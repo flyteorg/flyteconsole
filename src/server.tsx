@@ -7,7 +7,6 @@ import * as path from 'path';
 import { Helmet } from 'react-helmet';
 
 import { processEnv } from '../env';
-// import { getConfig } from './configLoader';
 
 // tslint:disable:prefer-array-literal
 interface Stats {
