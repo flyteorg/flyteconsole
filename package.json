@@ -8,14 +8,11 @@
   },
   "main": "index.js",
   "scripts": {
-    "build:prod":
-      "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production webpack --config webpack.config.ts --mode=production",
-    "build":
-      "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack --config webpack.config.ts --mode=development",
+    "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production webpack --config webpack.config.ts --mode=production",
+    "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack --config webpack.config.ts --mode=development",
     "clean": "rm -rf dist",
     "lint": "tslint --project .",
-    "lint-fix":
-      "tslint --fix --project . && prettier --write './**/*.{js,json}'",
+    "lint-fix": "tslint --fix --project . && prettier --write './**/*.{js,json}'",
     "lint:hooks": "eslint \"src/**/*.{ts,tsx}\"",
     "mockApi": "node ./mockApi",
     "prebuild": "yarn run clean",
@@ -23,14 +20,26 @@
     "start": "node -r dotenv/config index.js",
     "storybook": "start-storybook -p 9001 -c .storybook",
     "tdd": "yarn run test --watch --verbose false",
-    "test": "NODE_ENV=test jest --config=jest.config.js"
+    "test": "NODE_ENV=test jest --config=jest.config.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
-  "keywords": ["react", "lyft"],
+  "keywords": [
+    "react",
+    "lyft"
+  ],
   "author": "Lyft <flyte-eng@lyft.com>",
   "license": "Apache-2.0",
   "lint-staged": {
-    "*.{ts,tsx}": ["eslint", "tslint --fix", "git add"],
-    "*.{js,json}": ["prettier --write", "git add"]
+    "*.{ts,tsx}": [
+      "eslint",
+      "tslint --fix",
+      "git add"
+    ],
+    "*.{js,json}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -50,7 +59,7 @@
     "react-responsive": "^4.1.0",
     "react-transition-group": "^2.3.1",
     "serve-static": "^1.12.3",
-    "snyk": "^1.244.0",
+    "snyk": "^1.258.2",
     "tslib": "^1.9.0"
   },
   "devDependencies": {
@@ -183,5 +192,6 @@
   },
   "resolutions": {
     "micromatch": "^4.0.0"
-  }
+  },
+  "snyk": true
 }
