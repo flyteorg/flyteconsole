@@ -51,9 +51,7 @@ export function generateColumns(
         {
             cellRenderer: props => (
                 <>
-                    <Typography variant="body1">
-                        <NodeExecutionName {...props} />
-                    </Typography>
+                    <NodeExecutionName {...props} />
                     <Typography variant="subtitle1" color="textSecondary">
                         {props.execution.displayId}
                     </Typography>

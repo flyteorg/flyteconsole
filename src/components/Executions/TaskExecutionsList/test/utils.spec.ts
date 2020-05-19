@@ -1,5 +1,5 @@
 import { obj } from 'test/utils';
-import { getUniqueTaskExecutionName } from '../utils';
+import { formatRetryAttempt, getUniqueTaskExecutionName } from '../utils';
 
 describe('getUniqueTaskExecutionName', () => {
     const cases: [{ name: string; retryAttempt: number }, string][] = [
@@ -17,6 +17,21 @@ describe('getUniqueTaskExecutionName', () => {
                         taskId: { name: input.name }
                     }
                 } as any)
+            ).toEqual(expected))
+    );
+});
+
+describe('formatRetryAttempt', () => {
+    const cases: [number, string][] = [
+        [0, 'Attempt 01'],
+        [1, 'Attempt 02'],
+        [2, 'Attempt 03']
+    ];
+
+    cases.forEach(([input, expected]) =>
+        it(`should return ${expected} for ${input}`, () =>
+            expect(
+                formatRetryAttempt(input)
             ).toEqual(expected))
     );
 });
