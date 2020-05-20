@@ -30,8 +30,6 @@ describe('formatRetryAttempt', () => {
 
     cases.forEach(([input, expected]) =>
         it(`should return ${expected} for ${input}`, () =>
-            expect(
-                formatRetryAttempt(input)
-            ).toEqual(expected))
+            expect(formatRetryAttempt(input)).toEqual(expected))
     );
 });
