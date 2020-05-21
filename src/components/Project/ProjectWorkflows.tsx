@@ -9,7 +9,13 @@ import {
 import { useCommonStyles } from 'components/common/styles';
 import { useWorkflowNameList } from 'components/hooks/useNamedEntity';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
-import { limits, SortDirection, workflowSortFields } from 'models';
+import { Admin } from 'flyteidl';
+import {
+    FilterOperationName,
+    limits,
+    SortDirection,
+    workflowSortFields
+} from 'models';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes';
@@ -31,7 +37,15 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
             sort: {
                 direction: SortDirection.ASCENDING,
                 key: workflowSortFields.name
-            }
+            },
+            // Hide archived workflows from the list
+            filter: [
+                {
+                    key: 'state',
+                    operation: FilterOperationName.EQ,
+                    value: Admin.NamedEntityState.NAMED_ENTITY_ACTIVE
+                }
+            ]
         }
     );
 
