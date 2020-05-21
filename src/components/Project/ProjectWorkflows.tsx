@@ -1,12 +1,4 @@
-import { Typography } from '@material-ui/core';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import { SearchResult, WaitForData } from 'components/common';
-import {
-    SearchableNamedEntity,
-    SearchableNamedEntityList,
-    useNamedEntityListStyles
-} from 'components/common/SearchableNamedEntityList';
-import { useCommonStyles } from 'components/common/styles';
+import { WaitForData } from 'components/common';
 import { useWorkflowNameList } from 'components/hooks/useNamedEntity';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
 import { Admin } from 'flyteidl';
@@ -17,8 +9,6 @@ import {
     workflowSortFields
 } from 'models';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Routes } from 'routes';
 
 export interface ProjectWorkflowsProps {
     projectId: string;
