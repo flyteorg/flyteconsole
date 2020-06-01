@@ -29,11 +29,15 @@ export function useWorkflowExecutionState(
         key: executionSortFields.createdAt,
         direction: SortDirection.ASCENDING
     };
-    const rawNodeExecutions = useNodeExecutions(execution.id, {
+    const nodeExecutionsRequestConfig = {
         filter,
         sort,
         limit: limits.NONE
-    });
+    };
+    const rawNodeExecutions = useNodeExecutions(
+        execution.id,
+        nodeExecutionsRequestConfig
+    );
     const workflow = useWorkflow(execution.closure.workflowId);
     const nodeExecutions = useDetailedNodeExecutions(
         rawNodeExecutions,
@@ -49,5 +53,5 @@ export function useWorkflowExecutionState(
             executionIsTerminal(execution)
     });
 
-    return { workflow, nodeExecutions };
+    return { workflow, nodeExecutions, nodeExecutionsRequestConfig };
 }

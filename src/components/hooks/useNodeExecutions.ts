@@ -1,3 +1,4 @@
+import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import {
     limits,
     listNodeExecutions,
@@ -19,10 +20,11 @@ interface TaskExecutionChildrenFetchData {
     config: RequestConfig;
 }
 
-const doFetchNodeExecutions = async ({
-    id,
-    config
-}: NodeExecutionsFetchData) => {
+export const fetchNodeExecutions = async (
+    { id, config }: NodeExecutionsFetchData,
+    apiContext: APIContextValue
+) => {
+    const { listNodeExecutions } = apiContext;
     const { entities } = await listNodeExecutions(id, {
         ...config,
         limit: limits.NONE
@@ -37,20 +39,22 @@ export function useNodeExecutions(
     id: WorkflowExecutionIdentifier,
     config: RequestConfig
 ) {
+    const apiContext = useAPIContext();
     return useFetchableData<NodeExecution[], NodeExecutionsFetchData>(
         {
             debugName: 'NodeExecutions',
             defaultValue: [],
-            doFetch: doFetchNodeExecutions
+            doFetch: data => fetchNodeExecutions(data, apiContext)
         },
         { id, config }
     );
 }
 
-const doFetchTaskExecutionChildren = async ({
-    taskExecutionId,
-    config
-}: TaskExecutionChildrenFetchData) => {
+export const fetchTaskExecutionChildren = async (
+    { taskExecutionId, config }: TaskExecutionChildrenFetchData,
+    apiContext: APIContextValue
+) => {
+    const { listTaskExecutionChildren } = apiContext;
     const { entities } = await listTaskExecutionChildren(taskExecutionId, {
         ...config,
         limit: limits.NONE
@@ -63,11 +67,12 @@ export function useTaskExecutionChildren(
     taskExecutionId: TaskExecutionIdentifier,
     config: RequestConfig
 ) {
+    const apiContext = useAPIContext();
     return useFetchableData<NodeExecution[], TaskExecutionChildrenFetchData>(
         {
             debugName: 'TaskExecutionChildren',
             defaultValue: [],
-            doFetch: doFetchTaskExecutionChildren
+            doFetch: data => fetchTaskExecutionChildren(data, apiContext)
         },
         { taskExecutionId, config }
     );
