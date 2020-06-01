@@ -30,9 +30,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     const toggleExpanded = () => {
         setExpanded(!expanded);
     };
-    // TODO: This needs to be more general than child node executions
+
     const childNodeExecutions = useChildNodeExecutions(
-        execution.id,
+        execution,
         requestConfig
     );
 

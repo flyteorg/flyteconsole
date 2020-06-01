@@ -37,6 +37,8 @@ export interface DetailedTaskExecution extends TaskExecution {
 }
 
 export interface NodeExecutionGroup {
-    parentTaskExecution: TaskExecution;
+    name: string;
     nodeExecutions: NodeExecution[];
 }
+
+export enum NodeExecutionType {}
