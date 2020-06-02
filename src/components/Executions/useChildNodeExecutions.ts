@@ -1,5 +1,6 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import {
+    FetchableData,
     fetchNodeExecutions,
     fetchTaskExecutionChildren
 } from 'components/hooks';
@@ -7,7 +8,6 @@ import { useFetchableData } from 'components/hooks/useFetchableData';
 import { isEqual } from 'lodash';
 import {
     NodeExecution,
-    NodeExecutionIdentifier,
     RequestConfig,
     TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
@@ -75,10 +75,7 @@ async function fetchGroupsForTaskExecutionNode({
         nodeExecutionId,
         apiContext
     );
-    // TODO: It's possible that one of these promises fails while the
-    // others succeed. We might want to handle that in a way that
-    // allows the user to see the groups that loaded, and maybe
-    // retry the ones that did not.
+
     return await Promise.all(
         taskExecutions.map(({ id: taskExecutionId }) =>
             fetchGroupForTaskExecution({ apiContext, config, taskExecutionId })
@@ -108,10 +105,13 @@ async function fetchGroupsForWorkflowExecutionNode({
     ];
 }
 
+/** Fetches and groups `NodeExecution`s which are direct children of the given
+ * `NodeExecution`.
+ */
 export function useChildNodeExecutions(
     nodeExecution: NodeExecution,
     config: RequestConfig
-) {
+): FetchableData<NodeExecutionGroup[]> {
     const apiContext = useAPIContext();
     const { workflowNodeMetadata } = nodeExecution.closure;
     const { execution: topExecution } = React.useContext(ExecutionContext);

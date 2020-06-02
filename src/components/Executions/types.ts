@@ -40,5 +40,3 @@ export interface NodeExecutionGroup {
     name: string;
     nodeExecutions: NodeExecution[];
 }
-
-export enum NodeExecutionType {}

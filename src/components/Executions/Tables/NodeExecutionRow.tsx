@@ -45,8 +45,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         : false;
     const { error } = execution.closure;
 
-    // TODO: Do we want to show any loading indicator while we're waiting for
-    // the child executions to load and determine this?
     const expanderContent = isExpandable ? (
         <RowExpander expanded={expanded} onClick={toggleExpanded} />
     ) : null;

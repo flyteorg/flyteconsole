@@ -1,8 +1,6 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import {
     limits,
-    listNodeExecutions,
-    listTaskExecutionChildren,
     NodeExecution,
     RequestConfig,
     TaskExecutionIdentifier,
@@ -20,6 +18,10 @@ interface TaskExecutionChildrenFetchData {
     config: RequestConfig;
 }
 
+/** Fetches a list of `NodeExecution`s which are children of a WorkflowExecution.
+ * This function is meant to be consumed by hooks which are composing data.
+ * If you're calling it from a component, consider using `useNodeExecutions` instead.
+ */
 export const fetchNodeExecutions = async (
     { id, config }: NodeExecutionsFetchData,
     apiContext: APIContextValue
@@ -50,6 +52,10 @@ export function useNodeExecutions(
     );
 }
 
+/** Fetches a list of `NodeExecution`s which are children of the given `TaskExecution`.
+ * This function is meant to be consumed by hooks which are composing data.
+ * If you're calling it from a component, consider using `useTaskExecutionChildren` instead.
+ */
 export const fetchTaskExecutionChildren = async (
     { taskExecutionId, config }: TaskExecutionChildrenFetchData,
     apiContext: APIContextValue
