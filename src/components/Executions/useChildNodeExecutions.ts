@@ -115,15 +115,15 @@ export function useChildNodeExecutions(
     const apiContext = useAPIContext();
     const { workflowNodeMetadata } = nodeExecution.closure;
     const { execution: topExecution } = React.useContext(ExecutionContext);
-    return useFetchableData<NodeExecutionGroup[], NodeExecutionIdentifier>(
+    return useFetchableData<NodeExecutionGroup[], NodeExecution>(
         {
             debugName: 'ChildNodeExecutions',
             defaultValue: [],
-            doFetch: async () => {
+            doFetch: async data => {
                 const fetchArgs = {
                     apiContext,
                     config,
-                    nodeExecution
+                    nodeExecution: data
                 };
                 // Nested NodeExecutions will sometimes have `workflowNodeMetadata` that
                 // points to the parent WorkflowExecution. We're only interested in
@@ -137,6 +137,6 @@ export function useChildNodeExecutions(
                 return fetchGroupsForTaskExecutionNode(fetchArgs);
             }
         },
-        nodeExecution.id
+        nodeExecution
     );
 }
