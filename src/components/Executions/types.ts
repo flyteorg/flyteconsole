@@ -35,3 +35,8 @@ export interface DetailedNodeExecution extends NodeExecution {
 export interface DetailedTaskExecution extends TaskExecution {
     cacheKey: string;
 }
+
+export interface NodeExecutionGroup {
+    name: string;
+    nodeExecutions: NodeExecution[];
+}
