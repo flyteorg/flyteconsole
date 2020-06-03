@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Execution, NodeExecution, RequestConfig } from 'models';
-import { ExecutionFiltersState } from '../filters/useExecutionFiltersState';
 
 export interface ExecutionContextData {
     execution: Execution;
