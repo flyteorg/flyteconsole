@@ -1,7 +1,9 @@
 import * as classnames from 'classnames';
 import { useExpandableMonospaceTextStyles } from 'components/common/ExpandableMonospaceText';
 import * as React from 'react';
+import { NodeExecutionsRequestConfigContext } from '../ExecutionDetails/contexts';
 import { DetailedNodeExecution } from '../types';
+import { useChildNodeExecutions } from '../useChildNodeExecutions';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
@@ -15,10 +17,6 @@ interface NodeExecutionRowProps {
     style?: React.CSSProperties;
 }
 
-function isExpandableExecution(execution: DetailedNodeExecution) {
-    return true;
-}
-
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     columns,
@@ -26,10 +24,19 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     style
 }) => {
     const state = React.useContext(NodeExecutionsTableContext);
+    const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);
+
     const [expanded, setExpanded] = React.useState(false);
     const toggleExpanded = () => {
         setExpanded(!expanded);
     };
+
+    const childNodeExecutions = useChildNodeExecutions(
+        execution,
+        requestConfig
+    );
+
+    const isExpandable = childNodeExecutions.value.length > 0;
     const tableStyles = useExecutionTableStyles();
     const monospaceTextStyles = useExpandableMonospaceTextStyles();
 
@@ -38,7 +45,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         : false;
     const { error } = execution.closure;
 
-    const expanderContent = isExpandableExecution(execution) ? (
+    const expanderContent = isExpandable ? (
         <RowExpander expanded={expanded} onClick={toggleExpanded} />
     ) : null;
 
