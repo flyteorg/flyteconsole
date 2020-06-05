@@ -6,7 +6,7 @@ import { NodeDetailsProps } from 'components/WorkflowGraph';
 import { useStyles as useBaseStyles } from 'components/WorkflowGraph/NodeDetails/styles';
 import { emptyLiteralMapBlob, Execution } from 'models';
 import * as React from 'react';
-import { ExecutionContext } from '../contexts';
+import { ExecutionContext } from '../../contexts';
 
 const RemoteExecutionOutputs: React.FC<{ execution: Execution }> = ({
     execution

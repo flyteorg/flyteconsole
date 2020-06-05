@@ -4,7 +4,7 @@ import * as React from 'react';
 import {
     ExecutionContext,
     NodeExecutionsRequestConfigContext
-} from '../ExecutionDetails/contexts';
+} from '../contexts';
 import { DetailedNodeExecution } from '../types';
 import { useChildNodeExecutions } from '../useChildNodeExecutions';
 import { useDetailedChildNodeExecutions } from '../useDetailedNodeExecutions';

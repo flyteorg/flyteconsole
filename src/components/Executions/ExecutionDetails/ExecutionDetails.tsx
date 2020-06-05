@@ -7,8 +7,8 @@ import {
 import { Execution } from 'models';
 import * as React from 'react';
 import { executionRefreshIntervalMs } from '../constants';
+import { ExecutionContext } from '../contexts';
 import { executionIsTerminal } from '../utils';
-import { ExecutionContext } from './contexts';
 import { ExecutionDetailsAppBarContent } from './ExecutionDetailsAppBarContent';
 import { ExecutionNodeViews } from './ExecutionNodeViews';
 

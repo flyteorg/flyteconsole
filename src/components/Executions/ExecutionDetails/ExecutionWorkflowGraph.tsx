@@ -4,8 +4,8 @@ import { keyBy } from 'lodash';
 import { endNodeId, startNodeId } from 'models';
 import { Workflow } from 'models/Workflow';
 import * as React from 'react';
+import { NodeExecutionsContext } from '../contexts';
 import { DetailedNodeExecution } from '../types';
-import { NodeExecutionsContext } from './contexts';
 import { NodeExecutionDetails } from './NodeExecutionDetails';
 import { TaskExecutionNodeRenderer } from './TaskExecutionNodeRenderer/TaskExecutionNodeRenderer';
 

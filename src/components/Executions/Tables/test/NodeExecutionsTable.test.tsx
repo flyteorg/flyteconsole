@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import { mapNodeExecutionDetails } from 'components';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { APIContext } from 'components/data/apiContext';
-import { NodeExecutionsRequestConfigContext } from 'components/Executions/ExecutionDetails/contexts';
+import { NodeExecutionsRequestConfigContext } from 'components/Executions/contexts';
 import { DetailedNodeExecution } from 'components/Executions/types';
 import { FilterOperationName, RequestConfig } from 'models';
 import {
