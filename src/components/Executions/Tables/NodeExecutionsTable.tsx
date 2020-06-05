@@ -36,7 +36,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = props => 
 
     const onCloseDetailsPanel = () => state.setSelectedExecution(null);
 
-    const rowProps = { columns, state, onHeightChange: () => {} };
+    const rowProps = { state, onHeightChange: () => {} };
     const content =
         state.executions.length > 0 ? (
             state.executions.map(execution => {
@@ -63,7 +63,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = props => 
                 columns={columns}
                 scrollbarPadding={scrollbarPadding}
             />
-            <NodeExecutionsTableContext.Provider value={state}>
+            <NodeExecutionsTableContext.Provider value={{ columns, state }}>
                 <div className={tableStyles.scrollContainer}>{content}</div>
             </NodeExecutionsTableContext.Provider>
             <DetailsPanel

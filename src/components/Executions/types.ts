@@ -40,3 +40,7 @@ export interface NodeExecutionGroup {
     name: string;
     nodeExecutions: NodeExecution[];
 }
+
+export interface DetailedNodeExecutionGroup extends NodeExecutionGroup {
+    nodeExecutions: DetailedNodeExecution[];
+}

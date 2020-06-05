@@ -7,13 +7,12 @@ import {
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { isEqual } from 'lodash';
 import {
+    Execution,
     NodeExecution,
     RequestConfig,
     TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
 } from 'models';
-import * as React from 'react';
-import { ExecutionContext } from './ExecutionDetails/contexts';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { fetchTaskExecutions } from './useTaskExecutions';
@@ -76,11 +75,24 @@ async function fetchGroupsForTaskExecutionNode({
         apiContext
     );
 
-    return await Promise.all(
-        taskExecutions.map(({ id: taskExecutionId }) =>
-            fetchGroupForTaskExecution({ apiContext, config, taskExecutionId })
+    const groups = await Promise.all(
+        taskExecutions.map(execution =>
+            execution.isParent
+                ? fetchGroupForTaskExecution({
+                      apiContext,
+                      config,
+                      taskExecutionId: execution.id
+                  })
+                : Promise.resolve(null)
         )
     );
+
+    return groups.reduce<NodeExecutionGroup[]>((out, group) => {
+        if (group === null || group.nodeExecutions.length === 0) {
+            return out;
+        }
+        return [...out, group];
+    }, []);
 }
 
 async function fetchGroupsForWorkflowExecutionNode({
@@ -96,25 +108,30 @@ async function fetchGroupsForWorkflowExecutionNode({
     } = nodeExecution.closure.workflowNodeMetadata;
     // We can only have one WorkflowExecution (no retries), so there is only
     // one group to return. But calling code expects it as an array.
-    return [
-        await fetchGroupForWorkflowExecution({
-            apiContext,
-            config,
-            workflowExecutionId
-        })
-    ];
+    const group = await fetchGroupForWorkflowExecution({
+        apiContext,
+        config,
+        workflowExecutionId
+    });
+    return group.nodeExecutions.length > 0 ? [group] : [];
+}
+
+export interface UseChildNodeExecutionsArgs {
+    requestConfig: RequestConfig;
+    nodeExecution: NodeExecution;
+    workflowExecution: Execution;
 }
 
 /** Fetches and groups `NodeExecution`s which are direct children of the given
  * `NodeExecution`.
  */
-export function useChildNodeExecutions(
-    nodeExecution: NodeExecution,
-    config: RequestConfig
-): FetchableData<NodeExecutionGroup[]> {
+export function useChildNodeExecutions({
+    nodeExecution,
+    requestConfig,
+    workflowExecution
+}: UseChildNodeExecutionsArgs): FetchableData<NodeExecutionGroup[]> {
     const apiContext = useAPIContext();
     const { workflowNodeMetadata } = nodeExecution.closure;
-    const { execution: topExecution } = React.useContext(ExecutionContext);
     return useFetchableData<NodeExecutionGroup[], NodeExecution>(
         {
             debugName: 'ChildNodeExecutions',
@@ -122,7 +139,7 @@ export function useChildNodeExecutions(
             doFetch: async data => {
                 const fetchArgs = {
                     apiContext,
-                    config,
+                    config: requestConfig,
                     nodeExecution: data
                 };
                 // Nested NodeExecutions will sometimes have `workflowNodeMetadata` that
@@ -130,7 +147,10 @@ export function useChildNodeExecutions(
                 // showing children if this node is a sub-workflow.
                 if (
                     workflowNodeMetadata &&
-                    !isEqual(workflowNodeMetadata.executionId, topExecution.id)
+                    !isEqual(
+                        workflowNodeMetadata.executionId,
+                        workflowExecution.id
+                    )
                 ) {
                     return fetchGroupsForWorkflowExecutionNode(fetchArgs);
                 }
