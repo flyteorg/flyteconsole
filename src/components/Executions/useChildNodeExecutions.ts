@@ -8,22 +8,33 @@ import { useFetchableData } from 'components/hooks/useFetchableData';
 import { isEqual } from 'lodash';
 import {
     Execution,
+    GloballyUniqueNode,
     NodeExecution,
+    NodeExecutionIdentifier,
     RequestConfig,
+    TaskExecution,
     TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
 } from 'models';
+import { useContext } from 'react';
+import { ExecutionContext } from './contexts';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
+import { ExecutionDataCache } from './useExecutionDataCache';
 import { fetchTaskExecutions } from './useTaskExecutions';
 
+interface MakeGloballyUniqueNodeArgs {
+    nodeExecutionId: NodeExecutionIdentifier;
+    taskExecutionId: TaskExecutionIdentifier;
+}
+
 interface FetchGroupForTaskExecutionArgs {
-    apiContext: APIContextValue;
     config: RequestConfig;
+    dataCache: ExecutionDataCache;
     taskExecutionId: TaskExecutionIdentifier;
 }
 async function fetchGroupForTaskExecution({
-    apiContext,
+    dataCache,
     config,
     taskExecutionId
 }: FetchGroupForTaskExecutionArgs): Promise<NodeExecutionGroup> {
@@ -31,55 +42,52 @@ async function fetchGroupForTaskExecution({
         // NodeExecutions created by a TaskExecution are grouped
         // by the retry attempt of the task.
         name: formatRetryAttempt(taskExecutionId.retryAttempt),
-        nodeExecutions: await fetchTaskExecutionChildren(
-            { config, taskExecutionId },
-            apiContext
+        nodeExecutions: await dataCache.getTaskExecutionChildren(
+            taskExecutionId,
+            config
         )
     };
 }
 
 interface FetchGroupForWorkflowExecutionArgs {
-    apiContext: APIContextValue;
     config: RequestConfig;
+    dataCache: ExecutionDataCache;
     workflowExecutionId: WorkflowExecutionIdentifier;
 }
 async function fetchGroupForWorkflowExecution({
-    apiContext,
     config,
+    dataCache,
     workflowExecutionId
 }: FetchGroupForWorkflowExecutionArgs): Promise<NodeExecutionGroup> {
     return {
         // NodeExecutions created by a workflow execution are grouped
         // by the execution id, since workflow executions are not retryable.
         name: workflowExecutionId.name,
-        nodeExecutions: await fetchNodeExecutions(
-            { config, id: workflowExecutionId },
-            apiContext
+        nodeExecutions: await dataCache.getNodeExecutions(
+            workflowExecutionId,
+            config
         )
     };
 }
 
 interface FetchNodeExecutionGroupArgs {
-    apiContext: APIContextValue;
     config: RequestConfig;
+    dataCache: ExecutionDataCache;
     nodeExecution: NodeExecution;
 }
 
 async function fetchGroupsForTaskExecutionNode({
-    apiContext,
     config,
+    dataCache,
     nodeExecution: { id: nodeExecutionId }
 }: FetchNodeExecutionGroupArgs): Promise<NodeExecutionGroup[]> {
-    const taskExecutions = await fetchTaskExecutions(
-        nodeExecutionId,
-        apiContext
-    );
+    const taskExecutions = await dataCache.getTaskExecutions(nodeExecutionId);
 
     const groups = await Promise.all(
         taskExecutions.map(execution =>
             execution.isParent
                 ? fetchGroupForTaskExecution({
-                      apiContext,
+                      dataCache,
                       config,
                       taskExecutionId: execution.id
                   })
@@ -96,8 +104,8 @@ async function fetchGroupsForTaskExecutionNode({
 }
 
 async function fetchGroupsForWorkflowExecutionNode({
-    apiContext,
     config,
+    dataCache,
     nodeExecution
 }: FetchNodeExecutionGroupArgs): Promise<NodeExecutionGroup[]> {
     if (!nodeExecution.closure.workflowNodeMetadata) {
@@ -109,7 +117,7 @@ async function fetchGroupsForWorkflowExecutionNode({
     // We can only have one WorkflowExecution (no retries), so there is only
     // one group to return. But calling code expects it as an array.
     const group = await fetchGroupForWorkflowExecution({
-        apiContext,
+        dataCache,
         config,
         workflowExecutionId
     });
@@ -127,10 +135,9 @@ export interface UseChildNodeExecutionsArgs {
  */
 export function useChildNodeExecutions({
     nodeExecution,
-    requestConfig,
-    workflowExecution
+    requestConfig
 }: UseChildNodeExecutionsArgs): FetchableData<NodeExecutionGroup[]> {
-    const apiContext = useAPIContext();
+    const { dataCache, execution: topExecution } = useContext(ExecutionContext);
     const { workflowNodeMetadata } = nodeExecution.closure;
     return useFetchableData<NodeExecutionGroup[], NodeExecution>(
         {
@@ -138,19 +145,18 @@ export function useChildNodeExecutions({
             defaultValue: [],
             doFetch: async data => {
                 const fetchArgs = {
-                    apiContext,
+                    dataCache,
                     config: requestConfig,
                     nodeExecution: data
                 };
+                // TODO: I think this check is because of inline workflows?
+
                 // Nested NodeExecutions will sometimes have `workflowNodeMetadata` that
                 // points to the parent WorkflowExecution. We're only interested in
                 // showing children if this node is a sub-workflow.
                 if (
                     workflowNodeMetadata &&
-                    !isEqual(
-                        workflowNodeMetadata.executionId,
-                        workflowExecution.id
-                    )
+                    !isEqual(workflowNodeMetadata.executionId, topExecution.id)
                 ) {
                     return fetchGroupsForWorkflowExecutionNode(fetchArgs);
                 }

@@ -1,3 +1,4 @@
+import { CompiledNode, WorkflowId } from 'models';
 import { NodeExecution, TaskExecution } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 
@@ -20,6 +21,15 @@ export enum NodeExecutionDisplayType {
     Unknown = 'Unknown',
     UnknownTask = 'Unknown Task',
     WaitableTask = 'Waitable Task'
+}
+
+export interface UniqueNodeId {
+    workflowId: WorkflowId;
+    nodeId: string;
+}
+export interface NodeInformation {
+    id: UniqueNodeId;
+    node: CompiledNode;
 }
 
 /** An interface combining a NodeExecution with data pulled from the

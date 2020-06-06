@@ -1,6 +1,7 @@
 import { useNodeExecutions, useWorkflow } from 'components/hooks';
 import { Workflow } from 'models';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
+import { ExecutionContext } from './contexts';
 import { NodeExecutionGroup } from './types';
 import { mapNodeExecutionDetails } from './utils';
 
@@ -16,6 +17,8 @@ export function useDetailedNodeExecutions(
     nodeExecutionsFetchable: ReturnType<typeof useNodeExecutions>,
     workflowFetchable?: ReturnType<typeof useWorkflow>
 ) {
+    const { dataCache } = useContext(ExecutionContext);
+    // TODO: This could be updated to use fetch functions directly
     const { value: nodeExecutions } = nodeExecutionsFetchable;
     let workflow: Workflow | undefined = undefined;
     if (workflowFetchable && workflowFetchable.hasLoaded) {
@@ -25,25 +28,25 @@ export function useDetailedNodeExecutions(
     return {
         ...nodeExecutionsFetchable,
         value: useMemo(
-            () => mapNodeExecutionDetails(nodeExecutions, workflow),
-            [nodeExecutions, workflow]
+            () => mapNodeExecutionDetails(nodeExecutions, dataCache),
+            [nodeExecutions, workflow, dataCache]
         )
     };
 }
 
 export function useDetailedChildNodeExecutions(
-    nodeExecutionGroups: NodeExecutionGroup[],
-    workflow?: Workflow
+    nodeExecutionGroups: NodeExecutionGroup[]
 ) {
+    const { dataCache } = useContext(ExecutionContext);
     return useMemo(
         () =>
             nodeExecutionGroups.map(group => ({
                 ...group,
                 nodeExecutions: mapNodeExecutionDetails(
                     group.nodeExecutions,
-                    workflow
+                    dataCache
                 )
             })),
-        [nodeExecutionGroups, workflow]
+        [nodeExecutionGroups, dataCache]
     );
 }

@@ -39,6 +39,7 @@ import {
     ExecutionPhaseConstants,
     NodeExecutionDisplayType
 } from './types';
+import { ExecutionDataCache } from './useExecutionDataCache';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
@@ -120,28 +121,8 @@ export const taskExecutionIsTerminal = (taskExecution: TaskExecution) =>
  */
 export function mapNodeExecutionDetails(
     executions: NodeExecution[],
-    workflow?: Workflow
+    dataCache: ExecutionDataCache
 ) {
-    let nodesById: Dictionary<CompiledNode> = {};
-    let taskTemplates: Dictionary<TaskTemplate> = {};
-
-    if (workflow) {
-        if (!workflow.closure) {
-            throw new Error('Workflow has no closure');
-        }
-        if (!workflow.closure.compiledWorkflow) {
-            throw new Error('Workflow closure missing a compiled workflow');
-        }
-
-        taskTemplates = keyBy(extractTaskTemplates(workflow), t =>
-            getCacheKey(t.id)
-        );
-        nodesById = keyBy(
-            workflow.closure.compiledWorkflow.primary.template.nodes,
-            'id'
-        );
-    }
-
     return executions
         .filter(execution => {
             // Exclude the start/end nodes from the renderered list
@@ -150,28 +131,28 @@ export function mapNodeExecutionDetails(
         })
         .map<DetailedNodeExecution>(execution => {
             const { nodeId } = execution.id;
-            const node = nodesById[nodeId];
             const cacheKey = getCacheKey(execution.id);
+            const nodeInfo = dataCache.getNodeForNodeExecution(execution.id);
+
             let displayId = nodeId;
             let displayType = NodeExecutionDisplayType.Unknown;
             let taskTemplate: TaskTemplate | undefined = undefined;
 
-            if (!node) {
+            if (nodeInfo == null) {
                 return { ...execution, cacheKey, displayId, displayType };
             }
+            const { node } = nodeInfo;
 
             if (node.branchNode) {
                 displayId = nodeId;
                 displayType = NodeExecutionDisplayType.BranchNode;
             } else if (node.taskNode) {
                 displayType = NodeExecutionDisplayType.UnknownTask;
-                taskTemplate =
-                    taskTemplates[getCacheKey(node.taskNode.referenceId)];
+                taskTemplate = dataCache.getTaskTemplate(
+                    node.taskNode.referenceId
+                );
 
                 if (!taskTemplate) {
-                    log.warn(
-                        `Unexpected missing workflow task for node ${nodeId}`
-                    );
                     displayType = NodeExecutionDisplayType.UnknownTask;
                 } else {
                     displayId = taskTemplate.id.name;

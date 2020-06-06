@@ -1,11 +1,14 @@
 import * as React from 'react';
 
 import { Execution, NodeExecution, RequestConfig } from 'models';
+import { ExecutionDataCache } from './useExecutionDataCache';
 
 export interface ExecutionContextData {
     execution: Execution;
+    dataCache: ExecutionDataCache;
     terminateExecution(cause: string): Promise<void>;
 }
+
 export const ExecutionContext = React.createContext<ExecutionContextData>(
     {} as ExecutionContextData
 );
