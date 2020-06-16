@@ -1,7 +1,7 @@
 import {
     useDataRefresher,
-    useNodeExecutions,
-    useWorkflow
+    useFetchableData,
+    useNodeExecutions
 } from 'components/hooks';
 import { every } from 'lodash';
 import {
@@ -9,7 +9,9 @@ import {
     executionSortFields,
     FilterOperation,
     limits,
-    SortDirection
+    SortDirection,
+    Workflow,
+    WorkflowId
 } from 'models';
 import { useContext } from 'react';
 import {
@@ -18,7 +20,22 @@ import {
     nodeExecutionIsTerminal
 } from '.';
 import { ExecutionContext } from './contexts';
-import { useDetailedNodeExecutions } from './useDetailedNodeExecutions';
+
+/** Using a custom fetchable to make sure the related workflow is fetched
+ * using an ExecutionDataCache, ensuring that the extended details for NodeExecutions
+ * can be found.
+ */
+function useCachedWorkflow(id: WorkflowId) {
+    const { dataCache } = useContext(ExecutionContext);
+    return useFetchableData<Workflow, WorkflowId>(
+        {
+            debugName: 'Workflow',
+            defaultValue: {} as Workflow,
+            doFetch: id => dataCache.getWorkflow(id)
+        },
+        id
+    );
+}
 
 /** Fetches both the workflow and nodeExecutions for a given WorkflowExecution.
  * Will also map node details to the node executions.
@@ -27,7 +44,6 @@ export function useWorkflowExecutionState(
     execution: Execution,
     filter: FilterOperation[] = []
 ) {
-    // const { dataCache } = useContext(ExecutionContext);
     const sort = {
         key: executionSortFields.createdAt,
         direction: SortDirection.ASCENDING
@@ -37,28 +53,19 @@ export function useWorkflowExecutionState(
         sort,
         limit: limits.NONE
     };
-    const rawNodeExecutions = useNodeExecutions(
+    const nodeExecutions = useNodeExecutions(
         execution.id,
         nodeExecutionsRequestConfig
     );
 
-    // TODO: This needs to either:
-    // 1: Wait for the workflow by wrapping dataCache.getWorkflow in a fetchable
-    // 2. Move all of the data fetching here into a separate hook that can compose
-    //    the bare promises together.
-    // 3. Stop decorating NodeExecutions here and do it in the row component instead.
-    const workflow = useWorkflow(execution.closure.workflowId);
-    const nodeExecutions = useDetailedNodeExecutions(
-        rawNodeExecutions,
-        workflow
-    );
+    const workflow = useCachedWorkflow(execution.closure.workflowId);
 
     // We will continue to refresh the node executions list as long
     // as either the parent execution or any child is non-terminal
     useDataRefresher(execution.id, nodeExecutions, {
         interval: executionRefreshIntervalMs,
-        valueIsFinal: nodeExecutions =>
-            every(nodeExecutions, nodeExecutionIsTerminal) &&
+        valueIsFinal: executions =>
+            every(executions, nodeExecutionIsTerminal) &&
             executionIsTerminal(execution)
     });
 

@@ -115,9 +115,67 @@ export const taskExecutionIsTerminal = (taskExecution: TaskExecution) =>
     taskExecution.closure &&
     terminalTaskExecutionStates.includes(taskExecution.closure.phase);
 
+/** Populates a NodeExecution with extended information read from an `ExecutionDataCache` */
+export function populateNodeExecutionDetails(
+    nodeExecution: NodeExecution,
+    dataCache: ExecutionDataCache
+) {
+    const { nodeId } = nodeExecution.id;
+    const cacheKey = getCacheKey(nodeExecution.id);
+    const nodeInfo = dataCache.getNodeForNodeExecution(nodeExecution.id);
+
+    let displayId = nodeId;
+    let displayType = NodeExecutionDisplayType.Unknown;
+    let taskTemplate: TaskTemplate | undefined = undefined;
+
+    if (nodeInfo == null) {
+        return { ...nodeExecution, cacheKey, displayId, displayType };
+    }
+    const { node } = nodeInfo;
+
+    if (node.branchNode) {
+        displayId = nodeId;
+        displayType = NodeExecutionDisplayType.BranchNode;
+    } else if (node.taskNode) {
+        displayType = NodeExecutionDisplayType.UnknownTask;
+        taskTemplate = dataCache.getTaskTemplate(node.taskNode.referenceId);
+
+        if (!taskTemplate) {
+            displayType = NodeExecutionDisplayType.UnknownTask;
+        } else {
+            displayId = taskTemplate.id.name;
+            displayType =
+                taskTypeToNodeExecutionDisplayType[
+                    taskTemplate.type as TaskType
+                ];
+            if (!displayType) {
+                displayType = NodeExecutionDisplayType.UnknownTask;
+            }
+        }
+    } else if (node.workflowNode) {
+        displayType = NodeExecutionDisplayType.Workflow;
+        const { launchplanRef, subWorkflowRef } = node.workflowNode;
+        const identifier = (launchplanRef
+            ? launchplanRef
+            : subWorkflowRef) as Identifier;
+        if (!identifier) {
+            log.warn(`Unexpected workflow node with no ref: ${nodeId}`);
+        } else {
+            displayId = identifier.name;
+        }
+    }
+
+    return {
+        ...nodeExecution,
+        cacheKey,
+        displayId,
+        displayType,
+        taskTemplate
+    };
+}
+
 /** Assigns display information to NodeExecutions. Each NodeExecution has an
- * associated `nodeId`. If a `Workflow` is provided, node/task information will
- * be pulled from the workflow closure to determine the node type.
+ * associated `nodeId`. Extended details are populated using the provided `ExecutionDataCache`
  */
 export function mapNodeExecutionDetails(
     executions: NodeExecution[],
@@ -129,62 +187,9 @@ export function mapNodeExecutionDetails(
             const { nodeId } = execution.id;
             return !(nodeId === startNodeId || nodeId === endNodeId);
         })
-        .map<DetailedNodeExecution>(execution => {
-            const { nodeId } = execution.id;
-            const cacheKey = getCacheKey(execution.id);
-            const nodeInfo = dataCache.getNodeForNodeExecution(execution.id);
-
-            let displayId = nodeId;
-            let displayType = NodeExecutionDisplayType.Unknown;
-            let taskTemplate: TaskTemplate | undefined = undefined;
-
-            if (nodeInfo == null) {
-                return { ...execution, cacheKey, displayId, displayType };
-            }
-            const { node } = nodeInfo;
-
-            if (node.branchNode) {
-                displayId = nodeId;
-                displayType = NodeExecutionDisplayType.BranchNode;
-            } else if (node.taskNode) {
-                displayType = NodeExecutionDisplayType.UnknownTask;
-                taskTemplate = dataCache.getTaskTemplate(
-                    node.taskNode.referenceId
-                );
-
-                if (!taskTemplate) {
-                    displayType = NodeExecutionDisplayType.UnknownTask;
-                } else {
-                    displayId = taskTemplate.id.name;
-                    displayType =
-                        taskTypeToNodeExecutionDisplayType[
-                            taskTemplate.type as TaskType
-                        ];
-                    if (!displayType) {
-                        displayType = NodeExecutionDisplayType.UnknownTask;
-                    }
-                }
-            } else if (node.workflowNode) {
-                displayType = NodeExecutionDisplayType.Workflow;
-                const { launchplanRef, subWorkflowRef } = node.workflowNode;
-                const identifier = (launchplanRef
-                    ? launchplanRef
-                    : subWorkflowRef) as Identifier;
-                if (!identifier) {
-                    log.warn(`Unexpected workflow node with no ref: ${nodeId}`);
-                } else {
-                    displayId = identifier.name;
-                }
-            }
-
-            return {
-                ...execution,
-                cacheKey,
-                displayId,
-                displayType,
-                taskTemplate
-            };
-        });
+        .map<DetailedNodeExecution>(execution =>
+            populateNodeExecutionDetails(execution, dataCache)
+        );
 }
 
 interface GetExecutionDurationMSArgs {

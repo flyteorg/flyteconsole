@@ -15,7 +15,6 @@ import { executionRefreshIntervalMs, nodeExecutionIsTerminal } from '..';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
-import { useDetailedNodeExecutions } from '../useDetailedNodeExecutions';
 import { taskExecutionIsTerminal } from '../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -52,13 +51,12 @@ export const TaskExecutionNodes: React.FC<TaskExecutionNodesProps> = ({
         key: executionSortFields.createdAt,
         direction: SortDirection.ASCENDING
     };
-    const nodeExecutions = useDetailedNodeExecutions(
-        useTaskExecutionChildren(taskExecution.id, {
-            sort,
-            limit: limits.NONE,
-            filter: filterState.appliedFilters
-        })
-    );
+    // TODO: Does this need to use the execution context?
+    const nodeExecutions = useTaskExecutionChildren(taskExecution.id, {
+        sort,
+        limit: limits.NONE,
+        filter: filterState.appliedFilters
+    });
 
     // We will continue to refresh the node executions list as long
     // as either the parent execution or any child is non-terminal

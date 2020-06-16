@@ -26,8 +26,9 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
                         execution={nodeExecution}
                     />
                 ));
+                const key = `group-${name}`;
                 return showNames ? (
-                    <div key={`group-${name}`}>
+                    <div key={key}>
                         <div className={tableStyles.row}>
                             <Typography variant="overline">{name}</Typography>
                         </div>
@@ -41,7 +42,7 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
                         </div>
                     </div>
                 ) : (
-                    <>{rows}</>
+                    <div key={key}>{rows}</div>
                 );
             })}
         </>
