@@ -19,14 +19,14 @@ import {
     executionRefreshIntervalMs,
     nodeExecutionIsTerminal
 } from '.';
-import { ExecutionContext } from './contexts';
+import { ExecutionDataCacheContext } from './contexts';
 
 /** Using a custom fetchable to make sure the related workflow is fetched
  * using an ExecutionDataCache, ensuring that the extended details for NodeExecutions
  * can be found.
  */
 function useCachedWorkflow(id: WorkflowId) {
-    const { dataCache } = useContext(ExecutionContext);
+    const dataCache = useContext(ExecutionDataCacheContext);
     return useFetchableData<Workflow, WorkflowId>(
         {
             debugName: 'Workflow',

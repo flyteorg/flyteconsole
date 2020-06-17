@@ -3,7 +3,7 @@ import { RefreshConfig, useDataRefresher } from 'components/hooks';
 import { Execution } from 'models';
 import * as React from 'react';
 import { executionRefreshIntervalMs } from '../constants';
-import { ExecutionContext } from '../contexts';
+import { ExecutionContext, ExecutionDataCacheContext } from '../contexts';
 import { useExecutionDataCache } from '../useExecutionDataCache';
 import { useWorkflowExecution } from '../useWorkflowExecution';
 import { executionIsTerminal } from '../utils';
@@ -40,7 +40,6 @@ export const ExecutionDetailsContainer: React.FC<ExecutionDetailsRouteParams> = 
     );
     useDataRefresher(id, fetchable, executionRefreshConfig);
     const contextValue = {
-        dataCache,
         terminateExecution,
         execution: fetchable.value
     };
@@ -48,7 +47,9 @@ export const ExecutionDetailsContainer: React.FC<ExecutionDetailsRouteParams> = 
         <WaitForData {...fetchable}>
             <ExecutionContext.Provider value={contextValue}>
                 <ExecutionDetailsAppBarContent execution={fetchable.value} />
-                <ExecutionNodeViews execution={fetchable.value} />
+                <ExecutionDataCacheContext.Provider value={dataCache}>
+                    <ExecutionNodeViews execution={fetchable.value} />
+                </ExecutionDataCacheContext.Provider>
             </ExecutionContext.Provider>
         </WaitForData>
     );

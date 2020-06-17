@@ -5,7 +5,6 @@ import { ExecutionDataCache } from './useExecutionDataCache';
 
 export interface ExecutionContextData {
     execution: Execution;
-    dataCache: ExecutionDataCache;
     terminateExecution(cause: string): Promise<void>;
 }
 
@@ -19,3 +18,7 @@ export const NodeExecutionsContext = React.createContext<
 export const NodeExecutionsRequestConfigContext = React.createContext<
     RequestConfig
 >({});
+
+export const ExecutionDataCacheContext = React.createContext<
+    ExecutionDataCache
+>({} as ExecutionDataCache);

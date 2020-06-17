@@ -1,27 +1,19 @@
-import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import {
-    FetchableData,
-    fetchNodeExecutions,
-    fetchTaskExecutionChildren
-} from 'components/hooks';
+import { FetchableData } from 'components/hooks';
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { isEqual } from 'lodash';
 import {
     Execution,
-    GloballyUniqueNode,
     NodeExecution,
     NodeExecutionIdentifier,
     RequestConfig,
-    TaskExecution,
     TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
 } from 'models';
 import { useContext } from 'react';
-import { ExecutionContext } from './contexts';
+import { ExecutionContext, ExecutionDataCacheContext } from './contexts';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { ExecutionDataCache } from './useExecutionDataCache';
-import { fetchTaskExecutions } from './useTaskExecutions';
 
 interface MakeGloballyUniqueNodeArgs {
     nodeExecutionId: NodeExecutionIdentifier;
@@ -137,7 +129,8 @@ export function useChildNodeExecutions({
     nodeExecution,
     requestConfig
 }: UseChildNodeExecutionsArgs): FetchableData<NodeExecutionGroup[]> {
-    const { dataCache, execution: topExecution } = useContext(ExecutionContext);
+    const { execution: topExecution } = useContext(ExecutionContext);
+    const dataCache = useContext(ExecutionDataCacheContext);
     const { workflowNodeMetadata } = nodeExecution.closure;
     return useFetchableData<NodeExecutionGroup[], NodeExecution>(
         {

@@ -1,16 +1,15 @@
-import { useNodeExecutions, useWorkflow } from 'components/hooks';
-import { NodeExecution, Workflow } from 'models';
+import { NodeExecution } from 'models';
 import { useContext, useMemo } from 'react';
-import { ExecutionContext } from './contexts';
+import { ExecutionDataCacheContext } from './contexts';
 import { NodeExecutionGroup } from './types';
-import { mapNodeExecutionDetails, populateNodeExecutionDetails } from './utils';
+import { mapNodeExecutionDetails } from './utils';
 
 /** Decorates a list of NodeExecutions, mapping the list items to
  * `DetailedNodeExecution`s. The node details are pulled from the the nearest
  * `ExecutionContext.dataCache`.
  */
 export function useDetailedNodeExecutions(nodeExecutions: NodeExecution[]) {
-    const { dataCache } = useContext(ExecutionContext);
+    const dataCache = useContext(ExecutionDataCacheContext);
 
     return useMemo(() => mapNodeExecutionDetails(nodeExecutions, dataCache), [
         nodeExecutions,
@@ -21,7 +20,7 @@ export function useDetailedNodeExecutions(nodeExecutions: NodeExecution[]) {
 export function useDetailedChildNodeExecutions(
     nodeExecutionGroups: NodeExecutionGroup[]
 ) {
-    const { dataCache } = useContext(ExecutionContext);
+    const dataCache = useContext(ExecutionDataCacheContext);
     return useMemo(
         () =>
             nodeExecutionGroups.map(group => ({
