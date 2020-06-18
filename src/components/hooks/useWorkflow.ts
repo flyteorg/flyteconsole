@@ -20,8 +20,6 @@ export function useWorkflow(
         {
             doFetch,
             autoFetch: id !== null,
-            // Workflows are immutable
-            useCache: true,
             debugName: 'Workflow',
             defaultValue: {} as Workflow
         },

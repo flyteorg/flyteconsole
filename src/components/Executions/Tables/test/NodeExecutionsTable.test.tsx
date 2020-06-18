@@ -1,22 +1,34 @@
 import { render, waitFor } from '@testing-library/react';
-import { mapNodeExecutionDetails } from 'components';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { APIContext } from 'components/data/apiContext';
-import { NodeExecutionsRequestConfigContext } from 'components/Executions/contexts';
-import { DetailedNodeExecution } from 'components/Executions/types';
-import { FilterOperationName, RequestConfig } from 'models';
+import { APIContext, APIContextValue } from 'components/data/apiContext';
+import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
 import {
-    createMockWorkflow,
-    createMockWorkflowClosure
-} from 'models/__mocks__/workflowData';
-import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
+    ExecutionContext,
+    ExecutionContextData,
+    ExecutionDataCacheContext,
+    NodeExecutionsRequestConfigContext
+} from 'components/Executions/contexts';
+import {
+    createExecutionDataCache,
+    ExecutionDataCache
+} from 'components/Executions/useExecutionDataCache';
+import {
+    FilterOperationName,
+    getTask,
+    NodeExecution,
+    RequestConfig,
+    WorkflowExecutionIdentifier
+} from 'models';
+import { createMockExecution } from 'models/__mocks__/executionsData';
 import { createMockTaskExecutionsListResponse } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import {
+    getExecution,
     listTaskExecutionChildren,
     listTaskExecutions
 } from 'models/Execution/api';
 import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
 import * as React from 'react';
+import { Identifier } from 'typescript';
 import {
     NodeExecutionsTable,
     NodeExecutionsTableProps
@@ -24,8 +36,13 @@ import {
 
 describe('NodeExecutionsTable', () => {
     let props: NodeExecutionsTableProps;
+    let apiContext: APIContextValue;
+    let executionContext: ExecutionContextData;
+    let dataCache: ExecutionDataCache;
     let requestConfig: RequestConfig;
-    let mockNodeExecutions: DetailedNodeExecution[];
+    let mockNodeExecutions: NodeExecution[];
+    let mockGetExecution: jest.Mock<ReturnType<typeof getExecution>>;
+    let mockGetTask: jest.Mock<ReturnType<typeof getTask>>;
     let mockListTaskExecutions: jest.Mock<ReturnType<
         typeof listTaskExecutions
     >>;
@@ -34,35 +51,52 @@ describe('NodeExecutionsTable', () => {
     >>;
 
     beforeEach(() => {
+        const {
+            nodeExecutions,
+            workflow,
+            workflowExecution
+        } = createMockExecutionEntities({
+            workflowName: 'SampleWorkflow',
+            nodeExecutionCount: 2
+        });
+
+        mockNodeExecutions = nodeExecutions;
+
         mockListTaskExecutions = jest.fn().mockResolvedValue({ entities: [] });
         mockListTaskExecutionChildren = jest
             .fn()
             .mockResolvedValue({ entities: [] });
-        const {
-            executions: mockExecutions,
-            nodes: mockNodes
-        } = createMockNodeExecutions(1);
+        mockGetExecution = jest
+            .fn()
+            .mockImplementation(async (id: WorkflowExecutionIdentifier) => {
+                return { ...createMockExecution(id.name), id };
+            });
+        mockGetTask = jest.fn().mockImplementation(async (id: Identifier) => {
+            return { template: { ...mockTasks[0].template, id } };
+        });
 
-        const mockWorkflow = createMockWorkflow('SampleWorkflow');
-        const mockWorkflowClosure = createMockWorkflowClosure();
-        const compiledWorkflow = mockWorkflowClosure.compiledWorkflow!;
-        const {
-            primary: { template },
-            tasks
-        } = compiledWorkflow;
-        template.nodes = template.nodes.concat(mockNodes);
-        compiledWorkflow.tasks = tasks.concat(mockTasks);
-        mockWorkflow.closure = mockWorkflowClosure;
+        apiContext = mockAPIContextValue({
+            getExecution: mockGetExecution,
+            getTask: mockGetTask,
+            listTaskExecutions: mockListTaskExecutions,
+            listTaskExecutionChildren: mockListTaskExecutionChildren
+        });
 
-        mockNodeExecutions = mapNodeExecutionDetails(
-            mockExecutions,
-            mockWorkflow
+        dataCache = createExecutionDataCache(apiContext);
+        dataCache.insertWorkflow(workflow);
+        dataCache.insertWorkflowExecutionReference(
+            workflowExecution.id,
+            workflow.id
         );
 
         requestConfig = {};
+        executionContext = {
+            execution: workflowExecution,
+            terminateExecution: jest.fn().mockRejectedValue('Not Implemented')
+        };
 
         props = {
-            value: mockNodeExecutions,
+            value: nodeExecutions,
             lastError: null,
             loading: false,
             moreItemsAvailable: false,
@@ -72,26 +106,31 @@ describe('NodeExecutionsTable', () => {
 
     const renderTable = () =>
         render(
-            <APIContext.Provider
-                value={mockAPIContextValue({
-                    listTaskExecutions: mockListTaskExecutions,
-                    listTaskExecutionChildren: mockListTaskExecutionChildren
-                })}
-            >
+            <APIContext.Provider value={apiContext}>
                 <NodeExecutionsRequestConfigContext.Provider
                     value={requestConfig}
                 >
-                    <NodeExecutionsTable {...props} />
+                    <ExecutionContext.Provider value={executionContext}>
+                        <ExecutionDataCacheContext.Provider value={dataCache}>
+                            <NodeExecutionsTable {...props} />
+                        </ExecutionDataCacheContext.Provider>
+                    </ExecutionContext.Provider>
                 </NodeExecutionsRequestConfigContext.Provider>
             </APIContext.Provider>
         );
 
-    it('renders displayId for nodes', async () => {
+    it('renders task name for task nodes', async () => {
         const { queryByText } = renderTable();
         await waitFor(() => {});
 
-        const node = mockNodeExecutions[0];
-        expect(queryByText(node.displayId)).toBeInTheDocument();
+        const node = dataCache.getNodeForNodeExecution(
+            mockNodeExecutions[0].id
+        );
+        const taskId = node?.node.taskNode?.referenceId;
+        expect(taskId).toBeDefined();
+        const task = dataCache.getTaskTemplate(taskId!);
+        expect(task).toBeDefined();
+        expect(queryByText(task!.id.name)).toBeInTheDocument();
     });
 
     it('requests child node executions using configuration from context', async () => {
@@ -101,8 +140,11 @@ describe('NodeExecutionsTable', () => {
         requestConfig.filter = [
             { key: 'test', operation: FilterOperationName.EQ, value: 'test' }
         ];
+
         renderTable();
-        await waitFor(() => {});
+        await waitFor(() =>
+            expect(mockListTaskExecutionChildren).toHaveBeenCalled()
+        );
 
         expect(mockListTaskExecutionChildren).toHaveBeenCalledWith(
             taskExecutions[0].id,

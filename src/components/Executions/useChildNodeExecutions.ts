@@ -15,11 +15,6 @@ import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { ExecutionDataCache } from './useExecutionDataCache';
 
-interface MakeGloballyUniqueNodeArgs {
-    nodeExecutionId: NodeExecutionIdentifier;
-    taskExecutionId: TaskExecutionIdentifier;
-}
-
 interface FetchGroupForTaskExecutionArgs {
     config: RequestConfig;
     dataCache: ExecutionDataCache;

@@ -11,6 +11,7 @@ import {
 } from 'components/hooks/utils';
 import { NotFoundError } from 'errors';
 import {
+    Execution,
     GloballyUniqueNode,
     Identifier,
     NodeExecutionIdentifier,
@@ -38,18 +39,44 @@ export function createExecutionDataCache(apiContext: APIContextValue) {
     const taskTemplatesById: Map<string, TaskTemplate> = new Map();
     const workflowExecutionIdToWorkflowId: Map<string, WorkflowId> = new Map();
 
+    const insertNodes = (nodes: GloballyUniqueNode[]) => {
+        cacheItems(nodesById, nodes);
+    };
+
+    const insertTaskTemplates = (templates: TaskTemplate[]) => {
+        cacheItems(taskTemplatesById, templates);
+    };
+
+    const insertWorkflow = (workflow: Workflow) => {
+        workflowsById.set(getCacheKey(workflow.id), workflow);
+        insertNodes(extractAndIdentifyNodes(workflow));
+        insertTaskTemplates(extractTaskTemplates(workflow));
+    };
+
+    const insertExecution = (execution: Execution) => {
+        workflowExecutionIdToWorkflowId.set(
+            getCacheKey(execution.id),
+            execution.closure.workflowId
+        );
+    };
+
+    const insertWorkflowExecutionReference = (
+        executionId: WorkflowExecutionIdentifier,
+        workflowId: WorkflowId
+    ) => {
+        workflowExecutionIdToWorkflowId.set(
+            getCacheKey(executionId),
+            workflowId
+        );
+    };
+
     const getWorkflow = async (id: WorkflowId) => {
         const key = getCacheKey(id);
         if (workflowsById.has(key)) {
             return workflowsById.get(key)!;
         }
         const workflow = await apiContext.getWorkflow(id);
-        workflowsById.set(key, workflow);
-
-        const nodes = extractAndIdentifyNodes(workflow);
-        cacheItems(nodesById, nodes);
-        const taskTemplates = extractTaskTemplates(workflow);
-        cacheItems(taskTemplatesById, taskTemplates);
+        insertWorkflow(workflow);
         return workflow;
     };
 
@@ -122,8 +149,8 @@ export function createExecutionDataCache(apiContext: APIContextValue) {
 
     const getWorkflowExecution = async (id: WorkflowExecutionIdentifier) => {
         const execution = await apiContext.getExecution(id);
-        workflowExecutionIdToWorkflowId.set(
-            getCacheKey(execution.id),
+        insertWorkflowExecutionReference(
+            execution.id,
             execution.closure.workflowId
         );
         return execution;
@@ -178,7 +205,7 @@ export function createExecutionDataCache(apiContext: APIContextValue) {
                 }
             }
         }));
-        cacheItems(nodesById, nodes);
+        insertNodes(nodes);
 
         return children;
     };
@@ -192,7 +219,12 @@ export function createExecutionDataCache(apiContext: APIContextValue) {
         getTaskTemplate,
         getWorkflow,
         getWorkflowExecution,
-        getWorkflowIdForWorkflowExecution
+        getWorkflowIdForWorkflowExecution,
+        insertExecution,
+        insertNodes,
+        insertTaskTemplates,
+        insertWorkflow,
+        insertWorkflowExecutionReference
     };
 }
 // TODO: Make actual type
