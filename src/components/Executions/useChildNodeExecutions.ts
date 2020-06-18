@@ -12,8 +12,7 @@ import {
 import { useContext } from 'react';
 import { ExecutionContext, ExecutionDataCacheContext } from './contexts';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
-import { NodeExecutionGroup } from './types';
-import { ExecutionDataCache } from './useExecutionDataCache';
+import { ExecutionDataCache, NodeExecutionGroup } from './types';
 
 interface FetchGroupForTaskExecutionArgs {
     config: RequestConfig;
@@ -70,6 +69,8 @@ async function fetchGroupsForTaskExecutionNode({
 }: FetchNodeExecutionGroupArgs): Promise<NodeExecutionGroup[]> {
     const taskExecutions = await dataCache.getTaskExecutions(nodeExecutionId);
 
+    // For TaskExecutions marked as parents, fetch its children and create a group.
+    // Otherwise, return null and we will filter it out later.
     const groups = await Promise.all(
         taskExecutions.map(execution =>
             execution.isParent
@@ -82,6 +83,7 @@ async function fetchGroupsForTaskExecutionNode({
         )
     );
 
+    // Remove any empty groups
     return groups.reduce<NodeExecutionGroup[]>((out, group) => {
         if (group === null || group.nodeExecutions.length === 0) {
             return out;
@@ -137,7 +139,6 @@ export function useChildNodeExecutions({
                     config: requestConfig,
                     nodeExecution: data
                 };
-                // TODO: I think this check is because of inline workflows?
 
                 // Nested NodeExecutions will sometimes have `workflowNodeMetadata` that
                 // points to the parent WorkflowExecution. We're only interested in

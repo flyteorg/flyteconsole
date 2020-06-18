@@ -24,6 +24,7 @@ import {
     WorkflowId
 } from 'models';
 import { useState } from 'react';
+import { ExecutionDataCache } from './types';
 import { fetchTaskExecutions } from './useTaskExecutions';
 
 function cacheItems<T extends { id: object | string }>(
@@ -33,7 +34,9 @@ function cacheItems<T extends { id: object | string }>(
     values.forEach(v => map.set(getCacheKey(v.id), v));
 }
 
-export function createExecutionDataCache(apiContext: APIContextValue) {
+export function createExecutionDataCache(
+    apiContext: APIContextValue
+): ExecutionDataCache {
     const workflowsById: Map<string, Workflow> = new Map();
     const nodesById: Map<string, GloballyUniqueNode> = new Map();
     const taskTemplatesById: Map<string, TaskTemplate> = new Map();
@@ -227,8 +230,6 @@ export function createExecutionDataCache(apiContext: APIContextValue) {
         insertWorkflowExecutionReference
     };
 }
-// TODO: Make actual type
-export type ExecutionDataCache = ReturnType<typeof createExecutionDataCache>;
 
 export function useExecutionDataCache() {
     const apiContext = useAPIContext();

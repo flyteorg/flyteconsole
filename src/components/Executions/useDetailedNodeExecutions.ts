@@ -17,6 +17,9 @@ export function useDetailedNodeExecutions(nodeExecutions: NodeExecution[]) {
     ]);
 }
 
+/** Decorates a list of `NodeExecutionGroup`s, transforming their lists of
+ * `NodeExecution`s into `DetailedNodeExecution`s.
+ */
 export function useDetailedChildNodeExecutions(
     nodeExecutionGroups: NodeExecutionGroup[]
 ) {

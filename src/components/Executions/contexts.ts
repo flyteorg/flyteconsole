@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Execution, NodeExecution, RequestConfig } from 'models';
-import { ExecutionDataCache } from './useExecutionDataCache';
+import { ExecutionDataCache } from './types';
 
 export interface ExecutionContextData {
     execution: Execution;

@@ -41,7 +41,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         workflowExecution
     });
 
-    // TODO: Need to map workflow info here.
     const detailedChildNodeExecutions = useDetailedChildNodeExecutions(
         childNodeExecutions.value
     );

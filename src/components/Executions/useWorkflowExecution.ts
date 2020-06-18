@@ -11,7 +11,7 @@ import { useAPIContext } from 'components/data/apiContext';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import { FetchableData, FetchableExecution } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
-import { ExecutionDataCache } from './useExecutionDataCache';
+import { ExecutionDataCache } from './types';
 
 /** A hook for fetching a WorkflowExecution */
 export function useWorkflowExecution(

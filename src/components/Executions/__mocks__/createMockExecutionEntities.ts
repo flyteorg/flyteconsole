@@ -12,6 +12,10 @@ interface CreateExecutionEntitiesArgs {
     nodeExecutionCount: number;
 }
 
+/** Creates the basic entities necessary to render the majority of the
+ * ExecutionDetails page. These can be inserted into an ExecutionDataCache
+ * for mocking.
+ */
 export function createMockExecutionEntities({
     workflowName,
     nodeExecutionCount

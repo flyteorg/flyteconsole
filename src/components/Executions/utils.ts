@@ -36,10 +36,10 @@ import {
 } from './constants';
 import {
     DetailedNodeExecution,
+    ExecutionDataCache,
     ExecutionPhaseConstants,
     NodeExecutionDisplayType
 } from './types';
-import { ExecutionDataCache } from './useExecutionDataCache';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.

@@ -77,7 +77,6 @@ export const TaskExecutionNodes: React.FC<TaskExecutionNodesProps> = ({
         key: executionSortFields.createdAt,
         direction: SortDirection.ASCENDING
     };
-    // TODO: Does this need to use the execution context?
     const nodeExecutions = useCachedTaskExecutionChildren({
         id: taskExecution.id,
         config: {

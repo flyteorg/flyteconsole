@@ -8,10 +8,8 @@ import {
     ExecutionDataCacheContext,
     NodeExecutionsRequestConfigContext
 } from 'components/Executions/contexts';
-import {
-    createExecutionDataCache,
-    ExecutionDataCache
-} from 'components/Executions/useExecutionDataCache';
+import { ExecutionDataCache } from 'components/Executions/types';
+import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
 import {
     FilterOperationName,
     getTask,
