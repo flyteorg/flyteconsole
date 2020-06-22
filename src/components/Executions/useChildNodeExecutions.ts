@@ -4,7 +4,6 @@ import { isEqual } from 'lodash';
 import {
     Execution,
     NodeExecution,
-    NodeExecutionIdentifier,
     RequestConfig,
     TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
@@ -84,12 +83,9 @@ async function fetchGroupsForTaskExecutionNode({
     );
 
     // Remove any empty groups
-    return groups.reduce<NodeExecutionGroup[]>((out, group) => {
-        if (group === null || group.nodeExecutions.length === 0) {
-            return out;
-        }
-        return [...out, group];
-    }, []);
+    return groups.filter(
+        group => group !== null && group.nodeExecutions.length > 0
+    ) as NodeExecutionGroup[];
 }
 
 async function fetchGroupsForWorkflowExecutionNode({
