@@ -118,7 +118,7 @@ describe('NodeExecutionsTable', () => {
         );
 
     it('renders task name for task nodes', async () => {
-        const { queryByText } = renderTable();
+        const { queryAllByText } = renderTable();
         await waitFor(() => {});
 
         const node = dataCache.getNodeForNodeExecution(
@@ -128,7 +128,7 @@ describe('NodeExecutionsTable', () => {
         expect(taskId).toBeDefined();
         const task = dataCache.getTaskTemplate(taskId!);
         expect(task).toBeDefined();
-        expect(queryByText(task!.id.name)).toBeInTheDocument();
+        expect(queryAllByText(task!.id.name)[0]).toBeInTheDocument();
     });
 
     it('requests child node executions using configuration from context', async () => {
