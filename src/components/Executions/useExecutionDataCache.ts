@@ -34,6 +34,9 @@ function cacheItems<T extends { id: object | string }>(
     values.forEach(v => map.set(getCacheKey(v.id), v));
 }
 
+/** Creates a new ExecutionDataCache which will use the provided API context
+ * to fetch entities.
+ */
 export function createExecutionDataCache(
     apiContext: APIContextValue
 ): ExecutionDataCache {
@@ -231,6 +234,7 @@ export function createExecutionDataCache(
     };
 }
 
+/** A hook for creating a new ExecutionDataCache wired to the nearest `APIContext` */
 export function useExecutionDataCache() {
     const apiContext = useAPIContext();
     const [dataCache] = useState(() => createExecutionDataCache(apiContext));
