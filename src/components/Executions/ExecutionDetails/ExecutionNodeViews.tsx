@@ -4,11 +4,11 @@ import { WaitForData } from 'components/common';
 import { useTabState } from 'components/hooks/useTabState';
 import { Execution } from 'models';
 import * as React from 'react';
+import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { useWorkflowExecutionState } from '../useWorkflowExecutionState';
-import { NodeExecutionsRequestConfigContext } from './contexts';
 import { ExecutionWorkflowGraph } from './ExecutionWorkflowGraph';
 
 const useStyles = makeStyles((theme: Theme) => ({
