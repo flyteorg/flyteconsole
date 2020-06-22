@@ -1,19 +1,15 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import axios from 'axios';
-// tslint:disable-next-line:import-name
-import AxiosMockAdapter from 'axios-mock-adapter';
-import { mapNodeExecutionDetails } from 'components/Executions/utils';
-import { NavBar } from 'components/Navigation';
-import { Admin } from 'flyteidl';
-import { encodeProtoPayload } from 'models';
+import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
+import { ExecutionDataCacheContext } from 'components/Executions/contexts';
+import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
 import {
     createMockWorkflow,
     createMockWorkflowClosure
 } from 'models/__mocks__/workflowData';
 import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
-import { createMockTaskExecutionsListResponse } from 'models/Execution/__mocks__/mockTaskExecutionsData';
+import { Execution } from 'models/Execution/types';
 import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
 import * as React from 'react';
 import {
@@ -47,10 +43,18 @@ template.nodes = template.nodes.concat(mockNodes);
 compiledWorkflow.tasks = tasks.concat(mockTasks);
 mockWorkflow.closure = mockWorkflowClosure;
 
+const apiContext = mockAPIContextValue({});
+const dataCache = createExecutionDataCache(apiContext);
+dataCache.insertWorkflow(mockWorkflow);
+dataCache.insertWorkflowExecutionReference(
+    mockExecutions[0].id.executionId,
+    mockWorkflow.id
+);
+
 const fetchAction = action('fetch');
 
 const props: NodeExecutionsTableProps = {
-    value: mapNodeExecutionDetails(mockExecutions, mockWorkflow),
+    value: mockExecutions,
     lastError: null,
     loading: false,
     moreItemsAvailable: false,
@@ -59,26 +63,13 @@ const props: NodeExecutionsTableProps = {
 
 const stories = storiesOf('Tables/NodeExecutionsTable', module);
 stories.addDecorator(story => {
-    React.useEffect(() => {
-        const executionsResponse = createMockTaskExecutionsListResponse(3);
-        const mock = new AxiosMockAdapter(axios);
-        mock.onGet(/.*\/task_executions\/.*/).reply(() => [
-            200,
-            encodeProtoPayload(executionsResponse, Admin.TaskExecutionList),
-            { 'Content-Type': 'application/octet-stream' }
-        ]);
-        return () => mock.restore();
-    });
     return (
-        <>
+        <ExecutionDataCacheContext.Provider value={dataCache}>
             <div className={useStyles().container}>{story()}</div>
-        </>
+        </ExecutionDataCacheContext.Provider>
     );
 });
 stories.add('Basic', () => <NodeExecutionsTable {...props} />);
-stories.add('With more items available', () => (
-    <NodeExecutionsTable {...props} moreItemsAvailable={true} />
-));
 stories.add('With no items', () => (
     <NodeExecutionsTable {...props} value={[]} />
 ));

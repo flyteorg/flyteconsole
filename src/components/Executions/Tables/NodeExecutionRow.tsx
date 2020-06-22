@@ -1,49 +1,58 @@
 import * as classnames from 'classnames';
 import { useExpandableMonospaceTextStyles } from 'components/common/ExpandableMonospaceText';
 import * as React from 'react';
-import { NodeExecutionsRequestConfigContext } from '../ExecutionDetails/contexts';
+import {
+    ExecutionContext,
+    NodeExecutionsRequestConfigContext
+} from '../contexts';
 import { DetailedNodeExecution } from '../types';
 import { useChildNodeExecutions } from '../useChildNodeExecutions';
+import { useDetailedChildNodeExecutions } from '../useDetailedNodeExecutions';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
 import { RowExpander } from './RowExpander';
 import { selectedClassName, useExecutionTableStyles } from './styles';
-import { NodeExecutionColumnDefinition } from './types';
 
 interface NodeExecutionRowProps {
-    columns: NodeExecutionColumnDefinition[];
     execution: DetailedNodeExecution;
     style?: React.CSSProperties;
 }
 
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
-    columns,
-    execution,
+    execution: nodeExecution,
     style
 }) => {
-    const state = React.useContext(NodeExecutionsTableContext);
+    const { columns, state } = React.useContext(NodeExecutionsTableContext);
     const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);
+    const { execution: workflowExecution } = React.useContext(ExecutionContext);
 
     const [expanded, setExpanded] = React.useState(false);
     const toggleExpanded = () => {
         setExpanded(!expanded);
     };
 
-    const childNodeExecutions = useChildNodeExecutions(
-        execution,
-        requestConfig
+    // TODO: Handle error case for loading children.
+    // Maybe show an expander in that case and make the content the error?
+    const childNodeExecutions = useChildNodeExecutions({
+        nodeExecution,
+        requestConfig,
+        workflowExecution
+    });
+
+    const detailedChildNodeExecutions = useDetailedChildNodeExecutions(
+        childNodeExecutions.value
     );
 
-    const isExpandable = childNodeExecutions.value.length > 0;
+    const isExpandable = detailedChildNodeExecutions.length > 0;
     const tableStyles = useExecutionTableStyles();
     const monospaceTextStyles = useExpandableMonospaceTextStyles();
 
     const selected = state.selectedExecution
-        ? state.selectedExecution === execution
+        ? state.selectedExecution === nodeExecution
         : false;
-    const { error } = execution.closure;
+    const { error } = nodeExecution.closure;
 
     const expanderContent = isExpandable ? (
         <RowExpander expanded={expanded} onClick={toggleExpanded} />
@@ -61,7 +70,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
             )}
         >
             {errorContent}
-            <NodeExecutionChildren execution={execution} />
+            <NodeExecutionChildren childGroups={detailedChildNodeExecutions} />
         </div>
     ) : (
         errorContent
@@ -82,8 +91,8 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
                         className={classnames(tableStyles.rowColumn, className)}
                     >
                         {cellRenderer({
-                            execution,
-                            state
+                            state,
+                            execution: nodeExecution
                         })}
                     </div>
                 ))}
