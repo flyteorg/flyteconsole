@@ -25,6 +25,14 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         marginLeft: theme.spacing(4),
         padding: `${theme.spacing(2)}px 0`
     },
+    childGroupContainer: {},
+    childGroupRows: {
+        borderBottom: `2px solid ${theme.palette.divider}`,
+        borderTop: `2px solid ${theme.palette.divider}`,
+        '$childGroupContainer:last-child > &': {
+            borderBottom: 'none'
+        }
+    },
     errorContainer: {
         padding: `0 ${theme.spacing(7)}px ${theme.spacing(2)}px`,
         '$childrenContainer > &': {
