@@ -2,6 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
+import { APIContext } from 'components/data/apiContext';
 import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
 import { ExecutionDataCacheContext } from 'components/Executions/contexts';
 import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
@@ -85,9 +86,11 @@ const props: NodeExecutionsTableProps = {
 const stories = storiesOf('Tables/NodeExecutionsTable', module);
 stories.addDecorator(story => {
     return (
-        <ExecutionDataCacheContext.Provider value={dataCache}>
-            <div className={useStyles().container}>{story()}</div>
-        </ExecutionDataCacheContext.Provider>
+        <APIContext.Provider value={apiContext}>
+            <ExecutionDataCacheContext.Provider value={dataCache}>
+                <div className={useStyles().container}>{story()}</div>
+            </ExecutionDataCacheContext.Provider>
+        </APIContext.Provider>
     );
 });
 stories.add('Basic', () => <NodeExecutionsTable {...props} />);
