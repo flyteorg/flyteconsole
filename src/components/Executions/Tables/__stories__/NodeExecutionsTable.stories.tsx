@@ -2,15 +2,11 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
+import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
 import { ExecutionDataCacheContext } from 'components/Executions/contexts';
 import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
-import {
-    createMockWorkflow,
-    createMockWorkflowClosure
-} from 'models/__mocks__/workflowData';
-import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
-import { Execution } from 'models/Execution/types';
-import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
+import { keyBy } from 'lodash';
+import { createMockTaskExecutionForNodeExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import * as React from 'react';
 import {
     NodeExecutionsTable,
@@ -28,33 +24,58 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const {
-    executions: mockExecutions,
-    nodes: mockNodes
-} = createMockNodeExecutions(10);
+    nodes,
+    nodeExecutions,
+    workflow,
+    workflowExecution
+} = createMockExecutionEntities({
+    workflowName: 'SampleWorkflow',
+    nodeExecutionCount: 10
+});
 
-const mockWorkflow = createMockWorkflow('SampleWorkflow');
-const mockWorkflowClosure = createMockWorkflowClosure();
-const compiledWorkflow = mockWorkflowClosure.compiledWorkflow!;
-const {
-    primary: { template },
-    tasks
-} = compiledWorkflow;
-template.nodes = template.nodes.concat(mockNodes);
-compiledWorkflow.tasks = tasks.concat(mockTasks);
-mockWorkflow.closure = mockWorkflowClosure;
+const nodesById = keyBy(nodes, n => n.id);
+const nodesWithChildren = {
+    [nodes[0].id]: true,
+    [nodes[1].id]: true
+};
+const nodeRetryAttempts = {
+    [nodes[1].id]: 2
+};
 
-const apiContext = mockAPIContextValue({});
+const apiContext = mockAPIContextValue({
+    getExecution: () => Promise.resolve(workflowExecution),
+    listTaskExecutions: nodeExecutionId => {
+        const length = nodeRetryAttempts[nodeExecutionId.nodeId] || 1;
+        const entities = Array.from({ length }, (_, retryAttempt) =>
+            createMockTaskExecutionForNodeExecution(
+                nodeExecutionId,
+                nodesById[nodeExecutionId.nodeId],
+                retryAttempt,
+                { isParent: !!nodesWithChildren[nodeExecutionId.nodeId] }
+            )
+        );
+        return Promise.resolve({ entities });
+    },
+    listTaskExecutionChildren: ({ retryAttempt }) =>
+        Promise.resolve({
+            entities: nodeExecutions.slice(0, 2).map(ne => ({
+                ...ne,
+                id: {
+                    ...ne.id,
+                    nodeId: `${ne.id.nodeId}_${retryAttempt}`
+                }
+            }))
+        }),
+    getWorkflow: () => Promise.resolve(workflow)
+});
 const dataCache = createExecutionDataCache(apiContext);
-dataCache.insertWorkflow(mockWorkflow);
-dataCache.insertWorkflowExecutionReference(
-    mockExecutions[0].id.executionId,
-    mockWorkflow.id
-);
+dataCache.insertWorkflow(workflow);
+dataCache.insertWorkflowExecutionReference(workflowExecution.id, workflow.id);
 
 const fetchAction = action('fetch');
 
 const props: NodeExecutionsTableProps = {
-    value: mockExecutions,
+    value: nodeExecutions,
     lastError: null,
     loading: false,
     moreItemsAvailable: false,
