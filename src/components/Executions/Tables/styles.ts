@@ -21,6 +21,10 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         minHeight: theme.spacing(7),
         paddingLeft: theme.spacing(3)
     },
+    childGroupLabel: {
+        marginLeft: theme.spacing(4),
+        padding: `${theme.spacing(2)}px 0`
+    },
     errorContainer: {
         padding: `0 ${theme.spacing(7)}px ${theme.spacing(2)}px`,
         '$childrenContainer > &': {

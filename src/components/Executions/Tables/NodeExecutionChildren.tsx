@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import * as classnames from 'classnames';
-import { useExpandableMonospaceTextStyles } from 'components/common/ExpandableMonospaceText';
 import * as React from 'react';
 import { DetailedNodeExecutionGroup } from '../types';
 import { NodeExecutionRow } from './NodeExecutionRow';
@@ -16,7 +15,6 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
 }) => {
     const showNames = childGroups.length > 1;
     const tableStyles = useExecutionTableStyles();
-    const monospaceTextStyles = useExpandableMonospaceTextStyles();
     return (
         <>
             {childGroups.map(({ name, nodeExecutions }) => {
@@ -29,17 +27,20 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
                 const key = `group-${name}`;
                 return showNames ? (
                     <div key={key}>
-                        <div className={tableStyles.row}>
-                            <Typography variant="overline">{name}</Typography>
-                        </div>
                         <div
                             className={classnames(
-                                tableStyles.childrenContainer,
-                                monospaceTextStyles.nestedParent
+                                tableStyles.row,
+                                tableStyles.childGroupLabel
                             )}
                         >
-                            {rows}
+                            <Typography
+                                variant="overline"
+                                color="textSecondary"
+                            >
+                                {name}
+                            </Typography>
                         </div>
+                        <>{rows}</>
                     </div>
                 ) : (
                     <div key={key}>{rows}</div>
