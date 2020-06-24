@@ -3,6 +3,7 @@ import { headerGridHeight } from 'components';
 import {
     headerFontFamily,
     listhoverColor,
+    nestedListColor,
     smallFontSize,
     tableHeaderColor,
     tablePlaceholderColor
@@ -16,35 +17,32 @@ export const selectedClassName = 'selected';
 // the columns styles in some cases. So the column styles should be defined
 // last.
 export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
+    borderBottom: {
+        borderBottom: `1px solid ${theme.palette.divider}`
+    },
+    borderTop: {
+        borderTop: `1px solid ${theme.palette.divider}`
+    },
     childrenContainer: {
-        borderTop: `1px solid ${theme.palette.divider}`,
-        minHeight: theme.spacing(7),
-        paddingLeft: theme.spacing(3)
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        minHeight: theme.spacing(7)
     },
     childGroupLabel: {
-        marginLeft: theme.spacing(4),
+        borderWidth: '2px',
         padding: `${theme.spacing(2)}px 0`
     },
-    childGroupContainer: {},
-    childGroupRows: {
-        borderBottom: `2px solid ${theme.palette.divider}`,
-        borderTop: `2px solid ${theme.palette.divider}`,
-        '$childGroupContainer:last-child > &': {
-            borderBottom: 'none'
-        }
-    },
     errorContainer: {
-        padding: `0 ${theme.spacing(7)}px ${theme.spacing(2)}px`,
-        '$childrenContainer > &': {
+        padding: `0 ${theme.spacing(8)}px ${theme.spacing(2)}px`,
+        '$childrenContainer &': {
             paddingTop: theme.spacing(2),
-            paddingLeft: theme.spacing(4)
+            paddingLeft: theme.spacing(2)
         }
     },
     expander: {
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',
-        marginLeft: theme.spacing(3),
+        marginLeft: theme.spacing(-4),
         marginRight: theme.spacing(1),
         width: theme.spacing(3)
     },
@@ -87,7 +85,6 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         textAlign: 'center'
     },
     row: {
-        borderBottom: `1px solid ${theme.palette.divider}`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -95,10 +92,13 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
             backgroundColor: listhoverColor
         },
         '$childrenContainer &': {
-            borderBottom: 'none',
-            '&:not(:first-of-type)': {
-                borderTop: `1px solid ${theme.palette.divider}`
-            }
+            backgroundColor: nestedListColor
+        }
+    },
+    rowContent: {
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        '$childrenContainer $row:last-child &': {
+            borderBottom: 'none'
         }
     },
     rowColumns: {
@@ -114,10 +114,7 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         paddingBottom: theme.spacing(2),
         paddingTop: theme.spacing(2),
         textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        '&:first-of-type': {
-            marginLeft: theme.spacing(2)
-        }
+        whiteSpace: 'nowrap'
     },
     scrollContainer: {
         flex: '1 1 0',
@@ -130,6 +127,7 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
+export const nameColumnLeftMarginGridWidth = 6;
 export const useColumnStyles = makeStyles((theme: Theme) => ({
     columnName: {
         flexGrow: 1,
@@ -138,7 +136,7 @@ export const useColumnStyles = makeStyles((theme: Theme) => ({
         flexBasis: 0,
         overflow: 'hidden',
         '&:first-of-type': {
-            marginLeft: theme.spacing(7)
+            marginLeft: theme.spacing(nameColumnLeftMarginGridWidth)
         }
     },
     columnType: {

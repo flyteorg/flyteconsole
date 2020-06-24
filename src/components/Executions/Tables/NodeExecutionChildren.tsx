@@ -1,37 +1,52 @@
 import { Typography } from '@material-ui/core';
 import * as classnames from 'classnames';
+import { useTheme } from 'components/Theme/useTheme';
 import * as React from 'react';
 import { DetailedNodeExecutionGroup } from '../types';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useExecutionTableStyles } from './styles';
+import { calculateNodeExecutionRowLeftSpacing } from './utils';
 
 export interface NodeExecutionChildrenProps {
     childGroups: DetailedNodeExecutionGroup[];
+    level: number;
 }
 
 /** Renders a nested list of row items for children of a NodeExecution */
 export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
-    childGroups
+    childGroups,
+    level
 }) => {
     const showNames = childGroups.length > 1;
     const tableStyles = useExecutionTableStyles();
+    const theme = useTheme();
+    const childGroupLabelStyle = {
+        // The label is aligned with the parent above, so remove one level of spacing
+        marginLeft: `${calculateNodeExecutionRowLeftSpacing(
+            level - 1,
+            theme.spacing
+        )}px`
+    };
     return (
         <>
-            {childGroups.map(({ name, nodeExecutions }) => {
+            {childGroups.map(({ name, nodeExecutions }, groupIndex) => {
                 const rows = nodeExecutions.map(nodeExecution => (
                     <NodeExecutionRow
                         key={nodeExecution.cacheKey}
                         execution={nodeExecution}
+                        level={level}
                     />
                 ));
                 const key = `group-${name}`;
                 return showNames ? (
-                    <div className={tableStyles.childGroupContainer} key={key}>
+                    <div key={key}>
                         <div
                             className={classnames(
-                                tableStyles.row,
+                                { [tableStyles.borderTop]: groupIndex > 0 },
+                                tableStyles.borderBottom,
                                 tableStyles.childGroupLabel
                             )}
+                            style={childGroupLabelStyle}
                         >
                             <Typography
                                 variant="overline"
@@ -40,7 +55,7 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
                                 {name}
                             </Typography>
                         </div>
-                        <div className={tableStyles.childGroupRows}>{rows}</div>
+                        <div>{rows}</div>
                     </div>
                 ) : (
                     <div key={key}>{rows}</div>
