@@ -24,7 +24,7 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         borderTop: `1px solid ${theme.palette.divider}`
     },
     childrenContainer: {
-        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: nestedListColor,
         minHeight: theme.spacing(7)
     },
     childGroupLabel: {
@@ -90,17 +90,9 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         justifyContent: 'center',
         [`&.${selectedClassName}`]: {
             backgroundColor: listhoverColor
-        },
-        '$childrenContainer &': {
-            backgroundColor: nestedListColor
         }
     },
-    rowContent: {
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        '$childrenContainer $row:last-child &': {
-            borderBottom: 'none'
-        }
-    },
+    rowContent: {},
     rowColumns: {
         alignItems: 'center',
         display: 'flex',

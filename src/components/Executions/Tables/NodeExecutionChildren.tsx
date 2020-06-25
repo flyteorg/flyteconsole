@@ -30,9 +30,10 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
     return (
         <>
             {childGroups.map(({ name, nodeExecutions }, groupIndex) => {
-                const rows = nodeExecutions.map(nodeExecution => (
+                const rows = nodeExecutions.map((nodeExecution, index) => (
                     <NodeExecutionRow
                         key={nodeExecution.cacheKey}
+                        index={index}
                         execution={nodeExecution}
                         level={level}
                     />

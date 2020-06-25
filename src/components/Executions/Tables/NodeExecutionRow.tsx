@@ -16,6 +16,7 @@ import { selectedClassName, useExecutionTableStyles } from './styles';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
 
 interface NodeExecutionRowProps {
+    index: number;
     execution: DetailedNodeExecution;
     level?: number;
     style?: React.CSSProperties;
@@ -24,6 +25,7 @@ interface NodeExecutionRowProps {
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     execution: nodeExecution,
+    index,
     level = 0,
     style
 }) => {
@@ -77,7 +79,11 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     ) : null;
 
     const extraContent = expanded ? (
-        <div className={classnames(tableStyles.childrenContainer)}>
+        <div
+            className={classnames(tableStyles.childrenContainer, {
+                [tableStyles.borderBottom]: level === 0
+            })}
+        >
             <NodeExecutionChildren
                 childGroups={detailedChildNodeExecutions}
                 level={level + 1}
@@ -92,7 +98,14 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
             })}
             style={style}
         >
-            <div className={tableStyles.rowContent} style={rowContentStyle}>
+            <div
+                className={classnames(tableStyles.rowContent, {
+                    [tableStyles.borderBottom]:
+                        level === 0 || (level > 0 && expanded),
+                    [tableStyles.borderTop]: level > 0 && index > 0
+                })}
+                style={rowContentStyle}
+            >
                 <div className={tableStyles.rowColumns}>
                     <div
                         className={classnames(

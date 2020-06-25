@@ -42,5 +42,5 @@ export function calculateNodeExecutionRowLeftSpacing(
     level: number,
     spacing: Spacing
 ) {
-    return spacing(nameColumnLeftMarginGridWidth + 2 * level);
+    return spacing(nameColumnLeftMarginGridWidth + 3 * level);
 }
