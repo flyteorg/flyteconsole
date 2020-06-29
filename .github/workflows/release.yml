@@ -21,10 +21,10 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASEBOT_TOKEN }}
-          GIT_AUTHOR_NAME: "@service-github-lyft-semantic-release"
-          GIT_AUTHOR_EMAIL: "service-github-lyft-semantic-release@lyft.com"
-          GIT_COMMITTER_NAME: "@service-github-lyft-semantic-release"
-          GIT_COMMITTER_EMAIL: "service-github-lyft-semantic-release@lyft.com"
+          GIT_AUTHOR_NAME: "service-github-lyft-semantic-release"
+          GIT_AUTHOR_EMAIL: ""
+          GIT_COMMITTER_NAME: "service-github-lyft-semantic-release"
+          GIT_COMMITTER_EMAIL: ""
         run: npx semantic-release
   check_for_tag:
     name: Get Release Tag
