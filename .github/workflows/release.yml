@@ -65,3 +65,12 @@ jobs:
           image_tag: ${{ needs.check_for_tag.outputs.currentTag }}
           push_git_tag: true
           registry: docker.pkg.github.com
+      - name: Push Docker Image to Dockerhub
+        uses: whoan/docker-build-with-cache-action@v5
+        with:
+          username: "${{ secrets.DOCKERHUB_USERNAME }}"
+          password: "${{ secrets.DOCKERHUB_PASSWORD }}"
+          image_name: ${{ secrets.DOCKERHUB_IMAGE_NAME }}
+          image_tag: ${{ github.sha }}
+          push_git_tag: true
+          build_extra_args: "--compress=true"
