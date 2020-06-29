@@ -38,10 +38,11 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = props => 
     const rowProps = { state, onHeightChange: () => {} };
     const content =
         state.executions.length > 0 ? (
-            state.executions.map(execution => {
+            state.executions.map((execution, index) => {
                 return (
                     <NodeExecutionRow
                         {...rowProps}
+                        index={index}
                         key={execution.cacheKey}
                         execution={execution}
                     />
