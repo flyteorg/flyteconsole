@@ -8,6 +8,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { secondaryBackgroundColor, smallFontSize } from 'components/Theme';
 import { Execution } from 'models';
 import * as React from 'react';
+import { executionMetadataLabels } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -52,22 +53,22 @@ export const ExecutionMetadata: React.FC<{
             : unknownValueString;
 
     const details: DetailItem[] = [
-        { label: 'Domain', value: domain },
+        { label: executionMetadataLabels.domain, value: domain },
         {
             className: styles.version,
-            label: 'Version',
+            label: executionMetadataLabels.version,
             value: workflowId.version
         },
         {
-            label: 'Time',
+            label: executionMetadataLabels.time,
             value: startedAt ? formatDateUTC(timestampToDate(startedAt)) : ''
         },
         {
-            label: 'Duration',
+            label: executionMetadataLabels.duration,
             value: duration ? protobufDurationToHMS(duration) : ''
         },
         {
-            label: 'Cluster',
+            label: executionMetadataLabels.cluster,
             value: cluster
         }
     ];
@@ -88,6 +89,7 @@ export const ExecutionMetadata: React.FC<{
                     <Typography
                         className={commonStyles.truncateText}
                         variant="h6"
+                        data-testid={`metadata-${label}`}
                     >
                         {value}
                     </Typography>
