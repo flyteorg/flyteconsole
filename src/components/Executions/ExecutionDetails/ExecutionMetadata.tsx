@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as classnames from 'classnames';
+import { unknownValueString } from 'common/constants';
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
@@ -44,6 +45,11 @@ export const ExecutionMetadata: React.FC<{
 
     const { domain } = execution.id;
     const { duration, startedAt, workflowId } = execution.closure;
+    const { systemMetadata } = execution.spec.metadata;
+    const cluster =
+        systemMetadata && systemMetadata.executionCluster
+            ? systemMetadata.executionCluster
+            : unknownValueString;
 
     const details: DetailItem[] = [
         { label: 'Domain', value: domain },
@@ -59,6 +65,10 @@ export const ExecutionMetadata: React.FC<{
         {
             label: 'Duration',
             value: duration ? protobufDurationToHMS(duration) : ''
+        },
+        {
+            label: 'Cluster',
+            value: cluster
         }
     ];
 
