@@ -47,8 +47,8 @@ jobs:
         run: |
           CURRENT_TAG=$(git tag --sort=-refname --points-at ${{ github.ref }} | head -n 1)
           echo "::set-output name=currentTag::$CURRENT_TAG"
-  build_image:
-    name: Build Image for Tag
+  build_push_github:
+    name: Build and push image to Github
     needs: check_for_tag
     runs-on: ubuntu-latest
     if: needs.check_for_tag.outputs.currentTag
@@ -65,6 +65,15 @@ jobs:
           image_tag: latest,${{github.sha}},${{ needs.check_for_tag.outputs.currentTag }}
           push_git_tag: true
           registry: docker.pkg.github.com
+  push_dockerhub:
+    name: Build and push image to Dockerhub
+    needs: check_for_tag
+    runs-on: ubuntu-latest
+    if: needs.check_for_tag.outputs.currentTag
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ needs.check_for_tag.outputs.currentTag }}
       - name: Push Docker Image to Dockerhub
         uses: whoan/docker-build-with-cache-action@v5
         with:

@@ -2,8 +2,8 @@ name: Pull Request
 on: pull_request
 
 jobs:
-  build_image:
-    name: Build Image
+  build_push_github:
+    name: Build and push to Github
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,6 +15,11 @@ jobs:
           image_name: ${{ secrets.package_name }}
           image_tag: ${{ github.sha }}
           registry: docker.pkg.github.com
+  build_push_dockerhub:
+    name: Build and push to Dockerhub
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Push Docker Image to Dockerhub
         uses: whoan/docker-build-with-cache-action@v5
         with:
@@ -22,5 +27,4 @@ jobs:
           password: "${{ secrets.DOCKERHUB_PASSWORD }}"
           image_name: ${{ secrets.DOCKERHUB_IMAGE_NAME }}
           image_tag: ${{ github.sha }}
-          push_git_tag: true
           build_extra_args: "--compress=true"
