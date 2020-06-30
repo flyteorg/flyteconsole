@@ -8,6 +8,7 @@ import { useExecutionDataCache } from '../useExecutionDataCache';
 import { useWorkflowExecution } from '../useWorkflowExecution';
 import { executionIsTerminal } from '../utils';
 import { ExecutionDetailsAppBarContent } from './ExecutionDetailsAppBarContent';
+import { ExecutionMetadata } from './ExecutionMetadata';
 import { ExecutionNodeViews } from './ExecutionNodeViews';
 
 export interface ExecutionDetailsRouteParams {
@@ -47,6 +48,7 @@ export const ExecutionDetailsContainer: React.FC<ExecutionDetailsRouteParams> = 
         <WaitForData {...fetchable}>
             <ExecutionContext.Provider value={contextValue}>
                 <ExecutionDetailsAppBarContent execution={fetchable.value} />
+                <ExecutionMetadata execution={fetchable.value} />
                 <ExecutionDataCacheContext.Provider value={dataCache}>
                     <ExecutionNodeViews execution={fetchable.value} />
                 </ExecutionDataCacheContext.Provider>
