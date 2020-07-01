@@ -3,10 +3,10 @@ import { unknownValueString } from 'common/constants';
 import { Execution } from 'models';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
-import { executionMetadataLabels } from '../constants';
+import { ExecutionMetadataLabels } from '../constants';
 import { ExecutionMetadata } from '../ExecutionMetadata';
 
-const clusterTestId = `metadata-${executionMetadataLabels.cluster}`;
+const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
 
 describe('ExecutionMetadata', () => {
     let execution: Execution;

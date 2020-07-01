@@ -8,7 +8,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { secondaryBackgroundColor, smallFontSize } from 'components/Theme';
 import { Execution } from 'models';
 import * as React from 'react';
-import { executionMetadataLabels } from './constants';
+import { ExecutionMetadataLabels } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -47,28 +47,25 @@ export const ExecutionMetadata: React.FC<{
     const { domain } = execution.id;
     const { duration, startedAt, workflowId } = execution.closure;
     const { systemMetadata } = execution.spec.metadata;
-    const cluster =
-        systemMetadata && systemMetadata.executionCluster
-            ? systemMetadata.executionCluster
-            : unknownValueString;
+    const cluster = systemMetadata?.executionCluster ?? unknownValueString;
 
     const details: DetailItem[] = [
-        { label: executionMetadataLabels.domain, value: domain },
+        { label: ExecutionMetadataLabels.domain, value: domain },
         {
             className: styles.version,
-            label: executionMetadataLabels.version,
+            label: ExecutionMetadataLabels.version,
             value: workflowId.version
         },
         {
-            label: executionMetadataLabels.time,
+            label: ExecutionMetadataLabels.time,
             value: startedAt ? formatDateUTC(timestampToDate(startedAt)) : ''
         },
         {
-            label: executionMetadataLabels.duration,
+            label: ExecutionMetadataLabels.duration,
             value: duration ? protobufDurationToHMS(duration) : ''
         },
         {
-            label: executionMetadataLabels.cluster,
+            label: ExecutionMetadataLabels.cluster,
             value: cluster
         }
     ];
