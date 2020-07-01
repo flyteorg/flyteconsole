@@ -76,18 +76,22 @@ export const ExecutionMetadata: React.FC<{
             value: workflowId.version
         },
         {
-            label: ExecutionMetadataLabels.time,
-            value: startedAt ? formatDateUTC(timestampToDate(startedAt)) : ''
-        },
-        {
-            label: ExecutionMetadataLabels.duration,
-            value: duration ? protobufDurationToHMS(duration) : ''
-        },
-        {
             label: ExecutionMetadataLabels.cluster,
             value: cluster
         }
     ];
+    if (startedAt) {
+        details.push({
+            label: ExecutionMetadataLabels.time,
+            value: formatDateUTC(timestampToDate(startedAt))
+        });
+    }
+    if (duration) {
+        details.push({
+            label: ExecutionMetadataLabels.duration,
+            value: protobufDurationToHMS(duration)
+        });
+    }
 
     return (
         <div className={styles.container}>

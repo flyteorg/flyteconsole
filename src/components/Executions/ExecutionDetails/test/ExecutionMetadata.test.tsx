@@ -43,4 +43,16 @@ describe('ExecutionMetadata', () => {
             unknownValueString
         );
     });
+
+    it('does not show start time if not available', () => {
+        delete execution.closure.startedAt;
+        const { queryByText } = renderMetadata();
+        expect(queryByText(ExecutionMetadataLabels.time)).toBeNull;
+    });
+
+    it('does not show duration if not available', () => {
+        delete execution.closure.duration;
+        const { queryByText } = renderMetadata();
+        expect(queryByText(ExecutionMetadataLabels.duration)).toBeNull;
+    });
 });
