@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme: Theme) => {
         container: {
             background: secondaryBackgroundColor,
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            position: 'relative'
         },
         detailsContainer: {
             alignItems: 'center',
@@ -28,6 +29,19 @@ const useStyles = makeStyles((theme: Theme) => {
         detailItem: {
             flexShrink: 0,
             marginLeft: theme.spacing(4)
+        },
+        expandCollapseButton: {
+            transition: theme.transitions.create('transform'),
+            '&.expanded': {
+                transform: 'rotate(180deg)'
+            }
+        },
+        expandCollapseContainer: {
+            bottom: 0,
+            position: 'absolute',
+            right: theme.spacing(2),
+            transform: 'translateY(100%)',
+            zIndex: 1
         },
         version: {
             flex: '0 1 auto',
