@@ -5,16 +5,21 @@ import { unknownValueString } from 'common/constants';
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
-import { secondaryBackgroundColor, smallFontSize } from 'components/Theme';
+import { secondaryBackgroundColor } from 'components/Theme';
 import { Execution } from 'models';
 import * as React from 'react';
+import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';
 import { ExecutionMetadataLabels } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
         container: {
-            alignItems: 'center',
             background: secondaryBackgroundColor,
+            display: 'flex',
+            flexDirection: 'column'
+        },
+        detailsContainer: {
+            alignItems: 'center',
             display: 'flex',
             flex: '0 1 auto',
             paddingTop: theme.spacing(3),
@@ -45,7 +50,7 @@ export const ExecutionMetadata: React.FC<{
     const styles = useStyles();
 
     const { domain } = execution.id;
-    const { duration, startedAt, workflowId } = execution.closure;
+    const { duration, error, startedAt, workflowId } = execution.closure;
     const { systemMetadata } = execution.spec.metadata;
     const cluster = systemMetadata?.executionCluster ?? unknownValueString;
 
@@ -72,26 +77,30 @@ export const ExecutionMetadata: React.FC<{
 
     return (
         <div className={styles.container}>
-            {details.map(({ className, label, value }, idx) => (
-                <div
-                    className={classnames(styles.detailItem, className)}
-                    key={idx}
-                >
-                    <Typography
-                        className={commonStyles.truncateText}
-                        variant="subtitle1"
+            <div className={styles.detailsContainer}>
+                {details.map(({ className, label, value }, idx) => (
+                    <div
+                        className={classnames(styles.detailItem, className)}
+                        key={idx}
                     >
-                        {label}
-                    </Typography>
-                    <Typography
-                        className={commonStyles.truncateText}
-                        variant="h6"
-                        data-testid={`metadata-${label}`}
-                    >
-                        {value}
-                    </Typography>
-                </div>
-            ))}
+                        <Typography
+                            className={commonStyles.truncateText}
+                            variant="subtitle1"
+                        >
+                            {label}
+                        </Typography>
+                        <Typography
+                            className={commonStyles.truncateText}
+                            variant="h6"
+                            data-testid={`metadata-${label}`}
+                        >
+                            {value}
+                        </Typography>
+                    </div>
+                ))}
+            </div>
+
+            {error ? <ExpandableExecutionError error={error} /> : null}
         </div>
     );
 };
