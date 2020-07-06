@@ -263,7 +263,10 @@ export const WorkflowExecutionsTable: React.FC<WorkflowExecutionsTableProps> = p
         const execution = executions[rowProps.index];
         const cacheKey = getCacheKey(execution.id);
         const onExpandCollapseError = (expanded: boolean) => {
-            setExpandedErrors(currentExpandedErrors => ({ ...currentExpandedErrors, [cacheKey]: expanded }));
+            setExpandedErrors(currentExpandedErrors => ({
+                ...currentExpandedErrors,
+                [cacheKey]: expanded
+            }));
             recomputeRow(rowProps.index);
         };
         return (
