@@ -12,6 +12,8 @@ import { collectionChildToString } from '../utils';
 import {
     literalTestCases,
     literalToInputTestCases,
+    supportedPrimitives,
+    unsupportedTypes,
     validityTestCases
 } from './testCases';
 
@@ -58,14 +60,7 @@ describe('literalToInputValue', () => {
             })
         );
 
-        [
-            InputType.Collection,
-            InputType.Datetime,
-            InputType.Duration,
-            InputType.Float,
-            InputType.Integer,
-            InputType.String
-        ].map(type =>
+        supportedPrimitives.map(type =>
             it(`should convert None value for ${type} to undefined`, () => {
                 expect(
                     literalToInputValue({ type }, literalNone())
@@ -176,16 +171,7 @@ describe('inputToLiteral', () => {
     });
 
     describe('Unsupported Types', () => {
-        [
-            InputType.Binary,
-            InputType.Blob,
-            InputType.Error,
-            InputType.Map,
-            InputType.None,
-            InputType.Schema,
-            InputType.Struct,
-            InputType.Unknown
-        ].map(type =>
+        unsupportedTypes.map(type =>
             it(`should return empty value for type: ${type}`, () => {
                 expect(
                     inputToLiteral(makeSimpleInput(type, '')).scalar

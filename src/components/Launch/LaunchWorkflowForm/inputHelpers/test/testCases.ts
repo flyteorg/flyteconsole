@@ -9,6 +9,24 @@ type PrimitiveTestParams = [InputType, any, Core.IPrimitive];
 
 const validDateString = '2019-01-10T00:00:00.000Z'; // Dec 1, 2019
 
+export const supportedPrimitives = [
+    InputType.Boolean,
+    InputType.Datetime,
+    InputType.Duration,
+    InputType.Float,
+    InputType.Integer
+];
+
+export const unsupportedTypes = [
+    InputType.Binary,
+    InputType.Blob,
+    InputType.Error,
+    InputType.Map,
+    InputType.None,
+    InputType.Schema,
+    InputType.Struct
+];
+
 export const validityTestCases = {
     boolean: {
         invalid: ['randomString', {}, new Date()],

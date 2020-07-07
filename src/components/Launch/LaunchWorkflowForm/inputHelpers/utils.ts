@@ -1,6 +1,6 @@
 import { Core } from 'flyteidl';
 import { get } from 'lodash';
-import { InputType } from '../types';
+import { InputType, InputTypeDefinition } from '../types';
 
 /** Performs a deep get of `path` on the given `Core.ILiteral`. Will throw
  * if the given property doesn't exist.
@@ -24,4 +24,37 @@ export function collectionChildToString(type: InputType, value: any) {
         return '';
     }
     return type === InputType.Integer ? `${value}` : JSON.stringify(value);
+}
+
+/** Determines if a given input type, including all levels of nested types, is
+ * supported for use in the Launch form.
+ */
+export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
+    const { type, subtype } = typeDefinition;
+    switch (type) {
+        case InputType.Map:
+        case InputType.None:
+        case InputType.Schema:
+        case InputType.Unknown:
+            return false;
+        case InputType.Boolean:
+        case InputType.Datetime:
+        case InputType.Duration:
+        case InputType.Float:
+        case InputType.Integer:
+        case InputType.String:
+            return true;
+        case InputType.Collection: {
+            if (!subtype) {
+                console.error(
+                    'Unexpected missing subtype for collection input',
+                    typeDefinition
+                );
+                return false;
+            }
+            return typeIsSupported(subtype);
+        }
+        default:
+            return false;
+    }
 }
