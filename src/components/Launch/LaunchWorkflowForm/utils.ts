@@ -10,8 +10,14 @@ import {
 import * as moment from 'moment';
 import { simpleTypeToInputType, typeLabels } from './constants';
 import { inputToLiteral } from './inputHelpers/inputHelpers';
+import { typeIsSupported } from './inputHelpers/utils';
 import { SearchableSelectorOption } from './SearchableSelector';
-import { InputProps, InputType, InputTypeDefinition } from './types';
+import {
+    InputProps,
+    InputType,
+    InputTypeDefinition,
+    ParsedInput
+} from './types';
 
 /** Creates a unique cache key for an input based on its name and type.
  * Note: This will not be *globally* unique, only unique within a single workflow
@@ -151,4 +157,15 @@ export function getInputDefintionForLiteralType(
 
 export function getLaunchInputId(name: string): string {
     return `launch-input-${name}`;
+}
+
+export function getUnsupportedRequiredInputs(
+    inputs: ParsedInput[]
+): ParsedInput[] {
+    return inputs.filter(
+        input =>
+            !typeIsSupported(input.typeDefinition) &&
+            input.required &&
+            input.initialValue === undefined
+    );
 }
