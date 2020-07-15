@@ -75,6 +75,12 @@ describe('literalToInputValue', () => {
         });
     });
 
+    describe('Blob', () => {
+        // TODO: blob test cases
+        it('should correctly convert ____', () => {});
+        it('should correctly convert noneType', () => {});
+    });
+
     describe('Collections', () => {
         literalToInputTestCases.map(([type, input, output]) =>
             it(`should correctly convert collection of ${type}: ${JSON.stringify(
@@ -95,6 +101,10 @@ describe('literalToInputValue', () => {
                 expect(result).toEqual(expectedString);
             })
         );
+
+        it('should correctly convert collection of Blob', () => {
+            // TODO
+        });
 
         it('should return empty for noneType literals', () => {
             const collection: Core.ILiteral = {
@@ -138,6 +148,8 @@ describe('inputToLiteral', () => {
         );
     });
 
+    describe('Blob', () => {});
+
     describe('Collections', () => {
         literalTestCases.map(([type, input, output]) => {
             let value: any;
@@ -168,6 +180,10 @@ describe('inputToLiteral', () => {
                 ).toEqual(output);
             });
         });
+
+        it('should correctly convert collection of Blob', () => {});
+
+        it('should correctly convert nested collection of Blob ', () => {});
     });
 
     describe('Unsupported Types', () => {
@@ -215,6 +231,10 @@ describe('validateInput', () => {
         generateValidityTests(InputType.Boolean, validityTestCases.boolean);
     });
 
+    describe('blob', () => {
+        // TODO
+    });
+
     describe('datetime', () => {
         generateValidityTests(InputType.Datetime, validityTestCases.datetime);
     });
@@ -235,12 +255,16 @@ describe('validateInput', () => {
         generateValidityTests(InputType.String, validityTestCases.string);
     });
 
-    it('should throw errors for missing required values', () => {
+    it('should throw errors for missing required simple values', () => {
         const [type, input] = literalTestCases[0];
         const simpleInput = makeSimpleInput(type, input);
         simpleInput.required = true;
         delete simpleInput.value;
         expect(() => validateInput(simpleInput)).toThrowError();
+    });
+
+    it('should throw errors for missing required Blob values', () => {
+        // TODO
     });
 
     it('should not throw an error for a required input with an initial value and no value', () => {

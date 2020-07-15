@@ -34,7 +34,6 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     const { type, subtype } = typeDefinition;
     switch (type) {
         case InputType.Binary:
-        case InputType.Blob:
         case InputType.Error:
         case InputType.Map:
         case InputType.None:
@@ -43,6 +42,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
         case InputType.Unknown:
             return false;
         case InputType.Boolean:
+        case InputType.Blob:
         case InputType.Datetime:
         case InputType.Duration:
         case InputType.Float:

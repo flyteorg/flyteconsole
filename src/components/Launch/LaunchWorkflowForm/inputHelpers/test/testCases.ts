@@ -11,6 +11,7 @@ const validDateString = '2019-01-10T00:00:00.000Z'; // Dec 1, 2019
 
 export const supportedPrimitives = [
     InputType.Boolean,
+    InputType.Blob,
     InputType.Datetime,
     InputType.Duration,
     InputType.Float,
@@ -19,7 +20,6 @@ export const supportedPrimitives = [
 
 export const unsupportedTypes = [
     InputType.Binary,
-    InputType.Blob,
     InputType.Error,
     InputType.Map,
     InputType.None,
@@ -31,6 +31,10 @@ export const validityTestCases = {
     boolean: {
         invalid: ['randomString', {}, new Date()],
         valid: [true, 'true', 't', '1', 1, false, 'false', 'f', '0', 0]
+    },
+    blob: {
+        invalid: [],
+        valid: []
     },
     datetime: {
         invalid: ['abc', true],
@@ -69,6 +73,7 @@ export const validityTestCases = {
     string: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] }
 };
 
+// TODO: These are actually just primitive literals
 export const literalTestCases: PrimitiveTestParams[] = [
     [InputType.Boolean, true, { boolean: true }],
     [InputType.Boolean, 'true', { boolean: true }],
