@@ -42,6 +42,7 @@ export interface LaunchWorkflowFormState {
     selectedWorkflow?: SearchableSelectorOption<WorkflowId>;
     showErrors: boolean;
     submissionState: FetchableData<WorkflowExecutionIdentifier>;
+    unsupportedRequiredInputs: ParsedInput[];
     workflowName: string;
     workflowOptionsLoadingState: MultiFetchableState;
     workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];

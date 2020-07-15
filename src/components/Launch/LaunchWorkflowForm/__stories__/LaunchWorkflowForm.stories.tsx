@@ -31,6 +31,7 @@ import {
     SimpleVariableKey
 } from '../__mocks__/mockInputs';
 import { LaunchWorkflowForm } from '../LaunchWorkflowForm';
+import { binaryInputName, errorInputName } from '../test/constants';
 import { useExecutionLaunchConfiguration } from '../useExecutionLaunchConfiguration';
 import { getWorkflowInputs } from '../utils';
 
@@ -199,4 +200,11 @@ stories.add('Launched from Execution', () => {
         id: mockWorkflowExecutionResponse.id
     } as Execution;
     return renderForm({ mocks, execution });
+});
+stories.add('Unsupported Required Values', () => {
+    const mocks = generateMocks(mockSimpleVariables);
+    const parameters = mocks.mockLaunchPlan.closure!.expectedInputs.parameters;
+    parameters[binaryInputName].required = true;
+    parameters[errorInputName].required = true;
+    return renderForm({ mocks });
 });
