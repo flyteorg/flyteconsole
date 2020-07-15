@@ -37,7 +37,11 @@ import {
     mockSimpleVariables,
     simpleVariableDefaults
 } from '../__mocks__/mockInputs';
-import { cannotLaunchWorkflowString, formStrings } from '../constants';
+import {
+    cannotLaunchWorkflowString,
+    formStrings,
+    requiredInputSuffix
+} from '../constants';
 import { LaunchWorkflowForm } from '../LaunchWorkflowForm';
 import { InitialLaunchParameters, LaunchWorkflowFormProps } from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
@@ -778,6 +782,14 @@ describe('LaunchWorkflowForm', () => {
                 getByText(binaryInputName, { exact: false })
             );
             expect(inputElement).toBeInTheDocument();
+        });
+
+        it('should print input labels without decoration', async () => {
+            const { getByText } = renderForm();
+            const inputElement = await waitFor(() =>
+                getByText(binaryInputName, { exact: false })
+            );
+            expect(inputElement.textContent).not.toContain(requiredInputSuffix);
         });
 
         it('should disable submission', async () => {

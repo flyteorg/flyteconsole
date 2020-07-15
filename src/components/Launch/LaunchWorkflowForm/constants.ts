@@ -55,6 +55,6 @@ export const simpleTypeToInputType: { [k in SimpleType]: InputType } = {
     [SimpleType.STRUCT]: InputType.Struct
 };
 
-export const cannotLaunchWorkflowString = 'This workflow cannot be launched';
-export const unsupportedRequiredInputsString = `This Workflow version contains one or more required inputs which are not supported by Flyte Console and do not have default values specified in the workflow definition or the selected Launch Plan.\n
-You can launch this Workflow version with the Flyte CLI or by selecting a Launch Plan which provides values for the unsupported inputs.\nThe inputs are listed below:`;
+export const requiredInputSuffix = '*';
+export const cannotLaunchWorkflowString = 'Workflow cannot be launched';
+export const unsupportedRequiredInputsString = `This Workflow version contains one or more required inputs which are not supported by Flyte Console and do not have default values specified in the Workflow definition or the selected Launch Plan.\n\nYou can launch this Workflow version with the Flyte CLI or by selecting a Launch Plan which provides values for the unsupported inputs.\n\nThe required inputs are :`;
