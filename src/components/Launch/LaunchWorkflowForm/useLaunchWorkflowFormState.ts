@@ -51,8 +51,6 @@ function useLaunchPlanSelectorOptions(launchPlans: LaunchPlan[]) {
     ]);
 }
 
-function useUnsupportedRequiredInputs() {}
-
 interface UseLaunchPlansForWorkflowArgs {
     workflowId?: WorkflowId | null;
     preferredLaunchPlanId?: Identifier;

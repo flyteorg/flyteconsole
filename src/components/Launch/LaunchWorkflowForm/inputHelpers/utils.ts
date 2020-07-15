@@ -1,3 +1,4 @@
+import { assertNever } from 'common/utils';
 import { Core } from 'flyteidl';
 import { get } from 'lodash';
 import { InputType, InputTypeDefinition } from '../types';
@@ -32,9 +33,13 @@ export function collectionChildToString(type: InputType, value: any) {
 export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     const { type, subtype } = typeDefinition;
     switch (type) {
+        case InputType.Binary:
+        case InputType.Blob:
+        case InputType.Error:
         case InputType.Map:
         case InputType.None:
         case InputType.Schema:
+        case InputType.Struct:
         case InputType.Unknown:
             return false;
         case InputType.Boolean:
@@ -55,6 +60,9 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
             return typeIsSupported(subtype);
         }
         default:
+            // This will cause a compiler error if new types are added and there is
+            // no case for them listed above.
+            assertNever(type, { noThrow: true });
             return false;
     }
 }
