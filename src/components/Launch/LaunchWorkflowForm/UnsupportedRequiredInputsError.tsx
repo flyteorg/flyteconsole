@@ -29,6 +29,9 @@ function formatLabel(label: string) {
 export interface UnsupportedRequiredInputsErrorProps {
     inputs: ParsedInput[];
 }
+/** An informational error to be shown if a Workflow cannot be launch due to
+ * required inputs for which we will not be able to provide a value.
+ */
 export const UnsupportedRequiredInputsError: React.FC<UnsupportedRequiredInputsErrorProps> = ({
     inputs
 }) => {

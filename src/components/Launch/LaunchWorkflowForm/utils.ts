@@ -159,6 +159,9 @@ export function getLaunchInputId(name: string): string {
     return `launch-input-${name}`;
 }
 
+/** Given an array of `ParsedInput`s, returns the subset which are required
+ * and of a type which cannot be provided via our form.
+ */
 export function getUnsupportedRequiredInputs(
     inputs: ParsedInput[]
 ): ParsedInput[] {
