@@ -2,7 +2,7 @@ import { Core } from 'flyteidl';
 import { BlobDimensionality } from 'models';
 import { BlobValue, InputValue } from '../types';
 import { literalNone } from './constants';
-import { ConverterInput, InputHelper } from './types';
+import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 
 function fromLiteral(literal: Core.ILiteral): InputValue {
     if (!literal.scalar || !literal.scalar.blob) {
@@ -55,14 +55,17 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
     };
 }
 
-function validate({ value }: ConverterInput) {
+function validate({ value, required }: InputValidatorParams) {
     if (typeof value !== 'object') {
         throw new Error('Value must be an object');
     }
 
     const blobValue = value as BlobValue;
-    if (typeof blobValue.uri !== 'string' || blobValue.uri.length === 0) {
-        throw new Error('Value is not a valid Blob: uri is required');
+    if (
+        (required && typeof blobValue.uri !== 'string') ||
+        blobValue.uri.length === 0
+    ) {
+        throw new Error('uri is required');
     }
     if (!(getDimensionality(blobValue.dimensionality) in BlobDimensionality)) {
         throw new Error(

@@ -36,6 +36,7 @@ import { useExecutionLaunchConfiguration } from '../useExecutionLaunchConfigurat
 import { getWorkflowInputs } from '../utils';
 
 const booleanInputName = 'simpleBoolean';
+const blobInputName = 'simpleBlob';
 const stringInputName = 'simpleString';
 const integerInputName = 'simpleInteger';
 const submitAction = action('createWorkflowExecution');
@@ -168,6 +169,7 @@ stories.add('Required Inputs', () => {
     parameters[stringInputName].required = true;
     parameters[integerInputName].required = true;
     parameters[booleanInputName].required = true;
+    parameters[blobInputName].required = true;
     return renderForm({ mocks });
 });
 stories.add('Default Values', () => {
