@@ -10,7 +10,8 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
     }
     const { blob } = literal.scalar;
     const uri = blob.uri ?? '';
-    const format = blob.metadata?.type?.format ?? '';
+    // throw away empty format values
+    const format = blob.metadata?.type?.format || undefined;
     const dimensionality =
         blob.metadata?.type?.dimensionality ?? BlobDimensionality.SINGLE;
 
@@ -21,12 +22,21 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
     };
 }
 
+// Allows for string values ('single'/'multipart') when specifying blobs manually in collections
+function getDimensionality(value: string | number) {
+    return typeof value === 'number'
+        ? value
+        : BlobDimensionality[
+              value.toUpperCase() as keyof typeof BlobDimensionality
+          ];
+}
+
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
     if (typeof value !== 'object') {
         return literalNone();
     }
     const {
-        dimensionality = BlobDimensionality.SINGLE,
+        dimensionality: rawDimensionality,
         format: rawFormat,
         uri
     } = value as BlobValue;
@@ -34,8 +44,10 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
         return literalNone();
     }
 
+    const dimensionality = getDimensionality(rawDimensionality);
+
     // Send null for empty string values of format
-    const format = rawFormat ? rawFormat : null;
+    const format = rawFormat ? rawFormat : undefined;
     return {
         scalar: {
             blob: { uri, metadata: { type: { dimensionality, format } } }
@@ -52,11 +64,7 @@ function validate({ value }: ConverterInput) {
     if (typeof blobValue.uri !== 'string' || blobValue.uri.length === 0) {
         throw new Error('Value is not a valid Blob: uri is required');
     }
-    if (
-        ![BlobDimensionality.SINGLE, BlobDimensionality.MULTIPART].includes(
-            blobValue.dimensionality
-        )
-    ) {
+    if (!(getDimensionality(blobValue.dimensionality) in BlobDimensionality)) {
         throw new Error(
             `Value is not a valid Blob: unknown dimensionality value: ${blobValue.dimensionality}`
         );

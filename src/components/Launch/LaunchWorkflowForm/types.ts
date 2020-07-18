@@ -81,7 +81,7 @@ export interface ObjectValue {
 }
 
 export interface BlobValue {
-    dimensionality: BlobDimensionality;
+    dimensionality: BlobDimensionality | string;
     format?: string;
     uri: string;
 }
