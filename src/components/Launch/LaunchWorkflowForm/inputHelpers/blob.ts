@@ -29,10 +29,11 @@ function getDimensionality(value: string | number) {
     if (typeof value === 'number') {
         return value;
     }
-    if (isKeyOfBlobDimensionality(value)) {
-        return BlobDimensionality[value];
+    const normalizedValue = value.toUpperCase();
+    if (isKeyOfBlobDimensionality(normalizedValue)) {
+        return BlobDimensionality[normalizedValue];
     }
-    return BlobDimensionality.SINGLE;
+    return -1;
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
