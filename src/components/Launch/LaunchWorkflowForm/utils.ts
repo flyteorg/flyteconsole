@@ -1,5 +1,6 @@
 import { timestampToDate } from 'common/utils';
 import { Core } from 'flyteidl';
+import { isObject } from 'lodash';
 import {
     LaunchPlan,
     LiteralType,
@@ -13,6 +14,7 @@ import { inputToLiteral } from './inputHelpers/inputHelpers';
 import { typeIsSupported } from './inputHelpers/utils';
 import { SearchableSelectorOption } from './SearchableSelector';
 import {
+    BlobValue,
     InputProps,
     InputType,
     InputTypeDefinition,
@@ -171,4 +173,8 @@ export function getUnsupportedRequiredInputs(
             input.required &&
             input.initialValue === undefined
     );
+}
+
+export function isBlobValue(value: unknown): value is BlobValue {
+    return isObject(value);
 }

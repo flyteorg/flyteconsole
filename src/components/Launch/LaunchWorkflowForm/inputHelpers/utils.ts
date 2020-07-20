@@ -1,6 +1,7 @@
 import { assertNever } from 'common/utils';
 import { Core } from 'flyteidl';
 import { get } from 'lodash';
+import { BlobDimensionality } from 'models';
 import { InputType, InputTypeDefinition } from '../types';
 
 /** Performs a deep get of `path` on the given `Core.ILiteral`. Will throw
@@ -34,7 +35,6 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     const { type, subtype } = typeDefinition;
     switch (type) {
         case InputType.Binary:
-        case InputType.Blob:
         case InputType.Error:
         case InputType.Map:
         case InputType.None:
@@ -43,6 +43,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
         case InputType.Unknown:
             return false;
         case InputType.Boolean:
+        case InputType.Blob:
         case InputType.Datetime:
         case InputType.Duration:
         case InputType.Float:
@@ -65,4 +66,10 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
             assertNever(type, { noThrow: true });
             return false;
     }
+}
+
+export function isKeyOfBlobDimensionality(
+    value: string
+): value is keyof typeof BlobDimensionality {
+    return Object.keys(BlobDimensionality).indexOf(value) >= 0;
 }
