@@ -48,7 +48,6 @@ export const validityTestCases = {
             },
             { uri: 'path', dimensionality: 'notAnEnumValue' },
             { uri: 'path', dimensionality: 1000 },
-            { uri: '', dimensionality: BlobDimensionality.SINGLE },
             { uri: 'path' }
         ],
         valid: [

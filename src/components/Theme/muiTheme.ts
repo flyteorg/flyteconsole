@@ -140,7 +140,6 @@ export const muiTheme = {
                 }
             }
         },
-        MuiSelect: {},
         MuiTab: {
             labelIcon: {
                 minHeight: '64px',

@@ -47,7 +47,7 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
 
     const dimensionality = getDimensionality(rawDimensionality);
 
-    // Send null for empty string values of format
+    // Send undefined for empty string values of format
     const format = rawFormat ? rawFormat : undefined;
     return {
         scalar: {
@@ -62,19 +62,22 @@ function validate({ value, required }: InputValidatorParams) {
     }
 
     const blobValue = value as BlobValue;
-    if (
-        (required || !!blobValue) &&
-        (typeof blobValue.uri !== 'string' || blobValue.uri.length === 0)
-    ) {
+    if (required && (typeof blobValue.uri == null || !blobValue.uri.length)) {
         throw new Error('uri is required');
+    }
+    if (blobValue != null && typeof blobValue.uri !== 'string') {
+        throw new Error('uri must be a string');
+    }
+    if (blobValue.dimensionality == null) {
+        throw new Error('dimensionality is required');
     }
     if (!(getDimensionality(blobValue.dimensionality) in BlobDimensionality)) {
         throw new Error(
-            `Value is not a valid Blob: unknown dimensionality value: ${blobValue.dimensionality}`
+            `unknown dimensionality value: ${blobValue.dimensionality}`
         );
     }
     if (blobValue.format != null && typeof blobValue.format !== 'string') {
-        throw new Error('Value is not a valid Blob: format must be a string');
+        throw new Error('format must be a string');
     }
 }
 

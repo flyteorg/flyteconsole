@@ -115,10 +115,10 @@ export const BlobInput: React.FC<InputProps> = props => {
                             onChange={handleDimensionalityChange}
                         >
                             <MenuItem value={BlobDimensionality.SINGLE}>
-                                Single
+                                Single (File)
                             </MenuItem>
                             <MenuItem value={BlobDimensionality.MULTIPART}>
-                                Multipart
+                                Multipart (Directory)
                             </MenuItem>
                         </Select>
                     </FormControl>

@@ -203,13 +203,17 @@ function generateValidityTests(
     { valid, invalid }: { valid: any[]; invalid: any[] }
 ) {
     valid.map(value =>
-        it(`should treat ${value} (${typeof value}) as valid`, () => {
+        it(`should treat ${JSON.stringify(
+            value
+        )} (${typeof value}) as valid`, () => {
             const input = makeSimpleInput(type, value);
             expect(() => validateInput(input)).not.toThrowError();
         })
     );
     invalid.map(value =>
-        it(`should treat ${value} (${typeof value}) as invalid`, () => {
+        it(`should treat ${JSON.stringify(
+            value
+        )} (${typeof value}) as invalid`, () => {
             const input = makeSimpleInput(type, value);
             expect(() => validateInput(input)).toThrowError();
         })

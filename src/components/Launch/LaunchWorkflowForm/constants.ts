@@ -25,7 +25,7 @@ export const formStrings = {
 /** Maps any valid InputType enum to a display string */
 export const typeLabels: { [k in InputType]: string } = {
     [InputType.Binary]: 'binary',
-    [InputType.Blob]: 'blob',
+    [InputType.Blob]: 'file/blob',
     [InputType.Boolean]: 'boolean',
     [InputType.Collection]: '',
     [InputType.Datetime]: 'datetime - UTC',
