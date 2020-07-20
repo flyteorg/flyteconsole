@@ -1,5 +1,6 @@
 import { Core } from 'flyteidl';
 import * as Long from 'long';
+import { BlobDimensionality } from 'models';
 import { primitiveLiteral } from '../../__mocks__/utils';
 import { InputProps, InputType } from '../../types';
 import { literalNone } from '../constants';
@@ -218,9 +219,9 @@ describe('validateInput', () => {
     describe('boolean', () => {
         generateValidityTests(InputType.Boolean, validityTestCases.boolean);
     });
-    // TODO-NOW:
+
     describe('blob', () => {
-        // TODO
+        generateValidityTests(InputType.Blob, validityTestCases.blob);
     });
 
     describe('datetime', () => {
@@ -251,8 +252,15 @@ describe('validateInput', () => {
         expect(() => validateInput(simpleInput)).toThrowError();
     });
 
-    // TODO-NOW:
-    it('should throw errors for missing required Blob values', () => {});
+    it('should throw errors for missing required Blob values', () => {
+        // URI is the only required, user-provided value with no default
+        const simpleInput = makeSimpleInput(InputType.Blob, {
+            format: 'csv',
+            dimensionality: BlobDimensionality.SINGLE
+        });
+        simpleInput.required = true;
+        expect(() => validateInput(simpleInput)).toThrowError();
+    });
 
     it('should not throw an error for a required input with an initial value and no value', () => {
         const simpleInput = makeSimpleInput(

@@ -34,10 +34,45 @@ export const validityTestCases = {
         invalid: ['randomString', {}, new Date()],
         valid: [true, 'true', 't', '1', 1, false, 'false', 'f', '0', 0]
     },
-    // TODO-NOW:
     blob: {
-        invalid: [],
-        valid: []
+        invalid: [
+            {
+                uri: 5,
+                format: 'csv',
+                dimensionality: BlobDimensionality.SINGLE
+            },
+            {
+                uri: 'path',
+                format: 5,
+                dimensionality: BlobDimensionality.SINGLE
+            },
+            { uri: 'path', dimensionality: 'notAnEnumValue' },
+            { uri: 'path', dimensionality: 1000 },
+            { uri: '', dimensionality: BlobDimensionality.SINGLE },
+            { uri: 'path' }
+        ],
+        valid: [
+            {
+                uri: 'path',
+                format: 'csv',
+                dimensionality: BlobDimensionality.SINGLE
+            },
+            {
+                uri: 'path',
+                format: 'csv',
+                dimensionality: BlobDimensionality.MULTIPART
+            },
+            { uri: 'path', format: 'csv', dimensionality: 'single' },
+            { uri: 'path', format: 'csv', dimensionality: 'SINGLE' },
+            { uri: 'path', format: 'csv', dimensionality: 'multipart' },
+            { uri: 'path', format: 'csv', dimensionality: 'MULTIPART' },
+            {
+                uri: 'path',
+                format: '',
+                dimensionality: BlobDimensionality.SINGLE
+            },
+            { uri: 'path', dimensionality: BlobDimensionality.SINGLE }
+        ]
     },
     datetime: {
         invalid: ['abc', true],

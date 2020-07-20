@@ -63,8 +63,8 @@ function validate({ value, required }: InputValidatorParams) {
 
     const blobValue = value as BlobValue;
     if (
-        (required && typeof blobValue.uri !== 'string') ||
-        blobValue.uri.length === 0
+        (required || !!blobValue) &&
+        (typeof blobValue.uri !== 'string' || blobValue.uri.length === 0)
     ) {
         throw new Error('uri is required');
     }
