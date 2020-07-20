@@ -1,4 +1,5 @@
 import { Core } from 'flyteidl';
+import { isObject } from 'lodash';
 import { BlobDimensionality } from 'models';
 import { BlobValue, InputValue } from '../types';
 import { literalNone } from './constants';
@@ -32,7 +33,7 @@ function getDimensionality(value: string | number) {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-    if (typeof value !== 'object') {
+    if (!isObject(value)) {
         return literalNone();
     }
     const {

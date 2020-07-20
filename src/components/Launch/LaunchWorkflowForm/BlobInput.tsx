@@ -8,6 +8,7 @@ import {
     Typography
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import { isObject } from 'lodash';
 import { BlobDimensionality } from 'models';
 import * as React from 'react';
 import {
@@ -42,14 +43,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const BlobInput: React.FC<InputProps> = props => {
     const styles = useStyles();
     const { error, label, name, onChange, value: propValue } = props;
-    const blobValue =
-        typeof propValue === 'object'
-            ? (propValue as BlobValue)
-            : defaultBlobValue;
+    const blobValue = isObject(propValue)
+        ? (propValue as BlobValue)
+        : defaultBlobValue;
     const hasError = !!error;
-    // TODO: We might want a way to pass errors that are specific to a sub-field
-    // of an input. Right now, a string error assumes that an input has a single
-    // control that can be labeled with the error string.
     const helperText = hasError ? error : props.helperText;
 
     const handleUriChange = ({
@@ -90,7 +87,6 @@ export const BlobInput: React.FC<InputProps> = props => {
             <div className={styles.inputContainer}>
                 <TextField
                     id={getLaunchInputId(`${name}-uri`)}
-                    // TODO: Error here for required
                     helperText={blobUriHelperText}
                     fullWidth={true}
                     label="uri"
