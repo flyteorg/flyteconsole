@@ -1,5 +1,6 @@
 import { FetchableData, MultiFetchableState } from 'components/hooks';
 import { Core } from 'flyteidl';
+import { isObject } from 'lodash';
 import {
     BlobDimensionality,
     Identifier,

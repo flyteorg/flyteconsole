@@ -4,6 +4,7 @@ import { BlobDimensionality } from 'models';
 import { BlobValue, InputValue } from '../types';
 import { literalNone } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
+import { isKeyOfBlobDimensionality } from './utils';
 
 function fromLiteral(literal: Core.ILiteral): InputValue {
     if (!literal.scalar || !literal.scalar.blob) {
@@ -25,11 +26,13 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
 
 // Allows for string values ('single'/'multipart') when specifying blobs manually in collections
 function getDimensionality(value: string | number) {
-    return typeof value === 'number'
-        ? value
-        : BlobDimensionality[
-              value.toUpperCase() as keyof typeof BlobDimensionality
-          ];
+    if (typeof value === 'number') {
+        return value;
+    }
+    if (isKeyOfBlobDimensionality(value)) {
+        return BlobDimensionality[value];
+    }
+    return BlobDimensionality.SINGLE;
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {

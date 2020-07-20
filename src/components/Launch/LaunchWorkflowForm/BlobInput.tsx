@@ -8,7 +8,6 @@ import {
     Typography
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { isObject } from 'lodash';
 import { BlobDimensionality } from 'models';
 import * as React from 'react';
 import {
@@ -16,8 +15,8 @@ import {
     blobUriHelperText,
     defaultBlobValue
 } from './constants';
-import { BlobValue, InputProps } from './types';
-import { getLaunchInputId } from './utils';
+import { InputProps } from './types';
+import { getLaunchInputId, isBlobValue } from './utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
     dimensionalityInput: {
@@ -43,9 +42,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const BlobInput: React.FC<InputProps> = props => {
     const styles = useStyles();
     const { error, label, name, onChange, value: propValue } = props;
-    const blobValue = isObject(propValue)
-        ? (propValue as BlobValue)
-        : defaultBlobValue;
+    const blobValue = isBlobValue(propValue) ? propValue : defaultBlobValue;
     const hasError = !!error;
     const helperText = hasError ? error : props.helperText;
 
