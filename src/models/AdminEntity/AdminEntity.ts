@@ -44,7 +44,7 @@ async function request(
     const finalOptions = {
         ...options,
         url: adminApiUrl(endpoint),
-        withCredentials: true
+        withCredentials: false
     };
 
     try {
