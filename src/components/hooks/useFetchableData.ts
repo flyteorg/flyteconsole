@@ -11,7 +11,8 @@ import {
     fetchEvents,
     FetchFn,
     FetchMachine,
-    FetchStateContext
+    FetchStateContext,
+    fetchStates
 } from './types';
 
 const log = createDebugLogger('useFetchableData');
@@ -166,6 +167,14 @@ export function useFetchableData<T extends object, DataType>(
     useEffect(() => {
         sendEvent(fetchEvents.RESET);
     }, [cacheKey]);
+
+    // TODO: This seems janky. Either we should re-create the machine based on
+    // autoFetch, or we shouldn't allow it to change between renders.
+    useEffect(() => {
+        if (autoFetch && current.matches(fetchStates.IDLE)) {
+            sendEvent(fetchEvents.LOAD);
+        }
+    }, [autoFetch]);
 
     const { lastError, value } = current.context;
     return { debugName, fetch, lastError, value, state: current };
