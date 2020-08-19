@@ -1,11 +1,11 @@
-import { FetchableData, MultiFetchableState } from 'components/hooks';
+import { FetchableData } from 'components/hooks';
 import { Core } from 'flyteidl';
-import { isObject } from 'lodash';
 import {
     BlobDimensionality,
     Identifier,
     LaunchPlan,
     NamedEntityIdentifier,
+    Workflow,
     WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
@@ -35,10 +35,9 @@ export interface LaunchWorkflowFormState {
     /** Used to key inputs component so it is re-mounted the list of inputs */
     formKey?: string;
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
-    inputLoadingState: MultiFetchableState;
     inputs: ParsedInput[];
     inputValueCache: InputValueMap;
-    launchPlanOptionsLoadingState: MultiFetchableState;
+    launchPlans: FetchableData<LaunchPlan[]>;
     launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
     selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
     selectedWorkflow?: SearchableSelectorOption<WorkflowId>;
@@ -46,7 +45,7 @@ export interface LaunchWorkflowFormState {
     submissionState: FetchableData<WorkflowExecutionIdentifier>;
     unsupportedRequiredInputs: ParsedInput[];
     workflowName: string;
-    workflowOptionsLoadingState: MultiFetchableState;
+    workflows: FetchableData<Workflow[]>;
     workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
     onCancel(): void;
     onSelectWorkflow(selected: SearchableSelectorOption<WorkflowId>): void;

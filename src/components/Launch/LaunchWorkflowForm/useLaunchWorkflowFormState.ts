@@ -1,15 +1,11 @@
 import { getCacheKey } from 'components/Cache';
 import { useAPIContext } from 'components/data/apiContext';
-import {
-    useFetchableData,
-    useWorkflow,
-    waitForAllFetchables
-} from 'components/hooks';
+import { useFetchableData, useWorkflow } from 'components/hooks';
+import { fetchStates } from 'components/hooks/types';
 import { isEqual, uniqBy } from 'lodash';
 import {
     FilterOperationName,
     Identifier,
-    IdentifierScope,
     LaunchPlan,
     NamedEntityIdentifier,
     SortDirection,
@@ -242,11 +238,6 @@ export function useLaunchWorkflowFormState({
         ? selectedLaunchPlan.data
         : undefined;
 
-    const workflowOptionsLoadingState = waitForAllFetchables([workflows]);
-    const launchPlanOptionsLoadingState = waitForAllFetchables([launchPlans]);
-
-    const inputLoadingState = waitForAllFetchables([workflow, launchPlans]);
-
     const [parsedInputs, setParsedInputs] = useState<ParsedInput[]>([]);
 
     const unsupportedRequiredInputs = useMemo(
@@ -347,7 +338,7 @@ export function useLaunchWorkflowFormState({
     // the inputs so we can render the rest of the form
     useEffect(() => {
         const parsedInputs =
-            launchPlanData && workflow.hasLoaded
+            launchPlanData && workflow.state.matches(fetchStates.LOADED)
                 ? getInputs(
                       workflow.value,
                       launchPlanData,
@@ -355,7 +346,7 @@ export function useLaunchWorkflowFormState({
                   )
                 : [];
         setParsedInputs(parsedInputs);
-    }, [workflow.hasLoaded, workflow.value, launchPlanData]);
+    }, [workflow.state.value, workflow.value, launchPlanData]);
 
     // Once workflows have loaded, attempt to select the preferred workflow
     // plan, or fall back to selecting the first option
@@ -415,9 +406,8 @@ export function useLaunchWorkflowFormState({
     return {
         formInputsRef,
         formKey,
-        inputLoadingState,
         inputValueCache,
-        launchPlanOptionsLoadingState,
+        launchPlans,
         launchPlanSelectorOptions,
         onCancel,
         onSelectLaunchPlan,
@@ -429,7 +419,7 @@ export function useLaunchWorkflowFormState({
         submissionState,
         unsupportedRequiredInputs,
         workflowName,
-        workflowOptionsLoadingState,
+        workflows,
         workflowSelectorOptions,
         inputs: parsedInputs
     };

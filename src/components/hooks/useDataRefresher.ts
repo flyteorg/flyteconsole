@@ -1,9 +1,7 @@
-import { useEffect } from 'react';
-
 import { createDebugLogger } from 'common/log';
 import { getCacheKey } from 'components/Cache';
-
-import { FetchableData, RefreshConfig } from './types';
+import { useEffect } from 'react';
+import { FetchableData, fetchStates, RefreshConfig } from './types';
 
 const log = createDebugLogger('useDataRefresher');
 
@@ -23,7 +21,7 @@ export function useDataRefresher<T, IDType extends object | string>(
     refreshConfig: RefreshConfig<T>
 ) {
     const { interval } = refreshConfig;
-    const { debugName, hasLoaded, lastError, value } = fetchable;
+    const { debugName, state, value } = fetchable;
 
     const isFinal = refreshConfig.valueIsFinal(value);
 
@@ -31,6 +29,10 @@ export function useDataRefresher<T, IDType extends object | string>(
     const doRefresh = refreshConfig.doRefresh || defaultRefresh;
 
     useEffect(() => {
+        if (isFinal) {
+            return;
+        }
+
         let timerId: number = 0;
 
         const clear = () => {
@@ -42,19 +44,17 @@ export function useDataRefresher<T, IDType extends object | string>(
             window.clearInterval(timerId);
         };
 
-        if (!hasLoaded || isFinal || lastError) {
-            if (lastError) {
-                log(
-                    `${debugName} not refreshing fetchable because it is in an error state`,
-                    fetchable
-                );
-            }
-        } else {
+        if (state.matches(fetchStates.LOADED)) {
             log(`${debugName} attaching data refresher`);
             timerId = window.setInterval(() => doRefresh(fetchable), interval);
+        } else {
+            log(
+                `${debugName} not refreshing fetchable because it is not in LOADED state`,
+                fetchable
+            );
         }
 
         // When this effect is cleaned up, we should stop refreshing
         return clear;
-    }, [getCacheKey(id), hasLoaded, isFinal, lastError]);
+    }, [getCacheKey(id), state.value, isFinal]);
 }
