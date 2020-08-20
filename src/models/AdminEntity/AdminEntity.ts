@@ -19,7 +19,10 @@ import {
 /**
  * Function that returns boolean value for the string or number representation
  */
-const toBoolean = (value: string | number | boolean): boolean =>
+const toBoolean = (value?: string | number | boolean): boolean =>
+    if (value == null) {
+      return false;
+    }
     [true, 'true', 'True', 'TRUE', '1', 1].includes(value);
 
 /** Base work function used by the HTTP verb methods below. It does not handle
@@ -51,7 +54,7 @@ async function request(
     const finalOptions = {
         ...options,
         url: adminApiUrl(endpoint),
-        withCredentials: toBoolean(env.ENABLE_AUTH)
+        withCredentials: !toBoolean(env.DISABLE_AUTH)
     };
 
     try {
@@ -77,7 +80,7 @@ export async function getProtobufObject<ResponseType>(
         headers,
         method: 'get',
         responseType: 'arraybuffer',
-        withCredentials: toBoolean(env.ENABLE_AUTH)
+        withCredentials: !toBoolean(env.DISABLE_AUTH)
     };
 
     const { data } = await axios.request(options);
