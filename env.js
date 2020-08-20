@@ -33,6 +33,7 @@ module.exports = {
     CONFIG_CACHE_TTL_SECONDS,
     CONFIG_DIR,
     CORS_PROXY_PREFIX,
+    ENABLE_AUTH,
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,
@@ -40,9 +41,9 @@ module.exports = {
         ADMIN_API_URL,
         BASE_URL,
         CORS_PROXY_PREFIX,
+        ENABLE_AUTH,
         NODE_ENV,
-        STATUS_URL,
-        ENABLE_AUTH
+        STATUS_URL
     }
 };
 
