@@ -24,6 +24,8 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 // If it has no protocol, it will be treated as relative to window.location.origin
 const STATUS_URL = process.env.STATUS_URL;
 
+const ENABLE_AUTH = process.env.ENABLE_AUTH || true ;
+
 module.exports = {
     ADMIN_API_URL,
     BASE_URL,
@@ -39,6 +41,7 @@ module.exports = {
         BASE_URL,
         CORS_PROXY_PREFIX,
         NODE_ENV,
-        STATUS_URL
+        STATUS_URL,
+        ENABLE_AUTH
     }
 };

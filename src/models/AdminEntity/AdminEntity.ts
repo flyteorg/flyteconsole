@@ -1,3 +1,4 @@
+import { env } from 'common/env';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { generateAdminApiQuery } from './AdminApiQuery';
@@ -44,7 +45,7 @@ async function request(
     const finalOptions = {
         ...options,
         url: adminApiUrl(endpoint),
-        withCredentials: false
+        withCredentials: env.ENABLE_AUTH
     };
 
     try {
@@ -70,7 +71,7 @@ export async function getProtobufObject<ResponseType>(
         headers,
         method: 'get',
         responseType: 'arraybuffer',
-        withCredentials: true
+        withCredentials: env.ENABLE_AUTH
     };
 
     const { data } = await axios.request(options);
