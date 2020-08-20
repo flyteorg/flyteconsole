@@ -19,11 +19,11 @@ import {
 /**
  * Function that returns boolean value for the string or number representation
  */
-const toBoolean = (value?: string | number | boolean): boolean =>
+const toBoolean = (value?: string): boolean =>
     if (value == null) {
       return false;
     }
-    [true, 'true', 'True', 'TRUE', '1', 1].includes(value);
+    ['true', 'True', 'TRUE', '1'].includes(value);
 
 /** Base work function used by the HTTP verb methods below. It does not handle
  * encoding/decoding of protobuf.
