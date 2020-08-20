@@ -24,7 +24,7 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 // If it has no protocol, it will be treated as relative to window.location.origin
 const STATUS_URL = process.env.STATUS_URL;
 
-const ENABLE_AUTH = process.env.ENABLE_AUTH || true ;
+const ENABLE_AUTH = toBoolean(process.env.ENABLE_AUTH) || true ;
 
 module.exports = {
     ADMIN_API_URL,
@@ -45,3 +45,6 @@ module.exports = {
         ENABLE_AUTH
     }
 };
+
+const toBoolean = (value: string | number | boolean): boolean =>
+    [true, 'true', 'True', 'TRUE', '1', 1].includes(value);
