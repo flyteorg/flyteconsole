@@ -25,7 +25,7 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 const STATUS_URL = process.env.STATUS_URL;
 
 const enable_auth_string = process.env.ENABLE_AUTH || 'true';
-const ENABLE_AUTH = (enable_auth_string == 'false');
+const ENABLE_AUTH = process.env.ENABLE_AUTH || 'true';
 
 module.exports = {
     ADMIN_API_URL,
