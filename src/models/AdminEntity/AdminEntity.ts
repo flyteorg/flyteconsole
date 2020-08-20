@@ -19,7 +19,7 @@ import {
 /**
  * Function that returns boolean value for the string or number representation
  */
-const toBoolean = (value?: string): boolean =>
+function toBoolean(value?: string): boolean =>
     if (value == null) {
       return false;
     }
