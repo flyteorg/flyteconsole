@@ -239,6 +239,9 @@ export function useLaunchWorkflowFormState({
         : undefined;
 
     const [parsedInputs, setParsedInputs] = useState<ParsedInput[]>([]);
+    const inputsReady = !!(
+        launchPlanData && workflow.state.matches(fetchStates.LOADED)
+    );
 
     const unsupportedRequiredInputs = useMemo(
         () => getUnsupportedRequiredInputs(parsedInputs),
@@ -407,6 +410,7 @@ export function useLaunchWorkflowFormState({
         formInputsRef,
         formKey,
         inputValueCache,
+        inputsReady,
         launchPlans,
         launchPlanSelectorOptions,
         onCancel,

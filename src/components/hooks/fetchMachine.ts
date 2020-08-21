@@ -1,5 +1,4 @@
 import { assign, InvokeConfig, Machine, State } from 'xstate';
-import { choose, send } from 'xstate/lib/actions';
 import { fetchEvents, fetchStates } from '.';
 import { FetchEventObject, FetchMachine, FetchStateContext } from './types';
 
@@ -50,14 +49,7 @@ export const fetchMachine: FetchMachine<unknown> = Machine<
                 assign(context => ({
                     ...defaultContext,
                     value: context.defaultValue
-                })),
-                // If autoFetch is enabled, initiate a LOAD event
-                choose([
-                    {
-                        cond: ({ autoFetch = true }) => autoFetch,
-                        actions: send(fetchEvents.LOAD)
-                    }
-                ])
+                }))
             ],
             on: {
                 [fetchEvents.RESET]: `#fetch.${fetchStates.IDLE}`,

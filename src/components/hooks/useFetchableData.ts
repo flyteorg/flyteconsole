@@ -129,7 +129,6 @@ export function useFetchableData<T extends object, DataType>(
     const cacheKey = isHashableInput(data) ? getCacheKey(data) : undefined;
     const cache = useContext(CacheContext);
     const apiContext = useAPIContext();
-
     const fetchFn = useMemo(
         () =>
             createFetchFn({
@@ -148,14 +147,19 @@ export function useFetchableData<T extends object, DataType>(
         FetchStateContext<T>,
         FetchEventObject
     >(fetchMachine as FetchMachine<T>, {
+        // TODO: Only in dev mode?
+        devTools: true,
         context: {
-            autoFetch,
+            debugName,
             defaultValue
         },
         services: {
             doFetch: fetchFn
         }
     });
+
+    const isIdle = current.matches(fetchStates.IDLE);
+    const fetch = useMemo(() => () => sendEvent(fetchEvents.LOAD), [sendEvent]);
 
     // TODO: use cacheKey as a guard for current value
     // TODO: Check if `force` is actually used
@@ -165,16 +169,23 @@ export function useFetchableData<T extends object, DataType>(
     // **** Instead, make a useMachine hook that can be keyed and just
     // creates a new machine whenever the key changes.
     useEffect(() => {
-        sendEvent(fetchEvents.RESET);
+        const events = [fetchEvents.RESET];
+        // If we're resetting and autoFetch is true, we can save ourselves
+        // a render/useEffect loop to initiate the fetch by batching a LOAD
+        // event here.
+        if (autoFetch) {
+            events.push(fetchEvents.LOAD);
+        }
+        sendEvent(events);
     }, [cacheKey]);
 
     // TODO: This seems janky. Either we should re-create the machine based on
     // autoFetch, or we shouldn't allow it to change between renders.
     useEffect(() => {
-        if (autoFetch && current.matches(fetchStates.IDLE)) {
+        if (autoFetch && isIdle) {
             sendEvent(fetchEvents.LOAD);
         }
-    }, [autoFetch]);
+    }, [autoFetch, isIdle]);
 
     const { lastError, value } = current.context;
     return { debugName, fetch, lastError, value, state: current };

@@ -11,5 +11,5 @@ export interface ListProps<T> {
     moreItemsAvailable: boolean;
     onScrollbarPresenceChange?: (params: ScrollbarPresenceParams) => any;
     width?: number;
-    fetch(): Promise<unknown>;
+    fetch(): void;
 }

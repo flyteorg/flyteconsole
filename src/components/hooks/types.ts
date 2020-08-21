@@ -34,8 +34,7 @@ export interface FetchStateSchema {
 }
 
 export interface FetchStateContext<T> {
-    /** Whether fetch event is dispatched on initialization. Defaults to true. */
-    autoFetch?: boolean;
+    debugName?: string;
     defaultValue: T;
     lastError: Error | null;
     value: T;
@@ -58,7 +57,7 @@ export type FetchMachine<T> = StateMachine<
 
 export interface FetchableData<T> {
     debugName: string;
-    fetch(fetchArgs?: FetchArgs): Promise<any>;
+    fetch(fetchArgs?: FetchArgs): void;
     lastError: Error | null;
     state: FetchableState<T>;
     value: T;

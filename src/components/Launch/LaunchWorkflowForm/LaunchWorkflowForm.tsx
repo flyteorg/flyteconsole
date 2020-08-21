@@ -56,13 +56,7 @@ function generateFetchSearchResults(
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
     const state = useLaunchWorkflowFormState(props);
-    const {
-        launchPlans,
-        submissionState,
-        unsupportedRequiredInputs,
-        workflows
-    } = state;
-    const launchPlanSelected = !!state.selectedLaunchPlan;
+    const { submissionState, unsupportedRequiredInputs, workflows } = state;
     const styles = useStyles();
     const fetchSearchResults = generateFetchSearchResults(
         useAPIContext(),
@@ -74,11 +68,10 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         state.onSubmit();
     };
 
-    const inputsReady = state.selectedWorkflow && state.selectedLaunchPlan;
     const submissionInFlight = isLoadingState(submissionState.state);
     const preventSubmit =
         submissionInFlight ||
-        !inputsReady ||
+        !state.inputsReady ||
         unsupportedRequiredInputs.length > 0;
 
     return (
@@ -116,7 +109,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                             />
                         </section>
                     </WaitForData>
-                    {inputsReady ? (
+                    {state.inputsReady ? (
                         <section title={formStrings.inputs}>
                             {state.unsupportedRequiredInputs.length > 0 ? (
                                 <UnsupportedRequiredInputsError
