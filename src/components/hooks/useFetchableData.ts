@@ -1,4 +1,5 @@
 import { useMachine } from '@xstate/react';
+import { env } from 'common/env';
 import { createDebugLogger } from 'common/log';
 import { CacheContext, getCacheKey, ValueCache } from 'components/Cache';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
@@ -16,11 +17,6 @@ import {
 } from './types';
 
 const log = createDebugLogger('useFetchableData');
-
-interface FetchState<T> {
-    promise: Promise<T>;
-    key?: string;
-}
 
 export interface FetchableDataConfig<T, DataType> {
     autoFetch?: boolean;
@@ -147,8 +143,7 @@ export function useFetchableData<T extends object, DataType>(
         FetchStateContext<T>,
         FetchEventObject
     >(fetchMachine as FetchMachine<T>, {
-        // TODO: Only in dev mode?
-        devTools: true,
+        devTools: env.NODE_ENV === 'development',
         context: {
             debugName,
             defaultValue
@@ -162,12 +157,6 @@ export function useFetchableData<T extends object, DataType>(
     const fetch = useMemo(() => () => sendEvent(fetchEvents.LOAD), [sendEvent]);
 
     // TODO: use cacheKey as a guard for current value
-    // TODO: Check if `force` is actually used
-    // const [fetchState, setFetchState] = useState<FetchState<T> | null>(null);
-
-    // TODO:
-    // **** Instead, make a useMachine hook that can be keyed and just
-    // creates a new machine whenever the key changes.
     useEffect(() => {
         const events = [fetchEvents.RESET];
         // If we're resetting and autoFetch is true, we can save ourselves
@@ -179,8 +168,6 @@ export function useFetchableData<T extends object, DataType>(
         sendEvent(events);
     }, [cacheKey]);
 
-    // TODO: This seems janky. Either we should re-create the machine based on
-    // autoFetch, or we shouldn't allow it to change between renders.
     useEffect(() => {
         if (autoFetch && isIdle) {
             sendEvent(fetchEvents.LOAD);

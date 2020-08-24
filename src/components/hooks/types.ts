@@ -42,7 +42,6 @@ export interface FetchStateContext<T> {
 
 export interface FetchArgs {}
 
-// TODO: determine event type for this state
 export type FetchableState<T> = State<
     FetchStateContext<T>,
     FetchEventObject,
