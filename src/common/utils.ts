@@ -126,5 +126,3 @@ export function toBoolean(value?: string): boolean {
     }
     return ['true', 'True', 'TRUE', '1'].includes(value);
 }
-
-
