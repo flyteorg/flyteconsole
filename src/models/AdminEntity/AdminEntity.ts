@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import { env } from 'common/env';
 
 import { generateAdminApiQuery } from './AdminApiQuery';
+import { toBoolean } from 'common/utils'
 import { transformRequestError } from './transformRequestError';
 import {
     AdminEntityTransformer,
@@ -13,8 +14,7 @@ import {
     adminApiUrl,
     decodeProtoResponse,
     encodeProtoPayload,
-    logProtoResponse,
-    toBoolean
+    logProtoResponse
 } from './utils';
 
 /** Base work function used by the HTTP verb methods below. It does not handle
