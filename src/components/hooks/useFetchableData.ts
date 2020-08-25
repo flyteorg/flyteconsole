@@ -4,7 +4,7 @@ import { createDebugLogger } from 'common/log';
 import { CacheContext, getCacheKey, ValueCache } from 'components/Cache';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { NotAuthorizedError } from 'errors';
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useRef } from 'react';
 import { fetchMachine } from './fetchMachine';
 import {
     FetchableData,
@@ -123,6 +123,7 @@ export function useFetchableData<T extends object, DataType>(
     } = config;
 
     const cacheKey = isHashableInput(data) ? getCacheKey(data) : undefined;
+    const contextCacheKey = useRef<string>();
     const cache = useContext(CacheContext);
     const apiContext = useAPIContext();
     const fetchFn = useMemo(
@@ -139,41 +140,47 @@ export function useFetchableData<T extends object, DataType>(
         [apiContext, cache, cacheKey, data, debugName, doFetch, useCache]
     );
 
-    const [current, sendEvent] = useMachine<
+    const [lastState, sendEvent] = useMachine<
         FetchStateContext<T>,
         FetchEventObject
     >(fetchMachine as FetchMachine<T>, {
         devTools: env.NODE_ENV === 'development',
         context: {
             debugName,
-            defaultValue
+            defaultValue,
+            value: defaultValue
         },
         services: {
             doFetch: fetchFn
         }
     });
 
-    const isIdle = current.matches(fetchStates.IDLE);
     const fetch = useMemo(() => () => sendEvent(fetchEvents.LOAD), [sendEvent]);
+    let state = lastState;
 
-    // TODO: use cacheKey as a guard for current value
-    useEffect(() => {
-        const events = [fetchEvents.RESET];
-        // If we're resetting and autoFetch is true, we can save ourselves
-        // a render/useEffect loop to initiate the fetch by batching a LOAD
-        // event here.
-        if (autoFetch) {
-            events.push(fetchEvents.LOAD);
-        }
-        sendEvent(events);
-    }, [cacheKey]);
+    // If the cacheKey changes, immediately reset the state to avoid returning
+    // any stale state below.
+    if (
+        contextCacheKey.current !== cacheKey &&
+        !lastState.matches(fetchStates.IDLE)
+    ) {
+        state = sendEvent(fetchEvents.RESET);
+        contextCacheKey.current = cacheKey;
+    }
 
+    const isIdle = state.matches(fetchStates.IDLE);
     useEffect(() => {
         if (autoFetch && isIdle) {
-            sendEvent(fetchEvents.LOAD);
+            fetch();
         }
     }, [autoFetch, isIdle]);
 
-    const { lastError, value } = current.context;
-    return { debugName, fetch, lastError, value, state: current };
+    const { lastError, value } = state.context;
+    return {
+        debugName,
+        fetch,
+        lastError,
+        state,
+        value
+    };
 }

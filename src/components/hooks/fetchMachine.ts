@@ -11,6 +11,9 @@ export function isLoadingState(state: State<any, any>) {
     );
 }
 
+// TODO: Consider using parent states like 'hasValue', 'failed'
+// to group some of these. Makes things like WaitForData easier to implement.
+
 function makeLoadService<T>(
     successTarget: string,
     failureTarget: string
