@@ -20,7 +20,11 @@ import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes';
 import { DetailedNodeExecution, NodeExecutionDisplayType } from '../types';
-import { cacheStatusMessages, unknownCacheStatusString } from './constants';
+import {
+    cacheStatusMessages,
+    unknownCacheStatusString,
+    viewSourceExecutionString
+} from './constants';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
@@ -200,18 +204,36 @@ const NodeExecutionCacheInformation: React.FC<{
         cacheStatusMessages[taskNodeMetadata.cacheStatus] ||
         unknownCacheStatusString;
 
-    return (
-        <Typography
-            className={styles.cacheStatus}
-            variant="subtitle1"
-            color="textSecondary"
+    const sourceExecutionId = taskNodeMetadata.catalogKey?.sourceTaskExecution;
+    const sourceExecutionLink = sourceExecutionId ? (
+        <RouterLink
+            className={classnames(
+                commonStyles.primaryLink,
+                styles.nodeTypeLink
+            )}
+            to={Routes.ExecutionDetails.makeUrl(
+                sourceExecutionId.nodeExecutionId.executionId
+            )}
         >
-            <CacheStatusIcon
-                status={taskNodeMetadata.cacheStatus}
-                className={commonStyles.iconLeft}
-            />
-            {message}
-        </Typography>
+            {viewSourceExecutionString}
+        </RouterLink>
+    ) : null;
+
+    return (
+        <>
+            <Typography
+                className={styles.cacheStatus}
+                variant="subtitle1"
+                color="textSecondary"
+            >
+                <CacheStatusIcon
+                    status={taskNodeMetadata.cacheStatus}
+                    className={commonStyles.iconLeft}
+                />
+                {message}
+            </Typography>
+            {sourceExecutionLink}
+        </>
     );
 };
 

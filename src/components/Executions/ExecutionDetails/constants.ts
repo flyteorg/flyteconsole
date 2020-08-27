@@ -34,3 +34,4 @@ export const cacheStatusMessages: { [k in Core.CatalogCacheStatus]: string } = {
         'Failed to write output for this execution to cache.'
 };
 export const unknownCacheStatusString = 'Cache status is unknown';
+export const viewSourceExecutionString = 'View source execution';
