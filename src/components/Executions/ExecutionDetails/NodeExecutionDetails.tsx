@@ -1,19 +1,25 @@
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, SvgIconProps, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
+import Cached from '@material-ui/icons/Cached';
 import Close from '@material-ui/icons/Close';
+import ErrorOutlined from '@material-ui/icons/ErrorOutlined';
+import InfoOutlined from '@material-ui/icons/InfoOutlined';
 import * as classnames from 'classnames';
+import { assertNever } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionsList } from 'components/Executions';
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
 import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
+import { Core } from 'flyteidl';
 import { LocationDescriptor } from 'history';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes';
 import { DetailedNodeExecution, NodeExecutionDisplayType } from '../types';
+import { cacheStatusMessages, unknownCacheStatusString } from './constants';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
@@ -22,6 +28,11 @@ const useStyles = makeStyles((theme: Theme) => {
     const paddingVertical = `${theme.spacing(2)}px`;
     const paddingHorizontal = `${theme.spacing(3)}px`;
     return {
+        cacheStatus: {
+            alignItems: 'center',
+            display: 'flex',
+            marginTop: theme.spacing(1)
+        },
         closeButton: {
             marginLeft: theme.spacing(1)
         },
@@ -146,6 +157,61 @@ const ExecutionTypeDetails: React.FC<{
     );
 };
 
+const CacheStatusIcon: React.FC<SvgIconProps & {
+    status: Core.CatalogCacheStatus;
+}> = ({ status, ...props }) => {
+    switch (status) {
+        case Core.CatalogCacheStatus.CACHE_DISABLED:
+        case Core.CatalogCacheStatus.CACHE_MISS: {
+            return <InfoOutlined {...props} />;
+        }
+        case Core.CatalogCacheStatus.CACHE_HIT:
+        case Core.CatalogCacheStatus.CACHE_POPULATED: {
+            return <Cached {...props} />;
+        }
+        case Core.CatalogCacheStatus.CACHE_LOOKUP_FAILURE:
+        case Core.CatalogCacheStatus.CACHE_PUT_FAILURE: {
+            return <ErrorOutlined {...props} />;
+        }
+        default: {
+            assertNever(status);
+            return null;
+        }
+    }
+};
+
+const NodeExecutionCacheInformation: React.FC<{
+    execution: DetailedNodeExecution;
+}> = ({
+    execution: {
+        closure: { taskNodeMetadata }
+    }
+}) => {
+    const commonStyles = useCommonStyles();
+    const styles = useStyles();
+    if (taskNodeMetadata == null || taskNodeMetadata.cacheStatus == null) {
+        return null;
+    }
+
+    const message =
+        cacheStatusMessages[taskNodeMetadata.cacheStatus] ||
+        unknownCacheStatusString;
+
+    return (
+        <Typography
+            className={styles.cacheStatus}
+            variant="subtitle1"
+            color="textSecondary"
+        >
+            <CacheStatusIcon
+                status={taskNodeMetadata.cacheStatus}
+                className={commonStyles.iconLeft}
+            />
+            {message}
+        </Typography>
+    );
+};
+
 /** DetailsPanel content which renders execution information about a given NodeExecution
  */
 export const NodeExecutionDetails: React.FC<NodeExecutionDetailsProps> = ({
@@ -202,6 +268,7 @@ export const NodeExecutionDetails: React.FC<NodeExecutionDetailsProps> = ({
                         {execution.displayId}
                     </Typography>
                     {statusContent}
+                    <NodeExecutionCacheInformation execution={execution} />
                     <ExecutionTypeDetails execution={execution} />
                 </div>
             </header>
