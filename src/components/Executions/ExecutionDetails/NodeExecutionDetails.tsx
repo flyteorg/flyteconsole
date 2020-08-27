@@ -8,6 +8,7 @@ import ErrorOutlined from '@material-ui/icons/ErrorOutlined';
 import InfoOutlined from '@material-ui/icons/InfoOutlined';
 import * as classnames from 'classnames';
 import { assertNever } from 'common/utils';
+import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionsList } from 'components/Executions';
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
@@ -165,9 +166,11 @@ const CacheStatusIcon: React.FC<SvgIconProps & {
         case Core.CatalogCacheStatus.CACHE_MISS: {
             return <InfoOutlined {...props} />;
         }
-        case Core.CatalogCacheStatus.CACHE_HIT:
-        case Core.CatalogCacheStatus.CACHE_POPULATED: {
+        case Core.CatalogCacheStatus.CACHE_HIT: {
             return <Cached {...props} />;
+        }
+        case Core.CatalogCacheStatus.CACHE_POPULATED: {
+            return <PublishedWithChangesOutlined {...props} />;
         }
         case Core.CatalogCacheStatus.CACHE_LOOKUP_FAILURE:
         case Core.CatalogCacheStatus.CACHE_PUT_FAILURE: {
