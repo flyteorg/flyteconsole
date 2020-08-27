@@ -1,6 +1,11 @@
-import { assign, InvokeConfig, Machine, State } from 'xstate';
+import { assign, Machine, State, StateNodeConfig } from 'xstate';
 import { fetchEvents, fetchStates } from '.';
-import { FetchEventObject, FetchMachine, FetchStateContext } from './types';
+import {
+    FetchEventObject,
+    FetchMachine,
+    FetchStateContext,
+    FetchStateSchema
+} from './types';
 
 export function isLoadingState(state: State<any, any>) {
     return (
@@ -11,24 +16,26 @@ export function isLoadingState(state: State<any, any>) {
     );
 }
 
-// TODO: Consider using parent states like 'hasValue', 'failed'
-// to group some of these. Makes things like WaitForData easier to implement.
-
-function makeLoadService<T>(
+function makeLoadConfig<T>(
     successTarget: string,
     failureTarget: string
-): InvokeConfig<FetchStateContext<T>, FetchEventObject> {
+): Partial<
+    StateNodeConfig<FetchStateContext<T>, FetchStateSchema, FetchEventObject>
+> {
     return {
-        src: 'doFetch',
-        onDone: {
-            target: successTarget,
-            actions: assign({
-                value: (_, event) => event.data
-            })
-        },
-        onError: {
-            target: failureTarget,
-            actions: assign({ lastError: (_, event) => event.data })
+        entry: assign({ lastError: _ => null }),
+        invoke: {
+            src: 'doFetch',
+            onDone: {
+                target: successTarget,
+                actions: assign({
+                    value: (_, event) => event.data
+                })
+            },
+            onError: {
+                target: failureTarget,
+                actions: assign({ lastError: (_, event) => event.data })
+            }
         }
     };
 }
@@ -56,12 +63,10 @@ export const fetchMachine: FetchMachine<unknown> = Machine<
                 [fetchEvents.LOAD]: `#fetch.${fetchStates.LOADING}`
             }
         },
-        [fetchStates.LOADING]: {
-            invoke: makeLoadService(
-                `#fetch.${fetchStates.LOADED}`,
-                `#fetch.${fetchStates.FAILED}`
-            )
-        },
+        [fetchStates.LOADING]: makeLoadConfig(
+            `#fetch.${fetchStates.LOADED}`,
+            `#fetch.${fetchStates.FAILED}`
+        ),
         [fetchStates.LOADED]: {
             on: {
                 [fetchEvents.RESET]: `#fetch.${fetchStates.IDLE}`,
@@ -74,29 +79,23 @@ export const fetchMachine: FetchMachine<unknown> = Machine<
                 [fetchEvents.LOAD]: `#fetch.${fetchStates.FAILED_RETRYING}`
             }
         },
-        [fetchStates.FAILED_RETRYING]: {
-            invoke: makeLoadService(
-                `#fetch.${fetchStates.LOADED}`,
-                `#fetch.${fetchStates.FAILED}`
-            )
-        },
-        [fetchStates.REFRESHING]: {
-            invoke: makeLoadService(
-                `#fetch.${fetchStates.LOADED}`,
-                `#fetch.${fetchStates.REFRESH_FAILED}`
-            )
-        },
+        [fetchStates.FAILED_RETRYING]: makeLoadConfig(
+            `#fetch.${fetchStates.LOADED}`,
+            `#fetch.${fetchStates.FAILED}`
+        ),
+        [fetchStates.REFRESHING]: makeLoadConfig(
+            `#fetch.${fetchStates.LOADED}`,
+            `#fetch.${fetchStates.REFRESH_FAILED}`
+        ),
         [fetchStates.REFRESH_FAILED]: {
             on: {
                 [fetchEvents.RESET]: `#fetch.${fetchStates.IDLE}`,
                 [fetchEvents.LOAD]: `#fetch.${fetchStates.REFRESH_FAILED_RETRYING}`
             }
         },
-        [fetchStates.REFRESH_FAILED_RETRYING]: {
-            invoke: makeLoadService(
-                `#fetch.${fetchStates.LOADED}`,
-                `#fetch.${fetchStates.REFRESH_FAILED}`
-            )
-        }
+        [fetchStates.REFRESH_FAILED_RETRYING]: makeLoadConfig(
+            `#fetch.${fetchStates.LOADED}`,
+            `#fetch.${fetchStates.REFRESH_FAILED}`
+        )
     }
 });
