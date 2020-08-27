@@ -48,6 +48,10 @@ export function useWorkflowExecutionData(
     );
 }
 
+/** Fetches the inputs object for a given WorkflowExecution.
+ * This function is meant to be consumed by hooks which are composing data.
+ * If you're calling it from a component, consider using `useTaskExecutions` instead.
+ */
 export const fetchWorkflowExecutionInputs = async (
     execution: Execution,
     apiContext: APIContextValue
@@ -66,6 +70,7 @@ export const fetchWorkflowExecutionInputs = async (
     }
     return getRemoteLiteralMap(inputs.url);
 };
+
 /** A hook for fetching the inputs object associated with an Execution. Will
  * handle both the legacy (`computedInputs`) and current (externally stored) formats
  */

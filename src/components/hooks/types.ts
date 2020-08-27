@@ -40,8 +40,6 @@ export interface FetchStateContext<T> {
     value: T;
 }
 
-export interface FetchArgs {}
-
 export type FetchableState<T> = State<
     FetchStateContext<T>,
     FetchEventObject,
@@ -56,7 +54,7 @@ export type FetchMachine<T> = StateMachine<
 
 export interface FetchableData<T> {
     debugName: string;
-    fetch(fetchArgs?: FetchArgs): void;
+    fetch(): void;
     lastError: Error | null;
     state: FetchableState<T>;
     value: T;

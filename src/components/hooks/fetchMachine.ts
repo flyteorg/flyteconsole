@@ -7,6 +7,9 @@ import {
     FetchStateSchema
 } from './types';
 
+/** Helper function to determine if the State object from a fetchMachine
+ * is one in which data is being fetched.
+ */
 export function isLoadingState(state: State<any, any>) {
     return (
         state.matches(fetchStates.LOADING) ||
@@ -43,6 +46,8 @@ function makeLoadConfig<T>(
 const defaultContext: Partial<FetchStateContext<unknown>> = {
     lastError: null
 };
+
+/** A generic state machine for representing fetchable data. */
 export const fetchMachine: FetchMachine<unknown> = Machine<
     FetchStateContext<unknown>,
     FetchEventObject
