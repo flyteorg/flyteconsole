@@ -62,7 +62,9 @@ export const WaitForData: React.FC<WaitForDataProps> = ({
             return null;
         }
         case state.matches(fetchStates.LOADED):
-        case state.matches(fetchStates.REFRESH_FAILED): {
+        case state.matches(fetchStates.REFRESH_FAILED):
+        case state.matches(fetchStates.REFRESHING):
+        case state.matches(fetchStates.REFRESH_FAILED_RETRYING): {
             return (
                 <ErrorBoundary>
                     <>{isFunction(children) ? children() : children}</>
@@ -84,9 +86,7 @@ export const WaitForData: React.FC<WaitForDataProps> = ({
             );
         }
         case state.matches(fetchStates.LOADING):
-        case state.matches(fetchStates.FAILED_RETRYING):
-        case state.matches(fetchStates.REFRESHING):
-        case state.matches(fetchStates.REFRESH_FAILED_RETRYING): {
+        case state.matches(fetchStates.FAILED_RETRYING): {
             return LoadingComponent ? (
                 <LoadingComponent />
             ) : (
