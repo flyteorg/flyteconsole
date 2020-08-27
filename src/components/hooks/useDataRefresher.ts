@@ -1,6 +1,7 @@
 import { createDebugLogger } from 'common/log';
 import { getCacheKey } from 'components/Cache';
 import { useEffect } from 'react';
+import { isLoadingState } from './fetchMachine';
 import { FetchableData, fetchStates, RefreshConfig } from './types';
 
 const log = createDebugLogger('useDataRefresher');
@@ -27,6 +28,8 @@ export function useDataRefresher<T, IDType extends object | string>(
 
     // Default refresh implementation is just to fetch the current entity
     const doRefresh = refreshConfig.doRefresh || defaultRefresh;
+    const stateIsRefreshable =
+        state.matches(fetchStates.LOADED) || isLoadingState(state);
 
     useEffect(() => {
         if (isFinal) {
@@ -44,17 +47,17 @@ export function useDataRefresher<T, IDType extends object | string>(
             window.clearInterval(timerId);
         };
 
-        if (state.matches(fetchStates.LOADED)) {
+        if (stateIsRefreshable) {
             log(`${debugName} attaching data refresher`);
             timerId = window.setInterval(() => doRefresh(fetchable), interval);
         } else {
             log(
-                `${debugName} not refreshing fetchable because it is not in LOADED state`,
+                `${debugName} not refreshing fetchable because it is in a failed/idle state`,
                 fetchable
             );
         }
 
         // When this effect is cleaned up, we should stop refreshing
         return clear;
-    }, [getCacheKey(id), state.value, isFinal]);
+    }, [getCacheKey(id), stateIsRefreshable, isFinal, doRefresh]);
 }
