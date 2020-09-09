@@ -3,10 +3,11 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as classnames from 'classnames';
 import { WaitForData } from 'components';
 import { useCommonStyles } from 'components/common/styles';
-import { useWorkflowNamedEntity } from 'components/hooks/useNamedEntity';
-import { NamedEntityIdentifier, NamedEntityMetadata } from 'models';
+import { useNamedEntity } from 'components/hooks/useNamedEntity';
+import { NamedEntityMetadata, ResourceIdentifier } from 'models';
 import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
+import { noDescriptionStrings } from './constants';
 
 const Skeleton = reactLoadingSkeleton;
 
@@ -16,21 +17,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-const noDescriptionString = 'This workflow has no description.';
-
-/** Fetches and renders the description for a given workflow ID */
-export const WorkflowDescription: React.FC<{
-    workflowId: NamedEntityIdentifier;
-}> = ({ workflowId }) => {
+/** Fetches and renders the description for a given Entity (LaunchPlan,Workflow,Task) ID */
+export const EntityDescription: React.FC<{
+    id: ResourceIdentifier;
+}> = ({ id }) => {
     const commonStyles = useCommonStyles();
     const styles = useStyles();
-    const namedEntity = useWorkflowNamedEntity(workflowId);
+    const namedEntity = useNamedEntity(id);
     const { metadata = {} as NamedEntityMetadata } = namedEntity.value;
     const hasDescription = !!metadata.description;
     return (
         <>
             <Typography variant="h6">Description</Typography>
-
             <Typography variant="body2" className={styles.description}>
                 <WaitForData
                     {...namedEntity}
@@ -44,7 +42,7 @@ export const WorkflowDescription: React.FC<{
                     >
                         {hasDescription
                             ? metadata.description
-                            : noDescriptionString}
+                            : noDescriptionStrings[id.resourceType]}
                     </span>
                 </WaitForData>
             </Typography>

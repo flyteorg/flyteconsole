@@ -3,13 +3,14 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
-import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
-import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
-import { useWorkflowExecutions } from 'components/hooks';
-import { NamedEntityIdentifier } from 'models';
-import { FilterOperationName, SortDirection } from 'models/AdminEntity';
+import { useWorkflowExecutionFiltersState as useExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
+import { WorkflowExecutionsTable as ExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
+import { useWorkflowExecutions as useExecutions } from 'components/hooks';
+import { ResourceIdentifier } from 'models';
+import { SortDirection } from 'models/AdminEntity';
 import { executionSortFields } from 'models/Execution';
 import * as React from 'react';
+import { executionFilterGenerator } from './executionFilterGenerator';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filtersContainer: {
@@ -21,33 +22,30 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export interface WorkflowExecutionsProps {
-    workflowId: NamedEntityIdentifier;
+export interface EntityExecutionsProps {
+    id: ResourceIdentifier;
 }
 
 /** The tab/page content for viewing a workflow's executions */
-export const WorkflowExecutions: React.FC<WorkflowExecutionsProps> = ({
-    workflowId: { project, domain, name }
-}) => {
+export const EntityExecutions: React.FC<EntityExecutionsProps> = ({ id }) => {
+    const { domain, project, resourceType } = id;
     const styles = useStyles();
-    const filtersState = useWorkflowExecutionFiltersState();
+    const filtersState = useExecutionFiltersState();
     const sort = {
         key: executionSortFields.createdAt,
         direction: SortDirection.DESCENDING
     };
 
-    const executions = useWorkflowExecutions(
+    const baseFilters = React.useMemo(
+        () => executionFilterGenerator[resourceType](id),
+        [id]
+    );
+
+    const executions = useExecutions(
         { domain, project },
         {
             sort,
-            filter: [
-                {
-                    key: 'workflow.name',
-                    operation: FilterOperationName.EQ,
-                    value: name
-                },
-                ...filtersState.appliedFilters
-            ]
+            filter: [...baseFilters, ...filtersState.appliedFilters]
         }
     );
 
@@ -60,7 +58,7 @@ export const WorkflowExecutions: React.FC<WorkflowExecutionsProps> = ({
                 <ExecutionFilters {...filtersState} />
             </div>
             <WaitForData {...executions}>
-                <WorkflowExecutionsTable {...executions} />
+                <ExecutionsTable {...executions} />
             </WaitForData>
         </>
     );

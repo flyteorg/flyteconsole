@@ -3,11 +3,12 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import * as classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
-import { Project } from 'models';
+import { Project, ResourceIdentifier } from 'models';
 import { getProjectDomain } from 'models/Project/utils';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes';
+import { launchStrings } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
     actionsContainer: {},
@@ -28,31 +29,24 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-export interface WorkflowDetailsRouteParams {
-    projectId: string;
-    domainId: string;
-    workflowName: string;
-}
-export type WorkflowDetailsProps = WorkflowDetailsRouteParams;
-
-interface WorkflowDetailsHeaderProps {
-    domainId: string;
+interface EntityDetailsHeaderProps {
     project: Project;
-    workflowName: string;
-    onClickLaunch(): void;
+    id: ResourceIdentifier;
+    launchable?: boolean;
+    onClickLaunch?(): void;
 }
 
 /** Renders the workflow name and actions shown on the workflow details page */
-export const WorkflowDetailsHeader: React.FC<WorkflowDetailsHeaderProps> = ({
-    domainId,
+export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
+    id,
     onClickLaunch,
-    project,
-    workflowName
+    launchable = false,
+    project
 }) => {
     const styles = useStyles();
     const commonStyles = useCommonStyles();
-    const domain = getProjectDomain(project, domainId);
-    const headerText = `${domain.name} / ${workflowName}`;
+    const domain = getProjectDomain(project, id.domain);
+    const headerText = `${domain.name} / ${id.name}`;
     return (
         <div className={styles.headerContainer}>
             <div
@@ -65,7 +59,7 @@ export const WorkflowDetailsHeader: React.FC<WorkflowDetailsHeaderProps> = ({
                     className={commonStyles.linkUnstyled}
                     to={Routes.ProjectDetails.sections.workflows.makeUrl(
                         project.id,
-                        domainId
+                        id.domain
                     )}
                 >
                     <ArrowBack color="inherit" />
@@ -73,14 +67,16 @@ export const WorkflowDetailsHeader: React.FC<WorkflowDetailsHeaderProps> = ({
                 <span className={styles.headerText}>{headerText}</span>
             </div>
             <div className={styles.actionsContainer}>
-                <Button
-                    color="primary"
-                    id="launch-workflow"
-                    onClick={onClickLaunch}
-                    variant="contained"
-                >
-                    Launch Workflow
-                </Button>
+                {launchable ? (
+                    <Button
+                        color="primary"
+                        id="launch-workflow"
+                        onClick={onClickLaunch}
+                        variant="contained"
+                    >
+                        {launchStrings[id.resourceType]}
+                    </Button>
+                ) : null}
             </div>
         </div>
     );
