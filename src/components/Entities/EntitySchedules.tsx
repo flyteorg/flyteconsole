@@ -6,7 +6,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { useWorkflowSchedules } from 'components/hooks';
 import { LaunchPlan, ResourceIdentifier } from 'models';
 import * as React from 'react';
-import { noSchedulesStrings } from './constants';
+import { noSchedulesStrings, schedulesHeader } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
     schedulesContainer: {
@@ -29,7 +29,6 @@ const RenderSchedules: React.FC<{
     );
 };
 
-// TODO: This only supports workflows at the moment.
 export const EntitySchedules: React.FC<{
     id: ResourceIdentifier;
 }> = ({ id }) => {
@@ -39,7 +38,7 @@ export const EntitySchedules: React.FC<{
     return (
         <>
             <WaitForData {...scheduledLaunchPlans} spinnerVariant="none">
-                <Typography variant="h6">Schedules</Typography>
+                <Typography variant="h6">{schedulesHeader}</Typography>
                 <div className={styles.schedulesContainer}>
                     {scheduledLaunchPlans.value.length > 0 ? (
                         <RenderSchedules

@@ -1,22 +1,24 @@
-import { act, render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import {
     createMockLaunchPlan,
     mockLaunchPlanSchedules
 } from 'models/__mocks__/launchPlanData';
 import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
-import { NamedEntityIdentifier } from 'models/Common/types';
+import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { listLaunchPlans } from 'models/Launch/api';
 import { LaunchPlan, LaunchPlanState } from 'models/Launch/types';
 import * as React from 'react';
-import { WorkflowSchedules } from '../WorkflowSchedules';
+import { schedulesHeader } from '../constants';
+import { EntitySchedules } from '../EntitySchedules';
 
 jest.mock('models/Launch/api');
 
-describe('WorkflowSchedules', () => {
+describe('EntitySchedules', () => {
     const mockListLaunchPlans = listLaunchPlans as jest.Mock<
         ReturnType<typeof listLaunchPlans>
     >;
-    const workflowId: NamedEntityIdentifier = {
+    const id: ResourceIdentifier = {
+        resourceType: ResourceType.WORKFLOW,
         project: 'project',
         domain: 'domain',
         name: 'name'
@@ -24,10 +26,9 @@ describe('WorkflowSchedules', () => {
     let launchPlans: LaunchPlan[];
 
     const renderSchedules = async () => {
-        await act(() => {
-            render(<WorkflowSchedules workflowId={workflowId} />);
-            return new Promise<void>(resolve => setTimeout(resolve, 0));
-        });
+        const result = render(<EntitySchedules id={id} />);
+        await waitFor(() => result.getByText(schedulesHeader));
+        return result;
     };
 
     beforeEach(() => {
@@ -63,17 +64,17 @@ describe('WorkflowSchedules', () => {
             {
                 key: 'workflow.name',
                 operation: FilterOperationName.EQ,
-                value: workflowId.name
+                value: id.name
             },
             {
                 key: 'workflow.domain',
                 operation: FilterOperationName.EQ,
-                value: workflowId.domain
+                value: id.domain
             },
             {
                 key: 'workflow.project',
                 operation: FilterOperationName.EQ,
-                value: workflowId.project
+                value: id.project
             }
         ];
         await renderSchedules();

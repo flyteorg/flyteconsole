@@ -16,6 +16,8 @@ export const noDescriptionStrings: EntityStringMap = mapValues(
     typeString => `This ${typeString} has no description.`
 );
 
+export const schedulesHeader = 'Schedules';
+
 export const noSchedulesStrings: EntityStringMap = mapValues(
     entityStrings,
     typeString => `This ${typeString} has no schedules.`
