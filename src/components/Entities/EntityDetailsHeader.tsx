@@ -7,8 +7,8 @@ import { Project, ResourceIdentifier } from 'models';
 import { getProjectDomain } from 'models/Project/utils';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Routes } from 'routes';
 import { launchStrings } from './constants';
+import { backUrlGenerator } from './generators';
 
 const useStyles = makeStyles((theme: Theme) => ({
     actionsContainer: {},
@@ -36,7 +36,7 @@ interface EntityDetailsHeaderProps {
     onClickLaunch?(): void;
 }
 
-/** Renders the workflow name and actions shown on the workflow details page */
+/** Renders the entity name and any applicable actions.  */
 export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
     id,
     onClickLaunch,
@@ -57,10 +57,7 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
             >
                 <Link
                     className={commonStyles.linkUnstyled}
-                    to={Routes.ProjectDetails.sections.workflows.makeUrl(
-                        project.id,
-                        id.domain
-                    )}
+                    to={backUrlGenerator[id.resourceType](id)}
                 >
                     <ArrowBack color="inherit" />
                 </Link>

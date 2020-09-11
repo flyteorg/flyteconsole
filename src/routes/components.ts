@@ -3,6 +3,7 @@ import { TaskExecutionDetails } from 'components/Executions/TaskExecutionDetails
 import { NotFound } from 'components/NotFound';
 import { ProjectDetails } from 'components/Project';
 import { SelectProject } from 'components/SelectProject';
+import { TaskDetails } from 'components/Task/TaskDetails';
 import { WorkflowVersionDetails } from 'components/Workflow';
 import { WorkflowDetails } from 'components/Workflow/WorkflowDetails';
 
@@ -15,6 +16,7 @@ export const components = {
     projectDetails: ProjectDetails,
     selectProject: SelectProject,
     taskExecutionDetails: TaskExecutionDetails,
+    taskDetails: TaskDetails,
     workflowDetails: WorkflowDetails,
     workflowVersionDetails: WorkflowVersionDetails
 };
