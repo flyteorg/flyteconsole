@@ -52,46 +52,44 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
     const onCancelLaunch = () => setShowLaunchForm(false);
 
     return (
-        <>
-            <WaitForData {...project}>
-                <EntityDetailsHeader
-                    project={project.value}
-                    id={id}
-                    launchable={!!sections.launch}
-                    onClickLaunch={onLaunch}
-                />
-                <div className={styles.metadataContainer}>
-                    {!!sections.description ? (
-                        <div className={styles.descriptionContainer}>
-                            <EntityDescription id={id} />
-                        </div>
-                    ) : null}
-                    {!!sections.schedules ? (
-                        <div className={styles.schedulesContainer}>
-                            <EntitySchedules id={id} />
-                        </div>
-                    ) : null}
-                </div>
-                {!!sections.executions ? (
-                    <div className={styles.executionsContainer}>
-                        <EntityExecutions id={id} />
+        <WaitForData {...project}>
+            <EntityDetailsHeader
+                project={project.value}
+                id={id}
+                launchable={!!sections.launch}
+                onClickLaunch={onLaunch}
+            />
+            <div className={styles.metadataContainer}>
+                {!!sections.description ? (
+                    <div className={styles.descriptionContainer}>
+                        <EntityDescription id={id} />
                     </div>
                 ) : null}
-                {/* TODO: LaunchWorkflowForm needs to be made generic */}
-                {!!sections.launch ? (
-                    <Dialog
-                        scroll="paper"
-                        maxWidth="sm"
-                        fullWidth={true}
-                        open={showLaunchForm}
-                    >
-                        <LaunchWorkflowForm
-                            onClose={onCancelLaunch}
-                            workflowId={id}
-                        />
-                    </Dialog>
+                {!!sections.schedules ? (
+                    <div className={styles.schedulesContainer}>
+                        <EntitySchedules id={id} />
+                    </div>
                 ) : null}
-            </WaitForData>
-        </>
+            </div>
+            {!!sections.executions ? (
+                <div className={styles.executionsContainer}>
+                    <EntityExecutions id={id} />
+                </div>
+            ) : null}
+            {/* TODO: LaunchWorkflowForm needs to be made generic */}
+            {!!sections.launch ? (
+                <Dialog
+                    scroll="paper"
+                    maxWidth="sm"
+                    fullWidth={true}
+                    open={showLaunchForm}
+                >
+                    <LaunchWorkflowForm
+                        onClose={onCancelLaunch}
+                        workflowId={id}
+                    />
+                </Dialog>
+            ) : null}
+        </WaitForData>
     );
 };

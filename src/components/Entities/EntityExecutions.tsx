@@ -10,7 +10,7 @@ import { ResourceIdentifier } from 'models';
 import { SortDirection } from 'models/AdminEntity';
 import { executionSortFields } from 'models/Execution';
 import * as React from 'react';
-import { executionFilterGenerator } from './executionFilterGenerator';
+import { executionFilterGenerator } from './generators';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filtersContainer: {
