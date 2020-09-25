@@ -36,7 +36,6 @@ export interface LaunchWorkflowFormState {
     formKey?: string;
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
     inputs: ParsedInput[];
-    inputsReady: boolean;
     inputValueCache: InputValueMap;
     launchPlans: FetchableData<LaunchPlan[]>;
     launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];

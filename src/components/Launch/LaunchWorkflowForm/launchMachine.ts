@@ -1,6 +1,8 @@
 import {
     Identifier,
     LaunchPlan,
+    NamedEntityIdentifier,
+    Workflow,
     WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
@@ -14,7 +16,7 @@ export type SelectWorkflowVersionEvent = {
 
 export type WorkflowVersionOptionsLoadedEvent = {
     type: string;
-    workflowIds: WorkflowId[];
+    workflows: Workflow[];
 };
 
 export type LaunchPlanOptionsLoadedEvent = {
@@ -44,7 +46,8 @@ export type ExecutionCreatedEvent = {
 
 export type InputsParsedEvent = {
     type: string;
-    inputs: ParsedInput[];
+    parsedInputs: ParsedInput[];
+    unsupportedRequiredInputs?: ParsedInput[];
 };
 
 export type ErrorEvent = {
@@ -72,31 +75,17 @@ export interface LaunchContext {
     parsedInputs: ParsedInput[];
     resultExecutionId?: WorkflowExecutionIdentifier;
     sourceType: 'workflow' | 'task';
+    sourceWorkflowId?: NamedEntityIdentifier;
+    sourceTaskId?: NamedEntityIdentifier;
     error?: Error;
+    preferredLaunchPlanId?: Identifier;
+    preferredWorkflowId?: Identifier;
     workflowVersion?: WorkflowId;
-    workflowVersionOptions?: WorkflowId[];
+    workflowVersionOptions?: Workflow[];
     taskVersion?: Identifier;
     taskVersionOptions?: Identifier[];
+    unsupportedRequiredInputs?: ParsedInput[];
 }
-
-/* TODO
-
-* Should we move all of the state into context here?
-  * When are machines disposed? Will the memory be released?
-* Need state management for parsing inputs
-* Would be nice to pass all async fetching as a service object of some sort, or apiContext, so that mocking everything
-  * for machines is simpler.
-* Is it common to write tests for machines? Worried about testing large machines that leverage smaller sub-machines. Do we mock the nested machines?
-* We could leverage child machines for async activities. At the very least we need passed-in services for the following:
-  * Loading workflows
-  * Loading launch plans
-  * Loading selected workflow
-  * Loading selected task?
-  * Parsing inputs from workflow/launch plan
-    * Should we do this as part of the sub-states for selection and have those nested machines return the inputs when done?
-  * Parsing inputs from task
-    * Same question as above about parsing inputs at end of selection machine
-*/
 
 export interface LaunchSchema {
     states: {
@@ -152,6 +141,9 @@ export interface LaunchSchema {
     };
 }
 
+// TODO: Handle transitionless events for setting:
+// * preferred workflow version / launch plan
+
 const launchMachineConfig: MachineConfig<
     LaunchContext,
     LaunchSchema,
@@ -183,13 +175,16 @@ const launchMachineConfig: MachineConfig<
                             always: [
                                 {
                                     target: 'workflowSelected',
-                                    cond: ({ sourceType }) =>
-                                        sourceType === 'workflow'
+                                    // TODO: Possible to interpret this machine without setting
+                                    // a source id. That's an unrecoverable error. What should we do there?
+                                    cond: ({ sourceType, sourceWorkflowId }) =>
+                                        sourceType === 'workflow' &&
+                                        !!sourceWorkflowId
                                 },
                                 {
                                     target: 'taskSelected',
-                                    cond: ({ sourceType }) =>
-                                        sourceType === 'task'
+                                    cond: ({ sourceType, sourceTaskId }) =>
+                                        sourceType === 'task' && !!sourceTaskId
                                 }
                             ]
                         },
@@ -325,7 +320,9 @@ const launchMachineConfig: MachineConfig<
                         },
                         // Doesn't need any specific handlers, as the only way to get out
                         // of this state is selecting a different workflow/launch plan/task
-                        unsupportedInputs: {},
+                        unsupportedInputs: {
+                            // TODO: We need logic to detect when to move into this state
+                        },
                         enterInputs: {
                             states: {
                                 working: {
@@ -405,7 +402,7 @@ export const launchMachine = Machine(launchMachineConfig, {
         })),
         setWorkflowVersionOptions: assign((_, event) => ({
             workflowVersionOptions: (event as WorkflowVersionOptionsLoadedEvent)
-                .workflowIds
+                .workflows
         })),
         setTaskVersion: assign((_, event) => ({
             taskVersion: (event as SelectTaskVersionEvent).taskId
@@ -423,14 +420,22 @@ export const launchMachine = Machine(launchMachineConfig, {
         setExecutionId: assign((_, event) => ({
             resultExecutionId: (event as ExecutionCreatedEvent).executionId
         })),
-        setInputs: assign((_, event) => ({
-            parsedInputs: (event as InputsParsedEvent).inputs
-        })),
+        setInputs: assign((_, event) => {
+            const {
+                parsedInputs,
+                unsupportedRequiredInputs
+            } = event as InputsParsedEvent;
+            return {
+                parsedInputs,
+                unsupportedRequiredInputs
+            };
+        }),
         setError: assign((_, event) => ({
             error: (event as ErrorEvent).error
         }))
     },
     services: {
+        // TODO: Promise results here aren't typed, might get confusing when implementing these services in consumer
         loadWorkflowVersions: () =>
             Promise.reject(
                 'No `loadWorkflowVersions` service has been provided'
@@ -441,6 +446,8 @@ export const launchMachine = Machine(launchMachineConfig, {
             Promise.reject('No `loadTaskVersions` service has been provided'),
         loadInputs: () =>
             Promise.reject('No `loadInputs` service has been provided'),
-        submit: () => Promise.reject('No `submit` service has been provided')
+        submit: () => Promise.reject('No `submit` service has been provided'),
+        validate: () =>
+            Promise.reject('No `validate` service has been provided')
     }
 });
