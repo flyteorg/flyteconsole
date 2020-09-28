@@ -37,15 +37,12 @@ export interface LaunchWorkflowFormState {
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
     inputs: ParsedInput[];
     inputValueCache: InputValueMap;
-    launchPlans: FetchableData<LaunchPlan[]>;
     launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
     selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
     selectedWorkflow?: SearchableSelectorOption<WorkflowId>;
     showErrors: boolean;
-    submissionState: FetchableData<WorkflowExecutionIdentifier>;
     unsupportedRequiredInputs: ParsedInput[];
     workflowName: string;
-    workflows: FetchableData<Workflow[]>;
     workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
     onCancel(): void;
     onSelectWorkflow(selected: SearchableSelectorOption<WorkflowId>): void;

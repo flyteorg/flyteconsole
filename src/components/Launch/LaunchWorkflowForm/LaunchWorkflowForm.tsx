@@ -71,6 +71,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
     const submissionInFlight = isLoadingState(submissionState.state);
     const preventSubmit =
         submissionInFlight ||
+        // TODO: This should all be done based on matching the machine state
         !state.inputsReady ||
         unsupportedRequiredInputs.length > 0;
 

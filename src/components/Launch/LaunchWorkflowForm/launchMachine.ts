@@ -6,8 +6,8 @@ import {
     WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
-import { assign, Machine, MachineConfig } from 'xstate';
-import { ParsedInput } from './types';
+import { assign, Machine, MachineConfig, StateValueMap } from 'xstate';
+import { LiteralValueMap, ParsedInput } from './types';
 
 export type SelectWorkflowVersionEvent = {
     type: 'SELECT_WORKFLOW_VERSION';
@@ -70,13 +70,14 @@ export type LaunchEvent =
     | ErrorEvent;
 
 export interface LaunchContext {
+    defaultInputValues?: LiteralValueMap;
     launchPlan?: LaunchPlan;
     launchPlanOptions?: LaunchPlan[];
     parsedInputs: ParsedInput[];
     resultExecutionId?: WorkflowExecutionIdentifier;
     sourceType: 'workflow' | 'task';
-    sourceWorkflowId?: NamedEntityIdentifier;
-    sourceTaskId?: NamedEntityIdentifier;
+    sourceWorkflowName?: NamedEntityIdentifier;
+    sourceTaskName?: NamedEntityIdentifier;
     error?: Error;
     preferredLaunchPlanId?: Identifier;
     preferredWorkflowId?: Identifier;
@@ -84,7 +85,7 @@ export interface LaunchContext {
     workflowVersionOptions?: Workflow[];
     taskVersion?: Identifier;
     taskVersionOptions?: Identifier[];
-    unsupportedRequiredInputs?: ParsedInput[];
+    unsupportedRequiredInputs: ParsedInput[];
 }
 
 export interface LaunchSchema {
@@ -154,7 +155,8 @@ const launchMachineConfig: MachineConfig<
     context: {
         parsedInputs: [],
         // Defaults to workflow, can be overidden when interpreting the machine
-        sourceType: 'workflow'
+        sourceType: 'workflow',
+        unsupportedRequiredInputs: []
     },
     states: {
         cancelled: {
@@ -177,14 +179,18 @@ const launchMachineConfig: MachineConfig<
                                     target: 'workflowSelected',
                                     // TODO: Possible to interpret this machine without setting
                                     // a source id. That's an unrecoverable error. What should we do there?
-                                    cond: ({ sourceType, sourceWorkflowId }) =>
+                                    cond: ({
+                                        sourceType,
+                                        sourceWorkflowName
+                                    }) =>
                                         sourceType === 'workflow' &&
-                                        !!sourceWorkflowId
+                                        !!sourceWorkflowName
                                 },
                                 {
                                     target: 'taskSelected',
-                                    cond: ({ sourceType, sourceTaskId }) =>
-                                        sourceType === 'task' && !!sourceTaskId
+                                    cond: ({ sourceType, sourceTaskName }) =>
+                                        sourceType === 'task' &&
+                                        !!sourceTaskName
                                 }
                             ]
                         },
