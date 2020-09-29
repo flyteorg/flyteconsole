@@ -76,8 +76,8 @@ export interface LaunchContext {
     parsedInputs: ParsedInput[];
     resultExecutionId?: WorkflowExecutionIdentifier;
     sourceType: 'workflow' | 'task';
-    sourceWorkflowName?: NamedEntityIdentifier;
-    sourceTaskName?: NamedEntityIdentifier;
+    sourceWorkflowId?: NamedEntityIdentifier;
+    sourceTaskId?: NamedEntityIdentifier;
     error?: Error;
     preferredLaunchPlanId?: Identifier;
     preferredWorkflowId?: Identifier;
@@ -235,18 +235,14 @@ const launchMachineConfig: MachineConfig<
                                     target: 'workflowSource',
                                     // TODO: Possible to interpret this machine without setting
                                     // a source id. That's an unrecoverable error. What should we do there?
-                                    cond: ({
-                                        sourceType,
-                                        sourceWorkflowName
-                                    }) =>
+                                    cond: ({ sourceType, sourceWorkflowId }) =>
                                         sourceType === 'workflow' &&
-                                        !!sourceWorkflowName
+                                        !!sourceWorkflowId
                                 },
                                 {
                                     target: 'taskSource',
-                                    cond: ({ sourceType, sourceTaskName }) =>
-                                        sourceType === 'task' &&
-                                        !!sourceTaskName
+                                    cond: ({ sourceType, sourceTaskId }) =>
+                                        sourceType === 'task' && !!sourceTaskId
                                 }
                             ]
                         },
@@ -277,7 +273,6 @@ const launchMachineConfig: MachineConfig<
                                             }
                                         },
                                         select: {
-                                            // todo: handle preferred version
                                             on: {
                                                 SELECT_WORKFLOW_VERSION: {
                                                     target: 'launchPlan',

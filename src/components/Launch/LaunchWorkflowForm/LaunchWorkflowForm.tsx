@@ -7,13 +7,6 @@ import {
     Typography
 } from '@material-ui/core';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
-import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import {
-    FilterOperationName,
-    NamedEntityIdentifier,
-    SortDirection,
-    workflowSortFields
-} from 'models';
 import * as React from 'react';
 import { formStrings } from './constants';
 import { InputValueCacheContext } from './inputValueCache';
@@ -23,33 +16,6 @@ import { useStyles } from './styles';
 import { LaunchWorkflowFormProps } from './types';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useLaunchWorkflowFormState } from './useLaunchWorkflowFormState';
-import { workflowsToSearchableSelectorOptions } from './utils';
-
-function generateFetchSearchResults(
-    { listWorkflows }: APIContextValue,
-    workflowId: NamedEntityIdentifier
-) {
-    return async (query: string) => {
-        const { project, domain, name } = workflowId;
-        const { entities: workflows } = await listWorkflows(
-            { project, domain, name },
-            {
-                filter: [
-                    {
-                        key: 'version',
-                        operation: FilterOperationName.CONTAINS,
-                        value: query
-                    }
-                ],
-                sort: {
-                    key: workflowSortFields.createdAt,
-                    direction: SortDirection.DESCENDING
-                }
-            }
-        );
-        return workflowsToSearchableSelectorOptions(workflows);
-    };
-}
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
@@ -58,27 +24,22 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         formInputsRef,
         showErrors,
         inputValueCache,
-        launchPlanSelectorOptions,
         onCancel,
-        onSelectLaunchPlan,
-        onSelectWorkflow,
         onSubmit,
-        selectedLaunchPlan,
-        selectedWorkflow,
         state,
-        workflowSelectorOptions
+        workflowSourceSelectorState
     } = useLaunchWorkflowFormState(props);
     const styles = useStyles();
 
-    // TODO: This won't work correctly with our selected item matching in the state hook, because
-    // the selected item won't exist in the default list of options.
-    // Either:
-    // 1. Store search options in the machine context (meh, it's specific to the components)
-    // 2. Move the search option generation here and pass through the selected items as bare values.
-    const fetchSearchResults = generateFetchSearchResults(
-        useAPIContext(),
-        props.workflowId
-    );
+    const {
+        fetchSearchResults,
+        launchPlanSelectorOptions,
+        onSelectLaunchPlan,
+        onSelectWorkflowVersion,
+        selectedLaunchPlan,
+        selectedWorkflow,
+        workflowSelectorOptions
+    } = workflowSourceSelectorState;
 
     const submit: React.FormEventHandler = event => {
         event.preventDefault();
@@ -107,7 +68,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
             <DialogTitle disableTypography={true} className={styles.header}>
                 <div className={styles.inputLabel}>{formStrings.title}</div>
                 <Typography variant="h6">
-                    {state.context.sourceWorkflowName}
+                    {state.context.sourceWorkflowId}
                 </Typography>
             </DialogTitle>
             <DialogContent dividers={true} className={styles.inputsSection}>
@@ -119,7 +80,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         <SearchableSelector
                             id="launch-workflow-selector"
                             label={formStrings.workflowVersion}
-                            onSelectionChanged={onSelectWorkflow}
+                            onSelectionChanged={onSelectWorkflowVersion}
                             options={workflowSelectorOptions}
                             fetchSearchResults={fetchSearchResults}
                             selectedItem={selectedWorkflow}

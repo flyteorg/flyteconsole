@@ -1,5 +1,6 @@
 import { useMachine } from '@xstate/react';
 import { getCacheKey } from 'components/Cache';
+import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
 import {
@@ -22,34 +23,14 @@ import {
     launchMachine,
     LaunchTypestate
 } from './launchMachine';
-import { SearchableSelectorOption } from './SearchableSelector';
 import {
     LaunchWorkflowFormInputsRef,
     LaunchWorkflowFormProps,
     LaunchWorkflowFormState,
     ParsedInput
 } from './types';
-import {
-    getUnsupportedRequiredInputs,
-    launchPlansToSearchableSelectorOptions,
-    workflowsToSearchableSelectorOptions
-} from './utils';
-
-export function useWorkflowSelectorOptions(workflows: Workflow[]) {
-    return useMemo(() => {
-        const options = workflowsToSearchableSelectorOptions(workflows);
-        if (options.length > 0) {
-            options[0].description = 'latest';
-        }
-        return options;
-    }, [workflows]);
-}
-
-function useLaunchPlanSelectorOptions(launchPlans: LaunchPlan[]) {
-    return useMemo(() => launchPlansToSearchableSelectorOptions(launchPlans), [
-        launchPlans
-    ]);
-}
+import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
+import { getUnsupportedRequiredInputs } from './utils';
 
 async function loadLaunchPlans(
     { listLaunchPlans }: APIContextValue,
@@ -79,7 +60,6 @@ async function loadLaunchPlans(
     const { project, domain, name, version } = workflowVersion;
     const launchPlansPromise = listLaunchPlans(
         { project, domain },
-        // TODO: Only active?
         {
             filter: [
                 {
@@ -110,7 +90,7 @@ async function loadLaunchPlans(
 
 async function loadWorkflowVersions(
     { listWorkflows }: APIContextValue,
-    { preferredWorkflowId, sourceWorkflowName }: LaunchContext
+    { preferredWorkflowId, sourceWorkflowId: sourceWorkflowName }: LaunchContext
 ) {
     if (!sourceWorkflowName) {
         throw new Error('Cannot load workflows, missing workflowName');
@@ -159,9 +139,11 @@ async function loadInputs(
     { getWorkflow }: APIContextValue,
     { defaultInputValues, workflowVersion, launchPlan }: LaunchContext
 ) {
-    // TODO: per-argument errors?
-    if (!workflowVersion || !launchPlan) {
-        throw new Error('Missing arguments attempting to load inputs');
+    if (!workflowVersion) {
+        throw new Error('Failed to load inputs: missing workflowVersion');
+    }
+    if (!launchPlan) {
+        throw new Error('Failed to load inputs: missing launchPlan');
     }
     const workflow = await getWorkflow(workflowVersion);
     const parsedInputs: ParsedInput[] = getInputs(
@@ -252,7 +234,6 @@ export function useLaunchWorkflowFormState({
         values: defaultInputValues
     } = initialParameters;
 
-    const workflowName = sourceWorkflowId.name;
     const apiContext = useAPIContext();
     const [inputValueCache] = useState(createInputValueCache());
     const formInputsRef = useRef<LaunchWorkflowFormInputsRef>(null);
@@ -263,18 +244,14 @@ export function useLaunchWorkflowFormState({
         LaunchEvent,
         LaunchTypestate
     >(launchMachine, {
-        // TODO: Question: Does this replace or merge with the default context?
-        // If replace, we would need a default empty value for the inputs arrays
+        ...defaultStateMachineConfig,
         context: {
             defaultInputValues,
             preferredLaunchPlanId,
             preferredWorkflowId,
-            // TODO: This can only be set once, so we currently would have to force
-            // re-initialization of the form if the workflowId changes.
-            sourceWorkflowName: sourceWorkflowId,
+            sourceWorkflowId,
             sourceType: 'workflow'
         },
-        devTools: true, // TODO: Needs to be based on a common global machine config
         services: useMemo(() => getServices(apiContext, formInputsRef), [
             apiContext,
             formInputsRef
@@ -286,34 +263,8 @@ export function useLaunchWorkflowFormState({
         launchPlan,
         workflowVersionOptions = [],
         parsedInputs,
-        unsupportedRequiredInputs,
         workflowVersion
     } = state.context;
-
-    const workflowSelectorOptions = useWorkflowSelectorOptions(
-        workflowVersionOptions
-    );
-    const launchPlanSelectorOptions = useLaunchPlanSelectorOptions(
-        launchPlanOptions
-    );
-
-    const selectedWorkflow = useMemo(() => {
-        if (!workflowVersion) {
-            return undefined;
-        }
-        return workflowSelectorOptions.find(
-            option => option.id === workflowVersion.version
-        );
-    }, [workflowVersion, workflowVersionOptions]);
-
-    const selectedLaunchPlan = useMemo(() => {
-        if (!launchPlan) {
-            return undefined;
-        }
-        return launchPlanSelectorOptions.find(
-            option => option.id === launchPlan.id.name
-        );
-    }, [launchPlan, launchPlanOptions]);
 
     // Any time the inputs change (even if it's just re-ordering), we must
     // change the form key so that the inputs component will re-mount.
@@ -327,29 +278,35 @@ export function useLaunchWorkflowFormState({
     // Only show errors after first submission for a set of inputs.
     useEffect(() => setShowErrors(false), [formKey]);
 
-    const onSelectWorkflow = (
-        newWorkflow: SearchableSelectorOption<WorkflowId>
-    ) => {
-        if (newWorkflow === selectedWorkflow) {
+    const selectWorkflowVersion = () => (newWorkflow: WorkflowId) => {
+        if (newWorkflow === workflowVersion) {
             return;
         }
         sendEvent({
             type: 'SELECT_WORKFLOW_VERSION',
-            workflowId: newWorkflow.data
+            workflowId: newWorkflow
         });
     };
 
-    const onSelectLaunchPlan = (
-        newLaunchPlan: SearchableSelectorOption<LaunchPlan>
-    ) => {
-        if (newLaunchPlan === selectedLaunchPlan) {
+    const selectLaunchPlan = (newLaunchPlan: LaunchPlan) => {
+        if (newLaunchPlan === launchPlan) {
             return;
         }
         sendEvent({
             type: 'SELECT_LAUNCH_PLAN',
-            launchPlan: newLaunchPlan.data
+            launchPlan: newLaunchPlan
         });
     };
+
+    const workflowSourceSelectorState = useWorkflowSourceSelectorState({
+        launchPlan,
+        launchPlanOptions,
+        sourceWorkflowId,
+        selectLaunchPlan,
+        selectWorkflowVersion,
+        workflowVersion,
+        workflowVersionOptions
+    });
 
     const onSubmit = () => {
         // Show errors after the first submission
@@ -445,15 +402,10 @@ export function useLaunchWorkflowFormState({
         formInputsRef,
         formKey,
         inputValueCache,
-        launchPlanSelectorOptions,
         onCancel,
-        onSelectLaunchPlan,
-        onSelectWorkflow,
         onSubmit,
-        selectedLaunchPlan,
-        selectedWorkflow,
         showErrors,
         state,
-        workflowSelectorOptions
+        workflowSourceSelectorState
     };
 }

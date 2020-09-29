@@ -30,21 +30,30 @@ export interface LaunchWorkflowFormInputsRef {
     validate(): boolean;
 }
 
+export interface WorkflowSourceSelectorState {
+    launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
+    selectedWorkflow?: SearchableSelectorOption<Identifier>;
+    selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
+    workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
+    fetchSearchResults(
+        query: string
+    ): Promise<SearchableSelectorOption<Identifier>[]>;
+    onSelectWorkflowVersion(
+        selected: SearchableSelectorOption<WorkflowId>
+    ): void;
+    onSelectLaunchPlan(selected: SearchableSelectorOption<LaunchPlan>): void;
+}
+
 export interface LaunchWorkflowFormState {
     /** Used to key inputs component so it is re-mounted the list of inputs */
     formKey?: string;
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
     inputValueCache: InputValueMap;
-    launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
-    selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
-    selectedWorkflow?: SearchableSelectorOption<WorkflowId>;
     showErrors: boolean;
     state: State<LaunchContext, LaunchEvent, any, LaunchTypestate>;
-    workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
+    workflowSourceSelectorState: WorkflowSourceSelectorState;
     onCancel(): void;
-    onSelectWorkflow(selected: SearchableSelectorOption<WorkflowId>): void;
     onSubmit(): void;
-    onSelectLaunchPlan(selected: SearchableSelectorOption<LaunchPlan>): void;
 }
 
 export enum InputType {
