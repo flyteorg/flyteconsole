@@ -6,7 +6,7 @@ import {
     WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
-import { assign, Machine, MachineConfig, StateValueMap } from 'xstate';
+import { assign, Machine, MachineConfig } from 'xstate';
 import { LiteralValueMap, ParsedInput } from './types';
 
 export type SelectWorkflowVersionEvent = {
@@ -96,21 +96,29 @@ export interface LaunchSchema {
                 selectSource: {
                     states: {
                         selectType: {};
-                        workflowSelected: {
+                        workflowSource: {
                             states: {
-                                loadingWorkflowVersions: {};
-                                failedLoadingWorkflowVersions: {};
-                                selectVersion: {};
-                                loadingLaunchPlans: {};
-                                failedLoadingLaunchPlans: {};
-                                selectLaunchPlan: {};
+                                workflow: {
+                                    states: {
+                                        loading: {};
+                                        failedLoading: {};
+                                        select: {};
+                                    };
+                                };
+                                launchPlan: {
+                                    states: {
+                                        loading: {};
+                                        failedLoading: {};
+                                        select: {};
+                                    };
+                                };
                             };
                         };
-                        taskSelected: {
+                        taskSource: {
                             states: {
-                                loadingTaskVersions: {};
-                                failedLoadingTaskVersions: {};
-                                selectVersion: {};
+                                loading: {};
+                                failedLoading: {};
+                                select: {};
                             };
                         };
                     };
@@ -131,8 +139,8 @@ export interface LaunchSchema {
                             states: {
                                 validating: {};
                                 submitting: {};
-                                submitFailed: {};
-                                submitSucceeded: {};
+                                failed: {};
+                                succeeded: {};
                             };
                         };
                     };
@@ -142,8 +150,56 @@ export interface LaunchSchema {
     };
 }
 
-// TODO: Handle transitionless events for setting:
-// * preferred workflow version / launch plan
+export type LaunchTypestate =
+    | {
+          value:
+              | { cancelled: string }
+              | { launchPlan: string }
+              | { working: string }
+              | { workflow: string }
+              | { sourceSelected: string }
+              | { submit: string };
+          context: LaunchContext;
+      }
+    | {
+          value: { workflow: 'select' };
+          context: LaunchContext & {
+              workflowVersionOptions: Workflow[];
+          };
+      }
+    | {
+          value: { launchPlan: 'select' };
+          context: LaunchContext & {
+              workflowVersionOptions: Workflow[];
+              launchPlanOptions: LaunchPlan[];
+          };
+      }
+    | {
+          value: { sourceSelected: 'unsupportedRequiredInputs' };
+          context: LaunchContext & {
+              unsupportedRequiredInputs: [];
+          };
+      }
+    | {
+          value:
+              | { sourceSelected: 'enterInputs' }
+              | { sourceSelected: 'submit' };
+          context: LaunchContext & {
+              parsedInputs: [];
+          };
+      }
+    | {
+          value: { submit: 'succeeded' };
+          context: LaunchContext & {
+              resultExecutionId: WorkflowExecutionIdentifier;
+          };
+      }
+    | {
+          value: { submit: 'failed' };
+          context: LaunchContext & {
+              error: Error;
+          };
+      };
 
 const launchMachineConfig: MachineConfig<
     LaunchContext,
@@ -176,7 +232,7 @@ const launchMachineConfig: MachineConfig<
                         selectType: {
                             always: [
                                 {
-                                    target: 'workflowSelected',
+                                    target: 'workflowSource',
                                     // TODO: Possible to interpret this machine without setting
                                     // a source id. That's an unrecoverable error. What should we do there?
                                     cond: ({
@@ -187,97 +243,110 @@ const launchMachineConfig: MachineConfig<
                                         !!sourceWorkflowName
                                 },
                                 {
-                                    target: 'taskSelected',
+                                    target: 'taskSource',
                                     cond: ({ sourceType, sourceTaskName }) =>
                                         sourceType === 'task' &&
                                         !!sourceTaskName
                                 }
                             ]
                         },
-                        workflowSelected: {
-                            initial: 'loadingWorkflowVersions',
+                        workflowSource: {
+                            initial: 'workflow',
                             states: {
-                                loadingWorkflowVersions: {
-                                    invoke: {
-                                        src: 'loadWorkflowVersions',
-                                        onDone: {
-                                            target: 'loadingLaunchPlans',
-                                            actions: ['setWorkflowOptions']
+                                workflow: {
+                                    initial: 'loading',
+                                    states: {
+                                        loading: {
+                                            invoke: {
+                                                src: 'loadWorkflowVersions',
+                                                onDone: {
+                                                    target: '.select',
+                                                    actions: [
+                                                        'setWorkflowOptions'
+                                                    ]
+                                                },
+                                                onError: {
+                                                    target: '.failedLoading',
+                                                    actions: ['setError']
+                                                }
+                                            }
                                         },
-                                        onError: {
-                                            target:
-                                                'failedLoadingWorkflowVersions',
-                                            actions: ['setError']
-                                        }
-                                    }
-                                },
-                                failedLoadingWorkflowVersions: {
-                                    on: {
-                                        RETRY: 'loadingWorkflowVersions'
-                                    }
-                                },
-                                selectVersion: {
-                                    // todo: handle preferred version
-                                    on: {
-                                        SELECT_WORKFLOW_VERSION: {
-                                            target: 'loadingLaunchPlans',
-                                            actions: ['setWorkflowVersion']
-                                        }
-                                    }
-                                },
-                                loadingLaunchPlans: {
-                                    id: '#loadingLaunchPlans',
-                                    invoke: {
-                                        src: 'loadLaunchPlans',
-                                        onDone: {
-                                            target: 'selectLaunchPlan',
-                                            actions: ['setLaunchPlanOptions']
+                                        failedLoading: {
+                                            on: {
+                                                RETRY: '.loading'
+                                            }
                                         },
-                                        onError: {
-                                            target: 'failedLoadingLaunchPlans',
-                                            actions: ['setError']
+                                        select: {
+                                            // todo: handle preferred version
+                                            on: {
+                                                SELECT_WORKFLOW_VERSION: {
+                                                    target: 'launchPlan',
+                                                    actions: [
+                                                        'setWorkflowVersion'
+                                                    ]
+                                                }
+                                            }
                                         }
                                     }
                                 },
-                                failedLoadingLaunchPlans: {
-                                    on: {
-                                        RETRY: 'loadingLaunchPlans'
-                                    }
-                                },
-                                selectLaunchPlan: {
-                                    // todo: handle preferred launch plan
-                                    on: {
-                                        SELECT_LAUNCH_PLAN: {
-                                            target: '#loadingInputs',
-                                            actions: ['setLaunchPlan']
+                                launchPlan: {
+                                    initial: 'loading',
+                                    states: {
+                                        loading: {
+                                            id: '#loadingLaunchPlans',
+                                            invoke: {
+                                                src: 'loadLaunchPlans',
+                                                onDone: {
+                                                    target: '.select',
+                                                    actions: [
+                                                        'setLaunchPlanOptions'
+                                                    ]
+                                                },
+                                                onError: {
+                                                    target: '.failedLoading',
+                                                    actions: ['setError']
+                                                }
+                                            }
+                                        },
+                                        failedLoading: {
+                                            on: {
+                                                RETRY: '.loading'
+                                            }
+                                        },
+                                        select: {
+                                            on: {
+                                                SELECT_LAUNCH_PLAN: {
+                                                    target: '#loadingInputs',
+                                                    actions: ['setLaunchPlan']
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         },
-                        taskSelected: {
-                            initial: 'loadingTaskVersions',
+                        taskSource: {
+                            initial: 'loading',
                             states: {
-                                loadingTaskVersions: {
+                                loading: {
                                     invoke: {
                                         src: 'loadTaskVersions',
                                         onDone: {
-                                            target: 'selectVersion',
+                                            target: '.select',
                                             actions: ['setTaskVersionOptions']
                                         },
                                         onError: {
-                                            target: 'failedLoadingTaskVersions',
+                                            target: '.failedLoading',
                                             actions: ['setError']
                                         }
                                     }
                                 },
-                                failedLoadingTaskVersions: {
+                                failedLoading: {
                                     on: {
-                                        RETRY: 'loadingTaskVersions'
+                                        RETRY: '.loading'
                                     }
                                 },
-                                selectVersion: {
-                                    // todo: handle preferred version
+                                select: {
                                     on: {
                                         SELECT_TASK_VERSION: {
                                             target: '#loadingInputs',
@@ -372,22 +441,22 @@ const launchMachineConfig: MachineConfig<
                                     invoke: {
                                         src: 'submit',
                                         onDone: {
-                                            target: 'submitSucceeded',
+                                            target: '.succeeded',
                                             // TODO: Do we need this or can the consumer just listen to the `data` property of the machine?
                                             actions: ['setExecutionId']
                                         },
                                         onError: {
-                                            target: 'submitFailed',
+                                            target: '.failed',
                                             actions: ['setError']
                                         }
                                     }
                                 },
-                                submitFailed: {
+                                failed: {
                                     on: {
-                                        SUBMIT: 'submitting'
+                                        SUBMIT: '.submitting'
                                     }
                                 },
-                                submitSucceeded: {
+                                succeeded: {
                                     type: 'final'
                                 }
                             }

@@ -1,7 +1,7 @@
 import { useMachine } from '@xstate/react';
 import { getCacheKey } from 'components/Cache';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { partial, uniqBy } from 'lodash';
+import { isEqual, partial, uniqBy } from 'lodash';
 import {
     FilterOperationName,
     LaunchPlan,
@@ -16,7 +16,12 @@ import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { getInputs } from './getInputs';
 import { createInputValueCache } from './inputValueCache';
-import { LaunchContext, LaunchEvent, launchMachine } from './launchMachine';
+import {
+    LaunchContext,
+    LaunchEvent,
+    launchMachine,
+    LaunchTypestate
+} from './launchMachine';
 import { SearchableSelectorOption } from './SearchableSelector';
 import {
     LaunchWorkflowFormInputsRef,
@@ -251,28 +256,30 @@ export function useLaunchWorkflowFormState({
     const apiContext = useAPIContext();
     const [inputValueCache] = useState(createInputValueCache());
     const formInputsRef = useRef<LaunchWorkflowFormInputsRef>(null);
+    const [showErrors, setShowErrors] = useState(false);
 
-    const [state, sendEvent, service] = useMachine<LaunchContext, LaunchEvent>(
-        launchMachine,
-        {
-            // TODO: Question: Does this replace or merge with the default context?
-            // If replace, we would need a default empty value for the inputs arrays
-            context: {
-                defaultInputValues,
-                preferredLaunchPlanId,
-                preferredWorkflowId,
-                // TODO: This can only be set once, so we currently would have to force
-                // re-initialization of the form if the workflowId changes.
-                sourceWorkflowName: sourceWorkflowId,
-                sourceType: 'workflow'
-            },
-            devTools: true, // TODO: Needs to be based on a common global machine config
-            services: useMemo(() => getServices(apiContext, formInputsRef), [
-                apiContext,
-                formInputsRef
-            ])
-        }
-    );
+    const [state, sendEvent, service] = useMachine<
+        LaunchContext,
+        LaunchEvent,
+        LaunchTypestate
+    >(launchMachine, {
+        // TODO: Question: Does this replace or merge with the default context?
+        // If replace, we would need a default empty value for the inputs arrays
+        context: {
+            defaultInputValues,
+            preferredLaunchPlanId,
+            preferredWorkflowId,
+            // TODO: This can only be set once, so we currently would have to force
+            // re-initialization of the form if the workflowId changes.
+            sourceWorkflowName: sourceWorkflowId,
+            sourceType: 'workflow'
+        },
+        devTools: true, // TODO: Needs to be based on a common global machine config
+        services: useMemo(() => getServices(apiContext, formInputsRef), [
+            apiContext,
+            formInputsRef
+        ])
+    });
 
     const {
         launchPlanOptions = [],
@@ -283,25 +290,30 @@ export function useLaunchWorkflowFormState({
         workflowVersion
     } = state.context;
 
-    const [
-        lastSelectedLaunchPlanName,
-        setLastSelectedLaunchPlanName
-    ] = useState<string>();
-    const [showErrors, setShowErrors] = useState(false);
-
     const workflowSelectorOptions = useWorkflowSelectorOptions(
         workflowVersionOptions
     );
-    const [selectedWorkflow, setSelectedWorkflow] = useState<
-        SearchableSelectorOption<WorkflowId>
-    >();
-
     const launchPlanSelectorOptions = useLaunchPlanSelectorOptions(
         launchPlanOptions
     );
-    const [selectedLaunchPlan, setSelectedLaunchPlan] = useState<
-        SearchableSelectorOption<LaunchPlan>
-    >();
+
+    const selectedWorkflow = useMemo(() => {
+        if (!workflowVersion) {
+            return undefined;
+        }
+        return workflowSelectorOptions.find(
+            option => option.id === workflowVersion.version
+        );
+    }, [workflowVersion, workflowVersionOptions]);
+
+    const selectedLaunchPlan = useMemo(() => {
+        if (!launchPlan) {
+            return undefined;
+        }
+        return launchPlanSelectorOptions.find(
+            option => option.id === launchPlan.id.name
+        );
+    }, [launchPlan, launchPlanOptions]);
 
     // Any time the inputs change (even if it's just re-ordering), we must
     // change the form key so that the inputs component will re-mount.
@@ -321,8 +333,6 @@ export function useLaunchWorkflowFormState({
         if (newWorkflow === selectedWorkflow) {
             return;
         }
-        setSelectedLaunchPlan(undefined);
-        setSelectedWorkflow(newWorkflow);
         sendEvent({
             type: 'SELECT_WORKFLOW_VERSION',
             workflowId: newWorkflow.data
@@ -335,15 +345,11 @@ export function useLaunchWorkflowFormState({
         if (newLaunchPlan === selectedLaunchPlan) {
             return;
         }
-        setLastSelectedLaunchPlanName(newLaunchPlan.name);
-        setSelectedLaunchPlan(newLaunchPlan);
         sendEvent({
             type: 'SELECT_LAUNCH_PLAN',
             launchPlan: newLaunchPlan.data
         });
     };
-
-    // TODO: Subscribe to state transitions, navigate away on final submit state.
 
     const onSubmit = () => {
         // Show errors after the first submission
@@ -357,86 +363,83 @@ export function useLaunchWorkflowFormState({
 
     useEffect(() => {
         const subscription = service.subscribe(state => {
-            // TODO: Handle selecting default workflow and launch plan in a similar manner using code below
-            if (state.matches({ submit: 'submitSucceeded' })) {
+            // On transition to final success state, read the resulting execution
+            // id and navigate to the Execution Details page.
+            if (state.matches({ submit: 'succeeded' })) {
                 history.push(
                     Routes.ExecutionDetails.makeUrl(
                         state.context.resultExecutionId
                     )
                 );
             }
+
+            if (state.matches({ workflow: 'select' })) {
+                const {
+                    workflowVersionOptions,
+                    preferredWorkflowId
+                } = state.context;
+                if (workflowVersionOptions.length > 0) {
+                    let workflowToSelect = workflowVersionOptions[0];
+                    if (preferredWorkflowId) {
+                        const preferred = workflowVersionOptions.find(
+                            ({ id }) => isEqual(id, preferredWorkflowId)
+                        );
+                        if (preferred) {
+                            workflowToSelect = preferred;
+                        }
+                    }
+                    service.send({
+                        type: 'SELECT_WORKFLOW_VERSION',
+                        workflowId: workflowToSelect.id
+                    });
+                }
+            }
+
+            if (state.matches({ launchPlan: 'select' })) {
+                if (!launchPlanOptions.length) {
+                    return;
+                }
+
+                let launchPlanToSelect = launchPlanOptions[0];
+                /* Attempt to select, in order:
+                 * 1. The last launch plan that was selected, matching by the name, to preserve
+                 *    any user selection before switching workflow versions.
+                 * 2. The launch plan that was specified when initializing the form, by full id
+                 * 3. The default launch plan, which has the same `name` as the workflow
+                 * 4. The first launch plan in the list
+                 */
+                if (launchPlan) {
+                    const lastSelected = launchPlanOptions.find(
+                        ({ id: { name } }) => name === launchPlan.id.name
+                    );
+                    if (lastSelected) {
+                        launchPlanToSelect = lastSelected;
+                    }
+                } else if (preferredLaunchPlanId) {
+                    const preferred = launchPlanOptions.find(({ id }) =>
+                        isEqual(id, preferredLaunchPlanId)
+                    );
+                    if (preferred) {
+                        launchPlanToSelect = preferred;
+                    }
+                } else {
+                    const defaultLaunchPlan = launchPlanOptions.find(
+                        ({ id: { name } }) => name === sourceWorkflowId.name
+                    );
+                    if (defaultLaunchPlan) {
+                        launchPlanToSelect = defaultLaunchPlan;
+                    }
+                }
+
+                service.send({
+                    type: 'SELECT_LAUNCH_PLAN',
+                    launchPlan: launchPlanToSelect
+                });
+            }
         });
 
         return subscription.unsubscribe;
     }, [service]);
-
-    // TODO: Two options here:
-    // Thought: If we're storing preferred ids in the machine, does it make sense to keep the logic there so it always
-    // does that when using the machine?
-    // 1: Do it with logic in the state machine
-    // When entering the selectLaunchPlan state, check for a preferred launch plan
-    // and attempt to send the event to select it. (catch: we manage the selector state
-    // separately in this hook, so we would need to move it into the machine or
-    // update how we determine the currently selected item to base it off the value from the machine)
-    // 2: Use subscriptions, watch for state change here. If it's the workflows loaded event,
-    // then see if we can do a selectLaunchPlan here
-
-    // Once workflows have loaded, attempt to select the preferred workflow
-    // plan, or fall back to selecting the first option
-    // useEffect(() => {
-    //     if (workflowSelectorOptions.length > 0 && !selectedWorkflow) {
-    //         if (preferredWorkflowId) {
-    //             const preferred = workflowSelectorOptions.find(({ data }) =>
-    //                 isEqual(data, preferredWorkflowId)
-    //             );
-    //             if (preferred) {
-    //                 setWorkflow(preferred);
-    //                 return;
-    //             }
-    //         }
-    //         setWorkflow(workflowSelectorOptions[0]);
-    //     }
-    // }, [state.matches('')]);
-
-    // TODO: Similar to above, pick one of two options for maintaining this functionality.
-
-    // Once launch plans have been loaded, attempt to keep the previously
-    // selected launch plan, followed by the preferred launch plan, the one
-    // matching the workflow name, or just the first option.
-    // useEffect(() => {
-    //     if (!launchPlanSelectorOptions.length) {
-    //         return;
-    //     }
-
-    //     if (lastSelectedLaunchPlanName) {
-    //         const lastSelected = launchPlanSelectorOptions.find(
-    //             ({ name }) => name === lastSelectedLaunchPlanName
-    //         );
-    //         if (lastSelected) {
-    //             onSelectLaunchPlan(lastSelected);
-    //             return;
-    //         }
-    //     }
-
-    //     if (preferredLaunchPlanId) {
-    //         const preferred = launchPlanSelectorOptions.find(
-    //             ({ data: { id } }) => isEqual(id, preferredLaunchPlanId)
-    //         );
-    //         if (preferred) {
-    //             onSelectLaunchPlan(preferred);
-    //             return;
-    //         }
-    //     }
-
-    //     const defaultLaunchPlan = launchPlanSelectorOptions.find(
-    //         ({ id }) => id === sourceWorkflowId.name
-    //     );
-    //     if (defaultLaunchPlan) {
-    //         onSelectLaunchPlan(defaultLaunchPlan);
-    //         return;
-    //     }
-    //     onSelectLaunchPlan(launchPlanSelectorOptions[0]);
-    // }, [launchPlanSelectorOptions]);
 
     return {
         formInputsRef,
@@ -450,9 +453,7 @@ export function useLaunchWorkflowFormState({
         selectedLaunchPlan,
         selectedWorkflow,
         showErrors,
-        unsupportedRequiredInputs,
-        workflowName,
-        workflowSelectorOptions,
-        inputs: parsedInputs
+        state,
+        workflowSelectorOptions
     };
 }

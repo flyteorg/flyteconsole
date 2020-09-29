@@ -6,10 +6,8 @@ import {
     FormHelperText,
     Typography
 } from '@material-ui/core';
-import { WaitForData } from 'components/common';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { isLoadingState } from 'components/hooks/fetchMachine';
 import {
     FilterOperationName,
     NamedEntityIdentifier,
@@ -55,9 +53,28 @@ function generateFetchSearchResults(
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
-    const state = useLaunchWorkflowFormState(props);
-    const { submissionState, unsupportedRequiredInputs, workflows } = state;
+    const {
+        formKey,
+        formInputsRef,
+        showErrors,
+        inputValueCache,
+        launchPlanSelectorOptions,
+        onCancel,
+        onSelectLaunchPlan,
+        onSelectWorkflow,
+        onSubmit,
+        selectedLaunchPlan,
+        selectedWorkflow,
+        state,
+        workflowSelectorOptions
+    } = useLaunchWorkflowFormState(props);
     const styles = useStyles();
+
+    // TODO: This won't work correctly with our selected item matching in the state hook, because
+    // the selected item won't exist in the default list of options.
+    // Either:
+    // 1. Store search options in the machine context (meh, it's specific to the components)
+    // 2. Move the search option generation here and pass through the selected items as bare values.
     const fetchSearchResults = generateFetchSearchResults(
         useAPIContext(),
         props.workflowId
@@ -65,24 +82,36 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
 
     const submit: React.FormEventHandler = event => {
         event.preventDefault();
-        state.onSubmit();
+        onSubmit();
     };
 
-    const submissionInFlight = isLoadingState(submissionState.state);
-    const preventSubmit =
-        submissionInFlight ||
-        // TODO: This should all be done based on matching the machine state
-        !state.inputsReady ||
-        unsupportedRequiredInputs.length > 0;
+    const submissionInFlight = state.matches({ submit: 'submitting' });
+    const canSubmit = !state.matches({ sourceSelected: 'enterInputs' });
+    const showWorkflowSelector = [
+        { working: 'sourceSelected' },
+        { workflow: 'select' }
+    ].some(state.matches);
+    const showLaunchPlanSelector = [
+        { working: 'sourceSelected' },
+        { launchPlan: 'select' }
+    ].some(state.matches);
+    const showInputs = [
+        { sourceSelected: 'enterInputs' },
+        { sourceSelected: 'submit' }
+    ].some(state.matches);
 
+    // TODO: We removed all loading indicators here. Decide if we want skeletons
+    // instead.
     return (
-        <InputValueCacheContext.Provider value={state.inputValueCache}>
+        <InputValueCacheContext.Provider value={inputValueCache}>
             <DialogTitle disableTypography={true} className={styles.header}>
                 <div className={styles.inputLabel}>{formStrings.title}</div>
-                <Typography variant="h6">{state.workflowName}</Typography>
+                <Typography variant="h6">
+                    {state.context.sourceWorkflowName}
+                </Typography>
             </DialogTitle>
             <DialogContent dividers={true} className={styles.inputsSection}>
-                <WaitForData spinnerVariant="medium" {...workflows}>
+                {showWorkflowSelector ? (
                     <section
                         title={formStrings.workflowVersion}
                         className={styles.formControl}
@@ -90,48 +119,47 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         <SearchableSelector
                             id="launch-workflow-selector"
                             label={formStrings.workflowVersion}
-                            onSelectionChanged={state.onSelectWorkflow}
-                            options={state.workflowSelectorOptions}
+                            onSelectionChanged={onSelectWorkflow}
+                            options={workflowSelectorOptions}
                             fetchSearchResults={fetchSearchResults}
-                            selectedItem={state.selectedWorkflow}
+                            selectedItem={selectedWorkflow}
                         />
                     </section>
-                    <WaitForData {...state.launchPlans} spinnerVariant="medium">
-                        <section
-                            title={formStrings.launchPlan}
-                            className={styles.formControl}
-                        >
-                            <SearchableSelector
-                                id="launch-lp-selector"
-                                label={formStrings.launchPlan}
-                                onSelectionChanged={state.onSelectLaunchPlan}
-                                options={state.launchPlanSelectorOptions}
-                                selectedItem={state.selectedLaunchPlan}
-                            />
-                        </section>
-                    </WaitForData>
-                    {state.inputsReady ? (
-                        <section title={formStrings.inputs}>
-                            {state.unsupportedRequiredInputs.length > 0 ? (
-                                <UnsupportedRequiredInputsError
-                                    inputs={state.unsupportedRequiredInputs}
-                                />
-                            ) : (
-                                <LaunchWorkflowFormInputs
-                                    key={state.formKey}
-                                    inputs={state.inputs}
-                                    ref={state.formInputsRef}
-                                    showErrors={state.showErrors}
-                                />
-                            )}
-                        </section>
+                ) : null}
+                {showLaunchPlanSelector ? (
+                    <section
+                        title={formStrings.launchPlan}
+                        className={styles.formControl}
+                    >
+                        <SearchableSelector
+                            id="launch-lp-selector"
+                            label={formStrings.launchPlan}
+                            onSelectionChanged={onSelectLaunchPlan}
+                            options={launchPlanSelectorOptions}
+                            selectedItem={selectedLaunchPlan}
+                        />
+                    </section>
+                ) : null}
+                <section title={formStrings.inputs}>
+                    {state.matches({ sourceSelected: 'unsupportedInputs' }) ? (
+                        <UnsupportedRequiredInputsError
+                            inputs={state.context.unsupportedRequiredInputs}
+                        />
                     ) : null}
-                </WaitForData>
+                    {showInputs ? (
+                        <LaunchWorkflowFormInputs
+                            key={formKey}
+                            inputs={state.context.parsedInputs}
+                            ref={formInputsRef}
+                            showErrors={showErrors}
+                        />
+                    ) : null}
+                </section>
             </DialogContent>
             <div className={styles.footer}>
-                {!!submissionState.lastError && (
+                {state.matches({ submit: 'failed' }) && (
                     <FormHelperText error={true}>
-                        {submissionState.lastError.message}
+                        {state.context.error.message}
                     </FormHelperText>
                 )}
                 <DialogActions>
@@ -139,14 +167,14 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         color="primary"
                         disabled={submissionInFlight}
                         id="launch-workflow-cancel"
-                        onClick={state.onCancel}
+                        onClick={onCancel}
                         variant="outlined"
                     >
                         {formStrings.cancel}
                     </Button>
                     <Button
                         color="primary"
-                        disabled={preventSubmit}
+                        disabled={!canSubmit}
                         id="launch-workflow-submit"
                         onClick={submit}
                         type="submit"
