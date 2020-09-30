@@ -18,10 +18,8 @@ import { Routes } from 'routes/routes';
 import { getInputs } from './getInputs';
 import { createInputValueCache } from './inputValueCache';
 import {
-    flatLaunchMachine,
     LaunchContext,
     LaunchEvent,
-    LaunchFlatTypestate,
     launchMachine,
     LaunchState,
     LaunchTypestate
@@ -88,7 +86,7 @@ async function loadLaunchPlans(
         ...launchPlansResult.entities,
         ...preferredLaunchPlanResult.entities
     ];
-    return { launchPlans: uniqBy(merged, ({ id }) => id.name) };
+    return uniqBy(merged, ({ id }) => id.name);
 }
 
 async function loadWorkflowVersions(
@@ -135,7 +133,7 @@ async function loadWorkflowVersions(
         ...workflowsResult.entities,
         ...preferredWorkflowResult.entities
     ];
-    return { workflows: uniqBy(merged, ({ id: { version } }) => version) };
+    return uniqBy(merged, ({ id: { version } }) => version);
 }
 
 async function loadInputs(
@@ -156,7 +154,7 @@ async function loadInputs(
     );
 
     return {
-        parsedInputs: [],
+        parsedInputs,
         unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs)
     };
 }
@@ -250,8 +248,8 @@ export function useLaunchWorkflowFormState({
     const [state, sendEvent, service] = useMachine<
         LaunchContext,
         LaunchEvent,
-        LaunchFlatTypestate
-    >(flatLaunchMachine, {
+        LaunchTypestate
+    >(launchMachine, {
         ...defaultStateMachineConfig,
         services,
         context: {
@@ -283,7 +281,7 @@ export function useLaunchWorkflowFormState({
     // Only show errors after first submission for a set of inputs.
     useEffect(() => setShowErrors(false), [formKey]);
 
-    const selectWorkflowVersion = () => (newWorkflow: WorkflowId) => {
+    const selectWorkflowVersion = (newWorkflow: WorkflowId) => {
         if (newWorkflow === workflowVersion) {
             return;
         }
@@ -324,24 +322,24 @@ export function useLaunchWorkflowFormState({
     };
 
     useEffect(() => {
-        const subscription = service.subscribe(state => {
+        const subscription = service.subscribe(newState => {
             // On transition to final success state, read the resulting execution
             // id and navigate to the Execution Details page.
             // if (state.matches({ submit: 'succeeded' })) {
-            if (state.matches(LaunchState.SUBMIT_SUCCEEDED)) {
+            if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
                 history.push(
                     Routes.ExecutionDetails.makeUrl(
-                        state.context.resultExecutionId
+                        newState.context.resultExecutionId
                     )
                 );
             }
 
             // if (state.matches({ workflow: 'select' })) {
-            if (state.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
+            if (newState.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
                 const {
                     workflowVersionOptions,
                     preferredWorkflowId
-                } = state.context;
+                } = newState.context;
                 if (workflowVersionOptions.length > 0) {
                     let workflowToSelect = workflowVersionOptions[0];
                     if (preferredWorkflowId) {
@@ -352,7 +350,7 @@ export function useLaunchWorkflowFormState({
                             workflowToSelect = preferred;
                         }
                     }
-                    service.send({
+                    sendEvent({
                         type: 'SELECT_WORKFLOW_VERSION',
                         workflowId: workflowToSelect.id
                     });
@@ -360,7 +358,12 @@ export function useLaunchWorkflowFormState({
             }
 
             // if (state.matches({ launchPlan: 'select' })) {
-            if (state.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
+            if (newState.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
+                const {
+                    launchPlan,
+                    launchPlanOptions,
+                    sourceWorkflowId
+                } = newState.context;
                 if (!launchPlanOptions.length) {
                     return;
                 }
@@ -396,7 +399,7 @@ export function useLaunchWorkflowFormState({
                     }
                 }
 
-                service.send({
+                sendEvent({
                     type: 'SELECT_LAUNCH_PLAN',
                     launchPlan: launchPlanToSelect
                 });
@@ -404,7 +407,7 @@ export function useLaunchWorkflowFormState({
         });
 
         return subscription.unsubscribe;
-    }, [service]);
+    }, [service, sendEvent]);
 
     return {
         formInputsRef,

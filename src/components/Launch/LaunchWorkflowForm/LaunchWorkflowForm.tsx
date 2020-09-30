@@ -78,7 +78,6 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         LaunchState.LOADING_WORKFLOW_VERSIONS,
         LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS
     ].some(state.matches);
-    console.log(JSON.stringify(state.value), showWorkflowSelector);
     const showLaunchPlanSelector =
         state.context.workflowVersion &&
         ![
@@ -86,6 +85,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
             LaunchState.FAILED_LOADING_LAUNCH_PLANS
         ].some(state.matches);
     const showInputs = [
+        LaunchState.UNSUPPORTED_INPUTS,
         LaunchState.ENTER_INPUTS,
         LaunchState.VALIDATING_INPUTS,
         LaunchState.INVALID_INPUTS,
@@ -135,21 +135,22 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         />
                     </section>
                 ) : null}
-                <section title={formStrings.inputs}>
-                    {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
-                        <UnsupportedRequiredInputsError
-                            inputs={state.context.unsupportedRequiredInputs}
-                        />
-                    ) : null}
-                    {showInputs ? (
-                        <LaunchWorkflowFormInputs
-                            key={formKey}
-                            inputs={state.context.parsedInputs}
-                            ref={formInputsRef}
-                            showErrors={showErrors}
-                        />
-                    ) : null}
-                </section>
+                {showInputs ? (
+                    <section title={formStrings.inputs}>
+                        {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
+                            <UnsupportedRequiredInputsError
+                                inputs={state.context.unsupportedRequiredInputs}
+                            />
+                        ) : (
+                            <LaunchWorkflowFormInputs
+                                key={formKey}
+                                inputs={state.context.parsedInputs}
+                                ref={formInputsRef}
+                                showErrors={showErrors}
+                            />
+                        )}
+                    </section>
+                ) : null}
             </DialogContent>
             <div className={styles.footer}>
                 {state.matches(LaunchState.SUBMIT_FAILED) ? (
