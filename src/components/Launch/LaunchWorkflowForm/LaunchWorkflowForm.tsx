@@ -10,6 +10,7 @@ import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress
 import * as React from 'react';
 import { formStrings } from './constants';
 import { InputValueCacheContext } from './inputValueCache';
+import { LaunchState } from './launchMachine';
 import { LaunchWorkflowFormInputs } from './LaunchWorkflowFormInputs';
 import { SearchableSelector } from './SearchableSelector';
 import { useStyles } from './styles';
@@ -46,19 +47,52 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         onSubmit();
     };
 
-    const submissionInFlight = state.matches({ submit: 'submitting' });
-    const canSubmit = !state.matches({ sourceSelected: 'enterInputs' });
-    const showWorkflowSelector = [
-        { working: 'sourceSelected' },
-        { workflow: 'select' }
+    // const submissionInFlight = state.matches({ submit: 'submitting' });
+    // const canSubmit = !state.matches({ sourceSelected: 'enterInputs' });
+    // const showWorkflowSelector = [
+    //     { working: 'sourceSelected' },
+    //     { workflow: 'select' }
+    // ].some(state.matches);
+    // console.log(JSON.stringify(state.value), showWorkflowSelector);
+    // console.log(
+    //     'dot match',
+    //     state.matches('select')
+    // );
+    // const showLaunchPlanSelector = [
+    //     { working: 'sourceSelected' },
+    //     { launchPlan: 'select' }
+    // ].some(state.matches);
+    // const showInputs = [
+    //     { sourceSelected: 'enterInputs' },
+    //     { sourceSelected: 'submit' }
+    // ].some(state.matches);
+
+    const submissionInFlight = state.matches(LaunchState.SUBMITTING);
+    const canSubmit = [
+        LaunchState.ENTER_INPUTS,
+        LaunchState.VALIDATING_INPUTS,
+        LaunchState.INVALID_INPUTS,
+        LaunchState.SUBMIT_FAILED
     ].some(state.matches);
-    const showLaunchPlanSelector = [
-        { working: 'sourceSelected' },
-        { launchPlan: 'select' }
+    const showWorkflowSelector = ![
+        LaunchState.LOADING_WORKFLOW_VERSIONS,
+        LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS
     ].some(state.matches);
+    console.log(JSON.stringify(state.value), showWorkflowSelector);
+    const showLaunchPlanSelector =
+        state.context.workflowVersion &&
+        ![
+            LaunchState.LOADING_LAUNCH_PLANS,
+            LaunchState.FAILED_LOADING_LAUNCH_PLANS
+        ].some(state.matches);
     const showInputs = [
-        { sourceSelected: 'enterInputs' },
-        { sourceSelected: 'submit' }
+        LaunchState.ENTER_INPUTS,
+        LaunchState.VALIDATING_INPUTS,
+        LaunchState.INVALID_INPUTS,
+        LaunchState.SUBMIT_VALIDATING,
+        LaunchState.SUBMITTING,
+        LaunchState.SUBMIT_FAILED,
+        LaunchState.SUBMIT_SUCCEEDED
     ].some(state.matches);
 
     // TODO: We removed all loading indicators here. Decide if we want skeletons
@@ -68,7 +102,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
             <DialogTitle disableTypography={true} className={styles.header}>
                 <div className={styles.inputLabel}>{formStrings.title}</div>
                 <Typography variant="h6">
-                    {state.context.sourceWorkflowId}
+                    {state.context.sourceWorkflowId?.name}
                 </Typography>
             </DialogTitle>
             <DialogContent dividers={true} className={styles.inputsSection}>
@@ -102,7 +136,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                     </section>
                 ) : null}
                 <section title={formStrings.inputs}>
-                    {state.matches({ sourceSelected: 'unsupportedInputs' }) ? (
+                    {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
                         <UnsupportedRequiredInputsError
                             inputs={state.context.unsupportedRequiredInputs}
                         />
@@ -118,11 +152,11 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                 </section>
             </DialogContent>
             <div className={styles.footer}>
-                {state.matches({ submit: 'failed' }) && (
+                {state.matches(LaunchState.SUBMIT_FAILED) ? (
                     <FormHelperText error={true}>
                         {state.context.error.message}
                     </FormHelperText>
-                )}
+                ) : null}
                 <DialogActions>
                     <Button
                         color="primary"

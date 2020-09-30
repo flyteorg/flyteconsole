@@ -7,7 +7,12 @@ import {
     WorkflowId
 } from 'models';
 import { State } from 'xstate';
-import { LaunchContext, LaunchEvent, LaunchTypestate } from './launchMachine';
+import {
+    LaunchContext,
+    LaunchEvent,
+    LaunchFlatTypestate,
+    LaunchTypestate
+} from './launchMachine';
 import { SearchableSelectorOption } from './SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
@@ -50,7 +55,7 @@ export interface LaunchWorkflowFormState {
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
     inputValueCache: InputValueMap;
     showErrors: boolean;
-    state: State<LaunchContext, LaunchEvent, any, LaunchTypestate>;
+    state: State<LaunchContext, LaunchEvent, any, LaunchFlatTypestate>;
     workflowSourceSelectorState: WorkflowSourceSelectorState;
     onCancel(): void;
     onSubmit(): void;

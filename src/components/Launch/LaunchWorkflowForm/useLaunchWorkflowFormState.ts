@@ -18,9 +18,12 @@ import { Routes } from 'routes/routes';
 import { getInputs } from './getInputs';
 import { createInputValueCache } from './inputValueCache';
 import {
+    flatLaunchMachine,
     LaunchContext,
     LaunchEvent,
+    LaunchFlatTypestate,
     launchMachine,
+    LaunchState,
     LaunchTypestate
 } from './launchMachine';
 import {
@@ -239,23 +242,25 @@ export function useLaunchWorkflowFormState({
     const formInputsRef = useRef<LaunchWorkflowFormInputsRef>(null);
     const [showErrors, setShowErrors] = useState(false);
 
+    const services = useMemo(() => getServices(apiContext, formInputsRef), [
+        apiContext,
+        formInputsRef
+    ]);
+
     const [state, sendEvent, service] = useMachine<
         LaunchContext,
         LaunchEvent,
-        LaunchTypestate
-    >(launchMachine, {
+        LaunchFlatTypestate
+    >(flatLaunchMachine, {
         ...defaultStateMachineConfig,
+        services,
         context: {
             defaultInputValues,
             preferredLaunchPlanId,
             preferredWorkflowId,
             sourceWorkflowId,
             sourceType: 'workflow'
-        },
-        services: useMemo(() => getServices(apiContext, formInputsRef), [
-            apiContext,
-            formInputsRef
-        ])
+        }
     });
 
     const {
@@ -322,7 +327,8 @@ export function useLaunchWorkflowFormState({
         const subscription = service.subscribe(state => {
             // On transition to final success state, read the resulting execution
             // id and navigate to the Execution Details page.
-            if (state.matches({ submit: 'succeeded' })) {
+            // if (state.matches({ submit: 'succeeded' })) {
+            if (state.matches(LaunchState.SUBMIT_SUCCEEDED)) {
                 history.push(
                     Routes.ExecutionDetails.makeUrl(
                         state.context.resultExecutionId
@@ -330,7 +336,8 @@ export function useLaunchWorkflowFormState({
                 );
             }
 
-            if (state.matches({ workflow: 'select' })) {
+            // if (state.matches({ workflow: 'select' })) {
+            if (state.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
                 const {
                     workflowVersionOptions,
                     preferredWorkflowId
@@ -352,7 +359,8 @@ export function useLaunchWorkflowFormState({
                 }
             }
 
-            if (state.matches({ launchPlan: 'select' })) {
+            // if (state.matches({ launchPlan: 'select' })) {
+            if (state.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
                 if (!launchPlanOptions.length) {
                     return;
                 }
