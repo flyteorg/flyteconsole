@@ -116,6 +116,9 @@ export interface LaunchSchema {
     };
 }
 
+/** Typestates to narrow down the `context` values based on the result of
+ * a `state.matches` check.
+ */
 export type LaunchTypestate =
     | {
           value: LaunchState;
@@ -179,6 +182,15 @@ export type LaunchTypestate =
           };
       };
 
+/** A state machine config representing the flow a user takes through the Launch form.
+ * The high-level steps are:
+ * 1. Choose a source type. This is usually done automatically by specifying the
+ *    source type in context when interpreting the machine.
+ * 2. Select the relevant parameters for the source (version/launch plan for a Workflow source)
+ * 3. Enter inputs
+ * 4. Submit
+ * 5. Optionally correct any validation errors and re-submit.
+ */
 export const launchMachineConfig: MachineConfig<
     LaunchContext,
     LaunchSchema,
@@ -194,7 +206,6 @@ export const launchMachineConfig: MachineConfig<
     },
     on: {
         CANCEL: LaunchState.CANCELLED,
-        // TODO: Add guards for invalid source states and for source type.
         SELECT_WORKFLOW_VERSION: {
             cond: { type: 'isWorkflowSource' },
             target: LaunchState.LOADING_LAUNCH_PLANS,
@@ -375,6 +386,9 @@ export const launchMachineConfig: MachineConfig<
     }
 };
 
+/** A full machine for representing the Launch flow, combining the state definitions
+ * with actions/guards/services needed to support them.
+ */
 export const launchMachine = Machine(launchMachineConfig, {
     actions: {
         setWorkflowVersion: assign((_, event) => ({
@@ -417,7 +431,6 @@ export const launchMachine = Machine(launchMachineConfig, {
         isWorkflowSource: ({ sourceType }) => sourceType === 'workflow'
     },
     services: {
-        // TODO: Promise results here aren't typed, might get confusing when implementing these services in consumer
         loadWorkflowVersions: () =>
             Promise.reject(
                 'No `loadWorkflowVersions` service has been provided'
