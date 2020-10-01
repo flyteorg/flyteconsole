@@ -47,26 +47,6 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         onSubmit();
     };
 
-    // const submissionInFlight = state.matches({ submit: 'submitting' });
-    // const canSubmit = !state.matches({ sourceSelected: 'enterInputs' });
-    // const showWorkflowSelector = [
-    //     { working: 'sourceSelected' },
-    //     { workflow: 'select' }
-    // ].some(state.matches);
-    // console.log(JSON.stringify(state.value), showWorkflowSelector);
-    // console.log(
-    //     'dot match',
-    //     state.matches('select')
-    // );
-    // const showLaunchPlanSelector = [
-    //     { working: 'sourceSelected' },
-    //     { launchPlan: 'select' }
-    // ].some(state.matches);
-    // const showInputs = [
-    //     { sourceSelected: 'enterInputs' },
-    //     { sourceSelected: 'submit' }
-    // ].some(state.matches);
-
     const submissionInFlight = state.matches(LaunchState.SUBMITTING);
     const canSubmit = [
         LaunchState.ENTER_INPUTS,
