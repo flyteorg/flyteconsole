@@ -6,7 +6,14 @@ import {
     WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
-import { assign, DoneInvokeEvent, Machine, MachineConfig } from 'xstate';
+import {
+    assign,
+    DoneInvokeEvent,
+    Machine,
+    MachineConfig,
+    MachineOptions,
+    StatesConfig
+} from 'xstate';
 import { LiteralValueMap, ParsedInput } from './types';
 
 export type SelectWorkflowVersionEvent = {
@@ -33,37 +40,48 @@ export type InputsParsedEvent = DoneInvokeEvent<{
 }>;
 export type ErrorEvent = DoneInvokeEvent<Error>;
 
-export type LaunchEvent =
+export type BaseLaunchEvent =
     | { type: 'CANCEL' }
     | { type: 'SUBMIT' }
     | { type: 'RETRY' }
-    | SelectWorkflowVersionEvent
-    | WorkflowVersionOptionsLoadedEvent
-    | LaunchPlanOptionsLoadedEvent
-    | TaskVersionOptionsLoadedEvent
     | InputsParsedEvent
     | SelectTaskVersionEvent
     | SelectLaunchPlanEvent
     | ExecutionCreatedEvent
     | ErrorEvent;
 
-export interface LaunchContext {
+export type TaskLaunchEvent =
+    | BaseLaunchEvent
+    | TaskVersionOptionsLoadedEvent
+    | SelectTaskVersionEvent;
+
+export type WorkflowLaunchEvent =
+    | BaseLaunchEvent
+    | SelectWorkflowVersionEvent
+    | WorkflowVersionOptionsLoadedEvent
+    | LaunchPlanOptionsLoadedEvent;
+
+export interface BaseLaunchContext {
     defaultInputValues?: LiteralValueMap;
-    launchPlan?: LaunchPlan;
-    launchPlanOptions?: LaunchPlan[];
     parsedInputs: ParsedInput[];
     resultExecutionId?: WorkflowExecutionIdentifier;
-    sourceType: 'workflow' | 'task';
-    sourceWorkflowId?: NamedEntityIdentifier;
-    sourceTaskId?: NamedEntityIdentifier;
+    sourceId?: NamedEntityIdentifier;
     error?: Error;
+    unsupportedRequiredInputs: ParsedInput[];
+}
+
+export interface WorkflowLaunchContext extends BaseLaunchContext {
+    launchPlan?: LaunchPlan;
+    launchPlanOptions?: LaunchPlan[];
     preferredLaunchPlanId?: Identifier;
     preferredWorkflowId?: Identifier;
     workflowVersion?: WorkflowId;
     workflowVersionOptions?: Workflow[];
+}
+
+export interface TaskLaunchContext extends BaseLaunchContext {
     taskVersion?: Identifier;
     taskVersionOptions?: Identifier[];
-    unsupportedRequiredInputs: ParsedInput[];
 }
 
 export enum LaunchState {
@@ -90,19 +108,9 @@ export enum LaunchState {
     SUBMIT_SUCCEEDED = 'SUBMIT_SUCCEEDED'
 }
 
-export interface LaunchSchema {
+interface BaseLaunchSchema {
     states: {
         [LaunchState.CANCELLED]: {};
-        [LaunchState.SELECT_SOURCE]: {};
-        [LaunchState.LOADING_WORKFLOW_VERSIONS]: {};
-        [LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS]: {};
-        [LaunchState.SELECT_WORKFLOW_VERSION]: {};
-        [LaunchState.LOADING_LAUNCH_PLANS]: {};
-        [LaunchState.FAILED_LOADING_LAUNCH_PLANS]: {};
-        [LaunchState.SELECT_LAUNCH_PLAN]: {};
-        [LaunchState.LOADING_TASK_VERSIONS]: {};
-        [LaunchState.FAILED_LOADING_TASK_VERSIONS]: {};
-        [LaunchState.SELECT_TASK_VERSION]: {};
         [LaunchState.LOADING_INPUTS]: {};
         [LaunchState.FAILED_LOADING_INPUTS]: {};
         [LaunchState.UNSUPPORTED_INPUTS]: {};
@@ -116,32 +124,35 @@ export interface LaunchSchema {
     };
 }
 
+interface TaskLaunchSchema extends BaseLaunchSchema {
+    states: BaseLaunchSchema['states'] & {
+        [LaunchState.LOADING_TASK_VERSIONS]: {};
+        [LaunchState.FAILED_LOADING_TASK_VERSIONS]: {};
+        [LaunchState.SELECT_TASK_VERSION]: {};
+    };
+}
+interface WorkflowLaunchSchema extends BaseLaunchSchema {
+    states: BaseLaunchSchema['states'] & {
+        [LaunchState.LOADING_WORKFLOW_VERSIONS]: {};
+        [LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS]: {};
+        [LaunchState.SELECT_WORKFLOW_VERSION]: {};
+        [LaunchState.LOADING_LAUNCH_PLANS]: {};
+        [LaunchState.FAILED_LOADING_LAUNCH_PLANS]: {};
+        [LaunchState.SELECT_LAUNCH_PLAN]: {};
+    };
+}
+
 /** Typestates to narrow down the `context` values based on the result of
  * a `state.matches` check.
  */
-export type LaunchTypestate =
+export type BaseLaunchTypestate =
     | {
           value: LaunchState;
-          context: LaunchContext;
-      }
-    | {
-          value: LaunchState.SELECT_WORKFLOW_VERSION;
-          context: LaunchContext & {
-              sourceWorkflowId: WorkflowId;
-              workflowVersionOptions: Workflow[];
-          };
-      }
-    | {
-          value: LaunchState.SELECT_LAUNCH_PLAN;
-          context: LaunchContext & {
-              launchPlanOptions: LaunchPlan[];
-              sourceWorkflowId: WorkflowId;
-              workflowVersionOptions: Workflow[];
-          };
+          context: BaseLaunchContext;
       }
     | {
           value: LaunchState.UNSUPPORTED_INPUTS;
-          context: LaunchContext & {
+          context: BaseLaunchContext & {
               parsedInputs: [];
               unsupportedRequiredInputs: [];
           };
@@ -154,19 +165,19 @@ export type LaunchTypestate =
               | LaunchState.SUBMIT_VALIDATING
               | LaunchState.SUBMITTING
               | LaunchState.SUBMIT_SUCCEEDED;
-          context: LaunchContext & {
+          context: BaseLaunchContext & {
               parsedInputs: [];
           };
       }
     | {
           value: LaunchState.SUBMIT_SUCCEEDED;
-          context: LaunchContext & {
+          context: BaseLaunchContext & {
               resultExecutionId: WorkflowExecutionIdentifier;
           };
       }
     | {
           value: LaunchState.SUBMIT_FAILED;
-          context: LaunchContext & {
+          context: BaseLaunchContext & {
               parsedInputs: ParsedInput[];
               error: Error;
           };
@@ -177,72 +188,196 @@ export type LaunchTypestate =
               | LaunchState.FAILED_LOADING_LAUNCH_PLANS
               | LaunchState.FAILED_LOADING_TASK_VERSIONS
               | LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS;
-          context: LaunchContext & {
+          context: BaseLaunchContext & {
               error: Error;
           };
       };
 
-/** A state machine config representing the flow a user takes through the Launch form.
- * The high-level steps are:
- * 1. Choose a source type. This is usually done automatically by specifying the
- *    source type in context when interpreting the machine.
- * 2. Select the relevant parameters for the source (version/launch plan for a Workflow source)
- * 3. Enter inputs
- * 4. Submit
- * 5. Optionally correct any validation errors and re-submit.
- */
-export const launchMachineConfig: MachineConfig<
-    LaunchContext,
-    LaunchSchema,
-    LaunchEvent
+export type WorkflowLaunchTypestate =
+    | BaseLaunchTypestate
+    | {
+          value: LaunchState.SELECT_WORKFLOW_VERSION;
+          context: WorkflowLaunchContext & {
+              sourceWorkflowId: WorkflowId;
+              workflowVersionOptions: Workflow[];
+          };
+      }
+    | {
+          value: LaunchState.SELECT_LAUNCH_PLAN;
+          context: WorkflowLaunchContext & {
+              launchPlanOptions: LaunchPlan[];
+              sourceWorkflowId: WorkflowId;
+              workflowVersionOptions: Workflow[];
+          };
+      };
+
+// TODO:
+export type TaskLaunchTypestate = BaseLaunchTypestate;
+
+const defaultBaseContext: BaseLaunchContext = {
+    parsedInputs: [],
+    unsupportedRequiredInputs: []
+};
+
+const defaultHandlers = {
+    CANCEL: LaunchState.CANCELLED
+};
+
+const baseStateConfig: StatesConfig<
+    BaseLaunchContext,
+    BaseLaunchSchema,
+    BaseLaunchEvent
 > = {
-    id: 'launch',
-    initial: LaunchState.SELECT_SOURCE,
-    context: {
-        parsedInputs: [],
-        // Defaults to workflow, can be overidden when interpreting the machine
-        sourceType: 'workflow',
-        unsupportedRequiredInputs: []
+    [LaunchState.CANCELLED]: {
+        type: 'final'
     },
+    [LaunchState.LOADING_INPUTS]: {
+        invoke: {
+            src: 'loadInputs',
+            onDone: {
+                target: LaunchState.ENTER_INPUTS,
+                actions: ['setInputs']
+            },
+            onError: {
+                target: LaunchState.FAILED_LOADING_INPUTS,
+                actions: ['setError']
+            }
+        }
+    },
+    [LaunchState.FAILED_LOADING_INPUTS]: {
+        on: {
+            RETRY: LaunchState.LOADING_INPUTS
+        }
+    },
+    [LaunchState.UNSUPPORTED_INPUTS]: {
+        // events handled at top level
+    },
+    [LaunchState.ENTER_INPUTS]: {
+        always: {
+            target: LaunchState.UNSUPPORTED_INPUTS,
+            cond: ({ unsupportedRequiredInputs }) =>
+                unsupportedRequiredInputs.length > 0
+        },
+        on: {
+            SUBMIT: LaunchState.SUBMIT_VALIDATING,
+            VALIDATE: LaunchState.VALIDATING_INPUTS
+        }
+    },
+    [LaunchState.VALIDATING_INPUTS]: {
+        invoke: {
+            src: 'validate',
+            onDone: LaunchState.ENTER_INPUTS,
+            onError: LaunchState.INVALID_INPUTS
+        }
+    },
+    [LaunchState.INVALID_INPUTS]: {
+        on: {
+            VALIDATE: LaunchState.VALIDATING_INPUTS
+        }
+    },
+    [LaunchState.SUBMIT_VALIDATING]: {
+        invoke: {
+            src: 'validate',
+            onDone: {
+                target: LaunchState.SUBMITTING
+            },
+            onError: {
+                target: LaunchState.INVALID_INPUTS,
+                actions: ['setError']
+            }
+        }
+    },
+    [LaunchState.SUBMITTING]: {
+        invoke: {
+            src: 'submit',
+            onDone: {
+                target: LaunchState.SUBMIT_SUCCEEDED,
+                actions: ['setExecutionId']
+            },
+            onError: {
+                target: LaunchState.SUBMIT_FAILED,
+                actions: ['setError']
+            }
+        }
+    },
+    [LaunchState.SUBMIT_FAILED]: {
+        on: {
+            SUBMIT: LaunchState.SUBMITTING
+        }
+    },
+    [LaunchState.SUBMIT_SUCCEEDED]: {
+        type: 'final'
+    }
+};
+
+export const taskLaunchMachineConfig: MachineConfig<
+    TaskLaunchContext,
+    TaskLaunchSchema,
+    TaskLaunchEvent
+> = {
+    id: 'launchTask',
+    context: { ...defaultBaseContext },
     on: {
-        CANCEL: LaunchState.CANCELLED,
-        SELECT_WORKFLOW_VERSION: {
-            cond: { type: 'isWorkflowSource' },
-            target: LaunchState.LOADING_LAUNCH_PLANS,
-            actions: ['setWorkflowVersion']
-        },
-        SELECT_LAUNCH_PLAN: {
-            cond: { type: 'isWorkflowSource' },
-            target: LaunchState.LOADING_INPUTS,
-            actions: ['setLaunchPlan']
-        },
+        ...defaultHandlers,
         SELECT_TASK_VERSION: {
-            cond: { type: 'isTaskSource' },
             target: LaunchState.LOADING_INPUTS,
             actions: ['setTaskVersion']
         }
     },
     states: {
-        [LaunchState.CANCELLED]: {
-            type: 'final'
-        },
-        [LaunchState.SELECT_SOURCE]: {
-            // Automatically transition to the proper sub-state based
-            // on what type of source was specified when interpreting
-            // the machine.
-            always: [
-                {
-                    target: LaunchState.LOADING_WORKFLOW_VERSIONS,
-                    cond: ({ sourceType, sourceWorkflowId }) =>
-                        sourceType === 'workflow' && !!sourceWorkflowId
+        ...(baseStateConfig as StatesConfig<
+            TaskLaunchContext,
+            TaskLaunchSchema,
+            TaskLaunchEvent
+        >),
+        [LaunchState.LOADING_TASK_VERSIONS]: {
+            invoke: {
+                src: 'loadTaskVersions',
+                onDone: {
+                    target: LaunchState.SELECT_TASK_VERSION,
+                    actions: ['setTaskVersionOptions']
                 },
-                {
-                    target: LaunchState.LOADING_TASK_VERSIONS,
-                    cond: ({ sourceType, sourceTaskId }) =>
-                        sourceType === 'task' && !!sourceTaskId
+                onError: {
+                    target: LaunchState.FAILED_LOADING_TASK_VERSIONS,
+                    actions: ['setError']
                 }
-            ]
+            }
         },
+        [LaunchState.FAILED_LOADING_TASK_VERSIONS]: {
+            on: {
+                RETRY: LaunchState.LOADING_TASK_VERSIONS
+            }
+        },
+        [LaunchState.SELECT_TASK_VERSION]: {
+            // events handled at top level
+        }
+    }
+};
+
+export const workflowLaunchMachineConfig: MachineConfig<
+    WorkflowLaunchContext,
+    WorkflowLaunchSchema,
+    WorkflowLaunchEvent
+> = {
+    id: 'launchWorkflow',
+    context: { ...defaultBaseContext },
+    on: {
+        ...defaultHandlers,
+        SELECT_WORKFLOW_VERSION: {
+            target: LaunchState.LOADING_LAUNCH_PLANS,
+            actions: ['setWorkflowVersion']
+        },
+        SELECT_LAUNCH_PLAN: {
+            target: LaunchState.LOADING_INPUTS,
+            actions: ['setLaunchPlan']
+        }
+    },
+    states: {
+        ...(baseStateConfig as StatesConfig<
+            WorkflowLaunchContext,
+            WorkflowLaunchSchema,
+            WorkflowLaunchEvent
+        >),
         [LaunchState.LOADING_WORKFLOW_VERSIONS]: {
             invoke: {
                 src: 'loadWorkflowVersions',
@@ -284,165 +419,81 @@ export const launchMachineConfig: MachineConfig<
         },
         [LaunchState.SELECT_LAUNCH_PLAN]: {
             // events handled at top level
-        },
-        [LaunchState.LOADING_TASK_VERSIONS]: {
-            invoke: {
-                src: 'loadTaskVersions',
-                onDone: {
-                    target: LaunchState.SELECT_TASK_VERSION,
-                    actions: ['setTaskVersionOptions']
-                },
-                onError: {
-                    target: LaunchState.FAILED_LOADING_TASK_VERSIONS,
-                    actions: ['setError']
-                }
-            }
-        },
-        [LaunchState.FAILED_LOADING_TASK_VERSIONS]: {
-            on: {
-                RETRY: LaunchState.LOADING_TASK_VERSIONS
-            }
-        },
-        [LaunchState.SELECT_TASK_VERSION]: {
-            // events handled at top level
-        },
-        [LaunchState.LOADING_INPUTS]: {
-            invoke: {
-                src: 'loadInputs',
-                onDone: {
-                    target: LaunchState.ENTER_INPUTS,
-                    actions: ['setInputs']
-                },
-                onError: {
-                    target: LaunchState.FAILED_LOADING_INPUTS,
-                    actions: ['setError']
-                }
-            }
-        },
-        [LaunchState.FAILED_LOADING_INPUTS]: {
-            on: {
-                RETRY: LaunchState.LOADING_INPUTS
-            }
-        },
-        [LaunchState.UNSUPPORTED_INPUTS]: {
-            // events handled at top level
-        },
-        [LaunchState.ENTER_INPUTS]: {
-            always: {
-                target: LaunchState.UNSUPPORTED_INPUTS,
-                cond: ({ unsupportedRequiredInputs }) =>
-                    unsupportedRequiredInputs.length > 0
-            },
-            on: {
-                SUBMIT: LaunchState.SUBMIT_VALIDATING,
-                VALIDATE: LaunchState.VALIDATING_INPUTS
-            }
-        },
-        [LaunchState.VALIDATING_INPUTS]: {
-            invoke: {
-                src: 'validate',
-                onDone: LaunchState.ENTER_INPUTS,
-                onError: LaunchState.INVALID_INPUTS
-            }
-        },
-        [LaunchState.INVALID_INPUTS]: {
-            on: {
-                VALIDATE: LaunchState.VALIDATING_INPUTS
-            }
-        },
-        [LaunchState.SUBMIT_VALIDATING]: {
-            invoke: {
-                src: 'validate',
-                onDone: {
-                    target: LaunchState.SUBMITTING
-                },
-                onError: {
-                    target: LaunchState.INVALID_INPUTS,
-                    actions: ['setError']
-                }
-            }
-        },
-        [LaunchState.SUBMITTING]: {
-            invoke: {
-                src: 'submit',
-                onDone: {
-                    target: LaunchState.SUBMIT_SUCCEEDED,
-                    actions: ['setExecutionId']
-                },
-                onError: {
-                    target: LaunchState.SUBMIT_FAILED,
-                    actions: ['setError']
-                }
-            }
-        },
-        [LaunchState.SUBMIT_FAILED]: {
-            on: {
-                SUBMIT: LaunchState.SUBMITTING
-            }
-        },
-        [LaunchState.SUBMIT_SUCCEEDED]: {
-            type: 'final'
         }
     }
 };
 
+type BaseMachineOptions = MachineOptions<BaseLaunchContext, BaseLaunchEvent>;
+
+const baseActions: BaseMachineOptions['actions'] = {
+    setExecutionId: assign((_, event) => ({
+        resultExecutionId: (event as ExecutionCreatedEvent).data
+    })),
+    setInputs: assign((_, event) => {
+        const {
+            parsedInputs,
+            unsupportedRequiredInputs
+        } = (event as InputsParsedEvent).data;
+        return {
+            parsedInputs,
+            unsupportedRequiredInputs
+        };
+    }),
+    setError: assign((_, event) => ({
+        error: (event as ErrorEvent).data
+    }))
+};
+
+const baseServices: BaseMachineOptions['services'] = {
+    loadInputs: () =>
+        Promise.reject('No `loadInputs` service has been provided'),
+    submit: () => Promise.reject('No `submit` service has been provided'),
+    validate: () => Promise.reject('No `validate` service has been provided')
+};
+
+export const taskLaunchMachine = Machine(taskLaunchMachineConfig, {
+    actions: {
+        ...baseActions,
+        setTaskVersion: assign((_, event) => ({
+            taskVersion: (event as SelectTaskVersionEvent).taskId
+        })),
+        setTaskVersionOptions: assign((_, event) => ({
+            taskVersionOptions: (event as TaskVersionOptionsLoadedEvent).data
+        }))
+    },
+    services: {
+        ...baseServices,
+        loadTaskVersions: () =>
+            Promise.reject('No `loadTaskVersions` service has been provided')
+    }
+});
+
 /** A full machine for representing the Launch flow, combining the state definitions
  * with actions/guards/services needed to support them.
  */
-export const launchMachine = Machine(launchMachineConfig, {
+export const workflowLaunchMachine = Machine(workflowLaunchMachineConfig, {
     actions: {
+        ...baseActions,
         setWorkflowVersion: assign((_, event) => ({
             workflowVersion: (event as SelectWorkflowVersionEvent).workflowId
         })),
         setWorkflowVersionOptions: assign((_, event) => ({
             workflowVersionOptions: (event as DoneInvokeEvent<Workflow[]>).data
         })),
-        setTaskVersion: assign((_, event) => ({
-            taskVersion: (event as SelectTaskVersionEvent).taskId
-        })),
-        setTaskVersionOptions: assign((_, event) => ({
-            taskVersionOptions: (event as TaskVersionOptionsLoadedEvent).data
-        })),
         setLaunchPlanOptions: assign((_, event) => ({
             launchPlanOptions: (event as LaunchPlanOptionsLoadedEvent).data
         })),
         setLaunchPlan: assign((_, event) => ({
             launchPlan: (event as SelectLaunchPlanEvent).launchPlan
-        })),
-        setExecutionId: assign((_, event) => ({
-            resultExecutionId: (event as ExecutionCreatedEvent).data
-        })),
-        setInputs: assign((_, event) => {
-            const {
-                parsedInputs,
-                unsupportedRequiredInputs
-            } = (event as InputsParsedEvent).data;
-            return {
-                parsedInputs,
-                unsupportedRequiredInputs
-            };
-        }),
-        setError: assign((_, event) => ({
-            error: (event as ErrorEvent).data
         }))
     },
-    guards: {
-        isTaskSource: ({ sourceType }) => sourceType === 'task',
-        isWorkflowSource: ({ sourceType }) => sourceType === 'workflow'
-    },
     services: {
+        ...baseServices,
         loadWorkflowVersions: () =>
             Promise.reject(
                 'No `loadWorkflowVersions` service has been provided'
             ),
         loadLaunchPlans: () =>
-            Promise.reject('No `loadLaunchPlans` service has been provided'),
-        loadTaskVersions: () =>
-            Promise.reject('No `loadTaskVersions` service has been provided'),
-        loadInputs: () =>
-            Promise.reject('No `loadInputs` service has been provided'),
-        submit: () => Promise.reject('No `submit` service has been provided'),
-        validate: () =>
-            Promise.reject('No `validate` service has been provided')
+            Promise.reject('No `loadLaunchPlans` service has been provided')
     }
 });

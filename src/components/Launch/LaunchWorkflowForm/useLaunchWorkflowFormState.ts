@@ -18,11 +18,11 @@ import { Routes } from 'routes/routes';
 import { getInputs } from './getInputs';
 import { createInputValueCache } from './inputValueCache';
 import {
-    LaunchContext,
-    LaunchEvent,
-    launchMachine,
     LaunchState,
-    LaunchTypestate
+    WorkflowLaunchContext,
+    WorkflowLaunchEvent,
+    workflowLaunchMachine,
+    WorkflowLaunchTypestate
 } from './launchMachine';
 import {
     LaunchWorkflowFormInputsRef,
@@ -35,7 +35,7 @@ import { getUnsupportedRequiredInputs } from './utils';
 
 async function loadLaunchPlans(
     { listLaunchPlans }: APIContextValue,
-    { preferredLaunchPlanId, workflowVersion }: LaunchContext
+    { preferredLaunchPlanId, workflowVersion }: WorkflowLaunchContext
 ) {
     if (workflowVersion == null) {
         return Promise.reject('No workflowVersion specified');
@@ -91,7 +91,7 @@ async function loadLaunchPlans(
 
 async function loadWorkflowVersions(
     { listWorkflows }: APIContextValue,
-    { preferredWorkflowId, sourceWorkflowId: sourceWorkflowName }: LaunchContext
+    { preferredWorkflowId, sourceId: sourceWorkflowName }: WorkflowLaunchContext
 ) {
     if (!sourceWorkflowName) {
         throw new Error('Cannot load workflows, missing workflowName');
@@ -138,7 +138,7 @@ async function loadWorkflowVersions(
 
 async function loadInputs(
     { getWorkflow }: APIContextValue,
-    { defaultInputValues, workflowVersion, launchPlan }: LaunchContext
+    { defaultInputValues, workflowVersion, launchPlan }: WorkflowLaunchContext
 ) {
     if (!workflowVersion) {
         throw new Error('Failed to load inputs: missing workflowVersion');
@@ -161,7 +161,7 @@ async function loadInputs(
 
 async function validate(
     formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
-    {}: LaunchContext
+    {}: WorkflowLaunchContext
 ) {
     if (formInputsRef.current === null) {
         throw new Error('Unexpected empty form inputs ref');
@@ -177,7 +177,7 @@ async function validate(
 async function submit(
     { createWorkflowExecution }: APIContextValue,
     formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
-    { launchPlan, workflowVersion }: LaunchContext
+    { launchPlan, workflowVersion }: WorkflowLaunchContext
 ) {
     if (!launchPlan) {
         throw new Error('Attempting to launch with no LaunchPlan');
@@ -225,7 +225,7 @@ function getServices(
 export function useLaunchWorkflowFormState({
     initialParameters = {},
     onClose,
-    workflowId: sourceWorkflowId
+    workflowId: sourceId
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
     // These values will be used to auto-select items from the workflow
     // version/launch plan drop downs.
@@ -246,18 +246,17 @@ export function useLaunchWorkflowFormState({
     ]);
 
     const [state, sendEvent, service] = useMachine<
-        LaunchContext,
-        LaunchEvent,
-        LaunchTypestate
-    >(launchMachine, {
+        WorkflowLaunchContext,
+        WorkflowLaunchEvent,
+        WorkflowLaunchTypestate
+    >(workflowLaunchMachine, {
         ...defaultStateMachineConfig,
         services,
         context: {
             defaultInputValues,
             preferredLaunchPlanId,
             preferredWorkflowId,
-            sourceWorkflowId,
-            sourceType: 'workflow'
+            sourceId
         }
     });
 
@@ -304,7 +303,7 @@ export function useLaunchWorkflowFormState({
     const workflowSourceSelectorState = useWorkflowSourceSelectorState({
         launchPlan,
         launchPlanOptions,
-        sourceWorkflowId,
+        sourceId,
         selectLaunchPlan,
         selectWorkflowVersion,
         workflowVersion,
