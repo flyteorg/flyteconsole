@@ -6,82 +6,87 @@ import {
     FormHelperText,
     Typography
 } from '@material-ui/core';
-import { WaitForData } from 'components/common';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
-import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { isLoadingState } from 'components/hooks/fetchMachine';
-import {
-    FilterOperationName,
-    NamedEntityIdentifier,
-    SortDirection,
-    workflowSortFields
-} from 'models';
 import * as React from 'react';
 import { formStrings } from './constants';
 import { InputValueCacheContext } from './inputValueCache';
+import { LaunchState } from './launchMachine';
 import { LaunchWorkflowFormInputs } from './LaunchWorkflowFormInputs';
 import { SearchableSelector } from './SearchableSelector';
 import { useStyles } from './styles';
 import { LaunchWorkflowFormProps } from './types';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useLaunchWorkflowFormState } from './useLaunchWorkflowFormState';
-import { workflowsToSearchableSelectorOptions } from './utils';
-
-function generateFetchSearchResults(
-    { listWorkflows }: APIContextValue,
-    workflowId: NamedEntityIdentifier
-) {
-    return async (query: string) => {
-        const { project, domain, name } = workflowId;
-        const { entities: workflows } = await listWorkflows(
-            { project, domain, name },
-            {
-                filter: [
-                    {
-                        key: 'version',
-                        operation: FilterOperationName.CONTAINS,
-                        value: query
-                    }
-                ],
-                sort: {
-                    key: workflowSortFields.createdAt,
-                    direction: SortDirection.DESCENDING
-                }
-            }
-        );
-        return workflowsToSearchableSelectorOptions(workflows);
-    };
-}
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
-    const state = useLaunchWorkflowFormState(props);
-    const { submissionState, unsupportedRequiredInputs, workflows } = state;
+    const {
+        formKey,
+        formInputsRef,
+        showErrors,
+        inputValueCache,
+        onCancel,
+        onSubmit,
+        state,
+        workflowSourceSelectorState
+    } = useLaunchWorkflowFormState(props);
     const styles = useStyles();
-    const fetchSearchResults = generateFetchSearchResults(
-        useAPIContext(),
-        props.workflowId
-    );
+
+    const {
+        fetchSearchResults,
+        launchPlanSelectorOptions,
+        onSelectLaunchPlan,
+        onSelectWorkflowVersion,
+        selectedLaunchPlan,
+        selectedWorkflow,
+        workflowSelectorOptions
+    } = workflowSourceSelectorState;
 
     const submit: React.FormEventHandler = event => {
         event.preventDefault();
-        state.onSubmit();
+        onSubmit();
     };
 
-    const submissionInFlight = isLoadingState(submissionState.state);
-    const preventSubmit =
-        submissionInFlight ||
-        !state.inputsReady ||
-        unsupportedRequiredInputs.length > 0;
+    const submissionInFlight = state.matches(LaunchState.SUBMITTING);
+    const canSubmit = [
+        LaunchState.ENTER_INPUTS,
+        LaunchState.VALIDATING_INPUTS,
+        LaunchState.INVALID_INPUTS,
+        LaunchState.SUBMIT_FAILED
+    ].some(state.matches);
+    const showWorkflowSelector = ![
+        LaunchState.LOADING_WORKFLOW_VERSIONS,
+        LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS
+    ].some(state.matches);
+    const showLaunchPlanSelector =
+        state.context.workflowVersion &&
+        ![
+            LaunchState.LOADING_LAUNCH_PLANS,
+            LaunchState.FAILED_LOADING_LAUNCH_PLANS
+        ].some(state.matches);
+    const showInputs = [
+        LaunchState.UNSUPPORTED_INPUTS,
+        LaunchState.ENTER_INPUTS,
+        LaunchState.VALIDATING_INPUTS,
+        LaunchState.INVALID_INPUTS,
+        LaunchState.SUBMIT_VALIDATING,
+        LaunchState.SUBMITTING,
+        LaunchState.SUBMIT_FAILED,
+        LaunchState.SUBMIT_SUCCEEDED
+    ].some(state.matches);
 
+    // TODO: We removed all loading indicators here. Decide if we want skeletons
+    // instead.
     return (
-        <InputValueCacheContext.Provider value={state.inputValueCache}>
+        <InputValueCacheContext.Provider value={inputValueCache}>
             <DialogTitle disableTypography={true} className={styles.header}>
                 <div className={styles.inputLabel}>{formStrings.title}</div>
-                <Typography variant="h6">{state.workflowName}</Typography>
+                <Typography variant="h6">
+                    {state.context.sourceWorkflowId?.name}
+                </Typography>
             </DialogTitle>
             <DialogContent dividers={true} className={styles.inputsSection}>
-                <WaitForData spinnerVariant="medium" {...workflows}>
+                {showWorkflowSelector ? (
                     <section
                         title={formStrings.workflowVersion}
                         className={styles.formControl}
@@ -89,63 +94,63 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         <SearchableSelector
                             id="launch-workflow-selector"
                             label={formStrings.workflowVersion}
-                            onSelectionChanged={state.onSelectWorkflow}
-                            options={state.workflowSelectorOptions}
+                            onSelectionChanged={onSelectWorkflowVersion}
+                            options={workflowSelectorOptions}
                             fetchSearchResults={fetchSearchResults}
-                            selectedItem={state.selectedWorkflow}
+                            selectedItem={selectedWorkflow}
                         />
                     </section>
-                    <WaitForData {...state.launchPlans} spinnerVariant="medium">
-                        <section
-                            title={formStrings.launchPlan}
-                            className={styles.formControl}
-                        >
-                            <SearchableSelector
-                                id="launch-lp-selector"
-                                label={formStrings.launchPlan}
-                                onSelectionChanged={state.onSelectLaunchPlan}
-                                options={state.launchPlanSelectorOptions}
-                                selectedItem={state.selectedLaunchPlan}
+                ) : null}
+                {showLaunchPlanSelector ? (
+                    <section
+                        title={formStrings.launchPlan}
+                        className={styles.formControl}
+                    >
+                        <SearchableSelector
+                            id="launch-lp-selector"
+                            label={formStrings.launchPlan}
+                            onSelectionChanged={onSelectLaunchPlan}
+                            options={launchPlanSelectorOptions}
+                            selectedItem={selectedLaunchPlan}
+                        />
+                    </section>
+                ) : null}
+                {showInputs ? (
+                    <section title={formStrings.inputs}>
+                        {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
+                            <UnsupportedRequiredInputsError
+                                inputs={state.context.unsupportedRequiredInputs}
                             />
-                        </section>
-                    </WaitForData>
-                    {state.inputsReady ? (
-                        <section title={formStrings.inputs}>
-                            {state.unsupportedRequiredInputs.length > 0 ? (
-                                <UnsupportedRequiredInputsError
-                                    inputs={state.unsupportedRequiredInputs}
-                                />
-                            ) : (
-                                <LaunchWorkflowFormInputs
-                                    key={state.formKey}
-                                    inputs={state.inputs}
-                                    ref={state.formInputsRef}
-                                    showErrors={state.showErrors}
-                                />
-                            )}
-                        </section>
-                    ) : null}
-                </WaitForData>
+                        ) : (
+                            <LaunchWorkflowFormInputs
+                                key={formKey}
+                                inputs={state.context.parsedInputs}
+                                ref={formInputsRef}
+                                showErrors={showErrors}
+                            />
+                        )}
+                    </section>
+                ) : null}
             </DialogContent>
             <div className={styles.footer}>
-                {!!submissionState.lastError && (
+                {state.matches(LaunchState.SUBMIT_FAILED) ? (
                     <FormHelperText error={true}>
-                        {submissionState.lastError.message}
+                        {state.context.error.message}
                     </FormHelperText>
-                )}
+                ) : null}
                 <DialogActions>
                     <Button
                         color="primary"
                         disabled={submissionInFlight}
                         id="launch-workflow-cancel"
-                        onClick={state.onCancel}
+                        onClick={onCancel}
                         variant="outlined"
                     >
                         {formStrings.cancel}
                     </Button>
                     <Button
                         color="primary"
-                        disabled={preventSubmit}
+                        disabled={!canSubmit}
                         id="launch-workflow-submit"
                         onClick={submit}
                         type="submit"

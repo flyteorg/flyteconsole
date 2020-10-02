@@ -215,10 +215,10 @@ describe('LaunchWorkflowForm', () => {
 
         it('should select the launch plan matching the workflow name by default', async () => {
             const { getByLabelText } = renderForm();
-            await waitFor(() => {});
-            expect(getByLabelText(formStrings.launchPlan)).toHaveValue(
-                mockWorkflow.id.name
+            const launchPlanEl = await waitFor(() =>
+                getByLabelText(formStrings.launchPlan)
             );
+            expect(launchPlanEl).toHaveValue(mockWorkflow.id.name);
         });
 
         it('should not render inputs if no launch plan is selected', async () => {
@@ -303,7 +303,7 @@ describe('LaunchWorkflowForm', () => {
 
         it('should update launch plan when selecting a new workflow version', async () => {
             const { getByTitle } = renderForm();
-            await waitFor(() => {});
+            await waitFor(() => getByTitle(formStrings.launchPlan));
 
             mockListLaunchPlans.mockClear();
 
@@ -316,7 +316,7 @@ describe('LaunchWorkflowForm', () => {
             );
             fireEvent.click(items[1]);
 
-            await waitFor(() => {});
+            await waitFor(() => getByTitle(formStrings.launchPlan));
             expect(mockListLaunchPlans).toHaveBeenCalled();
         });
 
@@ -344,7 +344,9 @@ describe('LaunchWorkflowForm', () => {
 
         it('should update inputs when selecting a new launch plan', async () => {
             const { queryByLabelText, getByTitle } = renderForm();
-            await waitFor(() => {});
+            const launchPlanDiv = await waitFor(() =>
+                getByTitle(formStrings.launchPlan)
+            );
 
             // Delete the string input so that its corresponding input will
             // disappear after the new launch plan is loaded.
@@ -353,7 +355,6 @@ describe('LaunchWorkflowForm', () => {
             ];
 
             // Click the expander for the launch plan, select the second item
-            const launchPlanDiv = getByTitle(formStrings.launchPlan);
             const expander = getByRole(launchPlanDiv, 'button');
             fireEvent.click(expander);
             const items = await waitFor(() =>
@@ -361,7 +362,7 @@ describe('LaunchWorkflowForm', () => {
             );
             fireEvent.click(items[1]);
 
-            await waitFor(() => {});
+            await waitFor(() => getByTitle(formStrings.inputs));
             expect(
                 queryByLabelText(stringInputName, {
                     // Don't use exact match because the label will be decorated with type info

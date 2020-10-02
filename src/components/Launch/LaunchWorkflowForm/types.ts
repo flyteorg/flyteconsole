@@ -1,14 +1,13 @@
-import { FetchableData } from 'components/hooks';
 import { Core } from 'flyteidl';
 import {
     BlobDimensionality,
     Identifier,
     LaunchPlan,
     NamedEntityIdentifier,
-    Workflow,
-    WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
+import { State } from 'xstate';
+import { LaunchContext, LaunchEvent, LaunchTypestate } from './launchMachine';
 import { SearchableSelectorOption } from './SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
@@ -31,27 +30,30 @@ export interface LaunchWorkflowFormInputsRef {
     validate(): boolean;
 }
 
+export interface WorkflowSourceSelectorState {
+    launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
+    selectedWorkflow?: SearchableSelectorOption<Identifier>;
+    selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
+    workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
+    fetchSearchResults(
+        query: string
+    ): Promise<SearchableSelectorOption<Identifier>[]>;
+    onSelectWorkflowVersion(
+        selected: SearchableSelectorOption<WorkflowId>
+    ): void;
+    onSelectLaunchPlan(selected: SearchableSelectorOption<LaunchPlan>): void;
+}
+
 export interface LaunchWorkflowFormState {
     /** Used to key inputs component so it is re-mounted the list of inputs */
     formKey?: string;
     formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
-    inputs: ParsedInput[];
-    inputsReady: boolean;
     inputValueCache: InputValueMap;
-    launchPlans: FetchableData<LaunchPlan[]>;
-    launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
-    selectedLaunchPlan?: SearchableSelectorOption<LaunchPlan>;
-    selectedWorkflow?: SearchableSelectorOption<WorkflowId>;
     showErrors: boolean;
-    submissionState: FetchableData<WorkflowExecutionIdentifier>;
-    unsupportedRequiredInputs: ParsedInput[];
-    workflowName: string;
-    workflows: FetchableData<Workflow[]>;
-    workflowSelectorOptions: SearchableSelectorOption<WorkflowId>[];
+    state: State<LaunchContext, LaunchEvent, any, LaunchTypestate>;
+    workflowSourceSelectorState: WorkflowSourceSelectorState;
     onCancel(): void;
-    onSelectWorkflow(selected: SearchableSelectorOption<WorkflowId>): void;
     onSubmit(): void;
-    onSelectLaunchPlan(selected: SearchableSelectorOption<LaunchPlan>): void;
 }
 
 export enum InputType {

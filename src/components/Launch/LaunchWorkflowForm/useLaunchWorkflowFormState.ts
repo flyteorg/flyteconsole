@@ -1,188 +1,222 @@
+import { useMachine } from '@xstate/react';
 import { getCacheKey } from 'components/Cache';
-import { useAPIContext } from 'components/data/apiContext';
-import { useFetchableData, useWorkflow } from 'components/hooks';
-import { fetchStates } from 'components/hooks/types';
-import { isEqual, uniqBy } from 'lodash';
+import { defaultStateMachineConfig } from 'components/common/constants';
+import { APIContextValue, useAPIContext } from 'components/data/apiContext';
+import { isEqual, partial, uniqBy } from 'lodash';
 import {
     FilterOperationName,
-    Identifier,
     LaunchPlan,
-    NamedEntityIdentifier,
     SortDirection,
     Workflow,
     WorkflowExecutionIdentifier,
     WorkflowId,
     workflowSortFields
 } from 'models';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { history, Routes } from 'routes';
+import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
 import { getInputs } from './getInputs';
 import { createInputValueCache } from './inputValueCache';
-import { SearchableSelectorOption } from './SearchableSelector';
+import {
+    LaunchContext,
+    LaunchEvent,
+    launchMachine,
+    LaunchState,
+    LaunchTypestate
+} from './launchMachine';
 import {
     LaunchWorkflowFormInputsRef,
     LaunchWorkflowFormProps,
     LaunchWorkflowFormState,
     ParsedInput
 } from './types';
-import {
-    getUnsupportedRequiredInputs,
-    launchPlansToSearchableSelectorOptions,
-    workflowsToSearchableSelectorOptions
-} from './utils';
+import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
+import { getUnsupportedRequiredInputs } from './utils';
 
-export function useWorkflowSelectorOptions(workflows: Workflow[]) {
-    return useMemo(() => {
-        const options = workflowsToSearchableSelectorOptions(workflows);
-        if (options.length > 0) {
-            options[0].description = 'latest';
-        }
-        return options;
-    }, [workflows]);
-}
-
-function useLaunchPlanSelectorOptions(launchPlans: LaunchPlan[]) {
-    return useMemo(() => launchPlansToSearchableSelectorOptions(launchPlans), [
-        launchPlans
-    ]);
-}
-
-interface UseLaunchPlansForWorkflowArgs {
-    workflowId?: WorkflowId | null;
-    preferredLaunchPlanId?: Identifier;
-}
-/** Lists launch plans for a given workflowId, optionally fetching a preferred
- * launch plan. The result is a merged, de-duplicated list.
- */
-function useLaunchPlansForWorkflow({
-    workflowId = null,
-    preferredLaunchPlanId
-}: UseLaunchPlansForWorkflowArgs) {
-    const { listLaunchPlans } = useAPIContext();
-    return useFetchableData<LaunchPlan[], WorkflowId | null>(
-        {
-            autoFetch: workflowId !== null,
-            debugName: 'useLaunchPlansForWorkflow',
-            defaultValue: [],
-            doFetch: async workflowId => {
-                if (workflowId === null) {
-                    return Promise.reject('No workflowId specified');
-                }
-
-                let preferredLaunchPlanPromise = Promise.resolve({
-                    entities: [] as LaunchPlan[]
-                });
-                if (preferredLaunchPlanId) {
-                    const { version, ...scope } = preferredLaunchPlanId;
-                    preferredLaunchPlanPromise = listLaunchPlans(scope, {
-                        limit: 1,
-                        filter: [
-                            {
-                                key: 'version',
-                                operation: FilterOperationName.EQ,
-                                value: version
-                            }
-                        ]
-                    });
-                }
-
-                const { project, domain, name, version } = workflowId;
-                const launchPlansPromise = listLaunchPlans(
-                    { project, domain },
-                    // TODO: Only active?
-                    {
-                        filter: [
-                            {
-                                key: 'workflow.name',
-                                operation: FilterOperationName.EQ,
-                                value: name
-                            },
-                            {
-                                key: 'workflow.version',
-                                operation: FilterOperationName.EQ,
-                                value: version
-                            }
-                        ],
-                        limit: 10
-                    }
-                );
-
-                const [
-                    launchPlansResult,
-                    preferredLaunchPlanResult
-                ] = await Promise.all([
-                    launchPlansPromise,
-                    preferredLaunchPlanPromise
-                ]);
-                const merged = [
-                    ...launchPlansResult.entities,
-                    ...preferredLaunchPlanResult.entities
-                ];
-                return uniqBy(merged, ({ id }) => id.name);
-            }
-        },
-        workflowId
-    );
-}
-
-/** Fetches workflow versions matching a specific scope, optionally also
- * fetching a preferred version. The result is a merged, de-duplicated list.
- */
-function useWorkflowsWithPreferredVersion(
-    workflowName: NamedEntityIdentifier,
-    preferredVersion?: WorkflowId
+async function loadLaunchPlans(
+    { listLaunchPlans }: APIContextValue,
+    { preferredLaunchPlanId, workflowVersion }: LaunchContext
 ) {
-    const { listWorkflows } = useAPIContext();
-    return useFetchableData(
-        {
-            debugName: 'UseWorkflowsWithPreferredVersion',
-            defaultValue: [] as Workflow[],
-            doFetch: async () => {
-                const { project, domain, name } = workflowName;
-                const workflowsPromise = listWorkflows(
-                    { project, domain, name },
-                    {
-                        limit: 10,
-                        sort: {
-                            key: workflowSortFields.createdAt,
-                            direction: SortDirection.DESCENDING
-                        }
-                    }
-                );
+    if (workflowVersion == null) {
+        return Promise.reject('No workflowVersion specified');
+    }
 
-                let preferredWorkflowPromise = Promise.resolve({
-                    entities: [] as Workflow[]
-                });
-                if (preferredVersion) {
-                    const { version, ...scope } = preferredVersion;
-                    preferredWorkflowPromise = listWorkflows(scope, {
-                        limit: 1,
-                        filter: [
-                            {
-                                key: 'version',
-                                operation: FilterOperationName.EQ,
-                                value: version
-                            }
-                        ]
-                    });
+    let preferredLaunchPlanPromise = Promise.resolve({
+        entities: [] as LaunchPlan[]
+    });
+    if (preferredLaunchPlanId) {
+        const { version, ...scope } = preferredLaunchPlanId;
+        preferredLaunchPlanPromise = listLaunchPlans(scope, {
+            limit: 1,
+            filter: [
+                {
+                    key: 'version',
+                    operation: FilterOperationName.EQ,
+                    value: version
                 }
+            ]
+        });
+    }
 
-                const [
-                    workflowsResult,
-                    preferredWorkflowResult
-                ] = await Promise.all([
-                    workflowsPromise,
-                    preferredWorkflowPromise
-                ]);
-                const merged = [
-                    ...workflowsResult.entities,
-                    ...preferredWorkflowResult.entities
-                ];
-                return uniqBy(merged, ({ id: { version } }) => version);
-            }
-        },
-        { workflowName, preferredVersion }
+    const { project, domain, name, version } = workflowVersion;
+    const launchPlansPromise = listLaunchPlans(
+        { project, domain },
+        {
+            filter: [
+                {
+                    key: 'workflow.name',
+                    operation: FilterOperationName.EQ,
+                    value: name
+                },
+                {
+                    key: 'workflow.version',
+                    operation: FilterOperationName.EQ,
+                    value: version
+                }
+            ],
+            limit: 10
+        }
     );
+
+    const [launchPlansResult, preferredLaunchPlanResult] = await Promise.all([
+        launchPlansPromise,
+        preferredLaunchPlanPromise
+    ]);
+    const merged = [
+        ...launchPlansResult.entities,
+        ...preferredLaunchPlanResult.entities
+    ];
+    return uniqBy(merged, ({ id }) => id.name);
+}
+
+async function loadWorkflowVersions(
+    { listWorkflows }: APIContextValue,
+    { preferredWorkflowId, sourceWorkflowId: sourceWorkflowName }: LaunchContext
+) {
+    if (!sourceWorkflowName) {
+        throw new Error('Cannot load workflows, missing workflowName');
+    }
+    const { project, domain, name } = sourceWorkflowName;
+    const workflowsPromise = listWorkflows(
+        { project, domain, name },
+        {
+            limit: 10,
+            sort: {
+                key: workflowSortFields.createdAt,
+                direction: SortDirection.DESCENDING
+            }
+        }
+    );
+
+    let preferredWorkflowPromise = Promise.resolve({
+        entities: [] as Workflow[]
+    });
+    if (preferredWorkflowId) {
+        const { version, ...scope } = preferredWorkflowId;
+        preferredWorkflowPromise = listWorkflows(scope, {
+            limit: 1,
+            filter: [
+                {
+                    key: 'version',
+                    operation: FilterOperationName.EQ,
+                    value: version
+                }
+            ]
+        });
+    }
+
+    const [workflowsResult, preferredWorkflowResult] = await Promise.all([
+        workflowsPromise,
+        preferredWorkflowPromise
+    ]);
+    const merged = [
+        ...workflowsResult.entities,
+        ...preferredWorkflowResult.entities
+    ];
+    return uniqBy(merged, ({ id: { version } }) => version);
+}
+
+async function loadInputs(
+    { getWorkflow }: APIContextValue,
+    { defaultInputValues, workflowVersion, launchPlan }: LaunchContext
+) {
+    if (!workflowVersion) {
+        throw new Error('Failed to load inputs: missing workflowVersion');
+    }
+    if (!launchPlan) {
+        throw new Error('Failed to load inputs: missing launchPlan');
+    }
+    const workflow = await getWorkflow(workflowVersion);
+    const parsedInputs: ParsedInput[] = getInputs(
+        workflow,
+        launchPlan,
+        defaultInputValues
+    );
+
+    return {
+        parsedInputs,
+        unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs)
+    };
+}
+
+async function validate(
+    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
+    {}: LaunchContext
+) {
+    if (formInputsRef.current === null) {
+        throw new Error('Unexpected empty form inputs ref');
+    }
+
+    if (!formInputsRef.current.validate()) {
+        throw new Error(
+            'Some inputs have errors. Please correct them before submitting'
+        );
+    }
+}
+
+async function submit(
+    { createWorkflowExecution }: APIContextValue,
+    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
+    { launchPlan, workflowVersion }: LaunchContext
+) {
+    if (!launchPlan) {
+        throw new Error('Attempting to launch with no LaunchPlan');
+    }
+    if (!workflowVersion) {
+        throw new Error('Attempting to launch with no Workflow version');
+    }
+    if (formInputsRef.current === null) {
+        throw new Error('Unexpected empty form inputs ref');
+    }
+    const literals = formInputsRef.current.getValues();
+    const launchPlanId = launchPlan.id;
+    const { domain, project } = workflowVersion;
+
+    const response = await createWorkflowExecution({
+        domain,
+        launchPlanId,
+        project,
+        inputs: { literals }
+    });
+    const newExecutionId = response.id as WorkflowExecutionIdentifier;
+    if (!newExecutionId) {
+        throw new Error('API Response did not include new execution id');
+    }
+
+    return newExecutionId;
+}
+
+function getServices(
+    apiContext: APIContextValue,
+    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>
+) {
+    return {
+        loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
+        loadLaunchPlans: partial(loadLaunchPlans, apiContext),
+        loadInputs: partial(loadInputs, apiContext),
+        submit: partial(submit, apiContext, formInputsRef),
+        validate: partial(validate, formInputsRef)
+    };
 }
 
 /** Contains all of the form state for a LaunchWorkflowForm, including input
@@ -191,67 +225,54 @@ function useWorkflowsWithPreferredVersion(
 export function useLaunchWorkflowFormState({
     initialParameters = {},
     onClose,
-    workflowId
+    workflowId: sourceWorkflowId
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
     // These values will be used to auto-select items from the workflow
     // version/launch plan drop downs.
     const {
         launchPlan: preferredLaunchPlanId,
-        workflow: preferredWorkflowId
+        workflow: preferredWorkflowId,
+        values: defaultInputValues
     } = initialParameters;
 
-    const { createWorkflowExecution } = useAPIContext();
-    const [
-        lastSelectedLaunchPlanName,
-        setLastSelectedLaunchPlanName
-    ] = useState<string>();
+    const apiContext = useAPIContext();
+    const [inputValueCache] = useState(createInputValueCache());
     const formInputsRef = useRef<LaunchWorkflowFormInputsRef>(null);
     const [showErrors, setShowErrors] = useState(false);
-    const workflows = useWorkflowsWithPreferredVersion(
-        workflowId,
-        preferredWorkflowId
-    );
 
-    const workflowSelectorOptions = useWorkflowSelectorOptions(workflows.value);
-    const [selectedWorkflow, setWorkflow] = useState<
-        SearchableSelectorOption<WorkflowId>
-    >();
-    const selectedWorkflowId = selectedWorkflow ? selectedWorkflow.data : null;
+    const services = useMemo(() => getServices(apiContext, formInputsRef), [
+        apiContext,
+        formInputsRef
+    ]);
 
-    const [inputValueCache] = useState(createInputValueCache());
-
-    // We have to do a single item get once a workflow is selected so that we
-    // receive the full workflow spec
-    const workflow = useWorkflow(selectedWorkflowId);
-    const launchPlans = useLaunchPlansForWorkflow({
-        preferredLaunchPlanId,
-        workflowId: selectedWorkflowId
+    const [state, sendEvent, service] = useMachine<
+        LaunchContext,
+        LaunchEvent,
+        LaunchTypestate
+    >(launchMachine, {
+        ...defaultStateMachineConfig,
+        services,
+        context: {
+            defaultInputValues,
+            preferredLaunchPlanId,
+            preferredWorkflowId,
+            sourceWorkflowId,
+            sourceType: 'workflow'
+        }
     });
-    const launchPlanSelectorOptions = useLaunchPlanSelectorOptions(
-        launchPlans.value
-    );
 
-    const [selectedLaunchPlan, setLaunchPlan] = useState<
-        SearchableSelectorOption<LaunchPlan>
-    >();
-    const launchPlanData = selectedLaunchPlan
-        ? selectedLaunchPlan.data
-        : undefined;
-
-    const [parsedInputs, setParsedInputs] = useState<ParsedInput[]>([]);
-    const inputsReady = !!(
-        launchPlanData && workflow.state.matches(fetchStates.LOADED)
-    );
-
-    const unsupportedRequiredInputs = useMemo(
-        () => getUnsupportedRequiredInputs(parsedInputs),
-        [parsedInputs]
-    );
+    const {
+        launchPlanOptions = [],
+        launchPlan,
+        workflowVersionOptions = [],
+        parsedInputs,
+        workflowVersion
+    } = state.context;
 
     // Any time the inputs change (even if it's just re-ordering), we must
     // change the form key so that the inputs component will re-mount.
     const formKey = useMemo<string>(() => {
-        if (!selectedWorkflowId || !selectedLaunchPlan) {
+        if (!workflowVersion || !launchPlan) {
             return '';
         }
         return getCacheKey(parsedInputs);
@@ -260,171 +281,142 @@ export function useLaunchWorkflowFormState({
     // Only show errors after first submission for a set of inputs.
     useEffect(() => setShowErrors(false), [formKey]);
 
-    const workflowName = workflowId.name;
-
-    const onSelectWorkflow = (
-        newWorkflow: SearchableSelectorOption<WorkflowId>
-    ) => {
-        if (newWorkflow === selectedWorkflow) {
+    const selectWorkflowVersion = (newWorkflow: WorkflowId) => {
+        if (newWorkflow === workflowVersion) {
             return;
         }
-        setLaunchPlan(undefined);
-        setWorkflow(newWorkflow);
-    };
-
-    const onSelectLaunchPlan = (
-        newLaunchPlan: SearchableSelectorOption<LaunchPlan>
-    ) => {
-        if (newLaunchPlan === selectedLaunchPlan) {
-            return;
-        }
-        setLastSelectedLaunchPlanName(newLaunchPlan.name);
-        setLaunchPlan(newLaunchPlan);
-    };
-
-    const launchWorkflow = async () => {
-        if (!launchPlanData) {
-            throw new Error('Attempting to launch with no LaunchPlan');
-        }
-        if (formInputsRef.current === null) {
-            throw new Error('Unexpected empty form inputs ref');
-        }
-        const literals = formInputsRef.current.getValues();
-        const launchPlanId = launchPlanData.id;
-        const { domain, project } = workflowId;
-
-        const response = await createWorkflowExecution({
-            domain,
-            launchPlanId,
-            project,
-            inputs: { literals }
+        sendEvent({
+            type: 'SELECT_WORKFLOW_VERSION',
+            workflowId: newWorkflow
         });
-        const newExecutionId = response.id as WorkflowExecutionIdentifier;
-        if (!newExecutionId) {
-            throw new Error('API Response did not include new execution id');
-        }
-        history.push(Routes.ExecutionDetails.makeUrl(newExecutionId));
-        return newExecutionId;
     };
 
-    const submissionState = useFetchableData<
-        WorkflowExecutionIdentifier,
-        string
-    >(
-        {
-            autoFetch: false,
-            debugName: 'LaunchWorkflowForm',
-            defaultValue: {} as WorkflowExecutionIdentifier,
-            doFetch: launchWorkflow
-        },
-        formKey
-    );
+    const selectLaunchPlan = (newLaunchPlan: LaunchPlan) => {
+        if (newLaunchPlan === launchPlan) {
+            return;
+        }
+        sendEvent({
+            type: 'SELECT_LAUNCH_PLAN',
+            launchPlan: newLaunchPlan
+        });
+    };
+
+    const workflowSourceSelectorState = useWorkflowSourceSelectorState({
+        launchPlan,
+        launchPlanOptions,
+        sourceWorkflowId,
+        selectLaunchPlan,
+        selectWorkflowVersion,
+        workflowVersion,
+        workflowVersionOptions
+    });
 
     const onSubmit = () => {
-        if (formInputsRef.current === null) {
-            console.error('Unexpected empty form inputs ref');
-            return;
-        }
-
         // Show errors after the first submission
         setShowErrors(true);
-        // We validate separately so that a request isn't triggered unless
-        // the inputs are valid.
-        if (!formInputsRef.current.validate()) {
-            return;
-        }
-        submissionState.fetch();
+        sendEvent({ type: 'SUBMIT' });
     };
-    const onCancel = onClose;
+    const onCancel = () => {
+        sendEvent({ type: 'CANCEL' });
+        onClose();
+    };
 
-    // Once the selected workflow and launch plan have loaded, parse and set
-    // the inputs so we can render the rest of the form
     useEffect(() => {
-        const parsedInputs =
-            launchPlanData && workflow.state.matches(fetchStates.LOADED)
-                ? getInputs(
-                      workflow.value,
-                      launchPlanData,
-                      initialParameters.values
-                  )
-                : [];
-        setParsedInputs(parsedInputs);
-    }, [workflow.state.value, workflow.value, launchPlanData]);
-
-    // Once workflows have loaded, attempt to select the preferred workflow
-    // plan, or fall back to selecting the first option
-    useEffect(() => {
-        if (workflowSelectorOptions.length > 0 && !selectedWorkflow) {
-            if (preferredWorkflowId) {
-                const preferred = workflowSelectorOptions.find(({ data }) =>
-                    isEqual(data, preferredWorkflowId)
+        const subscription = service.subscribe(newState => {
+            // On transition to final success state, read the resulting execution
+            // id and navigate to the Execution Details page.
+            // if (state.matches({ submit: 'succeeded' })) {
+            if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
+                history.push(
+                    Routes.ExecutionDetails.makeUrl(
+                        newState.context.resultExecutionId
+                    )
                 );
-                if (preferred) {
-                    setWorkflow(preferred);
-                    return;
+            }
+
+            // if (state.matches({ workflow: 'select' })) {
+            if (newState.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
+                const {
+                    workflowVersionOptions,
+                    preferredWorkflowId
+                } = newState.context;
+                if (workflowVersionOptions.length > 0) {
+                    let workflowToSelect = workflowVersionOptions[0];
+                    if (preferredWorkflowId) {
+                        const preferred = workflowVersionOptions.find(
+                            ({ id }) => isEqual(id, preferredWorkflowId)
+                        );
+                        if (preferred) {
+                            workflowToSelect = preferred;
+                        }
+                    }
+                    sendEvent({
+                        type: 'SELECT_WORKFLOW_VERSION',
+                        workflowId: workflowToSelect.id
+                    });
                 }
             }
-            setWorkflow(workflowSelectorOptions[0]);
-        }
-    }, [workflows.value]);
 
-    // Once launch plans have been loaded, attempt to keep the previously
-    // selected launch plan, followed by the preferred launch plan, the one
-    // matching the workflow name, or just the first option.
-    useEffect(() => {
-        if (!launchPlanSelectorOptions.length) {
-            return;
-        }
+            // if (state.matches({ launchPlan: 'select' })) {
+            if (newState.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
+                const {
+                    launchPlan,
+                    launchPlanOptions,
+                    sourceWorkflowId
+                } = newState.context;
+                if (!launchPlanOptions.length) {
+                    return;
+                }
 
-        if (lastSelectedLaunchPlanName) {
-            const lastSelected = launchPlanSelectorOptions.find(
-                ({ name }) => name === lastSelectedLaunchPlanName
-            );
-            if (lastSelected) {
-                onSelectLaunchPlan(lastSelected);
-                return;
+                let launchPlanToSelect = launchPlanOptions[0];
+                /* Attempt to select, in order:
+                 * 1. The last launch plan that was selected, matching by the name, to preserve
+                 *    any user selection before switching workflow versions.
+                 * 2. The launch plan that was specified when initializing the form, by full id
+                 * 3. The default launch plan, which has the same `name` as the workflow
+                 * 4. The first launch plan in the list
+                 */
+                if (launchPlan) {
+                    const lastSelected = launchPlanOptions.find(
+                        ({ id: { name } }) => name === launchPlan.id.name
+                    );
+                    if (lastSelected) {
+                        launchPlanToSelect = lastSelected;
+                    }
+                } else if (preferredLaunchPlanId) {
+                    const preferred = launchPlanOptions.find(({ id }) =>
+                        isEqual(id, preferredLaunchPlanId)
+                    );
+                    if (preferred) {
+                        launchPlanToSelect = preferred;
+                    }
+                } else {
+                    const defaultLaunchPlan = launchPlanOptions.find(
+                        ({ id: { name } }) => name === sourceWorkflowId.name
+                    );
+                    if (defaultLaunchPlan) {
+                        launchPlanToSelect = defaultLaunchPlan;
+                    }
+                }
+
+                sendEvent({
+                    type: 'SELECT_LAUNCH_PLAN',
+                    launchPlan: launchPlanToSelect
+                });
             }
-        }
+        });
 
-        if (preferredLaunchPlanId) {
-            const preferred = launchPlanSelectorOptions.find(
-                ({ data: { id } }) => isEqual(id, preferredLaunchPlanId)
-            );
-            if (preferred) {
-                onSelectLaunchPlan(preferred);
-                return;
-            }
-        }
-
-        const defaultLaunchPlan = launchPlanSelectorOptions.find(
-            ({ id }) => id === workflowId.name
-        );
-        if (defaultLaunchPlan) {
-            onSelectLaunchPlan(defaultLaunchPlan);
-            return;
-        }
-        onSelectLaunchPlan(launchPlanSelectorOptions[0]);
-    }, [launchPlanSelectorOptions]);
+        return subscription.unsubscribe;
+    }, [service, sendEvent]);
 
     return {
         formInputsRef,
         formKey,
         inputValueCache,
-        inputsReady,
-        launchPlans,
-        launchPlanSelectorOptions,
         onCancel,
-        onSelectLaunchPlan,
-        onSelectWorkflow,
         onSubmit,
-        selectedLaunchPlan,
-        selectedWorkflow,
         showErrors,
-        submissionState,
-        unsupportedRequiredInputs,
-        workflowName,
-        workflows,
-        workflowSelectorOptions,
-        inputs: parsedInputs
+        state,
+        workflowSourceSelectorState
     };
 }
