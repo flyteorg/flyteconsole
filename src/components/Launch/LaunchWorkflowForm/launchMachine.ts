@@ -67,6 +67,7 @@ export interface BaseLaunchContext {
     resultExecutionId?: WorkflowExecutionIdentifier;
     sourceId?: NamedEntityIdentifier;
     error?: Error;
+    showErrors: boolean;
     unsupportedRequiredInputs: ParsedInput[];
 }
 
@@ -216,6 +217,7 @@ export type TaskLaunchTypestate = BaseLaunchTypestate;
 
 const defaultBaseContext: BaseLaunchContext = {
     parsedInputs: [],
+    showErrors: false,
     unsupportedRequiredInputs: []
 };
 
@@ -232,6 +234,7 @@ const baseStateConfig: StatesConfig<
         type: 'final'
     },
     [LaunchState.LOADING_INPUTS]: {
+        entry: ['hideErrors'],
         invoke: {
             src: 'loadInputs',
             onDone: {
@@ -276,6 +279,7 @@ const baseStateConfig: StatesConfig<
         }
     },
     [LaunchState.SUBMIT_VALIDATING]: {
+        entry: ['showErrors'],
         invoke: {
             src: 'validate',
             onDone: {
@@ -426,6 +430,7 @@ export const workflowLaunchMachineConfig: MachineConfig<
 type BaseMachineOptions = MachineOptions<BaseLaunchContext, BaseLaunchEvent>;
 
 const baseActions: BaseMachineOptions['actions'] = {
+    hideErrors: assign(_ => ({ showErrors: false })),
     setExecutionId: assign((_, event) => ({
         resultExecutionId: (event as ExecutionCreatedEvent).data
     })),
@@ -441,7 +446,8 @@ const baseActions: BaseMachineOptions['actions'] = {
     }),
     setError: assign((_, event) => ({
         error: (event as ErrorEvent).data
-    }))
+    })),
+    showErrors: assign(_ => ({ showErrors: true }))
 };
 
 const baseServices: BaseMachineOptions['services'] = {

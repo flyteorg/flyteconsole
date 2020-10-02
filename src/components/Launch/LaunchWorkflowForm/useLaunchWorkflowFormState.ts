@@ -221,7 +221,6 @@ function getServices(
  */
 export function useLaunchWorkflowFormState({
     initialParameters = {},
-    onClose,
     workflowId: sourceId
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
     // These values will be used to auto-select items from the workflow

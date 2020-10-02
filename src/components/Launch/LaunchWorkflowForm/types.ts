@@ -8,6 +8,9 @@ import {
 } from 'models';
 import { Interpreter, State } from 'xstate';
 import {
+    BaseLaunchContext,
+    BaseLaunchEvent,
+    BaseLaunchTypestate,
     TaskLaunchContext,
     TaskLaunchEvent,
     TaskLaunchTypestate,
@@ -19,6 +22,20 @@ import { SearchableSelectorOption } from './SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
+
+export type BaseInterpretedLaunchState = State<
+    BaseLaunchContext,
+    BaseLaunchEvent,
+    any,
+    BaseLaunchTypestate
+>;
+
+export type BaseLaunchService = Interpreter<
+    BaseLaunchContext,
+    any,
+    BaseLaunchEvent,
+    BaseLaunchTypestate
+>;
 
 export interface BaseLaunchFormProps {
     onClose(): void;
@@ -40,12 +57,11 @@ export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
 
 export interface TaskInitialLaunchParameters
     extends BaseInitialLaunchParameters {
-    task?: Identifier;
+    taskId?: NamedEntityIdentifier;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
     taskId: NamedEntityIdentifier;
     initialParameters?: InitialWorkflowLaunchParameters;
-    onClose(): void;
 }
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
@@ -58,7 +74,6 @@ export interface InitialWorkflowLaunchParameters {
 export interface LaunchWorkflowFormProps {
     workflowId: NamedEntityIdentifier;
     initialParameters?: InitialWorkflowLaunchParameters;
-    onClose(): void;
 }
 
 export interface LaunchFormInputsRef {
@@ -106,7 +121,8 @@ export interface LaunchTaskFormState {
         TaskLaunchEvent,
         TaskLaunchTypestate
     >;
-    // taskSourceSelectorState: WorkflowSourceSelectorState;
+    // TODO:
+    // taskSourceSelectorState: any;
 }
 
 export enum InputType {
