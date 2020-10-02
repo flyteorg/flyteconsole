@@ -6,10 +6,16 @@ import {
     FormHelperText,
     Typography
 } from '@material-ui/core';
+import { getCacheKey } from 'components/Cache/utils';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import * as React from 'react';
+import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
 import { formStrings } from './constants';
-import { InputValueCacheContext } from './inputValueCache';
+import {
+    createInputValueCache,
+    InputValueCacheContext
+} from './inputValueCache';
 import { LaunchState } from './launchMachine';
 import { LaunchWorkflowFormInputs } from './LaunchWorkflowFormInputs';
 import { SearchableSelector } from './SearchableSelector';
@@ -21,13 +27,9 @@ import { useLaunchWorkflowFormState } from './useLaunchWorkflowFormState';
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
     const {
-        formKey,
         formInputsRef,
-        showErrors,
-        inputValueCache,
-        onCancel,
-        onSubmit,
         state,
+        service,
         workflowSourceSelectorState
     } = useLaunchWorkflowFormState(props);
     const styles = useStyles();
@@ -44,8 +46,42 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
 
     const submit: React.FormEventHandler = event => {
         event.preventDefault();
-        onSubmit();
+        // Show errors after the first submission
+        setShowErrors(true);
+        service.send({ type: 'SUBMIT' });
     };
+
+    const onCancel = () => {
+        service.send({ type: 'CANCEL' });
+        props.onClose();
+    };
+
+    React.useEffect(() => {
+        const subscription = service.subscribe(newState => {
+            // On transition to final success state, read the resulting execution
+            // id and navigate to the Execution Details page.
+            // if (state.matches({ submit: 'succeeded' })) {
+            if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
+                history.push(
+                    Routes.ExecutionDetails.makeUrl(
+                        newState.context.resultExecutionId
+                    )
+                );
+            }
+        });
+
+        return subscription.unsubscribe;
+    }, [service]);
+
+    // Any time the inputs change (even if it's just re-ordering), we must
+    // change the form key so that the inputs component will re-mount.
+    const formKey = React.useMemo<string>(() => {
+        return getCacheKey(state.context.parsedInputs);
+    }, [state.context.parsedInputs]);
+    const [inputValueCache] = React.useState(createInputValueCache());
+    const [showErrors, setShowErrors] = React.useState(false);
+    // Only show errors after first submission for a set of inputs.
+    React.useEffect(() => setShowErrors(false), [formKey]);
 
     const submissionInFlight = state.matches(LaunchState.SUBMITTING);
     const canSubmit = [
@@ -82,7 +118,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
             <DialogTitle disableTypography={true} className={styles.header}>
                 <div className={styles.inputLabel}>{formStrings.title}</div>
                 <Typography variant="h6">
-                    {state.context.sourceWorkflowId?.name}
+                    {state.context.sourceId?.name}
                 </Typography>
             </DialogTitle>
             <DialogContent dividers={true} className={styles.inputsSection}>
