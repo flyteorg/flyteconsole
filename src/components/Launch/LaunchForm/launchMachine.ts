@@ -2,6 +2,7 @@ import {
     Identifier,
     LaunchPlan,
     NamedEntityIdentifier,
+    Task,
     Workflow,
     WorkflowExecutionIdentifier,
     WorkflowId
@@ -30,7 +31,7 @@ export type SelectLaunchPlanEvent = {
 };
 export type WorkflowVersionOptionsLoadedEvent = DoneInvokeEvent<Workflow[]>;
 export type LaunchPlanOptionsLoadedEvent = DoneInvokeEvent<LaunchPlan[]>;
-export type TaskVersionOptionsLoadedEvent = DoneInvokeEvent<Identifier[]>;
+export type TaskVersionOptionsLoadedEvent = DoneInvokeEvent<Task[]>;
 export type ExecutionCreatedEvent = DoneInvokeEvent<
     WorkflowExecutionIdentifier
 >;
@@ -81,8 +82,9 @@ export interface WorkflowLaunchContext extends BaseLaunchContext {
 }
 
 export interface TaskLaunchContext extends BaseLaunchContext {
+    preferredTaskId?: Identifier;
     taskVersion?: Identifier;
-    taskVersionOptions?: Identifier[];
+    taskVersionOptions?: Task[];
 }
 
 export enum LaunchState {
@@ -199,7 +201,7 @@ export type WorkflowLaunchTypestate =
     | {
           value: LaunchState.SELECT_WORKFLOW_VERSION;
           context: WorkflowLaunchContext & {
-              sourceId: WorkflowId;
+              sourceId: NamedEntityIdentifier;
               workflowVersionOptions: Workflow[];
           };
       }
@@ -207,13 +209,20 @@ export type WorkflowLaunchTypestate =
           value: LaunchState.SELECT_LAUNCH_PLAN;
           context: WorkflowLaunchContext & {
               launchPlanOptions: LaunchPlan[];
-              sourceId: WorkflowId;
+              sourceId: NamedEntityIdentifier;
               workflowVersionOptions: Workflow[];
           };
       };
 
-// TODO:
-export type TaskLaunchTypestate = BaseLaunchTypestate;
+export type TaskLaunchTypestate =
+    | BaseLaunchTypestate
+    | {
+          value: LaunchState.SELECT_TASK_VERSION;
+          context: TaskLaunchContext & {
+              sourceId: NamedEntityIdentifier;
+              taskVersionOptions: Task[];
+          };
+      };
 
 const defaultBaseContext: BaseLaunchContext = {
     parsedInputs: [],

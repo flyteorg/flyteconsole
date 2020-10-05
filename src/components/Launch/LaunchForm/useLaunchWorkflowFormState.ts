@@ -12,7 +12,7 @@ import {
     workflowSortFields
 } from 'models';
 import { RefObject, useEffect, useMemo, useRef } from 'react';
-import { getInputs } from './getInputs';
+import { getInputsForWorkflow } from './getInputs';
 import {
     LaunchState,
     WorkflowLaunchContext,
@@ -20,6 +20,7 @@ import {
     workflowLaunchMachine,
     WorkflowLaunchTypestate
 } from './launchMachine';
+import { validate } from './services';
 import {
     LaunchFormInputsRef,
     LaunchWorkflowFormProps,
@@ -143,7 +144,7 @@ async function loadInputs(
         throw new Error('Failed to load inputs: missing launchPlan');
     }
     const workflow = await getWorkflow(workflowVersion);
-    const parsedInputs: ParsedInput[] = getInputs(
+    const parsedInputs: ParsedInput[] = getInputsForWorkflow(
         workflow,
         launchPlan,
         defaultInputValues
@@ -153,22 +154,6 @@ async function loadInputs(
         parsedInputs,
         unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs)
     };
-}
-
-// TODO: Can be shared between both types of launch form.
-async function validate(
-    formInputsRef: RefObject<LaunchFormInputsRef>,
-    {}: WorkflowLaunchContext
-) {
-    if (formInputsRef.current === null) {
-        throw new Error('Unexpected empty form inputs ref');
-    }
-
-    if (!formInputsRef.current.validate()) {
-        throw new Error(
-            'Some inputs have errors. Please correct them before submitting.'
-        );
-    }
 }
 
 async function submit(

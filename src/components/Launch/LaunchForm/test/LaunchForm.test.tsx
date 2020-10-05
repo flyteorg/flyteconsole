@@ -17,22 +17,26 @@ import * as Long from 'long';
 import {
     createWorkflowExecution,
     CreateWorkflowExecutionArguments,
+    getTask,
     getWorkflow,
     Identifier,
     LaunchPlan,
     listLaunchPlans,
+    listTasks,
     listWorkflows,
     Literal,
     NamedEntityIdentifier,
     RequestConfig,
+    Task,
     Variable,
     Workflow
 } from 'models';
+import { createMockTaskClosure } from 'models/__mocks__/taskData';
 import { createMockWorkflowClosure } from 'models/__mocks__/workflowData';
 import * as React from 'react';
 import { delayedPromise, pendingPromise } from 'test/utils';
 import {
-    createMockWorkflowInputsInterface,
+    createMockInputsInterface,
     mockSimpleVariables,
     simpleVariableDefaults
 } from '../__mocks__/mockInputs';
@@ -42,10 +46,7 @@ import {
     requiredInputSuffix
 } from '../constants';
 import { LaunchForm } from '../LaunchForm';
-import {
-    InitialWorkflowLaunchParameters,
-    LaunchWorkflowFormProps
-} from '../types';
+import { LaunchFormProps, WorkflowInitialLaunchParameters } from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
 import {
     binaryInputName,
@@ -62,11 +63,16 @@ describe('LaunchWorkflowForm', () => {
     let mockSingleLaunchPlan: LaunchPlan;
     let mockWorkflow: Workflow;
     let mockWorkflowVersions: Workflow[];
+    let mockTask: Task;
+    let mockTaskVersions: Task[];
     let workflowId: NamedEntityIdentifier;
+    let taskId: NamedEntityIdentifier;
     let variables: Record<string, Variable>;
 
     let mockListLaunchPlans: jest.Mock<ReturnType<typeof listLaunchPlans>>;
+    let mockListTasks: jest.Mock<ReturnType<typeof listTasks>>;
     let mockListWorkflows: jest.Mock<ReturnType<typeof listWorkflows>>;
+    let mockGetTask: jest.Mock<ReturnType<typeof getTask>>;
     let mockGetWorkflow: jest.Mock<ReturnType<typeof getWorkflow>>;
     let mockCreateWorkflowExecution: jest.Mock<ReturnType<
         typeof createWorkflowExecution
@@ -87,14 +93,26 @@ describe('LaunchWorkflowForm', () => {
             id
         };
         workflow.closure = createMockWorkflowClosure();
-        workflow.closure!.compiledWorkflow!.primary.template.interface = createMockWorkflowInputsInterface(
+        workflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(
             variables
         );
         return workflow;
     };
 
+    const createMockTaskWithInputs = (id: Identifier) => {
+        const task: Task = {
+            id,
+            closure: createMockTaskClosure()
+        };
+        task.closure!.compiledTask!.template.interface = createMockInputsInterface(
+            variables
+        );
+        return task;
+    };
+
     const createMocks = () => {
         const mockObjects = createMockObjects(variables);
+        mockTask = mockObjects.mockTask;
         mockWorkflow = mockObjects.mockWorkflow;
         mockLaunchPlans = mockObjects.mockLaunchPlans;
         mockSingleLaunchPlan = mockLaunchPlans[0];
@@ -105,8 +123,10 @@ describe('LaunchWorkflowForm', () => {
             stringNoLabelName
         ];
 
+        mockTaskVersions = mockObjects.mockTaskVersions;
         mockWorkflowVersions = mockObjects.mockWorkflowVersions;
 
+        taskId = mockTask.id;
         workflowId = mockWorkflow.id;
         mockCreateWorkflowExecution = jest.fn();
         // Return our mock inputs for any version requested
@@ -114,6 +134,11 @@ describe('LaunchWorkflowForm', () => {
             .fn()
             .mockImplementation(id =>
                 Promise.resolve(createMockWorkflowWithInputs(id))
+            );
+        mockGetTask = jest
+            .fn()
+            .mockImplementation(id =>
+                Promise.resolve(createMockTaskWithInputs(id))
             );
         mockListLaunchPlans = jest
             .fn()
@@ -135,13 +160,31 @@ describe('LaunchWorkflowForm', () => {
                     return Promise.resolve({ entities: mockLaunchPlans });
                 }
             );
+
+        // For workflow/task list endpoings: If the scope has a filter, the calling
+        // code is searching for a specific item. So we'll return a single-item
+        // list containing it.
+        mockListTasks = jest
+            .fn()
+            .mockImplementation(
+                (scope: Partial<Identifier>, { filter }: RequestConfig) => {
+                    if (filter && filter[0].key === 'version') {
+                        const task = { ...mockTaskVersions[0] };
+                        task.id = {
+                            ...scope,
+                            version: filter[0].value
+                        } as Identifier;
+                        return Promise.resolve({
+                            entities: [task]
+                        });
+                    }
+                    return Promise.resolve({ entities: mockTaskVersions });
+                }
+            );
         mockListWorkflows = jest
             .fn()
             .mockImplementation(
                 (scope: Partial<Identifier>, { filter }: RequestConfig) => {
-                    // If the scope has a filter, the calling
-                    // code is searching for a specific item. So we'll
-                    // return a single-item list containing it.
                     if (filter && filter[0].key === 'version') {
                         const workflow = { ...mockWorkflowVersions[0] };
                         workflow.id = {
@@ -157,14 +200,16 @@ describe('LaunchWorkflowForm', () => {
             );
     };
 
-    const renderForm = (props?: Partial<LaunchWorkflowFormProps>) => {
+    const renderForm = (props?: Partial<LaunchFormProps>) => {
         return render(
             <ThemeProvider theme={muiTheme}>
                 <APIContext.Provider
                     value={mockAPIContextValue({
                         createWorkflowExecution: mockCreateWorkflowExecution,
+                        getTask: mockGetTask,
                         getWorkflow: mockGetWorkflow,
                         listLaunchPlans: mockListLaunchPlans,
+                        listTasks: mockListTasks,
                         listWorkflows: mockListWorkflows
                     })}
                 >
@@ -185,6 +230,10 @@ describe('LaunchWorkflowForm', () => {
         expect(buttons.length).toBe(1);
         return buttons[0];
     };
+
+    // TODO: Figure out which tests need to happen for both source types and do a
+    // map() taskId/workflowId
+    // Then duplicate the selector logic tests for task as a source.
 
     describe('With Simple Inputs', () => {
         beforeEach(() => {
@@ -503,7 +552,7 @@ describe('LaunchWorkflowForm', () => {
 
         describe('When using initial parameters', () => {
             it('should prefer the provided workflow version', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -514,7 +563,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred version in the selector', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -551,7 +600,7 @@ describe('LaunchWorkflowForm', () => {
                     }
                 );
                 const baseId = mockWorkflowVersions[2].id;
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: { ...baseId, version: 'nonexistentValue' }
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -562,7 +611,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should prefer the provided launch plan', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -573,7 +622,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred launch plan in the selector', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -609,7 +658,7 @@ describe('LaunchWorkflowForm', () => {
                 );
                 const launchPlanId = { ...mockLaunchPlans[1].id };
                 launchPlanId.name = 'InvalidLauchPlan';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: launchPlanId
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -676,7 +725,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads preferred workflow version when it does not exist in the list of suggestions', async () => {
                 const missingWorkflow = mockWorkflowVersions[0];
                 missingWorkflow.id.version = 'missingVersionString';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: missingWorkflow.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -689,7 +738,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads the preferred launch plan when it does not exist in the list of suggestions', async () => {
                 const missingLaunchPlan = mockLaunchPlans[0];
                 missingLaunchPlan.id.name = 'missingLaunchPlanName';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: missingLaunchPlan.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -723,7 +772,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should correctly render workflow version search results', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const inputString = mockWorkflowVersions[1].id.version.substring(

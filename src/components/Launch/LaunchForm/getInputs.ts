@@ -1,11 +1,12 @@
 import { sortedObjectEntries } from 'common/utils';
-import { LaunchPlan, Workflow } from 'models';
+import { LaunchPlan, Task, Workflow } from 'models';
 import { requiredInputSuffix } from './constants';
 import { LiteralValueMap, ParsedInput } from './types';
 import {
     createInputCacheKey,
     formatLabelWithType,
     getInputDefintionForLiteralType,
+    getTaskInputs,
     getWorkflowInputs
 } from './utils';
 
@@ -13,7 +14,7 @@ import {
 // to depend on the existence of a value
 const emptyDescription = ' ';
 
-export function getInputs(
+export function getInputsForWorkflow(
     workflow: Workflow,
     launchPlan: LaunchPlan,
     initialValues: LiteralValueMap = new Map()
@@ -54,6 +55,38 @@ export function getInputs(
             name,
             required,
             typeDefinition
+        };
+    });
+}
+
+export function getInputsForTask(
+    task: Task,
+    initialValues: LiteralValueMap = new Map()
+): ParsedInput[] {
+    if (!task) {
+        return [];
+    }
+
+    const taskInputs = getTaskInputs(task);
+    return sortedObjectEntries(taskInputs).map(value => {
+        const [name, { description = emptyDescription, type }] = value;
+        const typeDefinition = getInputDefintionForLiteralType(type);
+        const typeLabel = formatLabelWithType(name, typeDefinition);
+        const label = `${typeLabel}${requiredInputSuffix}`;
+        const inputKey = createInputCacheKey(name, typeDefinition);
+        const initialValue = initialValues.has(inputKey)
+            ? initialValues.get(inputKey)
+            : undefined;
+
+        return {
+            description,
+            initialValue,
+            label,
+            name,
+            typeDefinition,
+            // Task inputs are always required, as there is no default provided
+            // by a parent workflow.
+            required: true
         };
     });
 }

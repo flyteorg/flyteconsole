@@ -1,5 +1,5 @@
 import { mockSimpleVariables } from '../__mocks__/mockInputs';
-import { getInputs } from '../getInputs';
+import { getInputsForWorkflow } from '../getInputs';
 import { stringInputName } from './constants';
 import { createMockObjects } from './utils';
 
@@ -15,9 +15,13 @@ describe('getInputs', () => {
         const parameters = launchPlan.closure!.expectedInputs.parameters;
         parameters[stringInputName].default = null;
 
-        expect(() => getInputs(mockWorkflow, launchPlan)).not.toThrowError();
+        expect(() =>
+            getInputsForWorkflow(mockWorkflow, launchPlan)
+        ).not.toThrowError();
 
         delete parameters[stringInputName].default;
-        expect(() => getInputs(mockWorkflow, launchPlan)).not.toThrowError();
+        expect(() =>
+            getInputsForWorkflow(mockWorkflow, launchPlan)
+        ).not.toThrowError();
     });
 });

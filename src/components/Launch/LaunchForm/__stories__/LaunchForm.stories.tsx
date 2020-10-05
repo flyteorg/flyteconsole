@@ -23,7 +23,7 @@ import {
 import { mockWorkflowExecutionResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import * as React from 'react';
 import {
-    createMockWorkflowInputsInterface,
+    createMockInputsInterface,
     mockCollectionVariables,
     mockNestedCollectionVariables,
     mockSimpleVariables,
@@ -44,7 +44,7 @@ const submitAction = action('createWorkflowExecution');
 const generateMocks = (variables: Record<string, Variable>) => {
     const mockWorkflow = createMockWorkflow('MyWorkflow');
     mockWorkflow.closure = createMockWorkflowClosure();
-    mockWorkflow.closure!.compiledWorkflow!.primary.template.interface = createMockWorkflowInputsInterface(
+    mockWorkflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(
         variables
     );
 
@@ -95,7 +95,7 @@ const generateMocks = (variables: Record<string, Variable>) => {
                 id
             };
             workflow.closure = createMockWorkflowClosure();
-            workflow.closure!.compiledWorkflow!.primary.template.interface = createMockWorkflowInputsInterface(
+            workflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(
                 variables
             );
 

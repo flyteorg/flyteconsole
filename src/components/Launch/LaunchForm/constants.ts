@@ -17,6 +17,7 @@ export const formStrings = {
     cancel: 'Cancel',
     inputs: 'Inputs',
     submit: 'Launch',
+    taskVersion: 'Task Version',
     title: 'Launch Workflow',
     workflowVersion: 'Workflow Version',
     launchPlan: 'Launch Plan'

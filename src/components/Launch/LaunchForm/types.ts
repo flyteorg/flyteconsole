@@ -4,6 +4,8 @@ import {
     Identifier,
     LaunchPlan,
     NamedEntityIdentifier,
+    Task,
+    Workflow,
     WorkflowId
 } from 'models';
 import { Interpreter, State } from 'xstate';
@@ -22,6 +24,7 @@ import { SearchableSelectorOption } from './SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
+export type SearchableVersion = Workflow | Task;
 
 export type BaseInterpretedLaunchState = State<
     BaseLaunchContext,
@@ -52,28 +55,28 @@ export interface WorkflowInitialLaunchParameters
 }
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
     workflowId: NamedEntityIdentifier;
-    initialParameters?: InitialWorkflowLaunchParameters;
+    initialParameters?: WorkflowInitialLaunchParameters;
 }
 
 export interface TaskInitialLaunchParameters
     extends BaseInitialLaunchParameters {
-    taskId?: NamedEntityIdentifier;
+    taskId?: Identifier;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
     taskId: NamedEntityIdentifier;
-    initialParameters?: InitialWorkflowLaunchParameters;
+    initialParameters?: TaskInitialLaunchParameters;
 }
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
-export interface InitialWorkflowLaunchParameters {
+export interface WorkflowInitialLaunchParameters {
     launchPlan?: Identifier;
     workflow?: WorkflowId;
     values?: LiteralValueMap;
 }
 export interface LaunchWorkflowFormProps {
     workflowId: NamedEntityIdentifier;
-    initialParameters?: InitialWorkflowLaunchParameters;
+    initialParameters?: WorkflowInitialLaunchParameters;
 }
 
 export interface LaunchFormInputsRef {
@@ -93,6 +96,15 @@ export interface WorkflowSourceSelectorState {
         selected: SearchableSelectorOption<WorkflowId>
     ): void;
     onSelectLaunchPlan(selected: SearchableSelectorOption<LaunchPlan>): void;
+}
+
+export interface TaskSourceSelectorState {
+    selectedTask?: SearchableSelectorOption<Identifier>;
+    taskSelectorOptions: SearchableSelectorOption<Identifier>[];
+    fetchSearchResults(
+        query: string
+    ): Promise<SearchableSelectorOption<Identifier>[]>;
+    onSelectTaskVersion(selected: SearchableSelectorOption<Identifier>): void;
 }
 
 export interface LaunchWorkflowFormState {
@@ -121,8 +133,7 @@ export interface LaunchTaskFormState {
         TaskLaunchEvent,
         TaskLaunchTypestate
     >;
-    // TODO:
-    // taskSourceSelectorState: any;
+    taskSourceSelectorState: TaskSourceSelectorState;
 }
 
 export enum InputType {
