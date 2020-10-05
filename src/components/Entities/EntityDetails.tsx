@@ -4,7 +4,7 @@ import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks';
-import { LaunchForm } from 'components/Launch/LaunchWorkflowForm/LaunchForm';
+import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { ResourceIdentifier } from 'models';
 import * as React from 'react';
 import { entitySections } from './constants';

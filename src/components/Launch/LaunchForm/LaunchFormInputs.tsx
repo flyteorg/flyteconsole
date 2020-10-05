@@ -1,4 +1,3 @@
-import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
 import { BlobInput } from './BlobInput';
 import { CollectionInput } from './CollectionInput';
@@ -53,13 +52,7 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
         validate
     }));
 
-    // Any time the inputs change (even if it's just re-ordering), we must
-    // change the form key so that the inputs component will re-mount.
-    const formKey = React.useMemo<string>(() => {
-        return getCacheKey(state.context.parsedInputs);
-    }, [state.context.parsedInputs]);
-
-    const showInputs = ![
+    const showInputs = [
         LaunchState.UNSUPPORTED_INPUTS,
         LaunchState.ENTER_INPUTS,
         LaunchState.VALIDATING_INPUTS,
@@ -71,7 +64,7 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
     ].some(state.matches);
 
     return showInputs ? (
-        <section key={formKey} title={formStrings.inputs}>
+        <section title={formStrings.inputs}>
             {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
                 <UnsupportedRequiredInputsError
                     inputs={unsupportedRequiredInputs}

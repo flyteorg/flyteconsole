@@ -1,8 +1,8 @@
 import { WaitForData } from 'components/common';
 import { useWorkflow } from 'components/hooks';
-import { LaunchForm } from 'components/Launch/LaunchWorkflowForm/LaunchForm';
-import { useExecutionLaunchConfiguration } from 'components/Launch/LaunchWorkflowForm/useExecutionLaunchConfiguration';
-import { getWorkflowInputs } from 'components/Launch/LaunchWorkflowForm/utils';
+import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
+import { useExecutionLaunchConfiguration } from 'components/Launch/LaunchForm/useExecutionLaunchConfiguration';
+import { getWorkflowInputs } from 'components/Launch/LaunchForm/utils';
 import { Execution, Workflow } from 'models';
 import * as React from 'react';
 

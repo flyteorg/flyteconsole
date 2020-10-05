@@ -13,6 +13,7 @@ export interface LaunchFormActionsProps {
     service: BaseLaunchService;
     onClose(): void;
 }
+/** Renders the Submit/Cancel buttons for a LaunchForm */
 export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
     state,
     service,

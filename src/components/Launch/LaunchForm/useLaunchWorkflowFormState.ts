@@ -319,7 +319,7 @@ export function useLaunchWorkflowFormState({
                 const {
                     launchPlan,
                     launchPlanOptions,
-                    sourceWorkflowId
+                    sourceId
                 } = newState.context;
                 if (!launchPlanOptions.length) {
                     return;
@@ -349,7 +349,7 @@ export function useLaunchWorkflowFormState({
                     }
                 } else {
                     const defaultLaunchPlan = launchPlanOptions.find(
-                        ({ id: { name } }) => name === sourceWorkflowId.name
+                        ({ id: { name } }) => name === sourceId.name
                     );
                     if (defaultLaunchPlan) {
                         launchPlanToSelect = defaultLaunchPlan;

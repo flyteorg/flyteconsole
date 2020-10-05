@@ -199,7 +199,7 @@ export type WorkflowLaunchTypestate =
     | {
           value: LaunchState.SELECT_WORKFLOW_VERSION;
           context: WorkflowLaunchContext & {
-              sourceWorkflowId: WorkflowId;
+              sourceId: WorkflowId;
               workflowVersionOptions: Workflow[];
           };
       }
@@ -207,7 +207,7 @@ export type WorkflowLaunchTypestate =
           value: LaunchState.SELECT_LAUNCH_PLAN;
           context: WorkflowLaunchContext & {
               launchPlanOptions: LaunchPlan[];
-              sourceWorkflowId: WorkflowId;
+              sourceId: WorkflowId;
               workflowVersionOptions: Workflow[];
           };
       };
@@ -321,6 +321,7 @@ export const taskLaunchMachineConfig: MachineConfig<
 > = {
     id: 'launchTask',
     context: { ...defaultBaseContext },
+    initial: LaunchState.LOADING_TASK_VERSIONS,
     on: {
         ...defaultHandlers,
         SELECT_TASK_VERSION: {
@@ -365,6 +366,7 @@ export const workflowLaunchMachineConfig: MachineConfig<
 > = {
     id: 'launchWorkflow',
     context: { ...defaultBaseContext },
+    initial: LaunchState.LOADING_WORKFLOW_VERSIONS,
     on: {
         ...defaultHandlers,
         SELECT_WORKFLOW_VERSION: {

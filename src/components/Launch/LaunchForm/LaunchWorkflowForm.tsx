@@ -1,4 +1,5 @@
 import { DialogContent } from '@material-ui/core';
+import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
 import { formStrings } from './constants';
 import { LaunchFormActions } from './LaunchFormActions';
@@ -25,6 +26,12 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
     const styles = useStyles();
     const baseState = state as BaseInterpretedLaunchState;
     const baseService = service as BaseLaunchService;
+
+    // Any time the inputs change (even if it's just re-ordering), we must
+    // change the form key so that the inputs component will re-mount.
+    const formKey = React.useMemo<string>(() => {
+        return getCacheKey(state.context.parsedInputs);
+    }, [state.context.parsedInputs]);
 
     const {
         fetchSearchResults,
@@ -82,7 +89,11 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         />
                     </section>
                 ) : null}
-                <LaunchFormInputs ref={formInputsRef} state={baseState} />
+                <LaunchFormInputs
+                    key={formKey}
+                    ref={formInputsRef}
+                    state={baseState}
+                />
             </DialogContent>
             <LaunchFormActions
                 state={baseState}

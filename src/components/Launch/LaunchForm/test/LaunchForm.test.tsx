@@ -41,7 +41,7 @@ import {
     formStrings,
     requiredInputSuffix
 } from '../constants';
-import { LaunchWorkflowForm } from '../LaunchWorkflowForm';
+import { LaunchForm } from '../LaunchForm';
 import {
     InitialWorkflowLaunchParameters,
     LaunchWorkflowFormProps
@@ -168,7 +168,7 @@ describe('LaunchWorkflowForm', () => {
                         listWorkflows: mockListWorkflows
                     })}
                 >
-                    <LaunchWorkflowForm
+                    <LaunchForm
                         onClose={onClose}
                         workflowId={workflowId}
                         {...props}
