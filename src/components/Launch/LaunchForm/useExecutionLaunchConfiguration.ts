@@ -3,7 +3,7 @@ import { useAPIContext } from 'components/data/apiContext';
 import { fetchWorkflowExecutionInputs } from 'components/Executions/useWorkflowExecution';
 import { FetchableData, useFetchableData } from 'components/hooks';
 import { Execution, Variable } from 'models';
-import { InitialLaunchParameters, LiteralValueMap } from './types';
+import { InitialWorkflowLaunchParameters, LiteralValueMap } from './types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from './utils';
 
 export interface UseExecutionLaunchConfigurationArgs {
@@ -11,21 +11,22 @@ export interface UseExecutionLaunchConfigurationArgs {
     workflowInputs: Record<string, Variable>;
 }
 
-/** Returns a fetchable that will result in a `InitialLaunchParameters` object based on a provided `Execution` and its associated workflow inputs. */
+/** Returns a fetchable that will result in a `InitialWorkflowLaunchParameters`
+ * object based on a provided `Execution` and its associated workflow inputs. */
 export function useExecutionLaunchConfiguration({
     execution,
     workflowInputs
 }: UseExecutionLaunchConfigurationArgs): FetchableData<
-    InitialLaunchParameters
+    InitialWorkflowLaunchParameters
 > {
     const apiContext = useAPIContext();
     return useFetchableData<
-        InitialLaunchParameters,
+        InitialWorkflowLaunchParameters,
         UseExecutionLaunchConfigurationArgs
     >(
         {
             debugName: 'ExecutionLaunchConfiguration',
-            defaultValue: {} as InitialLaunchParameters,
+            defaultValue: {} as InitialWorkflowLaunchParameters,
             doFetch: async ({ execution, workflowInputs }) => {
                 const {
                     closure: { workflowId },

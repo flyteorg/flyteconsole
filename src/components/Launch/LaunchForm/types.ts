@@ -6,26 +6,77 @@ import {
     NamedEntityIdentifier,
     WorkflowId
 } from 'models';
-import { State } from 'xstate';
-import { LaunchContext, LaunchEvent, LaunchTypestate } from './launchMachine';
+import { Interpreter, State } from 'xstate';
+import {
+    BaseLaunchContext,
+    BaseLaunchEvent,
+    BaseLaunchTypestate,
+    TaskLaunchContext,
+    TaskLaunchEvent,
+    TaskLaunchTypestate,
+    WorkflowLaunchContext,
+    WorkflowLaunchEvent,
+    WorkflowLaunchTypestate
+} from './launchMachine';
 import { SearchableSelectorOption } from './SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
 
-export interface InitialLaunchParameters {
+export type BaseInterpretedLaunchState = State<
+    BaseLaunchContext,
+    BaseLaunchEvent,
+    any,
+    BaseLaunchTypestate
+>;
+
+export type BaseLaunchService = Interpreter<
+    BaseLaunchContext,
+    any,
+    BaseLaunchEvent,
+    BaseLaunchTypestate
+>;
+
+export interface BaseLaunchFormProps {
+    onClose(): void;
+}
+
+export interface BaseInitialLaunchParameters {
+    values?: LiteralValueMap;
+}
+
+export interface WorkflowInitialLaunchParameters
+    extends BaseInitialLaunchParameters {
+    launchPlan?: Identifier;
+    workflow?: WorkflowId;
+}
+export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
+    workflowId: NamedEntityIdentifier;
+    initialParameters?: InitialWorkflowLaunchParameters;
+}
+
+export interface TaskInitialLaunchParameters
+    extends BaseInitialLaunchParameters {
+    taskId?: NamedEntityIdentifier;
+}
+export interface LaunchTaskFormProps extends BaseLaunchFormProps {
+    taskId: NamedEntityIdentifier;
+    initialParameters?: InitialWorkflowLaunchParameters;
+}
+
+export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
+
+export interface InitialWorkflowLaunchParameters {
     launchPlan?: Identifier;
     workflow?: WorkflowId;
     values?: LiteralValueMap;
 }
-
 export interface LaunchWorkflowFormProps {
     workflowId: NamedEntityIdentifier;
-    initialParameters?: InitialLaunchParameters;
-    onClose(): void;
+    initialParameters?: InitialWorkflowLaunchParameters;
 }
 
-export interface LaunchWorkflowFormInputsRef {
+export interface LaunchFormInputsRef {
     getValues(): Record<string, Core.ILiteral>;
     validate(): boolean;
 }
@@ -45,15 +96,33 @@ export interface WorkflowSourceSelectorState {
 }
 
 export interface LaunchWorkflowFormState {
-    /** Used to key inputs component so it is re-mounted the list of inputs */
-    formKey?: string;
-    formInputsRef: React.RefObject<LaunchWorkflowFormInputsRef>;
-    inputValueCache: InputValueMap;
-    showErrors: boolean;
-    state: State<LaunchContext, LaunchEvent, any, LaunchTypestate>;
+    formInputsRef: React.RefObject<LaunchFormInputsRef>;
+    state: State<
+        WorkflowLaunchContext,
+        WorkflowLaunchEvent,
+        any,
+        WorkflowLaunchTypestate
+    >;
+    service: Interpreter<
+        WorkflowLaunchContext,
+        any,
+        WorkflowLaunchEvent,
+        WorkflowLaunchTypestate
+    >;
     workflowSourceSelectorState: WorkflowSourceSelectorState;
-    onCancel(): void;
-    onSubmit(): void;
+}
+
+export interface LaunchTaskFormState {
+    formInputsRef: React.RefObject<LaunchFormInputsRef>;
+    state: State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
+    service: Interpreter<
+        TaskLaunchContext,
+        any,
+        TaskLaunchEvent,
+        TaskLaunchTypestate
+    >;
+    // TODO:
+    // taskSourceSelectorState: any;
 }
 
 export enum InputType {

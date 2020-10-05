@@ -30,7 +30,7 @@ import {
     simpleVariableDefaults,
     SimpleVariableKey
 } from '../__mocks__/mockInputs';
-import { LaunchWorkflowForm } from '../LaunchWorkflowForm';
+import { LaunchForm } from '../LaunchForm';
 import { binaryInputName, errorInputName } from '../test/constants';
 import { useExecutionLaunchConfiguration } from '../useExecutionLaunchConfiguration';
 import { getWorkflowInputs } from '../utils';
@@ -124,7 +124,7 @@ const LaunchFormWithExecution: React.FC<RenderFormArgs & {
     const onClose = () => console.log('Close');
     return (
         <WaitForData {...launchConfig}>
-            <LaunchWorkflowForm
+            <LaunchForm
                 onClose={onClose}
                 workflowId={mockWorkflow.id}
                 initialParameters={launchConfig.value}
@@ -148,7 +148,7 @@ const renderForm = (args: RenderFormArgs) => {
                         execution={args.execution}
                     />
                 ) : (
-                    <LaunchWorkflowForm
+                    <LaunchForm
                         onClose={onClose}
                         workflowId={mockWorkflow.id}
                     />
@@ -158,7 +158,7 @@ const renderForm = (args: RenderFormArgs) => {
     );
 };
 
-const stories = storiesOf('Launch/LaunchWorkflowForm', module);
+const stories = storiesOf('Launch/LaunchForm/Workflow', module);
 
 stories.add('Simple', () =>
     renderForm({ mocks: generateMocks(mockSimpleVariables) })

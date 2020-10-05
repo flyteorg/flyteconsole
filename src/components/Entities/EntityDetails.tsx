@@ -4,7 +4,7 @@ import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks';
-import { LaunchWorkflowForm } from 'components/Launch/LaunchWorkflowForm/LaunchWorkflowForm';
+import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { ResourceIdentifier } from 'models';
 import * as React from 'react';
 import { entitySections } from './constants';
@@ -76,7 +76,6 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
                     <EntityExecutions id={id} />
                 </div>
             ) : null}
-            {/* TODO: LaunchWorkflowForm needs to be made generic */}
             {!!sections.launch ? (
                 <Dialog
                     scroll="paper"
@@ -84,10 +83,7 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
                     fullWidth={true}
                     open={showLaunchForm}
                 >
-                    <LaunchWorkflowForm
-                        onClose={onCancelLaunch}
-                        workflowId={id}
-                    />
+                    <LaunchForm onClose={onCancelLaunch} workflowId={id} />
                 </Dialog>
             ) : null}
         </WaitForData>

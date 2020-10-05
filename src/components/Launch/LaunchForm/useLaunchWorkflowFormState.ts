@@ -1,5 +1,4 @@
 import { useMachine } from '@xstate/react';
-import { getCacheKey } from 'components/Cache';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
@@ -12,20 +11,17 @@ import {
     WorkflowId,
     workflowSortFields
 } from 'models';
-import { RefObject, useEffect, useMemo, useRef, useState } from 'react';
-import { history } from 'routes/history';
-import { Routes } from 'routes/routes';
+import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { getInputs } from './getInputs';
-import { createInputValueCache } from './inputValueCache';
 import {
-    LaunchContext,
-    LaunchEvent,
-    launchMachine,
     LaunchState,
-    LaunchTypestate
+    WorkflowLaunchContext,
+    WorkflowLaunchEvent,
+    workflowLaunchMachine,
+    WorkflowLaunchTypestate
 } from './launchMachine';
 import {
-    LaunchWorkflowFormInputsRef,
+    LaunchFormInputsRef,
     LaunchWorkflowFormProps,
     LaunchWorkflowFormState,
     ParsedInput
@@ -35,7 +31,7 @@ import { getUnsupportedRequiredInputs } from './utils';
 
 async function loadLaunchPlans(
     { listLaunchPlans }: APIContextValue,
-    { preferredLaunchPlanId, workflowVersion }: LaunchContext
+    { preferredLaunchPlanId, workflowVersion }: WorkflowLaunchContext
 ) {
     if (workflowVersion == null) {
         return Promise.reject('No workflowVersion specified');
@@ -91,7 +87,7 @@ async function loadLaunchPlans(
 
 async function loadWorkflowVersions(
     { listWorkflows }: APIContextValue,
-    { preferredWorkflowId, sourceWorkflowId: sourceWorkflowName }: LaunchContext
+    { preferredWorkflowId, sourceId: sourceWorkflowName }: WorkflowLaunchContext
 ) {
     if (!sourceWorkflowName) {
         throw new Error('Cannot load workflows, missing workflowName');
@@ -138,7 +134,7 @@ async function loadWorkflowVersions(
 
 async function loadInputs(
     { getWorkflow }: APIContextValue,
-    { defaultInputValues, workflowVersion, launchPlan }: LaunchContext
+    { defaultInputValues, workflowVersion, launchPlan }: WorkflowLaunchContext
 ) {
     if (!workflowVersion) {
         throw new Error('Failed to load inputs: missing workflowVersion');
@@ -159,9 +155,10 @@ async function loadInputs(
     };
 }
 
+// TODO: Can be shared between both types of launch form.
 async function validate(
-    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
-    {}: LaunchContext
+    formInputsRef: RefObject<LaunchFormInputsRef>,
+    {}: WorkflowLaunchContext
 ) {
     if (formInputsRef.current === null) {
         throw new Error('Unexpected empty form inputs ref');
@@ -169,15 +166,15 @@ async function validate(
 
     if (!formInputsRef.current.validate()) {
         throw new Error(
-            'Some inputs have errors. Please correct them before submitting'
+            'Some inputs have errors. Please correct them before submitting.'
         );
     }
 }
 
 async function submit(
     { createWorkflowExecution }: APIContextValue,
-    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>,
-    { launchPlan, workflowVersion }: LaunchContext
+    formInputsRef: RefObject<LaunchFormInputsRef>,
+    { launchPlan, workflowVersion }: WorkflowLaunchContext
 ) {
     if (!launchPlan) {
         throw new Error('Attempting to launch with no LaunchPlan');
@@ -208,7 +205,7 @@ async function submit(
 
 function getServices(
     apiContext: APIContextValue,
-    formInputsRef: RefObject<LaunchWorkflowFormInputsRef>
+    formInputsRef: RefObject<LaunchFormInputsRef>
 ) {
     return {
         loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
@@ -224,8 +221,7 @@ function getServices(
  */
 export function useLaunchWorkflowFormState({
     initialParameters = {},
-    onClose,
-    workflowId: sourceWorkflowId
+    workflowId: sourceId
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
     // These values will be used to auto-select items from the workflow
     // version/launch plan drop downs.
@@ -236,9 +232,7 @@ export function useLaunchWorkflowFormState({
     } = initialParameters;
 
     const apiContext = useAPIContext();
-    const [inputValueCache] = useState(createInputValueCache());
-    const formInputsRef = useRef<LaunchWorkflowFormInputsRef>(null);
-    const [showErrors, setShowErrors] = useState(false);
+    const formInputsRef = useRef<LaunchFormInputsRef>(null);
 
     const services = useMemo(() => getServices(apiContext, formInputsRef), [
         apiContext,
@@ -246,18 +240,17 @@ export function useLaunchWorkflowFormState({
     ]);
 
     const [state, sendEvent, service] = useMachine<
-        LaunchContext,
-        LaunchEvent,
-        LaunchTypestate
-    >(launchMachine, {
+        WorkflowLaunchContext,
+        WorkflowLaunchEvent,
+        WorkflowLaunchTypestate
+    >(workflowLaunchMachine, {
         ...defaultStateMachineConfig,
         services,
         context: {
             defaultInputValues,
             preferredLaunchPlanId,
             preferredWorkflowId,
-            sourceWorkflowId,
-            sourceType: 'workflow'
+            sourceId
         }
     });
 
@@ -265,21 +258,8 @@ export function useLaunchWorkflowFormState({
         launchPlanOptions = [],
         launchPlan,
         workflowVersionOptions = [],
-        parsedInputs,
         workflowVersion
     } = state.context;
-
-    // Any time the inputs change (even if it's just re-ordering), we must
-    // change the form key so that the inputs component will re-mount.
-    const formKey = useMemo<string>(() => {
-        if (!workflowVersion || !launchPlan) {
-            return '';
-        }
-        return getCacheKey(parsedInputs);
-    }, [parsedInputs]);
-
-    // Only show errors after first submission for a set of inputs.
-    useEffect(() => setShowErrors(false), [formKey]);
 
     const selectWorkflowVersion = (newWorkflow: WorkflowId) => {
         if (newWorkflow === workflowVersion) {
@@ -304,37 +284,15 @@ export function useLaunchWorkflowFormState({
     const workflowSourceSelectorState = useWorkflowSourceSelectorState({
         launchPlan,
         launchPlanOptions,
-        sourceWorkflowId,
+        sourceId,
         selectLaunchPlan,
         selectWorkflowVersion,
         workflowVersion,
         workflowVersionOptions
     });
 
-    const onSubmit = () => {
-        // Show errors after the first submission
-        setShowErrors(true);
-        sendEvent({ type: 'SUBMIT' });
-    };
-    const onCancel = () => {
-        sendEvent({ type: 'CANCEL' });
-        onClose();
-    };
-
     useEffect(() => {
         const subscription = service.subscribe(newState => {
-            // On transition to final success state, read the resulting execution
-            // id and navigate to the Execution Details page.
-            // if (state.matches({ submit: 'succeeded' })) {
-            if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
-                history.push(
-                    Routes.ExecutionDetails.makeUrl(
-                        newState.context.resultExecutionId
-                    )
-                );
-            }
-
-            // if (state.matches({ workflow: 'select' })) {
             if (newState.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
                 const {
                     workflowVersionOptions,
@@ -357,12 +315,11 @@ export function useLaunchWorkflowFormState({
                 }
             }
 
-            // if (state.matches({ launchPlan: 'select' })) {
             if (newState.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
                 const {
                     launchPlan,
                     launchPlanOptions,
-                    sourceWorkflowId
+                    sourceId
                 } = newState.context;
                 if (!launchPlanOptions.length) {
                     return;
@@ -392,7 +349,7 @@ export function useLaunchWorkflowFormState({
                     }
                 } else {
                     const defaultLaunchPlan = launchPlanOptions.find(
-                        ({ id: { name } }) => name === sourceWorkflowId.name
+                        ({ id: { name } }) => name === sourceId.name
                     );
                     if (defaultLaunchPlan) {
                         launchPlanToSelect = defaultLaunchPlan;
@@ -411,12 +368,8 @@ export function useLaunchWorkflowFormState({
 
     return {
         formInputsRef,
-        formKey,
-        inputValueCache,
-        onCancel,
-        onSubmit,
-        showErrors,
         state,
+        service,
         workflowSourceSelectorState
     };
 }

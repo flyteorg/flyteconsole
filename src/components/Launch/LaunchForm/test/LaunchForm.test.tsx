@@ -41,8 +41,11 @@ import {
     formStrings,
     requiredInputSuffix
 } from '../constants';
-import { LaunchWorkflowForm } from '../LaunchWorkflowForm';
-import { InitialLaunchParameters, LaunchWorkflowFormProps } from '../types';
+import { LaunchForm } from '../LaunchForm';
+import {
+    InitialWorkflowLaunchParameters,
+    LaunchWorkflowFormProps
+} from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
 import {
     binaryInputName,
@@ -165,7 +168,7 @@ describe('LaunchWorkflowForm', () => {
                         listWorkflows: mockListWorkflows
                     })}
                 >
-                    <LaunchWorkflowForm
+                    <LaunchForm
                         onClose={onClose}
                         workflowId={workflowId}
                         {...props}
@@ -500,7 +503,7 @@ describe('LaunchWorkflowForm', () => {
 
         describe('When using initial parameters', () => {
             it('should prefer the provided workflow version', async () => {
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -511,7 +514,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred version in the selector', async () => {
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -548,7 +551,7 @@ describe('LaunchWorkflowForm', () => {
                     }
                 );
                 const baseId = mockWorkflowVersions[2].id;
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     workflow: { ...baseId, version: 'nonexistentValue' }
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -559,7 +562,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should prefer the provided launch plan', async () => {
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -570,7 +573,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred launch plan in the selector', async () => {
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -606,7 +609,7 @@ describe('LaunchWorkflowForm', () => {
                 );
                 const launchPlanId = { ...mockLaunchPlans[1].id };
                 launchPlanId.name = 'InvalidLauchPlan';
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     launchPlan: launchPlanId
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -673,7 +676,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads preferred workflow version when it does not exist in the list of suggestions', async () => {
                 const missingWorkflow = mockWorkflowVersions[0];
                 missingWorkflow.id.version = 'missingVersionString';
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     workflow: missingWorkflow.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -686,7 +689,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads the preferred launch plan when it does not exist in the list of suggestions', async () => {
                 const missingLaunchPlan = mockLaunchPlans[0];
                 missingLaunchPlan.id.name = 'missingLaunchPlanName';
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     launchPlan: missingLaunchPlan.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -720,7 +723,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should correctly render workflow version search results', async () => {
-                const initialParameters: InitialLaunchParameters = {
+                const initialParameters: InitialWorkflowLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const inputString = mockWorkflowVersions[1].id.version.substring(

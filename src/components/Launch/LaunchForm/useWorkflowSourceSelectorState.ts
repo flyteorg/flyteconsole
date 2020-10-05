@@ -64,7 +64,7 @@ interface UseWorkflowSourceSelectorStateArgs {
     /** List of options to show for the launch plan selector. */
     launchPlanOptions: LaunchPlan[];
     /** The parent workflow for which we are selecting a version. */
-    sourceWorkflowId: NamedEntityIdentifier;
+    sourceId: NamedEntityIdentifier;
     /** The currently selected Workflow version. */
     workflowVersion?: WorkflowId;
     /** The list of options to show for the Workflow selector. */
@@ -81,7 +81,7 @@ interface UseWorkflowSourceSelectorStateArgs {
 export function useWorkflowSourceSelectorState({
     launchPlan,
     launchPlanOptions,
-    sourceWorkflowId,
+    sourceId,
     workflowVersion,
     workflowVersionOptions,
     selectLaunchPlan,
@@ -132,16 +132,13 @@ export function useWorkflowSourceSelectorState({
     );
 
     const fetchSearchResults = useMemo(() => {
-        const doFetch = generateFetchSearchResults(
-            apiContext,
-            sourceWorkflowId
-        );
+        const doFetch = generateFetchSearchResults(apiContext, sourceId);
         return async (query: string) => {
             const results = await doFetch(query);
             setWorkflowVersionSearchOptions(results);
             return results;
         };
-    }, [apiContext, sourceWorkflowId, setWorkflowVersionSearchOptions]);
+    }, [apiContext, sourceId, setWorkflowVersionSearchOptions]);
 
     return {
         fetchSearchResults,
