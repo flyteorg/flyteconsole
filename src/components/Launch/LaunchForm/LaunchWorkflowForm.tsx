@@ -93,6 +93,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                     key={formKey}
                     ref={formInputsRef}
                     state={baseState}
+                    variant="workflow"
                 />
             </DialogContent>
             <LaunchFormActions

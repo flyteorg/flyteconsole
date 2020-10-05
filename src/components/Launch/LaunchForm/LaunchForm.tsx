@@ -3,6 +3,7 @@ import {
     createInputValueCache,
     InputValueCacheContext
 } from './inputValueCache';
+import { LaunchTaskForm } from './LaunchTaskForm';
 import { LaunchWorkflowForm } from './LaunchWorkflowForm';
 import { LaunchFormProps, LaunchWorkflowFormProps } from './types';
 
@@ -21,7 +22,9 @@ export const LaunchForm: React.FC<LaunchFormProps> = props => {
         <InputValueCacheContext.Provider value={inputValueCache}>
             {isWorkflowPropsObject(props) ? (
                 <LaunchWorkflowForm {...props} />
-            ) : null}
+            ) : (
+                <LaunchTaskForm {...props} />
+            )}
         </InputValueCacheContext.Provider>
     );
 };

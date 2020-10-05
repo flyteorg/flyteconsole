@@ -17,21 +17,17 @@ import * as Long from 'long';
 import {
     createWorkflowExecution,
     CreateWorkflowExecutionArguments,
-    getTask,
     getWorkflow,
     Identifier,
     LaunchPlan,
     listLaunchPlans,
-    listTasks,
     listWorkflows,
     Literal,
     NamedEntityIdentifier,
     RequestConfig,
-    Task,
     Variable,
     Workflow
 } from 'models';
-import { createMockTaskClosure } from 'models/__mocks__/taskData';
 import { createMockWorkflowClosure } from 'models/__mocks__/workflowData';
 import * as React from 'react';
 import { delayedPromise, pendingPromise } from 'test/utils';
@@ -57,22 +53,17 @@ import {
 } from './constants';
 import { createMockObjects } from './utils';
 
-describe('LaunchWorkflowForm', () => {
+describe('LaunchForm: Workflow', () => {
     let onClose: jest.Mock;
     let mockLaunchPlans: LaunchPlan[];
     let mockSingleLaunchPlan: LaunchPlan;
     let mockWorkflow: Workflow;
     let mockWorkflowVersions: Workflow[];
-    let mockTask: Task;
-    let mockTaskVersions: Task[];
     let workflowId: NamedEntityIdentifier;
-    let taskId: NamedEntityIdentifier;
     let variables: Record<string, Variable>;
 
     let mockListLaunchPlans: jest.Mock<ReturnType<typeof listLaunchPlans>>;
-    let mockListTasks: jest.Mock<ReturnType<typeof listTasks>>;
     let mockListWorkflows: jest.Mock<ReturnType<typeof listWorkflows>>;
-    let mockGetTask: jest.Mock<ReturnType<typeof getTask>>;
     let mockGetWorkflow: jest.Mock<ReturnType<typeof getWorkflow>>;
     let mockCreateWorkflowExecution: jest.Mock<ReturnType<
         typeof createWorkflowExecution
@@ -99,20 +90,8 @@ describe('LaunchWorkflowForm', () => {
         return workflow;
     };
 
-    const createMockTaskWithInputs = (id: Identifier) => {
-        const task: Task = {
-            id,
-            closure: createMockTaskClosure()
-        };
-        task.closure!.compiledTask!.template.interface = createMockInputsInterface(
-            variables
-        );
-        return task;
-    };
-
     const createMocks = () => {
         const mockObjects = createMockObjects(variables);
-        mockTask = mockObjects.mockTask;
         mockWorkflow = mockObjects.mockWorkflow;
         mockLaunchPlans = mockObjects.mockLaunchPlans;
         mockSingleLaunchPlan = mockLaunchPlans[0];
@@ -123,10 +102,8 @@ describe('LaunchWorkflowForm', () => {
             stringNoLabelName
         ];
 
-        mockTaskVersions = mockObjects.mockTaskVersions;
         mockWorkflowVersions = mockObjects.mockWorkflowVersions;
 
-        taskId = mockTask.id;
         workflowId = mockWorkflow.id;
         mockCreateWorkflowExecution = jest.fn();
         // Return our mock inputs for any version requested
@@ -134,11 +111,6 @@ describe('LaunchWorkflowForm', () => {
             .fn()
             .mockImplementation(id =>
                 Promise.resolve(createMockWorkflowWithInputs(id))
-            );
-        mockGetTask = jest
-            .fn()
-            .mockImplementation(id =>
-                Promise.resolve(createMockTaskWithInputs(id))
             );
         mockListLaunchPlans = jest
             .fn()
@@ -161,26 +133,9 @@ describe('LaunchWorkflowForm', () => {
                 }
             );
 
-        // For workflow/task list endpoings: If the scope has a filter, the calling
+        // For workflow/task list endpoints: If the scope has a filter, the calling
         // code is searching for a specific item. So we'll return a single-item
         // list containing it.
-        mockListTasks = jest
-            .fn()
-            .mockImplementation(
-                (scope: Partial<Identifier>, { filter }: RequestConfig) => {
-                    if (filter && filter[0].key === 'version') {
-                        const task = { ...mockTaskVersions[0] };
-                        task.id = {
-                            ...scope,
-                            version: filter[0].value
-                        } as Identifier;
-                        return Promise.resolve({
-                            entities: [task]
-                        });
-                    }
-                    return Promise.resolve({ entities: mockTaskVersions });
-                }
-            );
         mockListWorkflows = jest
             .fn()
             .mockImplementation(
@@ -206,10 +161,8 @@ describe('LaunchWorkflowForm', () => {
                 <APIContext.Provider
                     value={mockAPIContextValue({
                         createWorkflowExecution: mockCreateWorkflowExecution,
-                        getTask: mockGetTask,
                         getWorkflow: mockGetWorkflow,
                         listLaunchPlans: mockListLaunchPlans,
-                        listTasks: mockListTasks,
                         listWorkflows: mockListWorkflows
                     })}
                 >
@@ -230,10 +183,6 @@ describe('LaunchWorkflowForm', () => {
         expect(buttons.length).toBe(1);
         return buttons[0];
     };
-
-    // TODO: Figure out which tests need to happen for both source types and do a
-    // map() taskId/workflowId
-    // Then duplicate the selector logic tests for task as a source.
 
     describe('With Simple Inputs', () => {
         beforeEach(() => {
@@ -805,8 +754,6 @@ describe('LaunchWorkflowForm', () => {
 
         describe('With Unsupported Required Inputs', () => {
             beforeEach(() => {
-                // variables = mockSimpleVariables;
-                // createMocks();
                 // Binary is currently unsupported, setting the binary input to
                 // required and removing the default value will trigger our use case
                 const parameters = mockLaunchPlans[0].closure!.expectedInputs

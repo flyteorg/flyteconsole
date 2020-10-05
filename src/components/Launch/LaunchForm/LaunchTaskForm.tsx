@@ -70,6 +70,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = props => {
                     key={formKey}
                     ref={formInputsRef}
                     state={baseState}
+                    variant="task"
                 />
             </DialogContent>
             <LaunchFormActions
