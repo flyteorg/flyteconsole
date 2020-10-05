@@ -1,6 +1,6 @@
 import { WaitForData } from 'components/common';
 import { useWorkflow } from 'components/hooks';
-import { LaunchWorkflowForm } from 'components/Launch/LaunchWorkflowForm/LaunchWorkflowForm';
+import { LaunchForm } from 'components/Launch/LaunchWorkflowForm/LaunchForm';
 import { useExecutionLaunchConfiguration } from 'components/Launch/LaunchWorkflowForm/useExecutionLaunchConfiguration';
 import { getWorkflowInputs } from 'components/Launch/LaunchWorkflowForm/utils';
 import { Execution, Workflow } from 'models';
@@ -22,7 +22,7 @@ const RenderForm: React.FC<RelaunchExecutionFormProps & {
     });
     return (
         <WaitForData {...launchConfiguration}>
-            <LaunchWorkflowForm
+            <LaunchForm
                 initialParameters={launchConfiguration.value}
                 onClose={onClose}
                 workflowId={workflowId}
