@@ -3,6 +3,7 @@ import {
     act,
     fireEvent,
     getAllByRole,
+    getByLabelText,
     getByRole,
     queryAllByRole,
     render,
@@ -13,16 +14,12 @@ import { APIContext } from 'components/data/apiContext';
 import { muiTheme } from 'components/Theme';
 import { Core } from 'flyteidl';
 import { cloneDeep, get } from 'lodash';
-import * as Long from 'long';
 import {
     createWorkflowExecution,
     CreateWorkflowExecutionArguments,
     getTask,
     Identifier,
-    LaunchPlan,
-    listLaunchPlans,
     listTasks,
-    Literal,
     NamedEntityIdentifier,
     RequestConfig,
     Task,
@@ -47,15 +44,11 @@ import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
 import {
     binaryInputName,
     booleanInputName,
+    floatInputName,
     integerInputName,
-    stringInputName,
-    stringNoLabelName
+    stringInputName
 } from './constants';
 import { createMockObjects } from './utils';
-
-function getTaskVariables(task: Task): Record<string, Variable> {
-    return task.closure!.compiledTask.template.interface!.inputs!.variables;
-}
 
 describe('LaunchForm: Task', () => {
     let onClose: jest.Mock;
@@ -72,12 +65,6 @@ describe('LaunchForm: Task', () => {
 
     beforeEach(() => {
         onClose = jest.fn();
-        jest.useFakeTimers();
-    });
-
-    afterEach(() => {
-        jest.runOnlyPendingTimers();
-        jest.useRealTimers();
     });
 
     const createMockTaskWithInputs = (id: Identifier) => {
@@ -152,34 +139,49 @@ describe('LaunchForm: Task', () => {
         return buttons[0];
     };
 
+    const fillInputs = (container: HTMLElement) => {
+        fireEvent.change(
+            getByLabelText(container, stringInputName, {
+                exact: false
+            }),
+            { target: { value: 'abc' } }
+        );
+        fireEvent.change(
+            getByLabelText(container, integerInputName, {
+                exact: false
+            }),
+            { target: { value: '10' } }
+        );
+        fireEvent.change(
+            getByLabelText(container, floatInputName, {
+                exact: false
+            }),
+            { target: { value: '1.5' } }
+        );
+    };
+
     describe('With Simple Inputs', () => {
         beforeEach(() => {
             const {
                 simpleString,
-                stringNoLabel,
                 simpleInteger,
                 simpleFloat,
-                simpleBoolean,
-                simpleDuration,
-                simpleDatetime
+                simpleBoolean
             } = cloneDeep(mockSimpleVariables);
             // Only taking supported variable types since they are all required.
             variables = {
                 simpleString,
-                stringNoLabel,
                 simpleInteger,
                 simpleFloat,
-                simpleBoolean,
-                simpleDuration,
-                simpleDatetime
+                simpleBoolean
             };
             createMocks();
         });
 
         it('should not show task selector until options have loaded', async () => {
             mockListTasks.mockReturnValue(pendingPromise());
-            const { queryByText } = renderForm();
-            await waitFor(() => {});
+            const { getByText, queryByText } = renderForm();
+            await waitFor(() => getByText(formStrings.title));
             expect(
                 queryByText(formStrings.taskVersion)
             ).not.toBeInTheDocument();
@@ -187,10 +189,10 @@ describe('LaunchForm: Task', () => {
 
         it('should select the most recent task version by default', async () => {
             const { getByLabelText } = renderForm();
-            await waitFor(() => {});
-            expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
-                mockTaskVersions[0].id.version
+            const versionEl = await waitFor(() =>
+                getByLabelText(formStrings.taskVersion)
             );
+            expect(versionEl).toHaveValue(mockTaskVersions[0].id.version);
         });
 
         it('should disable submit button until inputs have loaded', async () => {
@@ -202,56 +204,46 @@ describe('LaunchForm: Task', () => {
             });
             const { container } = renderForm();
 
-            await waitFor(() => {});
-
-            const submitButton = getSubmitButton(container);
+            const submitButton = await waitFor(() =>
+                getSubmitButton(container)
+            );
 
             expect(submitButton).toBeDisabled();
             resolve(createMockTaskWithInputs(identifier));
 
-            await waitFor(() => {});
-            expect(submitButton).not.toBeDisabled();
+            await waitFor(() => expect(submitButton).not.toBeDisabled());
         });
 
         it('should not show validation errors until first submit', async () => {
             const { container, getByLabelText } = renderForm();
-            await waitFor(() => {});
-
-            const integerInput = getByLabelText(integerInputName, {
-                exact: false
-            });
+            const integerInput = await waitFor(() =>
+                getByLabelText(integerInputName, {
+                    exact: false
+                })
+            );
             fireEvent.change(integerInput, { target: { value: 'abc' } });
 
-            act(() => {
-                jest.runAllTimers();
-            });
-            await waitFor(() => {});
-            expect(integerInput).not.toBeInvalid();
+            await waitFor(() => expect(integerInput).not.toBeInvalid());
 
             fireEvent.click(getSubmitButton(container));
-            await waitFor(() => {});
-
-            expect(integerInput).toBeInvalid();
+            await waitFor(() => expect(integerInput).toBeInvalid());
         });
 
         it('should update validation errors while typing', async () => {
             const { container, getByLabelText } = renderForm();
             await waitFor(() => {});
 
-            const integerInput = getByLabelText(integerInputName, {
-                exact: false
-            });
+            const integerInput = await waitFor(() =>
+                getByLabelText(integerInputName, {
+                    exact: false
+                })
+            );
             fireEvent.change(integerInput, { target: { value: 'abc' } });
             fireEvent.click(getSubmitButton(container));
-            await waitFor(() => {});
-            expect(integerInput).toBeInvalid();
+            await waitFor(() => expect(integerInput).toBeInvalid());
 
             fireEvent.change(integerInput, { target: { value: '123' } });
-            act(() => {
-                jest.runAllTimers();
-            });
-            await waitFor(() => {});
-            expect(integerInput).toBeValid();
+            await waitFor(() => expect(integerInput).toBeValid());
         });
 
         it('should update inputs when selecting a new task version', async () => {
@@ -262,7 +254,6 @@ describe('LaunchForm: Task', () => {
 
             // Delete the string input so that its corresponding input will
             // disappear after the new launch plan is loaded.
-            const variables = getTaskVariables(mockTaskVersions[1]);
             delete variables[stringInputName];
 
             // Click the expander for the task version, select the second item
@@ -284,13 +275,13 @@ describe('LaunchForm: Task', () => {
 
         it('should preserve input values when changing task version', async () => {
             const { getByLabelText, getByTitle } = renderForm();
-            await waitFor(() => {});
 
-            const integerInput = getByLabelText(integerInputName, {
-                exact: false
-            });
+            const integerInput = await waitFor(() =>
+                getByLabelText(integerInputName, {
+                    exact: false
+                })
+            );
             fireEvent.change(integerInput, { target: { value: '10' } });
-            await waitFor(() => {});
 
             // Click the expander for the task version, select the second item
             const taskVersionDiv = getByTitle(formStrings.taskVersion);
@@ -300,7 +291,7 @@ describe('LaunchForm: Task', () => {
                 getAllByRole(taskVersionDiv, 'menuitem')
             );
             fireEvent.click(items[1]);
-            await waitFor(() => {});
+            await waitFor(() => getByTitle(formStrings.inputs));
 
             expect(
                 getByLabelText(integerInputName, {
@@ -321,15 +312,13 @@ describe('LaunchForm: Task', () => {
                 getByTitle,
                 queryByText
             } = renderForm();
-            await waitFor(() => {});
+            await waitFor(() => getByTitle(formStrings.inputs));
+            fillInputs(container);
 
             fireEvent.click(getSubmitButton(container));
-            await waitFor(() => {});
-
-            expect(getByText(errorString)).toBeInTheDocument();
-
-            // TODO: Not sure if we need to set the mock up to return a different set of inputs
-            // for the alternate task version
+            await waitFor(() =>
+                expect(getByText(errorString)).toBeInTheDocument()
+            );
 
             // Click the expander for the launch plan, select the second item
             const taskVersionDiv = getByTitle(formStrings.taskVersion);
@@ -339,8 +328,9 @@ describe('LaunchForm: Task', () => {
                 getAllByRole(taskVersionDiv, 'menuitem')
             );
             fireEvent.click(items[1]);
-            await waitFor(() => {});
-            expect(queryByText(errorString)).not.toBeInTheDocument();
+            await waitFor(() =>
+                expect(queryByText(errorString)).not.toBeInTheDocument()
+            );
         });
 
         describe('Input Values', () => {
@@ -355,13 +345,15 @@ describe('LaunchForm: Task', () => {
                     }
                 );
 
-                const { container } = renderForm();
-                await waitFor(() => {});
+                const { container, getByTitle } = renderForm();
+                await waitFor(() => getByTitle(formStrings.inputs));
+                fillInputs(container);
 
                 fireEvent.click(getSubmitButton(container));
-                await waitFor(() => {});
+                await waitFor(() =>
+                    expect(mockCreateWorkflowExecution).toHaveBeenCalled()
+                );
 
-                expect(mockCreateWorkflowExecution).toHaveBeenCalled();
                 expect(inputs.literals).toBeDefined();
                 const value = get(
                     inputs.literals,
@@ -371,16 +363,14 @@ describe('LaunchForm: Task', () => {
             });
 
             it('should decorate all inputs with required labels', async () => {
-                // Add defaults for the string/integer inputs and check that they are
-                // correctly populated
-                const { getByText } = renderForm();
-                await waitFor(() => {});
+                const { getByTitle, queryAllByText } = renderForm();
+                await waitFor(() => getByTitle(formStrings.inputs));
                 Object.keys(variables).forEach(name => {
-                    expect(
-                        getByText(name, {
-                            exact: false
-                        }).textContent
-                    ).toContain('*');
+                    const elements = queryAllByText(name, {
+                        exact: false
+                    });
+                    expect(elements.length).toBeGreaterThan(0);
+                    expect(elements[0].textContent).toContain('*');
                 });
             });
         });
@@ -391,9 +381,10 @@ describe('LaunchForm: Task', () => {
                     taskId: mockTaskVersions[2].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
-                await waitFor(() => {});
-                expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
-                    mockTaskVersions[2].id.version
+                await waitFor(() =>
+                    expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
+                        mockTaskVersions[2].id.version
+                    )
                 );
             });
 
@@ -402,9 +393,11 @@ describe('LaunchForm: Task', () => {
                     taskId: mockTaskVersions[2].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
-                await waitFor(() => {});
+
                 // Click the expander for the workflow, select the second item
-                const versionDiv = getByTitle(formStrings.taskVersion);
+                const versionDiv = await waitFor(() =>
+                    getByTitle(formStrings.taskVersion)
+                );
                 const expander = getByRole(versionDiv, 'button');
                 fireEvent.click(expander);
                 const items = await waitFor(() =>
@@ -439,9 +432,10 @@ describe('LaunchForm: Task', () => {
                     taskId: { ...baseId, version: 'nonexistentValue' }
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
-                await waitFor(() => {});
-                expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
-                    mockTaskVersions[0].id.version
+                await waitFor(() =>
+                    expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
+                        mockTaskVersions[0].id.version
+                    )
                 );
             });
 
@@ -450,7 +444,6 @@ describe('LaunchForm: Task', () => {
                 const initialStringValue: Core.ILiteral = {
                     scalar: { primitive: { stringValue } }
                 };
-                const variables = getTaskVariables(mockTaskVersions[0]);
                 const values = new Map();
                 const stringCacheKey = createInputCacheKey(
                     stringInputName,
@@ -462,11 +455,11 @@ describe('LaunchForm: Task', () => {
                 const { getByLabelText } = renderForm({
                     initialParameters: { values }
                 });
-                await waitFor(() => {});
-
-                expect(
-                    getByLabelText(stringInputName, { exact: false })
-                ).toHaveValue(stringValue);
+                await waitFor(() =>
+                    expect(
+                        getByLabelText(stringInputName, { exact: false })
+                    ).toHaveValue(stringValue)
+                );
             });
 
             it('loads preferred task version when it does not exist in the list of suggestions', async () => {
@@ -476,28 +469,28 @@ describe('LaunchForm: Task', () => {
                     taskId: missingTask.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
-                await waitFor(() => {});
-                expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
-                    missingTask.id.version
+                await waitFor(() =>
+                    expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
+                        missingTask.id.version
+                    )
                 );
             });
 
             it('should select contents of task version input on focus', async () => {
                 const { getByLabelText } = renderForm();
-                await waitFor(() => {});
 
                 // Focus the workflow version input
-                const workflowInput = getByLabelText(formStrings.taskVersion);
+                const workflowInput = await waitFor(() =>
+                    getByLabelText(formStrings.taskVersion)
+                );
                 fireEvent.focus(workflowInput);
-
-                act(() => {
-                    jest.runAllTimers();
-                });
 
                 const expectedValue = mockTaskVersions[0].id.version;
 
                 // The value should remain, but selection should be the entire string
-                expect(workflowInput).toHaveValue(expectedValue);
+                await waitFor(() =>
+                    expect(workflowInput).toHaveValue(expectedValue)
+                );
                 expect((workflowInput as HTMLInputElement).selectionEnd).toBe(
                     expectedValue.length
                 );
@@ -512,23 +505,22 @@ describe('LaunchForm: Task', () => {
                     4
                 );
                 const { getByLabelText } = renderForm({ initialParameters });
-                await waitFor(() => {});
 
+                const versionInput = await waitFor(() =>
+                    getByLabelText(formStrings.taskVersion)
+                );
                 mockListTasks.mockClear();
 
-                const versionInput = getByLabelText(formStrings.taskVersion);
                 fireEvent.change(versionInput, {
                     target: { value: inputString }
                 });
 
-                act(() => {
-                    jest.runAllTimers();
-                });
-                await waitFor(() => {});
                 const { project, domain, name } = mockTaskVersions[2].id;
-                expect(mockListTasks).toHaveBeenCalledWith(
-                    { project, domain, name },
-                    expect.anything()
+                await waitFor(() =>
+                    expect(mockListTasks).toHaveBeenCalledWith(
+                        { project, domain, name },
+                        expect.anything()
+                    )
                 );
             });
         });
@@ -537,7 +529,6 @@ describe('LaunchForm: Task', () => {
             beforeEach(() => {
                 // Binary is currently unsupported, and all values are required.
                 // So adding a binary variable will generate our test case.
-                const variables = getTaskVariables(mockTaskVersions[0]);
                 variables[binaryInputName] = cloneDeep(
                     mockSimpleVariables[binaryInputName]
                 );
@@ -580,7 +571,6 @@ describe('LaunchForm: Task', () => {
             });
 
             it('should not show error if initial value is provided', async () => {
-                const variables = getTaskVariables(mockTaskVersions[0]);
                 const values = new Map();
                 const cacheKey = createInputCacheKey(
                     binaryInputName,
@@ -589,12 +579,12 @@ describe('LaunchForm: Task', () => {
                     )
                 );
                 values.set(cacheKey, simpleVariableDefaults.simpleBinary);
-                const { queryByText } = renderForm({
+                const { getByLabelText, queryByText } = renderForm({
                     initialParameters: { values }
                 });
 
                 await waitFor(() =>
-                    queryByText(binaryInputName, { exact: false })
+                    getByLabelText(binaryInputName, { exact: false })
                 );
                 expect(queryByText(cannotLaunchTaskString)).toBeNull();
             });

@@ -18,7 +18,7 @@ export const formStrings = {
     inputs: 'Inputs',
     submit: 'Launch',
     taskVersion: 'Task Version',
-    title: 'Launch Workflow',
+    title: 'Create New Execution',
     workflowVersion: 'Workflow Version',
     launchPlan: 'Launch Plan'
 };
