@@ -212,7 +212,7 @@ export function useLaunchWorkflowFormState({
     // version/launch plan drop downs.
     const {
         launchPlan: preferredLaunchPlanId,
-        workflow: preferredWorkflowId,
+        workflowId: preferredWorkflowId,
         values: defaultInputValues
     } = initialParameters;
 

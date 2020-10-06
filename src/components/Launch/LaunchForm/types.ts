@@ -51,7 +51,7 @@ export interface BaseInitialLaunchParameters {
 export interface WorkflowInitialLaunchParameters
     extends BaseInitialLaunchParameters {
     launchPlan?: Identifier;
-    workflow?: WorkflowId;
+    workflowId?: WorkflowId;
 }
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
     workflowId: NamedEntityIdentifier;
@@ -69,11 +69,6 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
-export interface WorkflowInitialLaunchParameters {
-    launchPlan?: Identifier;
-    workflow?: WorkflowId;
-    values?: LiteralValueMap;
-}
 export interface LaunchWorkflowFormProps {
     workflowId: NamedEntityIdentifier;
     initialParameters?: WorkflowInitialLaunchParameters;
