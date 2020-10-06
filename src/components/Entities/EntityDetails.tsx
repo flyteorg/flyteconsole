@@ -5,7 +5,7 @@ import { WaitForData } from 'components/common';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
-import { ResourceIdentifier } from 'models';
+import { ResourceIdentifier, ResourceType } from 'models';
 import * as React from 'react';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';
@@ -37,6 +37,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export interface EntityDetailsProps {
     id: ResourceIdentifier;
+}
+
+function getLaunchProps(id: ResourceIdentifier) {
+    if (id.resourceType === ResourceType.TASK) {
+        return { taskId: id };
+    }
+
+    return { workflowId: id };
 }
 
 /** A view which optionally renders description, schedules, executions, and a
@@ -83,7 +91,10 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
                     fullWidth={true}
                     open={showLaunchForm}
                 >
-                    <LaunchForm onClose={onCancelLaunch} workflowId={id} />
+                    <LaunchForm
+                        onClose={onCancelLaunch}
+                        {...getLaunchProps(id)}
+                    />
                 </Dialog>
             ) : null}
         </WaitForData>
