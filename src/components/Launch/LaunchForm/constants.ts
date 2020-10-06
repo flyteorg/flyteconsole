@@ -17,7 +17,8 @@ export const formStrings = {
     cancel: 'Cancel',
     inputs: 'Inputs',
     submit: 'Launch',
-    title: 'Launch Workflow',
+    taskVersion: 'Task Version',
+    title: 'Create New Execution',
     workflowVersion: 'Workflow Version',
     launchPlan: 'Launch Plan'
 };
@@ -62,6 +63,8 @@ export const defaultBlobValue: BlobValue = {
 
 export const requiredInputSuffix = '*';
 export const cannotLaunchWorkflowString = 'Workflow cannot be launched';
-export const unsupportedRequiredInputsString = `This Workflow version contains one or more required inputs which are not supported by Flyte Console and do not have default values specified in the Workflow definition or the selected Launch Plan.\n\nYou can launch this Workflow version with the Flyte CLI or by selecting a Launch Plan which provides values for the unsupported inputs.\n\nThe required inputs are :`;
+export const cannotLaunchTaskString = 'Task cannot be launched';
+export const workflowUnsupportedRequiredInputsString = `This Workflow version contains one or more required inputs which are not supported by Flyte Console and do not have default values specified in the Workflow definition or the selected Launch Plan.\n\nYou can launch this Workflow version with the Flyte CLI or by selecting a Launch Plan which provides values for the unsupported inputs.\n\nThe required inputs are :`;
+export const taskUnsupportedRequiredInputsString = `This Task version contains one or more required inputs which are not supported by Flyte Console.\n\nYou can launch this Task version with the Flyte CLI instead.\n\nThe required inputs are :`;
 export const blobUriHelperText = '(required) location of the data';
 export const blobFormatHelperText = '(optional) csv, parquet, etc...';

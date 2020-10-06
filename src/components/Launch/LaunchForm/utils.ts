@@ -2,11 +2,12 @@ import { timestampToDate } from 'common/utils';
 import { Core } from 'flyteidl';
 import { isObject } from 'lodash';
 import {
+    Identifier,
     LaunchPlan,
     LiteralType,
+    Task,
     Variable,
-    Workflow,
-    WorkflowId
+    Workflow
 } from 'models';
 import * as moment from 'moment';
 import { simpleTypeToInputType, typeLabels } from './constants';
@@ -18,7 +19,8 @@ import {
     InputProps,
     InputType,
     InputTypeDefinition,
-    ParsedInput
+    ParsedInput,
+    SearchableVersion
 } from './types';
 
 /** Creates a unique cache key for an input based on its name and type.
@@ -56,6 +58,25 @@ export function getWorkflowInputs(
     return inputs.variables;
 }
 
+export function getTaskInputs(task: Task): Record<string, Variable> {
+    if (!task.closure) {
+        return {};
+    }
+    const { compiledTask } = task.closure;
+    if (!compiledTask) {
+        return {};
+    }
+    const { interface: ioInterface } = compiledTask.template;
+    if (!ioInterface) {
+        return {};
+    }
+    const { inputs } = ioInterface;
+    if (!inputs) {
+        return {};
+    }
+    return inputs.variables;
+}
+
 /** Returns a formatted string based on an InputTypeDefinition.
  * ex. `string`, `string[]`, `map<string, number>`
  */
@@ -77,17 +98,17 @@ export function formatLabelWithType(label: string, type: InputTypeDefinition) {
     return `${label}${typeString ? ` (${typeString})` : ''}`;
 }
 
-/** Formats a list of `Workflow` records for use in a `SearchableSelector` */
-export function workflowsToSearchableSelectorOptions(
-    workflows: Workflow[]
-): SearchableSelectorOption<WorkflowId>[] {
-    return workflows.map<SearchableSelectorOption<WorkflowId>>((wf, index) => ({
-        data: wf.id,
-        id: wf.id.version,
-        name: wf.id.version,
+/** Formats a list of  records for use in a `SearchableSelector` */
+export function versionsToSearchableSelectorOptions(
+    items: SearchableVersion[]
+): SearchableSelectorOption<Identifier>[] {
+    return items.map<SearchableSelectorOption<Identifier>>((item, index) => ({
+        data: item.id,
+        id: item.id.version,
+        name: item.id.version,
         description:
-            wf.closure && wf.closure.createdAt
-                ? moment(timestampToDate(wf.closure.createdAt)).format(
+            item.closure && item.closure.createdAt
+                ? moment(timestampToDate(item.closure.createdAt)).format(
                       'DD MMM YYYY'
                   )
                 : ''

@@ -4,9 +4,11 @@ import { NonIdealState } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
 import * as React from 'react';
 import {
+    cannotLaunchTaskString,
     cannotLaunchWorkflowString,
     requiredInputSuffix,
-    unsupportedRequiredInputsString
+    taskUnsupportedRequiredInputsString,
+    workflowUnsupportedRequiredInputsString
 } from './constants';
 import { ParsedInput } from './types';
 
@@ -28,24 +30,33 @@ function formatLabel(label: string) {
 
 export interface UnsupportedRequiredInputsErrorProps {
     inputs: ParsedInput[];
+    variant: 'workflow' | 'task';
 }
 /** An informational error to be shown if a Workflow cannot be launch due to
  * required inputs for which we will not be able to provide a value.
  */
 export const UnsupportedRequiredInputsError: React.FC<UnsupportedRequiredInputsErrorProps> = ({
-    inputs
+    inputs,
+    variant
 }) => {
     const styles = useStyles();
     const commonStyles = useCommonStyles();
+    const [titleString, errorString] =
+        variant === 'workflow'
+            ? [
+                  cannotLaunchWorkflowString,
+                  workflowUnsupportedRequiredInputsString
+              ]
+            : [cannotLaunchTaskString, taskUnsupportedRequiredInputsString];
     return (
         <NonIdealState
             className={styles.errorContainer}
             icon={ErrorOutline}
             size="medium"
-            title={cannotLaunchWorkflowString}
+            title={titleString}
         >
             <div className={styles.contentContainer}>
-                <p>{unsupportedRequiredInputsString}</p>
+                <p>{errorString}</p>
                 <ul className={commonStyles.listUnstyled}>
                     {inputs.map(input => (
                         <li

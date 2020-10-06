@@ -11,20 +11,11 @@ import {
 import { useMemo, useState } from 'react';
 import { SearchableSelectorOption } from './SearchableSelector';
 import { WorkflowSourceSelectorState } from './types';
+import { useVersionSelectorOptions } from './useVersionSelectorOptions';
 import {
     launchPlansToSearchableSelectorOptions,
-    workflowsToSearchableSelectorOptions
+    versionsToSearchableSelectorOptions
 } from './utils';
-
-export function useWorkflowSelectorOptions(workflows: Workflow[]) {
-    return useMemo(() => {
-        const options = workflowsToSearchableSelectorOptions(workflows);
-        if (options.length > 0) {
-            options[0].description = 'latest';
-        }
-        return options;
-    }, [workflows]);
-}
 
 function useLaunchPlanSelectorOptions(launchPlans: LaunchPlan[]) {
     return useMemo(() => launchPlansToSearchableSelectorOptions(launchPlans), [
@@ -54,7 +45,7 @@ function generateFetchSearchResults(
                 }
             }
         );
-        return workflowsToSearchableSelectorOptions(workflows);
+        return versionsToSearchableSelectorOptions(workflows);
     };
 }
 
@@ -88,7 +79,7 @@ export function useWorkflowSourceSelectorState({
     selectWorkflowVersion
 }: UseWorkflowSourceSelectorStateArgs): WorkflowSourceSelectorState {
     const apiContext = useAPIContext();
-    const workflowSelectorOptions = useWorkflowSelectorOptions(
+    const workflowSelectorOptions = useVersionSelectorOptions(
         workflowVersionOptions
     );
     const [

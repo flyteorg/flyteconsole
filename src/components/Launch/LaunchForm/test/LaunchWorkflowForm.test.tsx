@@ -32,7 +32,7 @@ import { createMockWorkflowClosure } from 'models/__mocks__/workflowData';
 import * as React from 'react';
 import { delayedPromise, pendingPromise } from 'test/utils';
 import {
-    createMockWorkflowInputsInterface,
+    createMockInputsInterface,
     mockSimpleVariables,
     simpleVariableDefaults
 } from '../__mocks__/mockInputs';
@@ -42,10 +42,7 @@ import {
     requiredInputSuffix
 } from '../constants';
 import { LaunchForm } from '../LaunchForm';
-import {
-    InitialWorkflowLaunchParameters,
-    LaunchWorkflowFormProps
-} from '../types';
+import { LaunchFormProps, WorkflowInitialLaunchParameters } from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
 import {
     binaryInputName,
@@ -56,7 +53,7 @@ import {
 } from './constants';
 import { createMockObjects } from './utils';
 
-describe('LaunchWorkflowForm', () => {
+describe('LaunchForm: Workflow', () => {
     let onClose: jest.Mock;
     let mockLaunchPlans: LaunchPlan[];
     let mockSingleLaunchPlan: LaunchPlan;
@@ -87,7 +84,7 @@ describe('LaunchWorkflowForm', () => {
             id
         };
         workflow.closure = createMockWorkflowClosure();
-        workflow.closure!.compiledWorkflow!.primary.template.interface = createMockWorkflowInputsInterface(
+        workflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(
             variables
         );
         return workflow;
@@ -135,13 +132,14 @@ describe('LaunchWorkflowForm', () => {
                     return Promise.resolve({ entities: mockLaunchPlans });
                 }
             );
+
+        // For workflow/task list endpoints: If the scope has a filter, the calling
+        // code is searching for a specific item. So we'll return a single-item
+        // list containing it.
         mockListWorkflows = jest
             .fn()
             .mockImplementation(
                 (scope: Partial<Identifier>, { filter }: RequestConfig) => {
-                    // If the scope has a filter, the calling
-                    // code is searching for a specific item. So we'll
-                    // return a single-item list containing it.
                     if (filter && filter[0].key === 'version') {
                         const workflow = { ...mockWorkflowVersions[0] };
                         workflow.id = {
@@ -157,7 +155,7 @@ describe('LaunchWorkflowForm', () => {
             );
     };
 
-    const renderForm = (props?: Partial<LaunchWorkflowFormProps>) => {
+    const renderForm = (props?: Partial<LaunchFormProps>) => {
         return render(
             <ThemeProvider theme={muiTheme}>
                 <APIContext.Provider
@@ -503,7 +501,7 @@ describe('LaunchWorkflowForm', () => {
 
         describe('When using initial parameters', () => {
             it('should prefer the provided workflow version', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -514,7 +512,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred version in the selector', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -551,7 +549,7 @@ describe('LaunchWorkflowForm', () => {
                     }
                 );
                 const baseId = mockWorkflowVersions[2].id;
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: { ...baseId, version: 'nonexistentValue' }
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -562,7 +560,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should prefer the provided launch plan', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -573,7 +571,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should only include one instance of the preferred launch plan in the selector', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: mockLaunchPlans[1].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
@@ -609,7 +607,7 @@ describe('LaunchWorkflowForm', () => {
                 );
                 const launchPlanId = { ...mockLaunchPlans[1].id };
                 launchPlanId.name = 'InvalidLauchPlan';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: launchPlanId
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -676,7 +674,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads preferred workflow version when it does not exist in the list of suggestions', async () => {
                 const missingWorkflow = mockWorkflowVersions[0];
                 missingWorkflow.id.version = 'missingVersionString';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: missingWorkflow.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -689,7 +687,7 @@ describe('LaunchWorkflowForm', () => {
             it('loads the preferred launch plan when it does not exist in the list of suggestions', async () => {
                 const missingLaunchPlan = mockLaunchPlans[0];
                 missingLaunchPlan.id.name = 'missingLaunchPlanName';
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     launchPlan: missingLaunchPlan.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
@@ -723,7 +721,7 @@ describe('LaunchWorkflowForm', () => {
             });
 
             it('should correctly render workflow version search results', async () => {
-                const initialParameters: InitialWorkflowLaunchParameters = {
+                const initialParameters: WorkflowInitialLaunchParameters = {
                     workflow: mockWorkflowVersions[2].id
                 };
                 const inputString = mockWorkflowVersions[1].id.version.substring(
@@ -756,8 +754,6 @@ describe('LaunchWorkflowForm', () => {
 
         describe('With Unsupported Required Inputs', () => {
             beforeEach(() => {
-                // variables = mockSimpleVariables;
-                // createMocks();
                 // Binary is currently unsupported, setting the binary input to
                 // required and removing the default value will trigger our use case
                 const parameters = mockLaunchPlans[0].closure!.expectedInputs

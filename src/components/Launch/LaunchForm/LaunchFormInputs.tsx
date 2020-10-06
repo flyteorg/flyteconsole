@@ -34,12 +34,13 @@ function getComponentForInput(input: InputProps, showErrors: boolean) {
 
 export interface LaunchFormInputsProps {
     state: BaseInterpretedLaunchState;
+    variant: 'workflow' | 'task';
 }
 
 export const LaunchFormInputsImpl: React.RefForwardingComponent<
     LaunchFormInputsRef,
     LaunchFormInputsProps
-> = ({ state }, ref) => {
+> = ({ state, variant }, ref) => {
     const {
         parsedInputs,
         unsupportedRequiredInputs,
@@ -68,6 +69,7 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
             {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
                 <UnsupportedRequiredInputsError
                     inputs={unsupportedRequiredInputs}
+                    variant={variant}
                 />
             ) : (
                 <>

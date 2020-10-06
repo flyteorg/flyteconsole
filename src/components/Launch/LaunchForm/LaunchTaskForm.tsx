@@ -11,18 +11,18 @@ import { useStyles } from './styles';
 import {
     BaseInterpretedLaunchState,
     BaseLaunchService,
-    LaunchWorkflowFormProps
+    LaunchTaskFormProps
 } from './types';
-import { useLaunchWorkflowFormState } from './useLaunchWorkflowFormState';
+import { useLaunchTaskFormState } from './useLaunchTaskFormState';
 
-/** Renders the form for initiating a Launch request based on a Workflow */
-export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
+/** Renders the form for initiating a Launch request based on a Task */
+export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = props => {
     const {
         formInputsRef,
         state,
         service,
-        workflowSourceSelectorState
-    } = useLaunchWorkflowFormState(props);
+        taskSourceSelectorState
+    } = useLaunchTaskFormState(props);
     const styles = useStyles();
     const baseState = state as BaseInterpretedLaunchState;
     const baseService = service as BaseLaunchService;
@@ -35,24 +35,15 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
 
     const {
         fetchSearchResults,
-        launchPlanSelectorOptions,
-        onSelectLaunchPlan,
-        onSelectWorkflowVersion,
-        selectedLaunchPlan,
-        selectedWorkflow,
-        workflowSelectorOptions
-    } = workflowSourceSelectorState;
+        onSelectTaskVersion,
+        selectedTask,
+        taskSelectorOptions
+    } = taskSourceSelectorState;
 
-    const showWorkflowSelector = ![
-        LaunchState.LOADING_WORKFLOW_VERSIONS,
-        LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS
+    const showTaskSelector = ![
+        LaunchState.LOADING_TASK_VERSIONS,
+        LaunchState.FAILED_LOADING_TASK_VERSIONS
     ].some(state.matches);
-    const showLaunchPlanSelector =
-        state.context.workflowVersion &&
-        ![
-            LaunchState.LOADING_LAUNCH_PLANS,
-            LaunchState.FAILED_LOADING_LAUNCH_PLANS
-        ].some(state.matches);
 
     // TODO: We removed all loading indicators here. Decide if we want skeletons
     // instead.
@@ -60,32 +51,18 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
         <>
             <LaunchFormHeader title={state.context.sourceId?.name} />
             <DialogContent dividers={true} className={styles.inputsSection}>
-                {showWorkflowSelector ? (
+                {showTaskSelector ? (
                     <section
-                        title={formStrings.workflowVersion}
+                        title={formStrings.taskVersion}
                         className={styles.formControl}
                     >
                         <SearchableSelector
-                            id="launch-workflow-selector"
-                            label={formStrings.workflowVersion}
-                            onSelectionChanged={onSelectWorkflowVersion}
-                            options={workflowSelectorOptions}
+                            id="launch-task-selector"
+                            label={formStrings.taskVersion}
+                            onSelectionChanged={onSelectTaskVersion}
+                            options={taskSelectorOptions}
                             fetchSearchResults={fetchSearchResults}
-                            selectedItem={selectedWorkflow}
-                        />
-                    </section>
-                ) : null}
-                {showLaunchPlanSelector ? (
-                    <section
-                        title={formStrings.launchPlan}
-                        className={styles.formControl}
-                    >
-                        <SearchableSelector
-                            id="launch-lp-selector"
-                            label={formStrings.launchPlan}
-                            onSelectionChanged={onSelectLaunchPlan}
-                            options={launchPlanSelectorOptions}
-                            selectedItem={selectedLaunchPlan}
+                            selectedItem={selectedTask}
                         />
                     </section>
                 ) : null}
@@ -93,7 +70,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                     key={formKey}
                     ref={formInputsRef}
                     state={baseState}
-                    variant="workflow"
+                    variant="task"
                 />
             </DialogContent>
             <LaunchFormActions

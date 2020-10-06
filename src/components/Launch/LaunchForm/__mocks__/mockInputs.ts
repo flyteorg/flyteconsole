@@ -104,7 +104,7 @@ export const mockNestedCollectionVariables: Record<
     type: { collectionType: v.type }
 }));
 
-export function createMockWorkflowInputsInterface(
+export function createMockInputsInterface(
     variables: Record<string, Variable>
 ): TypedInterface {
     return {
