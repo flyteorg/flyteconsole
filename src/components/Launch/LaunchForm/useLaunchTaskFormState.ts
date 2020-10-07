@@ -96,7 +96,7 @@ async function loadInputs(
 async function submit(
     { createWorkflowExecution }: APIContextValue,
     formInputsRef: RefObject<LaunchFormInputsRef>,
-    { taskVersion }: TaskLaunchContext
+    { referenceExecutionId, taskVersion }: TaskLaunchContext
 ) {
     if (!taskVersion) {
         throw new Error('Attempting to launch with no Task version');
@@ -112,6 +112,7 @@ async function submit(
         domain,
         launchPlanId,
         project,
+        referenceExecutionId,
         inputs: { literals }
     });
     const newExecutionId = response.id as WorkflowExecutionIdentifier;
@@ -139,7 +140,8 @@ function getServices(
  */
 export function useLaunchTaskFormState({
     initialParameters = {},
-    taskId: sourceId
+    taskId: sourceId,
+    referenceExecutionId
 }: LaunchTaskFormProps): LaunchTaskFormState {
     // These values will be used to auto-select items from the task
     // version/launch plan drop downs.
@@ -166,6 +168,7 @@ export function useLaunchTaskFormState({
         context: {
             defaultInputValues,
             preferredTaskId,
+            referenceExecutionId,
             sourceId
         }
     });

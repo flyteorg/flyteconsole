@@ -92,6 +92,7 @@ const RelaunchTaskForm: React.FC<RelaunchExecutionFormProps> = props => {
                 <LaunchForm
                     initialParameters={initialParameters.value}
                     onClose={props.onClose}
+                    referenceExecutionId={props.execution.id}
                     taskId={taskId}
                 />
             ) : null}
@@ -109,6 +110,7 @@ const RelaunchWorkflowForm: React.FC<RelaunchExecutionFormProps> = props => {
                 <LaunchForm
                     initialParameters={initialParameters.value}
                     onClose={props.onClose}
+                    referenceExecutionId={props.execution.id}
                     workflowId={workflowId}
                 />
             ) : null}

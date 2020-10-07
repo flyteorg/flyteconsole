@@ -159,7 +159,7 @@ async function loadInputs(
 async function submit(
     { createWorkflowExecution }: APIContextValue,
     formInputsRef: RefObject<LaunchFormInputsRef>,
-    { launchPlan, workflowVersion }: WorkflowLaunchContext
+    { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext
 ) {
     if (!launchPlan) {
         throw new Error('Attempting to launch with no LaunchPlan');
@@ -178,6 +178,7 @@ async function submit(
         domain,
         launchPlanId,
         project,
+        referenceExecutionId,
         inputs: { literals }
     });
     const newExecutionId = response.id as WorkflowExecutionIdentifier;
@@ -206,7 +207,8 @@ function getServices(
  */
 export function useLaunchWorkflowFormState({
     initialParameters = {},
-    workflowId: sourceId
+    workflowId: sourceId,
+    referenceExecutionId
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
     // These values will be used to auto-select items from the workflow
     // version/launch plan drop downs.
@@ -235,6 +237,7 @@ export function useLaunchWorkflowFormState({
             defaultInputValues,
             preferredLaunchPlanId,
             preferredWorkflowId,
+            referenceExecutionId,
             sourceId
         }
     });

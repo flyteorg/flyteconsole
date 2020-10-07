@@ -6,6 +6,7 @@ import {
     NamedEntityIdentifier,
     Task,
     Workflow,
+    WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
 import { Interpreter, State } from 'xstate';
@@ -42,6 +43,7 @@ export type BaseLaunchService = Interpreter<
 
 export interface BaseLaunchFormProps {
     onClose(): void;
+    referenceExecutionId?: WorkflowExecutionIdentifier;
 }
 
 export interface BaseInitialLaunchParameters {

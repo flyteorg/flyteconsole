@@ -3,6 +3,7 @@ export enum ExecutionMetadataLabels {
     domain = 'Domain',
     duration = 'Duration',
     time = 'Time',
+    relatedTo = 'Related to',
     version = 'Version'
 }
 
