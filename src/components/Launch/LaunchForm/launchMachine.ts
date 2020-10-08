@@ -69,6 +69,7 @@ export interface BaseLaunchContext {
     sourceId?: NamedEntityIdentifier;
     error?: Error;
     showErrors: boolean;
+    referenceExecutionId?: WorkflowExecutionIdentifier;
     unsupportedRequiredInputs: ParsedInput[];
 }
 

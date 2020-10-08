@@ -6,6 +6,7 @@ import {
     NamedEntityIdentifier,
     Task,
     Workflow,
+    WorkflowExecutionIdentifier,
     WorkflowId
 } from 'models';
 import { Interpreter, State } from 'xstate';
@@ -42,6 +43,7 @@ export type BaseLaunchService = Interpreter<
 
 export interface BaseLaunchFormProps {
     onClose(): void;
+    referenceExecutionId?: WorkflowExecutionIdentifier;
 }
 
 export interface BaseInitialLaunchParameters {
@@ -51,7 +53,7 @@ export interface BaseInitialLaunchParameters {
 export interface WorkflowInitialLaunchParameters
     extends BaseInitialLaunchParameters {
     launchPlan?: Identifier;
-    workflow?: WorkflowId;
+    workflowId?: WorkflowId;
 }
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
     workflowId: NamedEntityIdentifier;
@@ -69,11 +71,6 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
-export interface WorkflowInitialLaunchParameters {
-    launchPlan?: Identifier;
-    workflow?: WorkflowId;
-    values?: LiteralValueMap;
-}
 export interface LaunchWorkflowFormProps {
     workflowId: NamedEntityIdentifier;
     initialParameters?: WorkflowInitialLaunchParameters;

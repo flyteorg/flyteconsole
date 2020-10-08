@@ -502,7 +502,7 @@ describe('LaunchForm: Workflow', () => {
         describe('When using initial parameters', () => {
             it('should prefer the provided workflow version', async () => {
                 const initialParameters: WorkflowInitialLaunchParameters = {
-                    workflow: mockWorkflowVersions[2].id
+                    workflowId: mockWorkflowVersions[2].id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
                 await waitFor(() => {});
@@ -513,7 +513,7 @@ describe('LaunchForm: Workflow', () => {
 
             it('should only include one instance of the preferred version in the selector', async () => {
                 const initialParameters: WorkflowInitialLaunchParameters = {
-                    workflow: mockWorkflowVersions[2].id
+                    workflowId: mockWorkflowVersions[2].id
                 };
                 const { getByTitle } = renderForm({ initialParameters });
                 await waitFor(() => {});
@@ -550,7 +550,7 @@ describe('LaunchForm: Workflow', () => {
                 );
                 const baseId = mockWorkflowVersions[2].id;
                 const initialParameters: WorkflowInitialLaunchParameters = {
-                    workflow: { ...baseId, version: 'nonexistentValue' }
+                    workflowId: { ...baseId, version: 'nonexistentValue' }
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
                 await waitFor(() => {});
@@ -675,7 +675,7 @@ describe('LaunchForm: Workflow', () => {
                 const missingWorkflow = mockWorkflowVersions[0];
                 missingWorkflow.id.version = 'missingVersionString';
                 const initialParameters: WorkflowInitialLaunchParameters = {
-                    workflow: missingWorkflow.id
+                    workflowId: missingWorkflow.id
                 };
                 const { getByLabelText } = renderForm({ initialParameters });
                 await waitFor(() => {});
@@ -722,7 +722,7 @@ describe('LaunchForm: Workflow', () => {
 
             it('should correctly render workflow version search results', async () => {
                 const initialParameters: WorkflowInitialLaunchParameters = {
-                    workflow: mockWorkflowVersions[2].id
+                    workflowId: mockWorkflowVersions[2].id
                 };
                 const inputString = mockWorkflowVersions[1].id.version.substring(
                     0,

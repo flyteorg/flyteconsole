@@ -32,7 +32,8 @@ import {
 } from '../__mocks__/mockInputs';
 import { LaunchForm } from '../LaunchForm';
 import { binaryInputName, errorInputName } from '../test/constants';
-import { useExecutionLaunchConfiguration } from '../useExecutionLaunchConfiguration';
+import { WorkflowInitialLaunchParameters } from '../types';
+import { useMappedExecutionInputValues } from '../useMappedExecutionInputValues';
 import { getWorkflowInputs } from '../utils';
 
 const booleanInputName = 'simpleBoolean';
@@ -117,17 +118,26 @@ interface RenderFormArgs {
 const LaunchFormWithExecution: React.FC<RenderFormArgs & {
     execution: Execution;
 }> = ({ execution, mocks: { mockWorkflow } }) => {
-    const launchConfig = useExecutionLaunchConfiguration({
+    const {
+        closure: { workflowId },
+        spec: { launchPlan }
+    } = execution;
+    const executionInputs = useMappedExecutionInputValues({
         execution,
-        workflowInputs: getWorkflowInputs(mockWorkflow)
+        inputDefinitions: getWorkflowInputs(mockWorkflow)
     });
+    const initialParameters: WorkflowInitialLaunchParameters = {
+        workflowId,
+        launchPlan,
+        values: executionInputs.value
+    };
     const onClose = () => console.log('Close');
     return (
-        <WaitForData {...launchConfig}>
+        <WaitForData {...executionInputs}>
             <LaunchForm
                 onClose={onClose}
                 workflowId={mockWorkflow.id}
-                initialParameters={launchConfig.value}
+                initialParameters={initialParameters}
             />
         </WaitForData>
     );
