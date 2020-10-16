@@ -15,6 +15,7 @@ import {
     GloballyUniqueNode,
     Identifier,
     NodeExecutionIdentifier,
+    nodeExecutionQueryParams,
     NodeId,
     RequestConfig,
     TaskExecutionIdentifier,
@@ -125,6 +126,19 @@ export function createExecutionDataCache(
         return nodeExecutions;
     };
 
+    const getNodeExecutionsForParentNode = async (
+        { executionId, nodeId }: NodeExecutionIdentifier,
+        config: RequestConfig
+    ) => {
+        return getNodeExecutions(executionId, {
+            ...config,
+            params: {
+                ...config.params,
+                [nodeExecutionQueryParams.parentNodeId]: nodeId
+            }
+        });
+    };
+
     const getTaskTemplate = (id: Identifier) => {
         const template = taskTemplatesById.get(getCacheKey(id));
         if (template === undefined) {
@@ -220,6 +234,7 @@ export function createExecutionDataCache(
         getNode,
         getNodeForNodeExecution,
         getNodeExecutions,
+        getNodeExecutionsForParentNode,
         getTaskExecutions,
         getTaskExecutionChildren,
         getTaskTemplate,

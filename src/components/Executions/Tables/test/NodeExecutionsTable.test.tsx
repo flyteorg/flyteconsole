@@ -17,6 +17,7 @@ import {
     FilterOperationName,
     getTask,
     NodeExecution,
+    nodeExecutionQueryParams,
     RequestConfig,
     TaskNodeMetadata,
     WorkflowExecutionIdentifier
@@ -28,6 +29,7 @@ import {
 } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import {
     getExecution,
+    listNodeExecutions,
     listTaskExecutionChildren,
     listTaskExecutions
 } from 'models/Execution/api';
@@ -40,6 +42,35 @@ import {
     NodeExecutionsTable,
     NodeExecutionsTableProps
 } from '../NodeExecutionsTable';
+
+function makeChildrenForNodeExecution(
+    nodeExecution: NodeExecution
+): NodeExecution[] {
+    const { id } = nodeExecution;
+    const { nodeId } = id;
+    return [
+        {
+            ...nodeExecution,
+            id: { ...id, nodeId: `${nodeId}-child1` },
+            metadata: { retryGroup: '0' }
+        },
+        {
+            ...nodeExecution,
+            id: { ...id, nodeId: `${nodeId}-child2` },
+            metadata: { retryGroup: '0' }
+        },
+        {
+            ...nodeExecution,
+            id: { ...id, nodeId: `${nodeId}-child1` },
+            metadata: { retryGroup: '1' }
+        },
+        {
+            ...nodeExecution,
+            id: { ...id, nodeId: `${nodeId}-child2` },
+            metadata: { retryGroup: '1' }
+        }
+    ];
+}
 
 describe('NodeExecutionsTable', () => {
     let props: NodeExecutionsTableProps;
@@ -56,6 +87,9 @@ describe('NodeExecutionsTable', () => {
     let mockListTaskExecutionChildren: jest.Mock<ReturnType<
         typeof listTaskExecutionChildren
     >>;
+    let mockListNodeExecutions: jest.Mock<ReturnType<
+        typeof listNodeExecutions
+    >>;
 
     beforeEach(() => {
         const {
@@ -69,6 +103,29 @@ describe('NodeExecutionsTable', () => {
 
         mockNodeExecutions = nodeExecutions;
 
+        mockListNodeExecutions = jest
+            .fn()
+            .mockImplementation((_, config: RequestConfig = {}) => {
+                // If a valid parent nodeId is passed an matches one of our mock
+                // node executions, we will generate and return a dummy set of
+                // children in two different retry groups.
+                if (
+                    !config.params ||
+                    config.params[nodeExecutionQueryParams.parentNodeId] == null
+                ) {
+                    return { entities: [] };
+                }
+                const parentNodeId =
+                    config.params[nodeExecutionQueryParams.parentNodeId];
+                const parentNodeExecution = mockNodeExecutions.find(
+                    ne => ne.id.nodeId === parentNodeId
+                );
+                return {
+                    entities: parentNodeExecution
+                        ? makeChildrenForNodeExecution(parentNodeExecution)
+                        : []
+                };
+            });
         mockListTaskExecutions = jest.fn().mockResolvedValue({ entities: [] });
         mockListTaskExecutionChildren = jest
             .fn()
@@ -85,6 +142,7 @@ describe('NodeExecutionsTable', () => {
         apiContext = mockAPIContextValue({
             getExecution: mockGetExecution,
             getTask: mockGetTask,
+            listNodeExecutions: mockListNodeExecutions,
             listTaskExecutions: mockListTaskExecutions,
             listTaskExecutionChildren: mockListTaskExecutionChildren
         });
@@ -138,6 +196,62 @@ describe('NodeExecutionsTable', () => {
         const task = dataCache.getTaskTemplate(taskId!);
         expect(task).toBeDefined();
         expect(queryAllByText(task!.id.name)[0]).toBeInTheDocument();
+    });
+
+    describe('for nodes with children', () => {
+        // TODO: fn which expands the first node and waits for the children to be rendered
+        describe('with isParentNode flag', () => {
+            it('correctly fetches children', async () => {
+                // TODO: Set isParentNode flag on one of the executions
+                const { container } = renderTable();
+                expect(
+                    mockListNodeExecutions
+                ).toHaveBeenCalledWith(/*parent_id of the node execution, and same workflow execution id */);
+                expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
+            });
+
+            it('correctly renders groups', async () => {
+                // Children are grouped by retry attempt
+                // TODO
+            });
+        });
+
+        describe('without isParentNode flag, using taskNodeMetadata ', () => {
+            beforeEach(() => {
+                // In the case of a non-isParent node execution, API should not
+                // return anything from the list endpoint
+                mockListNodeExecutions.mockResolvedValue({ entities: [] });
+            });
+
+            it('correctly fetches children', async () => {
+                // TODO: Have to return one or more task executions here to check groups.
+                const { container } = renderTable();
+                expect(
+                    mockListTaskExecutionChildren
+                ).toHaveBeenCalledWith(/* ??? */);
+                expect(mockListNodeExecutions).not.toHaveBeenCalled();
+            });
+
+            it('correct renders groups', async () => {
+                // Tasks should be organized by retry attempt, so setup code should
+                // return at least one retry attempt
+                // TODO
+            });
+        });
+
+        describe('without isParentNode flag, using workflowNodeMetadata', () => {
+            beforeEach(() => {
+                // TODO: Setup wf execution node metadata here and
+                // setup listMockNodeExecutions to return a set of children for
+                // the new workflow execution
+            });
+            it('correctly fetches children', async () => {
+                // TODO
+            });
+            it('does not attempt to fetch children for workflow executions matching the top level', async () => {
+                // TODO
+            });
+        });
     });
 
     it('requests child node executions using configuration from context', async () => {

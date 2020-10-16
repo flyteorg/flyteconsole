@@ -32,7 +32,8 @@ import {
     DetailedNodeExecution,
     ExecutionDataCache,
     ExecutionPhaseConstants,
-    NodeExecutionDisplayType
+    NodeExecutionDisplayType,
+    ParentNodeExecution
 } from './types';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
@@ -114,7 +115,11 @@ export function populateNodeExecutionDetails(
     nodeExecution: NodeExecution,
     dataCache: ExecutionDataCache
 ) {
-    const { nodeId } = nodeExecution.id;
+    // Use `spec_node_id` if available to look up the node in the graph (needed to
+    // distinguish nodes in sub-workflow scenarios). But this may not exist, so
+    // fall back to id.nodeId in those cases.
+    const nodeId =
+        nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
     const cacheKey = getCacheKey(nodeExecution.id);
     const nodeInfo = dataCache.getNodeForNodeExecution(nodeExecution.id);
 
@@ -218,6 +223,14 @@ function getExecutionTimingMS({
         timestampToDate(startedAt).getTime() - createdAtDate.getTime();
 
     return { duration: durationMS, queued: queuedMS };
+}
+
+export function isParentNodeExecution(
+    nodeExecution: NodeExecution
+): nodeExecution is ParentNodeExecution {
+    return (
+        nodeExecution.metadata != null && !!nodeExecution.metadata.isParentNode
+    );
 }
 
 /** Returns timing information (duration, queue time, ...) for a WorkflowExecution */
