@@ -1,22 +1,23 @@
 import {
-    act,
     fireEvent,
     getByLabelText,
+    getByText,
     render,
     waitFor
 } from '@testing-library/react';
-import { PaginatedEntityResponse } from 'models/AdminEntity/types';
+import {
+    PaginatedEntityResponse,
+    RequestConfig
+} from 'models/AdminEntity/types';
 import * as React from 'react';
 import { PaginationConfig, usePagination } from '../usePagination';
 
-const stateLabel = 'pagination-state';
-const errorLabel = 'pagination-error';
 const valueLabel = 'pagination-value';
 const fetchLabel = 'pagination-doFetch';
 const moreItemsAvailableLabel = 'pagination-moreItemsAvailable';
 
 interface PaginationItem {
-    id: number;
+    id: string;
 }
 
 type FetchResponse = PaginatedEntityResponse<PaginationItem>;
@@ -31,8 +32,6 @@ const PaginationTester = ({ config, doFetch }: PaginationTesterProps) => {
 
     return (
         <div>
-            <div aria-label={stateLabel}>{fetchable.state.value}</div>
-            <div aria-label={errorLabel}>{`${fetchable.lastError}`}</div>
             <div aria-label={valueLabel}>
                 <ul>
                     {fetchable.value.map(({ id }) => (
@@ -41,7 +40,7 @@ const PaginationTester = ({ config, doFetch }: PaginationTesterProps) => {
                 </ul>
             </div>
             <div aria-label={moreItemsAvailableLabel}>
-                {fetchable.moreItemsAvailable}
+                {fetchable.moreItemsAvailable ? 'true' : 'false'}
             </div>
             <button aria-label={fetchLabel} onClick={onClickFetch}>
                 Fetch Data
@@ -51,23 +50,29 @@ const PaginationTester = ({ config, doFetch }: PaginationTesterProps) => {
 };
 
 describe('usePagination', () => {
-    const defaultValue = 'defaultValue';
-    const fetchData = 'dataString';
+    let entityCounter: number;
     let config: PaginationConfig<{}>;
     let doFetch: jest.Mock<Promise<FetchResponse>>;
-    let resolveValue: (value: FetchResponse) => void;
-    let rejectValue: (value: string) => void;
 
     beforeEach(() => {
-        doFetch = jest.fn().mockImplementation(() => {
-            return new Promise<FetchResponse>((resolve, reject) => {
-                resolveValue = resolve;
-                rejectValue = reject;
-            });
-        });
+        entityCounter = 0;
+        doFetch = jest
+            .fn()
+            .mockImplementation(
+                (fetchArg: any, { limit = 25 }: RequestConfig) =>
+                    Promise.resolve({
+                        entities: Array.from({ length: limit }, () => {
+                            const id = `${entityCounter}`;
+                            entityCounter += 1;
+                            return { id };
+                        }),
+                        token: `${entityCounter}`
+                    })
+            );
         config = {
             cacheItems: false,
-            fetchArg: {}
+            fetchArg: {},
+            limit: 25
         };
     });
 
@@ -76,137 +81,70 @@ describe('usePagination', () => {
     const getElements = async (container: HTMLElement) => {
         return waitFor(() => {
             return {
-                errorEl: getByLabelText(container, errorLabel),
                 fetchButton: getByLabelText(container, fetchLabel),
-                stateEl: getByLabelText(container, stateLabel),
-                valueEl: getByLabelText(container, valueLabel)
+                moreItemsAvailable: getByLabelText(
+                    container,
+                    moreItemsAvailableLabel
+                )
             };
         });
     };
 
-    it('should reset token when config changes', async () => {});
+    const waitForLastItemRendered = async (container: HTMLElement) => {
+        return waitFor(() => getByText(container, `item-${entityCounter - 1}`));
+    };
 
-    it('should set moreItemsAvailable if token is returned', async () => {});
+    it('should pass returned token in subsequent calls', async () => {
+        const { container } = renderTester();
+        const { fetchButton } = await getElements(container);
 
-    // it('should return value once fetch has resolved', async () => {
-    //     const { container } = renderTester();
-    //     const { valueEl } = await getElements(container);
+        expect(doFetch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ token: '' })
+        );
 
-    //     const newValue = 'newValue';
-    //     resolveValue(newValue);
+        fireEvent.click(fetchButton);
+        await waitForLastItemRendered(container);
+        expect(doFetch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ token: `${config.limit}` })
+        );
+    });
 
-    //     await waitFor(() => expect(valueEl.textContent).toBe(newValue));
-    // });
+    it('should reset token when config changes', async () => {
+        const { container } = renderTester();
+        await getElements(container);
 
-    // it('should return lastError when fetch fails', async () => {
-    //     const { container } = renderTester();
-    //     const { errorEl } = await getElements(container);
+        expect(doFetch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ token: '' })
+        );
 
-    //     const error = 'something went wrong';
-    //     rejectValue(new Error(error));
+        doFetch.mockClear();
+        entityCounter = 0;
 
-    //     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    // });
+        // Change the config to trigger a rest of the pagination hook
+        config.limit = 10;
+        await getElements(renderTester().container);
 
-    // it('should continue returning previously fetched value when refresh fails', async () => {
-    //     const { container } = renderTester();
-    //     const { errorEl, fetchButton, valueEl } = await getElements(container);
+        expect(doFetch).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ token: '' })
+        );
+    });
 
-    //     const firstValue = 'new value';
-    //     resolveValue(firstValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    //     fireEvent.click(fetchButton);
+    it('should set moreItemsAvailable if token is returned', async () => {
+        const { moreItemsAvailable } = await getElements(
+            renderTester().container
+        );
+        expect(moreItemsAvailable.textContent).toBe('true');
+    });
 
-    //     const error = 'something went wrong';
-    //     rejectValue(new Error(error));
-
-    //     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    //     expect(valueEl.textContent).toBe(firstValue);
-    // });
-
-    // it('should clear lastError when retrying failed initial fetch', async () => {
-    //     const { container } = renderTester();
-    //     const { errorEl, fetchButton, valueEl } = await getElements(container);
-
-    //     const error = 'something went wrong';
-    //     rejectValue(new Error(error));
-    //     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    //     fireEvent.click(fetchButton);
-
-    //     await waitFor(() => expect(errorEl.textContent).not.toContain(error));
-    // });
-
-    // it('should clear lastError when retrying failed refresh fetch', async () => {
-    //     const { container } = renderTester();
-    //     const { errorEl, fetchButton, valueEl } = await getElements(container);
-
-    //     // Create successful first fetch
-    //     const firstValue = 'new value';
-    //     resolveValue(firstValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    //     fireEvent.click(fetchButton);
-
-    //     const error = 'something went wrong';
-    //     rejectValue(new Error(error));
-
-    //     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    //     fireEvent.click(fetchButton);
-    //     await waitFor(() => expect(errorEl.textContent).not.toContain(error));
-    // });
-
-    // it('should reset and not return stale state when input data changes', async () => {
-    //     const { container, rerender } = renderTester();
-    //     const { errorEl, stateEl, valueEl } = await getElements(container);
-
-    //     // Create successful first fetch
-    //     const firstValue = 'new value';
-    //     resolveValue(firstValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-
-    //     rerender(
-    //         <FetchableTester
-    //             config={{ ...config, autoFetch: false }}
-    //             data="newFetchData"
-    //         />
-    //     );
-    //     await waitFor(() => expect(stateEl.textContent).toBe(fetchStates.IDLE));
-    //     expect(valueEl.textContent).toBe(defaultValue);
-    //     expect(errorEl.textContent).toBe('null');
-    // });
-
-    // it('should return refreshed value after a second fetch', async () => {
-    //     const { container } = renderTester();
-    //     const { fetchButton, valueEl } = await getElements(container);
-
-    //     // Create successful first fetch
-    //     const firstValue = 'new value';
-    //     resolveValue(firstValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-
-    //     fireEvent.click(fetchButton);
-
-    //     const secondValue = 'second new value';
-    //     resolveValue(secondValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(secondValue));
-    // });
-
-    // it('should return default value until fetch completes', async () => {
-    //     const { container } = renderTester();
-    //     const { valueEl } = await getElements(container);
-    //     expect(valueEl.textContent).toBe(defaultValue);
-
-    //     const newValue = 'new value';
-    //     resolveValue(newValue);
-    //     await waitFor(() => expect(valueEl.textContent).toBe(newValue));
-    // });
-
-    // it('should not issue an initial fetch if autoFetch is false', async () => {
-    //     config.autoFetch = false;
-    //     const { container } = renderTester();
-    //     const { fetchButton } = await getElements(container);
-    //     expect(doFetch).not.toHaveBeenCalled();
-
-    //     fireEvent.click(fetchButton);
-    //     expect(doFetch).toHaveBeenCalled();
-    // });
+    it('should not set moreItemsAvailable if no token is returned', async () => {
+        doFetch.mockResolvedValue({ entities: [{ id: '0' }] });
+        const { moreItemsAvailable } = await getElements(
+            renderTester().container
+        );
+        expect(moreItemsAvailable.textContent).toBe('false');
+    });
 });
