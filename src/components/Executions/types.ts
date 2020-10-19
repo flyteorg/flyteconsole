@@ -80,7 +80,7 @@ export interface DetailedNodeExecutionGroup extends NodeExecutionGroup {
 export interface ExecutionDataCache {
     getNode(id: NodeId): GloballyUniqueNode | undefined;
     getNodeForNodeExecution(
-        nodeExecutionId: NodeExecutionIdentifier
+        nodeExecution: NodeExecution
     ): GloballyUniqueNode | null | undefined;
     getNodeExecutions(
         workflowExecutionId: WorkflowExecutionIdentifier,

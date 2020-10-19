@@ -110,6 +110,10 @@ export const taskExecutionIsTerminal = (taskExecution: TaskExecution) =>
     taskExecution.closure &&
     terminalTaskExecutionStates.includes(taskExecution.closure.phase);
 
+export function getNodeExecutionSpecId(nodeExecution: NodeExecution): string {
+    return nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
+}
+
 /** Populates a NodeExecution with extended information read from an `ExecutionDataCache` */
 export function populateNodeExecutionDetails(
     nodeExecution: NodeExecution,
@@ -118,10 +122,9 @@ export function populateNodeExecutionDetails(
     // Use `spec_node_id` if available to look up the node in the graph (needed to
     // distinguish nodes in sub-workflow scenarios). But this may not exist, so
     // fall back to id.nodeId in those cases.
-    const nodeId =
-        nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
+    const nodeId = getNodeExecutionSpecId(nodeExecution);
     const cacheKey = getCacheKey(nodeExecution.id);
-    const nodeInfo = dataCache.getNodeForNodeExecution(nodeExecution.id);
+    const nodeInfo = dataCache.getNodeForNodeExecution(nodeExecution);
 
     let displayId = nodeId;
     let displayType = NodeExecutionDisplayType.Unknown;

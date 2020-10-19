@@ -1,4 +1,10 @@
-import { render, waitFor } from '@testing-library/react';
+import {
+    fireEvent,
+    getAllByRole,
+    getByTitle,
+    render,
+    waitFor
+} from '@testing-library/react';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { APIContext, APIContextValue } from 'components/data/apiContext';
 import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
@@ -9,6 +15,7 @@ import {
     ExecutionDataCacheContext,
     NodeExecutionsRequestConfigContext
 } from 'components/Executions/contexts';
+import { formatRetryAttempt } from 'components/Executions/TaskExecutionsList/utils';
 import { ExecutionDataCache } from 'components/Executions/types';
 import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
 import { fetchStates } from 'components/hooks/types';
@@ -38,6 +45,7 @@ import * as React from 'react';
 import { makeIdentifier } from 'test/modelUtils';
 import { Identifier } from 'typescript';
 import { State } from 'xstate';
+import { titleStrings } from '../constants';
 import {
     NodeExecutionsTable,
     NodeExecutionsTableProps
@@ -52,22 +60,22 @@ function makeChildrenForNodeExecution(
         {
             ...nodeExecution,
             id: { ...id, nodeId: `${nodeId}-child1` },
-            metadata: { retryGroup: '0' }
+            metadata: { retryGroup: '0', specNodeId: nodeId }
         },
         {
             ...nodeExecution,
             id: { ...id, nodeId: `${nodeId}-child2` },
-            metadata: { retryGroup: '0' }
+            metadata: { retryGroup: '0', specNodeId: nodeId }
         },
         {
             ...nodeExecution,
             id: { ...id, nodeId: `${nodeId}-child1` },
-            metadata: { retryGroup: '1' }
+            metadata: { retryGroup: '1', specNodeId: nodeId }
         },
         {
             ...nodeExecution,
             id: { ...id, nodeId: `${nodeId}-child2` },
-            metadata: { retryGroup: '1' }
+            metadata: { retryGroup: '1', specNodeId: nodeId }
         }
     ];
 }
@@ -188,9 +196,7 @@ describe('NodeExecutionsTable', () => {
         const { queryAllByText } = renderTable();
         await waitFor(() => {});
 
-        const node = dataCache.getNodeForNodeExecution(
-            mockNodeExecutions[0].id
-        );
+        const node = dataCache.getNodeForNodeExecution(mockNodeExecutions[0]);
         const taskId = node?.node.taskNode?.referenceId;
         expect(taskId).toBeDefined();
         const task = dataCache.getTaskTemplate(taskId!);
@@ -199,24 +205,47 @@ describe('NodeExecutionsTable', () => {
     });
 
     describe('for nodes with children', () => {
-        // TODO: fn which expands the first node and waits for the children to be rendered
+        let parentNodeId: string;
+        const groupNames = [formatRetryAttempt(0), formatRetryAttempt(1)];
+        beforeEach(() => {
+            parentNodeId = mockNodeExecutions[0].id.nodeId;
+        });
+
+        const expandParentNode = async (container: HTMLElement) => {
+            const expander = await waitFor(() =>
+                getByTitle(container, titleStrings.expandRow)
+            );
+            fireEvent.click(expander);
+            return await waitFor(() => getAllByRole(container, 'list'));
+        };
+
         describe('with isParentNode flag', () => {
+            beforeEach(() => {
+                mockNodeExecutions[0].metadata = { isParentNode: true };
+            });
+
             it('correctly fetches children', async () => {
-                // TODO: Set isParentNode flag on one of the executions
-                const { container } = renderTable();
-                expect(
-                    mockListNodeExecutions
-                ).toHaveBeenCalledWith(/*parent_id of the node execution, and same workflow execution id */);
+                const { getByText } = renderTable();
+                await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+                expect(mockListNodeExecutions).toHaveBeenCalledWith(
+                    expect.anything(),
+                    expect.objectContaining({
+                        params: {
+                            [nodeExecutionQueryParams.parentNodeId]: parentNodeId
+                        }
+                    })
+                );
                 expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
             });
 
-            it('correctly renders groups', async () => {
-                // Children are grouped by retry attempt
-                // TODO
+            it.only('correctly renders groups', async () => {
+                const { container, debug } = renderTable();
+                const childGroups = await expandParentNode(container);
+                expect(childGroups).toHaveLength(2);
             });
         });
 
-        describe('without isParentNode flag, using taskNodeMetadata ', () => {
+        describe.skip('without isParentNode flag, using taskNodeMetadata ', () => {
             beforeEach(() => {
                 // In the case of a non-isParent node execution, API should not
                 // return anything from the list endpoint
@@ -239,7 +268,7 @@ describe('NodeExecutionsTable', () => {
             });
         });
 
-        describe('without isParentNode flag, using workflowNodeMetadata', () => {
+        describe.skip('without isParentNode flag, using workflowNodeMetadata', () => {
             beforeEach(() => {
                 // TODO: Setup wf execution node metadata here and
                 // setup listMockNodeExecutions to return a set of children for
