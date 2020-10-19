@@ -134,6 +134,19 @@ export function getScheduleFrequencyString(schedule?: Admin.ISchedule) {
     if (schedule.rate) {
         return fixedRateToString(schedule.rate);
     }
+    if (schedule.cronSchedule && schedule.cronSchedule.schedule) {
+        return cronstrue.toString(`${schedule.cronSchedule.schedule}`);
+    }
+    return '';
+}
+
+export function getScheduleOffsetString(schedule?: Admin.ISchedule) {
+    if (schedule == null) {
+        return '';
+    }
+    if (schedule.cronSchedule) {
+        return schedule.cronSchedule.offset;
+    }
     return '';
 }
 

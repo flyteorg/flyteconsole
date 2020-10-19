@@ -1,7 +1,10 @@
 import Chip from '@material-ui/core/Chip';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as classnames from 'classnames';
-import { getScheduleFrequencyString } from 'common/formatters';
+import {
+    getScheduleFrequencyString,
+    getScheduleOffsetString
+} from 'common/formatters';
 import { ListProps } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
 import {
@@ -53,6 +56,18 @@ export const schedulesTableColumns: KeyedColumnProps[] = [
         key: 'frequency',
         label: 'frequency',
         width: schedulesTableColumnsWidths.frequency
+    },
+    {
+        cellDataGetter: ({ rowData }: CellDataGetterParams) =>
+            rowData.spec.entityMetadata.schedule,
+        cellRenderer: ({ cellData: schedule }: TableCellProps<Schedule>) =>
+            getScheduleOffsetString(schedule),
+        dataKey: 'closure',
+        flexGrow: 1,
+        flexShrink: 0,
+        key: 'offset',
+        label: 'offset',
+        width: schedulesTableColumnsWidths.offset
     },
     {
         cellDataGetter: ({ rowData }: CellDataGetterParams) =>

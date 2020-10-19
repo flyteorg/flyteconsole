@@ -1,4 +1,5 @@
 import { millisecondsToDuration } from 'common/utils';
+import { Admin } from 'flyteidl';
 import {
     subSecondString,
     unknownValueString,
@@ -12,6 +13,8 @@ import {
     formatDate,
     formatDateLocalTimezone,
     formatDateUTC,
+    getScheduleFrequencyString,
+    getScheduleOffsetString,
     leftPaddedNumber,
     millisecondsToHMS,
     protobufDurationToHMS
@@ -156,6 +159,41 @@ describe('millisecondsToHMS', () => {
     millisecondToHMSTestCases.forEach(([ms, expected]) =>
         it(`should convert ${ms}ms to ${expected}`, () => {
             expect(millisecondsToHMS(ms)).toBe(expected);
+        })
+    );
+});
+
+describe('getScheduleFrequencyString', () => {
+    // input and expected result
+    const cases: [Admin.ISchedule, string][] = [
+        [{ cronExpression: '* * * * *' }, 'Every minute'],
+        [
+            { rate: { value: 1, unit: Admin.FixedRateUnit.MINUTE } },
+            'Every 1 minutes'
+        ],
+        [{ cronSchedule: { schedule: '* * * * *' } }, 'Every minute'],
+        [null!, ''],
+        [{ cronSchedule: { schedule: '' } }, '']
+    ];
+
+    cases.forEach(([input, expected]) =>
+        it(`should produce ${expected} with input ${input}`, () => {
+            expect(getScheduleFrequencyString(input)).toEqual(expected);
+        })
+    );
+});
+
+describe('getScheduleOffsetString', () => {
+    // input and expected result
+    const cases: [Admin.ISchedule, string][] = [
+        [{ cronSchedule: { offset: 'P1D' } }, 'P1D'],
+        [null!, ''],
+        [{ cronSchedule: { offset: '' } }, '']
+    ];
+
+    cases.forEach(([input, expected]) =>
+        it(`should produce ${expected} with input ${input}`, () => {
+            expect(getScheduleOffsetString(input)).toEqual(expected);
         })
     );
 });
