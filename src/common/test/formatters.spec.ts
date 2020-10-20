@@ -172,6 +172,23 @@ describe('getScheduleFrequencyString', () => {
             'Every 1 minutes'
         ],
         [{ cronSchedule: { schedule: '* * * * *' } }, 'Every minute'],
+        [{ cronSchedule: { schedule: '@hourly' } }, 'Every hour'],
+        [{ cronSchedule: { schedule: 'hourly' } }, 'Every hour'],
+        [{ cronSchedule: { schedule: 'hours' } }, 'Every hour'],
+        [{ cronSchedule: { schedule: '@daily' } }, 'Every day'],
+        [{ cronSchedule: { schedule: 'daily' } }, 'Every day'],
+        [{ cronSchedule: { schedule: 'days' } }, 'Every day'],
+        [{ cronSchedule: { schedule: '@weekly' } }, 'Every week'],
+        [{ cronSchedule: { schedule: 'weekly' } }, 'Every week'],
+        [{ cronSchedule: { schedule: 'weeks' } }, 'Every week'],
+        [{ cronSchedule: { schedule: '@monthly' } }, 'Every month'],
+        [{ cronSchedule: { schedule: 'monthly' } }, 'Every month'],
+        [{ cronSchedule: { schedule: 'months' } }, 'Every month'],
+        [{ cronSchedule: { schedule: '@yearly' } }, 'Every year'],
+        [{ cronSchedule: { schedule: 'yearly' } }, 'Every year'],
+        [{ cronSchedule: { schedule: 'years' } }, 'Every year'],
+        [{ cronSchedule: { schedule: '@annually' } }, 'Every year'],
+        [{ cronSchedule: { schedule: 'annually' } }, 'Every year'],
         [null!, ''],
         [{ cronSchedule: { schedule: '' } }, '']
     ];

@@ -122,6 +122,31 @@ export function fixedRateToString({ value, unit }: Admin.IFixedRate): string {
     return `Every ${value} ${fixedRateUnitStrings[unit]}`;
 }
 
+const hourlyAliases = ['@hourly', 'hourly', 'hours'];
+const dailyAliases = ['@daily', 'daily', 'days'];
+const weeklyAliases = ['@weekly', 'weekly', 'weeks'];
+const monthlyAliases = ['@monthly', 'monthly', 'months'];
+const yearlyAliases = ['@yearly', 'yearly', 'years', '@annually', 'annually'];
+
+export function getScheduleFrequencyStringFromAlias(schedule: string) {
+    if (hourlyAliases.includes(schedule)) {
+        return 'Every hour';
+    }
+    if (dailyAliases.includes(schedule)) {
+        return 'Every day';
+    }
+    if (weeklyAliases.includes(schedule)) {
+        return 'Every week';
+    }
+    if (monthlyAliases.includes(schedule)) {
+        return 'Every month';
+    }
+    if (yearlyAliases.includes(schedule)) {
+        return 'Every year';
+    }
+    return '';
+}
+
 export function getScheduleFrequencyString(schedule?: Admin.ISchedule) {
     if (schedule == null) {
         return '';
@@ -135,7 +160,11 @@ export function getScheduleFrequencyString(schedule?: Admin.ISchedule) {
         return fixedRateToString(schedule.rate);
     }
     if (schedule.cronSchedule && schedule.cronSchedule.schedule) {
-        return cronstrue.toString(`${schedule.cronSchedule.schedule}`);
+        return (
+            getScheduleFrequencyStringFromAlias(
+                schedule.cronSchedule.schedule
+            ) || cronstrue.toString(schedule.cronSchedule.schedule)
+        );
     }
     return '';
 }
