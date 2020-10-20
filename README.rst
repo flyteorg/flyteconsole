@@ -61,7 +61,7 @@ usually not needed, so the default behavior is to run without a prefix.
 
 ``CORS_PROXY_PREFIX`` (default: ``/cors_proxy``)
 
-Sets the local endpoint for `CORS request proxying <cors-proxy_>`_.
+Sets the local endpoint for `CORS request proxying <cors-proxying_>`_.
 
 ===============
 Run the server
@@ -112,7 +112,7 @@ a single module, you can specify that one specifically
 (ex. ``localStorage.debug = 'flyte:adminEntity'`` to only see decoded Flyte
 Admin API requests).
 
-.. _cors-proxy:
+.. _cors-proxying:
 
 ==============
 CORS Proxying
