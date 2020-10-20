@@ -126,7 +126,9 @@ hosting the Admin API on a different domain than the console. Another example is
 when fetching execution data from external storage such as S3. This is done to
 minimize the amount of extra configuration required for ingress to the Admin API
 and data storage, as well as to simplify local development of the console without
-the need to grant CORS access to ``localhost``.
+the need to grant CORS access to ``localhost``. To proxy requests for local
+development, set ``ADMIN_API_URL`` to
+``http://localhost:3000/cors_proxy/http://<admin-host>:<admin-port>``.
 
 The requests and responses are piped through the NodeJS server with minimal
 overhead. However, it is still recommended to host the Admin API and console on
