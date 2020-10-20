@@ -31,6 +31,8 @@ can be installed by running ``yarn`` in the project directory.
 Environment variables
 ======================
 Before we can run the server, we need to set up an environment variable or two.
+Environment variables can be set either in the current shell or persisted in
+``.env`` file stored under the root of the repository.
 
 ``ADMIN_API_URL`` (default: `window.location.origin <https://developer.mozilla.org/en-US/docs/Web/API/Window/location>`_)
 
