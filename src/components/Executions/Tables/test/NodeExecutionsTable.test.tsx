@@ -226,6 +226,14 @@ describe('NodeExecutionsTable', () => {
                 expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
             });
 
+            it('does not fetch children if flag is false', async () => {
+                mockNodeExecutions[0].metadata = { isParentNode: false };
+                const { getByText } = renderTable();
+                await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+                expect(mockListNodeExecutions).not.toHaveBeenCalled();
+                expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
+            });
+
             it('correctly renders groups', async () => {
                 const { container } = renderTable();
                 const childGroups = await expandParentNode(container);

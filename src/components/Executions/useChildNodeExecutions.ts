@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { ExecutionContext, ExecutionDataCacheContext } from './contexts';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { ExecutionDataCache, NodeExecutionGroup } from './types';
-import { isParentNodeExecution } from './utils';
+import { hasParentNodeField } from './utils';
 
 interface FetchGroupForTaskExecutionArgs {
     config: RequestConfig;
@@ -164,9 +164,12 @@ export function useChildNodeExecutions({
                 };
 
                 // Newer NodeExecution structures can directly indicate their parent
-                // status and have their children fetched in bulk.
-                if (isParentNodeExecution(nodeExecution)) {
-                    return fetchGroupsForParentNodeExecution(fetchArgs);
+                // status and have their children fetched in bulk. If the field
+                // is present but false, we can just return an empty list.
+                if (hasParentNodeField(nodeExecution)) {
+                    return nodeExecution.metadata.isParentNode
+                        ? fetchGroupsForParentNodeExecution(fetchArgs)
+                        : [];
                 }
                 // Otherwise, we need to determine the type of the node and
                 // recursively fetch NodeExecutions for the corresponding Workflow

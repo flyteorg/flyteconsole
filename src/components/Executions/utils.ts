@@ -228,11 +228,16 @@ function getExecutionTimingMS({
     return { duration: durationMS, queued: queuedMS };
 }
 
-export function isParentNodeExecution(
+/** Indicates the presence of metadata for parent node status. Older executions
+ * may be missing this field and require additional API calls to determine if
+ * their are children.
+ */
+export function hasParentNodeField(
     nodeExecution: NodeExecution
 ): nodeExecution is ParentNodeExecution {
     return (
-        nodeExecution.metadata != null && !!nodeExecution.metadata.isParentNode
+        nodeExecution.metadata != null &&
+        nodeExecution.metadata.isParentNode != null
     );
 }
 
