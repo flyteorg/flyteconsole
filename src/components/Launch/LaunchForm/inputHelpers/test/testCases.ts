@@ -5,6 +5,7 @@ import { BlobDimensionality, SchemaColumnType } from 'models';
 import { blobLiteral, primitiveLiteral } from '../../__mocks__/utils';
 import { InputType, InputTypeDefinition, InputValue } from '../../types';
 import { literalNone } from '../constants';
+import { structTestCases } from './structTestCases';
 
 // Defines type of value, input, and expected value of a `Core.ILiteral`
 type LiteralTestParams = [InputTypeDefinition, any, Core.ILiteral];
@@ -104,15 +105,15 @@ export const supportedPrimitives: InputTypeDefinition[] = [
     inputTypes.duration,
     inputTypes.float,
     inputTypes.integer,
-    inputTypes.schema
+    inputTypes.schema,
+    inputTypes.struct
 ];
 
 export const unsupportedTypes: InputTypeDefinition[] = [
     inputTypes.binary,
     inputTypes.error,
     inputTypes.map,
-    inputTypes.none,
-    inputTypes.struct
+    inputTypes.none
 ];
 
 export const validityTestCases = {
@@ -195,9 +196,34 @@ export const validityTestCases = {
     },
     // schema is just a specialized string input, so it has the same validity cases as string
     schema: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },
-    string: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] }
+    string: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },
+    // TODO-NOW
+    struct: {
+        invalid: [
+            123,
+            true,
+            new Date(),
+            {},
+            'nonObjectString',
+            '[]',
+            '{garbageobject}'
+        ],
+        valid: [
+            // Valid use case is any stringified POJO
+            JSON.stringify({
+                someString: 'someValue',
+                someNumber: 123,
+                someBoolean: true,
+                nestedStruct: { someOtherString: 'someOtherValue' },
+                nestedList: [123, 'stringListValue'],
+                nullValue: null
+            })
+        ]
+    }
 };
 
+/** Test cases for converting a *valid* input value to its corresponding ILiteral
+ * representation. */
 export const literalTestCases: LiteralTestParams[] = [
     [inputTypes.boolean, true, primitiveLiteral({ boolean: true })],
     [inputTypes.boolean, 'true', primitiveLiteral({ boolean: true })],
@@ -434,7 +460,12 @@ export const literalTestCases: LiteralTestParams[] = [
         literalNone()
     ],
     // Blob which is not an object (results in None)
-    [inputTypes.blobMulti, undefined, literalNone()]
+    [inputTypes.blobMulti, undefined, literalNone()],
+    ...structTestCases.map<LiteralTestParams>(([stringValue, literalValue]) => [
+        inputTypes.struct,
+        stringValue,
+        literalValue
+    ])
 ];
 
 type InputToLiteralTestParams = [
@@ -442,6 +473,8 @@ type InputToLiteralTestParams = [
     Core.ILiteral,
     InputValue | undefined
 ];
+
+/** Test cases for converting a Core.ILiteral to a usable InputValue */
 export const literalToInputTestCases: InputToLiteralTestParams[] = [
     [inputTypes.boolean, primitiveLiteral({ boolean: true }), true],
     [inputTypes.boolean, primitiveLiteral({ boolean: false }), false],
@@ -575,5 +608,12 @@ export const literalToInputTestCases: InputToLiteralTestParams[] = [
             format: 'csv',
             uri: 's3://somePath'
         }
-    ]
+    ],
+    ...structTestCases.map<InputToLiteralTestParams>(
+        ([stringValue, literalValue]) => [
+            inputTypes.struct,
+            literalValue,
+            stringValue
+        ]
+    )
 ];
