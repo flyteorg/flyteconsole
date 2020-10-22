@@ -262,6 +262,10 @@ describe('validateInput', () => {
         generateValidityTests(inputTypes.integer, validityTestCases.integer);
     });
 
+    describe('schema', () => {
+        generateValidityTests(inputTypes.schema, validityTestCases.schema);
+    });
+
     describe('string', () => {
         generateValidityTests(inputTypes.string, validityTestCases.string);
     });

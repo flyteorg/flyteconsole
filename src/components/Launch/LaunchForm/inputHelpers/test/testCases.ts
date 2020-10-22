@@ -193,6 +193,8 @@ export const validityTestCases = {
             Long.MIN_VALUE
         ]
     },
+    // schema is just a specialized string input, so it has the same validity cases as string
+    schema: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },
     string: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] }
 };
 
@@ -295,6 +297,27 @@ export const literalTestCases: LiteralTestParams[] = [
         inputTypes.integer,
         Long.MIN_VALUE,
         primitiveLiteral({ integer: Long.MIN_VALUE })
+    ],
+    [
+        inputTypes.schema,
+        '',
+        {
+            scalar: {
+                schema: { type: inputTypes.schema.literalType.schema, uri: '' }
+            }
+        }
+    ],
+    [
+        inputTypes.schema,
+        's3://someUri',
+        {
+            scalar: {
+                schema: {
+                    type: inputTypes.schema.literalType.schema,
+                    uri: 's3://someUri'
+                }
+            }
+        }
     ],
     [inputTypes.string, '', primitiveLiteral({ stringValue: '' })],
     [
@@ -473,6 +496,12 @@ export const literalToInputTestCases: InputToLiteralTestParams[] = [
         inputTypes.integer,
         primitiveLiteral({ integer: Long.MIN_VALUE }),
         Long.MIN_VALUE.toString()
+    ],
+    [inputTypes.schema, { scalar: { schema: { uri: '' } } }, ''],
+    [
+        inputTypes.schema,
+        { scalar: { schema: { uri: 's3://someUri' } } },
+        's3://someUri'
     ],
     [inputTypes.string, primitiveLiteral({ stringValue: '' }), ''],
     [
