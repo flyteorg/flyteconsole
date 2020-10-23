@@ -201,7 +201,6 @@ export const validityTestCases = {
     // schema is just a specialized string input, so it has the same validity cases as string
     schema: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },
     string: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },
-    // TODO-NOW
     struct: {
         invalid: [
             123,
