@@ -1,3 +1,4 @@
+import { stringifyValue } from 'common/utils';
 import { Core, Protobuf } from 'flyteidl';
 import { InputValue } from '../types';
 import { structPath } from './constants';
@@ -18,6 +19,8 @@ function protobufValueToPrimitive(
     const valueWithKind = asValueWithKind(value);
     const { kind } = valueWithKind;
     switch (kind) {
+        case 'nullValue':
+            return null;
         case 'structValue':
             if (valueWithKind.structValue == null) {
                 throw new Error('Unexpected empty structValue field');
@@ -102,20 +105,26 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
         structPath
     );
 
-    return JSON.stringify(protobufStructToObject(structValue), null, 2);
+    return stringifyValue(protobufStructToObject(structValue));
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-    const stringValue = typeof value === 'string' ? value : value.toString();
-
     let parsedObject: Dictionary<any>;
-    try {
-        parsedObject = JSON.parse(stringValue);
-        if (typeof parsedObject !== 'object') {
-            throw new Error(`Result was of type: ${typeof parsedObject}`);
+
+    if (typeof value === 'object') {
+        parsedObject = value;
+    } else {
+        const stringValue =
+            typeof value === 'string' ? value : value.toString();
+
+        try {
+            parsedObject = JSON.parse(stringValue);
+            if (typeof parsedObject !== 'object') {
+                throw new Error(`Result was of type: ${typeof parsedObject}`);
+            }
+        } catch (e) {
+            throw new Error(`Value did not parse to an object`);
         }
-    } catch (e) {
-        throw new Error(`Value did not parse to an object`);
     }
 
     return { scalar: { generic: objectToProtobufStruct(parsedObject) } };

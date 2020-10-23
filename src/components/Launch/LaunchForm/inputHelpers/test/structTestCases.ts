@@ -1,5 +1,5 @@
+import { stringifyValue } from 'common/utils';
 import { Core, Protobuf } from 'flyteidl';
-import { literalNone } from '../constants';
 
 export function structLiteral(generic: Protobuf.IStruct): Core.ILiteral {
     return { scalar: { generic } };
@@ -10,7 +10,6 @@ const values = {
     integerField: 123,
     floatField: 123.456,
     nullField: null,
-    undefinedField: undefined,
     booleanTrueField: true,
     booleanFalseField: false
 };
@@ -20,22 +19,21 @@ const structValues: { [k in keyof typeof values]: Protobuf.IValue } = {
     integerField: { numberValue: 123 },
     floatField: { numberValue: 123.456 },
     nullField: { nullValue: Protobuf.NullValue.NULL_VALUE },
-    undefinedField: { nullValue: Protobuf.NullValue.NULL_VALUE },
     booleanTrueField: { boolValue: true },
     booleanFalseField: { boolValue: false }
 };
 
 type StructTestCase = [string, Core.ILiteral];
 export const structTestCases: StructTestCase[] = [
-    ['{}', structLiteral({})],
+    ['{}', structLiteral({ fields: {} })],
     // simple case with no lists or nested structs
     [
-        JSON.stringify({ ...values }),
+        stringifyValue({ ...values }),
         structLiteral({ fields: { ...structValues } })
     ],
     // Nested struct value
     [
-        JSON.stringify({ nestedStruct: { ...values } }),
+        stringifyValue({ nestedStruct: { ...values } }),
         structLiteral({
             fields: {
                 nestedStruct: { structValue: { fields: { ...structValues } } }
@@ -44,7 +42,7 @@ export const structTestCases: StructTestCase[] = [
     ],
     // List
     [
-        JSON.stringify({ listField: Object.values(values) }),
+        stringifyValue({ listField: Object.values(values) }),
         structLiteral({
             fields: {
                 listField: {
@@ -55,7 +53,7 @@ export const structTestCases: StructTestCase[] = [
     ],
     // Nested struct with list
     [
-        JSON.stringify({ nestedStruct: { listField: Object.values(values) } }),
+        stringifyValue({ nestedStruct: { listField: Object.values(values) } }),
         structLiteral({
             fields: {
                 nestedStruct: {
@@ -74,7 +72,7 @@ export const structTestCases: StructTestCase[] = [
     ],
     // List with nested struct
     [
-        JSON.stringify({ listField: [{ ...values }] }),
+        stringifyValue({ listField: [{ ...values }] }),
         structLiteral({
             fields: {
                 listField: {
@@ -89,7 +87,7 @@ export const structTestCases: StructTestCase[] = [
     ],
     // List with nested list
     [
-        JSON.stringify({ listField: [[Object.values(values)]] }),
+        stringifyValue({ listField: [Object.values(values)] }),
         structLiteral({
             fields: {
                 listField: {
