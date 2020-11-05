@@ -28,9 +28,7 @@ export function useNodeExecutionsTableState({
 
     const setSelectedExecution = useMemo(
         () => (newValue: DetailedNodeExecution | null) =>
-            setSelectedExecutionKey(
-                newValue == null ? null : newValue.cacheKey ?? null
-            ),
+            setSelectedExecutionKey(newValue?.cacheKey ?? null),
         [setSelectedExecutionKey]
     );
 
