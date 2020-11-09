@@ -1,5 +1,5 @@
 import { BlobDimensionality, SimpleType } from 'models';
-import { BlobValue, InputType } from './types';
+import { BlobValue, InputType, ParsedInput, RoleType } from './types';
 
 export const launchPlansTableRowHeight = 40;
 export const launchPlansTableColumnWidths = {
@@ -16,11 +16,36 @@ export const schedulesTableColumnsWidths = {
 export const formStrings = {
     cancel: 'Cancel',
     inputs: 'Inputs',
+    role: 'Role',
     submit: 'Launch',
     taskVersion: 'Task Version',
     title: 'Create New Execution',
     workflowVersion: 'Workflow Version',
     launchPlan: 'Launch Plan'
+};
+
+export const roleInputDefinition = {
+    description:
+        'Role to assume for this execution (ex. IAM role or Kubernetes Service Account)',
+    label: 'role',
+    name: '__authRole',
+    required: true,
+    typeDefinition: {
+        type: InputType.String,
+        literalType: { simple: SimpleType.STRING }
+    }
+};
+
+type RoleTypesKey = 'iamRole' | 'k8sServiceAccount';
+export const roleTypes: { [k in RoleTypesKey]: RoleType } = {
+    iamRole: {
+        label: 'IAM Role',
+        value: 'assumableIamRole'
+    },
+    k8sServiceAccount: {
+        label: 'Kubernetes Service Account',
+        value: 'kubernetesServiceAccount'
+    }
 };
 
 /** Maps any valid InputType enum to a display string */
@@ -60,6 +85,8 @@ export const defaultBlobValue: BlobValue = {
     uri: '',
     dimensionality: BlobDimensionality.SINGLE
 };
+
+export const launchInputDebouncDelay = 500;
 
 export const requiredInputSuffix = '*';
 export const cannotLaunchWorkflowString = 'Workflow cannot be launched';

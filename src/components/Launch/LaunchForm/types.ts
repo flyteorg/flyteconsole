@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Admin, Core } from 'flyteidl';
 import {
     BlobDimensionality,
     Identifier,
@@ -191,4 +191,10 @@ export interface ParsedInput
     > {
     /** Provides an initial value for the input, which can be changed by the user. */
     initialValue?: Core.ILiteral;
+}
+
+export type RoleTypeValue = keyof Admin.IAuthRole;
+export interface RoleType {
+    label: string;
+    value: RoleTypeValue;
 }

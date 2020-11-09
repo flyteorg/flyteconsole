@@ -96,10 +96,13 @@ async function loadInputs(
 async function submit(
     { createWorkflowExecution }: APIContextValue,
     formInputsRef: RefObject<LaunchFormInputsRef>,
-    { referenceExecutionId, taskVersion }: TaskLaunchContext
+    { authRole, referenceExecutionId, taskVersion }: TaskLaunchContext
 ) {
     if (!taskVersion) {
         throw new Error('Attempting to launch with no Task version');
+    }
+    if (!authRole) {
+        throw new Error('Attempting to launch without specifying an authRole');
     }
     if (formInputsRef.current === null) {
         throw new Error('Unexpected empty form inputs ref');
