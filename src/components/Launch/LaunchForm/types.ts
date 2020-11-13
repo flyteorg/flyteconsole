@@ -64,6 +64,7 @@ export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
 export interface TaskInitialLaunchParameters
     extends BaseInitialLaunchParameters {
     taskId?: Identifier;
+    authRole?: Admin.IAuthRole;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
     taskId: NamedEntityIdentifier;

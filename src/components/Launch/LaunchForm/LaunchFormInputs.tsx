@@ -75,7 +75,6 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
         showErrors
     } = state.context;
     const { getValues, inputs, validate } = useFormInputsState(parsedInputs);
-    const styles = useStyles();
     React.useImperativeHandle(ref, () => ({
         getValues,
         validate

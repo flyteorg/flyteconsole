@@ -71,6 +71,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = props => {
                 ) : null}
                 {isEnterInputsState(baseState) ? (
                     <LaunchRoleInput
+                        initialValue={state.context.defaultAuthRole}
                         ref={roleInputRef}
                         showErrors={state.context.showErrors}
                     />

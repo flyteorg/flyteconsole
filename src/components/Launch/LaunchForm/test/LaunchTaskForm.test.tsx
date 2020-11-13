@@ -199,7 +199,7 @@ describe('LaunchForm: Task', () => {
         });
     });
 
-    describe('With Simple Inputs', () => {
+    describe('With Inputs', () => {
         beforeEach(() => {
             const {
                 simpleString,
@@ -410,57 +410,135 @@ describe('LaunchForm: Task', () => {
             });
 
             Object.entries(roleTypes).forEach(
-                ([key, { label, inputLabel, helperText }]) => {
-                    it(`should show correct label and helper text for ${key}`, async () => {
-                        const { getByLabelText, getByText } = renderForm();
-                        const roleRadioSelector = await waitFor(() =>
-                            getByLabelText(label)
-                        );
-                        fireEvent.click(roleRadioSelector);
-                        await waitFor(() =>
-                            getByLabelText(inputLabel, { exact: false })
-                        );
-                        expect(getByText(helperText)).toBeInTheDocument();
-                    });
-
-                    it('should preserve role value for ${key} when changing task version', async () => {
-                        const { getByLabelText, getByTitle } = renderForm();
-
-                        // We expect both the radio selection and text value to be preserved
-                        const roleRadioSelector = await waitFor(() =>
-                            getByLabelText(label)
-                        );
-                        fireEvent.click(roleRadioSelector);
-
-                        expect(roleRadioSelector).toBeChecked();
-
-                        const roleInput = await waitFor(() =>
-                            getByLabelText(inputLabel, {
-                                exact: false
-                            })
-                        );
-                        fireEvent.change(roleInput, {
-                            target: { value: 'roleInputStringValue' }
+                ([key, { label, inputLabel, helperText, value }]) => {
+                    describe(`for role type ${key}`, () => {
+                        it('should show correct label and helper text', async () => {
+                            const { getByLabelText, getByText } = renderForm();
+                            const roleRadioSelector = await waitFor(() =>
+                                getByLabelText(label)
+                            );
+                            fireEvent.click(roleRadioSelector);
+                            await waitFor(() =>
+                                getByLabelText(inputLabel, { exact: false })
+                            );
+                            expect(getByText(helperText)).toBeInTheDocument();
                         });
 
-                        // Click the expander for the task version, select the second item
-                        const taskVersionDiv = getByTitle(
-                            formStrings.taskVersion
-                        );
-                        const expander = getByRole(taskVersionDiv, 'button');
-                        fireEvent.click(expander);
-                        const items = await waitFor(() =>
-                            getAllByRole(taskVersionDiv, 'menuitem')
-                        );
-                        fireEvent.click(items[1]);
-                        await waitFor(() => getByTitle(formStrings.inputs));
+                        it('should preserve role value when changing task version', async () => {
+                            const { getByLabelText, getByTitle } = renderForm();
 
-                        expect(getByLabelText(label)).toBeChecked();
-                        expect(
-                            getByLabelText(inputLabel, {
-                                exact: false
-                            })
-                        ).toHaveValue('roleInputStringValue');
+                            // We expect both the radio selection and text value to be preserved
+                            const roleRadioSelector = await waitFor(() =>
+                                getByLabelText(label)
+                            );
+                            fireEvent.click(roleRadioSelector);
+
+                            expect(roleRadioSelector).toBeChecked();
+
+                            const roleInput = await waitFor(() =>
+                                getByLabelText(inputLabel, {
+                                    exact: false
+                                })
+                            );
+                            fireEvent.change(roleInput, {
+                                target: { value: 'roleInputStringValue' }
+                            });
+
+                            // Click the expander for the task version, select the second item
+                            const taskVersionDiv = getByTitle(
+                                formStrings.taskVersion
+                            );
+                            const expander = getByRole(
+                                taskVersionDiv,
+                                'button'
+                            );
+                            fireEvent.click(expander);
+                            const items = await waitFor(() =>
+                                getAllByRole(taskVersionDiv, 'menuitem')
+                            );
+                            fireEvent.click(items[1]);
+                            await waitFor(() => getByTitle(formStrings.inputs));
+
+                            expect(getByLabelText(label)).toBeChecked();
+                            expect(
+                                getByLabelText(inputLabel, {
+                                    exact: false
+                                })
+                            ).toHaveValue('roleInputStringValue');
+                        });
+
+                        it(`should use initial values when provided`, async () => {
+                            const initialParameters: TaskInitialLaunchParameters = {
+                                authRole: {
+                                    [value]: 'roleStringValue'
+                                }
+                            };
+                            const { getByLabelText } = renderForm({
+                                initialParameters
+                            });
+                            await waitFor(() =>
+                                expect(getByLabelText(label)).toBeChecked()
+                            );
+                            await waitFor(() =>
+                                expect(
+                                    getByLabelText(inputLabel, { exact: false })
+                                ).toHaveValue('roleStringValue')
+                            );
+                        });
+
+                        it(`should prefer cached values over initial values when changing task versions`, async () => {
+                            const initialRoleTypeValue = Object.values(
+                                roleTypes
+                            ).find(rt => rt.value !== value)?.value;
+                            // Set the role and string initial values to something different than what we will input
+                            const initialParameters: TaskInitialLaunchParameters = {
+                                authRole: {
+                                    [initialRoleTypeValue!]: 'initialRoleStringValue'
+                                }
+                            };
+                            const { getByLabelText, getByTitle } = renderForm({
+                                initialParameters
+                            });
+
+                            // We expect both the radio selection and text value to be preserved
+                            const roleRadioSelector = await waitFor(() =>
+                                getByLabelText(label)
+                            );
+                            fireEvent.click(roleRadioSelector);
+
+                            expect(roleRadioSelector).toBeChecked();
+
+                            const roleInput = await waitFor(() =>
+                                getByLabelText(inputLabel, {
+                                    exact: false
+                                })
+                            );
+                            fireEvent.change(roleInput, {
+                                target: { value: 'roleInputStringValue' }
+                            });
+
+                            // Click the expander for the task version, select the second item
+                            const taskVersionDiv = getByTitle(
+                                formStrings.taskVersion
+                            );
+                            const expander = getByRole(
+                                taskVersionDiv,
+                                'button'
+                            );
+                            fireEvent.click(expander);
+                            const items = await waitFor(() =>
+                                getAllByRole(taskVersionDiv, 'menuitem')
+                            );
+                            fireEvent.click(items[1]);
+                            await waitFor(() => getByTitle(formStrings.inputs));
+
+                            expect(getByLabelText(label)).toBeChecked();
+                            expect(
+                                getByLabelText(inputLabel, {
+                                    exact: false
+                                })
+                            ).toHaveValue('roleInputStringValue');
+                        });
                     });
                 }
             );
@@ -707,10 +785,6 @@ describe('LaunchForm: Task', () => {
                         expect.anything()
                     )
                 );
-            });
-
-            it('should use provided authRole parameter', async () => {
-                // todo
             });
         });
 

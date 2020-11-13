@@ -8,7 +8,6 @@ import {
     Typography
 } from '@material-ui/core';
 import { log } from 'common/log';
-import { getCacheKey } from 'components/Cache';
 import { NewTargetLink } from 'components/common/NewTargetLink';
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
 import { Admin } from 'flyteidl';
@@ -17,21 +16,17 @@ import { launchInputDebouncDelay, roleTypes } from './constants';
 import { makeStringChangeHandler } from './handlers';
 import { useInputValueCacheContext } from './inputValueCache';
 import { useStyles } from './styles';
-import { LaunchRoleInputRef, RoleType, RoleTypeValue } from './types';
+import { InputValueMap, LaunchRoleInputRef, RoleType } from './types';
 
 const roleHeader = 'Role';
-const iamHelperText = 'Enter a string to use as the role value';
 const roleDocLinkUrl =
     'https://github.com/lyft/flyteidl/blob/3789005a1372221eba28fa20d8386e44b32388f5/protos/flyteidl/admin/common.proto#L241';
-const roleValueLabel = 'role value';
 const roleTypeLabel = 'type';
 const roleInputId = 'launch-auth-role';
-
-function getDefaultRoleTypeValue(): RoleType {
-    return roleTypes.iamRole;
-}
+const defaultRoleTypeValue = roleTypes.iamRole;
 
 export interface LaunchRoleInputProps {
+    initialValue?: Admin.IAuthRole;
     showErrors: boolean;
 }
 
@@ -54,27 +49,64 @@ function getRoleTypeByValue(value: string): RoleType | undefined {
 const roleTypeCacheKey = '__roleType';
 const roleStringCacheKey = '__roleString';
 
-export function useRoleInputState(): LaunchRoleInputState {
+interface AuthRoleInitialValues {
+    roleType: RoleType;
+    roleString: string;
+}
+
+function getInitialValues(
+    cache: InputValueMap,
+    initialValue?: Admin.IAuthRole
+): AuthRoleInitialValues {
+    let roleType: RoleType | undefined;
+    let roleString: string | undefined;
+
+    // Prefer cached value first, since that is user input
+    if (cache.has(roleTypeCacheKey)) {
+        const cachedValue = `${cache.get(roleTypeCacheKey)}`;
+        roleType = getRoleTypeByValue(cachedValue);
+        if (roleType === undefined) {
+            log.error(`Unexepected cached role type: ${cachedValue}`);
+        }
+    }
+    if (cache.has(roleStringCacheKey)) {
+        roleString = cache.get(roleStringCacheKey)?.toString();
+    }
+
+    // After trying cache, check for an initial value and populate either
+    // field from the initial value if no cached value was passed.
+    if (initialValue != null) {
+        const initialRoleType = Object.values(roleTypes).find(
+            rt => initialValue[rt.value] != null
+        );
+        if (initialRoleType != null && roleType == null) {
+            roleType = initialRoleType;
+        }
+        if (initialRoleType != null && roleString == null) {
+            roleString = initialValue[initialRoleType.value]?.toString();
+        }
+    }
+
+    return {
+        roleType: roleType ?? defaultRoleTypeValue,
+        roleString: roleString ?? ''
+    };
+}
+
+export function useRoleInputState(
+    props: LaunchRoleInputProps
+): LaunchRoleInputState {
     const inputValueCache = useInputValueCacheContext();
+    const initialValues = getInitialValues(inputValueCache, props.initialValue);
 
     const [error, setError] = React.useState<string>();
     const [roleString, setRoleString] = React.useState<string>(
-        inputValueCache.has(roleStringCacheKey)
-            ? `${inputValueCache.get(roleStringCacheKey)}`
-            : ''
+        initialValues.roleString
     );
 
-    const [roleType, setRoleType] = React.useState<RoleType>(() => {
-        let roleType: RoleType | undefined;
-        if (inputValueCache.has(roleTypeCacheKey)) {
-            const cachedValue = `${inputValueCache.get(roleTypeCacheKey)}`;
-            roleType = getRoleTypeByValue(cachedValue);
-            if (roleType === undefined) {
-                log.error(`Unexepected cached role type: ${cachedValue}`);
-            }
-        }
-        return roleType ?? getDefaultRoleTypeValue();
-    });
+    const [roleType, setRoleType] = React.useState<RoleType>(
+        initialValues.roleType
+    );
 
     const validationValue = useDebouncedValue(
         roleString,
@@ -135,7 +167,7 @@ const RoleDescription = () => (
 export const LaunchRoleInputImpl: React.RefForwardingComponent<
     LaunchRoleInputRef,
     LaunchRoleInputProps
-> = ({ showErrors }, ref) => {
+> = (props, ref) => {
     const styles = useStyles();
     const {
         error,
@@ -145,8 +177,8 @@ export const LaunchRoleInputImpl: React.RefForwardingComponent<
         onChangeRoleString,
         onChangeRoleType,
         validate
-    } = useRoleInputState();
-    const hasError = showErrors && !!error;
+    } = useRoleInputState(props);
+    const hasError = props.showErrors && !!error;
     const helperText = hasError ? error : roleType.helperText;
 
     React.useImperativeHandle(ref, () => ({

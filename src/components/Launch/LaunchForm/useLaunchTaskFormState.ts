@@ -14,14 +14,12 @@ import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { correctInputErrors } from './constants';
 import { getInputsForTask } from './getInputs';
 import {
-    BaseLaunchContext,
     LaunchState,
     TaskLaunchContext,
     TaskLaunchEvent,
     taskLaunchMachine,
     TaskLaunchTypestate
 } from './launchMachine';
-import { useRoleInputState } from './LaunchRoleInput';
 import { validate as baseValidate } from './services';
 import {
     LaunchFormInputsRef,
@@ -173,6 +171,7 @@ export function useLaunchTaskFormState({
     // These values will be used to auto-select items from the task
     // version/launch plan drop downs.
     const {
+        authRole: defaultAuthRole,
         taskId: preferredTaskId,
         values: defaultInputValues
     } = initialParameters;
@@ -194,6 +193,7 @@ export function useLaunchTaskFormState({
         ...defaultStateMachineConfig,
         services,
         context: {
+            defaultAuthRole,
             defaultInputValues,
             preferredTaskId,
             referenceExecutionId,
