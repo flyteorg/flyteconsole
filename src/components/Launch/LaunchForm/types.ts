@@ -112,7 +112,6 @@ export interface TaskSourceSelectorState {
 
 export interface LaunchWorkflowFormState {
     formInputsRef: React.RefObject<LaunchFormInputsRef>;
-    onSubmit(): void;
     state: State<
         WorkflowLaunchContext,
         WorkflowLaunchEvent,

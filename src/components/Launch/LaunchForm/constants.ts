@@ -24,18 +24,6 @@ export const formStrings = {
     launchPlan: 'Launch Plan'
 };
 
-export const roleInputDefinition = {
-    description:
-        'Role to assume for this execution (ex. IAM role or Kubernetes Service Account)',
-    label: 'role',
-    name: '__authRole',
-    required: true,
-    typeDefinition: {
-        type: InputType.String,
-        literalType: { simple: SimpleType.STRING }
-    }
-};
-
 type RoleTypesKey = 'iamRole' | 'k8sServiceAccount';
 export const roleTypes: { [k in RoleTypesKey]: RoleType } = {
     iamRole: {
