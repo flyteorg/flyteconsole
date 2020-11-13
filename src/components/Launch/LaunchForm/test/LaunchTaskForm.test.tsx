@@ -357,6 +357,20 @@ describe('LaunchForm: Task', () => {
             );
         });
 
+        it('should render info message when no inputs are needed', async () => {});
+
+        describe('Auth Role', () => {
+            it('should require a value', async () => {});
+
+            it('should show correct help text and label based on role type selection', async () => {});
+
+            it('should correctly construct an IAM role', async () => {});
+
+            it('should correctly construct a k8s service account role', async () => {});
+
+            it('should not submit with input errors and a valid value for role', async () => {});
+        });
+
         describe('Input Values', () => {
             it('Should send false for untouched toggles', async () => {
                 let inputs: Core.ILiteralMap = {};
@@ -547,6 +561,8 @@ describe('LaunchForm: Task', () => {
                     )
                 );
             });
+
+            it('should use provided authRole parameter', async () => {});
         });
 
         describe('With Unsupported Required Inputs', () => {

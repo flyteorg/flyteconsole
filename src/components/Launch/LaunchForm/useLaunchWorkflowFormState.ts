@@ -269,6 +269,8 @@ export function useLaunchWorkflowFormState({
         });
     };
 
+    const onSubmit = () => sendEvent({ type: 'SUBMIT' });
+
     const workflowSourceSelectorState = useWorkflowSourceSelectorState({
         launchPlan,
         launchPlanOptions,
@@ -356,6 +358,7 @@ export function useLaunchWorkflowFormState({
 
     return {
         formInputsRef,
+        onSubmit,
         state,
         service,
         workflowSourceSelectorState

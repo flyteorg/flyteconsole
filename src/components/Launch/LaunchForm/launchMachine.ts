@@ -84,7 +84,6 @@ export interface WorkflowLaunchContext extends BaseLaunchContext {
 }
 
 export interface TaskLaunchContext extends BaseLaunchContext {
-    authRole?: Admin.IAuthRole;
     preferredTaskId?: Identifier;
     taskVersion?: Identifier;
     taskVersionOptions?: Task[];

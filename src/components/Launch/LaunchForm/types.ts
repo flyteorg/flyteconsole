@@ -81,6 +81,10 @@ export interface LaunchFormInputsRef {
     getValues(): Record<string, Core.ILiteral>;
     validate(): boolean;
 }
+export interface LaunchRoleInputRef {
+    getValue(): Admin.IAuthRole;
+    validate(): boolean;
+}
 
 export interface WorkflowSourceSelectorState {
     launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
@@ -107,6 +111,7 @@ export interface TaskSourceSelectorState {
 
 export interface LaunchWorkflowFormState {
     formInputsRef: React.RefObject<LaunchFormInputsRef>;
+    onSubmit(): void;
     state: State<
         WorkflowLaunchContext,
         WorkflowLaunchEvent,
@@ -124,6 +129,7 @@ export interface LaunchWorkflowFormState {
 
 export interface LaunchTaskFormState {
     formInputsRef: React.RefObject<LaunchFormInputsRef>;
+    roleInputRef: React.RefObject<LaunchRoleInputRef>;
     state: State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
     service: Interpreter<
         TaskLaunchContext,
@@ -195,6 +201,8 @@ export interface ParsedInput
 
 export type RoleTypeValue = keyof Admin.IAuthRole;
 export interface RoleType {
+    helperText: string;
+    inputLabel: string;
     label: string;
     value: RoleTypeValue;
 }
