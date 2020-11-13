@@ -109,7 +109,7 @@ async function validate(
     if (!roleInputRef.current.validate()) {
         throw new Error(correctInputErrors);
     }
-    baseValidate(formInputsRef, context);
+    return baseValidate(formInputsRef, context);
 }
 
 async function submit(

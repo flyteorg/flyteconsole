@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import * as React from 'react';
 import { BlobInput } from './BlobInput';
 import { CollectionInput } from './CollectionInput';
-import { formStrings } from './constants';
+import { formStrings, inputsDescription } from './constants';
 import { LaunchState } from './launchMachine';
 import { NoInputsNeeded } from './NoInputsNeeded';
 import { SimpleInput } from './SimpleInput';
@@ -18,10 +18,6 @@ import { UnsupportedInput } from './UnsupportedInput';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useFormInputsState } from './useFormInputsState';
 import { isEnterInputsState } from './utils';
-
-const inputsHeader = 'Inputs';
-const inputsDescription =
-    'Enter input values below. Items marked with an asterisk(*) are required.';
 
 function getComponentForInput(input: InputProps, showErrors: boolean) {
     const props = { ...input, error: showErrors ? input.error : undefined };
@@ -57,7 +53,7 @@ const RenderFormInputs: React.FC<{
     ) : (
         <>
             <header className={styles.sectionHeader}>
-                <Typography variant="h6">{inputsHeader}</Typography>
+                <Typography variant="h6">{formStrings.inputs}</Typography>
                 <Typography variant="body2">{inputsDescription}</Typography>
             </header>
             {inputs.map(input => (

@@ -1,6 +1,5 @@
 import { ThemeProvider } from '@material-ui/styles';
 import {
-    act,
     fireEvent,
     getAllByRole,
     getByLabelText,
@@ -36,7 +35,10 @@ import {
 import {
     cannotLaunchTaskString,
     formStrings,
-    requiredInputSuffix
+    inputsDescription,
+    requiredInputSuffix,
+    roleTypes,
+    taskNoInputsString
 } from '../constants';
 import { LaunchForm } from '../LaunchForm';
 import { LaunchFormProps, TaskInitialLaunchParameters } from '../types';
@@ -45,7 +47,9 @@ import {
     binaryInputName,
     booleanInputName,
     floatInputName,
+    iamRoleString,
     integerInputName,
+    k8sServiceAccountString,
     stringInputName
 } from './constants';
 import { createMockObjects } from './utils';
@@ -139,7 +143,7 @@ describe('LaunchForm: Task', () => {
         return buttons[0];
     };
 
-    const fillInputs = (container: HTMLElement) => {
+    const fillInputs = async (container: HTMLElement) => {
         fireEvent.change(
             getByLabelText(container, stringInputName, {
                 exact: false
@@ -158,7 +162,42 @@ describe('LaunchForm: Task', () => {
             }),
             { target: { value: '1.5' } }
         );
+        fireEvent.click(getByLabelText(container, roleTypes.iamRole.label));
+        const roleInput = await waitFor(() =>
+            getByLabelText(container, roleTypes.iamRole.inputLabel, {
+                exact: false
+            })
+        );
+        fireEvent.change(roleInput, { target: { value: iamRoleString } });
     };
+
+    describe('With No Inputs', () => {
+        beforeEach(() => {
+            variables = {};
+            createMocks();
+        });
+
+        it('should render info message', async () => {
+            const { container, getByText } = renderForm();
+            const submitButton = await waitFor(() =>
+                getSubmitButton(container)
+            );
+            await waitFor(() => expect(submitButton).toBeEnabled());
+
+            expect(getByText(taskNoInputsString)).toBeInTheDocument();
+        });
+
+        it('should not render inputs header/description', async () => {
+            const { container, queryByText } = renderForm();
+            const submitButton = await waitFor(() =>
+                getSubmitButton(container)
+            );
+            await waitFor(() => expect(submitButton).toBeEnabled());
+
+            expect(queryByText(formStrings.inputs)).toBeNull();
+            expect(queryByText(inputsDescription)).toBeNull();
+        });
+    });
 
     describe('With Simple Inputs', () => {
         beforeEach(() => {
@@ -255,7 +294,7 @@ describe('LaunchForm: Task', () => {
                     exact: false
                 })
             );
-            fillInputs(container);
+            await fillInputs(container);
             const submitButton = getSubmitButton(container);
             fireEvent.change(integerInput, { target: { value: 'abc' } });
             fireEvent.click(submitButton);
@@ -337,7 +376,7 @@ describe('LaunchForm: Task', () => {
                 queryByText
             } = renderForm();
             await waitFor(() => getByTitle(formStrings.inputs));
-            fillInputs(container);
+            await fillInputs(container);
 
             fireEvent.click(getSubmitButton(container));
             await waitFor(() =>
@@ -357,18 +396,126 @@ describe('LaunchForm: Task', () => {
             );
         });
 
-        it('should render info message when no inputs are needed', async () => {});
-
         describe('Auth Role', () => {
-            it('should require a value', async () => {});
+            it('should require a value', async () => {
+                const { container, getByLabelText } = renderForm();
+                const roleInput = await waitFor(() =>
+                    getByLabelText(roleTypes.iamRole.inputLabel, {
+                        exact: false
+                    })
+                );
 
-            it('should show correct help text and label based on role type selection', async () => {});
+                fireEvent.click(getSubmitButton(container));
+                await waitFor(() => expect(roleInput).toBeInvalid());
+            });
 
-            it('should correctly construct an IAM role', async () => {});
+            Object.entries(roleTypes).forEach(
+                ([key, { label, inputLabel, helperText }]) => {
+                    it(`should show correct label and helper text for ${key}`, async () => {
+                        const { getByLabelText, getByText } = renderForm();
+                        const roleRadioSelector = await waitFor(() =>
+                            getByLabelText(label)
+                        );
+                        fireEvent.click(roleRadioSelector);
+                        await waitFor(() =>
+                            getByLabelText(inputLabel, { exact: false })
+                        );
+                        expect(getByText(helperText)).toBeInTheDocument();
+                    });
 
-            it('should correctly construct a k8s service account role', async () => {});
+                    it('should preserve role value for ${key} when changing task version', async () => {
+                        const { getByLabelText, getByTitle } = renderForm();
 
-            it('should not submit with input errors and a valid value for role', async () => {});
+                        // We expect both the radio selection and text value to be preserved
+                        const roleRadioSelector = await waitFor(() =>
+                            getByLabelText(label)
+                        );
+                        fireEvent.click(roleRadioSelector);
+
+                        expect(roleRadioSelector).toBeChecked();
+
+                        const roleInput = await waitFor(() =>
+                            getByLabelText(inputLabel, {
+                                exact: false
+                            })
+                        );
+                        fireEvent.change(roleInput, {
+                            target: { value: 'roleInputStringValue' }
+                        });
+
+                        // Click the expander for the task version, select the second item
+                        const taskVersionDiv = getByTitle(
+                            formStrings.taskVersion
+                        );
+                        const expander = getByRole(taskVersionDiv, 'button');
+                        fireEvent.click(expander);
+                        const items = await waitFor(() =>
+                            getAllByRole(taskVersionDiv, 'menuitem')
+                        );
+                        fireEvent.click(items[1]);
+                        await waitFor(() => getByTitle(formStrings.inputs));
+
+                        expect(getByLabelText(label)).toBeChecked();
+                        expect(
+                            getByLabelText(inputLabel, {
+                                exact: false
+                            })
+                        ).toHaveValue('roleInputStringValue');
+                    });
+                }
+            );
+
+            it('should correctly construct an IAM role', async () => {
+                const { container, getByLabelText } = renderForm();
+                const { label, inputLabel, value } = roleTypes.iamRole;
+                const radioSelector = await waitFor(() =>
+                    getByLabelText(label)
+                );
+                await fillInputs(container);
+                fireEvent.click(radioSelector);
+                const input = await waitFor(() =>
+                    getByLabelText(inputLabel, { exact: false })
+                );
+                fireEvent.change(input, { target: { value: iamRoleString } });
+
+                fireEvent.click(getSubmitButton(container));
+                await waitFor(() =>
+                    expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            authRole: { [value]: iamRoleString }
+                        })
+                    )
+                );
+            });
+
+            it('should correctly construct a k8s service account role', async () => {
+                const { container, getByLabelText } = renderForm();
+                const {
+                    label,
+                    inputLabel,
+                    value
+                } = roleTypes.k8sServiceAccount;
+                const radioSelector = await waitFor(() =>
+                    getByLabelText(label)
+                );
+                await fillInputs(container);
+                fireEvent.click(radioSelector);
+                const input = await waitFor(() =>
+                    getByLabelText(inputLabel, { exact: false })
+                );
+                fireEvent.change(input, {
+                    target: { value: k8sServiceAccountString }
+                });
+
+                fireEvent.click(getSubmitButton(container));
+                await waitFor(() =>
+                    expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
+                        expect.objectContaining({
+                            authRole: { [value]: k8sServiceAccountString }
+                        })
+                    )
+                );
+            });
         });
 
         describe('Input Values', () => {
@@ -385,7 +532,7 @@ describe('LaunchForm: Task', () => {
 
                 const { container, getByTitle } = renderForm();
                 await waitFor(() => getByTitle(formStrings.inputs));
-                fillInputs(container);
+                await fillInputs(container);
 
                 fireEvent.click(getSubmitButton(container));
                 await waitFor(() =>
@@ -562,7 +709,9 @@ describe('LaunchForm: Task', () => {
                 );
             });
 
-            it('should use provided authRole parameter', async () => {});
+            it('should use provided authRole parameter', async () => {
+                // todo
+            });
         });
 
         describe('With Unsupported Required Inputs', () => {

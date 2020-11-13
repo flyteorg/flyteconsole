@@ -95,6 +95,8 @@ export const launchInputDebouncDelay = 500;
 export const requiredInputSuffix = '*';
 export const cannotLaunchWorkflowString = 'Workflow cannot be launched';
 export const cannotLaunchTaskString = 'Task cannot be launched';
+export const inputsDescription =
+    'Enter input values below. Items marked with an asterisk(*) are required.';
 export const workflowNoInputsString =
     'This workflow does not accept any inputs.';
 export const taskNoInputsString = 'This task does not accept any inputs.';

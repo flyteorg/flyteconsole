@@ -7,12 +7,15 @@ import {
     TextField,
     Typography
 } from '@material-ui/core';
+import { log } from 'common/log';
+import { getCacheKey } from 'components/Cache';
 import { NewTargetLink } from 'components/common/NewTargetLink';
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
 import { Admin } from 'flyteidl';
 import * as React from 'react';
 import { launchInputDebouncDelay, roleTypes } from './constants';
 import { makeStringChangeHandler } from './handlers';
+import { useInputValueCacheContext } from './inputValueCache';
 import { useStyles } from './styles';
 import { LaunchRoleInputRef, RoleType, RoleTypeValue } from './types';
 
@@ -42,12 +45,36 @@ interface LaunchRoleInputState {
     validate(): boolean;
 }
 
-export function useRoleInputState(): LaunchRoleInputState {
-    const [error, setError] = React.useState<string>();
-    const [roleString, setRoleString] = React.useState<string>();
-    const [roleType, setRoleType] = React.useState<RoleType>(
-        getDefaultRoleTypeValue
+function getRoleTypeByValue(value: string): RoleType | undefined {
+    return Object.values(roleTypes).find(
+        ({ value: roleTypeValue }) => value === roleTypeValue
     );
+}
+
+const roleTypeCacheKey = '__roleType';
+const roleStringCacheKey = '__roleString';
+
+export function useRoleInputState(): LaunchRoleInputState {
+    const inputValueCache = useInputValueCacheContext();
+
+    const [error, setError] = React.useState<string>();
+    const [roleString, setRoleString] = React.useState<string>(
+        inputValueCache.has(roleStringCacheKey)
+            ? `${inputValueCache.get(roleStringCacheKey)}`
+            : ''
+    );
+
+    const [roleType, setRoleType] = React.useState<RoleType>(() => {
+        let roleType: RoleType | undefined;
+        if (inputValueCache.has(roleTypeCacheKey)) {
+            const cachedValue = `${inputValueCache.get(roleTypeCacheKey)}`;
+            roleType = getRoleTypeByValue(cachedValue);
+            if (roleType === undefined) {
+                log.error(`Unexepected cached role type: ${cachedValue}`);
+            }
+        }
+        return roleType ?? getDefaultRoleTypeValue();
+    });
 
     const validationValue = useDebouncedValue(
         roleString,
@@ -64,13 +91,17 @@ export function useRoleInputState(): LaunchRoleInputState {
         return true;
     };
 
+    const onChangeRoleString = (value: string) => {
+        inputValueCache.set(roleStringCacheKey, value);
+        setRoleString(value);
+    };
+
     const onChangeRoleType = (value: string) => {
-        const newRoleType = Object.values(roleTypes).find(
-            ({ value: roleTypeValue }) => value === roleTypeValue
-        );
+        const newRoleType = getRoleTypeByValue(value);
         if (newRoleType === undefined) {
             throw new Error(`Unexpected role type value: ${value}`);
         }
+        inputValueCache.set(roleTypeCacheKey, value);
         setRoleType(newRoleType);
     };
 
@@ -81,11 +112,11 @@ export function useRoleInputState(): LaunchRoleInputState {
     return {
         error,
         getValue,
+        onChangeRoleString,
         onChangeRoleType,
         roleType,
         roleString,
-        validate,
-        onChangeRoleString: setRoleString
+        validate
     };
 }
 
@@ -110,7 +141,7 @@ export const LaunchRoleInputImpl: React.RefForwardingComponent<
         error,
         getValue,
         roleType,
-        roleString,
+        roleString = '',
         onChangeRoleString,
         onChangeRoleType,
         validate
@@ -122,9 +153,6 @@ export const LaunchRoleInputImpl: React.RefForwardingComponent<
         getValue,
         validate
     }));
-
-    // TODO: Select appropriate helper text/label constants based on the selected
-    // role type and use them in the text field.
 
     return (
         <section>
