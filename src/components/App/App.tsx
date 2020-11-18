@@ -11,11 +11,15 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader';
 import { SkeletonTheme } from 'react-loading-skeleton';
+import { QueryCache, ReactQueryCacheProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
 import { NavBarRouter } from 'routes/NavBarRouter';
 import { ErrorBoundary } from '../common';
+
+const queryCache = new QueryCache();
 
 export const AppComponent: React.StatelessComponent<{}> = () => {
     if (env.NODE_ENV === 'development') {
@@ -25,26 +29,32 @@ export const AppComponent: React.StatelessComponent<{}> = () => {
 
     return (
         <ThemeProvider theme={muiTheme}>
-            <APIContext.Provider value={apiState}>
-                <SkeletonTheme
-                    color={skeletonColor}
-                    highlightColor={skeletonHighlightColor}
-                >
-                    <CssBaseline />
-                    <Helmet>
-                        <title>Flyte Console</title>
-                        <meta name="viewport" content="width=device-width" />
-                    </Helmet>
-                    <Router history={history}>
-                        <ErrorBoundary fixed={true}>
-                            <NavBarRouter />
-                            <ApplicationRouter />
-                            <LoginExpiredHandler />
-                        </ErrorBoundary>
-                    </Router>
-                    <SystemStatusBanner />
-                </SkeletonTheme>
-            </APIContext.Provider>
+            <ReactQueryCacheProvider queryCache={queryCache}>
+                <APIContext.Provider value={apiState}>
+                    <SkeletonTheme
+                        color={skeletonColor}
+                        highlightColor={skeletonHighlightColor}
+                    >
+                        <CssBaseline />
+                        <Helmet>
+                            <title>Flyte Console</title>
+                            <meta
+                                name="viewport"
+                                content="width=device-width"
+                            />
+                        </Helmet>
+                        <Router history={history}>
+                            <ErrorBoundary fixed={true}>
+                                <NavBarRouter />
+                                <ApplicationRouter />
+                                <LoginExpiredHandler />
+                            </ErrorBoundary>
+                        </Router>
+                        <SystemStatusBanner />
+                    </SkeletonTheme>
+                </APIContext.Provider>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </ReactQueryCacheProvider>
         </ThemeProvider>
     );
 };

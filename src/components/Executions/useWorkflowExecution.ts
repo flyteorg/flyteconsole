@@ -7,6 +7,7 @@ import {
     terminateWorkflowExecution,
     WorkflowExecutionIdentifier
 } from 'models';
+import { useQuery } from 'react-query';
 import { FetchableData, FetchableExecution } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { ExecutionDataCache } from './types';
@@ -31,6 +32,16 @@ export function useWorkflowExecution(
     };
 
     return { fetchable, terminateExecution };
+}
+
+export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
+    const { getExecution } = useAPIContext();
+    const fetchExecution = (_: any, id: WorkflowExecutionIdentifier) =>
+        getExecution(id);
+    return useQuery<Execution, Error>(
+        ['workflowExecution', id],
+        fetchExecution
+    );
 }
 
 /** Fetches the signed URLs for NodeExecution data (inputs/outputs) */
