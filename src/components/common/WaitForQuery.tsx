@@ -1,7 +1,7 @@
 import { log } from 'common/log';
 import { DataError } from 'components/Errors';
 import * as React from 'react';
-import { QueryResult, QueryStatus } from 'react-query';
+import { QueryObserverResult, QueryStatus } from 'react-query';
 import { ErrorBoundary } from './ErrorBoundary';
 
 const defaultErrorTitle = 'Failed to fetch data';
@@ -12,8 +12,8 @@ interface WaitForQueryProps<T> {
     errorComponent?: React.ComponentType<{ error?: Error; retry?(): any }>;
     /** The string to display as the header of the error content */
     errorTitle?: string;
-    /** Loading state (passed from Fetchable) */
-    query: QueryResult<T, Error>;
+    /** Loading state (passed from a hook using useQuery) */
+    query: QueryObserverResult<T, Error>;
     /** A callback that will initiaite a fetch of the underlying resource. This
      * is wired to a "Retry" button when showing the error visual.
      */
@@ -32,14 +32,14 @@ export const WaitForQuery = <T extends object>({
     fetch
 }: WaitForQueryProps<T>) => {
     switch (query.status) {
-        case QueryStatus.Idle: {
+        case 'idle': {
             return null;
         }
-        case QueryStatus.Loading: {
+        case 'loading': {
             // TODO:
             return null;
         }
-        case QueryStatus.Success: {
+        case 'success': {
             if (query.data === undefined) {
                 log.error(
                     'Unexpected `undefined` query data when rendering successful query: ',
@@ -53,7 +53,7 @@ export const WaitForQuery = <T extends object>({
                 </ErrorBoundary>
             );
         }
-        case QueryStatus.Error: {
+        case 'error': {
             const error = query.error || new Error('Unknown failure');
             return ErrorComponent ? (
                 <ErrorComponent error={error} retry={fetch} />

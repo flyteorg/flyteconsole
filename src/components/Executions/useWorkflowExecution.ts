@@ -1,3 +1,4 @@
+import { QueryKey } from 'components/common/queries';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import {
@@ -36,12 +37,10 @@ export function useWorkflowExecution(
 
 export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
     const { getExecution } = useAPIContext();
-    const fetchExecution = (_: any, id: WorkflowExecutionIdentifier) =>
-        getExecution(id);
-    return useQuery<Execution, Error>(
-        ['workflowExecution', id],
-        fetchExecution
-    );
+    return useQuery<Execution, Error>({
+        queryKey: [QueryKey.WorkflowExecution, id],
+        queryFn: () => getExecution(id)
+    });
 }
 
 /** Fetches the signed URLs for NodeExecution data (inputs/outputs) */

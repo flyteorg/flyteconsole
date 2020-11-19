@@ -4,7 +4,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as classnames from 'classnames';
 import { withRouteParams } from 'components/common';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { useAPIContext } from 'components/data/apiContext';
 import { RefreshConfig } from 'components/hooks';
 import { Execution } from 'models';
 import * as React from 'react';
@@ -63,15 +62,7 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
     const [metadataExpanded, setMetadataExpanded] = React.useState(true);
     const toggleMetadata = () => setMetadataExpanded(!metadataExpanded);
     const dataCache = useExecutionDataCache();
-    const { terminateWorkflowExecution } = useAPIContext();
-
-    // TODO: Move this to where the button actually lives, use a queryCache mutator
-    // so that consumers of the execution automatically update.
-    const terminateExecution = async (cause: string) => {
-        await terminateWorkflowExecution(execution.id, cause);
-    };
     const contextValue = {
-        terminateExecution,
         execution
     };
 

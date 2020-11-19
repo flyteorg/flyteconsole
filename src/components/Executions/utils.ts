@@ -12,6 +12,7 @@ import {
     BaseExecutionClosure,
     Execution,
     NodeExecution,
+    runningExecutionStates,
     TaskExecution,
     terminalExecutionStates,
     terminalNodeExecutionStates,
@@ -95,6 +96,13 @@ export function taskExecutionPhaseToColor(phase: TaskExecutionPhase): string {
 export const executionIsTerminal = (execution: Execution) =>
     execution.closure &&
     terminalExecutionStates.includes(execution.closure.phase);
+
+/** Determines if a workflow is in a known running state. Note: "Unknown" does
+ * not evaluate to true here.
+ */
+export const executionIsRunning = (execution: Execution) =>
+    execution.closure &&
+    runningExecutionStates.includes(execution.closure.phase);
 
 /** Determines if a node execution can be considered finalized and will not
  * change state again.

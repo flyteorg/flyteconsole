@@ -14686,17 +14686,17 @@ react-popper@^1.3.7:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
-react-query-devtools@^2.6.3:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.6.3.tgz#f7c982839d4b0001cee4d5ddfa826493c2f6341f"
-  integrity sha512-pSvWq5Q8zgIP7QbF0+4BerCHLaLn5HPzce7sIXYqz4XEizcYJHkJtcrAwn6bUkCu5JmAt1Y7fViQtZwOIG2SYA==
+react-query-devtools@^3.0.0-beta:
+  version "3.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-3.0.0-beta.1.tgz#0eab3925c7f219887baed1bb037f0a8b6ee530cc"
+  integrity sha512-Yef2y/YQLO1t+zu0E+C/sZQDqT1o8DBdX+z0cmpJmPuNMYsT7ZE3rJY18sp0GCzxZVB05Rku1GKtQKAVUjz8og==
   dependencies:
     match-sorter "^4.1.0"
 
-react-query@^2.26.2:
-  version "2.26.2"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.26.2.tgz#d6fb2dd0b54934f5d1f5cdd9f8d97808eb012eb7"
-  integrity sha512-tJ3oHifWtI3cwklOLx5jIIj1ZpmvuWpPBg5iaOoi3uuIe80l0t3QCDTEF+nXpE12pYxKMj29NQ5OkTsOOMdP4Q==
+react-query@^3.2.0-beta:
+  version "3.2.0-beta.24"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.2.0-beta.24.tgz#a8fbda11de1c6a0f2bcd1c68901301ec464eff4d"
+  integrity sha512-l5/kLsxqXSa90/TN76dVEhHxhijippXupoU7JrKh8LlOCIuq6yEIYPUzGbBac/ZFftRyQr4ksuaMTygufsUDdg==
   dependencies:
     "@babel/runtime" "^7.5.5"
 
