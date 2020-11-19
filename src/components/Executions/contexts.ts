@@ -5,7 +5,6 @@ import { ExecutionDataCache } from './types';
 
 export interface ExecutionContextData {
     execution: Execution;
-    terminateExecution(cause: string): Promise<void>;
 }
 
 export const ExecutionContext = React.createContext<ExecutionContextData>(

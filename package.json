@@ -177,6 +177,8 @@
     "react-intersection-observer": "^8.25.1",
     "react-json-tree": "^0.11.0",
     "react-loading-skeleton": "^1.1.2",
+    "react-query": "^3.2.0-beta",
+    "react-query-devtools": "^3.0.0-beta",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-test-renderer": "^16.9.0",

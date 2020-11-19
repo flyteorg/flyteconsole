@@ -1,33 +1,56 @@
+import { QueryKey } from 'components/common/queries';
+import { waitForQueryState } from 'components/common/queryUtils';
+import { useAPIContext } from 'components/data/apiContext';
+import { Execution } from 'models';
 import { useContext, useState } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { ExecutionContext } from '../contexts';
+import { executionIsTerminal } from '../utils';
+
+interface TerminateExecutionVariables {
+    cause: string;
+}
 
 /** Holds state for `TerminateExecutionForm` */
 export function useTerminateExecutionState(onClose: () => void) {
+    const { getExecution, terminateWorkflowExecution } = useAPIContext();
     const [cause, setCause] = useState('');
-    const [terminating, setTerminating] = useState(false);
-    const [terminationError, setTerminationError] = useState('');
-    const { terminateExecution: doTerminateExecution } = useContext(
-        ExecutionContext
+    const {
+        execution: { id }
+    } = useContext(ExecutionContext);
+    const queryClient = useQueryClient();
+
+    const { mutate, ...terminationState } = useMutation<
+        Execution,
+        Error,
+        TerminateExecutionVariables
+    >(
+        async ({ cause }: TerminateExecutionVariables) => {
+            await terminateWorkflowExecution(id, cause);
+            return await waitForQueryState<Execution>({
+                queryClient,
+                queryKey: [QueryKey.WorkflowExecution, id],
+                queryFn: () => getExecution(id),
+                valueCheckFn: executionIsTerminal
+            });
+        },
+        {
+            onSuccess: updatedExecution => {
+                queryClient.setQueryData(
+                    [QueryKey.WorkflowExecution, id],
+                    updatedExecution
+                );
+                onClose();
+            }
+        }
     );
 
-    const terminateExecution = async (cause: string) => {
-        setTerminating(true);
-        try {
-            await doTerminateExecution(cause);
-            onClose();
-        } catch (e) {
-            setTerminationError(`Failed to terminate execution: ${e}`);
-            setTerminating(false);
-        }
-    };
+    const terminateExecution = async (cause: string) => await mutate({ cause });
 
     return {
         cause,
         setCause,
-        setTerminating,
-        setTerminationError,
-        terminateExecution,
-        terminating,
-        terminationError
+        terminationState,
+        terminateExecution
     };
 }

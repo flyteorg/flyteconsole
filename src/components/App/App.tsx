@@ -2,6 +2,8 @@ import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { env } from 'common/env';
 import { debug, debugPrefix } from 'common/log';
+import { QueryAuthorizationObserver } from 'components/common/QueryAuthorizationObserver';
+import { queryClient } from 'components/common/queryCache';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { LoginExpiredHandler } from 'components/Errors/LoginExpiredHandler';
 import { SystemStatusBanner } from 'components/Notifications/SystemStatusBanner';
@@ -11,6 +13,8 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader';
 import { SkeletonTheme } from 'react-loading-skeleton';
+import { QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
@@ -25,26 +29,33 @@ export const AppComponent: React.StatelessComponent<{}> = () => {
 
     return (
         <ThemeProvider theme={muiTheme}>
-            <APIContext.Provider value={apiState}>
-                <SkeletonTheme
-                    color={skeletonColor}
-                    highlightColor={skeletonHighlightColor}
-                >
-                    <CssBaseline />
-                    <Helmet>
-                        <title>Flyte Console</title>
-                        <meta name="viewport" content="width=device-width" />
-                    </Helmet>
-                    <Router history={history}>
-                        <ErrorBoundary fixed={true}>
-                            <NavBarRouter />
-                            <ApplicationRouter />
-                            <LoginExpiredHandler />
-                        </ErrorBoundary>
-                    </Router>
-                    <SystemStatusBanner />
-                </SkeletonTheme>
-            </APIContext.Provider>
+            <QueryClientProvider client={queryClient}>
+                <APIContext.Provider value={apiState}>
+                    <QueryAuthorizationObserver />
+                    <SkeletonTheme
+                        color={skeletonColor}
+                        highlightColor={skeletonHighlightColor}
+                    >
+                        <CssBaseline />
+                        <Helmet>
+                            <title>Flyte Console</title>
+                            <meta
+                                name="viewport"
+                                content="width=device-width"
+                            />
+                        </Helmet>
+                        <Router history={history}>
+                            <ErrorBoundary fixed={true}>
+                                <NavBarRouter />
+                                <ApplicationRouter />
+                                <LoginExpiredHandler />
+                            </ErrorBoundary>
+                        </Router>
+                        <SystemStatusBanner />
+                    </SkeletonTheme>
+                </APIContext.Provider>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
         </ThemeProvider>
     );
 };
