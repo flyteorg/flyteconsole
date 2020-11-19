@@ -85,8 +85,7 @@ describe('ExecutionNodeViews', () => {
         );
 
         executionContext = {
-            execution: workflowExecution,
-            terminateExecution: jest.fn().mockRejectedValue('Not Implemented')
+            execution: workflowExecution
         };
 
         props = { execution: workflowExecution };
