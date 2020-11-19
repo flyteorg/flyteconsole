@@ -1,3 +1,4 @@
+import { NotAuthorizedError } from 'errors/fetchErrors';
 import { isObject, isPlainObject } from 'lodash';
 import {
     hashQueryKey,
@@ -7,6 +8,12 @@ import {
 } from 'react-query';
 
 export const queryCache = new QueryCache();
+const allowedFailures = 3;
+
+function isErrorRetryable(error: any) {
+    // Fail immediately for auth errors, retries won't succeed
+    return !(error instanceof NotAuthorizedError);
+}
 
 const normalizeObjectPrototypeKeys: QueryKeyHashFunction = queryKey => {
     const arrayQueryKey = Array.isArray(queryKey) ? queryKey : [queryKey];
@@ -25,6 +32,10 @@ const normalizeObjectPrototypeKeys: QueryKeyHashFunction = queryKey => {
 export const queryClient = new QueryClient({
     queryCache,
     defaultOptions: {
-        queries: { queryKeyHashFn: normalizeObjectPrototypeKeys }
+        queries: {
+            queryKeyHashFn: normalizeObjectPrototypeKeys,
+            retry: (failureCount, error) =>
+                failureCount < allowedFailures && isErrorRetryable(error)
+        }
     }
 });

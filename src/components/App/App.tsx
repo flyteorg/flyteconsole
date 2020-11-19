@@ -2,6 +2,7 @@ import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { env } from 'common/env';
 import { debug, debugPrefix } from 'common/log';
+import { QueryAuthorizationObserver } from 'components/common/QueryAuthorizationObserver';
 import { queryClient } from 'components/common/queryCache';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { LoginExpiredHandler } from 'components/Errors/LoginExpiredHandler';
@@ -30,6 +31,7 @@ export const AppComponent: React.StatelessComponent<{}> = () => {
         <ThemeProvider theme={muiTheme}>
             <QueryClientProvider client={queryClient}>
                 <APIContext.Provider value={apiState}>
+                    <QueryAuthorizationObserver />
                     <SkeletonTheme
                         color={skeletonColor}
                         highlightColor={skeletonHighlightColor}
