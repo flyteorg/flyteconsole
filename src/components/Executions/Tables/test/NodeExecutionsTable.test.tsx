@@ -167,8 +167,7 @@ describe('NodeExecutionsTable', () => {
         );
 
         executionContext = {
-            execution: mockExecution,
-            terminateExecution: jest.fn().mockRejectedValue('Not Implemented')
+            execution: mockExecution
         };
     });
 

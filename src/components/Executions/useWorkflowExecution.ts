@@ -1,4 +1,6 @@
+import { QueryKey } from 'components/common/queries';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
+import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import {
     Execution,
@@ -9,7 +11,14 @@ import {
 } from 'models';
 import { FetchableData, FetchableExecution } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
+import { executionRefreshIntervalMs } from './constants';
 import { ExecutionDataCache } from './types';
+import { executionIsTerminal } from './utils';
+
+function shouldRefreshExecution(execution: Execution): boolean {
+    const result = !executionIsTerminal(execution);
+    return result;
+}
 
 /** A hook for fetching a WorkflowExecution */
 export function useWorkflowExecution(
@@ -31,6 +40,18 @@ export function useWorkflowExecution(
     };
 
     return { fetchable, terminateExecution };
+}
+
+export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
+    const { getExecution } = useAPIContext();
+    return useConditionalQuery<Execution, Error>(
+        {
+            queryKey: [QueryKey.WorkflowExecution, id],
+            queryFn: () => getExecution(id),
+            refetchInterval: executionRefreshIntervalMs
+        },
+        shouldRefreshExecution
+    );
 }
 
 /** Fetches the signed URLs for NodeExecution data (inputs/outputs) */
