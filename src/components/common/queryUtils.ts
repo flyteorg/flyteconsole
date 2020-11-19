@@ -13,6 +13,9 @@ export interface WaitForQueryValueConfig<TResult> {
     valueCheckFn: (value: TResult) => boolean;
 }
 
+/** Executes a query against the given QueryClient on an interval until the data
+ * returned by the query satisfies the `valueCheckFn` predicate or the timeout is reached.
+ */
 export async function waitForQueryState<TResult>({
     queryClient,
     queryKey,
