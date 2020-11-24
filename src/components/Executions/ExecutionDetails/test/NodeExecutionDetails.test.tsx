@@ -18,7 +18,7 @@ import * as React from 'react';
 import { MemoryRouter } from 'react-router';
 import { Routes } from 'routes';
 import { makeIdentifier } from 'test/modelUtils';
-import { NodeExecutionDetails } from '../NodeExecutionDetails';
+import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 
 describe('NodeExecutionDetails', () => {
     let execution: DetailedNodeExecution;
@@ -44,7 +44,7 @@ describe('NodeExecutionDetails', () => {
                         listTaskExecutions: mockListTaskExecutions
                     })}
                 >
-                    <NodeExecutionDetails execution={execution} />
+                    <NodeExecutionDetailsPanelContent execution={execution} />
                 </APIContext.Provider>
             </MemoryRouter>
         );

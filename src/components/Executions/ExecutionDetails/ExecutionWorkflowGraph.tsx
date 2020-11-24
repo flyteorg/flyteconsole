@@ -6,7 +6,7 @@ import { Workflow } from 'models/Workflow';
 import * as React from 'react';
 import { NodeExecutionsContext } from '../contexts';
 import { DetailedNodeExecution } from '../types';
-import { NodeExecutionDetails } from './NodeExecutionDetails';
+import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 import { TaskExecutionNodeRenderer } from './TaskExecutionNodeRenderer/TaskExecutionNodeRenderer';
 
 export interface ExecutionWorkflowGraphProps {
@@ -58,7 +58,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
                 onClose={onCloseDetailsPanel}
             >
                 {selectedExecution && (
-                    <NodeExecutionDetails
+                    <NodeExecutionDetailsPanelContent
                         onClose={onCloseDetailsPanel}
                         execution={selectedExecution}
                     />

@@ -1,14 +1,17 @@
-import { QueryKey } from 'components/common/queries';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
+import { QueryKey } from 'components/data/queries';
+import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import {
     Execution,
     ExecutionData,
+    getExecution,
     LiteralMap,
     terminateWorkflowExecution,
     WorkflowExecutionIdentifier
 } from 'models';
+import { QueryClient } from 'react-query';
 import { FetchableData, FetchableExecution } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { executionRefreshIntervalMs } from './constants';
@@ -42,12 +45,26 @@ export function useWorkflowExecution(
     return { fetchable, terminateExecution };
 }
 
+export function makeWorkflowExecutionQuery(
+    id: WorkflowExecutionIdentifier
+): QueryInput<Execution> {
+    return {
+        queryKey: [QueryKey.WorkflowExecution, id],
+        queryFn: () => getExecution(id)
+    };
+}
+
+export function fetchWorkflowExecution(
+    queryClient: QueryClient,
+    id: WorkflowExecutionIdentifier
+) {
+    return queryClient.fetchQuery(makeWorkflowExecutionQuery(id));
+}
+
 export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
-    const { getExecution } = useAPIContext();
-    return useConditionalQuery<Execution, Error>(
+    return useConditionalQuery<Execution>(
         {
-            queryKey: [QueryKey.WorkflowExecution, id],
-            queryFn: () => getExecution(id),
+            ...makeWorkflowExecutionQuery(id),
             refetchInterval: executionRefreshIntervalMs
         },
         shouldRefreshExecution

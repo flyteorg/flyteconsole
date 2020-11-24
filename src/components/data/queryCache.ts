@@ -6,6 +6,7 @@ import {
     QueryClient,
     QueryKeyHashFunction
 } from 'react-query';
+import { attachQueryDefaults } from './queryDefaults';
 
 export const queryCache = new QueryCache();
 const allowedFailures = 3;
@@ -29,13 +30,15 @@ const normalizeObjectPrototypeKeys: QueryKeyHashFunction = queryKey => {
     return hashQueryKey(normalizedKey);
 };
 
-export const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-        queries: {
-            queryKeyHashFn: normalizeObjectPrototypeKeys,
-            retry: (failureCount, error) =>
-                failureCount < allowedFailures && isErrorRetryable(error)
+export const queryClient = attachQueryDefaults(
+    new QueryClient({
+        queryCache,
+        defaultOptions: {
+            queries: {
+                queryKeyHashFn: normalizeObjectPrototypeKeys,
+                retry: (failureCount, error) =>
+                    failureCount < allowedFailures && isErrorRetryable(error)
+            }
         }
-    }
-});
+    })
+);

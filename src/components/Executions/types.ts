@@ -1,20 +1,25 @@
 import {
+    BranchNode,
     CompiledNode,
     GloballyUniqueNode,
     Identifier,
     NodeId,
     RequestConfig,
+    TaskNode,
     Workflow,
-    WorkflowId
+    WorkflowId,
+    WorkflowNode
 } from 'models';
 import {
     Execution,
     NodeExecution,
+    NodeExecutionClosure,
     NodeExecutionIdentifier,
     NodeExecutionMetadata,
     TaskExecution,
     TaskExecutionIdentifier,
-    WorkflowExecutionIdentifier
+    WorkflowExecutionIdentifier,
+    WorkflowNodeMetadata
 } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 
@@ -48,12 +53,38 @@ export interface NodeInformation {
     node: CompiledNode;
 }
 
+export interface CompiledTaskNode extends CompiledNode {
+    taskNode: TaskNode;
+}
+
+export interface CompiledWorkflowNode extends CompiledNode {
+    workflowNode: WorkflowNode;
+}
+
+export interface CompiledBranchNode extends CompiledNode {
+    branchNode: BranchNode;
+}
+
 export interface ParentNodeExecution extends NodeExecution {
     metadata: NodeExecutionMetadata & {
         isParentNode: true;
     };
 }
 
+export interface WorkflowNodeExecutionClosure extends NodeExecutionClosure {
+    workflowNodeMetadata: WorkflowNodeMetadata;
+}
+
+export interface WorkflowNodeExecution extends NodeExecution {
+    closure: WorkflowNodeExecutionClosure;
+}
+
+export interface NodeExecutionDetails {
+    displayType: NodeExecutionDisplayType;
+    displayId: string;
+    cacheKey: string;
+    taskTemplate?: TaskTemplate;
+}
 /** An interface combining a NodeExecution with data pulled from the
  * corresponding Workflow Node structure.
  */

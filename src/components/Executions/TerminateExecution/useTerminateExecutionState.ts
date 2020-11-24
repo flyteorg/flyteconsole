@@ -1,6 +1,6 @@
-import { QueryKey } from 'components/common/queries';
-import { waitForQueryState } from 'components/common/queryUtils';
 import { useAPIContext } from 'components/data/apiContext';
+import { QueryKey } from 'components/data/queries';
+import { waitForQueryState } from 'components/data/queryUtils';
 import { Execution } from 'models';
 import { useContext, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';

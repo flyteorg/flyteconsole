@@ -1,11 +1,12 @@
 import * as classnames from 'classnames';
 import { useTheme } from 'components/Theme/useTheme';
+import { isEqual } from 'lodash';
+import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import {
     ExecutionContext,
     NodeExecutionsRequestConfigContext
 } from '../contexts';
-import { DetailedNodeExecution } from '../types';
 import { useChildNodeExecutions } from '../useChildNodeExecutions';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExpandableExecutionError } from './ExpandableExecutionError';
@@ -16,7 +17,7 @@ import { calculateNodeExecutionRowLeftSpacing } from './utils';
 
 interface NodeExecutionRowProps {
     index: number;
-    execution: DetailedNodeExecution;
+    execution: NodeExecution;
     level?: number;
     style?: React.CSSProperties;
 }
@@ -61,7 +62,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     const tableStyles = useExecutionTableStyles();
 
     const selected = state.selectedExecution
-        ? state.selectedExecution === nodeExecution
+        ? isEqual(state.selectedExecution, nodeExecution)
         : false;
     const { error } = nodeExecution.closure;
 
