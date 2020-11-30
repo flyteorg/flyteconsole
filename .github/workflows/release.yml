@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - container-registry
 jobs:
   release:
     name: Generate Release
