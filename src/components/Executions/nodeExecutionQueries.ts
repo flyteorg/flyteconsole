@@ -2,14 +2,32 @@ import { QueryKey } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import {
+    endNodeId,
     getNodeExecution,
     listNodeExecutions,
+    listTaskExecutionChildren,
     NodeExecution,
     NodeExecutionIdentifier,
     RequestConfig,
+    startNodeId,
+    TaskExecutionIdentifier,
     WorkflowExecutionIdentifier
 } from 'models';
 import { QueryClient } from 'react-query';
+
+const ignoredNodeIds = [startNodeId, endNodeId];
+function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
+    return nodeExecutions.filter(ne => {
+        if (ignoredNodeIds.includes(ne.id.nodeId)) {
+            return false;
+        }
+        const specId = ne.metadata?.specNodeId;
+        if (specId != null && ignoredNodeIds.includes(specId)) {
+            return false;
+        }
+        return true;
+    });
+}
 
 export function makeNodeExecutionQuery(
     id: NodeExecutionIdentifier
@@ -42,7 +60,8 @@ export function makeNodeExecutionListQuery(
 ): QueryInput<NodeExecution[]> {
     return {
         queryKey: [QueryKey.NodeExecutionList, id, config],
-        queryFn: async () => (await listNodeExecutions(id, config)).entities
+        queryFn: async () =>
+            removeSystemNodes((await listNodeExecutions(id, config)).entities)
     };
 }
 
@@ -63,4 +82,25 @@ export function useNodeExecutionListQuery(
         // todo: Refresh node executions on interval while parent is non-terminal
         () => true
     );
+}
+
+export function makeTaskExecutionChildListQuery(
+    id: TaskExecutionIdentifier,
+    config?: RequestConfig
+): QueryInput<NodeExecution[]> {
+    return {
+        queryKey: [QueryKey.TaskExecutionChildList, id, config],
+        queryFn: async () =>
+            removeSystemNodes(
+                (await listTaskExecutionChildren(id, config)).entities
+            )
+    };
+}
+
+export function fetchTaskExecutionChildList(
+    queryClient: QueryClient,
+    id: TaskExecutionIdentifier,
+    config?: RequestConfig
+) {
+    return queryClient.fetchQuery(makeTaskExecutionChildListQuery(id, config));
 }

@@ -8,7 +8,9 @@ export function makeTaskTemplateQuery(
 ): QueryInput<TaskTemplate> {
     return {
         queryKey: [QueryKey.TaskTemplate, id],
-        queryFn: async () => (await getTask(id)).closure.compiledTask.template
+        queryFn: async () => (await getTask(id)).closure.compiledTask.template,
+        // Task templates are immutable and safe to cache indefinitely
+        staleTime: Infinity
     };
 }
 

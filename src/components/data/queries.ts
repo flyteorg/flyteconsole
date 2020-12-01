@@ -1,9 +1,9 @@
 export enum QueryKey {
     NodeExecutionDetails = 'NodeExecutionDetails',
-    // NodeSpec = 'nodeSpec',
     NodeExecution = 'nodeExecution',
     NodeExecutionList = 'nodeExecutionList',
     TaskExecutionList = 'taskExecutionList',
+    TaskExecutionChildList = 'taskExecutionChildList',
     TaskTemplate = 'taskTemplate',
     Workflow = 'workflow',
     WorkflowExecution = 'workflowExecution'
