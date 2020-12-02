@@ -1,6 +1,6 @@
 import { log } from 'common/log';
 import { getCacheKey } from 'components/Cache';
-import { QueryKey } from 'components/data/queries';
+import { QueryType } from 'components/data/queries';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import {
@@ -278,7 +278,7 @@ export function fetchNodeExecutionDetails(
     id: NodeExecutionIdentifier
 ) {
     return queryClient.fetchQuery({
-        queryKey: [QueryKey.NodeExecutionDetails, id],
+        queryKey: [QueryType.NodeExecutionDetails, id],
         queryFn: () => doFetchNodeExecutionDetails(queryClient, id)
     });
 }
@@ -288,7 +288,7 @@ export function useNodeExecutionDetails(id: NodeExecutionIdentifier) {
     return useQuery<NodeExecutionDetails, Error>({
         // Once we successfully map these details, we don't need to do it again.
         staleTime: Infinity,
-        queryKey: [QueryKey.NodeExecutionDetails, id],
+        queryKey: [QueryType.NodeExecutionDetails, id],
         queryFn: () => doFetchNodeExecutionDetails(queryClient, id)
     });
 }

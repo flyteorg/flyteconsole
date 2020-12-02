@@ -1,4 +1,4 @@
-export enum QueryKey {
+export enum QueryType {
     NodeExecutionDetails = 'NodeExecutionDetails',
     NodeExecution = 'nodeExecution',
     NodeExecutionList = 'nodeExecutionList',

@@ -1,4 +1,4 @@
-import { QueryKey } from 'components/data/queries';
+import { QueryType } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import {
     listTaskExecutions,
@@ -40,7 +40,7 @@ export function makeTaskExecutionListQuery(
     config?: RequestConfig
 ): QueryInput<TaskExecution[]> {
     return {
-        queryKey: [QueryKey.TaskExecutionList, id, config],
+        queryKey: [QueryType.TaskExecutionList, id, config],
         queryFn: async () => (await listTaskExecutions(id, config)).entities
     };
 }

@@ -1,5 +1,5 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { QueryKey } from 'components/data/queries';
+import { QueryType } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
@@ -25,7 +25,7 @@ export function makeWorkflowExecutionQuery(
     id: WorkflowExecutionIdentifier
 ): QueryInput<Execution> {
     return {
-        queryKey: [QueryKey.WorkflowExecution, id],
+        queryKey: [QueryType.WorkflowExecution, id],
         queryFn: () => getExecution(id)
     };
 }

@@ -1,4 +1,4 @@
-import { QueryKey } from 'components/data/queries';
+import { QueryType } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual, some } from 'lodash';
@@ -39,7 +39,7 @@ export function makeNodeExecutionQuery(
     id: NodeExecutionIdentifier
 ): QueryInput<NodeExecution> {
     return {
-        queryKey: [QueryKey.NodeExecution, id],
+        queryKey: [QueryType.NodeExecution, id],
         queryFn: () => getNodeExecution(id)
     };
 }
@@ -65,7 +65,7 @@ export function makeNodeExecutionListQuery(
     config?: RequestConfig
 ): QueryInput<NodeExecution[]> {
     return {
-        queryKey: [QueryKey.NodeExecutionList, id, config],
+        queryKey: [QueryType.NodeExecutionList, id, config],
         queryFn: async () =>
             removeSystemNodes((await listNodeExecutions(id, config)).entities)
     };
@@ -95,7 +95,7 @@ export function makeTaskExecutionChildListQuery(
     config?: RequestConfig
 ): QueryInput<NodeExecution[]> {
     return {
-        queryKey: [QueryKey.TaskExecutionChildList, id, config],
+        queryKey: [QueryType.TaskExecutionChildList, id, config],
         queryFn: async () =>
             removeSystemNodes(
                 (await listTaskExecutionChildren(id, config)).entities
@@ -280,7 +280,7 @@ export function useChildNodeExecutionGroupsQuery(
     return useConditionalQuery<NodeExecutionGroup[]>(
         {
             queryKey: [
-                QueryKey.NodeExecutionChildList,
+                QueryType.NodeExecutionChildList,
                 nodeExecution.id,
                 config
             ],
