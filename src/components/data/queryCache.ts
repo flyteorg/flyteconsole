@@ -1,4 +1,4 @@
-import { NotAuthorizedError } from 'errors/fetchErrors';
+import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
 import {
     hashQueryKey,
     QueryCache,
@@ -12,7 +12,10 @@ const allowedFailures = 3;
 
 function isErrorRetryable(error: any) {
     // Fail immediately for auth errors, retries won't succeed
-    return !(error instanceof NotAuthorizedError);
+    return (
+        !(error instanceof NotAuthorizedError) &&
+        !(error instanceof NotFoundError)
+    );
 }
 
 const queryKeyHashFn: QueryKeyHashFunction = queryKey =>

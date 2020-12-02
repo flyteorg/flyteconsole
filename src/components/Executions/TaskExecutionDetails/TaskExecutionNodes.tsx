@@ -1,7 +1,6 @@
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { useFetchableData } from 'components/hooks';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { useTabState } from 'components/hooks/useTabState';
 import { every } from 'lodash';
@@ -9,22 +8,16 @@ import {
     executionSortFields,
     limits,
     NodeExecution,
-    RequestConfig,
     SortDirection,
-    TaskExecution,
-    TaskExecutionIdentifier
+    TaskExecution
 } from 'models';
 import * as React from 'react';
 import { nodeExecutionIsTerminal } from '..';
-import {
-    ExecutionDataCacheContext,
-    NodeExecutionsRequestConfigContext
-} from '../contexts';
+import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { makeTaskExecutionChildListQuery } from '../nodeExecutionQueries';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
-import { DetailedNodeExecution } from '../types';
 import { taskExecutionIsTerminal } from '../utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,28 +42,6 @@ interface TaskExecutionNodesProps {
 const tabIds = {
     nodes: 'nodes'
 };
-
-interface UseCachedTaskExecutionChildrenArgs {
-    config: RequestConfig;
-    id: TaskExecutionIdentifier;
-}
-function useCachedTaskExecutionChildren(
-    args: UseCachedTaskExecutionChildrenArgs
-) {
-    const dataCache = React.useContext(ExecutionDataCacheContext);
-    return useFetchableData<
-        DetailedNodeExecution[],
-        UseCachedTaskExecutionChildrenArgs
-    >(
-        {
-            debugName: 'CachedTaskExecutionChildren',
-            defaultValue: [],
-            doFetch: ({ id, config }) =>
-                dataCache.getTaskExecutionChildren(id, config)
-        },
-        args
-    );
-}
 
 /** Contains the content for viewing child NodeExecutions for a TaskExecution */
 export const TaskExecutionNodes: React.FC<TaskExecutionNodesProps> = ({

@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Execution, NodeExecution, RequestConfig } from 'models';
-import { ExecutionDataCache } from './types';
 
 export interface ExecutionContextData {
     execution: Execution;
@@ -17,7 +16,3 @@ export const NodeExecutionsContext = React.createContext<
 export const NodeExecutionsRequestConfigContext = React.createContext<
     RequestConfig
 >({});
-
-export const ExecutionDataCacheContext = React.createContext<
-    ExecutionDataCache
->({} as ExecutionDataCache);

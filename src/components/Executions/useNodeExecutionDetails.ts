@@ -244,6 +244,8 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
         );
     }
 
+    // TODO: When this throws, it is triggering retries on the query.
+    // We want this to just fail to `Unknown` the first time it happens.
     throw new Error(`Unable to find spec information for node: ${nodeId}`);
 }
 

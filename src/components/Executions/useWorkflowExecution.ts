@@ -8,41 +8,17 @@ import {
     ExecutionData,
     getExecution,
     LiteralMap,
-    terminateWorkflowExecution,
     WorkflowExecutionIdentifier
 } from 'models';
 import { QueryClient } from 'react-query';
-import { FetchableData, FetchableExecution } from '../hooks/types';
+import { FetchableData } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { executionRefreshIntervalMs } from './constants';
-import { ExecutionDataCache } from './types';
 import { executionIsTerminal } from './utils';
 
 function shouldRefreshExecution(execution: Execution): boolean {
     const result = !executionIsTerminal(execution);
     return result;
-}
-
-/** A hook for fetching a WorkflowExecution */
-export function useWorkflowExecution(
-    id: WorkflowExecutionIdentifier,
-    dataCache: ExecutionDataCache
-): FetchableExecution {
-    const fetchable = useFetchableData<Execution, WorkflowExecutionIdentifier>(
-        {
-            debugName: 'Execution',
-            defaultValue: {} as Execution,
-            doFetch: id => dataCache.getWorkflowExecution(id)
-        },
-        id
-    );
-
-    const terminateExecution = async (cause: string) => {
-        await terminateWorkflowExecution(id, cause);
-        await fetchable.fetch();
-    };
-
-    return { fetchable, terminateExecution };
 }
 
 export function makeWorkflowExecutionQuery(

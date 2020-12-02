@@ -16,11 +16,8 @@ import { cacheStatusMessages } from 'components/Executions/constants';
 import {
     ExecutionContext,
     ExecutionContextData,
-    ExecutionDataCacheContext,
     NodeExecutionsRequestConfigContext
 } from 'components/Executions/contexts';
-import { ExecutionDataCache } from 'components/Executions/types';
-import { createExecutionDataCache } from 'components/Executions/useExecutionDataCache';
 import { fetchStates } from 'components/hooks';
 import { Core } from 'flyteidl';
 import { cloneDeep, isEqual } from 'lodash';
