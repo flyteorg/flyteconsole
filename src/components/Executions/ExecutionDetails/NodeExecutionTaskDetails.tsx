@@ -2,9 +2,7 @@ import { DumpJSON } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
 import { DataError } from 'components/Errors';
 import { TaskTemplate } from 'models';
-import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
-import { DetailedNodeExecution } from '../types';
 
 /** Render the task template for a given NodeExecution */
 export const NodeExecutionTaskDetails: React.FC<{

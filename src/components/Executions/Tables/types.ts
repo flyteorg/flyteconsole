@@ -3,7 +3,6 @@ import {
     NodeExecution,
     NodeExecutionIdentifier
 } from 'models/Execution';
-import { DetailedNodeExecution, DetailedTaskExecution } from '../types';
 
 export interface NodeExecutionsTableState {
     selectedExecution?: NodeExecutionIdentifier | null;
@@ -26,15 +25,6 @@ export interface NodeExecutionCellRendererData {
 }
 export type NodeExecutionColumnDefinition = ColumnDefinition<
     NodeExecutionCellRendererData
->;
-
-export interface TaskExecutionCellRendererData {
-    execution: DetailedTaskExecution;
-    nodeExecution: DetailedNodeExecution;
-    state: NodeExecutionsTableState;
-}
-export type TaskExecutionColumnDefinition = ColumnDefinition<
-    TaskExecutionCellRendererData
 >;
 
 export interface WorkflowExecutionCellRendererData {

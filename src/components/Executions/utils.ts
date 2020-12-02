@@ -1,13 +1,4 @@
-import { log } from 'common/log';
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
-import { getCacheKey } from 'components/Cache';
-import {
-    endNodeId,
-    Identifier,
-    startNodeId,
-    TaskTemplate,
-    TaskType
-} from 'models';
 import {
     BaseExecutionClosure,
     Execution,
@@ -26,15 +17,9 @@ import {
 import {
     nodeExecutionPhaseConstants,
     taskExecutionPhaseConstants,
-    taskTypeToNodeExecutionDisplayType,
     workflowExecutionPhaseConstants
 } from './constants';
-import {
-    DetailedNodeExecution,
-    ExecutionPhaseConstants,
-    NodeExecutionDisplayType,
-    ParentNodeExecution
-} from './types';
+import { ExecutionPhaseConstants, ParentNodeExecution } from './types';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.

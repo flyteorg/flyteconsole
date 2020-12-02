@@ -6,9 +6,9 @@ import { WaitForQuery } from 'components/common/WaitForQuery';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
+import { useQuery } from 'react-query';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
-import { useNodeExecutionQuery } from '../nodeExecutionQueries';
-import { getNodeExecutionSpecId } from '../utils';
+import { makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
@@ -21,24 +21,6 @@ export interface NodeExecutionsTableProps {
 }
 
 const scrollbarPadding = scrollbarSize();
-
-const SelectedNodeExecutionDetails: React.FC<{
-    selectedExecution: NodeExecutionIdentifier;
-    onClose(): void;
-}> = ({ onClose, selectedExecution }) => {
-    const nodeExecutionQuery = useNodeExecutionQuery(selectedExecution);
-    const renderNodeExecutionDetails = (nodeExecution: NodeExecution) => (
-        <NodeExecutionDetailsPanelContent
-            onClose={onClose}
-            execution={nodeExecution}
-        />
-    );
-    return (
-        <WaitForQuery query={nodeExecutionQuery}>
-            {renderNodeExecutionDetails}
-        </WaitForQuery>
-    );
-};
 
 /** Renders a table of NodeExecution records. Executions with errors will
  * have an expanadable container rendered as part of the table row.
@@ -117,9 +99,9 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
                 onClose={onCloseDetailsPanel}
             >
                 {selectedExecution != null ? (
-                    <SelectedNodeExecutionDetails
+                    <NodeExecutionDetailsPanelContent
                         onClose={onCloseDetailsPanel}
-                        selectedExecution={selectedExecution}
+                        nodeExecutionId={selectedExecution}
                     />
                 ) : null}
             </DetailsPanel>

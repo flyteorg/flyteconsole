@@ -51,15 +51,6 @@ export function fetchNodeExecution(
     return queryClient.fetchQuery(makeNodeExecutionQuery(id));
 }
 
-export function useNodeExecutionQuery(id: NodeExecutionIdentifier) {
-    return useConditionalQuery<NodeExecution>(
-        makeNodeExecutionQuery(id),
-        // todo: enabled=false since we will query it from the parent level?
-        // Maybe allow this to refresh if the parent execution is finalized but this one is not?
-        () => false
-    );
-}
-
 export function makeNodeExecutionListQuery(
     id: WorkflowExecutionIdentifier,
     config?: RequestConfig

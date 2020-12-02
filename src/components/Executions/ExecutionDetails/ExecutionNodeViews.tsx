@@ -10,6 +10,7 @@ import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
+import { ExecutionWorkflowGraph } from './ExecutionWorkflowGraph';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -60,14 +61,13 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
             <NodeExecutionsTable nodeExecutions={nodeExecutions} />
         </NodeExecutionsRequestConfigContext.Provider>
     );
-    // TODO: Graph needs to take workflowId and fetch workflow itself
-    const renderExecutionWorkflowGraph = (nodeExecutions: NodeExecution[]) =>
-        null; /*(
+
+    const renderExecutionWorkflowGraph = (nodeExecutions: NodeExecution[]) => (
         <ExecutionWorkflowGraph
-                    nodeExecutions={nodeExecutions}
-                    workflow={workflow.value}
-                />
-    );*/
+            nodeExecutions={nodeExecutions}
+            workflowId={execution.closure.workflowId}
+        />
+    );
 
     return (
         <>

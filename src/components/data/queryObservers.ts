@@ -1,11 +1,10 @@
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { NodeExecution } from 'models/Execution/types';
 import { Workflow } from 'models/Workflow/types';
-import { Query, QueryClient, QueryKey as ReactQueryKey } from 'react-query';
+import { Query, QueryClient, QueryKey } from 'react-query';
 import { QueryType } from './queries';
 
-// TODO: Rename our QueryKey -> QueryType
-function isQueryType(queryKey: ReactQueryKey, queryType: QueryType) {
+function isQueryType(queryKey: QueryKey, queryType: QueryType) {
     return Array.isArray(queryKey) && queryKey[0] === queryType;
 }
 

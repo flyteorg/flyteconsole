@@ -76,19 +76,6 @@ export interface NodeExecutionDetails {
     cacheKey: string;
     taskTemplate?: TaskTemplate;
 }
-/** An interface combining a NodeExecution with data pulled from the
- * corresponding Workflow Node structure.
- */
-export interface DetailedNodeExecution extends NodeExecution {
-    displayType: NodeExecutionDisplayType;
-    displayId: string;
-    cacheKey: string;
-    taskTemplate?: TaskTemplate;
-}
-
-export interface DetailedTaskExecution extends TaskExecution {
-    cacheKey: string;
-}
 
 export interface NodeExecutionGroup {
     name: string;

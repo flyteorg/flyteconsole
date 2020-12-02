@@ -27,7 +27,7 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
     execution,
     state
 }) => {
-    const detailsQuery = useNodeExecutionDetails(execution.id);
+    const detailsQuery = useNodeExecutionDetails(execution);
     const commonStyles = useCommonStyles();
     const styles = useColumnStyles();
     const name = execution.id.nodeId;
@@ -66,9 +66,9 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
 };
 
 const NodeExecutionDisplayType: React.FC<NodeExecutionCellRendererData> = ({
-    execution: { id }
+    execution
 }) => {
-    const detailsQuery = useNodeExecutionDetails(id);
+    const detailsQuery = useNodeExecutionDetails(execution);
     const extractDisplayType = ({ displayType }: NodeExecutionDetails) =>
         displayType;
     return (

@@ -8,14 +8,12 @@ import {
     CompiledWorkflow,
     Identifier,
     NodeExecution,
-    NodeExecutionIdentifier,
     TaskTemplate,
     TaskType,
     Workflow
 } from 'models';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
 import { taskTypeToNodeExecutionDisplayType } from '.';
-import { fetchNodeExecution } from './nodeExecutionQueries';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import {
     CompiledBranchNode,
@@ -167,11 +165,7 @@ function findNodeInWorkflow(
     if (!workflow.closure?.compiledWorkflow) {
         return undefined;
     }
-    const {
-        primary,
-        subWorkflows = [],
-        tasks
-    } = workflow.closure?.compiledWorkflow;
+    const { primary, subWorkflows = [] } = workflow.closure?.compiledWorkflow;
     return findCompiledNode(nodeId, [primary, ...subWorkflows]);
 }
 
@@ -244,16 +238,13 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
         );
     }
 
-    // TODO: When this throws, it is triggering retries on the query.
-    // We want this to just fail to `Unknown` the first time it happens.
-    throw new Error(`Unable to find spec information for node: ${nodeId}`);
+    return createUnknownNodeExecutionDetails(nodeExecution);
 }
 
 async function doFetchNodeExecutionDetails(
     queryClient: QueryClient,
-    id: NodeExecutionIdentifier
+    nodeExecution: NodeExecution
 ) {
-    const nodeExecution = await fetchNodeExecution(queryClient, id);
     try {
         if (isWorkflowNodeExecution(nodeExecution)) {
             return fetchExternalWorkflowNodeExecutionDetails(
@@ -275,20 +266,21 @@ async function doFetchNodeExecutionDetails(
 
 export function fetchNodeExecutionDetails(
     queryClient: QueryClient,
-    id: NodeExecutionIdentifier
+    nodeExecution: NodeExecution
 ) {
     return queryClient.fetchQuery({
-        queryKey: [QueryType.NodeExecutionDetails, id],
-        queryFn: () => doFetchNodeExecutionDetails(queryClient, id)
+        queryKey: [QueryType.NodeExecutionDetails, nodeExecution.id],
+        queryFn: () => doFetchNodeExecutionDetails(queryClient, nodeExecution)
     });
 }
 
-export function useNodeExecutionDetails(id: NodeExecutionIdentifier) {
+export function useNodeExecutionDetails(nodeExecution?: NodeExecution) {
     const queryClient = useQueryClient();
     return useQuery<NodeExecutionDetails, Error>({
+        enabled: !!nodeExecution,
         // Once we successfully map these details, we don't need to do it again.
         staleTime: Infinity,
-        queryKey: [QueryType.NodeExecutionDetails, id],
-        queryFn: () => doFetchNodeExecutionDetails(queryClient, id)
+        queryKey: [QueryType.NodeExecutionDetails, nodeExecution?.id],
+        queryFn: () => doFetchNodeExecutionDetails(queryClient, nodeExecution!)
     });
 }
