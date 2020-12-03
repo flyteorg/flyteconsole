@@ -14,11 +14,15 @@ import {
 } from 'models/Execution/utils';
 import { makeWorkflowPath } from 'models/Workflow/utils';
 import { ResponseResolver, rest } from 'msw';
-import { setupServer, SetupServerApi } from 'msw/lib/types/node';
+import { setupServer } from 'msw/lib/types/node';
 import { RestContext } from 'msw/lib/types/rest';
-import { apiPath } from './utils';
+import { apiPrefix } from './constants';
 
-export function adminEntityResponder(
+function apiPath(path: string) {
+    return `${apiPrefix}${path}`;
+}
+
+function adminEntityResponder(
     data: any,
     encodeType: EncodableType<any>
 ): ResponseResolver<any, RestContext> {
@@ -32,66 +36,61 @@ export function adminEntityResponder(
         );
 }
 
-export function workflowExecutionHandler(
-    server: SetupServerApi,
-    data: Partial<Execution>
-) {
-    server.use(
-        rest.get(
-            apiPath(makeExecutionPath(data.id!)),
-            adminEntityResponder(data, Admin.Execution)
-        )
+export function workflowExecutionHandler(data: Partial<Execution>) {
+    return rest.get(
+        apiPath(makeExecutionPath(data.id!)),
+        adminEntityResponder(data, Admin.Execution)
     );
 }
 
-export function workflowHandler(
-    server: SetupServerApi,
-    data: Partial<Workflow>
-) {
-    server.use(
-        rest.get(
-            apiPath(makeWorkflowPath(data.id!)),
-            adminEntityResponder(data, Admin.Workflow)
-        )
+export function workflowHandler(data: Partial<Workflow>) {
+    return rest.get(
+        apiPath(makeWorkflowPath(data.id!)),
+        adminEntityResponder(data, Admin.Workflow)
     );
 }
 
-export function nodeExecutionHandler(
-    server: SetupServerApi,
-    data: Partial<NodeExecution>
-) {
-    server.use(
-        rest.get(
-            apiPath(makeNodeExecutionPath(data.id!)),
-            adminEntityResponder(data, Admin.NodeExecution)
-        )
+export function nodeExecutionHandler(data: Partial<NodeExecution>) {
+    return rest.get(
+        apiPath(makeNodeExecutionPath(data.id!)),
+        adminEntityResponder(data, Admin.NodeExecution)
     );
 }
 
 // TODO: pagination responder that respects limit/token?
 export function nodeExecutionListHandler(
-    server: SetupServerApi,
     scope: NameIdentifierScope,
     data: Partial<NodeExecution>[]
 ) {
-    server.use(
-        rest.get(
-            apiPath(makeNodeExecutionListPath(scope)),
-            adminEntityResponder(
-                {
-                    nodeExecutions: data
-                },
-                Admin.NodeExecutionList
-            )
+    return rest.get(
+        apiPath(makeNodeExecutionListPath(scope)),
+        adminEntityResponder(
+            {
+                nodeExecutions: data
+            },
+            Admin.NodeExecutionList
         )
     );
 }
 
-export function bindHandlers(server: ReturnType<typeof setupServer>) {
+export interface BoundAdminServer {
+    insertNodeExecution(data: Partial<NodeExecution>): void;
+    insertNodeExecutionList(
+        scope: NameIdentifierScope,
+        data: Partial<NodeExecution>[]
+    ): void;
+    insertWorkflow(data: Partial<Workflow>): void;
+    insertWorkflowExecution(data: Partial<Execution>): void;
+}
+
+export function bindHandlers({
+    use
+}: ReturnType<typeof setupServer>): BoundAdminServer {
     return {
-        insertNodeExecution: nodeExecutionHandler.bind(null, server),
-        insertNodeExecutionList: nodeExecutionListHandler.bind(null, server),
-        insertWorkflow: workflowHandler.bind(null, server),
-        insertWorkflowExecution: workflowExecutionHandler.bind(null, server)
+        insertNodeExecution: data => use(nodeExecutionHandler(data)),
+        insertNodeExecutionList: (scope, data) =>
+            use(nodeExecutionListHandler(scope, data)),
+        insertWorkflow: data => use(workflowHandler(data)),
+        insertWorkflowExecution: data => use(workflowExecutionHandler(data))
     };
 }
