@@ -26,6 +26,7 @@ import {
 import {
     executionListTransformer,
     makeExecutionPath,
+    makeNodeExecutionListPath,
     makeNodeExecutionPath,
     makeTaskExecutionChildrenPath,
     makeTaskExecutionListPath,
@@ -211,7 +212,7 @@ export const listNodeExecutions = (
 ) =>
     getAdminEntity(
         {
-            path: makeIdentifierPath(endpointPrefixes.nodeExecution, scope),
+            path: makeNodeExecutionListPath(scope),
             messageType: Admin.NodeExecutionList,
             transform: nodeExecutionListTransformer
         },
