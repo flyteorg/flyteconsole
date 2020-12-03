@@ -12,4 +12,4 @@ const basic: LaunchPlan = {
     }
 } as LaunchPlan;
 
-export const launchPlans: Record<string, LaunchPlan> = { basic };
+export const launchPlans = { basic };

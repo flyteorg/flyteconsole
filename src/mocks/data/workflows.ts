@@ -12,4 +12,4 @@ const basic: Workflow = {
     }
 };
 
-export const workflows: Record<string, Workflow> = { basic };
+export const workflows = { basic };

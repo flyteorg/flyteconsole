@@ -2,10 +2,12 @@ import { Admin, Core } from 'flyteidl';
 import {
     defaultListExecutionChildrenConfig,
     defaultPaginationConfig,
-    getAdminEntity,
-    postAdminEntity,
     RequestConfig
 } from 'models/AdminEntity';
+import {
+    getAdminEntity,
+    postAdminEntity
+} from 'models/AdminEntity/AdminEntity';
 import {
     endpointPrefixes,
     Identifier,

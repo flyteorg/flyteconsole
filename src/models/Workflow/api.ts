@@ -1,9 +1,6 @@
 import { Admin } from 'flyteidl';
-import {
-    defaultPaginationConfig,
-    getAdminEntity,
-    RequestConfig
-} from 'models/AdminEntity';
+import { defaultPaginationConfig, RequestConfig } from 'models/AdminEntity';
+import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { Identifier, IdentifierScope } from 'models/Common';
 import { Workflow } from './types';
 import { makeWorkflowPath, workflowListTransformer } from './utils';

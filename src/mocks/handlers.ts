@@ -5,6 +5,7 @@ import {
     Execution,
     NameIdentifierScope,
     NodeExecution,
+    Project,
     Workflow
 } from 'models';
 import {
@@ -16,13 +17,9 @@ import { makeWorkflowPath } from 'models/Workflow/utils';
 import { ResponseResolver, rest } from 'msw';
 import { setupServer } from 'msw/lib/types/node';
 import { RestContext } from 'msw/lib/types/rest';
-import { apiPrefix } from './constants';
+import { apiPath } from './utils';
 
-function apiPath(path: string) {
-    return `${apiPrefix}${path}`;
-}
-
-function adminEntityResponder(
+export function adminEntityResponder(
     data: any,
     encodeType: EncodableType<any>
 ): ResponseResolver<any, RestContext> {
@@ -73,12 +70,20 @@ export function nodeExecutionListHandler(
     );
 }
 
+export function projectListHandler(data: Project[]) {
+    return rest.get(
+        apiPath('/projects'),
+        adminEntityResponder({ projects: data }, Admin.Projects)
+    );
+}
+
 export interface BoundAdminServer {
     insertNodeExecution(data: Partial<NodeExecution>): void;
     insertNodeExecutionList(
         scope: NameIdentifierScope,
         data: Partial<NodeExecution>[]
     ): void;
+    insertProjects(data: Project[]): void;
     insertWorkflow(data: Partial<Workflow>): void;
     insertWorkflowExecution(data: Partial<Execution>): void;
 }
@@ -90,6 +95,7 @@ export function bindHandlers({
         insertNodeExecution: data => use(nodeExecutionHandler(data)),
         insertNodeExecutionList: (scope, data) =>
             use(nodeExecutionListHandler(scope, data)),
+        insertProjects: data => use(projectListHandler(data)),
         insertWorkflow: data => use(workflowHandler(data)),
         insertWorkflowExecution: data => use(workflowExecutionHandler(data))
     };

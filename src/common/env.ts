@@ -1,14 +1,8 @@
 import { Env } from 'config';
+import { cloneDeep } from 'lodash';
 
-/** Safely check for server environment */
-export function isServer() {
-    try {
-        return __isServer;
-    } catch (e) {
-        return false;
-    }
-}
+const global = process != null ? process : window;
 
 /** equivalent to process.env in server and client */
 // tslint:disable-next-line:no-any
-export const env: Env = (isServer() ? process.env : window.env) as any;
+export const env: Env = cloneDeep(global.env) as any;

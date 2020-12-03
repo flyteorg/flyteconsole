@@ -1,4 +1,4 @@
-import { setupServer } from 'msw/lib/types/node';
+import { setupServer } from 'msw/node';
 import { getDefaultData } from './getDefaultData';
 import { bindHandlers } from './handlers';
 

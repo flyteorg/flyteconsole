@@ -43,6 +43,6 @@ const basic: Execution = {
     }
 };
 
-export const workflowExecutions: Record<string, Execution> = {
+export const workflowExecutions = {
     basic
 };
