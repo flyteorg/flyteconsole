@@ -1,5 +1,7 @@
 import { RequestConfig } from './types';
 
+export const apiPrefix = '/api/v1';
+
 export const limits = {
     DEFAULT: 25,
     /** The admin API requires a limit value for all list endpoints, but does not

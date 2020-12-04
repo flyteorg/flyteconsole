@@ -29,6 +29,8 @@ describe.skip('ExecutionNodeViews', () => {
         props = { execution: workflowExecution };
     });
 
+    it('is disabled', () => {});
+
     const renderViews = () =>
         render(
             <QueryClientProvider client={queryClient}>

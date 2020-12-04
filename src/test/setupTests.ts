@@ -1,6 +1,16 @@
 import '@testing-library/jest-dom';
+import { mockServer } from 'mocks/server';
 
-// Make sure the env object exists in a sane way
-window.env = {
-    BASE_URL: ''
-};
+beforeAll(() => {
+    mockServer.listen({
+        onUnhandledRequest: 'error'
+    });
+});
+
+afterEach(() => {
+    mockServer.resetHandlers();
+});
+
+afterAll(() => {
+    mockServer.close();
+});
