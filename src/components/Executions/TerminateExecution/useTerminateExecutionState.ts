@@ -1,6 +1,6 @@
-import { QueryKey } from 'components/common/queries';
-import { waitForQueryState } from 'components/common/queryUtils';
 import { useAPIContext } from 'components/data/apiContext';
+import { QueryType } from 'components/data/queries';
+import { waitForQueryState } from 'components/data/queryUtils';
 import { Execution } from 'models';
 import { useContext, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
@@ -29,7 +29,7 @@ export function useTerminateExecutionState(onClose: () => void) {
             await terminateWorkflowExecution(id, cause);
             return await waitForQueryState<Execution>({
                 queryClient,
-                queryKey: [QueryKey.WorkflowExecution, id],
+                queryKey: [QueryType.WorkflowExecution, id],
                 queryFn: () => getExecution(id),
                 valueCheckFn: executionIsTerminal
             });
@@ -37,7 +37,7 @@ export function useTerminateExecutionState(onClose: () => void) {
         {
             onSuccess: updatedExecution => {
                 queryClient.setQueryData(
-                    [QueryKey.WorkflowExecution, id],
+                    [QueryType.WorkflowExecution, id],
                     updatedExecution
                 );
                 onClose();

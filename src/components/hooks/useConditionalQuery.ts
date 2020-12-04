@@ -19,7 +19,7 @@ interface ConditionalQueryOptions<TData, TError, TQueryFnData>
  */
 export function useConditionalQuery<
     TData = unknown,
-    TError = unknown,
+    TError = Error,
     TQueryFnData = TData
 >(
     options: ConditionalQueryOptions<TData, TError, TQueryFnData>,

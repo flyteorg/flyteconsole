@@ -1,7 +1,7 @@
-import { useAPIContext } from 'components/data/apiContext';
 import { NotAuthorizedError } from 'errors/fetchErrors';
 import * as React from 'react';
 import { onlineManager, Query, useQueryClient } from 'react-query';
+import { useAPIContext } from './apiContext';
 
 /** Watches all queries to detect a NotAuthorized error, disabling future queries
  * and triggering the login refresh flow.

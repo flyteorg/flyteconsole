@@ -8,8 +8,7 @@ import { RefreshConfig } from 'components/hooks';
 import { Execution } from 'models';
 import * as React from 'react';
 import { executionRefreshIntervalMs } from '../constants';
-import { ExecutionContext, ExecutionDataCacheContext } from '../contexts';
-import { useExecutionDataCache } from '../useExecutionDataCache';
+import { ExecutionContext } from '../contexts';
 import { useWorkflowExecutionQuery } from '../useWorkflowExecution';
 import { executionIsTerminal } from '../utils';
 import { ExecutionDetailsAppBarContent } from './ExecutionDetailsAppBarContent';
@@ -46,6 +45,7 @@ export interface ExecutionDetailsRouteParams {
 }
 export type ExecutionDetailsProps = ExecutionDetailsRouteParams;
 
+// TODO: Remove?
 const executionRefreshConfig: RefreshConfig<Execution> = {
     interval: executionRefreshIntervalMs,
     valueIsFinal: executionIsTerminal
@@ -61,7 +61,6 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
     const styles = useStyles();
     const [metadataExpanded, setMetadataExpanded] = React.useState(true);
     const toggleMetadata = () => setMetadataExpanded(!metadataExpanded);
-    const dataCache = useExecutionDataCache();
     const contextValue = {
         execution
     };
@@ -83,9 +82,7 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
                     </IconButton>
                 </div>
             </div>
-            <ExecutionDataCacheContext.Provider value={dataCache}>
-                <ExecutionNodeViews execution={execution} />
-            </ExecutionDataCacheContext.Provider>
+            <ExecutionNodeViews execution={execution} />
         </ExecutionContext.Provider>
     );
 };
