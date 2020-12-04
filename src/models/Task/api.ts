@@ -1,16 +1,12 @@
 import { Admin } from 'flyteidl';
-import {
-    defaultPaginationConfig,
-    getAdminEntity,
-    RequestConfig
-} from 'models/AdminEntity';
+import { defaultPaginationConfig, RequestConfig } from 'models/AdminEntity';
+import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
     endpointPrefixes,
     Identifier,
     IdentifierScope,
     makeIdentifierPath
 } from 'models/Common';
-
 import { Task } from './types';
 import { taskListTransformer } from './utils';
 

@@ -97,6 +97,8 @@ describe.skip('NodeExecutionsTable', () => {
         return render(<Table {...await getProps()} />);
     };
 
+    it('is disabled', () => {});
+
     // it('renders task name for task nodes', async () => {
     //     const { queryAllByText, getAllByRole } = await renderTable();
     //     await waitFor(() => getAllByRole('listitem').length > 0);
