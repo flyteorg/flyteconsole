@@ -1,12 +1,11 @@
 import { render } from '@testing-library/react';
 import { createQueryClient } from 'components/data/queryCache';
-import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
+import { cloneDeep } from 'lodash';
+import { workflowExecutions } from 'mocks/data/workflowExecutions';
+import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import {
-    ExecutionNodeViews,
-    ExecutionNodeViewsProps
-} from '../ExecutionNodeViews';
+import { ExecutionNodeViews } from '../ExecutionNodeViews';
 
 // We don't need to verify the content of the graph component here and it is
 // difficult to make it work correctly in a test environment.
@@ -14,29 +13,24 @@ jest.mock('../ExecutionWorkflowGraph.tsx', () => ({
     ExecutionWorkflowGraph: () => null
 }));
 
-// TODO: Update this to use MSW and re-enable
-describe.skip('ExecutionNodeViews', () => {
+describe('ExecutionNodeViews', () => {
     let queryClient: QueryClient;
-    let props: ExecutionNodeViewsProps;
+    let execution: Execution;
 
     beforeEach(() => {
         queryClient = createQueryClient();
-        const { workflowExecution } = createMockExecutionEntities({
-            workflowName: 'SampleWorkflow',
-            nodeExecutionCount: 2
-        });
-
-        props = { execution: workflowExecution };
+        execution = cloneDeep(workflowExecutions.basic);
     });
-
-    it('is disabled', () => {});
 
     const renderViews = () =>
         render(
             <QueryClientProvider client={queryClient}>
-                <ExecutionNodeViews {...props} />
+                <ExecutionNodeViews execution={execution} />
             </QueryClientProvider>
         );
+
+    // TODO: Instead of checking API call parameters, look for the filter
+    // components and ensure that they are in an enabled state.
 
     // it('only applies filter when viewing the nodes tab', async () => {
     //     const { getByText } = renderViews();

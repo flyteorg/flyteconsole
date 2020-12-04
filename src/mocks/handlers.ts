@@ -14,43 +14,40 @@ import {
     makeNodeExecutionPath
 } from 'models/Execution/utils';
 import { makeWorkflowPath } from 'models/Workflow/utils';
-import { ResponseResolver, rest } from 'msw';
+import { rest } from 'msw';
 import { setupServer } from 'msw/lib/types/node';
 import { RestContext } from 'msw/lib/types/rest';
 import { apiPath } from './utils';
 
-export function adminEntityResponder(
+export function protobufResponse(
+    ctx: RestContext,
     data: any,
     encodeType: EncodableType<any>
-): ResponseResolver<any, RestContext> {
+) {
     const buffer = encodeProtoPayload(data, encodeType);
     const contentLength = buffer.byteLength.toString();
-    return (_, res, ctx) =>
-        res(
-            ctx.set('Content-Type', 'application/octet-stream'),
-            ctx.set('Content-Length', contentLength),
-            ctx.body(buffer)
-        );
+    return [
+        ctx.set('Content-Type', 'application/octet-stream'),
+        ctx.set('Content-Length', contentLength),
+        ctx.body(buffer)
+    ];
 }
 
 export function workflowExecutionHandler(data: Partial<Execution>) {
-    return rest.get(
-        apiPath(makeExecutionPath(data.id!)),
-        adminEntityResponder(data, Admin.Execution)
+    return rest.get(apiPath(makeExecutionPath(data.id!)), (_, res, ctx) =>
+        res(...protobufResponse(ctx, data, Admin.Execution))
     );
 }
 
 export function workflowHandler(data: Partial<Workflow>) {
-    return rest.get(
-        apiPath(makeWorkflowPath(data.id!)),
-        adminEntityResponder(data, Admin.Workflow)
+    return rest.get(apiPath(makeWorkflowPath(data.id!)), (_, res, ctx) =>
+        res(...protobufResponse(ctx, data, Admin.Workflow))
     );
 }
 
 export function nodeExecutionHandler(data: Partial<NodeExecution>) {
-    return rest.get(
-        apiPath(makeNodeExecutionPath(data.id!)),
-        adminEntityResponder(data, Admin.NodeExecution)
+    return rest.get(apiPath(makeNodeExecutionPath(data.id!)), (_, res, ctx) =>
+        res(...protobufResponse(ctx, data, Admin.NodeExecution))
     );
 }
 
@@ -61,19 +58,31 @@ export function nodeExecutionListHandler(
 ) {
     return rest.get(
         apiPath(makeNodeExecutionListPath(scope)),
-        adminEntityResponder(
-            {
-                nodeExecutions: data
-            },
-            Admin.NodeExecutionList
-        )
+        (_, res, ctx) => {
+            return res(
+                ...protobufResponse(
+                    ctx,
+                    {
+                        nodeExecutions: data
+                    },
+                    Admin.NodeExecutionList
+                )
+            );
+        }
     );
 }
 
 export function projectListHandler(data: Project[]) {
-    return rest.get(
-        apiPath('/projects'),
-        adminEntityResponder({ projects: data }, Admin.Projects)
+    return rest.get(apiPath('/projects'), (_, res, ctx) =>
+        res(
+            ...protobufResponse(
+                ctx,
+                {
+                    projects: data
+                },
+                Admin.Projects
+            )
+        )
     );
 }
 

@@ -4,3 +4,5 @@ export const mockStartDate = new Date('2020-11-15T02:32:19.610Z');
 
 // Workflow Execution duration in milliseconds
 export const defaultWorkflowExecutionDuration = 1000 * 60 * 60 * 1.251;
+
+export const inputUriPrefix = 's3://flytedata';
