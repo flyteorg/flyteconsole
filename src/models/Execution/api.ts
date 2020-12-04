@@ -1,5 +1,6 @@
 import { Admin, Core } from 'flyteidl';
 import {
+    defaultListExecutionChildrenConfig,
     defaultPaginationConfig,
     getAdminEntity,
     postAdminEntity,
@@ -216,6 +217,7 @@ export const listNodeExecutions = (
         },
         {
             ...defaultPaginationConfig,
+            ...defaultListExecutionChildrenConfig,
             ...config
         }
     );
@@ -235,6 +237,7 @@ export const listTaskExecutionChildren = (
         },
         {
             ...defaultPaginationConfig,
+            ...defaultListExecutionChildrenConfig,
             ...config
         }
     );
@@ -278,6 +281,7 @@ export const listTaskExecutions = (
         },
         {
             ...defaultPaginationConfig,
+            ...defaultListExecutionChildrenConfig,
             ...config
         }
     );

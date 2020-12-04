@@ -1,18 +1,19 @@
-import { QueryKey } from 'components/common/queries';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
+import { QueryType } from 'components/data/queries';
+import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import {
     Execution,
     ExecutionData,
+    getExecution,
     LiteralMap,
-    terminateWorkflowExecution,
     WorkflowExecutionIdentifier
 } from 'models';
-import { FetchableData, FetchableExecution } from '../hooks/types';
+import { QueryClient } from 'react-query';
+import { FetchableData } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { executionRefreshIntervalMs } from './constants';
-import { ExecutionDataCache } from './types';
 import { executionIsTerminal } from './utils';
 
 function shouldRefreshExecution(execution: Execution): boolean {
@@ -20,34 +21,26 @@ function shouldRefreshExecution(execution: Execution): boolean {
     return result;
 }
 
-/** A hook for fetching a WorkflowExecution */
-export function useWorkflowExecution(
-    id: WorkflowExecutionIdentifier,
-    dataCache: ExecutionDataCache
-): FetchableExecution {
-    const fetchable = useFetchableData<Execution, WorkflowExecutionIdentifier>(
-        {
-            debugName: 'Execution',
-            defaultValue: {} as Execution,
-            doFetch: id => dataCache.getWorkflowExecution(id)
-        },
-        id
-    );
-
-    const terminateExecution = async (cause: string) => {
-        await terminateWorkflowExecution(id, cause);
-        await fetchable.fetch();
+export function makeWorkflowExecutionQuery(
+    id: WorkflowExecutionIdentifier
+): QueryInput<Execution> {
+    return {
+        queryKey: [QueryType.WorkflowExecution, id],
+        queryFn: () => getExecution(id)
     };
+}
 
-    return { fetchable, terminateExecution };
+export function fetchWorkflowExecution(
+    queryClient: QueryClient,
+    id: WorkflowExecutionIdentifier
+) {
+    return queryClient.fetchQuery(makeWorkflowExecutionQuery(id));
 }
 
 export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
-    const { getExecution } = useAPIContext();
-    return useConditionalQuery<Execution, Error>(
+    return useConditionalQuery<Execution>(
         {
-            queryKey: [QueryKey.WorkflowExecution, id],
-            queryFn: () => getExecution(id),
+            ...makeWorkflowExecutionQuery(id),
             refetchInterval: executionRefreshIntervalMs
         },
         shouldRefreshExecution
