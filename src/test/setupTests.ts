@@ -2,7 +2,9 @@ import '@testing-library/jest-dom';
 import { mockServer } from 'mocks/server';
 
 beforeAll(() => {
-    mockServer.listen();
+    mockServer.listen({
+        onUnhandledRequest: 'error'
+    });
 });
 
 afterEach(() => {
