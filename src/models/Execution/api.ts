@@ -2,10 +2,12 @@ import { Admin, Core } from 'flyteidl';
 import {
     defaultListExecutionChildrenConfig,
     defaultPaginationConfig,
-    getAdminEntity,
-    postAdminEntity,
     RequestConfig
 } from 'models/AdminEntity';
+import {
+    getAdminEntity,
+    postAdminEntity
+} from 'models/AdminEntity/AdminEntity';
 import {
     endpointPrefixes,
     Identifier,
@@ -26,6 +28,7 @@ import {
 import {
     executionListTransformer,
     makeExecutionPath,
+    makeNodeExecutionListPath,
     makeNodeExecutionPath,
     makeTaskExecutionChildrenPath,
     makeTaskExecutionListPath,
@@ -211,7 +214,7 @@ export const listNodeExecutions = (
 ) =>
     getAdminEntity(
         {
-            path: makeIdentifierPath(endpointPrefixes.nodeExecution, scope),
+            path: makeNodeExecutionListPath(scope),
             messageType: Admin.NodeExecutionList,
             transform: nodeExecutionListTransformer
         },
