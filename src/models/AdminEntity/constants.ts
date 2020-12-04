@@ -20,3 +20,8 @@ export const sortQueryKeys = {
 export const defaultPaginationConfig: RequestConfig = {
     limit: limits.DEFAULT
 };
+
+/** For listing execution children, we generally do *not* want multiple pages */
+export const defaultListExecutionChildrenConfig: RequestConfig = {
+    limit: limits.NONE
+};
