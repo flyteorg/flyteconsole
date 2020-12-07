@@ -171,7 +171,7 @@ const NodeExecutionTabs: React.FC<{
             break;
         }
         case tabIds.task: {
-            tabContent = !!taskTemplate ? (
+            tabContent = taskTemplate ? (
                 <NodeExecutionTaskDetails taskTemplate={taskTemplate} />
             ) : null;
             break;
