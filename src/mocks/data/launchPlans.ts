@@ -1,14 +1,15 @@
 import { Core } from 'flyteidl';
 import { LaunchPlan } from 'models';
+import { testDomain, testProject, testVersions } from './constants';
 
 // TODO:
 const basic: LaunchPlan = {
     id: {
         resourceType: Core.ResourceType.LAUNCH_PLAN,
-        project: 'flytetest',
-        domain: 'development',
+        project: testProject,
+        domain: testDomain,
         name: 'Basic',
-        version: 'abc123'
+        version: testVersions.v1
     }
 } as LaunchPlan;
 

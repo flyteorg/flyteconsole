@@ -3,7 +3,12 @@ import { Admin } from 'flyteidl';
 import { LiteralMap } from 'models/Common/types';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { Execution, ExecutionMetadata } from 'models/Execution/types';
-import { defaultWorkflowExecutionDuration, mockStartDate } from './constants';
+import {
+    defaultExecutionDuration,
+    mockStartDate,
+    testDomain,
+    testProject
+} from './constants';
 import { launchPlans } from './launchPlans';
 import { workflows } from './workflows';
 
@@ -21,8 +26,8 @@ export function emptyLiteralMap(): LiteralMap {
 
 const basic: Execution = {
     id: {
-        project: 'flytetest',
-        domain: 'development',
+        project: testProject,
+        domain: testDomain,
         name: 'abc123'
     },
     spec: {
@@ -36,7 +41,7 @@ const basic: Execution = {
     closure: {
         computedInputs: emptyLiteralMap(),
         createdAt: dateToTimestamp(mockStartDate),
-        duration: millisecondsToDuration(defaultWorkflowExecutionDuration),
+        duration: millisecondsToDuration(defaultExecutionDuration),
         phase: WorkflowExecutionPhase.SUCCEEDED,
         startedAt: dateToTimestamp(mockStartDate),
         workflowId: { ...workflows.basic.id }

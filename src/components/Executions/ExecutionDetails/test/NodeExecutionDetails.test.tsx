@@ -1,62 +1,47 @@
 import { render, waitFor } from '@testing-library/react';
-import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { APIContext } from 'components/data/apiContext';
 import {
     cacheStatusMessages,
     viewSourceExecutionString
 } from 'components/Executions/constants';
-import {
-    NodeExecutionDetails,
-    NodeExecutionDisplayType
-} from 'components/Executions/types';
 import { Core } from 'flyteidl';
+import { cloneDeep } from 'lodash';
+import { nodeExecutions } from 'mocks/data/nodeExecutions';
+import { tasks } from 'mocks/data/tasks';
+import { mockServer } from 'mocks/server';
 import { NodeExecution, TaskNodeMetadata } from 'models';
-import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
-import { listTaskExecutions } from 'models/Execution/api';
 import * as React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { Routes } from 'routes';
 import { makeIdentifier } from 'test/modelUtils';
+import { createTestQueryClient } from 'test/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 
-// TODO: Update this to use MSW and re-enable
-describe.skip('NodeExecutionDetails', () => {
+describe('NodeExecutionDetails', () => {
     let execution: NodeExecution;
-    let details: NodeExecutionDetails;
-    let mockListTaskExecutions: jest.Mock<ReturnType<
-        typeof listTaskExecutions
-    >>;
+    let queryClient: QueryClient;
+
     beforeEach(() => {
-        const { executions } = createMockNodeExecutions(1);
-        details = {
-            displayType: NodeExecutionDisplayType.PythonTask,
-            displayId: 'com.flyte.testTask',
-            cacheKey: 'abcdefg'
-        };
-        execution = executions[0];
-        mockListTaskExecutions = jest.fn().mockResolvedValue({ entities: [] });
+        execution = cloneDeep(nodeExecutions.pythonNode);
+        queryClient = createTestQueryClient();
     });
 
     const renderComponent = () =>
         render(
             <MemoryRouter>
-                <APIContext.Provider
-                    value={mockAPIContextValue({
-                        listTaskExecutions: mockListTaskExecutions
-                    })}
-                >
+                <QueryClientProvider client={queryClient}>
                     <NodeExecutionDetailsPanelContent
                         nodeExecutionId={execution.id}
                     />
-                </APIContext.Provider>
+                </QueryClientProvider>
             </MemoryRouter>
         );
 
-    it('renders displayId', async () => {
-        const { queryByText } = renderComponent();
-        await waitFor(() => {});
-        expect(queryByText(details.displayId)).toBeInTheDocument();
+    it('renders name for task nodes', async () => {
+        const { name } = tasks.basicPython.template.id;
+        const { getByText } = renderComponent();
+        await waitFor(() => getByText(name));
     });
 
     describe('with cache information', () => {
@@ -72,6 +57,7 @@ describe.skip('NodeExecutionDetails', () => {
                 }
             };
             execution.closure.taskNodeMetadata = taskNodeMetadata;
+            mockServer.insertNodeExecution(execution);
         });
 
         [
@@ -84,6 +70,7 @@ describe.skip('NodeExecutionDetails', () => {
         ].forEach(cacheStatusValue =>
             it(`renders correct status for ${Core.CatalogCacheStatus[cacheStatusValue]}`, async () => {
                 taskNodeMetadata.cacheStatus = cacheStatusValue;
+                mockServer.insertNodeExecution(execution);
                 const { getByText } = renderComponent();
                 await waitFor(() =>
                     getByText(cacheStatusMessages[cacheStatusValue])

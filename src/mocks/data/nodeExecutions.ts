@@ -6,7 +6,7 @@ import {
     WorkflowExecutionIdentifier
 } from 'models';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { defaultWorkflowExecutionDuration, inputUriPrefix } from './constants';
+import { defaultExecutionDuration, inputUriPrefix, nodeIds } from './constants';
 import { workflowExecutions } from './workflowExecutions';
 
 function makeInputUri({
@@ -33,15 +33,18 @@ function nodeExecutionId(
     };
 }
 
-const nodeIds = {
+const ids = {
     basic: {
-        node1: nodeExecutionId(workflowExecutions.basic.id, 'node1'),
+        node1: nodeExecutionId(workflowExecutions.basic.id, 'pythonTaskNode'),
         node2: nodeExecutionId(workflowExecutions.basic.id, 'node2')
     }
 };
 
-const basic1: NodeExecution = {
-    id: nodeIds.basic.node1,
+const pythonNode: NodeExecution = {
+    id: ids.basic.node1,
+    metadata: {
+        specNodeId: nodeIds.pythonTask
+    },
     closure: {
         createdAt: timeStampOffset(
             workflowExecutions.basic.closure.createdAt,
@@ -51,38 +54,18 @@ const basic1: NodeExecution = {
             workflowExecutions.basic.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(nodeIds.basic.node1),
+        outputUri: makeOutputUri(ids.basic.node1),
         phase: NodeExecutionPhase.SUCCEEDED,
-        duration: millisecondsToDuration(defaultWorkflowExecutionDuration / 2)
+        duration: millisecondsToDuration(defaultExecutionDuration)
     },
-    inputUri: makeInputUri(nodeIds.basic.node1)
-};
-
-const basic2: NodeExecution = {
-    id: nodeIds.basic.node2,
-    closure: {
-        // Offset from first NodeExecution by 5 minutes
-        createdAt: timeStampOffset(
-            workflowExecutions.basic.closure.createdAt,
-            60 * 5
-        ),
-        startedAt: timeStampOffset(
-            workflowExecutions.basic.closure.createdAt,
-            60 * 5
-        ),
-        outputUri: makeOutputUri(nodeIds.basic.node2),
-        phase: NodeExecutionPhase.SUCCEEDED,
-        duration: millisecondsToDuration(defaultWorkflowExecutionDuration / 2)
-    },
-    inputUri: makeInputUri(nodeIds.basic.node2)
+    inputUri: makeInputUri(ids.basic.node1)
 };
 
 export const nodeExecutions = {
-    basic1,
-    basic2
+    pythonNode
 };
 
 export const nodeExecutionLists: [
     WorkflowExecutionIdentifier,
     NodeExecution[]
-][] = [[workflowExecutions.basic.id, [basic1, basic2]]];
+][] = [[workflowExecutions.basic.id, [pythonNode]]];

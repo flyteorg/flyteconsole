@@ -1,10 +1,10 @@
 import { render } from '@testing-library/react';
-import { createQueryClient } from 'components/data/queryCache';
 import { cloneDeep } from 'lodash';
 import { workflowExecutions } from 'mocks/data/workflowExecutions';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { createTestQueryClient } from 'test/utils';
 import { ExecutionNodeViews } from '../ExecutionNodeViews';
 
 // We don't need to verify the content of the graph component here and it is
@@ -18,7 +18,7 @@ describe('ExecutionNodeViews', () => {
     let execution: Execution;
 
     beforeEach(() => {
-        queryClient = createQueryClient();
+        queryClient = createTestQueryClient();
         execution = cloneDeep(workflowExecutions.basic);
     });
 

@@ -10,7 +10,6 @@ import {
 import { getCacheKey } from 'components/Cache';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { APIContext, APIContextValue } from 'components/data/apiContext';
-import { createQueryClient } from 'components/data/queryCache';
 import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
 import { cacheStatusMessages } from 'components/Executions/constants';
 import {
@@ -52,7 +51,7 @@ import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
-import { obj } from 'test/utils';
+import { createTestQueryClient, obj } from 'test/utils';
 import { Identifier } from 'typescript';
 import { State } from 'xstate';
 import { titleStrings } from '../constants';
@@ -71,7 +70,7 @@ describe.skip('NodeExecutionsTable', () => {
     beforeEach(async () => {
         nodeExecutions = [];
         requestConfig = {};
-        queryClient = createQueryClient();
+        queryClient = createTestQueryClient();
 
         executionContext = {
             execution: createMockExecution()
