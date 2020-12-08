@@ -64,7 +64,7 @@ function createWorkflowNodeExecutionDetails(
     node: CompiledWorkflowNode
 ): NodeExecutionDetails {
     const displayType = NodeExecutionDisplayType.Workflow;
-    let displayId: string = '';
+    let displayId = '';
     const { launchplanRef, subWorkflowRef } = node.workflowNode;
     const identifier = (launchplanRef
         ? launchplanRef
