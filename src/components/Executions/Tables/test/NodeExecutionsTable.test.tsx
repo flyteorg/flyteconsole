@@ -59,56 +59,66 @@ import {
     NodeExecutionsTable,
     NodeExecutionsTableProps
 } from '../NodeExecutionsTable';
+import { workflowExecutions } from 'mocks/data/workflowExecutions';
+import {
+    fetchNodeExecutionList,
+    useNodeExecutionListQuery
+} from 'components/Executions/nodeExecutionQueries';
+import { WaitForQuery } from 'components/common/WaitForQuery';
+import { tasks } from 'mocks/data/tasks';
 
-// TODO: Update this to use MSW to provide entities and re-enable tests
-describe.skip('NodeExecutionsTable', () => {
-    let nodeExecutions: NodeExecution[];
+describe('NodeExecutionsTable', () => {
+    let workflowExecution: Execution;
     let queryClient: QueryClient;
     let executionContext: ExecutionContextData;
     let requestConfig: RequestConfig;
 
-    beforeEach(async () => {
-        nodeExecutions = [];
+    beforeEach(() => {
+        workflowExecution = cloneDeep(workflowExecutions.basic);
         requestConfig = {};
         queryClient = createTestQueryClient();
 
         executionContext = {
-            execution: createMockExecution()
+            execution: workflowExecution
         };
     });
 
-    const Table = (props: NodeExecutionsTableProps) => (
-        <QueryClientProvider client={queryClient}>
-            <NodeExecutionsRequestConfigContext.Provider value={requestConfig}>
-                <ExecutionContext.Provider value={executionContext}>
-                    <NodeExecutionsTable {...props} />
-                </ExecutionContext.Provider>
-            </NodeExecutionsRequestConfigContext.Provider>
-        </QueryClientProvider>
+    const renderContent = (nodeExecutions: NodeExecution[]) => (
+        <NodeExecutionsTable nodeExecutions={nodeExecutions} />
     );
 
-    const getProps = async () =>
-        ({
-            nodeExecutions
-        } as NodeExecutionsTableProps);
+    const TestTable = () => (
+        <WaitForQuery
+            query={useNodeExecutionListQuery(
+                workflowExecution.id,
+                requestConfig
+            )}
+        >
+            {renderContent}
+        </WaitForQuery>
+    );
 
-    const renderTable = async () => {
-        return render(<Table {...await getProps()} />);
-    };
+    const renderTable = () =>
+        render(
+            <QueryClientProvider client={queryClient}>
+                <NodeExecutionsRequestConfigContext.Provider
+                    value={requestConfig}
+                >
+                    <ExecutionContext.Provider value={executionContext}>
+                        <TestTable />
+                    </ExecutionContext.Provider>
+                </NodeExecutionsRequestConfigContext.Provider>
+            </QueryClientProvider>
+        );
 
-    it('is disabled', () => {});
-
-    // it('renders task name for task nodes', async () => {
-    //     const { queryAllByText, getAllByRole } = await renderTable();
-    //     await waitFor(() => getAllByRole('listitem').length > 0);
-
-    //     const node = dataCache.getNodeForNodeExecution(mockNodeExecutions[0]);
-    //     const taskId = node?.node.taskNode?.referenceId;
-    //     expect(taskId).toBeDefined();
-    //     const task = dataCache.getTaskTemplate(taskId!);
-    //     expect(task).toBeDefined();
-    //     expect(queryAllByText(task!.id.name)[0]).toBeInTheDocument();
-    // });
+    it('renders task name for task nodes', async () => {
+        const { getByText } = renderTable();
+        await waitFor(() =>
+            expect(
+                getByText(tasks.basicPython.template.id.name)
+            ).toBeInTheDocument()
+        );
+    });
 
     // describe('for nodes with children', () => {
     //     let parentNodeExecution: NodeExecution;

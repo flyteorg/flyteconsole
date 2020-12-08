@@ -73,7 +73,7 @@ describe('NodeExecutionDetails', () => {
                 mockServer.insertNodeExecution(execution);
                 const { getByText } = renderComponent();
                 await waitFor(() =>
-                    getByText(cacheStatusMessages[cacheStatusValue])
+                    expect(getByText(cacheStatusMessages[cacheStatusValue]))
                 );
             })
         );
