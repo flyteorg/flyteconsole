@@ -45,7 +45,7 @@ function sampleLogs(): TaskLog[] {
 function taskExecutionId(
     nodeExecution: NodeExecution,
     task: CompiledTask,
-    retryAttempt: number = 0
+    retryAttempt = 0
 ) {
     return {
         retryAttempt,
