@@ -13,4 +13,14 @@ const basic: LaunchPlan = {
     }
 } as LaunchPlan;
 
-export const launchPlans = { basic };
+const nestedDynamic: LaunchPlan = {
+    id: {
+        resourceType: Core.ResourceType.LAUNCH_PLAN,
+        project: testProject,
+        domain: testDomain,
+        name: 'NestedDynamic',
+        version: testVersions.v1
+    }
+} as LaunchPlan;
+
+export const launchPlans = { basic, nestedDynamic };

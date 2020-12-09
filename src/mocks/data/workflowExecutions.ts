@@ -24,12 +24,22 @@ export function emptyLiteralMap(): LiteralMap {
     return { literals: {} };
 }
 
-const basic: Execution = {
-    id: {
+// Note: Names here must be unique
+export const workflowExecutionIds = {
+    basic: {
         project: testProject,
         domain: testDomain,
         name: 'abc123'
     },
+    nestedDynamic: {
+        project: testProject,
+        domain: testDomain,
+        name: 'def456'
+    }
+}
+
+const basic: Execution = {
+    id: {...workflowExecutionIds.basic},
     spec: {
         launchPlan: { ...launchPlans.basic.id },
         inputs: emptyLiteralMap(),
@@ -48,6 +58,29 @@ const basic: Execution = {
     }
 };
 
+const nestedDynamic = {
+    id: {
+       ...workflowExecutionIds.nestedDynamic
+    },
+    spec: {
+        launchPlan: { ...launchPlans.nestedDynamic.id },
+        inputs: emptyLiteralMap(),
+        metadata: defaultWorkflowExecutionMetadata(),
+        notifications: {
+            notifications: []
+        }
+    },
+    closure: {
+        computedInputs: emptyLiteralMap(),
+        createdAt: dateToTimestamp(mockStartDate),
+        duration: millisecondsToDuration(defaultExecutionDuration),
+        phase: WorkflowExecutionPhase.SUCCEEDED,
+        startedAt: dateToTimestamp(mockStartDate),
+        workflowId: { ...workflows.nestedDynamic.id }
+    }
+}
+
 export const workflowExecutions = {
-    basic
+    basic,
+    nestedDynamic
 };

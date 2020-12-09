@@ -42,6 +42,9 @@ const basicId = {
     name: 'Basic',
     version: testVersions.v1
 };
+/** This workflow has a single python node which takes a string as input
+ * and copies it to the output.
+ */
 const basic: Workflow = {
     id: { ...basicId },
     closure: {
@@ -51,10 +54,10 @@ const basic: Workflow = {
                 connections: {
                     downstream: {
                         [startNodeId]: { ids: [nodeIds.pythonTask] },
-                        pythonTask: { ids: [endNodeId] }
+                        [nodeIds.pythonTask]: { ids: [endNodeId] }
                     },
                     upstream: {
-                        pythonTask: { ids: [startNodeId] },
+                        [nodeIds.pythonTask]: { ids: [startNodeId] },
                         [endNodeId]: { ids: [nodeIds.pythonTask] }
                     }
                 },
@@ -96,4 +99,81 @@ const basic: Workflow = {
     }
 };
 
-export const workflows = { basic };
+const nestedDynamicId = {
+    resourceType: Core.ResourceType.WORKFLOW,
+    project: testProject,
+    domain: testDomain,
+    name: 'NestedDynamic',
+    version: testVersions.v1
+};
+
+/** This workflow has two top-level nodes:
+ * - A basic python task
+ * - A dynamic task which will produce an additional python task at runtime.
+ */
+const nestedDynamic: Workflow = {
+    id: { ...nestedDynamicId },
+    closure: {
+        createdAt: { ...entityCreationDate },
+        compiledWorkflow: {
+            primary: {
+                connections: {
+                    downstream: {
+                        [startNodeId]: { ids: [nodeIds.dynamicTask, nodeIds.pythonTask] },
+                        [nodeIds.pythonTask]: { ids: [endNodeId]},
+                        [nodeIds.dynamicTask]: { ids: [endNodeId] }
+                    },
+                    upstream: {
+                        [nodeIds.dynamicTask]: { ids: [startNodeId] },
+                        [nodeIds.pythonTask]: { ids: [startNodeId]},
+                        [endNodeId]: { ids: [nodeIds.dynamicTask, nodeIds.pythonTask] }
+                    }
+                },
+                template: {
+                    metadata: {},
+                    metadataDefaults: {},
+                    id: { ...nestedDynamicId },
+                    // This workflow uses the same i/o as its nested dynamic task
+                    interface: cloneDeep(tasks.dynamic.template.interface),
+                    nodes: [
+                        { id: startNodeId },
+                        { id: endNodeId },
+                        {
+                            ...taskNodeIds(nodeIds.pythonTask, tasks.basicPython),
+                            inputs: [
+                                bindingFromNode(
+                                    variableNames.basicString,
+                                    startNodeId,
+                                    variableNames.basicString
+                                )
+                            ]
+                        },
+                        {
+                            ...taskNodeIds(
+                                nodeIds.dynamicTask,
+                                tasks.dynamic
+                            ),
+                            inputs: [
+                                bindingFromNode(
+                                    variableNames.basicString,
+                                    startNodeId,
+                                    variableNames.basicString
+                                )
+                            ]
+                        }
+                    ],
+                    outputs: [
+                        bindingFromNode(
+                            variableNames.basicString,
+                            nodeIds.dynamicTask,
+                            variableNames.basicString
+                        )
+                    ]
+                }
+            },
+            tasks: [cloneDeep(tasks.dynamic), cloneDeep(tasks.basicPython)]
+        }
+    }
+};
+
+export const workflows = { basic, nestedDynamic };

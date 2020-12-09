@@ -29,5 +29,6 @@ export const variableNames = {
 };
 
 export const nodeIds = {
+    dynamicTask: 'dynamicTask',
     pythonTask: 'pythonTask'
 };

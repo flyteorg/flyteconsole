@@ -51,7 +51,11 @@ import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
-import { createTestQueryClient, obj } from 'test/utils';
+import {
+    createTestQueryClient,
+    findNearestAncestorByRole,
+    obj
+} from 'test/utils';
 import { Identifier } from 'typescript';
 import { State } from 'xstate';
 import { titleStrings } from '../constants';
@@ -62,10 +66,13 @@ import {
 import { workflowExecutions } from 'mocks/data/workflowExecutions';
 import {
     fetchNodeExecutionList,
+    fetchTaskExecutionChildList,
     useNodeExecutionListQuery
 } from 'components/Executions/nodeExecutionQueries';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { tasks } from 'mocks/data/tasks';
+import { mockServer } from 'mocks/server';
+import { taskExecutions } from 'mocks/data/taskExecutions';
 
 describe('NodeExecutionsTable', () => {
     let workflowExecution: Execution;
@@ -120,207 +127,186 @@ describe('NodeExecutionsTable', () => {
         );
     });
 
-    // describe('for nodes with children', () => {
-    //     let parentNodeExecution: NodeExecution;
-    //     let childNodeExecutions: NodeExecution[];
-    //     beforeEach(() => {
-    //         parentNodeExecution = mockNodeExecutions[0];
-    //     });
+    it('renders NodeExecutions with no associated spec information as Unknown', async () => {
+        // Create a NodeExecution that has no specNodeId, no metadata, and set up server
+        // to return an empty list for task executions. This mimics the empty generator
+        // nodes from dynamic workflows.
+    });
 
-    //     const expandParentNode = async (container: HTMLElement) => {
-    //         const expander = await waitFor(() =>
-    //             getByTitle(container, titleStrings.expandRow)
-    //         );
-    //         fireEvent.click(expander);
-    //         return await waitFor(() => getAllByRole(container, 'list'));
-    //     };
+    describe('for nodes with children', () => {
+        const expandParentNode = async (rowContainer: HTMLElement) => {
+            const expander = getByTitle(rowContainer, titleStrings.expandRow);
+            fireEvent.click(expander);
+            return await waitFor(() => getAllByRole(rowContainer, 'list'));
+        };
 
-    //     describe('with isParentNode flag', () => {
-    //         beforeEach(() => {
-    //             const id = parentNodeExecution.id;
-    //             const { nodeId } = id;
-    //             childNodeExecutions = [
-    //                 {
-    //                     ...parentNodeExecution,
-    //                     id: { ...id, nodeId: `${nodeId}-child1` },
-    //                     metadata: { retryGroup: '0', specNodeId: nodeId }
-    //                 },
-    //                 {
-    //                     ...parentNodeExecution,
-    //                     id: { ...id, nodeId: `${nodeId}-child2` },
-    //                     metadata: { retryGroup: '0', specNodeId: nodeId }
-    //                 },
-    //                 {
-    //                     ...parentNodeExecution,
-    //                     id: { ...id, nodeId: `${nodeId}-child1` },
-    //                     metadata: { retryGroup: '1', specNodeId: nodeId }
-    //                 },
-    //                 {
-    //                     ...parentNodeExecution,
-    //                     id: { ...id, nodeId: `${nodeId}-child2` },
-    //                     metadata: { retryGroup: '1', specNodeId: nodeId }
-    //                 }
-    //             ];
-    //             mockNodeExecutions[0].metadata = { isParentNode: true };
-    //             setExecutionChildren(
-    //                 {
-    //                     id: mockExecution.id,
-    //                     parentNodeId: parentNodeExecution.id.nodeId
-    //                 },
-    //                 childNodeExecutions
-    //             );
-    //         });
+        // describe('with isParentNode flag', () => {
+        //     beforeEach(() => {
+        //         const id = parentNodeExecution.id;
+        //         const { nodeId } = id;
+        //         childNodeExecutions = [
+        //             {
+        //                 ...parentNodeExecution,
+        //                 id: { ...id, nodeId: `${nodeId}-child1` },
+        //                 metadata: { retryGroup: '0', specNodeId: nodeId }
+        //             },
+        //             {
+        //                 ...parentNodeExecution,
+        //                 id: { ...id, nodeId: `${nodeId}-child2` },
+        //                 metadata: { retryGroup: '0', specNodeId: nodeId }
+        //             },
+        //             {
+        //                 ...parentNodeExecution,
+        //                 id: { ...id, nodeId: `${nodeId}-child1` },
+        //                 metadata: { retryGroup: '1', specNodeId: nodeId }
+        //             },
+        //             {
+        //                 ...parentNodeExecution,
+        //                 id: { ...id, nodeId: `${nodeId}-child2` },
+        //                 metadata: { retryGroup: '1', specNodeId: nodeId }
+        //             }
+        //         ];
+        //         mockNodeExecutions[0].metadata = { isParentNode: true };
+        //         setExecutionChildren(
+        //             {
+        //                 id: mockExecution.id,
+        //                 parentNodeId: parentNodeExecution.id.nodeId
+        //             },
+        //             childNodeExecutions
+        //         );
+        //     });
 
-    //         it('correctly fetches children', async () => {
-    //             const { getByText } = await renderTable();
-    //             await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-    //             expect(mockListNodeExecutions).toHaveBeenCalledWith(
-    //                 expect.anything(),
-    //                 expect.objectContaining({
-    //                     params: {
-    //                         [nodeExecutionQueryParams.parentNodeId]:
-    //                             parentNodeExecution.id.nodeId
-    //                     }
-    //                 })
-    //             );
-    //             expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
-    //         });
+        //     it('correctly fetches children', async () => {
+        //         const { getByText } = await renderTable();
+        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+        //         expect(mockListNodeExecutions).toHaveBeenCalledWith(
+        //             expect.anything(),
+        //             expect.objectContaining({
+        //                 params: {
+        //                     [nodeExecutionQueryParams.parentNodeId]:
+        //                         parentNodeExecution.id.nodeId
+        //                 }
+        //             })
+        //         );
+        //         expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
+        //     });
 
-    //         it('does not fetch children if flag is false', async () => {
-    //             mockNodeExecutions[0].metadata = { isParentNode: false };
-    //             const { getByText } = await renderTable();
-    //             await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-    //             expect(mockListNodeExecutions).not.toHaveBeenCalledWith(
-    //                 expect.anything(),
-    //                 expect.objectContaining({
-    //                     params: {
-    //                         [nodeExecutionQueryParams.parentNodeId]:
-    //                             parentNodeExecution.id.nodeId
-    //                     }
-    //                 })
-    //             );
-    //             expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
-    //         });
+        //     it('does not fetch children if flag is false', async () => {
+        //         mockNodeExecutions[0].metadata = { isParentNode: false };
+        //         const { getByText } = await renderTable();
+        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+        //         expect(mockListNodeExecutions).not.toHaveBeenCalledWith(
+        //             expect.anything(),
+        //             expect.objectContaining({
+        //                 params: {
+        //                     [nodeExecutionQueryParams.parentNodeId]:
+        //                         parentNodeExecution.id.nodeId
+        //                 }
+        //             })
+        //         );
+        //         expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
+        //     });
 
-    //         it('correctly renders groups', async () => {
-    //             const { container } = await renderTable();
-    //             const childGroups = await expandParentNode(container);
-    //             expect(childGroups).toHaveLength(2);
-    //         });
-    //     });
+        //     it('correctly renders groups', async () => {
+        //         const { container } = await renderTable();
+        //         const childGroups = await expandParentNode(container);
+        //         expect(childGroups).toHaveLength(2);
+        //     });
+        // });
 
-    //     describe('without isParentNode flag, using taskNodeMetadata ', () => {
-    //         let taskExecutions: TaskExecution[];
-    //         beforeEach(() => {
-    //             taskExecutions = [0, 1].map(retryAttempt =>
-    //                 createMockTaskExecutionForNodeExecution(
-    //                     parentNodeExecution.id,
-    //                     mockNodes[0],
-    //                     retryAttempt,
-    //                     { isParent: true }
-    //                 )
-    //             );
-    //             childNodeExecutions = [
-    //                 {
-    //                     ...parentNodeExecution
-    //                 }
-    //             ];
-    //             mockNodeExecutions = mockNodeExecutions.slice(0, 1);
-    //             mockListTaskExecutions.mockImplementation(async id => {
-    //                 const entities =
-    //                     id.nodeId === parentNodeExecution.id.nodeId
-    //                         ? taskExecutions
-    //                         : [];
-    //                 return { entities };
-    //             });
-    //             mockListTaskExecutionChildren.mockResolvedValue({
-    //                 entities: childNodeExecutions
-    //             });
-    //         });
+        describe('without isParentNode flag, using taskNodeMetadata ', () => {
+            beforeEach(() => {
+                workflowExecution = cloneDeep(workflowExecutions.nestedDynamic);
+                executionContext = {
+                    execution: workflowExecution
+                };
+            });
 
-    //         it('correctly fetches children', async () => {
-    //             const { getByText } = await renderTable();
-    //             await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-    //             expect(mockListNodeExecutions).not.toHaveBeenCalledWith(
-    //                 expect.anything(),
-    //                 expect.objectContaining({
-    //                     params: {
-    //                         [nodeExecutionQueryParams.parentNodeId]:
-    //                             parentNodeExecution.id.nodeId
-    //                     }
-    //                 })
-    //             );
-    //             expect(mockListTaskExecutionChildren).toHaveBeenCalledWith(
-    //                 expect.objectContaining(taskExecutions[0].id),
-    //                 expect.anything()
-    //             );
-    //         });
+            it('correctly renders children', async () => {
+                // The dynamic task node should have a single child node
+                // which runs the basic python task. Expand it and then
+                // look for the python task name to verify it was rendered.
+                const { container } = await renderTable();
+                const dynamicTaskNameEl = await waitFor(() =>
+                    getByText(container, tasks.dynamic.template.id.name)
+                );
+                const dynamicRowEl = findNearestAncestorByRole(
+                    dynamicTaskNameEl,
+                    'listitem'
+                );
+                await expandParentNode(dynamicRowEl);
+                await waitFor(() =>
+                    expect(
+                        getByText(container, tasks.basicPython.template.id.name)
+                    )
+                );
+            });
 
-    //         it('correctly renders groups', async () => {
-    //             // We returned two task execution attempts, each with children
-    //             const { container } = await renderTable();
-    //             const childGroups = await expandParentNode(container);
-    //             expect(childGroups).toHaveLength(2);
-    //         });
-    //     });
+            // it('correctly renders groups', async () => {
+            //     // We returned two task execution attempts, each with children
+            //     const { container } = await renderTable();
+            //     const childGroups = await expandParentNode(container);
+            //     expect(childGroups).toHaveLength(2);
+            // });
+        });
 
-    //     describe('without isParentNode flag, using workflowNodeMetadata', () => {
-    //         let childExecution: Execution;
-    //         let childNodeExecutions: NodeExecution[];
-    //         beforeEach(() => {
-    //             childExecution = cloneDeep(executionContext.execution);
-    //             childExecution.id.name = 'childExecution';
-    //             dataCache.insertExecution(childExecution);
-    //             dataCache.insertWorkflowExecutionReference(
-    //                 childExecution.id,
-    //                 mockWorkflow.id
-    //             );
+        // describe('without isParentNode flag, using workflowNodeMetadata', () => {
+        //     let childExecution: Execution;
+        //     let childNodeExecutions: NodeExecution[];
+        //     beforeEach(() => {
+        //         childExecution = cloneDeep(executionContext.execution);
+        //         childExecution.id.name = 'childExecution';
+        //         dataCache.insertExecution(childExecution);
+        //         dataCache.insertWorkflowExecutionReference(
+        //             childExecution.id,
+        //             mockWorkflow.id
+        //         );
 
-    //             childNodeExecutions = cloneDeep(mockNodeExecutions);
-    //             childNodeExecutions.forEach(
-    //                 ne => (ne.id.executionId = childExecution.id)
-    //             );
-    //             mockNodeExecutions[0].closure.workflowNodeMetadata = {
-    //                 executionId: childExecution.id
-    //             };
-    //             mockGetExecution.mockImplementation(async id => {
-    //                 if (isEqual(id, childExecution.id)) {
-    //                     return childExecution;
-    //                 }
-    //                 if (isEqual(id, mockExecution.id)) {
-    //                     return mockExecution;
-    //                 }
+        //         childNodeExecutions = cloneDeep(mockNodeExecutions);
+        //         childNodeExecutions.forEach(
+        //             ne => (ne.id.executionId = childExecution.id)
+        //         );
+        //         mockNodeExecutions[0].closure.workflowNodeMetadata = {
+        //             executionId: childExecution.id
+        //         };
+        //         mockGetExecution.mockImplementation(async id => {
+        //             if (isEqual(id, childExecution.id)) {
+        //                 return childExecution;
+        //             }
+        //             if (isEqual(id, mockExecution.id)) {
+        //                 return mockExecution;
+        //             }
 
-    //                 throw new Error(
-    //                     `Unexpected call to getExecution with execution id: ${obj(
-    //                         id
-    //                     )}`
-    //                 );
-    //             });
-    //             setExecutionChildren(
-    //                 { id: childExecution.id },
-    //                 childNodeExecutions
-    //             );
-    //         });
+        //             throw new Error(
+        //                 `Unexpected call to getExecution with execution id: ${obj(
+        //                     id
+        //                 )}`
+        //             );
+        //         });
+        //         setExecutionChildren(
+        //             { id: childExecution.id },
+        //             childNodeExecutions
+        //         );
+        //     });
 
-    //         it('correctly fetches children', async () => {
-    //             const { getByText } = await renderTable();
-    //             await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-    //             expect(mockListNodeExecutions).toHaveBeenCalledWith(
-    //                 expect.objectContaining({ name: childExecution.id.name }),
-    //                 expect.anything()
-    //             );
-    //         });
+        //     it('correctly fetches children', async () => {
+        //         const { getByText } = await renderTable();
+        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+        //         expect(mockListNodeExecutions).toHaveBeenCalledWith(
+        //             expect.objectContaining({ name: childExecution.id.name }),
+        //             expect.anything()
+        //         );
+        //     });
 
-    //         it('correctly renders groups', async () => {
-    //             // We returned a single WF execution child, so there should only
-    //             // be one child group
-    //             const { container } = await renderTable();
-    //             const childGroups = await expandParentNode(container);
-    //             expect(childGroups).toHaveLength(1);
-    //         });
-    //     });
-    // });
+        //     it('correctly renders groups', async () => {
+        //         // We returned a single WF execution child, so there should only
+        //         // be one child group
+        //         const { container } = await renderTable();
+        //         const childGroups = await expandParentNode(container);
+        //         expect(childGroups).toHaveLength(1);
+        //     });
+        // });
+    });
 
     // it('requests child node executions using configuration from context', async () => {
     //     const { taskExecutions } = createMockTaskExecutionsListResponse(1);

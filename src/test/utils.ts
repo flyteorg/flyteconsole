@@ -1,3 +1,4 @@
+import { prettyDOM } from '@testing-library/react';
 import { createQueryClient } from 'components/data/queryCache';
 import * as Long from 'long';
 
@@ -38,4 +39,15 @@ export function waitFor(timeMS: number) {
     return new Promise(resolve => {
         setTimeout(resolve, timeMS);
     });
+}
+
+export function findNearestAncestorByRole(element: HTMLElement, role: string): HTMLElement {
+    let parent: HTMLElement | null = element;
+    while(parent !== null) {
+        if (parent.getAttribute('role') === role) {
+            return parent;
+        }
+        parent = parent.parentElement;
+    }
+    throw new Error(`Failed to find element with role ${role} in ancestor tree.\n${prettyDOM(document.body)}`);
 }

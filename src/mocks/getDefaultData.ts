@@ -1,7 +1,7 @@
 import { RequestHandlersList } from 'msw/lib/types/setupWorker/glossary';
 import { nodeExecutionLists, nodeExecutions } from './data/nodeExecutions';
 import { projects } from './data/projects';
-import { taskExecutionLists, taskExecutions } from './data/taskExecutions';
+import { taskExecutionChildLists, taskExecutionLists, taskExecutions } from './data/taskExecutions';
 import { tasks } from './data/tasks';
 import { workflowExecutions } from './data/workflowExecutions';
 import { workflows } from './data/workflows';
@@ -9,6 +9,7 @@ import {
     nodeExecutionHandler,
     nodeExecutionListHandler,
     projectListHandler,
+    taskExecutionChildListHandler,
     taskExecutionHandler,
     taskExecutionListHandler,
     taskHandler,
@@ -41,6 +42,8 @@ export function getDefaultData(): RequestHandlersList {
         taskExecutionListHandler(id, children)
     );
 
+    const taskExecutionChildListHandlers = taskExecutionChildLists.map(([id, children]) => taskExecutionChildListHandler(id, children));
+
     return [
         ...projectListHandlers,
         ...workflowHandlers,
@@ -49,6 +52,7 @@ export function getDefaultData(): RequestHandlersList {
         ...nodeExecutionHandlers,
         ...nodeExecutionListHandlers,
         ...taskExecutionHandlers,
-        ...taskExecutionListHandlers
+        ...taskExecutionListHandlers,
+        ...taskExecutionChildListHandlers
     ];
 }

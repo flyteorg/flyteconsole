@@ -80,11 +80,77 @@ const pythonNode: TaskExecution = {
     }
 };
 
+const dynamicNodeTaskExecutionId = taskExecutionId(
+    nodeExecutions.dynamicNode,
+    tasks.dynamic
+);
+const dynamicNode: TaskExecution = {
+    id: { ...dynamicNodeTaskExecutionId },
+    inputUri: makeInputUri(dynamicNodeTaskExecutionId),
+    isParent: true,
+    closure: {
+        customInfo: {},
+        phase: TaskExecutionPhase.SUCCEEDED,
+        duration: millisecondsToDuration(defaultExecutionDuration),
+        createdAt: timeStampOffset(
+            nodeExecutions.dynamicNode.closure.createdAt,
+            0
+        ),
+        startedAt: timeStampOffset(
+            nodeExecutions.dynamicNode.closure.createdAt,
+            0
+        ),
+        outputUri: makeOutputUri(dynamicNodeTaskExecutionId),
+        logs: sampleLogs()
+    }
+};
+
+const dynamicChildPythonNodeTaskExecutionId = taskExecutionId(
+    nodeExecutions.dynamicChildPythonNode,
+    tasks.basicPython
+);
+
+const dynamicChildPythonNode: TaskExecution = {
+    id: { ...dynamicChildPythonNodeTaskExecutionId },
+    inputUri: makeInputUri(dynamicChildPythonNodeTaskExecutionId),
+    isParent: false,
+    closure: {
+        customInfo: {},
+        phase: TaskExecutionPhase.SUCCEEDED,
+        duration: millisecondsToDuration(defaultExecutionDuration),
+        createdAt: timeStampOffset(
+            nodeExecutions.dynamicChildPythonNode.closure.createdAt,
+            0
+        ),
+        startedAt: timeStampOffset(
+            nodeExecutions.dynamicChildPythonNode.closure.createdAt,
+            0
+        ),
+        outputUri: makeOutputUri(dynamicChildPythonNodeTaskExecutionId),
+        logs: sampleLogs()
+    }
+};
+
 export const taskExecutions = {
+    dynamicNode,
+    dynamicChildPythonNode,
     pythonNode
 };
 
+/** Maps parent NodeExecutions to the list of TaskExecutions returned for them. */
 export const taskExecutionLists: [
     NodeExecutionIdentifier,
     TaskExecution[]
-][] = [[nodeExecutions.pythonNode.id, [pythonNode]]];
+][] = [
+    [nodeExecutions.pythonNode.id, [pythonNode]],
+    [nodeExecutions.dynamicNode.id, [dynamicNode]],
+    [nodeExecutions.dynamicChildPythonNode.id, [dynamicChildPythonNode]]
+];
+
+/** Legacy dynamic tasks use the isParent flag and return child NodeExecutions
+ * via a separate endpoint. This list maps child NodeExecutions to parent TaskExecutions.
+ */
+export const taskExecutionChildLists: [
+    TaskExecutionIdentifier,
+    NodeExecution[]
+][] = [[taskExecutions.dynamicNode.id, [nodeExecutions.dynamicChildPythonNode]]];

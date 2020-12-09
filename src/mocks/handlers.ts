@@ -1,5 +1,6 @@
 import { Admin } from 'flyteidl';
 import {
+    adminApiUrl,
     CompiledTask,
     EncodableType,
     encodeProtoPayload,
@@ -9,12 +10,14 @@ import {
     NodeExecutionIdentifier,
     Project,
     TaskExecution,
+    TaskExecutionIdentifier,
     Workflow
 } from 'models';
 import {
     makeExecutionPath,
     makeNodeExecutionListPath,
     makeNodeExecutionPath,
+    makeTaskExecutionChildrenPath,
     makeTaskExecutionListPath,
     makeTaskExecutionPath
 } from 'models/Execution/utils';
@@ -23,7 +26,6 @@ import { makeWorkflowPath } from 'models/Workflow/utils';
 import { rest } from 'msw';
 import { setupServer } from 'msw/lib/types/node';
 import { RestContext } from 'msw/lib/types/rest';
-import { apiPath } from './utils';
 
 export function protobufResponse(
     ctx: RestContext,
@@ -40,20 +42,22 @@ export function protobufResponse(
 }
 
 export function workflowExecutionHandler(data: Partial<Execution>) {
-    return rest.get(apiPath(makeExecutionPath(data.id!)), (_, res, ctx) =>
+    return rest.get(adminApiUrl(makeExecutionPath(data.id!)), (_, res, ctx) =>
         res(...protobufResponse(ctx, data, Admin.Execution))
     );
 }
 
 export function workflowHandler(data: Partial<Workflow>) {
-    return rest.get(apiPath(makeWorkflowPath(data.id!)), (_, res, ctx) =>
+    return rest.get(adminApiUrl(makeWorkflowPath(data.id!)), (_, res, ctx) =>
         res(...protobufResponse(ctx, data, Admin.Workflow))
     );
 }
 
 export function nodeExecutionHandler(data: Partial<NodeExecution>) {
-    return rest.get(apiPath(makeNodeExecutionPath(data.id!)), (_, res, ctx) =>
-        res(...protobufResponse(ctx, data, Admin.NodeExecution))
+    return rest.get(
+        adminApiUrl(makeNodeExecutionPath(data.id!)),
+        (_, res, ctx) =>
+            res(...protobufResponse(ctx, data, Admin.NodeExecution))
     );
 }
 
@@ -63,7 +67,7 @@ export function nodeExecutionListHandler(
     data: Partial<NodeExecution>[]
 ) {
     return rest.get(
-        apiPath(makeNodeExecutionListPath(scope)),
+        adminApiUrl(makeNodeExecutionListPath(scope)),
         (_, res, ctx) => {
             return res(
                 ...protobufResponse(
@@ -79,23 +83,27 @@ export function nodeExecutionListHandler(
 }
 
 export function taskHandler(data: Partial<CompiledTask>) {
-    return rest.get(apiPath(makeTaskPath(data.template!.id)), (_, res, ctx) =>
-        res(
-            ...protobufResponse(
-                ctx,
-                {
-                    id: data.template!.id,
-                    closure: { compiledTask: data }
-                },
-                Admin.Task
+    return rest.get(
+        adminApiUrl(makeTaskPath(data.template!.id)),
+        (_, res, ctx) =>
+            res(
+                ...protobufResponse(
+                    ctx,
+                    {
+                        id: data.template!.id,
+                        closure: { compiledTask: data }
+                    },
+                    Admin.Task
+                )
             )
-        )
     );
 }
 
 export function taskExecutionHandler(data: Partial<TaskExecution>) {
-    return rest.get(apiPath(makeTaskExecutionPath(data.id!)), (_, res, ctx) =>
-        res(...protobufResponse(ctx, data, Admin.TaskExecution))
+    return rest.get(
+        adminApiUrl(makeTaskExecutionPath(data.id!)),
+        (_, res, ctx) =>
+            res(...protobufResponse(ctx, data, Admin.TaskExecution))
     );
 }
 
@@ -104,7 +112,7 @@ export function taskExecutionListHandler(
     data: Partial<TaskExecution>[]
 ) {
     return rest.get(
-        apiPath(makeTaskExecutionListPath(nodeExecutionId)),
+        adminApiUrl(makeTaskExecutionListPath(nodeExecutionId)),
         (_, res, ctx) =>
             res(
                 ...protobufResponse(
@@ -116,8 +124,25 @@ export function taskExecutionListHandler(
     );
 }
 
+export function taskExecutionChildListHandler(
+    id: TaskExecutionIdentifier,
+    data: Partial<NodeExecution>[]
+) {
+    return rest.get(
+        adminApiUrl(makeTaskExecutionChildrenPath(id)),
+        (_, res, ctx) =>
+            res(
+                ...protobufResponse(
+                    ctx,
+                    { nodeExecutions: data },
+                    Admin.NodeExecutionList
+                )
+            )
+    );
+}
+
 export function projectListHandler(data: Project[]) {
-    return rest.get(apiPath('/projects'), (_, res, ctx) =>
+    return rest.get(adminApiUrl('/projects'), (_, res, ctx) =>
         res(
             ...protobufResponse(
                 ctx,
@@ -143,6 +168,10 @@ export interface BoundAdminServer {
         id: NodeExecutionIdentifier,
         data: Partial<TaskExecution>[]
     ): void;
+    insertTaskExecutionChildList(
+        id: TaskExecutionIdentifier,
+        data: Partial<NodeExecution>[]
+    ): void;
     insertWorkflow(data: Partial<Workflow>): void;
     insertWorkflowExecution(data: Partial<Execution>): void;
 }
@@ -159,6 +188,8 @@ export function bindHandlers({
         insertTaskExecution: data => use(taskExecutionHandler(data)),
         insertTaskExecutionList: (id, data) =>
             use(taskExecutionListHandler(id, data)),
+        insertTaskExecutionChildList: (id, data) =>
+            use(taskExecutionChildListHandler(id, data)),
         insertWorkflow: data => use(workflowHandler(data)),
         insertWorkflowExecution: data => use(workflowExecutionHandler(data))
     };
