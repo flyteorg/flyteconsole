@@ -1,12 +1,20 @@
-import { CompiledTask, ResourceType, SimpleType } from 'models';
+import { CompiledTask, ResourceType, SimpleType, Task } from 'models';
 import {
+    entityCreationDate,
     testDomain,
     testProject,
     testVersions,
     variableNames
 } from './constants';
 
-const basicPython: CompiledTask = {
+function makeTask(compiledTask: CompiledTask): Task {
+    return {
+        closure: { createdAt: { ...entityCreationDate }, compiledTask },
+        id: compiledTask.template.id
+    };
+}
+
+const basicPython = makeTask({
     template: {
         custom: {},
         container: {},
@@ -39,9 +47,9 @@ const basicPython: CompiledTask = {
             }
         }
     }
-};
+});
 
-const dynamic: CompiledTask = {
+const dynamic = makeTask({
     template: {
         custom: {},
         container: {},
@@ -74,7 +82,7 @@ const dynamic: CompiledTask = {
             }
         }
     }
-}
+});
 
 export const tasks = {
     basicPython,

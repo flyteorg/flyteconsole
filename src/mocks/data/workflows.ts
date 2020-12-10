@@ -1,6 +1,6 @@
 import { Core } from 'flyteidl';
 import { cloneDeep } from 'lodash';
-import { Binding, CompiledTask, endNodeId, startNodeId } from 'models';
+import { Binding, endNodeId, startNodeId, Task } from 'models';
 import { Workflow } from 'models/Workflow/types';
 import {
     entityCreationDate,
@@ -12,10 +12,10 @@ import {
 } from './constants';
 import { tasks } from './tasks';
 
-function taskNodeIds(id: string, task: CompiledTask) {
+function taskNodeIds(id: string, task: Task) {
     return {
         id,
-        taskNode: { referenceId: { ...task.template.id } }
+        taskNode: { referenceId: { ...task.id } }
     };
 }
 
@@ -67,7 +67,10 @@ const basic: Workflow = {
                     id: { ...basicId },
                     // This workflow has just one task, so the i/o will be those from
                     // the task
-                    interface: cloneDeep(tasks.basicPython.template.interface),
+                    interface: cloneDeep(
+                        tasks.basicPython.closure.compiledTask.template
+                            .interface
+                    ),
                     nodes: [
                         { id: startNodeId },
                         { id: endNodeId },
@@ -94,7 +97,7 @@ const basic: Workflow = {
                     ]
                 }
             },
-            tasks: [cloneDeep(tasks.basicPython)]
+            tasks: [cloneDeep(tasks.basicPython.closure.compiledTask)]
         }
     }
 };
@@ -119,14 +122,18 @@ const nestedDynamic: Workflow = {
             primary: {
                 connections: {
                     downstream: {
-                        [startNodeId]: { ids: [nodeIds.dynamicTask, nodeIds.pythonTask] },
-                        [nodeIds.pythonTask]: { ids: [endNodeId]},
+                        [startNodeId]: {
+                            ids: [nodeIds.dynamicTask, nodeIds.pythonTask]
+                        },
+                        [nodeIds.pythonTask]: { ids: [endNodeId] },
                         [nodeIds.dynamicTask]: { ids: [endNodeId] }
                     },
                     upstream: {
                         [nodeIds.dynamicTask]: { ids: [startNodeId] },
-                        [nodeIds.pythonTask]: { ids: [startNodeId]},
-                        [endNodeId]: { ids: [nodeIds.dynamicTask, nodeIds.pythonTask] }
+                        [nodeIds.pythonTask]: { ids: [startNodeId] },
+                        [endNodeId]: {
+                            ids: [nodeIds.dynamicTask, nodeIds.pythonTask]
+                        }
                     }
                 },
                 template: {
@@ -134,12 +141,17 @@ const nestedDynamic: Workflow = {
                     metadataDefaults: {},
                     id: { ...nestedDynamicId },
                     // This workflow uses the same i/o as its nested dynamic task
-                    interface: cloneDeep(tasks.dynamic.template.interface),
+                    interface: cloneDeep(
+                        tasks.dynamic.closure.compiledTask.template.interface
+                    ),
                     nodes: [
                         { id: startNodeId },
                         { id: endNodeId },
                         {
-                            ...taskNodeIds(nodeIds.pythonTask, tasks.basicPython),
+                            ...taskNodeIds(
+                                nodeIds.pythonTask,
+                                tasks.basicPython
+                            ),
                             inputs: [
                                 bindingFromNode(
                                     variableNames.basicString,
@@ -149,10 +161,7 @@ const nestedDynamic: Workflow = {
                             ]
                         },
                         {
-                            ...taskNodeIds(
-                                nodeIds.dynamicTask,
-                                tasks.dynamic
-                            ),
+                            ...taskNodeIds(nodeIds.dynamicTask, tasks.dynamic),
                             inputs: [
                                 bindingFromNode(
                                     variableNames.basicString,
@@ -171,7 +180,10 @@ const nestedDynamic: Workflow = {
                     ]
                 }
             },
-            tasks: [cloneDeep(tasks.dynamic), cloneDeep(tasks.basicPython)]
+            tasks: [
+                cloneDeep(tasks.dynamic.closure.compiledTask),
+                cloneDeep(tasks.basicPython.closure.compiledTask)
+            ]
         }
     }
 };

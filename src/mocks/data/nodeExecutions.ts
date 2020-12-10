@@ -1,5 +1,4 @@
 import { millisecondsToDuration } from 'common/utils';
-import { cloneDeep } from 'lodash';
 import { timeStampOffset } from 'mocks/utils';
 import {
     NodeExecution,
@@ -87,6 +86,7 @@ const dynamicNode: NodeExecution = {
     },
     inputUri: makeInputUri(ids.dynamic.node1)
 };
+// TODO: Add this to nestedDynamic WF Execution and provide task exedcutions for it or remove it
 const dynamicSiblingPythonNode: NodeExecution = {
     id: ids.dynamic.node3,
     metadata: {
@@ -133,6 +133,7 @@ const dynamicChildPythonNode: NodeExecution = {
 export const nodeExecutions = {
     dynamicNode,
     dynamicChildPythonNode,
+    dynamicSiblingPythonNode,
     pythonNode
 };
 

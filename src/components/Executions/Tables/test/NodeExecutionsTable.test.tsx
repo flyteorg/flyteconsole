@@ -29,6 +29,7 @@ import {
     NodeExecution,
     nodeExecutionQueryParams,
     RequestConfig,
+    Task,
     TaskExecution,
     TaskNodeMetadata,
     Workflow,
@@ -73,6 +74,7 @@ import { WaitForQuery } from 'components/common/WaitForQuery';
 import { tasks } from 'mocks/data/tasks';
 import { mockServer } from 'mocks/server';
 import { taskExecutions } from 'mocks/data/taskExecutions';
+import { nodeExecutions } from 'mocks/data/nodeExecutions';
 
 describe('NodeExecutionsTable', () => {
     let workflowExecution: Execution;
@@ -122,7 +124,7 @@ describe('NodeExecutionsTable', () => {
         const { getByText } = renderTable();
         await waitFor(() =>
             expect(
-                getByText(tasks.basicPython.template.id.name)
+                getByText(tasks.basicPython.id.name)
             ).toBeInTheDocument()
         );
     });
@@ -135,7 +137,7 @@ describe('NodeExecutionsTable', () => {
 
     describe('for nodes with children', () => {
         const expandParentNode = async (rowContainer: HTMLElement) => {
-            const expander = getByTitle(rowContainer, titleStrings.expandRow);
+            const expander = await waitFor(() => getByTitle(rowContainer, titleStrings.expandRow));
             fireEvent.click(expander);
             return await waitFor(() => getAllByRole(rowContainer, 'list'));
         };
@@ -226,9 +228,9 @@ describe('NodeExecutionsTable', () => {
                 // The dynamic task node should have a single child node
                 // which runs the basic python task. Expand it and then
                 // look for the python task name to verify it was rendered.
-                const { container } = await renderTable();
+                const { container } = renderTable();
                 const dynamicTaskNameEl = await waitFor(() =>
-                    getByText(container, tasks.dynamic.template.id.name)
+                    getByText(container, tasks.dynamic.id.name)
                 );
                 const dynamicRowEl = findNearestAncestorByRole(
                     dynamicTaskNameEl,
@@ -237,17 +239,24 @@ describe('NodeExecutionsTable', () => {
                 await expandParentNode(dynamicRowEl);
                 await waitFor(() =>
                     expect(
-                        getByText(container, tasks.basicPython.template.id.name)
+                        getByText(container, tasks.basicPython.id.name)
                     )
                 );
             });
 
-            // it('correctly renders groups', async () => {
-            //     // We returned two task execution attempts, each with children
-            //     const { container } = await renderTable();
-            //     const childGroups = await expandParentNode(container);
-            //     expect(childGroups).toHaveLength(2);
-            // });
+            it('correctly renders groups', async () => {
+                const firstTaskRetry = cloneDeep(taskExecutions.dynamicNode);
+                firstTaskRetry.id.retryAttempt = 1;
+                mockServer.insertTaskExecution(firstTaskRetry);
+                mockServer.insertTaskExecutionList(nodeExecutions.dynamicNode.id, [taskExecutions.dynamicNode, firstTaskRetry]);
+                mockServer.insertTaskExecutionChildList(firstTaskRetry.id, [nodeExecutions.dynamicChildPythonNode]);
+                // We returned two task execution attempts, each with children
+                const { container } = renderTable();
+                const nodeNameEl = await waitFor(() => getByText(container, nodeExecutions.dynamicNode.id.nodeId));
+                const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
+                const childGroups = await expandParentNode(rowEl);
+                expect(childGroups).toHaveLength(2);
+            });
         });
 
         // describe('without isParentNode flag, using workflowNodeMetadata', () => {

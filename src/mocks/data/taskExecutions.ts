@@ -1,9 +1,9 @@
 import { millisecondsToDuration } from 'common/utils';
 import { timeStampOffset } from 'mocks/utils';
 import {
-    CompiledTask,
     NodeExecution,
     NodeExecutionIdentifier,
+    Task,
     TaskExecution,
     TaskExecutionIdentifier,
     TaskLog
@@ -44,13 +44,13 @@ function sampleLogs(): TaskLog[] {
 
 function taskExecutionId(
     nodeExecution: NodeExecution,
-    task: CompiledTask,
+    task: Task,
     retryAttempt = 0
 ) {
     return {
         retryAttempt,
         nodeExecutionId: { ...nodeExecution.id },
-        taskId: { ...task.template.id }
+        taskId: { ...task.id }
     };
 }
 
@@ -142,9 +142,9 @@ export const taskExecutionLists: [
     NodeExecutionIdentifier,
     TaskExecution[]
 ][] = [
-    [nodeExecutions.pythonNode.id, [pythonNode]],
-    [nodeExecutions.dynamicNode.id, [dynamicNode]],
-    [nodeExecutions.dynamicChildPythonNode.id, [dynamicChildPythonNode]]
+    [nodeExecutions.pythonNode.id, [taskExecutions.pythonNode]],
+    [nodeExecutions.dynamicNode.id, [taskExecutions.dynamicNode]],
+    [nodeExecutions.dynamicChildPythonNode.id, [taskExecutions.dynamicChildPythonNode]]
 ];
 
 /** Legacy dynamic tasks use the isParent flag and return child NodeExecutions

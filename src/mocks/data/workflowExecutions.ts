@@ -29,17 +29,17 @@ export const workflowExecutionIds = {
     basic: {
         project: testProject,
         domain: testDomain,
-        name: 'abc123'
+        name: 'basicExecution'
     },
     nestedDynamic: {
         project: testProject,
         domain: testDomain,
-        name: 'def456'
+        name: 'nestedDynamicExecution'
     }
-}
+};
 
 const basic: Execution = {
-    id: {...workflowExecutionIds.basic},
+    id: { ...workflowExecutionIds.basic },
     spec: {
         launchPlan: { ...launchPlans.basic.id },
         inputs: emptyLiteralMap(),
@@ -60,7 +60,7 @@ const basic: Execution = {
 
 const nestedDynamic = {
     id: {
-       ...workflowExecutionIds.nestedDynamic
+        ...workflowExecutionIds.nestedDynamic
     },
     spec: {
         launchPlan: { ...launchPlans.nestedDynamic.id },
@@ -78,7 +78,7 @@ const nestedDynamic = {
         startedAt: dateToTimestamp(mockStartDate),
         workflowId: { ...workflows.nestedDynamic.id }
     }
-}
+};
 
 export const workflowExecutions = {
     basic,

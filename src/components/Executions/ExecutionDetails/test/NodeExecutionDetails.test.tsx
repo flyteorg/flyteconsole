@@ -39,9 +39,9 @@ describe('NodeExecutionDetails', () => {
         );
 
     it('renders name for task nodes', async () => {
-        const { name } = tasks.basicPython.template.id;
+        const { name } = tasks.basicPython.id;
         const { getByText } = renderComponent();
-        await waitFor(() => getByText(name));
+        await waitFor(() => expect(getByText(name)));
     });
 
     describe('with cache information', () => {

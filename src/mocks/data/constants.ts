@@ -8,7 +8,7 @@ export const mockStartDate = new Date('2020-11-15T02:32:19.610Z');
 // entities will be created an hour before any executions have run
 export const entityCreationDate = timeStampOffset(
     dateToTimestamp(mockStartDate),
-    3600
+    -3600
 );
 
 // Workflow Execution duration in milliseconds
@@ -20,8 +20,8 @@ export const testProject = 'flytetest';
 export const testDomain = 'development';
 
 export const testVersions = {
-    v1: 'abc123',
-    v2: 'def456'
+    v1: 'v0001',
+    v2: 'v0002'
 };
 
 export const variableNames = {

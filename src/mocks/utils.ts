@@ -1,9 +1,5 @@
 import { Protobuf } from 'flyteidl';
-import { apiPrefix } from 'models/AdminEntity/constants';
-
-export function apiPath(path: string) {
-    return `${apiPrefix}${path}`;
-}
+import { isObject, isPlainObject } from 'lodash';
 
 export function timeStampOffset(
     timeStamp: Protobuf.ITimestamp,
@@ -15,4 +11,26 @@ export function timeStampOffset(
             ? output.seconds.subtract(offsetSeconds)
             : output.seconds.add(offsetSeconds);
     return output;
+}
+
+function stableStringifyReplacer(_key: string, value: unknown): unknown {
+    if (typeof value === 'function') {
+        throw new Error('Encountered function() during serialization');
+    }
+
+    if (isObject(value)) {
+        const plainObject: any = isPlainObject(value) ? value : { ...value };
+        return Object.keys(plainObject)
+            .sort()
+            .reduce((result, key) => {
+                result[key] = plainObject[key];
+                return result;
+            }, {} as any);
+    }
+
+    return value;
+}
+
+export function stableStringify(value: unknown): string {
+    return JSON.stringify(value, stableStringifyReplacer);
 }
