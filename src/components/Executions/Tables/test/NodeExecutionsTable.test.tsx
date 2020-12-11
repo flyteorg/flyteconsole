@@ -27,6 +27,7 @@ import {
     getTask,
     getWorkflow,
     NodeExecution,
+    NodeExecutionMetadata,
     nodeExecutionQueryParams,
     RequestConfig,
     Task,
@@ -57,8 +58,6 @@ import {
     findNearestAncestorByRole,
     obj
 } from 'test/utils';
-import { Identifier } from 'typescript';
-import { State } from 'xstate';
 import { titleStrings } from '../constants';
 import {
     NodeExecutionsTable,
@@ -123,13 +122,12 @@ describe('NodeExecutionsTable', () => {
     it('renders task name for task nodes', async () => {
         const { getByText } = renderTable();
         await waitFor(() =>
-            expect(
-                getByText(tasks.basicPython.id.name)
-            ).toBeInTheDocument()
+            expect(getByText(tasks.basicPython.id.name)).toBeInTheDocument()
         );
     });
 
     it('renders NodeExecutions with no associated spec information as Unknown', async () => {
+        // TODO:
         // Create a NodeExecution that has no specNodeId, no metadata, and set up server
         // to return an empty list for task executions. This mimics the empty generator
         // nodes from dynamic workflows.
@@ -137,84 +135,99 @@ describe('NodeExecutionsTable', () => {
 
     describe('for nodes with children', () => {
         const expandParentNode = async (rowContainer: HTMLElement) => {
-            const expander = await waitFor(() => getByTitle(rowContainer, titleStrings.expandRow));
+            const expander = await waitFor(() =>
+                getByTitle(rowContainer, titleStrings.expandRow)
+            );
             fireEvent.click(expander);
             return await waitFor(() => getAllByRole(rowContainer, 'list'));
         };
 
-        // describe('with isParentNode flag', () => {
-        //     beforeEach(() => {
-        //         const id = parentNodeExecution.id;
-        //         const { nodeId } = id;
-        //         childNodeExecutions = [
-        //             {
-        //                 ...parentNodeExecution,
-        //                 id: { ...id, nodeId: `${nodeId}-child1` },
-        //                 metadata: { retryGroup: '0', specNodeId: nodeId }
-        //             },
-        //             {
-        //                 ...parentNodeExecution,
-        //                 id: { ...id, nodeId: `${nodeId}-child2` },
-        //                 metadata: { retryGroup: '0', specNodeId: nodeId }
-        //             },
-        //             {
-        //                 ...parentNodeExecution,
-        //                 id: { ...id, nodeId: `${nodeId}-child1` },
-        //                 metadata: { retryGroup: '1', specNodeId: nodeId }
-        //             },
-        //             {
-        //                 ...parentNodeExecution,
-        //                 id: { ...id, nodeId: `${nodeId}-child2` },
-        //                 metadata: { retryGroup: '1', specNodeId: nodeId }
-        //             }
-        //         ];
-        //         mockNodeExecutions[0].metadata = { isParentNode: true };
-        //         setExecutionChildren(
-        //             {
-        //                 id: mockExecution.id,
-        //                 parentNodeId: parentNodeExecution.id.nodeId
-        //             },
-        //             childNodeExecutions
-        //         );
-        //     });
+        describe('with isParentNode flag', () => {
+            beforeEach(() => {
+                workflowExecution = cloneDeep(workflowExecutions.nestedDynamic);
+                executionContext = {
+                    execution: workflowExecution
+                };
+                const parentNodeExecution = cloneDeep(
+                    nodeExecutions.dynamicNode
+                );
+                parentNodeExecution.metadata = {
+                    isParentNode: true,
+                    retryGroup: '0',
+                    specNodeId: parentNodeExecution.id.nodeId
+                };
+                const parentTaskExecution = cloneDeep(
+                    taskExecutions.dynamicNode
+                );
+                parentTaskExecution.isParent = false;
+                const childNode = (
+                    nodeIdSuffix: string,
+                    retryGroup: string
+                ) => {
+                    const result = cloneDeep(
+                        nodeExecutions.dynamicChildPythonNode
+                    );
+                    result.id.nodeId += nodeIdSuffix;
+                    result.metadata = {
+                        retryGroup,
+                        isParentNode: false,
+                        specNodeId:
+                            nodeExecutions.dynamicChildPythonNode.id.nodeId
+                    };
+                    return result;
+                };
 
-        //     it('correctly fetches children', async () => {
-        //         const { getByText } = await renderTable();
-        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-        //         expect(mockListNodeExecutions).toHaveBeenCalledWith(
-        //             expect.anything(),
-        //             expect.objectContaining({
-        //                 params: {
-        //                     [nodeExecutionQueryParams.parentNodeId]:
-        //                         parentNodeExecution.id.nodeId
-        //                 }
-        //             })
-        //         );
-        //         expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
-        //     });
+                const childNodeExecutions: NodeExecution[] = [
+                    childNode('_child0_1', '0'),
+                    childNode('_child1_1', '1')
+                ];
 
-        //     it('does not fetch children if flag is false', async () => {
-        //         mockNodeExecutions[0].metadata = { isParentNode: false };
-        //         const { getByText } = await renderTable();
-        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-        //         expect(mockListNodeExecutions).not.toHaveBeenCalledWith(
-        //             expect.anything(),
-        //             expect.objectContaining({
-        //                 params: {
-        //                     [nodeExecutionQueryParams.parentNodeId]:
-        //                         parentNodeExecution.id.nodeId
-        //                 }
-        //             })
-        //         );
-        //         expect(mockListTaskExecutionChildren).not.toHaveBeenCalled();
-        //     });
+                mockServer.insertNodeExecutionList(workflowExecution.id, [parentNodeExecution]);
+                mockServer.insertTaskExecution(parentTaskExecution);
+                mockServer.insertNodeExecution(parentNodeExecution);
+                mockServer.insertTaskExecutionList(parentNodeExecution.id, [
+                    parentTaskExecution
+                ]);
+                childNodeExecutions.forEach(ne => {
+                    mockServer.insertNodeExecution(ne);
+                    mockServer.insertTaskExecutionList(ne.id, [taskExecutions.dynamicChildPythonNode]);
+                });
+                mockServer.insertNodeExecutionList(
+                    parentNodeExecution.id.executionId,
+                    childNodeExecutions,
+                    {
+                        [nodeExecutionQueryParams.parentNodeId]:
+                            parentNodeExecution.id.nodeId
+                    }
+                );
+            });
 
-        //     it('correctly renders groups', async () => {
-        //         const { container } = await renderTable();
-        //         const childGroups = await expandParentNode(container);
-        //         expect(childGroups).toHaveLength(2);
-        //     });
-        // });
+            it('correctly renders children', async () => {
+                const { container } = renderTable();
+                const dynamicTaskNameEl = await waitFor(() =>
+                    getByText(container, tasks.dynamic.id.name)
+                );
+                const dynamicRowEl = findNearestAncestorByRole(
+                    dynamicTaskNameEl,
+                    'listitem'
+                );
+                const childContainerList = await expandParentNode(dynamicRowEl);
+                await waitFor(() =>
+                    expect(getByText(childContainerList[0], tasks.basicPython.id.name))
+                );
+            });
+
+            it('correctly renders groups', async () => {
+                // We returned two task execution attempts, each with children
+                const { container } = renderTable();
+                const nodeNameEl = await waitFor(() =>
+                    getByText(container, nodeExecutions.dynamicNode.id.nodeId)
+                );
+                const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
+                const childGroups = await expandParentNode(rowEl);
+                expect(childGroups).toHaveLength(2);
+            });
+        });
 
         describe('without isParentNode flag, using taskNodeMetadata ', () => {
             beforeEach(() => {
@@ -236,11 +249,9 @@ describe('NodeExecutionsTable', () => {
                     dynamicTaskNameEl,
                     'listitem'
                 );
-                await expandParentNode(dynamicRowEl);
+                const childContainerList = await expandParentNode(dynamicRowEl);
                 await waitFor(() =>
-                    expect(
-                        getByText(container, tasks.basicPython.id.name)
-                    )
+                    expect(getByText(childContainerList[0], tasks.basicPython.id.name))
                 );
             });
 
@@ -248,75 +259,90 @@ describe('NodeExecutionsTable', () => {
                 const firstTaskRetry = cloneDeep(taskExecutions.dynamicNode);
                 firstTaskRetry.id.retryAttempt = 1;
                 mockServer.insertTaskExecution(firstTaskRetry);
-                mockServer.insertTaskExecutionList(nodeExecutions.dynamicNode.id, [taskExecutions.dynamicNode, firstTaskRetry]);
-                mockServer.insertTaskExecutionChildList(firstTaskRetry.id, [nodeExecutions.dynamicChildPythonNode]);
+                mockServer.insertTaskExecutionList(
+                    nodeExecutions.dynamicNode.id,
+                    [taskExecutions.dynamicNode, firstTaskRetry]
+                );
+                mockServer.insertTaskExecutionChildList(firstTaskRetry.id, [
+                    nodeExecutions.dynamicChildPythonNode
+                ]);
                 // We returned two task execution attempts, each with children
                 const { container } = renderTable();
-                const nodeNameEl = await waitFor(() => getByText(container, nodeExecutions.dynamicNode.id.nodeId));
+                const nodeNameEl = await waitFor(() =>
+                    getByText(container, nodeExecutions.dynamicNode.id.nodeId)
+                );
                 const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
                 const childGroups = await expandParentNode(rowEl);
                 expect(childGroups).toHaveLength(2);
             });
         });
 
-        // describe('without isParentNode flag, using workflowNodeMetadata', () => {
-        //     let childExecution: Execution;
-        //     let childNodeExecutions: NodeExecution[];
-        //     beforeEach(() => {
-        //         childExecution = cloneDeep(executionContext.execution);
-        //         childExecution.id.name = 'childExecution';
-        //         dataCache.insertExecution(childExecution);
-        //         dataCache.insertWorkflowExecutionReference(
-        //             childExecution.id,
-        //             mockWorkflow.id
-        //         );
+        describe('without isParentNode flag, using workflowNodeMetadata', () => {
+            beforeEach(() => {
+                workflowExecution = cloneDeep(workflowExecutions.nestedDynamic);
+                executionContext = {
+                    execution: workflowExecution
+                };
+                // TODO: Create a workflow/task/WFE/NE/TE which launches an external
+                // worfklow. Set workflowNodeMetadata on the parent node execution,
+                // point it to the basic workflow
 
-        //         childNodeExecutions = cloneDeep(mockNodeExecutions);
-        //         childNodeExecutions.forEach(
-        //             ne => (ne.id.executionId = childExecution.id)
-        //         );
-        //         mockNodeExecutions[0].closure.workflowNodeMetadata = {
-        //             executionId: childExecution.id
-        //         };
-        //         mockGetExecution.mockImplementation(async id => {
-        //             if (isEqual(id, childExecution.id)) {
-        //                 return childExecution;
-        //             }
-        //             if (isEqual(id, mockExecution.id)) {
-        //                 return mockExecution;
-        //             }
+                // childExecution = cloneDeep(executionContext.execution);
+                // childExecution.id.name = 'childExecution';
+                // dataCache.insertExecution(childExecution);
+                // dataCache.insertWorkflowExecutionReference(
+                //     childExecution.id,
+                //     mockWorkflow.id
+                // );
 
-        //             throw new Error(
-        //                 `Unexpected call to getExecution with execution id: ${obj(
-        //                     id
-        //                 )}`
-        //             );
-        //         });
-        //         setExecutionChildren(
-        //             { id: childExecution.id },
-        //             childNodeExecutions
-        //         );
-        //     });
+                // childNodeExecutions = cloneDeep(mockNodeExecutions);
+                // childNodeExecutions.forEach(
+                //     ne => (ne.id.executionId = childExecution.id)
+                // );
+                // mockNodeExecutions[0].closure.workflowNodeMetadata = {
+                //     executionId: childExecution.id
+                // };
+                // mockGetExecution.mockImplementation(async id => {
+                //     if (isEqual(id, childExecution.id)) {
+                //         return childExecution;
+                //     }
+                //     if (isEqual(id, mockExecution.id)) {
+                //         return mockExecution;
+                //     }
 
-        //     it('correctly fetches children', async () => {
-        //         const { getByText } = await renderTable();
-        //         await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-        //         expect(mockListNodeExecutions).toHaveBeenCalledWith(
-        //             expect.objectContaining({ name: childExecution.id.name }),
-        //             expect.anything()
-        //         );
-        //     });
+                //     throw new Error(
+                //         `Unexpected call to getExecution with execution id: ${obj(
+                //             id
+                //         )}`
+                //     );
+                // });
+                // setExecutionChildren(
+                //     { id: childExecution.id },
+                //     childNodeExecutions
+                // );
+            });
 
-        //     it('correctly renders groups', async () => {
-        //         // We returned a single WF execution child, so there should only
-        //         // be one child group
-        //         const { container } = await renderTable();
-        //         const childGroups = await expandParentNode(container);
-        //         expect(childGroups).toHaveLength(1);
-        //     });
-        // });
+            // it('correctly fetches children', async () => {
+            //     const { getByText } = await renderTable();
+            //     await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
+            //     expect(mockListNodeExecutions).toHaveBeenCalledWith(
+            //         expect.objectContaining({ name: childExecution.id.name }),
+            //         expect.anything()
+            //     );
+            // });
+
+            // it('correctly renders groups', async () => {
+            //     // We returned a single WF execution child, so there should only
+            //     // be one child group
+            //     const { container } = await renderTable();
+            //     const childGroups = await expandParentNode(container);
+            //     expect(childGroups).toHaveLength(1);
+            // });
+        });
     });
 
+    // TODO: Set a filter in the context and configure mockServer to return a different list for it
+    // then check that the expected items were rendered.
     // it('requests child node executions using configuration from context', async () => {
     //     const { taskExecutions } = createMockTaskExecutionsListResponse(1);
     //     taskExecutions[0].isParent = true;
