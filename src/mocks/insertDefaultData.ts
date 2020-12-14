@@ -1,3 +1,5 @@
+import { dynamicExternalSubWorkflow } from './data/fixtures/dynamicExternalSubworkflow';
+import { insertFixture } from './data/insertFixture';
 import { nodeExecutionLists, nodeExecutions } from './data/nodeExecutions';
 import { projects } from './data/projects';
 import { taskExecutionChildLists, taskExecutionLists, taskExecutions } from './data/taskExecutions';
@@ -31,4 +33,6 @@ export function insertDefaultData(server: MockServer): void {
     );
 
     taskExecutionChildLists.forEach(([id, children]) => server.insertTaskExecutionChildList(id, children));
+
+    insertFixture(server, dynamicExternalSubWorkflow.generate());
 }

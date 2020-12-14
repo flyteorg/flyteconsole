@@ -1,37 +1,25 @@
 import { millisecondsToDuration } from 'common/utils';
 import { timeStampOffset } from 'mocks/utils';
 import {
+    Execution,
     NodeExecution,
-    NodeExecutionIdentifier,
+    NodeExecutionClosure,
+    NodeExecutionMetadata,
     WorkflowExecutionIdentifier
 } from 'models';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { defaultExecutionDuration, inputUriPrefix, nodeIds } from './constants';
+import {
+    defaultExecutionDuration,
+    emptyInputUri,
+    emptyOutputUri,
+    nodeIds
+} from './constants';
+import {
+    makeNodeExecutionInputUri,
+    makeNodeExecutionOutputUri,
+    nodeExecutionId
+} from './utils';
 import { workflowExecutionIds, workflowExecutions } from './workflowExecutions';
-
-function makeInputUri({
-    executionId: { project, domain, name },
-    nodeId
-}: NodeExecutionIdentifier) {
-    return `${inputUriPrefix}/${project}_${domain}_${name}_${nodeId}/inputs.pb`;
-}
-
-function makeOutputUri({
-    executionId: { project, domain, name },
-    nodeId
-}: NodeExecutionIdentifier) {
-    return `${inputUriPrefix}/${project}_${domain}_${name}_${nodeId}/outputs.pb`;
-}
-
-function nodeExecutionId(
-    executionId: WorkflowExecutionIdentifier,
-    nodeId: string
-): NodeExecutionIdentifier {
-    return {
-        nodeId,
-        executionId: { ...executionId }
-    };
-}
 
 const ids = {
     basic: {
@@ -39,11 +27,45 @@ const ids = {
         node2: nodeExecutionId(workflowExecutionIds.basic, 'node2')
     },
     dynamic: {
-        node1: nodeExecutionId(workflowExecutionIds.nestedDynamic, 'dynamicTaskNode'),
-        node2: nodeExecutionId(workflowExecutionIds.nestedDynamic, 'dynamicTaskPythonChildNode'),
-        node3: nodeExecutionId(workflowExecutionIds.nestedDynamic, 'pythonTaskNode')
+        node1: nodeExecutionId(
+            workflowExecutionIds.nestedDynamic,
+            'dynamicTaskNode'
+        ),
+        node2: nodeExecutionId(
+            workflowExecutionIds.nestedDynamic,
+            'dynamicTaskPythonChildNode'
+        ),
+        node3: nodeExecutionId(
+            workflowExecutionIds.nestedDynamic,
+            'pythonTaskNode'
+        )
     }
 };
+
+interface NodeExecutionOverrides {
+    closure?: Partial<NodeExecutionClosure>;
+    metadata?: Partial<NodeExecutionMetadata>;
+}
+
+export function nodeExecution(
+    parentExecution: Execution,
+    nodeId: string,
+    { closure, metadata }: NodeExecutionOverrides = {}
+): NodeExecution {
+    return {
+        id: nodeExecutionId(parentExecution.id, nodeId),
+        metadata: { ...metadata },
+        closure: {
+            createdAt: timeStampOffset(parentExecution.closure.createdAt, 0),
+            startedAt: timeStampOffset(parentExecution.closure.createdAt, 0),
+            outputUri: emptyOutputUri,
+            phase: NodeExecutionPhase.SUCCEEDED,
+            duration: millisecondsToDuration(defaultExecutionDuration),
+            ...closure
+        },
+        inputUri: emptyInputUri
+    };
+}
 
 const pythonNode: NodeExecution = {
     id: ids.basic.node1,
@@ -59,11 +81,11 @@ const pythonNode: NodeExecution = {
             workflowExecutions.basic.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(ids.basic.node1),
+        outputUri: makeNodeExecutionOutputUri(ids.basic.node1),
         phase: NodeExecutionPhase.SUCCEEDED,
         duration: millisecondsToDuration(defaultExecutionDuration)
     },
-    inputUri: makeInputUri(ids.basic.node1)
+    inputUri: makeNodeExecutionInputUri(ids.basic.node1)
 };
 
 const dynamicNode: NodeExecution = {
@@ -80,35 +102,13 @@ const dynamicNode: NodeExecution = {
             workflowExecutions.nestedDynamic.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(ids.dynamic.node1),
+        outputUri: makeNodeExecutionOutputUri(ids.dynamic.node1),
         phase: NodeExecutionPhase.SUCCEEDED,
         duration: millisecondsToDuration(defaultExecutionDuration)
     },
-    inputUri: makeInputUri(ids.dynamic.node1)
-};
-// TODO: Add this to nestedDynamic WF Execution and provide task exedcutions for it or remove it
-const dynamicSiblingPythonNode: NodeExecution = {
-    id: ids.dynamic.node3,
-    metadata: {
-        specNodeId: nodeIds.pythonTask
-    },
-    closure: {
-        createdAt: timeStampOffset(
-            workflowExecutions.nestedDynamic.closure.createdAt,
-            0
-        ),
-        startedAt: timeStampOffset(
-            workflowExecutions.nestedDynamic.closure.createdAt,
-            0
-        ),
-        outputUri: makeOutputUri(ids.dynamic.node3),
-        phase: NodeExecutionPhase.SUCCEEDED,
-        duration: millisecondsToDuration(defaultExecutionDuration)
-    },
-    inputUri: makeInputUri(ids.dynamic.node3)
+    inputUri: makeNodeExecutionInputUri(ids.dynamic.node1)
 };
 
-/** This is a node execution yielded from  */
 const dynamicChildPythonNode: NodeExecution = {
     id: ids.dynamic.node2,
     metadata: {
@@ -123,17 +123,16 @@ const dynamicChildPythonNode: NodeExecution = {
             workflowExecutions.nestedDynamic.closure.createdAt,
             300
         ),
-        outputUri: makeOutputUri(ids.dynamic.node2),
+        outputUri: makeNodeExecutionOutputUri(ids.dynamic.node2),
         phase: NodeExecutionPhase.SUCCEEDED,
         duration: millisecondsToDuration(defaultExecutionDuration - 3000)
     },
-    inputUri: makeInputUri(ids.dynamic.node2)
-}
+    inputUri: makeNodeExecutionInputUri(ids.dynamic.node2)
+};
 
 export const nodeExecutions = {
     dynamicNode,
     dynamicChildPythonNode,
-    dynamicSiblingPythonNode,
     pythonNode
 };
 
@@ -141,4 +140,7 @@ export const nodeExecutions = {
 export const nodeExecutionLists: [
     WorkflowExecutionIdentifier,
     NodeExecution[]
-][] = [[workflowExecutionIds.basic, [pythonNode]], [workflowExecutionIds.nestedDynamic, [dynamicNode]]];
+][] = [
+    [workflowExecutionIds.basic, [pythonNode]],
+    [workflowExecutionIds.nestedDynamic, [dynamicNode]]
+];

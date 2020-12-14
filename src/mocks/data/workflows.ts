@@ -1,6 +1,6 @@
 import { Core } from 'flyteidl';
 import { cloneDeep } from 'lodash';
-import { Binding, endNodeId, startNodeId, Task } from 'models';
+import { endNodeId, startNodeId } from 'models';
 import { Workflow } from 'models/Workflow/types';
 import {
     entityCreationDate,
@@ -11,29 +11,7 @@ import {
     variableNames
 } from './constants';
 import { tasks } from './tasks';
-
-function taskNodeIds(id: string, task: Task) {
-    return {
-        id,
-        taskNode: { referenceId: { ...task.id } }
-    };
-}
-
-function bindingFromNode(
-    inputName: string,
-    upstreamNodeId: string,
-    upstreamInputName: string
-): Binding {
-    return {
-        var: inputName,
-        binding: {
-            promise: {
-                nodeId: upstreamNodeId,
-                var: upstreamInputName
-            }
-        }
-    };
-}
+import { taskNodeIds, bindingFromNode } from './utils';
 
 const basicId = {
     resourceType: Core.ResourceType.WORKFLOW,
@@ -42,6 +20,8 @@ const basicId = {
     name: 'Basic',
     version: testVersions.v1
 };
+
+
 /** This workflow has a single python node which takes a string as input
  * and copies it to the output.
  */

@@ -5,63 +5,42 @@ import {
     NodeExecutionIdentifier,
     Task,
     TaskExecution,
-    TaskExecutionIdentifier,
-    TaskLog
+    TaskExecutionIdentifier
 } from 'models';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { defaultExecutionDuration, inputUriPrefix } from './constants';
+import { defaultExecutionDuration, emptyInputUri, emptyOutputUri } from './constants';
 import { nodeExecutions } from './nodeExecutions';
 import { tasks } from './tasks';
-
-function makeInputUri({
-    nodeExecutionId: {
-        executionId: { project, domain, name },
-        nodeId
-    },
-    retryAttempt
-}: TaskExecutionIdentifier) {
-    return `${inputUriPrefix}/${project}_${domain}_${name}_${nodeId}_${retryAttempt}/inputs.pb`;
-}
-
-function makeOutputUri({
-    nodeExecutionId: {
-        executionId: { project, domain, name },
-        nodeId
-    },
-    retryAttempt
-}: TaskExecutionIdentifier) {
-    return `${inputUriPrefix}/${project}_${domain}_${name}_${nodeId}_${retryAttempt}/outputs.pb`;
-}
-
-function sampleLogs(): TaskLog[] {
-    return [
-        { name: 'Kubernetes Logs', uri: 'http://localhost/k8stasklog' },
-        { name: 'User Logs', uri: 'http://localhost/containerlog' },
-        { name: 'AWS Batch Logs', uri: 'http://localhost/awsbatchlog' },
-        { name: 'Other Custom Logs', uri: 'http://localhost/customlog' }
-    ];
-}
-
-function taskExecutionId(
-    nodeExecution: NodeExecution,
-    task: Task,
-    retryAttempt = 0
-) {
-    return {
-        retryAttempt,
-        nodeExecutionId: { ...nodeExecution.id },
-        taskId: { ...task.id }
-    };
-}
+import {
+    makeTaskExecutionInputUri,
+    makeTaskExecutionOutputUri,
+    sampleLogs,
+    taskExecutionId
+} from './utils';
 
 const pythonNodeTaskExecutionId = taskExecutionId(
     nodeExecutions.pythonNode,
     tasks.basicPython
 );
 
+export function taskExecutionForNodeExecution(nodeExecution: NodeExecution, task: Task, retryAttempt = 0): TaskExecution {
+    return {id: taskExecutionId(nodeExecution, task, retryAttempt),
+    inputUri: emptyInputUri,
+    isParent: false,
+    closure: {
+        customInfo: {},
+        phase: TaskExecutionPhase.SUCCEEDED,
+        duration: millisecondsToDuration(defaultExecutionDuration),
+        createdAt: timeStampOffset(nodeExecution.closure.createdAt, 0),
+        startedAt: timeStampOffset(nodeExecution.closure.createdAt, 0),
+        outputUri: emptyOutputUri,
+        logs: sampleLogs()
+    }};
+}
+
 const pythonNode: TaskExecution = {
     id: { ...pythonNodeTaskExecutionId },
-    inputUri: makeInputUri(pythonNodeTaskExecutionId),
+    inputUri: makeTaskExecutionInputUri(pythonNodeTaskExecutionId),
     isParent: false,
     closure: {
         customInfo: {},
@@ -75,7 +54,7 @@ const pythonNode: TaskExecution = {
             nodeExecutions.pythonNode.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(pythonNodeTaskExecutionId),
+        outputUri: makeTaskExecutionOutputUri(pythonNodeTaskExecutionId),
         logs: sampleLogs()
     }
 };
@@ -86,7 +65,7 @@ const dynamicNodeTaskExecutionId = taskExecutionId(
 );
 const dynamicNode: TaskExecution = {
     id: { ...dynamicNodeTaskExecutionId },
-    inputUri: makeInputUri(dynamicNodeTaskExecutionId),
+    inputUri: makeTaskExecutionInputUri(dynamicNodeTaskExecutionId),
     isParent: true,
     closure: {
         customInfo: {},
@@ -100,7 +79,7 @@ const dynamicNode: TaskExecution = {
             nodeExecutions.dynamicNode.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(dynamicNodeTaskExecutionId),
+        outputUri: makeTaskExecutionOutputUri(dynamicNodeTaskExecutionId),
         logs: sampleLogs()
     }
 };
@@ -112,7 +91,7 @@ const dynamicChildPythonNodeTaskExecutionId = taskExecutionId(
 
 const dynamicChildPythonNode: TaskExecution = {
     id: { ...dynamicChildPythonNodeTaskExecutionId },
-    inputUri: makeInputUri(dynamicChildPythonNodeTaskExecutionId),
+    inputUri: makeTaskExecutionInputUri(dynamicChildPythonNodeTaskExecutionId),
     isParent: false,
     closure: {
         customInfo: {},
@@ -126,7 +105,9 @@ const dynamicChildPythonNode: TaskExecution = {
             nodeExecutions.dynamicChildPythonNode.closure.createdAt,
             0
         ),
-        outputUri: makeOutputUri(dynamicChildPythonNodeTaskExecutionId),
+        outputUri: makeTaskExecutionOutputUri(
+            dynamicChildPythonNodeTaskExecutionId
+        ),
         logs: sampleLogs()
     }
 };
@@ -144,7 +125,10 @@ export const taskExecutionLists: [
 ][] = [
     [nodeExecutions.pythonNode.id, [taskExecutions.pythonNode]],
     [nodeExecutions.dynamicNode.id, [taskExecutions.dynamicNode]],
-    [nodeExecutions.dynamicChildPythonNode.id, [taskExecutions.dynamicChildPythonNode]]
+    [
+        nodeExecutions.dynamicChildPythonNode.id,
+        [taskExecutions.dynamicChildPythonNode]
+    ]
 ];
 
 /** Legacy dynamic tasks use the isParent flag and return child NodeExecutions
@@ -153,4 +137,6 @@ export const taskExecutionLists: [
 export const taskExecutionChildLists: [
     TaskExecutionIdentifier,
     NodeExecution[]
-][] = [[taskExecutions.dynamicNode.id, [nodeExecutions.dynamicChildPythonNode]]];
+][] = [
+    [taskExecutions.dynamicNode.id, [nodeExecutions.dynamicChildPythonNode]]
+];

@@ -1,8 +1,15 @@
 import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
 import { Admin } from 'flyteidl';
-import { LiteralMap } from 'models/Common/types';
+import { LaunchPlan } from 'models';
+import { Identifier, LiteralMap } from 'models/Common/types';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
-import { Execution, ExecutionMetadata } from 'models/Execution/types';
+import {
+    Execution,
+    ExecutionClosure,
+    ExecutionMetadata,
+    ExecutionSpec,
+    WorkflowExecutionIdentifier
+} from 'models/Execution/types';
 import {
     defaultExecutionDuration,
     mockStartDate,
@@ -22,6 +29,42 @@ export function defaultWorkflowExecutionMetadata(): ExecutionMetadata {
 
 export function emptyLiteralMap(): LiteralMap {
     return { literals: {} };
+}
+
+export interface WorkflowExecutionOverrides {
+    spec?: Partial<ExecutionSpec>;
+    closure?: Partial<ExecutionClosure>;
+}
+export function workflowExecution(
+    id: WorkflowExecutionIdentifier,
+    workflowId: Identifier,
+    launchPlan: LaunchPlan,
+    { closure, spec }: WorkflowExecutionOverrides = {}
+): Execution {
+    const executionStart = dateToTimestamp(mockStartDate);
+    return {
+        id: {
+            ...id
+        },
+        spec: {
+            launchPlan: { ...launchPlan.id },
+            inputs: emptyLiteralMap(),
+            metadata: defaultWorkflowExecutionMetadata(),
+            notifications: {
+                notifications: []
+            },
+            ...spec
+        },
+        closure: {
+            computedInputs: emptyLiteralMap(),
+            createdAt: executionStart,
+            duration: millisecondsToDuration(defaultExecutionDuration),
+            phase: WorkflowExecutionPhase.SUCCEEDED,
+            startedAt: executionStart,
+            workflowId: { ...workflowId },
+            ...closure
+        }
+    };
 }
 
 // Note: Names here must be unique

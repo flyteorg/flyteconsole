@@ -14,7 +14,9 @@ export const entityCreationDate = timeStampOffset(
 // Workflow Execution duration in milliseconds
 export const defaultExecutionDuration = 1000 * 60 * 60 * 1.251;
 
-export const inputUriPrefix = 's3://flytedata';
+export const dataUriPrefix = 's3://flytedata';
+export const emptyInputUri = `${dataUriPrefix}/empty/inputs.pb`;
+export const emptyOutputUri = `${dataUriPrefix}/empty/outputs.pb`;
 
 export const testProject = 'flytetest';
 export const testDomain = 'development';

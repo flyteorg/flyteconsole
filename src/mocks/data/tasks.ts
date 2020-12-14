@@ -84,7 +84,32 @@ const dynamic = makeTask({
     }
 });
 
+const dynamicNoInputs = makeTask({
+    template: {
+        custom: {},
+        container: {},
+        metadata: {},
+        type: 'dynamic-task',
+        id: {
+            resourceType: ResourceType.TASK,
+            project: testProject,
+            domain: testDomain,
+            name: 'DynamicTaskNoInputs',
+            version: testVersions.v1
+        },
+        interface: {
+            inputs: {
+                variables: {}
+            },
+            outputs: {
+                variables: {}
+            }
+        }
+    }
+});
+
 export const tasks = {
     basicPython,
-    dynamic
+    dynamic,
+    dynamicNoInputs
 };
