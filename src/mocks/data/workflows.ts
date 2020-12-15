@@ -1,6 +1,7 @@
+import { DeepPartial } from 'common/types';
 import { Core } from 'flyteidl';
-import { cloneDeep } from 'lodash';
-import { endNodeId, startNodeId } from 'models';
+import { cloneDeep, merge } from 'lodash';
+import { endNodeId, Identifier, startNodeId } from 'models';
 import { Workflow } from 'models/Workflow/types';
 import {
     entityCreationDate,
@@ -13,22 +14,47 @@ import {
 import { tasks } from './tasks';
 import { taskNodeIds, bindingFromNode } from './utils';
 
-const basicId = {
+const baseId = {
     resourceType: Core.ResourceType.WORKFLOW,
     project: testProject,
     domain: testDomain,
-    name: 'Basic',
+    name: '_base',
     version: testVersions.v1
 };
+const baseWorkflowTemplate: Workflow = {
+    id: { ...baseId },
+    closure: {
+        createdAt: { ...entityCreationDate },
+        compiledWorkflow: {
+            primary: {
+                connections: {
+                    downstream: {},
+                    upstream: {}
+                },
+                template: {
+                    metadata: {},
+                    metadataDefaults: {},
+                    id: { ...baseId },
+                    interface: {},
+                    nodes: [{ id: startNodeId }, { id: endNodeId }],
+                    outputs: []
+                }
+            },
+            tasks: []
+        }
+    }
+};
 
+export function generateWorkflow(id: Partial<Identifier>, overrides: DeepPartial<Workflow>): Workflow {
+    const idMask = { id, closure: { compiledWorkflow: { primary: { template: { id }}}} };
+    return merge(cloneDeep(baseWorkflowTemplate), idMask, overrides);
+}
 
 /** This workflow has a single python node which takes a string as input
  * and copies it to the output.
  */
-const basic: Workflow = {
-    id: { ...basicId },
+const basic = generateWorkflow({ name: 'Basic'}, {
     closure: {
-        createdAt: { ...entityCreationDate },
         compiledWorkflow: {
             primary: {
                 connections: {
@@ -42,9 +68,6 @@ const basic: Workflow = {
                     }
                 },
                 template: {
-                    metadata: {},
-                    metadataDefaults: {},
-                    id: { ...basicId },
                     // This workflow has just one task, so the i/o will be those from
                     // the task
                     interface: cloneDeep(
@@ -52,8 +75,6 @@ const basic: Workflow = {
                             .interface
                     ),
                     nodes: [
-                        { id: startNodeId },
-                        { id: endNodeId },
                         {
                             ...taskNodeIds(
                                 nodeIds.pythonTask,
@@ -77,27 +98,17 @@ const basic: Workflow = {
                     ]
                 }
             },
-            tasks: [cloneDeep(tasks.basicPython.closure.compiledTask)]
+            tasks: [tasks.basicPython.closure.compiledTask]
         }
     }
-};
-
-const nestedDynamicId = {
-    resourceType: Core.ResourceType.WORKFLOW,
-    project: testProject,
-    domain: testDomain,
-    name: 'NestedDynamic',
-    version: testVersions.v1
-};
+});
 
 /** This workflow has two top-level nodes:
  * - A basic python task
  * - A dynamic task which will produce an additional python task at runtime.
  */
-const nestedDynamic: Workflow = {
-    id: { ...nestedDynamicId },
+const nestedDynamic = generateWorkflow({name: 'NestedDynamic'}, {
     closure: {
-        createdAt: { ...entityCreationDate },
         compiledWorkflow: {
             primary: {
                 connections: {
@@ -117,21 +128,13 @@ const nestedDynamic: Workflow = {
                     }
                 },
                 template: {
-                    metadata: {},
-                    metadataDefaults: {},
-                    id: { ...nestedDynamicId },
                     // This workflow uses the same i/o as its nested dynamic task
                     interface: cloneDeep(
                         tasks.dynamic.closure.compiledTask.template.interface
                     ),
                     nodes: [
-                        { id: startNodeId },
-                        { id: endNodeId },
                         {
-                            ...taskNodeIds(
-                                nodeIds.pythonTask,
-                                tasks.basicPython
-                            ),
+                            ...taskNodeIds(nodeIds.pythonTask, tasks.basicPython),
                             inputs: [
                                 bindingFromNode(
                                     variableNames.basicString,
@@ -141,7 +144,10 @@ const nestedDynamic: Workflow = {
                             ]
                         },
                         {
-                            ...taskNodeIds(nodeIds.dynamicTask, tasks.dynamic),
+                            ...taskNodeIds(
+                                nodeIds.dynamicTask,
+                                tasks.dynamic
+                            ),
                             inputs: [
                                 bindingFromNode(
                                     variableNames.basicString,
@@ -166,6 +172,9 @@ const nestedDynamic: Workflow = {
             ]
         }
     }
-};
+})
 
-export const workflows = { basic, nestedDynamic };
+export const workflows = {
+    basic,
+    nestedDynamic
+};

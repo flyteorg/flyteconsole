@@ -12,3 +12,7 @@ export interface ResourceDefinition {
     // TODO: This should probably be an enum
     type: string;
 }
+
+export type DeepPartial<T> = {
+    [P in keyof T]?: DeepPartial<T[P]>;
+};

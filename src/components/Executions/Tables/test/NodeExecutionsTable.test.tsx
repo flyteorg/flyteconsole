@@ -74,6 +74,9 @@ import { tasks } from 'mocks/data/tasks';
 import { mockServer } from 'mocks/server';
 import { taskExecutions } from 'mocks/data/taskExecutions';
 import { nodeExecutions } from 'mocks/data/nodeExecutions';
+import { dynamicExternalSubWorkflow } from 'mocks/data/fixtures/dynamicExternalSubworkflow';
+import { MockDataFixture } from 'mocks/data/fixtures/types';
+import { insertFixture } from 'mocks/data/insertFixture';
 
 describe('NodeExecutionsTable', () => {
     let workflowExecution: Execution;
@@ -182,7 +185,9 @@ describe('NodeExecutionsTable', () => {
                     childNode('_child1_1', '1')
                 ];
 
-                mockServer.insertNodeExecutionList(workflowExecution.id, [parentNodeExecution]);
+                mockServer.insertNodeExecutionList(workflowExecution.id, [
+                    parentNodeExecution
+                ]);
                 mockServer.insertTaskExecution(parentTaskExecution);
                 mockServer.insertNodeExecution(parentNodeExecution);
                 mockServer.insertTaskExecutionList(parentNodeExecution.id, [
@@ -190,7 +195,9 @@ describe('NodeExecutionsTable', () => {
                 ]);
                 childNodeExecutions.forEach(ne => {
                     mockServer.insertNodeExecution(ne);
-                    mockServer.insertTaskExecutionList(ne.id, [taskExecutions.dynamicChildPythonNode]);
+                    mockServer.insertTaskExecutionList(ne.id, [
+                        taskExecutions.dynamicChildPythonNode
+                    ]);
                 });
                 mockServer.insertNodeExecutionList(
                     parentNodeExecution.id.executionId,
@@ -213,7 +220,12 @@ describe('NodeExecutionsTable', () => {
                 );
                 const childContainerList = await expandParentNode(dynamicRowEl);
                 await waitFor(() =>
-                    expect(getByText(childContainerList[0], tasks.basicPython.id.name))
+                    expect(
+                        getByText(
+                            childContainerList[0],
+                            tasks.basicPython.id.name
+                        )
+                    )
                 );
             });
 
@@ -251,7 +263,12 @@ describe('NodeExecutionsTable', () => {
                 );
                 const childContainerList = await expandParentNode(dynamicRowEl);
                 await waitFor(() =>
-                    expect(getByText(childContainerList[0], tasks.basicPython.id.name))
+                    expect(
+                        getByText(
+                            childContainerList[0],
+                            tasks.basicPython.id.name
+                        )
+                    )
                 );
             });
 
@@ -278,66 +295,53 @@ describe('NodeExecutionsTable', () => {
         });
 
         describe('without isParentNode flag, using workflowNodeMetadata', () => {
+            let fixture: ReturnType<typeof dynamicExternalSubWorkflow.generate>;
             beforeEach(() => {
-                workflowExecution = cloneDeep(workflowExecutions.nestedDynamic);
+                fixture = dynamicExternalSubWorkflow.generate();
+                insertFixture(mockServer, fixture);
+                workflowExecution = fixture.workflowExecutions.top.data;
                 executionContext = {
                     execution: workflowExecution
                 };
-                // TODO: Create a workflow/task/WFE/NE/TE which launches an external
-                // worfklow. Set workflowNodeMetadata on the parent node execution,
-                // point it to the basic workflow
-
-                // childExecution = cloneDeep(executionContext.execution);
-                // childExecution.id.name = 'childExecution';
-                // dataCache.insertExecution(childExecution);
-                // dataCache.insertWorkflowExecutionReference(
-                //     childExecution.id,
-                //     mockWorkflow.id
-                // );
-
-                // childNodeExecutions = cloneDeep(mockNodeExecutions);
-                // childNodeExecutions.forEach(
-                //     ne => (ne.id.executionId = childExecution.id)
-                // );
-                // mockNodeExecutions[0].closure.workflowNodeMetadata = {
-                //     executionId: childExecution.id
-                // };
-                // mockGetExecution.mockImplementation(async id => {
-                //     if (isEqual(id, childExecution.id)) {
-                //         return childExecution;
-                //     }
-                //     if (isEqual(id, mockExecution.id)) {
-                //         return mockExecution;
-                //     }
-
-                //     throw new Error(
-                //         `Unexpected call to getExecution with execution id: ${obj(
-                //             id
-                //         )}`
-                //     );
-                // });
-                // setExecutionChildren(
-                //     { id: childExecution.id },
-                //     childNodeExecutions
-                // );
             });
 
-            // it('correctly fetches children', async () => {
-            //     const { getByText } = await renderTable();
-            //     await waitFor(() => getByText(mockNodeExecutions[0].id.nodeId));
-            //     expect(mockListNodeExecutions).toHaveBeenCalledWith(
-            //         expect.objectContaining({ name: childExecution.id.name }),
-            //         expect.anything()
-            //     );
-            // });
+            it('correctly renders children', async () => {
+                const { container } = renderTable();
+                const dynamicTaskNameEl = await waitFor(() =>
+                    getByText(
+                        container,
+                        fixture.tasks.generateSubWorkflow.id.name
+                    )
+                );
+                const dynamicRowEl = findNearestAncestorByRole(
+                    dynamicTaskNameEl,
+                    'listitem'
+                );
+                const childContainerList = await expandParentNode(dynamicRowEl);
+                await waitFor(() =>
+                    expect(
+                        getByText(
+                            childContainerList[0],
+                            fixture.workflows.sub.id.name
+                        )
+                    )
+                );
+            });
 
-            // it('correctly renders groups', async () => {
-            //     // We returned a single WF execution child, so there should only
-            //     // be one child group
-            //     const { container } = await renderTable();
-            //     const childGroups = await expandParentNode(container);
-            //     expect(childGroups).toHaveLength(1);
-            // });
+            it('correctly renders groups', async () => {
+                const parentNodeExecution =
+                    fixture.workflowExecutions.top.nodeExecutions
+                        .dynamicWorkflowGenerator.data;
+                // We returned a single WF execution child, so there should only
+                // be one child group
+                const { container } = renderTable();
+                const nodeNameEl = await waitFor(() =>
+                    getByText(container, parentNodeExecution.id.nodeId)
+                );
+                const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
+                const childGroups = await expandParentNode(rowEl);
+                expect(childGroups).toHaveLength(1);
+            });
         });
     });
 

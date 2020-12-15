@@ -1,89 +1,64 @@
 import { cloneDeep } from 'lodash';
-import {
-    endNodeId,
-    Identifier,
-    ResourceType,
-    startNodeId,
-    TaskExecution,
-    Workflow
-} from 'models';
-import {
-    entityCreationDate,
-    testDomain,
-    testProject,
-    testVersions
-} from '../constants';
-import { launchPlans } from '../launchPlans';
-import { nodeExecution, nodeExecutions } from '../nodeExecutions';
-import {
-    taskExecutionForNodeExecution,
-    taskExecutions
-} from '../taskExecutions';
-import { tasks } from '../tasks';
+import { endNodeId, startNodeId, TaskExecution } from 'models';
+import { testDomain, testProject } from '../constants';
+import { nodeExecution } from '../nodeExecutions';
+import { taskExecutionForNodeExecution } from '../taskExecutions';
+import { generateTask } from '../tasks';
 import { makeDefaultLaunchPlan, taskNodeIds } from '../utils';
 import { workflowExecution } from '../workflowExecutions';
-import { workflows } from '../workflows';
-import { MockDataFixture } from './types';
+import { generateWorkflow } from '../workflows';
 
-const topWorkflowId: Identifier = {
-    resourceType: ResourceType.WORKFLOW,
-    project: testProject,
-    domain: testDomain,
-    name: 'ExternalSubWorkflow',
-    version: testVersions.v1
-};
-
+const topWorkflowName = 'LaunchExternalSubWorkflow';
 const nodeIds = {
-    subWorkflow: 'subWorkflowNode'
+    subWorkflow: 'subWorkflowNode',
+    python: 'pythonNode'
 };
 
-// TODO: utility function to generate all of the default stuff and allow overrides for connections, nodes, tasks
-const topWorkflow: Workflow = {
-    id: { ...topWorkflowId },
-    closure: {
-        createdAt: { ...entityCreationDate },
-        compiledWorkflow: {
-            primary: {
-                connections: {
-                    downstream: {
-                        [startNodeId]: { ids: [nodeIds.subWorkflow] },
-                        [nodeIds.subWorkflow]: { ids: [endNodeId] }
+const subWorkflowTaskName = `${topWorkflowName}.LaunchSubworkflowTask`;
+const launchSubWorkflowTask = generateTask(
+    { name: subWorkflowTaskName },
+    { template: { type: 'dynamic-task' } }
+);
+const topWorkflow = generateWorkflow(
+    { name: topWorkflowName },
+    {
+        closure: {
+            compiledWorkflow: {
+                primary: {
+                    connections: {
+                        downstream: {
+                            [startNodeId]: { ids: [nodeIds.subWorkflow] },
+                            [nodeIds.subWorkflow]: { ids: [endNodeId] }
+                        },
+                        upstream: {
+                            [nodeIds.subWorkflow]: { ids: [startNodeId] },
+                            [endNodeId]: { ids: [nodeIds.subWorkflow] }
+                        }
                     },
-                    upstream: {
-                        [nodeIds.subWorkflow]: { ids: [startNodeId] },
-                        [endNodeId]: { ids: [nodeIds.subWorkflow] }
+                    template: {
+                        nodes: [
+                            {
+                                ...taskNodeIds(
+                                    nodeIds.subWorkflow,
+                                    launchSubWorkflowTask
+                                ),
+                                inputs: []
+                            }
+                        ]
                     }
                 },
-                template: {
-                    metadata: {},
-                    metadataDefaults: {},
-                    id: { ...topWorkflowId },
-                    interface: {},
-                    nodes: [
-                        { id: startNodeId },
-                        { id: endNodeId },
-                        {
-                            ...taskNodeIds(
-                                nodeIds.subWorkflow,
-                                tasks.dynamicNoInputs
-                            ),
-                            inputs: []
-                        }
-                    ],
-                    outputs: []
-                }
-            },
-            tasks: [cloneDeep(tasks.dynamicNoInputs.closure.compiledTask)]
+                tasks: [cloneDeep(launchSubWorkflowTask.closure.compiledTask)]
+            }
         }
     }
-};
-const topWorkflowLaunchPlan = makeDefaultLaunchPlan(topWorkflow);
+);
 
+const topWorkflowLaunchPlan = makeDefaultLaunchPlan(topWorkflow);
 const topExecution = workflowExecution(
     {
         project: testProject,
         domain: testDomain,
-        name: `${topWorkflowId.name}Execution`
+        name: `${topWorkflowName}Execution`
     },
     topWorkflow.id,
     topWorkflowLaunchPlan
@@ -96,23 +71,72 @@ const topNodeExecution = nodeExecution(topExecution, 'dynamicWorkflowChild', {
 });
 
 const topTaskExecution: TaskExecution = {
-    ...taskExecutionForNodeExecution(topNodeExecution, tasks.dynamicNoInputs),
+    ...taskExecutionForNodeExecution(topNodeExecution, launchSubWorkflowTask),
     isParent: true
 };
+
+const subWorkflowPythonTask = generateTask(
+    { name: `${topWorkflowName}.PythonTask` },
+    { template: { type: 'python-task' } }
+);
+
+const subWorkflowName = `${topWorkflowName}.SubWorkflow`;
+const subWorkflow = generateWorkflow(
+    { name: subWorkflowName },
+    {
+        closure: {
+            compiledWorkflow: {
+                primary: {
+                    connections: {
+                        downstream: {
+                            [startNodeId]: { ids: [nodeIds.python] },
+                            [nodeIds.python]: { ids: [endNodeId] }
+                        },
+                        upstream: {
+                            [nodeIds.python]: { ids: [startNodeId] },
+                            [endNodeId]: { ids: [nodeIds.python] }
+                        }
+                    },
+                    template: {
+                        nodes: [
+                            {
+                                ...taskNodeIds(
+                                    nodeIds.python,
+                                    subWorkflowPythonTask
+                                ),
+                                inputs: []
+                            }
+                        ]
+                    }
+                },
+                tasks: [subWorkflowPythonTask.closure.compiledTask]
+            }
+        }
+    }
+);
+const subWorkflowLaunchPlan = makeDefaultLaunchPlan(subWorkflow);
 
 const subWorkflowExecution = workflowExecution(
     {
         project: testProject,
         domain: testDomain,
-        name: `${workflows.basic.id}NestedExecution`
+        name: `${subWorkflowName}Execution`
     },
-    workflows.basic.id,
-    launchPlans.basic
+    subWorkflow.id,
+    subWorkflowLaunchPlan
 );
+const pythonNodeExecution = nodeExecution(subWorkflowExecution, 'pythonNode', {
+    metadata: {
+        specNodeId: nodeIds.python
+    }
+});
+const pythonTaskExecution: TaskExecution = {
+    ...taskExecutionForNodeExecution(pythonNodeExecution, subWorkflowPythonTask)
+};
 
-const subWorkflowNodeExecution = nodeExecution(
+const launchSubWorkflowNodeExecution = nodeExecution(
     topExecution,
-    'subWorkflowNode',
+    'launchSubWorkflow',
     {
         closure: {
             workflowNodeMetadata: {
@@ -128,44 +152,53 @@ const subWorkflowNodeExecution = nodeExecution(
  * our basic python workflow.
  */
 export const dynamicExternalSubWorkflow = {
-    generate(): MockDataFixture {
+    generate() {
         return {
-            launchPlans: [cloneDeep(topWorkflowLaunchPlan)],
-            tasks: [],
-            workflows: [cloneDeep(topWorkflow)],
-            workflowExecutions: [
-                {
+            launchPlans: {
+                top: cloneDeep(topWorkflowLaunchPlan),
+                subWorkflow: cloneDeep(subWorkflowLaunchPlan)
+            },
+            tasks: {
+                generateSubWorkflow: cloneDeep(launchSubWorkflowTask),
+                pythonTask: cloneDeep(subWorkflowPythonTask)
+            },
+            workflows: {
+                top: cloneDeep(topWorkflow),
+                sub: cloneDeep(subWorkflow)
+            },
+            workflowExecutions: {
+                top: {
                     data: cloneDeep(topExecution),
-                    nodeExecutions: [
-                        {
+                    nodeExecutions: {
+                        dynamicWorkflowGenerator: {
                             data: cloneDeep(topNodeExecution),
-                            taskExecutions: [
-                                {
+                            taskExecutions: {
+                                firstAttempt: {
                                     data: cloneDeep(topTaskExecution),
-                                    nodeExecutions: [
-                                        {
+                                    nodeExecutions: {
+                                        launchSubWorkflow: {
                                             data: cloneDeep(
-                                                subWorkflowNodeExecution
+                                                launchSubWorkflowNodeExecution
                                             )
                                         }
-                                    ]
+                                    }
                                 }
-                            ]
+                            }
                         }
-                    ]
+                    }
                 },
-                {
-                    data: subWorkflowExecution,
-                    nodeExecutions: [
-                        {
-                            data: nodeExecutions.pythonNode,
-                            taskExecutions: [
-                                { data: taskExecutions.pythonNode }
-                            ]
+                sub: {
+                    data: cloneDeep(subWorkflowExecution),
+                    nodeExecutions: {
+                        pythonNode: {
+                            data: cloneDeep(pythonNodeExecution),
+                            taskExecutions: {
+                                firstAttempt: { data: pythonTaskExecution }
+                            }
                         }
-                    ]
+                    }
                 }
-            ]
+            }
         };
     }
 };

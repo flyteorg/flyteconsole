@@ -9,13 +9,14 @@ import {
 
 function insertTaskExecutionData(
     server: MockServer,
-    { data, nodeExecutions }: MockTaskExecutionData
+    mock: MockTaskExecutionData
 ): void {
-    server.insertTaskExecution(data);
-    if (nodeExecutions) {
+    server.insertTaskExecution(mock.data);
+    if (mock.nodeExecutions) {
+        const nodeExecutions = Object.values(mock.nodeExecutions);
         nodeExecutions.forEach(ne => insertNodeExecutionData(server, ne));
         server.insertTaskExecutionChildList(
-            data.id,
+            mock.data.id,
             nodeExecutions.map(({ data }) => data)
         );
     }
@@ -23,35 +24,38 @@ function insertTaskExecutionData(
 
 function insertNodeExecutionData(
     server: MockServer,
-    { data, taskExecutions, nodeExecutions }: MockNodeExecutionData
+    mock: MockNodeExecutionData
 ): void {
-    server.insertNodeExecution(data);
-    if (taskExecutions) {
+    server.insertNodeExecution(mock.data);
+    if (mock.taskExecutions) {
+        const taskExecutions = Object.values(mock.taskExecutions);
         taskExecutions.forEach(te => insertTaskExecutionData(server, te));
         server.insertTaskExecutionList(
-            data.id,
+            mock.data.id,
             taskExecutions.map(({ data }) => data)
         );
     }
 
-    if (nodeExecutions) {
+    if (mock.nodeExecutions) {
+        const nodeExecutions = Object.values(mock.nodeExecutions);
         nodeExecutions.forEach(ne => insertNodeExecutionData(server, ne));
         server.insertNodeExecutionList(
-            data.id.executionId,
+            mock.data.id.executionId,
             nodeExecutions.map(({ data }) => data),
-            { [nodeExecutionQueryParams.parentNodeId]: data.id.nodeId }
+            { [nodeExecutionQueryParams.parentNodeId]: mock.data.id.nodeId }
         );
     }
 }
 
 function insertWorkflowExecutionData(
     server: MockServer,
-    { data, nodeExecutions }: MockWorkflowExecutionData
+    mock: MockWorkflowExecutionData
 ): void {
-    server.insertWorkflowExecution(data);
+    server.insertWorkflowExecution(mock.data);
+    const nodeExecutions = Object.values(mock.nodeExecutions);
     nodeExecutions.forEach(ne => insertNodeExecutionData(server, ne));
     server.insertNodeExecutionList(
-        data.id,
+        mock.data.id,
         nodeExecutions.map(({ data }) => data)
     );
 }
@@ -60,9 +64,15 @@ export function insertFixture(
     server: MockServer,
     { launchPlans, tasks, workflowExecutions, workflows }: MockDataFixture
 ): void {
-    tasks?.forEach(server.insertTask);
-    workflows?.forEach(server.insertWorkflow);
-    workflowExecutions?.forEach(execution =>
-        insertWorkflowExecutionData(server, execution)
-    );
+    if (tasks) {
+        Object.values(tasks).forEach(server.insertTask);
+    }
+    if (workflows) {
+        Object.values(workflows).forEach(server.insertWorkflow);
+    }
+    if (workflowExecutions) {
+        Object.values(workflowExecutions).forEach(execution =>
+            insertWorkflowExecutionData(server, execution)
+        );
+    }
 }

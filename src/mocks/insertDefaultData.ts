@@ -33,6 +33,4 @@ export function insertDefaultData(server: MockServer): void {
     );
 
     taskExecutionChildLists.forEach(([id, children]) => server.insertTaskExecutionChildList(id, children));
-
-    insertFixture(server, dynamicExternalSubWorkflow.generate());
 }

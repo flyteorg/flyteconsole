@@ -9,23 +9,23 @@ import {
 
 export interface MockTaskExecutionData {
     data: TaskExecution;
-    nodeExecutions?: MockNodeExecutionData[];
+    nodeExecutions?: Record<string, MockNodeExecutionData>;
 }
 
 export interface MockNodeExecutionData {
     data: NodeExecution;
-    nodeExecutions?: MockNodeExecutionData[];
-    taskExecutions?: MockTaskExecutionData[];
+    nodeExecutions?: Record<string, MockNodeExecutionData>;
+    taskExecutions?: Record<string, MockTaskExecutionData>;
 }
 
 export interface MockWorkflowExecutionData {
     data: Execution;
-    nodeExecutions: MockNodeExecutionData[];
+    nodeExecutions: Record<string, MockNodeExecutionData>;
 }
 
 export interface MockDataFixture {
-    launchPlans?: LaunchPlan[];
-    tasks?: Task[];
-    workflows?: Workflow[];
-    workflowExecutions?: MockWorkflowExecutionData[];
+    launchPlans?: Record<string, LaunchPlan>;
+    tasks?: Record<string, Task>;
+    workflows?: Record<string, Workflow>;
+    workflowExecutions?: Record<string, MockWorkflowExecutionData>;
 }
