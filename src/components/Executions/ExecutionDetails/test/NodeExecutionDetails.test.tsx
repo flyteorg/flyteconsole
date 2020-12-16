@@ -4,9 +4,8 @@ import {
     viewSourceExecutionString
 } from 'components/Executions/constants';
 import { Core } from 'flyteidl';
-import { cloneDeep } from 'lodash';
-import { nodeExecutions } from 'mocks/data/nodeExecutions';
-import { tasks } from 'mocks/data/tasks';
+import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
+import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
 import { NodeExecution, TaskNodeMetadata } from 'models';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
@@ -19,11 +18,14 @@ import { createTestQueryClient } from 'test/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 
 describe('NodeExecutionDetails', () => {
+    let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
     let execution: NodeExecution;
     let queryClient: QueryClient;
 
     beforeEach(() => {
-        execution = cloneDeep(nodeExecutions.pythonNode);
+        fixture = basicPythonWorkflow.generate();
+        execution = fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
+        insertFixture(mockServer, fixture);
         queryClient = createTestQueryClient();
     });
 
@@ -39,7 +41,7 @@ describe('NodeExecutionDetails', () => {
         );
 
     it('renders name for task nodes', async () => {
-        const { name } = tasks.basicPython.id;
+        const { name } = fixture.tasks.python.id;
         const { getByText } = renderComponent();
         await waitFor(() => expect(getByText(name)));
     });
