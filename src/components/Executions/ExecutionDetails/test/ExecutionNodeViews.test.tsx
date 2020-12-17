@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
-import { cloneDeep } from 'lodash';
-import { workflowExecutions } from 'mocks/data/workflowExecutions';
+import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
+import { insertFixture } from 'mocks/data/insertFixture';
+import { mockServer } from 'mocks/server';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -16,10 +17,13 @@ jest.mock('../ExecutionWorkflowGraph.tsx', () => ({
 describe('ExecutionNodeViews', () => {
     let queryClient: QueryClient;
     let execution: Execution;
+    let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
 
     beforeEach(() => {
+        fixture = basicPythonWorkflow.generate();
+        insertFixture(mockServer, fixture);
         queryClient = createTestQueryClient();
-        execution = cloneDeep(workflowExecutions.basic);
+        execution = fixture.workflowExecutions.top.data;
     });
 
     const renderViews = () =>

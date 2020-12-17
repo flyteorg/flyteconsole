@@ -93,7 +93,6 @@ const NodeExecutionLinkContent: React.FC<{
 }> = ({ execution }) => {
     const commonStyles = useCommonStyles();
     const styles = useStyles();
-    useStyles();
     const { workflowNodeMetadata } = execution.closure;
     if (!workflowNodeMetadata) {
         return null;

@@ -24,7 +24,8 @@ describe('NodeExecutionDetails', () => {
 
     beforeEach(() => {
         fixture = basicPythonWorkflow.generate();
-        execution = fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
+        execution =
+            fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
         insertFixture(mockServer, fixture);
         queryClient = createTestQueryClient();
     });

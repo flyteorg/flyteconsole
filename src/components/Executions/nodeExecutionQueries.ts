@@ -70,17 +70,6 @@ export function fetchNodeExecutionList(
     return queryClient.fetchQuery(makeNodeExecutionListQuery(id, config));
 }
 
-export function useNodeExecutionListQuery(
-    id: WorkflowExecutionIdentifier,
-    config: RequestConfig
-) {
-    return useConditionalQuery<NodeExecution[]>(
-        makeNodeExecutionListQuery(id, config),
-        // todo: Refresh node executions on interval while parent is non-terminal
-        () => true
-    );
-}
-
 export function makeTaskExecutionChildListQuery(
     id: TaskExecutionIdentifier,
     config?: RequestConfig
