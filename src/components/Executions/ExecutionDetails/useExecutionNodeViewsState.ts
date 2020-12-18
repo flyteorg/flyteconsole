@@ -8,6 +8,7 @@ import {
     NodeExecution,
     SortDirection
 } from 'models';
+import { useQueryClient } from 'react-query';
 import { executionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionListQuery } from '../nodeExecutionQueries';
 import { executionIsTerminal, nodeExecutionIsTerminal } from '../utils';
@@ -33,6 +34,7 @@ export function useExecutionNodeViewsState(
     const nodeExecutionsQuery = useConditionalQuery(
         {
             ...makeNodeExecutionListQuery(
+                useQueryClient(),
                 execution.id,
                 nodeExecutionsRequestConfig
             ),

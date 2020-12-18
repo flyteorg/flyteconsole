@@ -8,7 +8,6 @@ import {
     waitFor
 } from '@testing-library/react';
 import { cacheStatusMessages } from 'components';
-import { WaitForQuery } from 'components/common/WaitForQuery';
 import {
     ExecutionContext,
     ExecutionContextData,
@@ -38,12 +37,9 @@ import {
 } from 'models';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
-import {
-    createTestQueryClient,
-    findNearestAncestorByRole
-} from 'test/utils';
+import { createTestQueryClient, findNearestAncestorByRole } from 'test/utils';
 import { titleStrings } from '../constants';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 
@@ -58,29 +54,45 @@ describe('NodeExecutionsTable', () => {
         queryClient = createTestQueryClient();
     });
 
-    const renderContent = (nodeExecutions: NodeExecution[]) => (
-        <NodeExecutionsTable nodeExecutions={nodeExecutions} />
-    );
-
     const shouldUpdateFn = (nodeExecutions: NodeExecution[]) =>
         some(nodeExecutions, ne => !nodeExecutionIsTerminal(ne));
 
-    const TestTable = () => (
-        <WaitForQuery
-            query={useConditionalQuery(
-                {
-                    ...makeNodeExecutionListQuery(
-                        workflowExecution.id,
-                        requestConfig
-                    ),
-                    refetchInterval: 1
-                },
-                shouldUpdateFn
-            )}
-        >
-            {renderContent}
-        </WaitForQuery>
-    );
+    const selectNode = async (container: HTMLElement, nodeId: string) => {
+        const nodeNameAnchor = await waitFor(() =>
+            getByText(container, nodeId)
+        );
+        fireEvent.click(nodeNameAnchor);
+        // Wait for Details Panel to render and then for the nodeId header
+        const detailsPanel = await waitFor(() =>
+            screen.getByTestId('details-panel')
+        );
+        await waitFor(() => getByText(detailsPanel, nodeId));
+        return detailsPanel;
+    };
+
+    const expandParentNode = async (rowContainer: HTMLElement) => {
+        const expander = await waitFor(() =>
+            getByTitle(rowContainer, titleStrings.expandRow)
+        );
+        fireEvent.click(expander);
+        return await waitFor(() => getAllByRole(rowContainer, 'list'));
+    };
+
+    const TestTable = () => {
+        const query = useConditionalQuery(
+            {
+                ...makeNodeExecutionListQuery(
+                    useQueryClient(),
+                    workflowExecution.id,
+                    requestConfig
+                ),
+                // During tests, we only want to wait for the next tick to refresh
+                refetchInterval: 1
+            },
+            shouldUpdateFn
+        );
+        return query.data ? <NodeExecutionsTable nodeExecutions={query.data} /> : null;
+    };
 
     const renderTable = () =>
         render(
@@ -210,55 +222,9 @@ describe('NodeExecutionsTable', () => {
                 })
             );
         });
-
-        describe('when rendering the DetailsPanel', () => {
-            let nodeExecution: NodeExecution;
-            beforeEach(() => {
-                nodeExecution =
-                    fixture.workflowExecutions.top.nodeExecutions.pythonNode
-                        .data;
-            });
-
-            const selectFirstNode = async (container: HTMLElement) => {
-                const { nodeId } = nodeExecution.id;
-                const nodeNameAnchor = await waitFor(() =>
-                    getByText(container, nodeId)
-                );
-                fireEvent.click(nodeNameAnchor);
-                // Wait for Details Panel to render and then for the nodeId header
-                const detailsPanel = await waitFor(() =>
-                    screen.getByTestId('details-panel')
-                );
-                await waitFor(() => getByText(detailsPanel, nodeId));
-                return detailsPanel;
-            };
-
-            it('should render updated state if selected nodeExecution object changes', async () => {
-                nodeExecution.closure.phase = NodeExecutionPhase.RUNNING;
-                updateNodeExecutions([nodeExecution]);
-                // Render table, click first node
-                const { container } = renderTable();
-                const detailsPanel = await selectFirstNode(container);
-                expect(getByText(detailsPanel, 'Running')).toBeInTheDocument();
-
-                const updatedExecution = cloneDeep(nodeExecution);
-                updatedExecution.closure.phase = NodeExecutionPhase.FAILED;
-                updateNodeExecutions([updatedExecution]);
-
-                await waitFor(() => expect(getByText(detailsPanel, 'Failed')));
-            });
-        });
     });
 
     describe('for nodes with children', () => {
-        const expandParentNode = async (rowContainer: HTMLElement) => {
-            const expander = await waitFor(() =>
-                getByTitle(rowContainer, titleStrings.expandRow)
-            );
-            fireEvent.click(expander);
-            return await waitFor(() => getAllByRole(rowContainer, 'list'));
-        };
-
         describe('with isParentNode flag', () => {
             let fixture: ReturnType<typeof dynamicPythonNodeExecutionWorkflow.generate>;
             beforeEach(() => {
@@ -402,49 +368,6 @@ describe('NodeExecutionsTable', () => {
                 expect(childGroups).toHaveLength(1);
             });
         });
-
-        // describe('when rendering the DetailsPanel', () => {
-        //         let parentNodeExecution: NodeExecution;
-        //         let childNodeExecutions: NodeExecution[];
-        //         beforeEach(() => {
-        //             parentNodeExecution = mockNodeExecutions[0];
-        //             const id = parentNodeExecution.id;
-        //             const { nodeId } = id;
-        //             childNodeExecutions = [
-        //                 {
-        //                     ...parentNodeExecution,
-        //                     id: { ...id, nodeId: `${nodeId}-child1` },
-        //                     metadata: { retryGroup: '0', specNodeId: nodeId }
-        //                 }
-        //             ];
-        //             mockNodeExecutions[0].metadata = { isParentNode: true };
-        //             setExecutionChildren(
-        //                 {
-        //                     id: mockExecution.id,
-        //                     parentNodeId: parentNodeExecution.id.nodeId
-        //                 },
-        //                 childNodeExecutions
-        //             );
-        //         });
-
-        //         it('should correctly render details for nested executions', async () => {
-        //             const { container } = await renderTable();
-        //             const expander = await waitFor(() =>
-        //                 getByTitle(container, titleStrings.expandRow)
-        //             );
-        //             fireEvent.click(expander);
-        //             const { nodeId } = childNodeExecutions[0].id;
-        //             const nodeNameAnchor = await waitFor(() =>
-        //                 getByText(container, nodeId)
-        //             );
-        //             fireEvent.click(nodeNameAnchor);
-        //             // Wait for Details Panel to render and then for the nodeId header
-        //             const detailsPanel = await waitFor(() =>
-        //                 screen.getByTestId('details-panel')
-        //             );
-        //             await waitFor(() => getByText(detailsPanel, nodeId));
-        //         });
-        //     });
     });
 
     describe('with a request filter', () => {
@@ -488,6 +411,80 @@ describe('NodeExecutionsTable', () => {
             expect(
                 queryByText(nodeExecutions.pythonNode.data.id.nodeId)
             ).toBeNull();
+        });
+    });
+
+    describe('when rendering the DetailsPanel', () => {
+        let nodeExecution: NodeExecution;
+        let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
+        beforeEach(() => {
+            fixture = basicPythonWorkflow.generate();
+            workflowExecution = fixture.workflowExecutions.top.data;
+            insertFixture(mockServer, fixture);
+
+            executionContext = {
+                execution: workflowExecution
+            };
+            nodeExecution =
+                fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
+        });
+
+        const updateNodeExecutions = (executions: NodeExecution[]) => {
+            executions.forEach(mockServer.insertNodeExecution);
+            mockServer.insertNodeExecutionList(
+                fixture.workflowExecutions.top.data.id,
+                executions
+            );
+        };
+
+        it('should render updated state if selected nodeExecution object changes', async () => {
+            nodeExecution.closure.phase = NodeExecutionPhase.RUNNING;
+            updateNodeExecutions([nodeExecution]);
+            // Render table, click first node
+            const { container } = renderTable();
+            const detailsPanel = await selectNode(
+                container,
+                nodeExecution.id.nodeId
+            );
+            expect(getByText(detailsPanel, 'Running')).toBeInTheDocument();
+
+            const updatedExecution = cloneDeep(nodeExecution);
+            updatedExecution.closure.phase = NodeExecutionPhase.FAILED;
+            updateNodeExecutions([updatedExecution]);
+            await waitFor(() => expect(getByText(detailsPanel, 'Failed')));
+        });
+
+        describe('with nested children', () => {
+            let fixture: ReturnType<typeof dynamicPythonNodeExecutionWorkflow.generate>;
+            beforeEach(() => {
+                fixture = dynamicPythonNodeExecutionWorkflow.generate();
+                workflowExecution = fixture.workflowExecutions.top.data;
+                insertFixture(mockServer, fixture);
+                executionContext = { execution: workflowExecution };
+            });
+
+            it('should correctly render details for nested executions', async () => {
+                const childNodeExecution =
+                    fixture.workflowExecutions.top.nodeExecutions.dynamicNode
+                        .nodeExecutions.firstChild.data;
+                const { container } = renderTable();
+                const dynamicTaskNameEl = await waitFor(() =>
+                    getByText(container, fixture.tasks.dynamic.id.name)
+                );
+                const dynamicRowEl = findNearestAncestorByRole(
+                    dynamicTaskNameEl,
+                    'listitem'
+                );
+                await expandParentNode(dynamicRowEl);
+                await selectNode(container, childNodeExecution.id.nodeId);
+
+                // Wait for Details Panel to render and then for the nodeId header
+                const detailsPanel = await waitFor(() =>
+                    screen.getByTestId('details-panel')
+                );
+                await waitFor(() => expect(getByText(detailsPanel, childNodeExecution.id.nodeId)));
+                expect(getByText(detailsPanel, fixture.tasks.python.id.name)).toBeInTheDocument();
+            });
         });
     });
 });

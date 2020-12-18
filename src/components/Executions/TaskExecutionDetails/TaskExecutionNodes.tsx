@@ -12,6 +12,7 @@ import {
     TaskExecution
 } from 'models';
 import * as React from 'react';
+import { useQueryClient } from 'react-query';
 import { nodeExecutionIsTerminal } from '..';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
@@ -68,7 +69,7 @@ export const TaskExecutionNodes: React.FC<TaskExecutionNodesProps> = ({
         taskExecutionIsTerminal(taskExecution);
 
     const nodeExecutionsQuery = useConditionalQuery(
-        makeTaskExecutionChildListQuery(taskExecution.id, requestConfig),
+        makeTaskExecutionChildListQuery(useQueryClient(), taskExecution.id, requestConfig),
         shouldEnableQuery
     );
 
