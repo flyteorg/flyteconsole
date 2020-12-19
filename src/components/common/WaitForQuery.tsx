@@ -54,6 +54,7 @@ export const WaitForQuery = <T extends object>({
             );
         }
         case 'error': {
+            // TODO: Show DataError by default here
             const error = query.error || new Error('Unknown failure');
             return ErrorComponent ? (
                 <ErrorComponent error={error} retry={fetch} />

@@ -53,7 +53,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
         nodeExecutionsRequestConfig
     } = useExecutionNodeViewsState(execution, appliedFilters);
 
-    // TODO: Handle error case (table usually rendered the error)
     const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
         <NodeExecutionsRequestConfigContext.Provider
             value={nodeExecutionsRequestConfig}
