@@ -21,6 +21,7 @@ module.exports = {
         'jest/valid-title': 'off',
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/ban-types': 'warn',
-        '@typescript-eslint/no-empty-function': 'warn'
+        '@typescript-eslint/no-empty-function': 'warn',
+        '@typescript-eslint/explicit-module-boundary-types': 'off'
     }
 };

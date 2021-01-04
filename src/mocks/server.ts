@@ -1,7 +1,6 @@
-import { setupServer } from 'msw/node';
-import { getDefaultData } from './getDefaultData';
-import { bindHandlers } from './handlers';
+import { setupServer, SetupServerApi } from 'msw/node';
+import { AdminServer, createAdminServer } from './createAdminServer';
 
-const server = setupServer(...getDefaultData());
-const handlers = bindHandlers(server);
-export const mockServer = { ...server, ...handlers };
+const { handlers, server } = createAdminServer();
+export type MockServer = SetupServerApi & AdminServer;
+export const mockServer: MockServer = { ...setupServer(...handlers), ...server };

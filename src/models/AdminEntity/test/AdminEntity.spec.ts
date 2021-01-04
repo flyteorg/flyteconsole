@@ -1,9 +1,9 @@
 import { NotAuthorizedError, NotFoundError } from 'errors';
 import { Admin } from 'flyteidl';
 import { mockServer } from 'mocks/server';
-import { apiPath } from 'mocks/utils';
 import { rest } from 'msw';
 import { getAdminEntity } from '../AdminEntity';
+import { adminApiUrl } from '../utils';
 
 describe('getAdminEntity', () => {
     const messageType = Admin.Workflow;
@@ -15,7 +15,7 @@ describe('getAdminEntity', () => {
 
     it('Returns a NotFoundError for 404 responses', async () => {
         mockServer.use(
-            rest.get(apiPath(path), (_, res, ctx) => {
+            rest.get(adminApiUrl(path), (_, res, ctx) => {
                 return res(ctx.status(404));
             })
         );
@@ -27,7 +27,7 @@ describe('getAdminEntity', () => {
 
     it('Returns a NotAuthorizedError for 401 responses', async () => {
         mockServer.use(
-            rest.get(apiPath(path), (_, res, ctx) => {
+            rest.get(adminApiUrl(path), (_, res, ctx) => {
                 return res(ctx.status(401));
             })
         );

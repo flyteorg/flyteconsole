@@ -2,13 +2,10 @@ import * as classnames from 'classnames';
 import { getCacheKey } from 'components/Cache';
 import { DetailsPanel } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
-import { WaitForQuery } from 'components/common/WaitForQuery';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
-import { useQuery } from 'react-query';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
-import { makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
@@ -61,8 +58,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 
     const rowProps = {
         selectedExecution,
-        setSelectedExecution,
-        onHeightChange: () => {}
+        setSelectedExecution
     };
     const content =
         executionsWithKeys.length > 0 ? (

@@ -1,7 +1,7 @@
 import { QueryType } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { isEqual, some } from 'lodash';
+import { isEqual } from 'lodash';
 import {
     endNodeId,
     getNodeExecution,
@@ -51,14 +51,31 @@ export function fetchNodeExecution(
     return queryClient.fetchQuery(makeNodeExecutionQuery(id));
 }
 
+// On successful node execution list queries, extract and store all
+// executions so they are individually fetchable from the cache.
+function cacheNodeExecutions(
+    queryClient: QueryClient,
+    nodeExecutions: NodeExecution[]
+) {
+    nodeExecutions.forEach(ne =>
+        queryClient.setQueryData([QueryType.NodeExecution, ne.id], ne)
+    );
+}
+
 export function makeNodeExecutionListQuery(
+    queryClient: QueryClient,
     id: WorkflowExecutionIdentifier,
     config?: RequestConfig
 ): QueryInput<NodeExecution[]> {
     return {
         queryKey: [QueryType.NodeExecutionList, id, config],
-        queryFn: async () =>
-            removeSystemNodes((await listNodeExecutions(id, config)).entities)
+        queryFn: async () => {
+            const nodeExecutions = removeSystemNodes(
+                (await listNodeExecutions(id, config)).entities
+            );
+            cacheNodeExecutions(queryClient, nodeExecutions);
+            return nodeExecutions;
+        }
     };
 }
 
@@ -67,30 +84,30 @@ export function fetchNodeExecutionList(
     id: WorkflowExecutionIdentifier,
     config?: RequestConfig
 ) {
-    return queryClient.fetchQuery(makeNodeExecutionListQuery(id, config));
-}
-
-export function useNodeExecutionListQuery(
-    id: WorkflowExecutionIdentifier,
-    config: RequestConfig
-) {
-    return useConditionalQuery<NodeExecution[]>(
-        makeNodeExecutionListQuery(id, config),
-        // todo: Refresh node executions on interval while parent is non-terminal
-        () => true
+    return queryClient.fetchQuery(
+        makeNodeExecutionListQuery(queryClient, id, config)
     );
 }
 
 export function makeTaskExecutionChildListQuery(
+    queryClient: QueryClient,
     id: TaskExecutionIdentifier,
     config?: RequestConfig
 ): QueryInput<NodeExecution[]> {
     return {
         queryKey: [QueryType.TaskExecutionChildList, id, config],
-        queryFn: async () =>
-            removeSystemNodes(
+        queryFn: async () => {
+            const nodeExecutions = removeSystemNodes(
                 (await listTaskExecutionChildren(id, config)).entities
-            )
+            );
+            cacheNodeExecutions(queryClient, nodeExecutions);
+            return nodeExecutions;
+        },
+        onSuccess: nodeExecutions => {
+            nodeExecutions.forEach(ne =>
+                queryClient.setQueryData([QueryType.NodeExecution, ne.id], ne)
+            );
+        }
     };
 }
 
@@ -99,7 +116,9 @@ export function fetchTaskExecutionChildList(
     id: TaskExecutionIdentifier,
     config?: RequestConfig
 ) {
-    return queryClient.fetchQuery(makeTaskExecutionChildListQuery(id, config));
+    return queryClient.fetchQuery(
+        makeTaskExecutionChildListQuery(queryClient, id, config)
+    );
 }
 
 /** --- Queries for fetching children of a NodeExecution --- **/
@@ -263,8 +282,8 @@ export function useChildNodeExecutionGroupsQuery(
         if (!nodeExecutionIsTerminal(nodeExecution)) {
             return true;
         }
-        return some(groups, group =>
-            some(group.nodeExecutions, ne => !nodeExecutionIsTerminal(ne))
+        return groups.some( group =>
+            group.nodeExecutions.some(ne => !nodeExecutionIsTerminal(ne))
         );
     };
 

@@ -1,9 +1,15 @@
 import '@testing-library/jest-dom';
+import { insertDefaultData } from 'mocks/insertDefaultData';
 import { mockServer } from 'mocks/server';
+import { obj } from './utils';
 
 beforeAll(() => {
+    insertDefaultData(mockServer);
     mockServer.listen({
-        onUnhandledRequest: 'error'
+        onUnhandledRequest: (req) => {
+            const message = `Unexpected request: ${obj(req)}`;
+            throw new Error(message);
+        }
     });
 });
 

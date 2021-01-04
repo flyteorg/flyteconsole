@@ -6,7 +6,7 @@ import { keyBy } from 'lodash';
 import { endNodeId, NodeExecution, startNodeId } from 'models';
 import { Workflow, WorkflowId } from 'models/Workflow';
 import * as React from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { NodeExecutionsContext } from '../contexts';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 import { TaskExecutionNodeRenderer } from './TaskExecutionNodeRenderer/TaskExecutionNodeRenderer';
@@ -22,7 +22,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
     workflowId
 }) => {
     const workflowQuery = useQuery<Workflow, Error>(
-        makeWorkflowQuery(workflowId)
+        makeWorkflowQuery(useQueryClient(), workflowId)
     );
     const nodeExecutionsById = React.useMemo(
         () => keyBy(nodeExecutions, 'id.nodeId'),

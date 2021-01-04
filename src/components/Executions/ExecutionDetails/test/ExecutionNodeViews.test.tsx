@@ -1,12 +1,15 @@
-import { render } from '@testing-library/react';
-import { createQueryClient } from 'components/data/queryCache';
-import { createMockExecutionEntities } from 'components/Executions/__mocks__/createMockExecutionEntities';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { filterLabels } from 'components/Executions/filters/constants';
+import { nodeExecutionStatusFilters } from 'components/Executions/filters/statusFilters';
+import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
+import { insertFixture } from 'mocks/data/insertFixture';
+import { mockServer } from 'mocks/server';
+import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import {
-    ExecutionNodeViews,
-    ExecutionNodeViewsProps
-} from '../ExecutionNodeViews';
+import { createTestQueryClient } from 'test/utils';
+import { tabs } from '../constants';
+import { ExecutionNodeViews } from '../ExecutionNodeViews';
 
 // We don't need to verify the content of the graph component here and it is
 // difficult to make it work correctly in a test environment.
@@ -14,80 +17,83 @@ jest.mock('../ExecutionWorkflowGraph.tsx', () => ({
     ExecutionWorkflowGraph: () => null
 }));
 
-// TODO: Update this to use MSW and re-enable
-describe.skip('ExecutionNodeViews', () => {
+// ExecutionNodeViews uses query params for NE list, so we must match them
+// for the list to be returned properly
+const baseQueryParams = {
+    filters: '',
+    'sort_by.direction': 'ASCENDING',
+    'sort_by.key': 'created_at'
+};
+
+describe('ExecutionNodeViews', () => {
     let queryClient: QueryClient;
-    let props: ExecutionNodeViewsProps;
+    let execution: Execution;
+    let fixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
 
     beforeEach(() => {
-        queryClient = createQueryClient();
-        const { workflowExecution } = createMockExecutionEntities({
-            workflowName: 'SampleWorkflow',
-            nodeExecutionCount: 2
-        });
+        fixture = oneFailedTaskWorkflow.generate();
+        execution = fixture.workflowExecutions.top.data;
+        insertFixture(mockServer, fixture);
+        const nodeExecutions = fixture.workflowExecutions.top.nodeExecutions;
 
-        props = { execution: workflowExecution };
+        mockServer.insertNodeExecutionList(
+            execution.id,
+            Object.values(nodeExecutions).map(({ data }) => data),
+            baseQueryParams
+        );
+        mockServer.insertNodeExecutionList(
+            execution.id,
+            [nodeExecutions.failedNode.data],
+            { ...baseQueryParams, filters: 'value_in(phase,FAILED)' }
+        );
+        queryClient = createTestQueryClient();
     });
-
-    it('is disabled', () => {});
 
     const renderViews = () =>
         render(
             <QueryClientProvider client={queryClient}>
-                <ExecutionNodeViews {...props} />
+                <ExecutionNodeViews execution={execution} />
             </QueryClientProvider>
         );
 
-    // it('only applies filter when viewing the nodes tab', async () => {
-    //     const { getByText } = renderViews();
-    //     const nodesTab = await waitFor(() => getByText(tabs.nodes.label));
-    //     const graphTab = await waitFor(() => getByText(tabs.graph.label));
+    it('maintains filter when switching back to nodes tab', async () => {
+        const { nodeExecutions } = fixture.workflowExecutions.top;
+        const failedNodeName = nodeExecutions.failedNode.data.id.nodeId;
+        const succeededNodeName = nodeExecutions.pythonNode.data.id.nodeId;
 
-    //     fireEvent.click(nodesTab);
-    //     const statusButton = await waitFor(() =>
-    //         getByText(filterLabels.status)
-    //     );
-    //     fireEvent.click(statusButton);
-    //     const successFilter = await waitFor(() =>
-    //         getByText(nodeExecutionStatusFilters.succeeded.label)
-    //     );
+        const { getByText, queryByText } = renderViews();
+        const nodesTab = await waitFor(() => getByText(tabs.nodes.label));
+        const graphTab = await waitFor(() => getByText(tabs.graph.label));
 
-    //     mockListNodeExecutions.mockClear();
-    //     fireEvent.click(successFilter);
-    //     await waitFor(() => mockListNodeExecutions.mock.calls.length > 0);
-    //     // Verify at least one filter is passed
-    //     expect(mockListNodeExecutions).toHaveBeenCalledWith(
-    //         expect.anything(),
-    //         expect.objectContaining({
-    //             filter: expect.arrayContaining([
-    //                 expect.objectContaining({ key: expect.any(String) })
-    //             ])
-    //         })
-    //     );
+        // Ensure we are on Nodes tab
+        fireEvent.click(nodesTab);
+        await waitFor(() => getByText(succeededNodeName));
 
-    //     fireEvent.click(statusButton);
-    //     await waitForElementToBeRemoved(successFilter);
-    //     mockListNodeExecutions.mockClear();
-    //     fireEvent.click(graphTab);
-    //     await waitFor(() => mockListNodeExecutions.mock.calls.length > 0);
-    //     // No filter expected on the graph tab
-    //     expect(mockListNodeExecutions).toHaveBeenCalledWith(
-    //         expect.anything(),
-    //         expect.objectContaining({ filter: [] })
-    //     );
+        const statusButton = await waitFor(() =>
+            getByText(filterLabels.status)
+        );
 
-    //     mockListNodeExecutions.mockClear();
-    //     fireEvent.click(nodesTab);
-    //     await waitFor(() => mockListNodeExecutions.mock.calls.length > 0);
-    //     // Verify (again) at least one filter is passed, after changing back to
-    //     // nodes tab.
-    //     expect(mockListNodeExecutions).toHaveBeenCalledWith(
-    //         expect.anything(),
-    //         expect.objectContaining({
-    //             filter: expect.arrayContaining([
-    //                 expect.objectContaining({ key: expect.any(String) })
-    //             ])
-    //         })
-    //     );
-    // });
+        // Apply 'Failed' filter and wait for list to include only the failed item
+        fireEvent.click(statusButton);
+        const failedFilter = await waitFor(() =>
+            screen.getByLabelText(nodeExecutionStatusFilters.failed.label)
+        );
+
+        // Wait for succeeded task to disappear and ensure failed task remains
+        fireEvent.click(failedFilter);
+        await waitFor(() => queryByText(succeededNodeName) == null);
+        await waitFor(() =>
+            expect(getByText(failedNodeName)).toBeInTheDocument()
+        );
+
+        // Switch to the Graph tab
+        fireEvent.click(statusButton);
+        fireEvent.click(graphTab);
+        await waitFor(() => queryByText(failedNodeName) == null);
+
+        // Switch back to Nodes Tab and verify filter still applied
+        fireEvent.click(nodesTab);
+        await waitFor(() => getByText(failedNodeName));
+        expect(queryByText(succeededNodeName)).toBeNull();
+    });
 });
