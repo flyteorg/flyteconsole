@@ -32,6 +32,7 @@ import {
 } from './constants';
 import { nodeExecutionId, sampleLogs, taskExecutionId } from './utils';
 
+/** Wraps a `CompiledTask` in the necessary fields to create a `Task`. */
 export function taskFromCompiledTask(compiledTask: CompiledTask): Task {
     return {
         closure: { createdAt: { ...entityCreationDate }, compiledTask },
@@ -39,6 +40,9 @@ export function taskFromCompiledTask(compiledTask: CompiledTask): Task {
     };
 }
 
+/** Generate a new `Task` object based on a set of defaults. The base object
+ * returned when `compiledTaskOverrides` is omitted will be a valid `Task`
+ */
 export function generateTask(
     idOverrides: Partial<Identifier>,
     compiledTaskOverrides?: DeepPartial<CompiledTask>
@@ -71,6 +75,9 @@ export function generateTask(
     return taskFromCompiledTask(merge(base, compiledTaskOverrides));
 }
 
+/** Generate a new `Workflow` object based on a set of defaults. The base object
+ * returned when `overrides` is omitted will be a valid `Workflow`.
+ */
 export function generateWorkflow(
     idOverrides: Partial<Identifier>,
     overrides: DeepPartial<Workflow>
@@ -109,6 +116,9 @@ export function generateWorkflow(
     return merge(base, overrides);
 }
 
+/** Generate an `Execution` for a given `Workflow` and `LaunchPlan`. The base object
+ * returned when `overrides` is omitted will be a valid `Execution`.
+ */
 export function generateExecutionForWorkflow(
     workflow: Workflow,
     launchPlan: LaunchPlan,
@@ -147,6 +157,9 @@ export function generateExecutionForWorkflow(
     return merge(base, overrides);
 }
 
+/** Generate a `NodeExecution` for a nodeId that will be a child of the given `Execution`.
+ * The base object returned when `overrides` is omitted will be a valid `NodeExecution`.
+ */
 export function generateNodeExecution(
     parentExecution: Execution,
     nodeId: string,
@@ -167,6 +180,9 @@ export function generateNodeExecution(
     return merge(base, overrides);
 }
 
+/** Generate a `TaskExecution` for a `Task` that will be a child of the given `NodeExecution`.
+ * The base object returned when `overrides` is omitted will be a valid `TaskExecution`.
+ */
 export function generateTaskExecution(
     nodeExecution: NodeExecution,
     task: Task,

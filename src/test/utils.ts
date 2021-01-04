@@ -2,12 +2,17 @@ import { prettyDOM } from '@testing-library/react';
 import { createQueryClient } from 'components/data/queryCache';
 import * as Long from 'long';
 
+/** Shorthand for creating a `Long` from a `Number`. */
 export const long = (val: number) => Long.fromNumber(val);
+/** Stringifies the argument with formatting. */
 export const obj = (val: any) => JSON.stringify(val, null, 2);
+/** Returns a promise which will never resolve. */
 export function pendingPromise<T = any>(): Promise<T> {
     return new Promise(() => {});
 }
 
+/** Creates a version of `QueryClient` suitable for use in tests (will not perform
+ * any retries). */
 export const createTestQueryClient = () =>
     createQueryClient({
         queries: { retry: false }
@@ -18,6 +23,8 @@ export interface DelayedPromiseResult<T> {
     resolve: (value: T) => void;
     reject: (value: any) => void;
 }
+
+/** Returns a promise which can be manually resolved/rejected. */
 export function delayedPromise<T = any>(): DelayedPromiseResult<T> {
     let resolve: (value: any) => void;
     let reject: (value: any) => void;
@@ -41,6 +48,9 @@ export function waitFor(timeMS: number) {
     });
 }
 
+/** Starting from the given `element` search upwards for the first ancestor with
+ * a `role` attribute equal to the given value. Throws if no matching element is found.
+ */
 export function findNearestAncestorByRole(element: HTMLElement, role: string): HTMLElement {
     let parent: HTMLElement | null = element;
     while(parent !== null) {

@@ -17,6 +17,7 @@ interface TaskNodeIdsResult {
     id: string;
     taskNode: Pick<TaskNode, 'referenceId'>;
 }
+/** Helper for generating id fields used in a `Task` record. */
 export function taskNodeIds(id: string, task: Task): TaskNodeIdsResult {
     return {
         id,
@@ -24,6 +25,7 @@ export function taskNodeIds(id: string, task: Task): TaskNodeIdsResult {
     };
 }
 
+/** Generates a binding indicating consumption of outputs from an upstream node. */
 export function bindingFromNode(
     inputName: string,
     upstreamNodeId: string,
@@ -40,6 +42,9 @@ export function bindingFromNode(
     };
 }
 
+/** Generates a default `LaunchPlan` for a given `Workflow`. It will have an identical
+ * `name` and `version`, no default/fixed inputs and will use a dummy `role` value.
+ */
 export function makeDefaultLaunchPlan(workflow: Workflow): LaunchPlan {
     return {
         id: {
@@ -59,6 +64,7 @@ export function makeDefaultLaunchPlan(workflow: Workflow): LaunchPlan {
     };
 }
 
+/** Generates a consistent input URI for NodeExecution data. */
 export function makeNodeExecutionInputUri({
     executionId: { project, domain, name },
     nodeId
@@ -66,6 +72,7 @@ export function makeNodeExecutionInputUri({
     return `${dataUriPrefix}/${project}_${domain}_${name}_${nodeId}/inputs.pb`;
 }
 
+/** Generates a consistent output URI for NodeExecution data. */
 export function makeNodeExecutionOutputUri({
     executionId: { project, domain, name },
     nodeId
@@ -73,6 +80,7 @@ export function makeNodeExecutionOutputUri({
     return `${dataUriPrefix}/${project}_${domain}_${name}_${nodeId}/outputs.pb`;
 }
 
+/** Combines parent `Execution` id and `nodeId` into a `NodeExecutionIdentifier` */
 export function nodeExecutionId(
     executionId: WorkflowExecutionIdentifier,
     nodeId: string
@@ -83,6 +91,7 @@ export function nodeExecutionId(
     };
 }
 
+/** Generates a set of dummy log links for use in a `TaskExecution`. */
 export function sampleLogs(): TaskLog[] {
     return [
         { name: 'Kubernetes Logs', uri: 'http://localhost/k8stasklog' },
@@ -92,6 +101,9 @@ export function sampleLogs(): TaskLog[] {
     ];
 }
 
+/** Combines the needed fields from a parent `NodeExecution`, `Task` and `retryAttempt`
+ * into a `TaskExecutionIdentifier`.
+ */
 export function taskExecutionId(
     nodeExecution: NodeExecution,
     task: Task,
@@ -104,6 +116,7 @@ export function taskExecutionId(
     };
 }
 
+/** Generates a consistent input URI for `TaskExecution` data. */
 export function makeTaskExecutionInputUri({
     nodeExecutionId: {
         executionId: { project, domain, name },
@@ -114,6 +127,7 @@ export function makeTaskExecutionInputUri({
     return `${dataUriPrefix}/${project}_${domain}_${name}_${nodeId}_${retryAttempt}/inputs.pb`;
 }
 
+/** Generates a consistent output URI for `TaskExecution` data. */
 export function makeTaskExecutionOutputUri({
     nodeExecutionId: {
         executionId: { project, domain, name },

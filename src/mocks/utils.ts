@@ -1,6 +1,9 @@
 import { Protobuf } from 'flyteidl';
 import { isObject, isPlainObject } from 'lodash';
 
+/** Offsets a given `Protobuf.ITimestamp` by a value in seconds. Useful
+ * for creating start time relationships between parent/child or sibling executions.
+ */
 export function timeStampOffset(
     timeStamp: Protobuf.ITimestamp,
     offsetSeconds: number
@@ -31,6 +34,9 @@ function stableStringifyReplacer(_key: string, value: unknown): unknown {
     return value;
 }
 
+/** A copy of the hash function from react-query, useful for generating a unique
+ * key for mapping a Request to its associated data based on URL/type/query params/etc.
+ */
 export function stableStringify(value: unknown): string {
     return JSON.stringify(value, stableStringifyReplacer);
 }

@@ -60,6 +60,7 @@ function insertWorkflowExecutionData(
     );
 }
 
+/** Deep-inserts all entities from a generated `MockDataFixture`. */
 export function insertFixture(
     server: MockServer,
     { launchPlans, tasks, workflowExecutions, workflows }: MockDataFixture

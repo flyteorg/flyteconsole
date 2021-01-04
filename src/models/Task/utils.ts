@@ -6,6 +6,9 @@ import { makeIdentifierPath } from 'models/Common/utils';
 
 import { Task } from './types';
 
+/** Generate the correct path for retrieving a task or list of tasks based on the
+ * given scope.
+ */
 export function makeTaskPath(scope: IdentifierScope) {
     return makeIdentifierPath(endpointPrefixes.task, scope);
 }

@@ -1,7 +1,6 @@
 import { Admin } from 'flyteidl';
 import {
     adminApiUrl,
-    defaultListExecutionChildrenConfig,
     EncodableType,
     encodeProtoPayload,
     Execution,
@@ -165,31 +164,58 @@ function adminEntityHandler<DataType>({
 type RequireIdField<T extends { id?: unknown }> = Omit<T, 'id'> &
     Pick<Required<T>, 'id'>;
 
+/** A mock implementation of the Admin API server. Contains functions for inserting
+ * mock data of various types. Paths for inserted entities are automatically determined
+ * based on the parameters provided (usually the `id` field).
+ */
 export interface AdminServer {
+    /** Debug utility which dumps the contents of the backing store. */
     printEntities(): void;
+    /** Insert a single NodeExecution. */
     insertNodeExecution(data: RequireIdField<Partial<NodeExecution>>): void;
+    /** Insert a list of NodeExecutions to be returned for a WorkflowExecution.
+     * Note: Does not add handlers for single NodeExecutions. Those must be inserted
+     * separately.
+     */
     insertNodeExecutionList(
         id: WorkflowExecutionIdentifier,
         data: RequireIdField<Partial<NodeExecution>>[],
         query?: Record<string, string>
     ): void;
+    /** Insert the global list of projects. Overwrites the existing list. */
     insertProjects(data: RequireIdField<Partial<Project>>[]): void;
+    /** Insert a single `Task` record. */
     insertTask(data: RequireIdField<Partial<Task>>): void;
+    /** Insert a single `TaskExecution` record. */
     insertTaskExecution(data: RequireIdField<Partial<TaskExecution>>): void;
+    /** Insert a list of `TaskExecution` records to be returned for a parent
+     * `NodeExecution`.
+     * Note: Does not insert single `TaskExecution` records. Those must be inserted
+     * separately.
+     */
     insertTaskExecutionList(
         id: NodeExecutionIdentifier,
         data: RequireIdField<Partial<TaskExecution>>[]
     ): void;
+    /** Inserts a list of `NodeExecution` records to be returned for a parent
+     * `TaskExecution`.
+     * Note: Does not insert single `NodeExecution` records. Those must be inserted
+     * separately.
+     */
     insertTaskExecutionChildList(
         id: TaskExecutionIdentifier,
         data: RequireIdField<Partial<NodeExecution>>[]
     ): void;
+    /** Inserts a single `Workflow` record. */
     insertWorkflow(data: RequireIdField<Partial<Workflow>>): void;
+    /** Inserts a single `WorkflowExecution` record. */
     insertWorkflowExecution(data: RequireIdField<Partial<Execution>>): void;
 }
 
 export interface CreateAdminServerResult {
+    /** handlers to be inserted into mock-service-worker's `setupServer` function. */
     handlers: RequestHandlersList;
+    /** The resulting `AdminServer` object, used for inserting mock data. */
     server: AdminServer;
 }
 
@@ -231,6 +257,7 @@ function taskExecutionIdFromParams({
     };
 }
 
+/** Creates an instance of an Admin API mock server with an empty backing store. */
 export function createAdminServer(): CreateAdminServerResult {
     const entityMap: Map<string, unknown> = new Map();
     const getWorkflowHandler = adminEntityHandler({
