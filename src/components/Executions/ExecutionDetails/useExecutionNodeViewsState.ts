@@ -1,5 +1,4 @@
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { every } from 'lodash';
 import {
     Execution,
     executionSortFields,
@@ -8,6 +7,8 @@ import {
     NodeExecution,
     SortDirection
 } from 'models';
+import { useQueryClient } from 'react-query';
+import { executionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionListQuery } from '../nodeExecutionQueries';
 import { executionIsTerminal, nodeExecutionIsTerminal } from '../utils';
 
@@ -26,11 +27,18 @@ export function useExecutionNodeViewsState(
     };
 
     const shouldEnableQuery = (executions: NodeExecution[]) =>
-        every(executions, nodeExecutionIsTerminal) &&
-        executionIsTerminal(execution);
+        !executionIsTerminal(execution) ||
+        executions.some(ne => !nodeExecutionIsTerminal(ne));
 
     const nodeExecutionsQuery = useConditionalQuery(
-        makeNodeExecutionListQuery(execution.id, nodeExecutionsRequestConfig),
+        {
+            ...makeNodeExecutionListQuery(
+                useQueryClient(),
+                execution.id,
+                nodeExecutionsRequestConfig
+            ),
+            refetchInterval: executionRefreshIntervalMs
+        },
         shouldEnableQuery
     );
 

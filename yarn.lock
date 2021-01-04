@@ -12216,6 +12216,14 @@ match-sorter@^4.1.0:
     "@babel/runtime" "^7.10.5"
     remove-accents "0.4.2"
 
+match-sorter@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-6.0.2.tgz#91bbab14c28a87f4a67755b7a194c0d11dedc080"
+  integrity sha512-SDRLNlWof9GnAUEyhKP0O5525MMGXUGt+ep4MrrqQ2StAh3zjvICVZseiwg7Zijn3GazpJDiwuRr/mFDHd92NQ==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    remove-accents "0.4.2"
+
 matchmediaquery@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/matchmediaquery/-/matchmediaquery-0.2.1.tgz#223c7005793de03e47ce92b13285a72c44ada2cf"
@@ -14924,12 +14932,13 @@ react-query-devtools@^3.0.0-beta:
   dependencies:
     match-sorter "^4.1.0"
 
-react-query@^3.2.0-beta:
-  version "3.2.0-beta.30"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.2.0-beta.30.tgz#b5be7790e00911a2126c1dadc7e07dbfe768bd13"
-  integrity sha512-OaKvcXUz8nwxsgs4AYjwC0h4Z9Ku4K124HAiqTBLPN6/Vv/p6L//JdGZa+fz618jE2lnc1HsR2RRpkmO2L1KzA==
+react-query@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-3.3.0.tgz#a52ea140134295531b6f04cd52975e4e49244423"
+  integrity sha512-vuYoAs8qFjROk6BDR7TZKR4DJwF0ZuA09xA+cCgBokRtd9zTfZ6ql0Zqbr0POgVJofQFuf7IfrcP4j5G/kujwQ==
   dependencies:
     "@babel/runtime" "^7.5.5"
+    match-sorter "^6.0.2"
 
 react-refresh@^0.8.3:
   version "0.8.3"

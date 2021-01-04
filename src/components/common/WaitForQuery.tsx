@@ -36,7 +36,6 @@ export const WaitForQuery = <T extends object>({
             return null;
         }
         case 'loading': {
-            // TODO:
             return null;
         }
         case 'success': {
@@ -57,7 +56,7 @@ export const WaitForQuery = <T extends object>({
             const error = query.error || new Error('Unknown failure');
             return ErrorComponent ? (
                 <ErrorComponent error={error} retry={fetch} />
-            ) : null;
+            ) : <DataError error={error} errorTitle={errorTitle} retry={fetch} />;
         }
         default:
             log.error(`Unexpected query status value: ${status}`);
