@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { insertDefaultData } from 'mocks/insertDefaultDAta';
+import { insertDefaultData } from 'mocks/insertDefaultData';
 import { mockServer } from 'mocks/server';
 import { obj } from './utils';
 
