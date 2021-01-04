@@ -1,5 +1,4 @@
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { some } from 'lodash';
 import {
     Execution,
     executionSortFields,
@@ -29,7 +28,7 @@ export function useExecutionNodeViewsState(
 
     const shouldEnableQuery = (executions: NodeExecution[]) =>
         !executionIsTerminal(execution) ||
-        some(executions, ne => !nodeExecutionIsTerminal(ne));
+        executions.some(ne => !nodeExecutionIsTerminal(ne));
 
     const nodeExecutionsQuery = useConditionalQuery(
         {

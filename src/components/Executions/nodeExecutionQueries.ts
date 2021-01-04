@@ -1,7 +1,7 @@
 import { QueryType } from 'components/data/queries';
 import { QueryInput } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { isEqual, some } from 'lodash';
+import { isEqual } from 'lodash';
 import {
     endNodeId,
     getNodeExecution,
@@ -282,8 +282,8 @@ export function useChildNodeExecutionGroupsQuery(
         if (!nodeExecutionIsTerminal(nodeExecution)) {
             return true;
         }
-        return some(groups, group =>
-            some(group.nodeExecutions, ne => !nodeExecutionIsTerminal(ne))
+        return groups.some( group =>
+            group.nodeExecutions.some(ne => !nodeExecutionIsTerminal(ne))
         );
     };
 

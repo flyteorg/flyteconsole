@@ -8,7 +8,6 @@ beforeAll(() => {
     mockServer.listen({
         onUnhandledRequest: (req) => {
             const message = `Unexpected request: ${obj(req)}`;
-            console.error(message);
             throw new Error(message);
         }
     });

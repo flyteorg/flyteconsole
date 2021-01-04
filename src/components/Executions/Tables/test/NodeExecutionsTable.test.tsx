@@ -18,7 +18,7 @@ import { NodeExecutionDisplayType } from 'components/Executions/types';
 import { nodeExecutionIsTerminal } from 'components/Executions/utils';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { Core } from 'flyteidl';
-import { cloneDeep, some } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { dynamicExternalSubWorkflow } from 'mocks/data/fixtures/dynamicExternalSubworkflow';
 import {
@@ -55,7 +55,7 @@ describe('NodeExecutionsTable', () => {
     });
 
     const shouldUpdateFn = (nodeExecutions: NodeExecution[]) =>
-        some(nodeExecutions, ne => !nodeExecutionIsTerminal(ne));
+        nodeExecutions.some(ne => !nodeExecutionIsTerminal(ne));
 
     const selectNode = async (container: HTMLElement, nodeId: string) => {
         const nodeNameAnchor = await waitFor(() =>
