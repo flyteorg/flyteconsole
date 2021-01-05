@@ -13,6 +13,7 @@ import { LocationDescriptor } from 'history';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 import * as React from 'react';
+import Skeleton from 'react-loading-skeleton';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes';
@@ -59,6 +60,9 @@ const useStyles = makeStyles((theme: Theme) => {
             justifyContent: 'space-between',
             marginTop: theme.spacing(2),
             paddingTop: theme.spacing(2)
+        },
+        nodeTypeContent: {
+            minWidth: theme.spacing(9)
         },
         nodeTypeLink: {
             fontWeight: 'normal'
@@ -118,7 +122,6 @@ const NodeExecutionLinkContent: React.FC<{
     );
 };
 
-// TODO: Skeleton for type until it loads
 const ExecutionTypeDetails: React.FC<{
     details?: NodeExecutionDetails;
     execution: NodeExecution;
@@ -132,7 +135,7 @@ const ExecutionTypeDetails: React.FC<{
                 styles.nodeTypeContainer
             )}
         >
-            <div>
+            <div className={styles.nodeTypeContent}>
                 <div
                     className={classnames(
                         commonStyles.microHeader,
@@ -141,7 +144,7 @@ const ExecutionTypeDetails: React.FC<{
                 >
                     Type
                 </div>
-                <div>{details ? details.displayType : ''}</div>
+                <div>{details ? details.displayType : <Skeleton />}</div>
             </div>
             {<NodeExecutionLinkContent execution={execution} />}
         </div>
@@ -207,7 +210,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     const commonStyles = useCommonStyles();
     const styles = useStyles();
     const detailsQuery = useNodeExecutionDetails(nodeExecution);
-    const displayId = detailsQuery.data ? detailsQuery.data.displayId : null;
+    const displayId = detailsQuery.data ? detailsQuery.data.displayId : <Skeleton />;
     const taskTemplate = detailsQuery.data
         ? detailsQuery.data.taskTemplate
         : null;
@@ -235,7 +238,6 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         />
     ) : null;
 
-    // TODO: Skeleton for the display Id
     return (
         <section className={styles.container}>
             <header className={styles.header}>

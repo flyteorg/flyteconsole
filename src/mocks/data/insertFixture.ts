@@ -1,4 +1,4 @@
-import { MockServer } from 'mocks/server';
+import { AdminServer } from 'mocks/createAdminServer';
 import { nodeExecutionQueryParams } from 'models';
 import {
     MockDataFixture,
@@ -8,7 +8,7 @@ import {
 } from './fixtures/types';
 
 function insertTaskExecutionData(
-    server: MockServer,
+    server: AdminServer,
     mock: MockTaskExecutionData
 ): void {
     server.insertTaskExecution(mock.data);
@@ -23,7 +23,7 @@ function insertTaskExecutionData(
 }
 
 function insertNodeExecutionData(
-    server: MockServer,
+    server: AdminServer,
     mock: MockNodeExecutionData
 ): void {
     server.insertNodeExecution(mock.data);
@@ -48,7 +48,7 @@ function insertNodeExecutionData(
 }
 
 function insertWorkflowExecutionData(
-    server: MockServer,
+    server: AdminServer,
     mock: MockWorkflowExecutionData
 ): void {
     server.insertWorkflowExecution(mock.data);
@@ -62,7 +62,7 @@ function insertWorkflowExecutionData(
 
 /** Deep-inserts all entities from a generated `MockDataFixture`. */
 export function insertFixture(
-    server: MockServer,
+    server: AdminServer,
     { launchPlans, tasks, workflowExecutions, workflows }: MockDataFixture
 ): void {
     // TODO: Insert Launch plans (requires support in mockServer)

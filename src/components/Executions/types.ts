@@ -73,7 +73,6 @@ export interface WorkflowNodeExecution extends NodeExecution {
 export interface NodeExecutionDetails {
     displayType: NodeExecutionDisplayType;
     displayId: string;
-    cacheKey: string;
     taskTemplate?: TaskTemplate;
 }
 

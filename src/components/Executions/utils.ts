@@ -1,4 +1,5 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
+import { CompiledNode } from 'models';
 import {
     BaseExecutionClosure,
     Execution,
@@ -19,7 +20,14 @@ import {
     taskExecutionPhaseConstants,
     workflowExecutionPhaseConstants
 } from './constants';
-import { ExecutionPhaseConstants, ParentNodeExecution } from './types';
+import {
+    CompiledBranchNode,
+    CompiledTaskNode,
+    CompiledWorkflowNode,
+    ExecutionPhaseConstants,
+    ParentNodeExecution,
+    WorkflowNodeExecution
+} from './types';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
@@ -147,6 +155,30 @@ export function isParentNode(
     return (
         nodeExecution.metadata != null && !!nodeExecution.metadata.isParentNode
     );
+}
+
+export function isWorkflowNodeExecution(
+    nodeExecution: NodeExecution
+): nodeExecution is WorkflowNodeExecution {
+    return nodeExecution.closure.workflowNodeMetadata != null;
+}
+
+export function isCompiledTaskNode(
+    node: CompiledNode
+): node is CompiledTaskNode {
+    return node.taskNode != null;
+}
+
+export function isCompiledWorkflowNode(
+    node: CompiledNode
+): node is CompiledWorkflowNode {
+    return node.workflowNode != null;
+}
+
+export function isCompiledBranchNode(
+    node: CompiledNode
+): node is CompiledBranchNode {
+    return node.branchNode != null;
 }
 
 /** Returns timing information (duration, queue time, ...) for a WorkflowExecution */
