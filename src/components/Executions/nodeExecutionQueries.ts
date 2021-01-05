@@ -35,6 +35,7 @@ function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
     });
 }
 
+/** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQuery(
     id: NodeExecutionIdentifier
 ): QueryInput<NodeExecution> {
@@ -44,6 +45,7 @@ export function makeNodeExecutionQuery(
     };
 }
 
+/** Composable fetch function which wraps `makeNodeExecutionQuery` */
 export function fetchNodeExecution(
     queryClient: QueryClient,
     id: NodeExecutionIdentifier
@@ -62,6 +64,9 @@ function cacheNodeExecutions(
     );
 }
 
+/** A query for fetching a list of `NodeExecution`s which are children of a given
+ * `Execution`.
+ */
 export function makeNodeExecutionListQuery(
     queryClient: QueryClient,
     id: WorkflowExecutionIdentifier,
@@ -79,6 +84,7 @@ export function makeNodeExecutionListQuery(
     };
 }
 
+/** Composable fetch function which wraps `makeNodeExecutionListQuery`. */
 export function fetchNodeExecutionList(
     queryClient: QueryClient,
     id: WorkflowExecutionIdentifier,
@@ -89,6 +95,9 @@ export function fetchNodeExecutionList(
     );
 }
 
+/** A query for fetching a list of `NodeExecution`s which are children of a given
+ * `TaskExecution`.
+ */
 export function makeTaskExecutionChildListQuery(
     queryClient: QueryClient,
     id: TaskExecutionIdentifier,
@@ -111,6 +120,7 @@ export function makeTaskExecutionChildListQuery(
     };
 }
 
+/** Composable fetch function which wraps `makeTaskExecutionChildListQuery`. */
 export function fetchTaskExecutionChildList(
     queryClient: QueryClient,
     id: TaskExecutionIdentifier,
@@ -236,7 +246,7 @@ async function fetchGroupsForParentNodeExecution(
     return Array.from(groupsByName.values());
 }
 
-export function fetchChildNodeExecutionGroups(
+function fetchChildNodeExecutionGroups(
     queryClient: QueryClient,
     nodeExecution: NodeExecution,
     config: RequestConfig

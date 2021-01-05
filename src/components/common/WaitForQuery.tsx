@@ -1,7 +1,7 @@
 import { log } from 'common/log';
 import { DataError } from 'components/Errors';
 import * as React from 'react';
-import { QueryObserverResult, QueryStatus } from 'react-query';
+import { QueryObserverResult } from 'react-query';
 import { ErrorBoundary } from './ErrorBoundary';
 
 const defaultErrorTitle = 'Failed to fetch data';
@@ -12,6 +12,10 @@ interface WaitForQueryProps<T> {
     errorComponent?: React.ComponentType<{ error?: Error; retry?(): any }>;
     /** The string to display as the header of the error content */
     errorTitle?: string;
+    /** Component to show while loading. If not provided, nothing will be rendered
+     * during load.
+     */
+    loadingComponent?: React.ComponentType;
     /** Loading state (passed from a hook using useQuery) */
     query: QueryObserverResult<T, Error>;
     /** A callback that will initiaite a fetch of the underlying resource. This
@@ -28,6 +32,7 @@ export const WaitForQuery = <T extends object>({
     children,
     errorComponent: ErrorComponent,
     errorTitle = defaultErrorTitle,
+    loadingComponent: LoadingComponent,
     query,
     fetch
 }: WaitForQueryProps<T>) => {
@@ -36,7 +41,7 @@ export const WaitForQuery = <T extends object>({
             return null;
         }
         case 'loading': {
-            return null;
+            return LoadingComponent ? <LoadingComponent /> : null;
         }
         case 'success': {
             if (query.data === undefined) {
@@ -56,7 +61,13 @@ export const WaitForQuery = <T extends object>({
             const error = query.error || new Error('Unknown failure');
             return ErrorComponent ? (
                 <ErrorComponent error={error} retry={fetch} />
-            ) : <DataError error={error} errorTitle={errorTitle} retry={fetch} />;
+            ) : (
+                <DataError
+                    error={error}
+                    errorTitle={errorTitle}
+                    retry={fetch}
+                />
+            );
         }
         default:
             log.error(`Unexpected query status value: ${status}`);
