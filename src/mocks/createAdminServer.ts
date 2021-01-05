@@ -22,6 +22,7 @@ import { RestContext } from 'msw/lib/types/rest';
 import { RequestHandlersList } from 'msw/lib/types/setupWorker/glossary';
 import { DefaultRequestBodyType } from 'msw/lib/types/utils/handlers/requestHandler';
 import { obj } from 'test/utils';
+import { notFoundError, RequestError, unexpectedError } from './errors';
 import { stableStringify } from './utils';
 
 const taskExecutionPath =
@@ -81,31 +82,14 @@ function getItemKey(id: unknown) {
     return stableStringify(id);
 }
 
-enum RequestErrorType {
-    NotFound = 404,
-    Unexpected = 500
-}
-class RequestError extends Error {
-    constructor(public type: RequestErrorType, message?: string) {
-        super(message);
-    }
-}
-
-function notFoundError(id: unknown): RequestError {
-    return new RequestError(
-        RequestErrorType.NotFound,
-        `Couldn't find item: ${obj(id)}`
-    );
-}
-
-function unexpectedError(message: string): RequestError {
-    return new RequestError(RequestErrorType.Unexpected, message);
-}
 
 function getItem<ItemType>(store: Map<string, unknown>, id: unknown): ItemType {
     const item = store.get(getItemKey(id));
     if (!item) {
         throw notFoundError(id);
+    }
+    if (item instanceof RequestError) {
+        throw item;
     }
     return item as ItemType;
 }
@@ -184,7 +168,7 @@ export interface AdminServer {
      */
     insertNodeExecutionList(
         id: WorkflowExecutionIdentifier,
-        data: RequireIdField<Partial<NodeExecution>>[],
+        data: RequireIdField<Partial<NodeExecution>>[] | RequestError,
         query?: Record<string, string>
     ): void;
     /** Insert the global list of `Project`s. Overwrites the existing list. */
@@ -497,7 +481,7 @@ export function createAdminServer(): CreateAdminServerResult {
                 ),
             insertNodeExecutionList: (
                 parentExecutionId,
-                executions,
+                data,
                 query: QueryParamsMap = {}
             ) =>
                 insertItem(
@@ -507,7 +491,7 @@ export function createAdminServer(): CreateAdminServerResult {
                         parentExecutionId,
                         nodeExecutionListQueryParams(query)
                     ],
-                    executions.map(({ id }) => id)
+                    data instanceof RequestError ? data : data.map(({ id }) => id)
                 ),
             insertTaskExecution: execution =>
                 insertItem(

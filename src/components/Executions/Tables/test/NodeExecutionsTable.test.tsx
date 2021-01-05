@@ -27,19 +27,27 @@ import {
 } from 'mocks/data/fixtures/dynamicPythonWorkflow';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
+import { notFoundError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
 import {
     Execution,
     FilterOperationName,
     NodeExecution,
+    nodeExecutionQueryParams,
     RequestConfig,
     TaskNodeMetadata
 } from 'models';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
-import { createTestQueryClient, findNearestAncestorByRole } from 'test/utils';
+import {
+    createTestQueryClient,
+    disableQueryLogger,
+    enableQueryLogger,
+    findNearestAncestorByRole
+} from 'test/utils';
 import { titleStrings } from '../constants';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 
@@ -91,7 +99,9 @@ describe('NodeExecutionsTable', () => {
             },
             shouldUpdateFn
         );
-        return query.data ? <NodeExecutionsTable nodeExecutions={query.data} /> : null;
+        return query.data ? (
+            <NodeExecutionsTable nodeExecutions={query.data} />
+        ) : null;
     };
 
     const renderTable = () =>
@@ -267,6 +277,57 @@ describe('NodeExecutionsTable', () => {
                 const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
                 const childGroups = await expandParentNode(rowEl);
                 expect(childGroups).toHaveLength(2);
+            });
+
+            describe('with initial failure to fetch children', () => {
+                // Disable react-query logger output to avoid a console.error
+                // when the request fails.
+                beforeEach(() => {
+                    disableQueryLogger();
+                });
+                afterEach(() => {
+                    enableQueryLogger();
+                });
+                it('renders error icon with retry', async () => {
+                    const {
+                        data: { id: workflowExecutionId },
+                        nodeExecutions
+                    } = fixture.workflowExecutions.top;
+                    const parentNodeExecution = nodeExecutions.dynamicNode.data;
+                    // Simulate an error when attempting to list children of first NE.
+                    mockServer.insertNodeExecutionList(
+                        workflowExecutionId,
+                        notFoundError(parentNodeExecution.id.nodeId),
+                        {
+                            [nodeExecutionQueryParams.parentNodeId]:
+                                parentNodeExecution.id.nodeId
+                        }
+                    );
+
+                    const { container, getByTitle } = renderTable();
+                    // We expect to find an error icon in place of the child expander
+                    const errorIconButton = await waitFor(() =>
+                        getByTitle(titleStrings.childGroupFetchFailed)
+                    );
+                    // restore proper handler for node execution children
+                    insertFixture(mockServer, fixture);
+                    // click error icon
+                    await fireEvent.click(errorIconButton);
+
+                    // wait for expander and open it to verify children loaded correctly
+                    const nodeNameEl = await waitFor(() =>
+                        getByText(
+                            container,
+                            nodeExecutions.dynamicNode.data.id.nodeId
+                        )
+                    );
+                    const rowEl = findNearestAncestorByRole(
+                        nodeNameEl,
+                        'listitem'
+                    );
+                    const childGroups = await expandParentNode(rowEl);
+                    expect(childGroups.length).toBeGreaterThan(0);
+                });
             });
         });
 
@@ -482,8 +543,14 @@ describe('NodeExecutionsTable', () => {
                 const detailsPanel = await waitFor(() =>
                     screen.getByTestId('details-panel')
                 );
-                await waitFor(() => expect(getByText(detailsPanel, childNodeExecution.id.nodeId)));
-                expect(getByText(detailsPanel, fixture.tasks.python.id.name)).toBeInTheDocument();
+                await waitFor(() =>
+                    expect(
+                        getByText(detailsPanel, childNodeExecution.id.nodeId)
+                    )
+                );
+                expect(
+                    getByText(detailsPanel, fixture.tasks.python.id.name)
+                ).toBeInTheDocument();
             });
         });
     });

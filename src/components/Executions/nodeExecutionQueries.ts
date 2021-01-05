@@ -246,6 +246,7 @@ async function fetchGroupsForParentNodeExecution(
     return Array.from(groupsByName.values());
 }
 
+
 function fetchChildNodeExecutionGroups(
     queryClient: QueryClient,
     nodeExecution: NodeExecution,
@@ -299,6 +300,8 @@ export function useChildNodeExecutionGroupsQuery(
 
     return useConditionalQuery<NodeExecutionGroup[]>(
         {
+            // TODO: testing, remove.
+            retry: false,
             queryKey: [
                 QueryType.NodeExecutionChildList,
                 nodeExecution.id,

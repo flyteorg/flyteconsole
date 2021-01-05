@@ -1,13 +1,15 @@
+import { CircularProgress, IconButton } from '@material-ui/core';
+import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import * as classnames from 'classnames';
 import { useTheme } from 'components/Theme/useTheme';
 import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import {
-    ExecutionContext,
     NodeExecutionsRequestConfigContext
 } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
+import { titleStrings } from './constants';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
@@ -21,6 +23,22 @@ interface NodeExecutionRowProps {
     level?: number;
     style?: React.CSSProperties;
 }
+
+const ChildFetchErrorIcon: React.FC<{
+    query: ReturnType<typeof useChildNodeExecutionGroupsQuery>;
+}> = ({ query }) => {
+    return query.isFetching ? <CircularProgress size={24} /> : (
+        <IconButton
+            disableRipple={true}
+            disableTouchRipple={true}
+            size="small"
+            title={titleStrings.childGroupFetchFailed}
+            onClick={() => query.refetch()}
+        >
+            <ErrorOutline />
+        </IconButton>
+    );
+};
 
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
@@ -51,10 +69,11 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
     // TODO: Handle error case for loading children.
     // Maybe show an expander in that case and make the content the error?
-    const { data: childGroups = [] } = useChildNodeExecutionGroupsQuery(
+    const childGroupsQuery = useChildNodeExecutionGroupsQuery(
         nodeExecution,
         requestConfig
     );
+    const { data: childGroups = [] } = childGroupsQuery;
 
     const isExpandable = childGroups.length > 0;
     const tableStyles = useExecutionTableStyles();
@@ -64,7 +83,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         : false;
     const { error } = nodeExecution.closure;
 
-    const expanderContent = isExpandable ? (
+    const expanderContent = childGroupsQuery.error ? (
+        <ChildFetchErrorIcon query={childGroupsQuery} />
+    ) : isExpandable ? (
         <RowExpander expanded={expanded} onClick={toggleExpanded} />
     ) : null;
 
