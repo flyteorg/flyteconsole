@@ -45,12 +45,6 @@ export interface ExecutionDetailsRouteParams {
 }
 export type ExecutionDetailsProps = ExecutionDetailsRouteParams;
 
-// TODO: Remove?
-const executionRefreshConfig: RefreshConfig<Execution> = {
-    interval: executionRefreshIntervalMs,
-    valueIsFinal: executionIsTerminal
-};
-
 interface RenderExecutionDetailsProps {
     execution: Execution;
 }

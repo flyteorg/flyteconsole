@@ -1,5 +1,4 @@
 import { log } from 'common/log';
-import { getCacheKey } from 'components/Cache';
 import { QueryType } from 'components/data/queries';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
@@ -17,43 +16,24 @@ import { taskTypeToNodeExecutionDisplayType } from '.';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import {
     CompiledBranchNode,
-    CompiledTaskNode,
     CompiledWorkflowNode,
     NodeExecutionDetails,
     NodeExecutionDisplayType,
     WorkflowNodeExecution
 } from './types';
 import { fetchWorkflowExecution } from './useWorkflowExecution';
-import { getNodeExecutionSpecId } from './utils';
+import {
+    getNodeExecutionSpecId,
+    isCompiledBranchNode,
+    isCompiledTaskNode,
+    isCompiledWorkflowNode,
+    isWorkflowNodeExecution
+} from './utils';
 
-// TODO: Move helpers
-function isWorkflowNodeExecution(
-    nodeExecution: NodeExecution
-): nodeExecution is WorkflowNodeExecution {
-    return nodeExecution.closure.workflowNodeMetadata != null;
-}
-
-function isCompiledTaskNode(node: CompiledNode): node is CompiledTaskNode {
-    return node.taskNode != null;
-}
-
-function isCompiledWorkflowNode(
-    node: CompiledNode
-): node is CompiledWorkflowNode {
-    return node.workflowNode != null;
-}
-
-function isCompiledBranchNode(node: CompiledNode): node is CompiledBranchNode {
-    return node.branchNode != null;
-}
-
-// TODO: Look into removing the cacheKey prop from NE details. Probably unnecessary at this point.
 function createExternalWorkflowNodeExecutionDetails(
-    nodeExecution: NodeExecution,
     workflow: Workflow
 ): NodeExecutionDetails {
     return {
-        cacheKey: getCacheKey(nodeExecution.id),
         displayId: workflow.id.name,
         displayType: NodeExecutionDisplayType.Workflow
     };
@@ -81,32 +61,25 @@ function createWorkflowNodeExecutionDetails(
 
     return {
         displayId,
-        displayType,
-        cacheKey: getCacheKey(nodeExecution.id)
+        displayType
     };
 }
 
-// TODO: Decide or document what information we want to show in the future about branch nodes (name? conditions?)
+// TODO: https://github.com/lyft/flyte/issues/655
 function createBranchNodeExecutionDetails(
-    nodeExecution: NodeExecution,
     node: CompiledBranchNode
 ): NodeExecutionDetails {
     return {
-        cacheKey: getCacheKey(nodeExecution.id),
-        displayId: '',
+        displayId: 'branchNode',
         displayType: NodeExecutionDisplayType.BranchNode
     };
 }
 
 function createTaskNodeExecutionDetails(
-    nodeExecution: NodeExecution,
     taskTemplate: TaskTemplate
 ): NodeExecutionDetails {
     return {
-        // TODO: I think we can remove this here since code that needs the template can fetch
-        // it relatively cheaply from the query cache.
         taskTemplate,
-        cacheKey: getCacheKey(nodeExecution.id),
         displayId: taskTemplate.id.name,
         displayType:
             taskTypeToNodeExecutionDisplayType[taskTemplate.type as TaskType] ??
@@ -114,11 +87,8 @@ function createTaskNodeExecutionDetails(
     };
 }
 
-function createUnknownNodeExecutionDetails(
-    nodeExecution: NodeExecution
-): NodeExecutionDetails {
+function createUnknownNodeExecutionDetails(): NodeExecutionDetails {
     return {
-        cacheKey: getCacheKey(nodeExecution.id),
         displayId: '',
         displayType: NodeExecutionDisplayType.Unknown
     };
@@ -140,7 +110,7 @@ async function fetchExternalWorkflowNodeExecutionDetails(
         workflowExecution.closure.workflowId
     );
 
-    return createExternalWorkflowNodeExecutionDetails(nodeExecution, workflow);
+    return createExternalWorkflowNodeExecutionDetails(workflow);
 }
 
 function findCompiledNode(
@@ -182,7 +152,7 @@ async function fetchTaskNodeExecutionDetails(
             )}`
         );
     }
-    return createTaskNodeExecutionDetails(nodeExecution, taskTemplate);
+    return createTaskNodeExecutionDetails(taskTemplate);
 }
 
 async function fetchNodeExecutionDetailsFromNodeSpec(
@@ -217,10 +187,7 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
             );
         }
         if (isCompiledBranchNode(compiledNode)) {
-            return createBranchNodeExecutionDetails(
-                nodeExecution,
-                compiledNode
-            );
+            return createBranchNodeExecutionDetails(compiledNode);
         }
     }
 
@@ -238,7 +205,7 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
         );
     }
 
-    return createUnknownNodeExecutionDetails(nodeExecution);
+    return createUnknownNodeExecutionDetails();
 }
 
 async function doFetchNodeExecutionDetails(
@@ -260,7 +227,7 @@ async function doFetchNodeExecutionDetails(
             nodeExecution
         );
     } catch (e) {
-        return createUnknownNodeExecutionDetails(nodeExecution);
+        return createUnknownNodeExecutionDetails();
     }
 }
 

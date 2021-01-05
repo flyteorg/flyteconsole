@@ -34,7 +34,6 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     const commonStyles = useCommonStyles();
     const tableStyles = useExecutionTableStyles();
 
-    // TODO: Consider adding cacheKey to NodeExecution (and all other items when they are returned from the API)
     const executionsWithKeys = React.useMemo(
         () =>
             nodeExecutions.map(nodeExecution => ({
