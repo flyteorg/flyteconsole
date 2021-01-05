@@ -94,9 +94,6 @@ function createUnknownNodeExecutionDetails(): NodeExecutionDetails {
     };
 }
 
-// TODO: Try/catches for all of these fetch functions which default back to unknown node display type.
-// Potentially just add a single catch at the top so that each of these node execution details functions doesn't need its own
-// case for generating unknown node details
 async function fetchExternalWorkflowNodeExecutionDetails(
     queryClient: QueryClient,
     nodeExecution: WorkflowNodeExecution
@@ -141,7 +138,6 @@ function findNodeInWorkflow(
 
 async function fetchTaskNodeExecutionDetails(
     queryClient: QueryClient,
-    nodeExecution: NodeExecution,
     taskId: Identifier
 ) {
     const taskTemplate = await fetchTaskTemplate(queryClient, taskId);
@@ -176,7 +172,6 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
         if (isCompiledTaskNode(compiledNode)) {
             return fetchTaskNodeExecutionDetails(
                 queryClient,
-                nodeExecution,
                 compiledNode.taskNode.referenceId
             );
         }
@@ -200,7 +195,6 @@ async function fetchNodeExecutionDetailsFromNodeSpec(
     if (taskExecutions.length > 0) {
         return fetchTaskNodeExecutionDetails(
             queryClient,
-            nodeExecution,
             taskExecutions[0].id.taskId
         );
     }
