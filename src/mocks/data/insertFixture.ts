@@ -65,7 +65,9 @@ export function insertFixture(
     server: AdminServer,
     { launchPlans, tasks, workflowExecutions, workflows }: MockDataFixture
 ): void {
-    // TODO: Insert Launch plans (requires support in mockServer)
+    if (launchPlans) {
+        Object.values(launchPlans).forEach(server.insertLaunchPlan);
+    }
     if (tasks) {
         Object.values(tasks).forEach(server.insertTask);
     }

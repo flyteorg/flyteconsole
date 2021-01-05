@@ -5,6 +5,7 @@ import {
     encodeProtoPayload,
     Execution,
     Identifier,
+    LaunchPlan,
     limits,
     NodeExecution,
     NodeExecutionIdentifier,
@@ -42,6 +43,10 @@ function makeFullIdentifier(
         throw new Error(`Received incomplete Identifier: ${id}`);
     }
     return { ...id, resourceType };
+}
+
+function launchPlanIdentifier(id: Partial<Identifier>) {
+    return makeFullIdentifier(id, ResourceType.LAUNCH_PLAN);
 }
 
 function workflowIdentifier(id: Partial<Identifier>) {
@@ -169,12 +174,12 @@ type RequireIdField<T extends { id?: unknown }> = Omit<T, 'id'> &
  * based on the parameters provided (usually the `id` field).
  */
 export interface AdminServer {
-    /** Debug utility which dumps the contents of the backing store. */
-    printEntities(): void;
-    /** Insert a single NodeExecution. */
+    /** Insert a single `LaunchPlan`. */
+    insertLaunchPlan(data: RequireIdField<Partial<LaunchPlan>>): void;
+    /** Insert a single `NodeExecution`. */
     insertNodeExecution(data: RequireIdField<Partial<NodeExecution>>): void;
-    /** Insert a list of NodeExecutions to be returned for a WorkflowExecution.
-     * Note: Does not add handlers for single NodeExecutions. Those must be inserted
+    /** Insert a list of `NodeExecution`s to be returned for an `Execution`.
+     * Note: Does not add handlers for single `NodeExecution`s. Those must be inserted
      * separately.
      */
     insertNodeExecutionList(
@@ -182,7 +187,7 @@ export interface AdminServer {
         data: RequireIdField<Partial<NodeExecution>>[],
         query?: Record<string, string>
     ): void;
-    /** Insert the global list of projects. Overwrites the existing list. */
+    /** Insert the global list of `Project`s. Overwrites the existing list. */
     insertProjects(data: RequireIdField<Partial<Project>>[]): void;
     /** Insert a single `Task` record. */
     insertTask(data: RequireIdField<Partial<Task>>): void;
@@ -208,8 +213,10 @@ export interface AdminServer {
     ): void;
     /** Inserts a single `Workflow` record. */
     insertWorkflow(data: RequireIdField<Partial<Workflow>>): void;
-    /** Inserts a single `WorkflowExecution` record. */
+    /** Inserts a single `Execution` record. */
     insertWorkflowExecution(data: RequireIdField<Partial<Execution>>): void;
+    /** Debug utility which dumps the contents of the backing store. */
+    printEntities(): void;
 }
 
 export interface CreateAdminServerResult {
@@ -220,6 +227,8 @@ export interface CreateAdminServerResult {
 }
 
 enum EntityType {
+    LaunchPlan = 'launchPlan',
+    LaunchPlanList = 'launchPlanList',
     ProjectList = 'projectList',
     Workflow = 'workflow',
     Task = 'task',
@@ -288,6 +297,21 @@ export function createAdminServer(): CreateAdminServerResult {
             return getItem<Task>(entityMap, [EntityType.Task, id]);
         },
         responseEncoder: Admin.Task
+    });
+
+    const getLaunchPlanHandler = adminEntityHandler({
+        path: '/launch_plans/:project/:domain/:name/:version',
+        getDataForRequest: req => {
+            const { project, domain, name, version } = req.params;
+            const id = launchPlanIdentifier({
+                project,
+                domain,
+                name,
+                version
+            });
+            return getItem(entityMap, [EntityType.LaunchPlan, id]);
+        },
+        responseEncoder: Admin.LaunchPlan
     });
 
     const getProjectListHandler = adminEntityHandler<Admin.IProjects>({
@@ -424,6 +448,7 @@ export function createAdminServer(): CreateAdminServerResult {
 
     return {
         handlers: [
+            getLaunchPlanHandler,
             getProjectListHandler,
             getWorkflowHandler,
             getTaskHandler,
@@ -435,7 +460,15 @@ export function createAdminServer(): CreateAdminServerResult {
             getTaskExecutionChildListHandler
         ],
         server: {
-            printEntities: () => console.log(Array.from(entityMap.entries())),
+            insertLaunchPlan: launchPlan =>
+                insertItem(
+                    entityMap,
+                    [
+                        EntityType.LaunchPlan,
+                        launchPlanIdentifier(launchPlan.id)
+                    ],
+                    launchPlan
+                ),
             insertProjects: projects =>
                 insertItem(entityMap, EntityType.ProjectList, projects),
             insertTask: task =>
@@ -501,7 +534,8 @@ export function createAdminServer(): CreateAdminServerResult {
                         normalizeTaskExecutionIdentifier(parentExecutionId)
                     ],
                     executions.map(({ id }) => id)
-                )
+                ),
+            printEntities: () => console.log(Array.from(entityMap.entries()))
         }
     };
 }
