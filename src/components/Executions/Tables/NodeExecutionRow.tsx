@@ -67,8 +67,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         )}px`
     };
 
-    // TODO: Handle error case for loading children.
-    // Maybe show an expander in that case and make the content the error?
     const childGroupsQuery = useChildNodeExecutionGroupsQuery(
         nodeExecution,
         requestConfig
