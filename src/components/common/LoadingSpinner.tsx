@@ -35,7 +35,10 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     const styles = useStyles();
     const shouldRender = useDelayedValue(false, 1000, true);
     return shouldRender ? (
-        <div className={classnames(styles.container, size)}>
+        <div
+            className={classnames(styles.container, size)}
+            data-testid="loading-spinner"
+        >
             <CircularProgress size={spinnerSizes[size]} />
         </div>
     ) : null;
