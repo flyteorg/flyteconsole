@@ -9,7 +9,6 @@ import {
     NodeExecution,
     NodeExecutionClosure,
     NodeExecutionMetadata,
-    TaskExecution,
     WorkflowNodeMetadata
 } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
