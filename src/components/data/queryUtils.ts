@@ -1,5 +1,6 @@
 import { log } from 'common/log';
 import { QueryClient, QueryFunction, QueryKey } from 'react-query';
+import { InfiniteQueryInput, InfiniteQueryPage } from './types';
 
 const defaultRefetchInterval = 1000;
 const defaultTimeout = 30000;
@@ -48,4 +49,12 @@ export async function waitForQueryState<TResult>({
         setTimeout(() => reject(new Error('Timed Out')), timeout);
     });
     return Promise.race([queryWaitPromise, timeoutPromise]);
+}
+
+function getNextPageParam<T>({ token }: InfiniteQueryPage<T>) {
+    return token != null && token.length > 0 ? token : undefined;
+}
+
+export function createPaginationQuery<T>(queryOptions: InfiniteQueryInput<T>) {
+    return { ...queryOptions, getNextPageParam };
 }

@@ -33,7 +33,8 @@ const useStyles = makeStyles((theme: Theme) => ({
         paddingLeft: theme.spacing(1)
     },
     columnName: {
-        flexBasis: workflowExecutionsTableColumnWidths.name
+        flexBasis: workflowExecutionsTableColumnWidths.name,
+        whiteSpace: 'normal'
     },
     columnLastRun: {
         flexBasis: workflowExecutionsTableColumnWidths.lastRun
@@ -79,22 +80,34 @@ type WorkflowExecutionColumnDefinition = ColumnDefinition<
     WorkflowExecutionCellRendererData
 >;
 
+interface WorkflowExecutionColumnOptions {
+    showWorkflowName: boolean;
+}
 function generateColumns(
     styles: ReturnType<typeof useStyles>,
-    tableStyles: ReturnType<typeof useExecutionTableStyles>
+    commonStyles: ReturnType<typeof useCommonStyles>,
+    { showWorkflowName }: WorkflowExecutionColumnOptions
 ): WorkflowExecutionColumnDefinition[] {
     return [
         {
             cellRenderer: ({
                 execution: {
                     id,
-                    closure: { startedAt }
+                    closure: { startedAt, workflowId }
                 }
             }) => (
                 <>
                     <WorkflowExecutionLink id={id} />
-                    <Typography variant="subtitle1" color="textSecondary">
-                        {startedAt
+                    <Typography
+                        className={
+                            commonStyles.textWrapped
+                        }
+                        variant="subtitle1"
+                        color="textSecondary"
+                    >
+                        {showWorkflowName
+                            ? workflowId.name
+                            : startedAt
                             ? `Last run ${dateFromNow(
                                   timestampToDate(startedAt)
                               )}`
@@ -222,13 +235,15 @@ const WorkflowExecutionRow: React.FC<WorkflowExecutionRowProps> = ({
     );
 };
 
-export type WorkflowExecutionsTableProps = ListProps<Execution>
+export interface WorkflowExecutionsTableProps extends ListProps<Execution> {
+    showWorkflowName?: boolean;
+}
 
 /** Renders a table of WorkflowExecution records. Executions with errors will
  * have an expanadable container rendered as part of the table row.
  */
 export const WorkflowExecutionsTable: React.FC<WorkflowExecutionsTableProps> = props => {
-    const executions = props.value;
+    const { value: executions, showWorkflowName = false } = props;
     const [expandedErrors, setExpandedErrors] = React.useState<
         Dictionary<boolean>
     >({});
@@ -244,10 +259,10 @@ export const WorkflowExecutionsTable: React.FC<WorkflowExecutionsTableProps> = p
     }, [executions]);
 
     // Memoizing columns so they won't be re-generated unless the styles change
-    const columns = React.useMemo(() => generateColumns(styles, tableStyles), [
-        styles,
-        commonStyles
-    ]);
+    const columns = React.useMemo(
+        () => generateColumns(styles, commonStyles, { showWorkflowName }),
+        [styles, commonStyles, showWorkflowName]
+    );
 
     const retry = () => props.fetch();
     const onCloseIOModal = () => state.setSelectedIOExecution(null);

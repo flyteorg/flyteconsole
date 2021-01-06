@@ -1,37 +1,82 @@
+import { WaitForQuery } from 'components/common/WaitForQuery';
+import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
+import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
+import {
+    WorkflowExecutionsTable,
+    WorkflowExecutionsTableProps
+} from 'components/Executions/Tables/WorkflowExecutionsTable';
+import { makeWorkflowExecutionListQuery } from 'components/Executions/workflowExecutionQueries';
+import { fetchStates } from 'components/hooks';
+import { Execution, executionSortFields, SortDirection } from 'models';
 import * as React from 'react';
+import { useInfiniteQuery } from 'react-query';
+import { State } from 'xstate';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { SectionHeader, WaitForData, withRouteParams } from 'components/common';
-import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
-import { useWorkflowExecutions } from 'components/hooks';
-import { SortDirection } from 'models/AdminEntity';
-import { executionSortFields } from 'models/Execution';
-
-export interface ProjectExecutionsRouteParams {
+const useStyles = makeStyles(() => ({
+    container: {
+        display: 'flex',
+        flex: '1 1 auto',
+        flexDirection: 'column'
+    }
+}));
+export interface ProjectExecutionsProps {
     projectId: string;
     domainId: string;
 }
 
-/** The tab/page content for viewing a project's executions */
-export const ProjectExecutionsContainer: React.FC<ProjectExecutionsRouteParams> = ({
-    projectId: project,
-    domainId: domain
+/** A listing of all executions across a project/domain combo */
+export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
+    domainId: domain,
+    projectId: project
 }) => {
+    const styles = useStyles();
+    const filtersState = useWorkflowExecutionFiltersState();
     const sort = {
         key: executionSortFields.createdAt,
         direction: SortDirection.DESCENDING
     };
-    const executions = useWorkflowExecutions({ domain, project }, { sort });
+
+    const config = {
+        sort,
+        filter: filtersState.appliedFilters
+    };
+
+    const tableKey = `executions_${project}_${domain}`;
+
+    const query = useInfiniteQuery({
+        ...makeWorkflowExecutionListQuery({ domain, project }, config)
+    });
+
+    const executions = React.useMemo(
+        () =>
+            query.data?.pages
+                ? query.data.pages.reduce<Execution[]>(
+                      (acc, { data }) => acc.concat(data),
+                      []
+                  )
+                : [],
+        [query.data?.pages]
+    );
+
+    const renderTable = () => {
+        const props: WorkflowExecutionsTableProps = {
+            fetch: () => query.fetchNextPage(),
+            value: executions,
+            lastError: query.error,
+            moreItemsAvailable: !!query.hasNextPage,
+            showWorkflowName: true,
+            state: State.from(
+                query.isLoading ? fetchStates.LOADING : fetchStates.LOADED
+            )
+        };
+        return <WorkflowExecutionsTable key={tableKey} {...props} />;
+    };
 
     return (
-        <>
-            <SectionHeader title="Executions" />
-            <WaitForData {...executions}>
-                <WorkflowExecutionsTable {...executions} />
-            </WaitForData>
-        </>
+        <div className={styles.container}>
+            <ExecutionFilters {...filtersState} />
+            <WaitForQuery query={query}>{renderTable}</WaitForQuery>
+        </div>
     );
 };
-
-export const ProjectExecutions = withRouteParams<ProjectExecutionsRouteParams>(
-    ProjectExecutionsContainer
-);

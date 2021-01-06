@@ -8,5 +8,6 @@ export enum QueryType {
     TaskExecutionChildList = 'taskExecutionChildList',
     TaskTemplate = 'taskTemplate',
     Workflow = 'workflow',
-    WorkflowExecution = 'workflowExecution'
+    WorkflowExecution = 'workflowExecution',
+    WorkflowExecutionList = 'workflowExecutionList'
 }
