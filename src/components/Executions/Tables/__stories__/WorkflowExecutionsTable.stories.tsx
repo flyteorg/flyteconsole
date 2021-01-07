@@ -1,10 +1,8 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { fetchStates } from 'components/hooks/types';
 import { createMockWorkflowExecutionsListResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import * as React from 'react';
-import { State } from 'xstate';
 import {
     WorkflowExecutionsTable,
     WorkflowExecutionsTableProps

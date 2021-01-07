@@ -8,6 +8,7 @@ import { useInfiniteQuery } from 'react-query';
 import { makeStyles } from '@material-ui/core/styles';
 import { DataError } from 'components/Errors/DataError';
 import { ErrorBoundary, LargeLoadingSpinner } from 'components/common';
+import { getCacheKey } from 'components/Cache';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -38,7 +39,17 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         filter: filtersState.appliedFilters
     };
 
-    const tableKey = `executions_${project}_${domain}`;
+    // Remount the table whenever we change project/domain/filters to ensure
+    // things are virtualized correctly.
+    const tableKey = React.useMemo(
+        () =>
+            getCacheKey({
+                domain,
+                project,
+                filters: filtersState.appliedFilters
+            }),
+        [domain, project, filtersState.appliedFilters]
+    );
 
     const query = useInfiniteQuery({
         ...makeWorkflowExecutionListQuery({ domain, project }, config)
