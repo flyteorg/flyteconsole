@@ -52,9 +52,14 @@ export async function waitForQueryState<TResult>({
 }
 
 function getNextPageParam<T>({ token }: InfiniteQueryPage<T>) {
+    // An empty token will cause pagination code to think there are more results.
+    // Only return a defined value if it is a non-zero-length string.
     return token != null && token.length > 0 ? token : undefined;
 }
 
+/** Composes a `queryOptions` object with generic options which make our API responses
+ * compatible with `useInfiniteQuery`
+ */
 export function createPaginationQuery<T>(queryOptions: InfiniteQueryInput<T>) {
     return { ...queryOptions, getNextPageParam };
 }

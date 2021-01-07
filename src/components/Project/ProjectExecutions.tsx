@@ -55,6 +55,8 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         ...makeWorkflowExecutionListQuery({ domain, project }, config)
     });
 
+    // useInfiniteQuery returns pages of items, but the table would like a single
+    // flat list.
     const executions = React.useMemo(
         () =>
             query.data?.pages
