@@ -1,17 +1,13 @@
-import { WaitForQuery } from 'components/common/WaitForQuery';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
-import {
-    WorkflowExecutionsTable,
-    WorkflowExecutionsTableProps
-} from 'components/Executions/Tables/WorkflowExecutionsTable';
+import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { makeWorkflowExecutionListQuery } from 'components/Executions/workflowExecutionQueries';
-import { fetchStates } from 'components/hooks';
 import { Execution, executionSortFields, SortDirection } from 'models';
 import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
-import { State } from 'xstate';
 import { makeStyles } from '@material-ui/core/styles';
+import { DataError } from 'components/Errors/DataError';
+import { ErrorBoundary, LargeLoadingSpinner } from 'components/common';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -25,7 +21,7 @@ export interface ProjectExecutionsProps {
     domainId: string;
 }
 
-/** A listing of all executions across a project/domain combo */
+/** A listing of all executions across a project/domain combination. */
 export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     domainId: domain,
     projectId: project
@@ -59,24 +55,32 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         [query.data?.pages]
     );
 
-    const renderTable = () => {
-        const props: WorkflowExecutionsTableProps = {
-            fetch: () => query.fetchNextPage(),
-            value: executions,
-            lastError: query.error,
-            moreItemsAvailable: !!query.hasNextPage,
-            showWorkflowName: true,
-            state: State.from(
-                query.isLoading ? fetchStates.LOADING : fetchStates.LOADED
-            )
-        };
-        return <WorkflowExecutionsTable key={tableKey} {...props} />;
-    };
+    const fetch = React.useCallback(() => query.fetchNextPage(), [query]);
+
+    const content = query.isLoadingError ? (
+        <DataError
+            error={query.error}
+            errorTitle="Failed to load Executions."
+            retry={fetch}
+        />
+    ) : query.isLoading ? (
+        <LargeLoadingSpinner />
+    ) : (
+        <WorkflowExecutionsTable
+            key={tableKey}
+            fetch={fetch}
+            value={executions}
+            lastError={query.error}
+            moreItemsAvailable={!!query.hasNextPage}
+            showWorkflowName={true}
+            isFetching={query.isFetching}
+        />
+    );
 
     return (
         <div className={styles.container}>
             <ExecutionFilters {...filtersState} />
-            <WaitForQuery query={query}>{renderTable}</WaitForQuery>
+            <ErrorBoundary>{content}</ErrorBoundary>
         </div>
     );
 };

@@ -25,7 +25,7 @@ const fetchAction = action('fetch');
 const props: WorkflowExecutionsTableProps = {
     value: createMockWorkflowExecutionsListResponse(10).executions,
     lastError: null,
-    state: State.from(fetchStates.LOADED),
+    isFetching: false,
     moreItemsAvailable: false,
     fetch: () => Promise.resolve(() => fetchAction() as unknown)
 };

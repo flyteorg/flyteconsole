@@ -6,6 +6,7 @@ import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable as ExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { useWorkflowExecutions as useExecutions } from 'components/hooks';
+import { isLoadingState } from 'components/hooks/fetchMachine';
 import { ResourceIdentifier } from 'models';
 import { SortDirection } from 'models/AdminEntity';
 import { executionSortFields } from 'models/Execution';
@@ -58,7 +59,7 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({ id }) => {
                 <ExecutionFilters {...filtersState} />
             </div>
             <WaitForData {...executions}>
-                <ExecutionsTable {...executions} />
+                <ExecutionsTable {...executions} isFetching={isLoadingState(executions.state)} />
             </WaitForData>
         </>
     );
