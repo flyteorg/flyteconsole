@@ -1,5 +1,18 @@
 import { InfiniteQueryObserverOptions, QueryObserverOptions } from 'react-query';
-import { QueryType } from './queries';
+
+export enum QueryType {
+    NodeExecutionDetails = 'NodeExecutionDetails',
+    NodeExecution = 'nodeExecution',
+    NodeExecutionList = 'nodeExecutionList',
+    NodeExecutionChildList = 'nodeExecutionChildList',
+    TaskExecution = 'taskExecution',
+    TaskExecutionList = 'taskExecutionList',
+    TaskExecutionChildList = 'taskExecutionChildList',
+    TaskTemplate = 'taskTemplate',
+    Workflow = 'workflow',
+    WorkflowExecution = 'workflowExecution',
+    WorkflowExecutionList = 'workflowExecutionList'
+}
 
 type QueryKeyArray = [QueryType, ...unknown[]];
 export interface QueryInput<T> extends QueryObserverOptions<T, Error> {

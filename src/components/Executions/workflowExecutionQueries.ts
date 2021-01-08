@@ -1,6 +1,5 @@
-import { QueryType } from 'components/data/queries';
 import { createPaginationQuery } from 'components/data/queryUtils';
-import { InfiniteQueryInput, InfiniteQueryPage } from 'components/data/types';
+import { InfiniteQueryInput, InfiniteQueryPage, QueryType } from 'components/data/types';
 import {
     DomainIdentifierScope,
     Execution,
