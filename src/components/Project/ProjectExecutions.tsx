@@ -1,3 +1,7 @@
+import { makeStyles } from '@material-ui/core/styles';
+import { getCacheKey } from 'components/Cache';
+import { ErrorBoundary, LargeLoadingSpinner } from 'components/common';
+import { DataError } from 'components/Errors/DataError';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
@@ -5,10 +9,7 @@ import { makeWorkflowExecutionListQuery } from 'components/Executions/workflowEx
 import { Execution, executionSortFields, SortDirection } from 'models';
 import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
-import { makeStyles } from '@material-ui/core/styles';
-import { DataError } from 'components/Errors/DataError';
-import { ErrorBoundary, LargeLoadingSpinner } from 'components/common';
-import { getCacheKey } from 'components/Cache';
+import { failedToLoadExecutionsString } from './constants';
 
 const useStyles = makeStyles(() => ({
     container: {
@@ -22,6 +23,11 @@ export interface ProjectExecutionsProps {
     domainId: string;
 }
 
+const defaultSort = {
+    key: executionSortFields.createdAt,
+    direction: SortDirection.DESCENDING
+};
+
 /** A listing of all executions across a project/domain combination. */
 export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     domainId: domain,
@@ -29,13 +35,9 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
 }) => {
     const styles = useStyles();
     const filtersState = useWorkflowExecutionFiltersState();
-    const sort = {
-        key: executionSortFields.createdAt,
-        direction: SortDirection.DESCENDING
-    };
 
     const config = {
-        sort,
+        sort: defaultSort,
         filter: filtersState.appliedFilters
     };
 
@@ -73,7 +75,7 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     const content = query.isLoadingError ? (
         <DataError
             error={query.error}
-            errorTitle="Failed to load Executions."
+            errorTitle={failedToLoadExecutionsString}
             retry={fetch}
         />
     ) : query.isLoading ? (
