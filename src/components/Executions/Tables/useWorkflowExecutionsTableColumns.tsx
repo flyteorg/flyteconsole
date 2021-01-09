@@ -17,6 +17,10 @@ import { WorkflowExecutionLink } from './WorkflowExecutionLink';
 interface WorkflowExecutionColumnOptions {
     showWorkflowName: boolean;
 }
+/** Returns a memoized list of column definitions to use when rendering a
+ * `WorkflowExecutionRow`. Memoization is based on common/column style objects
+ * and any fields in the incoming `WorkflowExecutionColumnOptions` object.
+ */
 export function useWorkflowExecutionsTableColumns({
     showWorkflowName
 }: WorkflowExecutionColumnOptions): WorkflowExecutionColumnDefinition[] {

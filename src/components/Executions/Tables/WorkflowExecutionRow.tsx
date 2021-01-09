@@ -21,6 +21,9 @@ export interface WorkflowExecutionRowProps extends Partial<ListRowProps> {
     state: WorkflowExecutionsTableState;
 }
 
+/** Renders a single `Execution` record as a row. Designed to be used as a child
+ * of `WorkflowExecutionTable`.
+ */
 export const WorkflowExecutionRow: React.FC<WorkflowExecutionRowProps> = ({
     columns,
     errorExpanded,

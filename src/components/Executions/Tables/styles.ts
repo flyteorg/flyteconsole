@@ -155,6 +155,7 @@ export const useColumnStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
+/** Style overrides specific to columns in `WorkflowExecutionsTable`. */
 export const useWorkflowExecutionsColumnStyles = makeStyles((theme: Theme) => ({
     cellName: {
         paddingLeft: theme.spacing(1)
