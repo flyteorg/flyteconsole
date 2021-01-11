@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: bhamutov/npm-install@v1
+      - uses: bahmutov/npm-install@v1
       - name: Run tests and generate coverage
         run: make test_unit_codecov
       - uses: codecov/codecov-action@v1
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bhamutov/npm-install@v1
+    - uses: bahmutov/npm-install@v1
     - name: Run linter
       run: make lint
 
@@ -26,6 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: bhamutov/npm-install@v1
+      - uses: bahmutov/npm-install@v1
       - name: Build image
         run: docker build .
