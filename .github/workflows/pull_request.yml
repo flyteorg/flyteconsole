@@ -2,10 +2,30 @@ name: Pull Request
 on: pull_request
 
 jobs:
+  unit_tests_with_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bhamutov/npm-install@v1
+      - name: Run tests and generate coverage
+        run: make test_unit_codecov
+      - uses: codecov/codecov-action@v1
+        with:
+          files: .coverage/coverage-final.json
+
+  lint_project:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: bhamutov/npm-install@v1
+    - name: Run linter
+      run: make lint
+
   test_image_build:
     name: Test build Docker image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: bhamutov/npm-install@v1
       - name: Build image
         run: docker build .
