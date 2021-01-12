@@ -1,3 +1,4 @@
+import * as classnames from 'classnames';
 import { Fade, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { SearchableList, SearchResult } from 'components/common/SearchableList';
@@ -12,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         width: '100%'
     },
     itemName: {
-        flex: '1 0 auto',
+        flex: '1 0 0',
         fontWeight: 'bold'
     },
     noResults: {
@@ -72,6 +73,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                     TransitionComponent={Fade}
                     key={value.id}
                     placement="bottom-end"
+                    enterDelay={500}
                     title={
                         <Typography variant="body1">
                             <div className={commonStyles.textMonospace}>
@@ -90,7 +92,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         className={styles.searchResult}
                         onClick={onProjectSelected.bind(null, value)}
                     >
-                        <div className={styles.itemName}>{content}</div>
+                        <div className={classnames(styles.itemName, commonStyles.textWrapped)}>{content}</div>
                     </div>
                 </Tooltip>
             ))}
