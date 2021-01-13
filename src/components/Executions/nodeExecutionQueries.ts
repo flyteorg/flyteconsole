@@ -299,8 +299,6 @@ export function useChildNodeExecutionGroupsQuery(
 
     return useConditionalQuery<NodeExecutionGroup[]>(
         {
-            // TODO: testing, remove.
-            retry: false,
             queryKey: [
                 QueryType.NodeExecutionChildList,
                 nodeExecution.id,
