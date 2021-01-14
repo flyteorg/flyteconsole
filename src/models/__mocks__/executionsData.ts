@@ -101,9 +101,3 @@ export const createMockExecution: (id?: string | number) => Execution = (
         spec: createMockExecutionSpec()
     };
 };
-
-export const createMockExecutions: () => Execution[] = () => [
-    createMockExecution(1),
-    createMockExecution(2),
-    createMockExecution(3)
-];

@@ -164,10 +164,6 @@ export interface InputTypeDefinition {
     subtype?: InputTypeDefinition;
 }
 
-export interface ObjectValue {
-    type: InputType;
-}
-
 export interface BlobValue {
     dimensionality: BlobDimensionality | string;
     format?: string;
