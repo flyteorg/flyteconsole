@@ -1,15 +1,11 @@
 import * as cheerio from 'cheerio';
 import * as express from 'express';
 import * as fs from 'fs';
-// tslint:disable-next-line:import-name
 import MemoryFileSystem from 'memory-fs';
 import * as path from 'path';
 import { Helmet } from 'react-helmet';
-
 import { processEnv } from '../env';
-// import { getConfig } from './configLoader';
 
-// tslint:disable:prefer-array-literal
 interface Stats {
     assetsByChunkName: {
         bootstrap: string[] | string;
@@ -29,7 +25,6 @@ interface ServerRendererArguments {
  */
 export default function serverRenderer({
     fileSystem,
-    clientStats,
     currentDirectory
 }: ServerRendererArguments) {
     const env = process.env.NODE_ENV || 'development';
@@ -44,8 +39,7 @@ export default function serverRenderer({
 
     return (
         req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
+        res: express.Response
     ) => {
         if (isDev) {
             const indexPath = path.join(currentDirectory, 'dist', 'index.html');
@@ -72,7 +66,6 @@ export default function serverRenderer({
             $(`<script>window.env = ${JSON.stringify(processEnv)}</script>`)
         );
 
-        // TODO: Populate this with the loaded config if/when we need to
         const initialData = {};
 
         $('body').prepend(
@@ -82,19 +75,6 @@ export default function serverRenderer({
                 )}</script>`
             )
         );
-
-        // add additional chunk scripts
-        try {
-            let bootstrapScriptName = clientStats.assetsByChunkName.bootstrap;
-            if (Array.isArray(bootstrapScriptName)) {
-                bootstrapScriptName = bootstrapScriptName.find(name =>
-                    name.endsWith('.js')
-                )!;
-            }
-        } catch (e) {
-            // tslint:disable-next-line:no-console
-            console.error(e);
-        }
 
         res.status(200).send($.html());
     };
