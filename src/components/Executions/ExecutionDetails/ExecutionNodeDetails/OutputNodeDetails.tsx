@@ -1,9 +1,12 @@
-import { SectionHeader, WaitForData } from 'components/common';
+import { SectionHeader } from 'components/common/SectionHeader';
 import { useCommonStyles } from 'components/common/styles';
-import { LiteralMapViewer, RemoteLiteralMapViewer } from 'components/Literals';
-import { NodeDetailsProps } from 'components/WorkflowGraph';
+import { WaitForData } from 'components/common/WaitForData';
+import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
+import { RemoteLiteralMapViewer } from 'components/Literals/RemoteLiteralMapViewer';
+import { NodeDetailsProps } from 'components/WorkflowGraph/NodeDetails/NodeDetails';
 import { useStyles as useBaseStyles } from 'components/WorkflowGraph/NodeDetails/styles';
-import { emptyLiteralMapBlob, Execution } from 'models';
+import { emptyLiteralMapBlob } from 'models/Common/constants';
+import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { ExecutionContext } from '../../contexts';
 import { useWorkflowExecutionData } from '../../useWorkflowExecution';

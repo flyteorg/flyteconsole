@@ -1,9 +1,6 @@
-import {
-    isEndNode,
-    isStartNode,
-    NodeDetailsProps,
-    SelectNode
-} from 'components/WorkflowGraph';
+import { NodeDetailsProps } from 'components/WorkflowGraph/NodeDetails/NodeDetails';
+import { SelectNode } from 'components/WorkflowGraph/NodeDetails/SelectNode';
+import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
 import * as React from 'react';
 import { InputNodeDetails } from './InputNodeDetails';
 import { OutputNodeDetails } from './OutputNodeDetails';

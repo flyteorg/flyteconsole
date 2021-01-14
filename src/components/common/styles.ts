@@ -1,12 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import {
-    buttonHoverColor,
-    dangerousButtonBorderColor,
-    dangerousButtonColor,
-    dangerousButtonHoverColor,
-    mutedPrimaryTextColor,
-    smallFontSize
-} from 'components/Theme';
+import { buttonHoverColor, dangerousButtonBorderColor, dangerousButtonColor, dangerousButtonHoverColor, mutedPrimaryTextColor, smallFontSize } from 'components/Theme/constants';
 
 const unstyledLinkProps = {
     textDecoration: 'none',

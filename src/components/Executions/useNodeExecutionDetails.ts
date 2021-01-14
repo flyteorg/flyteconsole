@@ -2,17 +2,13 @@ import { log } from 'common/log';
 import { QueryType } from 'components/data/types';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
-import {
-    CompiledNode,
-    CompiledWorkflow,
-    Identifier,
-    NodeExecution,
-    TaskTemplate,
-    TaskType,
-    Workflow
-} from 'models';
+import { Identifier } from 'models/Common/types';
+import { NodeExecution } from 'models/Execution/types';
+import { CompiledNode } from 'models/Node';
+import { TaskTemplate, TaskType } from 'models/Task';
+import { CompiledWorkflow, Workflow } from 'models/Workflow';
 import { QueryClient, useQuery, useQueryClient } from 'react-query';
-import { taskTypeToNodeExecutionDisplayType } from '.';
+import { taskTypeToNodeExecutionDisplayType } from './constants';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import {
     CompiledBranchNode,

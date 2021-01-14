@@ -1,21 +1,16 @@
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import * as React from 'react';
-const { useContext } = React;
 import { noExecutionsFoundString } from 'common/constants';
-import { NonIdealState, SectionHeader } from 'components/common';
-import { useCommonStyles } from 'components/common/styles';
-import { TaskExecutionsList } from 'components/Executions';
+import { NonIdealState } from 'components/common/NonIdealState';
+import { SectionHeader } from 'components/common/SectionHeader';
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
+import { TaskExecutionsList } from 'components/Executions/TaskExecutionsList/TaskExecutionsList';
 import { useTabState } from 'components/hooks/useTabState';
-import {
-    NodeDetailsProps,
-    SelectNode,
-    TaskNodeDetails
-} from 'components/WorkflowGraph';
+import { NodeDetailsProps } from 'components/WorkflowGraph/NodeDetails/NodeDetails';
+import { SelectNode } from 'components/WorkflowGraph/NodeDetails/SelectNode';
 import { useStyles as useBaseStyles } from 'components/WorkflowGraph/NodeDetails/styles';
+import * as React from 'react';
 import { NodeExecutionsContext } from '../../contexts';
-import { NodeExecutionData } from '../NodeExecutionData';
 import { NodeExecutionInputs } from '../NodeExecutionInputs';
 import { NodeExecutionOutputs } from '../NodeExecutionOutputs';
 
@@ -24,14 +19,6 @@ const tabIds = {
     inputs: 'inputs',
     outputs: 'outputs'
 };
-
-const NoTaskDetailsAvailable: React.FC = () => (
-    <NonIdealState
-        description="This node has no task associated with it"
-        title="No details available"
-        size="small"
-    />
-);
 
 const NoExecutionsAvailable: React.FC = () => (
     <NonIdealState
@@ -47,22 +34,13 @@ const NoExecutionsAvailable: React.FC = () => (
 export const TaskExecutionNodeDetails: React.FC<NodeDetailsProps> = props => {
     const { node } = props;
     const nodeId = node ? node.id : '';
-    const nodeExecutions = useContext(NodeExecutionsContext);
+    const nodeExecutions = React.useContext(NodeExecutionsContext);
     const tabState = useTabState(tabIds, tabIds.executions);
     const execution = nodeExecutions[nodeId];
     const baseStyles = useBaseStyles();
-    const commonStyles = useCommonStyles();
 
     if (!node) {
         return <SelectNode />;
-    }
-
-    let taskContent;
-    // Only supporting TaskNodes for now
-    if (node.taskNode) {
-        taskContent = <TaskNodeDetails taskId={node.taskNode.referenceId} />;
-    } else {
-        taskContent = <NoTaskDetailsAvailable />;
     }
 
     let statusContent;

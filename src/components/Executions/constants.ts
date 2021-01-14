@@ -1,16 +1,11 @@
-import {
-    negativeTextColor,
-    positiveTextColor,
-    secondaryTextColor,
-    statusColors
-} from 'components/Theme';
+import { negativeTextColor, positiveTextColor, secondaryTextColor, statusColors } from 'components/Theme/constants';
 import { Core } from 'flyteidl';
-import { TaskType } from 'models';
 import {
     NodeExecutionPhase,
     TaskExecutionPhase,
     WorkflowExecutionPhase
 } from 'models/Execution/enums';
+import { TaskType } from 'models/Task/constants';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 
 export const executionRefreshIntervalMs = 10000;

@@ -1,9 +1,9 @@
 import Typography from '@material-ui/core/Typography';
-import { WaitForData } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
-import { useNodeExecutionData } from 'components/hooks';
-import { RemoteLiteralMapViewer } from 'components/Literals';
-import { NodeExecution } from 'models';
+import { WaitForData } from 'components/common/WaitForData';
+import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
+import { RemoteLiteralMapViewer } from 'components/Literals/RemoteLiteralMapViewer';
+import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 
 /** Fetches and renders the execution data (inputs/outputs for a given
