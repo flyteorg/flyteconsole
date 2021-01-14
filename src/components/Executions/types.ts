@@ -34,15 +34,6 @@ export enum NodeExecutionDisplayType {
     WaitableTask = 'Waitable Task'
 }
 
-export interface UniqueNodeId {
-    workflowId: WorkflowId;
-    nodeId: string;
-}
-export interface NodeInformation {
-    id: UniqueNodeId;
-    node: CompiledNode;
-}
-
 export interface CompiledTaskNode extends CompiledNode {
     taskNode: TaskNode;
 }

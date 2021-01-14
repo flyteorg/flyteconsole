@@ -7,9 +7,6 @@ import { Helmet } from 'react-helmet';
 import { processEnv } from '../env';
 
 interface Stats {
-    assetsByChunkName: {
-        bootstrap: string[] | string;
-    };
     publicPath: string;
     assets: Array<{ name: string }>;
 }
@@ -38,7 +35,7 @@ export default function serverRenderer({
     }
 
     return (
-        req: express.Request,
+        _req: express.Request,
         res: express.Response
     ) => {
         if (isDev) {
@@ -64,16 +61,6 @@ export default function serverRenderer({
         // Populate process.env into window.env
         $('head').append(
             $(`<script>window.env = ${JSON.stringify(processEnv)}</script>`)
-        );
-
-        const initialData = {};
-
-        $('body').prepend(
-            $(
-                `<script>window.__INITIAL_DATA__ = ${JSON.stringify(
-                    initialData
-                )}</script>`
-            )
         );
 
         res.status(200).send($.html());

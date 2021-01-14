@@ -30,12 +30,6 @@ export const createMockTask: (name: string, version?: string) => Task = (
 export const createMockTaskClosure: () => TaskClosure = () =>
     cloneDeep(decodedClosure);
 
-export const createMockTasks: Fn<Task[]> = () => [
-    createMockTask('task1'),
-    createMockTask('task2'),
-    createMockTask('task3')
-];
-
 export const createMockTaskVersions = (name: string, length: number) => {
     return Array.from({ length }, (_, idx) => {
         return createMockTask(name, getCacheKey({ idx }));

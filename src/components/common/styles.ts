@@ -24,16 +24,6 @@ export const buttonGroup = (theme: Theme) => ({
     display: 'flex'
 });
 
-export const flexWrap = (spacing: number) => ({
-    flexFlow: 'wrap',
-    marginLeft: -spacing,
-    marginTop: -spacing,
-    '& > *': {
-        marginLeft: spacing,
-        marginTop: spacing
-    }
-});
-
 export const useCommonStyles = makeStyles((theme: Theme) => ({
     buttonWhiteOutlined: {
         backgroundColor: theme.palette.common.white,

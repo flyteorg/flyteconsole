@@ -8,7 +8,6 @@ export const noDescriptionString = '(No description)';
 export const noneString = '(none)';
 export const noExecutionsFoundString = 'No executions found.';
 export const zeroSecondsString = '0s';
-export const subSecondString = '< 1s';
 
 export enum KeyCodes {
     ESCAPE = 27

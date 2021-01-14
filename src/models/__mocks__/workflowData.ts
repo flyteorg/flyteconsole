@@ -29,12 +29,6 @@ export const createMockWorkflow: (
 export const createMockWorkflowClosure: () => WorkflowClosure = () =>
     cloneDeep(decodedClosure);
 
-export const createMockWorkflows: Fn<Workflow[]> = () => [
-    createMockWorkflow('workflow1'),
-    createMockWorkflow('workflow2'),
-    createMockWorkflow('workflow3')
-];
-
 export const createMockWorkflowVersions = (name: string, length: number) => {
     return Array.from({ length }, (_, idx) => {
         return createMockWorkflow(name, getCacheKey({ idx }));
