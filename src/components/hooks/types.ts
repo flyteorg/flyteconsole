@@ -2,7 +2,6 @@ import {
     PaginatedEntityResponse,
     RequestConfig
 } from 'models/AdminEntity/types';
-import { Execution, NodeExecution } from 'models/Execution/types';
 import { EventObject, State, StateMachine } from 'xstate';
 
 export enum fetchStates {
@@ -59,11 +58,6 @@ export interface FetchableData<T> {
     value: T;
 }
 
-export interface FetchableExecution {
-    fetchable: FetchableData<Execution>;
-    terminateExecution(cause: string): Promise<void>;
-}
-
 export interface PaginationValue<T> {
     token?: string;
     items: T[];
@@ -96,5 +90,3 @@ export interface RefreshConfig<T> {
     /** Implements the fetch logic for this entity. Defaults to calling fetch() */
     doRefresh?: (fetchable: FetchableData<T>) => Promise<T>;
 }
-
-export type NodeExecutionDictionary = Record<string, NodeExecution>;

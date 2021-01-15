@@ -1,5 +1,5 @@
 import { ExecutionDetails } from 'components/Executions/ExecutionDetails/ExecutionDetails';
-import { TaskExecutionDetails } from 'components/Executions/TaskExecutionsList/TaskExecutionDetails';
+import { TaskExecutionDetails } from 'components/Executions/TaskExecutionDetails/TaskExecutionDetails';
 import { NotFound } from 'components/NotFound/NotFound';
 import { ProjectDetails } from 'components/Project/ProjectDetails';
 import { SelectProject } from 'components/SelectProject/SelectProject';
