@@ -65,7 +65,11 @@ export const TaskExecutionNodes: React.FC<TaskExecutionNodesProps> = ({
         taskExecutionIsTerminal(taskExecution);
 
     const nodeExecutionsQuery = useConditionalQuery(
-        makeTaskExecutionChildListQuery(useQueryClient(), taskExecution.id, requestConfig),
+        makeTaskExecutionChildListQuery(
+            useQueryClient(),
+            taskExecution.id,
+            requestConfig
+        ),
         shouldEnableQuery
     );
 

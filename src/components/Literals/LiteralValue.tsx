@@ -1,4 +1,9 @@
-import { Literal, LiteralCollection, LiteralMap, Scalar } from 'models/Common/types';
+import {
+    Literal,
+    LiteralCollection,
+    LiteralMap,
+    Scalar
+} from 'models/Common/types';
 import * as React from 'react';
 import { LiteralCollectionViewer } from './LiteralCollectionViewer';
 import { LiteralMapViewer } from './LiteralMapViewer';

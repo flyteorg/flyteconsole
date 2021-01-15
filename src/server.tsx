@@ -34,10 +34,7 @@ export default function serverRenderer({
             .toString();
     }
 
-    return (
-        _req: express.Request,
-        res: express.Response
-    ) => {
+    return (_req: express.Request, res: express.Response) => {
         if (isDev) {
             const indexPath = path.join(currentDirectory, 'dist', 'index.html');
             html = fileSystem.readFileSync(indexPath).toString();

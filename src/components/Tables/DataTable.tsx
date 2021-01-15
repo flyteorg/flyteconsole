@@ -3,7 +3,13 @@ import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import * as classnames from 'classnames';
 import { noExecutionsFoundString } from 'common/constants';
 import { useCommonStyles } from 'components/common/styles';
-import { bodyFontSize, headerFontFamily, separatorColor, tableHeaderColor, tablePlaceholderColor } from 'components/Theme/constants';
+import {
+    bodyFontSize,
+    headerFontFamily,
+    separatorColor,
+    tableHeaderColor,
+    tablePlaceholderColor
+} from 'components/Theme/constants';
 import * as React from 'react';
 import {
     AutoSizer,

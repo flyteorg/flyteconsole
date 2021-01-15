@@ -1,4 +1,4 @@
-import { Blob, BlobDimensionality } from "models/Common/types";
+import { Blob, BlobDimensionality } from 'models/Common/types';
 
 export const blobValues: Dictionary<Blob> = {
     singleBlobValue: {

@@ -1,5 +1,10 @@
 import { Admin, Core } from 'flyteidl';
-import { BlobDimensionality, Identifier, LiteralType, NamedEntityIdentifier } from 'models/Common/types';
+import {
+    BlobDimensionality,
+    Identifier,
+    LiteralType,
+    NamedEntityIdentifier
+} from 'models/Common/types';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';

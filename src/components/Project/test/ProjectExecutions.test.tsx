@@ -12,7 +12,11 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
-import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'test/utils';
+import {
+    createTestQueryClient,
+    disableQueryLogger,
+    enableQueryLogger
+} from 'test/utils';
 import { failedToLoadExecutionsString } from '../constants';
 import { ProjectExecutions } from '../ProjectExecutions';
 
@@ -90,7 +94,9 @@ describe('ProjectExecutions', () => {
 
         it('shows error message', async () => {
             const { getByText } = renderView();
-            await waitFor(() => expect(getByText(failedToLoadExecutionsString)));
+            await waitFor(() =>
+                expect(getByText(failedToLoadExecutionsString))
+            );
         });
     });
 });

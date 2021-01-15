@@ -25,6 +25,6 @@ export function makeWorkflowExecutionListQuery(
                 finalConfig
             );
             return { data, token };
-        },
+        }
     });
 }

@@ -6,7 +6,10 @@ import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { NavBarContent } from 'components/Navigation/NavBarContent';
-import { interactiveTextDisabledColor, smallFontSize } from 'components/Theme/constants';
+import {
+    interactiveTextDisabledColor,
+    smallFontSize
+} from 'components/Theme/constants';
 import { TaskExecution } from 'models/Execution/types';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';

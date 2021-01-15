@@ -21,7 +21,7 @@ export const StorybookContainer: React.FC = ({ children }) => {
             <CssBaseline />
             <ErrorBoundary>
                 <QueryClientProvider client={queryClient}>
-                <div className={useStyles().container}>{children}</div>
+                    <div className={useStyles().container}>{children}</div>
                 </QueryClientProvider>
             </ErrorBoundary>
         </ThemeProvider>

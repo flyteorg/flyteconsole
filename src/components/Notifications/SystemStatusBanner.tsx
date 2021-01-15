@@ -7,7 +7,12 @@ import Warning from '@material-ui/icons/Warning';
 import { Empty } from 'components/common/Empty';
 import { LinkifiedText } from 'components/common/LinkifiedText';
 import { WaitForData } from 'components/common/WaitForData';
-import { infoIconColor, mutedButtonColor, mutedButtonHoverColor, warningIconColor } from 'components/Theme/constants';
+import {
+    infoIconColor,
+    mutedButtonColor,
+    mutedButtonHoverColor,
+    warningIconColor
+} from 'components/Theme/constants';
 import { StatusString, SystemStatus } from 'models/Common/types';
 import * as React from 'react';
 import { useSystemStatus } from './useSystemStatus';

@@ -1,11 +1,10 @@
-import { useFetchableData } from "components/hooks/useFetchableData";
-import { NotFoundError } from "errors/fetchErrors";
-import { SortDirection } from "models/AdminEntity/types";
-import { NamedEntityIdentifier } from "models/Common/types";
-import { listTasks } from "models/Task/api";
-import { taskSortFields } from "models/Task/constants";
-import { Task } from "models/Task/types";
-
+import { useFetchableData } from 'components/hooks/useFetchableData';
+import { NotFoundError } from 'errors/fetchErrors';
+import { SortDirection } from 'models/AdminEntity/types';
+import { NamedEntityIdentifier } from 'models/Common/types';
+import { listTasks } from 'models/Task/api';
+import { taskSortFields } from 'models/Task/constants';
+import { Task } from 'models/Task/types';
 
 async function fetchLatestTaskVersion(id: NamedEntityIdentifier) {
     const { entities } = await listTasks(id, {

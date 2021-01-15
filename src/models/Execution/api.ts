@@ -3,10 +3,17 @@ import {
     getAdminEntity,
     postAdminEntity
 } from 'models/AdminEntity/AdminEntity';
-import { defaultListExecutionChildrenConfig, defaultPaginationConfig } from 'models/AdminEntity/constants';
+import {
+    defaultListExecutionChildrenConfig,
+    defaultPaginationConfig
+} from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { endpointPrefixes } from 'models/Common/constants';
-import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
+import {
+    Identifier,
+    IdentifierScope,
+    NameIdentifierScope
+} from 'models/Common/types';
 import { makeIdentifierPath } from 'models/Common/utils';
 import { defaultExecutionPrincipal } from './constants';
 import {

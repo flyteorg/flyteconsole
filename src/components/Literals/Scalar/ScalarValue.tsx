@@ -1,4 +1,12 @@
-import { Binary, Blob, Error, Primitive, ProtobufStruct, Scalar, Schema } from 'models/Common/types';
+import {
+    Binary,
+    Blob,
+    Error,
+    Primitive,
+    ProtobufStruct,
+    Scalar,
+    Schema
+} from 'models/Common/types';
 import * as React from 'react';
 import { PrintValue } from '../PrintValue';
 import { UnsupportedType } from '../UnsupportedType';

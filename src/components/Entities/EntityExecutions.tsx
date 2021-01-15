@@ -59,7 +59,10 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({ id }) => {
                 <ExecutionFilters {...filtersState} />
             </div>
             <WaitForData {...executions}>
-                <WorkflowExecutionsTable {...executions} isFetching={isLoadingState(executions.state)} />
+                <WorkflowExecutionsTable
+                    {...executions}
+                    isFetching={isLoadingState(executions.state)}
+                />
             </WaitForData>
         </>
     );

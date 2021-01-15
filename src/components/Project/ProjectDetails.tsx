@@ -42,7 +42,10 @@ const ProjectEntitiesByDomain: React.FC<{
         throw new Error('No domains exist for this project');
     }
     const domainId = params.domain || project.domains[0].id;
-    const handleTabChange = (_event: React.ChangeEvent<unknown>, tabId: string) =>
+    const handleTabChange = (
+        _event: React.ChangeEvent<unknown>,
+        tabId: string
+    ) =>
         setQueryState({
             domain: tabId
         });
@@ -68,7 +71,7 @@ const ProjectEntitiesByDomain: React.FC<{
     );
 };
 
-const ProjectExecutionsByDomain: React.FC<{ project: Project}> = ({
+const ProjectExecutionsByDomain: React.FC<{ project: Project }> = ({
     project
 }) => <ProjectEntitiesByDomain project={project} entityType="executions" />;
 
@@ -98,8 +101,14 @@ export const ProjectDetailsContainer: React.FC<ProjectDetailsRouteParams> = ({
                         <Route path={Routes.ProjectDetails.sections.tasks.path}>
                             <ProjectTasksByDomain project={project.value} />
                         </Route>
-                        <Route path={Routes.ProjectDetails.sections.executions.path}>
-                            <ProjectExecutionsByDomain project={project.value} />
+                        <Route
+                            path={
+                                Routes.ProjectDetails.sections.executions.path
+                            }
+                        >
+                            <ProjectExecutionsByDomain
+                                project={project.value}
+                            />
                         </Route>
                         <Redirect
                             to={Routes.ProjectDetails.sections.workflows.makeUrl(

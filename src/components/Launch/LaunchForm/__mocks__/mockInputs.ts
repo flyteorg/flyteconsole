@@ -2,7 +2,12 @@ import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
 import { Core } from 'flyteidl';
 import { cloneDeep, mapValues } from 'lodash';
 import * as Long from 'long';
-import { BlobDimensionality, SimpleType, TypedInterface, Variable } from 'models/Common/types';
+import {
+    BlobDimensionality,
+    SimpleType,
+    TypedInterface,
+    Variable
+} from 'models/Common/types';
 import { literalNone } from '../inputHelpers/constants';
 import { primitiveLiteral } from './utils';
 

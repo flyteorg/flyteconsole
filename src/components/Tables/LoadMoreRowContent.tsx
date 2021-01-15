@@ -37,7 +37,12 @@ export const LoadMoreRowContent: React.FC<LoadMoreRowContentProps> = props => {
     const { loadMoreRows, lastError, isFetching, style } = props;
 
     const button = (
-        <Button onClick={loadMoreRows} size="small" variant="outlined" disabled={isFetching}>
+        <Button
+            onClick={loadMoreRows}
+            size="small"
+            variant="outlined"
+            disabled={isFetching}
+        >
             Load More
             {isFetching ? <ButtonCircularProgress /> : null}
         </Button>
