@@ -58,8 +58,6 @@ export interface Execution extends Admin.IExecution {
     spec: ExecutionSpec;
 }
 
-export type ExecutionsMap = Map<string, Execution>;
-
 /** Node executions **/
 export interface WorkflowNodeMetadata {
     executionId: WorkflowExecutionIdentifier;

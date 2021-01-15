@@ -40,4 +40,3 @@ export interface Workflow extends Admin.IWorkflow {
 }
 
 export type WorkflowId = Identifier;
-export type WorkflowsMap = Map<string, Workflow>;

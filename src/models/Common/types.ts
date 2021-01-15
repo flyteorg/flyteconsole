@@ -1,5 +1,4 @@
 import { Admin, Core, Protobuf } from 'flyteidl';
-import { Collection } from 'react-virtualized';
 
 /* --- BEGIN flyteidl type aliases --- */
 /** These are types shared across multiple sections of the data model. Most of
