@@ -9,7 +9,7 @@ const render = (Component: React.FC) => {
 };
 
 const initializeApp = () => {
-    const App = require('./components/App').App;
+    const App = require('./components/App/App').App;
 
     if (env.NODE_ENV === 'development') {
         // We use style-loader in dev mode, but it causes a FOUC and some initial styling issues

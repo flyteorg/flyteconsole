@@ -1,16 +1,9 @@
-import { Typography } from '@material-ui/core';
+import { ListProps, Typography } from '@material-ui/core';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import * as classnames from 'classnames';
 import { noExecutionsFoundString } from 'common/constants';
-import { ListProps } from 'components/common';
 import { useCommonStyles } from 'components/common/styles';
-import {
-    bodyFontSize,
-    headerFontFamily,
-    separatorColor,
-    tableHeaderColor,
-    tablePlaceholderColor
-} from 'components/Theme';
+import { bodyFontSize, headerFontFamily, separatorColor, tableHeaderColor, tablePlaceholderColor } from 'components/Theme/constants';
 import * as React from 'react';
 import {
     AutoSizer,

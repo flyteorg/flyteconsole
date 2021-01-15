@@ -1,11 +1,13 @@
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData, withRouteParams } from 'components/common';
-import { useProject, useQueryState } from 'components/hooks';
-import { Project } from 'models';
+import { WaitForData } from 'components/common/WaitForData';
+import { withRouteParams } from 'components/common/withRouteParams';
+import { useProject } from 'components/hooks/useProjects';
+import { useQueryState } from 'components/hooks/useQueryState';
+import { Project } from 'models/Project/types';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
-import { Routes } from 'routes';
+import { Routes } from 'routes/routes';
 import { ProjectExecutions } from './ProjectExecutions';
 import { ProjectTasks } from './ProjectTasks';
 import { ProjectWorkflows } from './ProjectWorkflows';

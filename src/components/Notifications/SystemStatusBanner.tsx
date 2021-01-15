@@ -4,15 +4,10 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
 import Info from '@material-ui/icons/Info';
 import Warning from '@material-ui/icons/Warning';
-import { WaitForData } from 'components/common';
 import { Empty } from 'components/common/Empty';
 import { LinkifiedText } from 'components/common/LinkifiedText';
-import {
-    infoIconColor,
-    mutedButtonColor,
-    mutedButtonHoverColor,
-    warningIconColor
-} from 'components/Theme';
+import { WaitForData } from 'components/common/WaitForData';
+import { infoIconColor, mutedButtonColor, mutedButtonHoverColor, warningIconColor } from 'components/Theme/constants';
 import { StatusString, SystemStatus } from 'models/Common/types';
 import * as React from 'react';
 import { useSystemStatus } from './useSystemStatus';

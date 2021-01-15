@@ -1,18 +1,8 @@
-import {
-    Binary,
-    Blob,
-    Error,
-    Primitive,
-    ProtobufStruct,
-    Scalar,
-    Schema
-} from 'models';
+import { Binary, Blob, Error, Primitive, ProtobufStruct, Scalar, Schema } from 'models/Common/types';
 import * as React from 'react';
-
 import { PrintValue } from '../PrintValue';
 import { UnsupportedType } from '../UnsupportedType';
 import { ValueLabel } from '../ValueLabel';
-
 import { BinaryValue } from './BinaryValue';
 import { BlobValue } from './BlobValue';
 import { ErrorValue } from './ErrorValue';

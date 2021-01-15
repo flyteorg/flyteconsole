@@ -1,8 +1,4 @@
-import {
-    Execution,
-    NodeExecution,
-    NodeExecutionIdentifier
-} from 'models/Execution';
+import { Execution, NodeExecution, NodeExecutionIdentifier } from "models/Execution/types";
 
 export interface WorkflowExecutionsTableState {
     selectedIOExecution: Execution | null;

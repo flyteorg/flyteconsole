@@ -1,13 +1,12 @@
 import ButtonBase from '@material-ui/core/ButtonBase';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import * as classnames from 'classnames';
-import { Project } from 'models';
-import * as React from 'react';
-
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import { KeyCodes } from 'common/constants';
 import { useCommonStyles } from 'components/common/styles';
-import { listhoverColor } from 'components/Theme';
+import { listhoverColor } from 'components/Theme/constants';
+import { Project } from 'models/Project/types';
+import * as React from 'react';
 import { SearchableProjectList } from './SearchableProjectList';
 
 const expanderGridHeight = 12;

@@ -1,5 +1,5 @@
-import { ContentContainer, ContentContainerProps } from 'components/common';
-import { withSideNavigation } from 'components/Navigation';
+import { ContentContainer, ContentContainerProps } from 'components/common/ContentContainer';
+import { withSideNavigation } from 'components/Navigation/withSideNavigation';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { components } from './components';

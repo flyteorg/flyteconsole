@@ -1,5 +1,5 @@
 import { ensureSlashPrefixed } from 'common/utils';
-import { TaskExecutionIdentifier, WorkflowExecutionIdentifier } from 'models';
+import { TaskExecutionIdentifier, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import {
     projectBasePath,
     projectDomainBasePath,

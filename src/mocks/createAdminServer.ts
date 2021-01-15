@@ -1,23 +1,13 @@
 import { Admin } from 'flyteidl';
-import {
-    adminApiUrl,
-    DomainIdentifierScope,
-    EncodableType,
-    encodeProtoPayload,
-    Execution,
-    Identifier,
-    LaunchPlan,
-    limits,
-    NodeExecution,
-    NodeExecutionIdentifier,
-    Project,
-    ResourceType,
-    Task,
-    TaskExecution,
-    TaskExecutionIdentifier,
-    Workflow,
-    WorkflowExecutionIdentifier
-} from 'models';
+import { limits } from 'models/AdminEntity/constants';
+import { EncodableType } from 'models/AdminEntity/types';
+import { adminApiUrl, encodeProtoPayload } from 'models/AdminEntity/utils';
+import { DomainIdentifierScope, Identifier, ResourceType } from 'models/Common/types';
+import { Execution, NodeExecution, NodeExecutionIdentifier, TaskExecution, TaskExecutionIdentifier, WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { LaunchPlan } from 'models/Launch/types';
+import { Project } from 'models/Project/types';
+import { Task } from 'models/Task/types';
+import { Workflow } from 'models/Workflow/types';
 import { MockedRequest, RequestParams, ResponseResolver, rest } from 'msw';
 import { RestContext } from 'msw/lib/types/rest';
 import { RequestHandlersList } from 'msw/lib/types/setupWorker/glossary';

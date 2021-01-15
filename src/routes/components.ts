@@ -1,8 +1,8 @@
-import { ExecutionDetails } from 'components/Executions/ExecutionDetails';
-import { TaskExecutionDetails } from 'components/Executions/TaskExecutionDetails';
-import { NotFound } from 'components/NotFound';
-import { ProjectDetails } from 'components/Project';
-import { SelectProject } from 'components/SelectProject';
+import { ExecutionDetails } from 'components/Executions/ExecutionDetails/ExecutionDetails';
+import { TaskExecutionDetails } from 'components/Executions/TaskExecutionsList/TaskExecutionDetails';
+import { NotFound } from 'components/NotFound/NotFound';
+import { ProjectDetails } from 'components/Project/ProjectDetails';
+import { SelectProject } from 'components/SelectProject/SelectProject';
 import { TaskDetails } from 'components/Task/TaskDetails';
 import { WorkflowDetails } from 'components/Workflow/WorkflowDetails';
 
