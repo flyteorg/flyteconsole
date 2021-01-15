@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from "@material-ui/core";
 import classnames from "classnames";
-import { Execution } from "models";
+import { Execution } from "models/Execution/types";
 import * as React from "react";
 import { ListRowProps } from "react-virtualized";
 import { ExpandableExecutionError } from "./ExpandableExecutionError";

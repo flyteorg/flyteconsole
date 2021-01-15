@@ -1,4 +1,4 @@
-import { TaskType } from 'models/Task';
+import { TaskType } from 'models/Task/constants';
 import { COLOR_SPECTRUM } from './colorSpectrum';
 
 export const bodyFontFamily = 'Lato, helvetica, arial, sans-serif';

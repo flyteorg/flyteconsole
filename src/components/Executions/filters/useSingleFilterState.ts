@@ -1,5 +1,5 @@
 import { log } from 'common/log';
-import { useQueryState } from 'components/hooks';
+import { useQueryState } from 'components/hooks/useQueryState';
 import { useEffect, useState } from 'react';
 import { FilterMap, FilterValue, SingleFilterState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';

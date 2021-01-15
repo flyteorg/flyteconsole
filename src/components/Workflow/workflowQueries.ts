@@ -1,6 +1,7 @@
 import { QueryInput, QueryType } from 'components/data/types';
 import { extractTaskTemplates } from 'components/hooks/utils';
-import { getWorkflow, Workflow, WorkflowId } from 'models';
+import { getWorkflow } from 'models/Workflow/api';
+import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { QueryClient } from 'react-query';
 
 export function makeWorkflowQuery(queryClient: QueryClient, id: WorkflowId): QueryInput<Workflow> {

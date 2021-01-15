@@ -1,5 +1,5 @@
 import { Core } from 'flyteidl';
-import { Alias, Binding, Identifier } from 'models/Common';
+import { Alias, Binding, Identifier } from 'models/Common/types';
 
 /** A graph node indicating a subworkflow execution */
 export type WorkflowNode = Core.IWorkflowNode

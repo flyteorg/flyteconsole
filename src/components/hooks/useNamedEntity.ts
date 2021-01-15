@@ -1,12 +1,8 @@
 import { useAPIContext } from 'components/data/apiContext';
 import { Core } from 'flyteidl';
-import {
-    DomainIdentifierScope,
-    getNamedEntity,
-    NamedEntity,
-    RequestConfig,
-    ResourceType
-} from 'models';
+import { RequestConfig } from 'models/AdminEntity/types';
+import { getNamedEntity } from 'models/Common/api';
+import { DomainIdentifierScope, NamedEntity, ResourceType } from 'models/Common/types';
 import { useFetchableData } from './useFetchableData';
 import { usePagination } from './usePagination';
 

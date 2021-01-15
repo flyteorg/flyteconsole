@@ -1,4 +1,4 @@
-import { BlobDimensionality, SimpleType } from 'models';
+import { BlobDimensionality, SimpleType } from 'models/Common/types';
 import { BlobValue, InputType, RoleType } from './types';
 
 export const formStrings = {

@@ -1,4 +1,5 @@
-import { DAGNode, endNodeId, startNodeId } from 'models';
+import { DAGNode } from "models/Graph/types";
+import { endNodeId, startNodeId } from "models/Node/constants";
 
 export function isStartNode(node: DAGNode) {
     return node.id === startNodeId;

@@ -2,14 +2,7 @@ import { Button, ButtonBase } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import FileCopy from '@material-ui/icons/FileCopy';
 import * as classnames from 'classnames';
-import {
-    bodyFontFamily,
-    errorBackgroundColor,
-    listhoverColor,
-    nestedListColor,
-    separatorColor,
-    smallFontSize
-} from 'components/Theme';
+import { bodyFontFamily, errorBackgroundColor, listhoverColor, nestedListColor, separatorColor, smallFontSize } from 'components/Theme/constants';
 import * as copyToClipboard from 'copy-to-clipboard';
 import * as React from 'react';
 

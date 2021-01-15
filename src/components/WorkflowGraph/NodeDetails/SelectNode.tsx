@@ -1,4 +1,4 @@
-import { NonIdealState } from 'components/common';
+import { NonIdealState } from 'components/common/NonIdealState';
 import * as React from 'react';
 
 export const SelectNode: React.FC = () => (
