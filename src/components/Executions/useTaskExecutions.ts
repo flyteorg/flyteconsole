@@ -1,7 +1,8 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { useDataRefresher } from 'components/hooks/useDataRefresher';
 import { every } from 'lodash';
-import { limits, SortDirection } from 'models/AdminEntity';
+import { limits } from 'models/AdminEntity/constants';
+import { SortDirection } from 'models/AdminEntity/types';
 import {
     ExecutionData,
     NodeExecution,
@@ -9,7 +10,7 @@ import {
     TaskExecution,
     TaskExecutionIdentifier
 } from 'models/Execution/types';
-import { taskSortFields } from 'models/Task';
+import { taskSortFields } from 'models/Task/constants';
 import { FetchableData } from '../hooks/types';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { executionRefreshIntervalMs } from './constants';

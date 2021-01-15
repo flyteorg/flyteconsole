@@ -1,9 +1,5 @@
-import {
-    Execution,
-    NodeExecution,
-    PaginatedEntityResponse,
-    RequestConfig
-} from 'models';
+import { PaginatedEntityResponse, RequestConfig } from 'models/AdminEntity/types';
+import { Execution, NodeExecution } from 'models/Execution/types';
 import { EventObject, State, StateMachine } from 'xstate';
 
 export enum fetchStates {

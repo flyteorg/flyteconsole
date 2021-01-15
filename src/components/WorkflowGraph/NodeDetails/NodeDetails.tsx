@@ -1,5 +1,6 @@
-import { NonIdealState, SectionHeader } from 'components/common';
-import { CompiledNode } from 'models';
+import { NonIdealState } from 'components/common/NonIdealState';
+import { SectionHeader } from 'components/common/SectionHeader';
+import { CompiledNode } from 'models/Node/types';
 import * as React from 'react';
 import { SelectNode } from './SelectNode';
 import { useStyles } from './styles';

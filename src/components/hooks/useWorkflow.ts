@@ -1,5 +1,5 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { Workflow, WorkflowId } from 'models';
+import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { FetchableData } from './types';
 import { useFetchableData } from './useFetchableData';
 

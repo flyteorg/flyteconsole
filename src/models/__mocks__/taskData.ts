@@ -1,8 +1,8 @@
-import { getCacheKey } from 'components/Cache';
+import { getCacheKey } from 'components/Cache/utils';
 import { Admin } from 'flyteidl';
 import { cloneDeep } from 'lodash';
-import { Identifier } from '../Common';
-import { Task, TaskClosure } from '../Task';
+import { Identifier } from 'models/Common/types';
+import { Task, TaskClosure } from 'models/Task/types';
 import * as simpleClosure from './simpleTaskClosure.json';
 
 const decodedClosure = Admin.TaskClosure.create(

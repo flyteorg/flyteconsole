@@ -1,7 +1,7 @@
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
-import { RequestConfig } from 'models/AdminEntity';
+import { RequestConfig } from 'models/AdminEntity/types';
 import { getNodeExecution, listNodeExecutions, listTaskExecutionChildren } from 'models/Execution/api';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import { NodeExecution, NodeExecutionIdentifier, TaskExecutionIdentifier, WorkflowExecutionIdentifier } from 'models/Execution/types';

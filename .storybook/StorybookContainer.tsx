@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import * as React from 'react';
 import { QueryClientProvider } from 'react-query';
-import { ErrorBoundary } from '../src/components/common';
+import { ErrorBoundary } from '../src/components/common/ErrorBoundary';
 import { createQueryClient } from '../src/components/data/queryCache';
 import { muiTheme } from '../src/components/Theme/muiTheme';
 

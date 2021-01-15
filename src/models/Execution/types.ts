@@ -1,19 +1,12 @@
 import { Admin, Core, Protobuf } from 'flyteidl';
-import {
-    Identifier,
-    LiteralMap,
-    LiteralMapBlob,
-    Notification,
-    TaskLog,
-    UrlBlob
-} from 'models/Common';
-
+import { Identifier, LiteralMap, LiteralMapBlob, TaskLog, UrlBlob } from 'models/Common/types';
 import {
     ExecutionMode,
     NodeExecutionPhase,
     TaskExecutionPhase,
     WorkflowExecutionPhase
 } from './enums';
+
 
 export type WorkflowExecutionIdentifier = RequiredNonNullable<
     Core.IWorkflowExecutionIdentifier

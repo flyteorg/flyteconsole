@@ -1,7 +1,7 @@
 import { createPaginationQuery } from 'components/data/queryUtils';
 import { InfiniteQueryInput, QueryType } from 'components/data/types';
-import { RequestConfig } from 'models/AdminEntity';
-import { DomainIdentifierScope } from 'models/Common';
+import { RequestConfig } from 'models/AdminEntity/types';
+import { DomainIdentifierScope } from 'models/Common/types';
 import { listExecutions } from 'models/Execution/api';
 import { Execution } from 'models/Execution/types';
 

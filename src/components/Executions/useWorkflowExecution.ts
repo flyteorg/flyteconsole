@@ -2,7 +2,7 @@ import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
-import { LiteralMap } from 'models/Common';
+import { LiteralMap } from 'models/Common/types';
 import { getExecution } from 'models/Execution/api';
 import {
     Execution,

@@ -4,7 +4,7 @@ import {
     NodeExecutionMetadata,
     WorkflowNodeMetadata
 } from 'models/Execution/types';
-import { BranchNode, CompiledNode, TaskNode, WorkflowNode } from 'models/Node';
+import { BranchNode, CompiledNode, TaskNode, WorkflowNode } from 'models/Node/types';
 import { TaskTemplate } from 'models/Task/types';
 
 export interface ExecutionPhaseConstants {

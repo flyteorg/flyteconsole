@@ -1,4 +1,4 @@
-import { Domain, Project } from '../Project';
+import { Domain, Project } from "models/Project/types";
 
 export const emptyProject = {
     id: 'emptyproject',

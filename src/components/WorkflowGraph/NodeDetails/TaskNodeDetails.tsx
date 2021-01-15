@@ -1,8 +1,8 @@
+import { DumpJSON } from 'components/common/DumpJSON';
+import { WaitForData } from 'components/common/WaitForData';
+import { useTaskTemplate } from 'components/hooks/useTask';
+import { Identifier } from 'models/Common/types';
 import * as React from 'react';
-
-import { DumpJSON, WaitForData } from 'components/common';
-import { useTaskTemplate } from 'components/hooks';
-import { Identifier } from 'models';
 
 interface TaskNodeDetailsProps {
     taskId: Identifier;
