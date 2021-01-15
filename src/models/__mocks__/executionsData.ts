@@ -1,7 +1,12 @@
 import { Core, Protobuf } from 'flyteidl';
 import * as Long from 'long';
 import { LiteralMap, LiteralMapBlob } from 'models/Common/types';
-import { Execution, ExecutionClosure, ExecutionMetadata, ExecutionSpec } from 'models/Execution/types';
+import {
+    Execution,
+    ExecutionClosure,
+    ExecutionMetadata,
+    ExecutionSpec
+} from 'models/Execution/types';
 import { ExecutionMode, WorkflowExecutionPhase } from '../Execution/enums';
 
 export const MOCK_LAUNCH_PLAN_ID = {

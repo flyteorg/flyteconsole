@@ -1,4 +1,3 @@
-
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';

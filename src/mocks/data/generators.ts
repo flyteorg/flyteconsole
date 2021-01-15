@@ -9,7 +9,11 @@ import {
     TaskExecutionPhase,
     WorkflowExecutionPhase
 } from 'models/Execution/enums';
-import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+import {
+    Execution,
+    NodeExecution,
+    TaskExecution
+} from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { CompiledTask, Task } from 'models/Task/types';

@@ -82,7 +82,12 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
             >
                 <header className={styles.header}>
                     <div className={commonStyles.microHeader}>PROJECT</div>
-                    <div className={classnames(commonStyles.mutedHeader, commonStyles.textWrapped)}>
+                    <div
+                        className={classnames(
+                            commonStyles.mutedHeader,
+                            commonStyles.textWrapped
+                        )}
+                    >
                         {selectedProject.name}
                     </div>
                 </header>

@@ -5,7 +5,6 @@ import { IdentifierScope } from 'models/Common/types';
 import { makeIdentifierPath } from 'models/Common/utils';
 import { Task } from './types';
 
-
 /** Generate the correct path for retrieving a task or list of tasks based on the
  * given scope.
  */

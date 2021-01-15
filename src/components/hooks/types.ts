@@ -1,4 +1,7 @@
-import { PaginatedEntityResponse, RequestConfig } from 'models/AdminEntity/types';
+import {
+    PaginatedEntityResponse,
+    RequestConfig
+} from 'models/AdminEntity/types';
 import { Execution, NodeExecution } from 'models/Execution/types';
 import { EventObject, State, StateMachine } from 'xstate';
 

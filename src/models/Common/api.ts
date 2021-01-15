@@ -9,7 +9,10 @@ import {
 } from 'models/AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';
 import { transformRequestError } from 'models/AdminEntity/transformRequestError';
-import { PaginatedEntityResponse, RequestConfig } from 'models/AdminEntity/types';
+import {
+    PaginatedEntityResponse,
+    RequestConfig
+} from 'models/AdminEntity/types';
 import { getProfileUrl } from 'models/AdminEntity/utils';
 import {
     defaultAxiosConfig,

@@ -1,7 +1,17 @@
 import { makeStyles, Theme } from '@material-ui/core';
 import { headerGridHeight } from 'components/Tables/constants';
-import { headerFontFamily, listhoverColor, nestedListColor, smallFontSize, tableHeaderColor, tablePlaceholderColor } from 'components/Theme/constants';
-import { nodeExecutionsTableColumnWidths, workflowExecutionsTableColumnWidths } from './constants';
+import {
+    headerFontFamily,
+    listhoverColor,
+    nestedListColor,
+    smallFontSize,
+    tableHeaderColor,
+    tablePlaceholderColor
+} from 'components/Theme/constants';
+import {
+    nodeExecutionsTableColumnWidths,
+    workflowExecutionsTableColumnWidths
+} from './constants';
 
 export const selectedClassName = 'selected';
 

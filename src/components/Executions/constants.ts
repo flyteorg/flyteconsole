@@ -1,4 +1,9 @@
-import { negativeTextColor, positiveTextColor, secondaryTextColor, statusColors } from 'components/Theme/constants';
+import {
+    negativeTextColor,
+    positiveTextColor,
+    secondaryTextColor,
+    statusColors
+} from 'components/Theme/constants';
 import { Core } from 'flyteidl';
 import {
     NodeExecutionPhase,

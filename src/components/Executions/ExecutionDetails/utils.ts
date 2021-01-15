@@ -1,6 +1,6 @@
-import { Identifier, ResourceType } from "models/Common/types";
-import { Execution } from "models/Execution/types";
-import { Routes } from "routes/routes";
+import { Identifier, ResourceType } from 'models/Common/types';
+import { Execution } from 'models/Execution/types';
+import { Routes } from 'routes/routes';
 
 export function isSingleTaskExecution(execution: Execution) {
     return execution.spec.launchPlan.resourceType === ResourceType.TASK;

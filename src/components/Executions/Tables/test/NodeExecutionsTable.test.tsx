@@ -32,7 +32,11 @@ import { mockServer } from 'mocks/server';
 import { FilterOperationName, RequestConfig } from 'models/AdminEntity/types';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { Execution, NodeExecution, TaskNodeMetadata } from 'models/Execution/types';
+import {
+    Execution,
+    NodeExecution,
+    TaskNodeMetadata
+} from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';

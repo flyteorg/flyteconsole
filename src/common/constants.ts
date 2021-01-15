@@ -12,4 +12,3 @@ export const zeroSecondsString = '0s';
 export enum KeyCodes {
     ESCAPE = 27
 }
-

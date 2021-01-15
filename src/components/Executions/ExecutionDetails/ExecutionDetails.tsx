@@ -96,7 +96,10 @@ export const ExecutionDetailsContainer: React.FC<ExecutionDetailsProps> = ({
     );
 
     return (
-        <WaitForQuery loadingComponent={LargeLoadingSpinner} query={useWorkflowExecutionQuery(id)}>
+        <WaitForQuery
+            loadingComponent={LargeLoadingSpinner}
+            query={useWorkflowExecutionQuery(id)}
+        >
             {renderExecutionDetails}
         </WaitForQuery>
     );

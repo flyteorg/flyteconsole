@@ -1,11 +1,21 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
-import { runningExecutionStates, terminalExecutionStates, terminalNodeExecutionStates, terminalTaskExecutionStates } from 'models/Execution/constants';
+import {
+    runningExecutionStates,
+    terminalExecutionStates,
+    terminalNodeExecutionStates,
+    terminalTaskExecutionStates
+} from 'models/Execution/constants';
 import {
     NodeExecutionPhase,
     TaskExecutionPhase,
     WorkflowExecutionPhase
 } from 'models/Execution/enums';
-import { BaseExecutionClosure, Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+import {
+    BaseExecutionClosure,
+    Execution,
+    NodeExecution,
+    TaskExecution
+} from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import {
     nodeExecutionPhaseConstants,

@@ -92,7 +92,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                         className={styles.searchResult}
                         onClick={onProjectSelected.bind(null, value)}
                     >
-                        <div className={classnames(styles.itemName, commonStyles.textWrapped)}>{content}</div>
+                        <div
+                            className={classnames(
+                                styles.itemName,
+                                commonStyles.textWrapped
+                            )}
+                        >
+                            {content}
+                        </div>
                     </div>
                 </Tooltip>
             ))}

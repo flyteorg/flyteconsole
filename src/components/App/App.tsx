@@ -7,7 +7,10 @@ import { APIContext, useAPIState } from 'components/data/apiContext';
 import { QueryAuthorizationObserver } from 'components/data/QueryAuthorizationObserver';
 import { createQueryClient } from 'components/data/queryCache';
 import { SystemStatusBanner } from 'components/Notifications/SystemStatusBanner';
-import { skeletonColor, skeletonHighlightColor } from 'components/Theme/constants';
+import {
+    skeletonColor,
+    skeletonHighlightColor
+} from 'components/Theme/constants';
 import { muiTheme } from 'components/Theme/muiTheme';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';

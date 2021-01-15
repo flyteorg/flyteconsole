@@ -3,10 +3,7 @@ import { Admin } from 'flyteidl';
 import { cloneDeep } from 'lodash';
 import { TaskLog } from 'models/Common/types';
 import { TaskExecutionPhase } from '../enums';
-import {
-    TaskExecution,
-    TaskExecutionClosure
-} from '../types';
+import { TaskExecution, TaskExecutionClosure } from '../types';
 import { sampleError } from './sampleExecutionError';
 
 const sampleLogs: TaskLog[] = [
