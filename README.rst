@@ -44,6 +44,12 @@ Quickstart
        export ADMIN_API_URL=http://localhost:30081
        export DISABLE_AUTH=1
 
+  .. note::
+
+     You can persist these environment variables in a ``.env`` file at the root
+     of the repository. This will persist the settings across multiple terminal
+     sessions
+
 #. Start the server (uses localhost:3000)
 
    .. code:: bash
