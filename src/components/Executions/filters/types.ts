@@ -20,7 +20,7 @@ export interface FilterButtonState {
     onClick: () => void;
 }
 
-export type FilterStateType = 'single' | 'multi' | 'search';
+export type FilterStateType = 'single' | 'multi' | 'search' | 'byUser';
 
 export interface FilterState {
     active: boolean;
@@ -28,7 +28,7 @@ export interface FilterState {
     label: string;
     type: FilterStateType;
     getFilter: () => FilterOperation[];
-    onReset: () => void;
+    onReset?: () => void;
 }
 
 export interface SingleFilterState<FilterKey extends string>
@@ -53,4 +53,12 @@ export interface MultiFilterState<FilterKey extends string, DataType>
     selectedStates: Record<FilterKey, boolean>;
     type: 'multi';
     values: FilterValue<FilterKey, DataType>[];
+}
+
+export interface FilterByUserState {
+    active: boolean;
+    button: FilterButtonState;
+    label: string;
+    getFilter: () => FilterOperation[];
+    type: 'byUser';
 }
