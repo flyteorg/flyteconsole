@@ -6,9 +6,6 @@ import * as ProjectAPI from 'models/Project/api';
 import * as TaskAPI from 'models/Task/api';
 import * as WorkflowAPI from 'models/Workflow/api';
 import * as React from 'react';
-import { useUserProfile } from 'components/hooks/useUserProfile';
-import { FetchableData } from 'components/hooks/types';
-import { UserProfile } from 'models/Common/types';
 
 type APIFunctions = typeof CommonAPI &
     typeof ExecutionAPI &
@@ -23,7 +20,6 @@ export interface LoginStatus {
 }
 export interface APIContextValue extends APIFunctions {
     loginStatus: LoginStatus;
-    profile?: FetchableData<UserProfile | null>;
 }
 
 export const defaultAPIContextValue = {
@@ -68,8 +64,7 @@ function useLoginStatus(): LoginStatus {
 export function useAPIState(): APIContextValue {
     return {
         ...defaultAPIContextValue,
-        loginStatus: useLoginStatus(),
-        profile: useUserProfile()
+        loginStatus: useLoginStatus()
     };
 }
 

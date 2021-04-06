@@ -14,7 +14,7 @@ import { FilterState } from './types';
 import { useMultiFilterState } from './useMultiFilterState';
 import { useSearchFilterState } from './useSearchFilterState';
 import { useSingleFilterState } from './useSingleFilterState';
-import { useUserByFilterState } from './useUserByFilterState';
+import { useCurrentUserOnlyFilterState } from './useCurrentUserOnlyFilterState';
 
 export interface ExecutionFiltersState {
     appliedFilters: FilterOperation[];
@@ -64,9 +64,7 @@ export function useWorkflowExecutionFiltersState() {
             label: filterLabels.duration,
             queryStateKey: 'duration'
         }),
-        useUserByFilterState({
-            queryStateKey: 'user'
-        })
+        useCurrentUserOnlyFilterState()
     ]);
 }
 
