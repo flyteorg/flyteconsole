@@ -1,8 +1,8 @@
 import { FilterOperationName } from 'models/AdminEntity/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { FilterByUserState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';
-import { useUserProfile } from 'components/hooks/useUserProfile';
+import { APIContext } from 'components/data/apiContext';
 
 interface FilterByUserStateArgs {
     queryStateKey: string;
@@ -15,22 +15,20 @@ export function useUserByFilterState({
     queryStateKey,
     filterOperation = FilterOperationName.EQ
 }: FilterByUserStateArgs): FilterByUserState {
-    const profile = useUserProfile();
-    const filterValue =
-        profile.value == null
+    const { profile } = useContext(APIContext);
+    const username =
+        profile?.value == null
             ? ''
             : profile.value?.preferredUsername == ''
             ? profile.value.name
             : profile.value?.preferredUsername;
+
+    const [value, setValue] = useState(username);
     const button = useFilterButtonState();
-    const [value, setValue] = useState('');
 
     useEffect(() => {
-        if (button.open) {
-            setValue('');
-        } else {
-            setValue(filterValue);
-        }
+        if (button.open) setValue('');
+        else setValue(username);
     }, [button.open]);
 
     const getFilter = () => {

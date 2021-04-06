@@ -4,7 +4,7 @@ import { SearchInputForm } from 'components/common/SearchInputForm';
 import { SingleSelectForm } from 'components/common/SingleSelectForm';
 import { FilterPopoverButton } from 'components/Tables/filters/FilterPopoverButton';
 import { FilterByUserButton } from 'components/Tables/filters/FilterByUserButton';
-import { useUserProfile } from 'components/hooks/useUserProfile';
+import { APIContext } from 'components/data/apiContext';
 import {
     buttonHoverColor,
     interactiveTextBackgroundColor,
@@ -91,13 +91,13 @@ export const ExecutionFilters: React.FC<{ filters: FilterState[] }> = ({
     filters
 }) => {
     const styles = useStyles();
-    const profile = useUserProfile();
+    const { profile } = React.useContext(APIContext);
 
     return (
         <div className={styles.container}>
             {filters.map(filter => {
                 if (filter.type == 'byUser') {
-                    if (profile.value == null) {
+                    if (profile?.value == null) {
                         return <></>;
                     } else {
                         return (
