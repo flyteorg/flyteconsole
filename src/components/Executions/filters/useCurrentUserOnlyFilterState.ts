@@ -5,12 +5,12 @@ import { BooleanFilterState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 
-/** Maintains the state for a button to be used for filtering by user.
- */
 function getUserId(profile: UserProfile): string {
     return profile.sub ? profile.sub : '';
 }
 
+/** Maintains the state for a button to be used for filtering by user.
+ */
 export function useCurrentUserOnlyFilterState(): BooleanFilterState {
     const profile = useUserProfile();
     const userId = profile.value ? getUserId(profile.value) : '';
@@ -30,6 +30,8 @@ export function useCurrentUserOnlyFilterState(): BooleanFilterState {
             : [];
     };
 
+    const onReset = () => setActive(true);
+
     return {
         active,
         button,
@@ -37,7 +39,8 @@ export function useCurrentUserOnlyFilterState(): BooleanFilterState {
         label: 'Only my executions',
         getFilter,
         setActive,
-        onReset: () => {},
-        type: 'boolean'
+        onReset,
+        type: 'boolean',
+        status: profile.state.value.toString()
     };
 }

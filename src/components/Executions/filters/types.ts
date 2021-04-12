@@ -28,6 +28,7 @@ export interface FilterState {
     hidden?: boolean;
     label: string;
     type: FilterStateType;
+    status?: string;
     getFilter: () => FilterOperation[];
     onReset: () => void;
 }
