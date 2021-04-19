@@ -77,6 +77,7 @@ export const ExecutionFilters: React.FC<{
                     return (
                         <FormControlLabel
                             key={filter.label}
+                            data-testid="checkbox"
                             control={
                                 <Checkbox
                                     checked={filter.active}
