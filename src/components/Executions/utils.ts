@@ -113,7 +113,12 @@ export const taskExecutionIsTerminal = (taskExecution: TaskExecution) =>
     terminalTaskExecutionStates.includes(taskExecution.closure.phase);
 
 export function getNodeExecutionSpecId(nodeExecution: NodeExecution): string {
-    return nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
+    /** RFC: DO NOT DEPLOY UNTIL RESOLVED
+     * I am unclear on the implications of removing ternary here
+     *
+     * modified: return nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
+     */
+    return nodeExecution.id.nodeId;
 }
 
 interface GetExecutionDurationMSArgs {
