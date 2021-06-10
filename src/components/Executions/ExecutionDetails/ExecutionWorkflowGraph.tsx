@@ -11,7 +11,6 @@ import * as React from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { NodeExecutionsContext } from '../contexts';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
-import { TaskExecutionNodeRenderer } from './TaskExecutionNodeRenderer/TaskExecutionNodeRenderer';
 
 export interface ExecutionWorkflowGraphProps {
     nodeExecutions: NodeExecution[];
@@ -27,7 +26,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
         makeWorkflowQuery(useQueryClient(), workflowId)
     );
     const nodeExecutionsById = React.useMemo(
-        () => keyBy(nodeExecutions, 'id.nodeId'),
+        () => keyBy(nodeExecutions, 'scopedId'),
         [nodeExecutions]
     );
 
@@ -51,13 +50,13 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
     const selectedExecution = selectedNodes.length
         ? nodeExecutionsById[selectedNodes[0]].id
         : null;
+
     const onCloseDetailsPanel = () => setSelectedNodes([]);
 
     const renderGraph = (workflow: Workflow) => (
         <WorkflowGraph
             onNodeSelectionChanged={onNodeSelectionChanged}
-            nodeRenderer={TaskExecutionNodeRenderer}
-            selectedNodes={selectedNodes}
+            nodeExecutionsById={nodeExecutionsById}
             workflow={workflow}
         />
     );
