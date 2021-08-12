@@ -56,8 +56,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
         nodeExecutionsRequestConfig
     } = useExecutionNodeViewsState(execution, appliedFilters);
 
-    console.log('NodeExecutionQuery:', nodeExecutionsQuery);
-
     const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
         <NodeExecutionsRequestConfigContext.Provider
             value={nodeExecutionsRequestConfig}
@@ -67,7 +65,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
     );
 
     const renderExecutionLoader = (nodeExecutions: NodeExecution[]) => {
-        console.log('renderExecutionWorkflowGraph:');
         return (
             <ExecutionChildrenLoader
                 nodeExecutions={nodeExecutions}

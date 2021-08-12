@@ -137,13 +137,12 @@ export const ConvertFlyteDagToReactFlows = (
     nodeExecutionsById: NodeExecutionsById,
     onNodeSelectionChanged
 ): Elements => {
-    console.log('@ConvertFlyteDagToReactFlows: input=>', root);
     const rfJson = dagToReactFlow(
         root,
         nodeExecutionsById,
         0,
         onNodeSelectionChanged
     );
-    console.log('@ConvertFlyteDagToReactFlows: =>', rfJson);
+
     return rfJson;
 };

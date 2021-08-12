@@ -16,7 +16,7 @@ const ReactFlowGraphComponent = props => {
         nodeExecutionsById,
         onNodeSelectionChanged
     );
-    console.log('ReactflowGraphComponent: output:', rfGraphJson);
+
     const backgroundStyle = getRFBackground(data.nodeExecutionStatus).nested;
     const ReactFlowProps: RFWrapperProps = {
         backgroundStyle,

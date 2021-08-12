@@ -29,10 +29,8 @@ import {
 export const transformerWorkflowToDAG = (
     workflow: CompiledWorkflowClosure
 ): dNode => {
-    console.log('@transformerWorkflowToDAG: input:', workflow);
     const { primary } = workflow;
     const root = buildDAG(null, primary, dTypes.primary, workflow);
-    console.log('@transformerWorkflowToDAG: output:', root);
     return root;
 };
 
@@ -327,23 +325,13 @@ export const buildDAG = (
 ) => {
     switch (graphType) {
         case dTypes.branch:
-            console.log('\n\n\n- - - SWTICH TO BRANCH - - -');
-            console.log('\t>parseBranch(): root:', root);
-            console.log('\t>parseBranch(): context:', context);
-            console.log('\t>parseBranch(): graphType', graphType);
             parseBranch(root as dNode, context, workflow);
             break;
         case dTypes.subworkflow:
-            console.log('\n\n\n- - - SWTICH TO SUBWORKFLOW - - -');
-            console.log('\t>parseWorkflow(): root:', root);
-            console.log('\t>parseWorkflow(): context:', context);
-            console.log('\t>parseWorkflow(): graphType', graphType);
             parseWorkflow(root, context, graphType, workflow);
             break;
         case dTypes.primary:
-            console.log('\n\n\n- - - SWTICH TO PRIMARY - - -');
             return parseWorkflow(root, context, graphType, workflow);
-        default:
-            console.error('@Could not map graphType');
+            break;
     }
 };
