@@ -79,7 +79,14 @@ export const getGraphHandleStyle = (
     }
 };
 
-export const getStatusColor = (nodeExecutionStatus: NodeExecutionPhase) => {
+/**
+ * Maps node execution phases to UX colors
+ * @param nodeExecutionStatus
+ * @returns
+ */
+export const getStatusColor = (
+    nodeExecutionStatus: NodeExecutionPhase
+): string => {
     let nodePrimaryColor = '';
     switch (nodeExecutionStatus) {
         case NodeExecutionPhase.FAILED:
@@ -99,6 +106,9 @@ export const getStatusColor = (nodeExecutionStatus: NodeExecutionPhase) => {
             break;
         case NodeExecutionPhase.QUEUED:
             nodePrimaryColor = '#dfd71b';
+            break;
+        case NodeExecutionPhase.UNDEFINED:
+            nodePrimaryColor = '#4a2839';
             break;
         default:
             nodePrimaryColor = '#c6c6c6';
