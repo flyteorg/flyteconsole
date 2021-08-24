@@ -16,6 +16,11 @@ const muiTheme = createMuiTheme({
     }
 });
 
+muiTheme.typography.h5 = {
+    fontSize: '16px',
+    fontWeight: 400
+};
+
 /** Handles rendering of the input component for a Struct */
 export const StructInput: React.FC<InputProps> = props => {
     const {
