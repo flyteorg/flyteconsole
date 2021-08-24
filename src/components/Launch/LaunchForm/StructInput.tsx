@@ -38,11 +38,20 @@ export const StructInput: React.FC<InputProps> = props => {
     let jsonFormRenderable = false;
     let parsedJson: PrimitiveType = {};
 
-    if (literalType?.metadata) {
-        parsedJson = protobufValueToPrimitive(
-            literalType.metadata.fields.definitions
+    if (literalType?.metadata?.fields?.definitions?.structValue?.fields) {
+        const keys = Object.keys(
+            literalType?.metadata?.fields?.definitions?.structValue?.fields
         );
-        if (parsedJson.DatumSchema) jsonFormRenderable = true;
+
+        if (keys[0]) {
+            parsedJson = protobufValueToPrimitive(
+                literalType.metadata.fields.definitions.structValue.fields[
+                    `${keys[0]}`
+                ]
+            );
+
+            if (parsedJson) jsonFormRenderable = true;
+        }
     }
 
     return jsonFormRenderable ? (
@@ -54,7 +63,7 @@ export const StructInput: React.FC<InputProps> = props => {
                 />
                 <CardContent>
                     <Form
-                        schema={parsedJson.DatumSchema}
+                        schema={JSON.parse(JSON.stringify(parsedJson))}
                         formData={paramData}
                         onChange={onFormChange}
                     >
