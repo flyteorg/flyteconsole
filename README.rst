@@ -188,7 +188,7 @@ URL of your target FlyteAdmin API instance. These instructions will use
    
    .. code:: bash
    
-      127.0.0.1 different.admin.service.com
+      127.0.0.1 localhost.different.admin.service.com
 
 #. Install Chrome plugin: `Allow CORS: Access-Control-Allow-Origin <https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf>`_
 
@@ -214,7 +214,7 @@ URL of your target FlyteAdmin API instance. These instructions will use
 
       yarn start
 
-   Your new localhost is `different.admin.service.com <http://different.admin.service.com>`_
+   Your new localhost is `localhost.different.admin.service.com <http://localhost.different.admin.service.com>`_
 
 .. note:: Hint
 
