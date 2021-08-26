@@ -3,6 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import * as classnames from 'classnames';
 import { navbarGridHeight } from 'common/layout';
+import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
 import { useLocationState } from 'components/hooks/useLocationState';
@@ -12,6 +13,7 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -20,8 +22,6 @@ import { backLinkTitle, executionActionStrings } from './constants';
 import { RelaunchExecutionForm } from './RelaunchExecutionForm';
 import { getExecutionBackLink, getExecutionSourceId } from './utils';
 import { useRecoverExecutionState } from './useRecoverExecutionState';
-import { ButtonCircularProgress } from '../../common/ButtonCircularProgress';
-import { Routes } from '../../../routes/routes';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -83,12 +83,20 @@ export const ExecutionDetailsAppBarContent: React.FC<{
     const { domain, name, project } = execution.id;
     const { phase } = execution.closure;
     const sourceId = getExecutionSourceId(execution);
-    const { backLink = getExecutionBackLink(execution) } = useLocationState();
+    const {
+        backLink: originalBackLink = getExecutionBackLink(execution)
+    } = useLocationState();
     const isRunning = executionIsRunning(execution);
     const isTerminal = executionIsTerminal(execution);
     const onClickShowInputsOutputs = () => setShowInputsOutputs(true);
     const onClickRelaunch = () => setShowRelaunchForm(true);
     const onCloseRelaunch = () => setShowRelaunchForm(false);
+    const fromExecutionNav = new URLSearchParams(history.location.search).get(
+        'fromExecutionNav'
+    );
+    const backLink = fromExecutionNav
+        ? Routes.ProjectDetails.sections.executions.makeUrl(project, domain)
+        : originalBackLink;
     const {
         recoverExecution,
         recoverState: { isLoading: recovering, error, data: recoveredId }
