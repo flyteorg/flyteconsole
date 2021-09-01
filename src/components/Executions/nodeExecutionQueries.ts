@@ -320,22 +320,6 @@ async function fetchAllChildNodeExecutions(
     );
     return executions;
 }
-
-/**
- * 
- * @Uncaught TypeError: Cannot read property 'closure' of undefined
-    at Object.nodeExecutionIsTerminal (utils.ts:96)
-    at shouldEnableFn (nodeExecutionQueries.ts:408)
-    at Object.useConditionalQuery (useConditionalQuery.ts:30)
-    at Object.useAllChildNodeExecutionGroupsQuery (nodeExecutionQueries.ts:419)
-    at ExecutionChildrenLoader (ExecutionChildrenLoader.tsx:33)
-    at ProxyFacade (react-hot-loader.development.js:830)
-    at renderWithHooks (react-dom.development.js:14803)
-    at updateFunctionComponent (react-dom.development.js:17034)
-    at beginWork (react-dom.development.js:18610)
-    at HTMLUnknownElement.callCallback (react-dom.development.js:188)
- */
-
 /**
  *
  * @param nodeExecutions list of parent node executionId's

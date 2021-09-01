@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.25.0](http://github.com/lyft/flyteconsole/compare/v0.24.0...v0.25.0) (2021-08-31)
+
+
+### Features
+
+* add workflow versions table ([#193](http://github.com/lyft/flyteconsole/issues/193)) ([6fff87e](http://github.com/lyft/flyteconsole/commit/6fff87e40007fd15faae634eb6402045c067dd2c))
+
+# [0.24.0](http://github.com/lyft/flyteconsole/compare/v0.23.1...v0.24.0) (2021-08-27)
+
+
+### Features
+
+* add recover option to workflows ([#192](http://github.com/lyft/flyteconsole/issues/192)) ([818c686](http://github.com/lyft/flyteconsole/commit/818c6869ea9bbeea5f82d9b7f0131e927ce36fb3))
+
+## [0.23.1](http://github.com/lyft/flyteconsole/compare/v0.23.0...v0.23.1) (2021-08-26)
+
+
+### Bug Fixes
+
+* back button on execution detail screen ([#190](http://github.com/lyft/flyteconsole/issues/190)) ([291f02c](http://github.com/lyft/flyteconsole/commit/291f02c2e7fad029681b33227ce4f05f29b7a7ed))
+
+# [0.23.0](http://github.com/lyft/flyteconsole/compare/v0.22.1...v0.23.0) (2021-08-24)
+
+
+### Features
+
+* schema validator for struct type execution ([#186](http://github.com/lyft/flyteconsole/issues/186)) ([9744894](http://github.com/lyft/flyteconsole/commit/974489493e6444ac1ff4af87de3d7848336c12b3))
+
+## [0.22.1](http://github.com/lyft/flyteconsole/compare/v0.22.0...v0.22.1) (2021-08-19)
+
+
+### Bug Fixes
+
+* duration is not always calculated for task executions ([#185](http://github.com/lyft/flyteconsole/issues/185)) ([2e12418](http://github.com/lyft/flyteconsole/commit/2e124189d39f09375fb90b20e562a1575e88405d))
+
 # [0.22.0](http://github.com/lyft/flyteconsole/compare/v0.21.0...v0.22.0) (2021-08-04)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "flyteconsole",
-  "version": "0.22.0",
+  "version": "0.25.0",
   "description": "The web UI for the Flyte platform",
   "repository": {
     "type": "git",
@@ -41,6 +41,8 @@
     ]
   },
   "dependencies": {
+    "@rjsf/core": "^3.0.0",
+    "@rjsf/material-ui": "^3.0.0",
     "babel-polyfill": "^6.26.0",
     "cache": "^2.1.0",
     "chalk": "^2.0.1",

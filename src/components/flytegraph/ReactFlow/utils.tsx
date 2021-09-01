@@ -248,7 +248,7 @@ export const getRFBackground = () => {
 export const setReactFlowGraphLayout = (
     elements: Elements,
     direction: string,
-    estimate: boolean = false
+    estimate = false
 ) => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));

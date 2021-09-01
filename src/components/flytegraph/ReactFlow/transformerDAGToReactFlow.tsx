@@ -59,7 +59,6 @@ export const buildReactFlowNode = (
             nodeType: type,
             scopedId: dNode.scopedId,
             dag: dag,
-            graphDimesions: { depth: 0, breadth: 0 },
             taskType: taskType,
             onNodeSelectionChanged: () => {
                 onNodeSelectionChanged([dNode.scopedId]);
