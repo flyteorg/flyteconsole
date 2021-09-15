@@ -9,7 +9,12 @@ import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge
 import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
-import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import { PaginatedEntityResponse } from 'models/AdminEntity/types';
+import {
+    NodeExecution,
+    NodeExecutionIdentifier,
+    TaskExecution
+} from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 import * as React from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -17,13 +22,17 @@ import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
-import { makeNodeExecutionQuery } from '../nodeExecutionQueries';
+import {
+    makeListTaskExecutionsQuery,
+    makeNodeExecutionQuery
+} from '../nodeExecutionQueries';
 import { TaskExecutionsList } from '../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionDetails } from '../types';
 import { useNodeExecutionDetails } from '../useNodeExecutionDetails';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
+import { getTaskExecutionDetailReasons } from './utils';
 
 const useStyles = makeStyles((theme: Theme) => {
     const paddingVertical = `${theme.spacing(2)}px`;
@@ -207,6 +216,16 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
     const nodeExecution = nodeExecutionQuery.data;
 
+    const listTaskExecutionsQuery = useQuery<
+        PaginatedEntityResponse<TaskExecution>,
+        Error
+    >({
+        ...makeListTaskExecutionsQuery(nodeExecutionId),
+        staleTime: Infinity
+    });
+
+    const reasons = getTaskExecutionDetailReasons(listTaskExecutionsQuery.data);
+
     const commonStyles = useCommonStyles();
     const styles = useStyles();
     const detailsQuery = useNodeExecutionDetails(nodeExecution);
@@ -219,8 +238,21 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         ? detailsQuery.data.taskTemplate
         : null;
 
+    const isRunningPhase = React.useMemo(() => {
+        return (
+            nodeExecution?.closure.phase === 1 ||
+            nodeExecution?.closure.phase === 2
+        );
+    }, [nodeExecution]);
+
     const statusContent = nodeExecution ? (
-        <ExecutionStatusBadge phase={nodeExecution.closure.phase} type="node" />
+        <>
+            <ExecutionStatusBadge
+                phase={nodeExecution.closure.phase}
+                type="node"
+            />
+            {isRunningPhase && reasons.map(reason => <code>{reason}</code>)}
+        </>
     ) : null;
 
     const detailsContent = nodeExecution ? (
