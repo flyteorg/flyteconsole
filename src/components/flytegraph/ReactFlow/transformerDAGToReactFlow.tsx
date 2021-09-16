@@ -35,14 +35,10 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
     const type = typeOverride ? typeOverride : dNode.type;
     const taskType = dNode?.value?.template ? dNode.value.template.type : null;
 
-    console.log('nodeExecutionsById:', nodeExecutionsById);
     /**
      * @TODO decide which to display after demo
      */
-    const displayName =
-        dNode.name == DISPLAY_NAME_START || dNode.name == DISPLAY_NAME_END
-            ? dNode.name
-            : dNode.scopedId;
+    const displayName = dNode.name;
 
     const mapNodeExecutionStatus = () => {
         if (nodeExecutionsById) {
