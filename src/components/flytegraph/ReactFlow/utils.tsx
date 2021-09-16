@@ -85,7 +85,7 @@ export const getGraphHandleStyle = (
  * @returns
  */
 export const getStatusColor = (
-    nodeExecutionStatus: NodeExecutionPhase
+    nodeExecutionStatus: NodeExecutionPhase | null
 ): string => {
     let nodePrimaryColor = '';
     switch (nodeExecutionStatus) {
@@ -109,6 +109,9 @@ export const getStatusColor = (
             break;
         case NodeExecutionPhase.UNDEFINED:
             nodePrimaryColor = '#4a2839';
+            break;
+        case null:
+            nodePrimaryColor = '#0099ff';
             break;
         default:
             nodePrimaryColor = '#c6c6c6';
@@ -189,6 +192,15 @@ export const getGraphNodeStyle = (
         },
         task: {
             borderColor: nodePrimaryColor
+        },
+        staticNode: {
+            backgroundColor: '#fff',
+            borderColor: '#bfbfbf',
+            borderWidth: '.05rem'
+        },
+        staticNestedNode: {
+            backgroundColor: '#dfdfdf',
+            border: 'none'
         }
     };
     const key = String(dTypes[type]);
@@ -199,7 +211,9 @@ export const getGraphNodeStyle = (
     return output;
 };
 
-export const getRFBackground = (nodeExecutionStatus: NodeExecutionPhase) => {
+export const getRFBackground = (
+    nodeExecutionStatus: NodeExecutionPhase | null = null
+) => {
     return {
         main: {
             background: {
@@ -219,6 +233,14 @@ export const getRFBackground = (nodeExecutionStatus: NodeExecutionPhase) => {
             },
             gridColor: 'none',
             gridSpacing: 1
+        } as RFBackgroundProps,
+        static: {
+            background: {
+                border: 'none',
+                backgroundColor: 'rgb(255,255,255)'
+            },
+            gridColor: 'none',
+            gridSpacing: 20
         } as RFBackgroundProps
     };
 };
