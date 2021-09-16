@@ -1,8 +1,4 @@
 import { dEdge, dTypes } from 'models/Graph/types';
-import {
-    DISPLAY_NAME_START,
-    DISPLAY_NAME_END
-} from 'components/WorkflowGraph/utils';
 import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
@@ -36,7 +32,8 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
     const taskType = dNode?.value?.template ? dNode.value.template.type : null;
 
     /**
-     * @TODO decide which to display after demo
+     * @TODO Implement a toggle that will allow users to view either the display
+     * name or the nodeId.
      */
     const displayName = dNode.name;
 

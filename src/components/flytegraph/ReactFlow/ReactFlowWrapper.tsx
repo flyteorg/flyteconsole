@@ -46,11 +46,11 @@ const LayoutRC: React.FC<LayoutRCProps> = ({
     setLayout,
     hasLayout
 }: LayoutRCProps) => {
-    const [computeLayout, setComputeLayout] = useState(true);
-
     /* strore is only populated onLoad for each flow */
     const nodes = useStoreState(store => store.nodes);
     const edges = useStoreState(store => store.edges);
+
+    const [computeLayout, setComputeLayout] = useState(true);
 
     if (nodes.length > 0 && computeLayout) {
         if (nodes[0].__rf.width) {
@@ -67,7 +67,7 @@ const LayoutRC: React.FC<LayoutRCProps> = ({
     useEffect(() => {
         if (!computeLayout) {
             const nodesAndEdges = (nodes as any[]).concat(edges);
-            const graph = setReactFlowGraphLayout(nodesAndEdges, 'LR');
+            const { graph } = setReactFlowGraphLayout(nodesAndEdges, 'LR');
             setElements(graph);
             setLayout(true);
         }
