@@ -39,9 +39,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     versionView: {
         flex: '1 1 auto'
     },
-    versionView: {
-        flex: '1 1 auto'
-    },
     schedulesContainer: {
         flex: '1 2 auto',
         marginRight: theme.spacing(30)
