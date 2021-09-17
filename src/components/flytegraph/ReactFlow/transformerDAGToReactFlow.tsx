@@ -3,7 +3,6 @@ import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { BuildRFNodeProps, ConvertDagProps, DagToFRProps } from './types';
-import { nodeExecutionId } from 'mocks/data/utils';
 
 export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
@@ -28,13 +27,9 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
         typeOverride,
         onNodeSelectionChanged
     } = props;
+
     const type = typeOverride ? typeOverride : dNode.type;
     const taskType = dNode?.value?.template ? dNode.value.template.type : null;
-
-    /**
-     * @TODO Implement a toggle that will allow users to view either the display
-     * name or the nodeId.
-     */
     const displayName = dNode.name;
 
     const mapNodeExecutionStatus = () => {
@@ -107,7 +102,6 @@ export const dagToReactFlow = (props: DagToFRProps) => {
             onNodeSelectionChanged: onNodeSelectionChanged,
             isStaticGraph: isStaticGraph
         } as BuildRFNodeProps;
-
         if (dNode.nodes?.length > 0 && currentDepth <= maxRenderDepth) {
             /* Note: currentDepth will be replaced once nested toggle */
             if (currentDepth == maxRenderDepth) {
@@ -117,7 +111,7 @@ export const dagToReactFlow = (props: DagToFRProps) => {
             } else {
                 const nestedDagProps: DagToFRProps = {
                     root: dNode,
-                    nodeExecutionsById: nodeExecutionId,
+                    nodeExecutionsById: nodeExecutionsById,
                     currentDepth: currentDepth + 1,
                     onNodeSelectionChanged: onNodeSelectionChanged,
                     maxRenderDepth: maxRenderDepth,

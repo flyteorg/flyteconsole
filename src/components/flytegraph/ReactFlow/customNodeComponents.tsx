@@ -252,6 +252,9 @@ export const ReactFlowStaticNode = ({ data }: any) => {
  */
 
 export const ReactFlowCustomTaskNode = ({ data }: any) => {
+    // console.log(`\n\n@ReactFlowCustomTaskNode: ${data.text}`);
+    // console.log('\t data.nodeType:', dTypes[data.nodeType]);
+    // console.log('\t data.nodeExecutionStatus:', data.nodeExecutionStatus);
     const styles = getGraphNodeStyle(data.nodeType, data.nodeExecutionStatus);
     const onNodeSelectionChanged = data.onNodeSelectionChanged;
     const [selectedNode, setSelectedNode] = useState(false);
@@ -351,7 +354,7 @@ export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
  */
 export const ReactFlowCustomBranchNode = ({ data }: any) => {
     const { dag } = data;
-    console.log('@ReactFlowCustomBranchNode: data');
+    console.log('@ReactFlowCustomBranchNode: data', data);
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
     const { estimatedDimensions } = setReactFlowGraphLayout(dag, 'LR', true);
