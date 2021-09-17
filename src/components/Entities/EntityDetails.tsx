@@ -13,11 +13,8 @@ import { EntityExecutions } from './EntityExecutions';
 import { EntitySchedules } from './EntitySchedules';
 import { EntityVersions } from './EntityVersions';
 import classNames from 'classnames';
-<<<<<<< HEAD
 import { StaticGraphContainer } from 'components/Workflow/StaticGraphContainer';
 import { WorkflowId } from 'models/Workflow/types';
-=======
->>>>>>> master
 
 const useStyles = makeStyles((theme: Theme) => ({
     metadataContainer: {
