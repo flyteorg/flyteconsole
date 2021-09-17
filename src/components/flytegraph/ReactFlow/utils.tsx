@@ -241,6 +241,7 @@ export const getRFBackground = () => {
             gridSpacing: 20
         } as RFBackgroundProps,
         nested: {
+<<<<<<< HEAD
             gridColor: 'none',
             gridSpacing: 1
         } as RFBackgroundProps,
@@ -249,6 +250,8 @@ export const getRFBackground = () => {
                 border: 'none',
                 backgroundColor: 'rgb(255,255,255)'
             },
+=======
+>>>>>>> master
             gridColor: 'none',
             gridSpacing: 20
         } as RFBackgroundProps
