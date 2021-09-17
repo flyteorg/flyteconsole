@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export interface EntityDetailsProps {
     id: ResourceIdentifier;
     versionView?: boolean;
+    showStaticGraph?: boolean;
 }
 
 function getLaunchProps(id: ResourceIdentifier) {
@@ -69,7 +70,8 @@ function getLaunchProps(id: ResourceIdentifier) {
  */
 export const EntityDetails: React.FC<EntityDetailsProps> = ({
     id,
-    versionView = false
+    versionView = false,
+    showStaticGraph = false
 }) => {
     const sections = entitySections[id.resourceType];
     const workflowId = id as WorkflowId;
@@ -103,7 +105,9 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({
             )}
             {sections.versions ? (
                 <>
-                    <StaticGraphContainer workflowId={workflowId} />
+                    {showStaticGraph ? (
+                        <StaticGraphContainer workflowId={workflowId} />
+                    ) : null}
                     <div
                         className={classNames(styles.versionsContainer, {
                             [styles.versionView]: versionView
