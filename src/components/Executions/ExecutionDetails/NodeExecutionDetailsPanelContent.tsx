@@ -288,7 +288,6 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
             {isRunningPhase && isReasonsVisible && (
                 <div className={styles.statusBody}>
                     <ExpandableMonospaceText
-                        // onExpandCollapse={onExpandCollapse}
                         initialExpansionState={false}
                         text={reasons.join('\n')}
                     />
