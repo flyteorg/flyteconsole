@@ -5,6 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Close from '@material-ui/icons/Close';
 import * as classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
+import { InfoIcon } from 'components/common/Icons/InfoIcon';
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
 import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
@@ -33,6 +34,7 @@ import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
 import { getTaskExecutionDetailReasons } from './utils';
+import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 
 const useStyles = makeStyles((theme: Theme) => {
     const paddingVertical = `${theme.spacing(2)}px`;
@@ -83,6 +85,21 @@ const useStyles = makeStyles((theme: Theme) => {
             alignItems: 'flex-start',
             display: 'flex',
             justifyContent: 'space-between'
+        },
+        statusContainer: {
+            display: 'flex',
+            flexDirection: 'column'
+        },
+        statusHeaderContainer: {
+            display: 'flex',
+            alignItems: 'center'
+        },
+        reasonsIcon: {
+            marginLeft: theme.spacing(1),
+            cursor: 'pointer'
+        },
+        statusBody: {
+            marginTop: theme.spacing(2)
         }
     };
 });
@@ -207,12 +224,17 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     nodeExecutionId,
     onClose
 }) => {
+    const [isReasonsVisible, setReasonsVisible] = React.useState(false);
     const nodeExecutionQuery = useQuery<NodeExecution, Error>({
         ...makeNodeExecutionQuery(nodeExecutionId),
         // The selected NodeExecution has been fetched at this point, we don't want to
         // issue an additional fetch.
         staleTime: Infinity
     });
+
+    React.useEffect(() => {
+        setReasonsVisible(false);
+    }, [nodeExecutionId]);
 
     const nodeExecution = nodeExecutionQuery.data;
 
@@ -245,14 +267,34 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         );
     }, [nodeExecution]);
 
+    const handleReasonsVisibility = React.useCallback(() => {
+        setReasonsVisible(prevVisibility => !prevVisibility);
+    }, []);
+
     const statusContent = nodeExecution ? (
-        <>
-            <ExecutionStatusBadge
-                phase={nodeExecution.closure.phase}
-                type="node"
-            />
-            {isRunningPhase && reasons.map(reason => <code>{reason}</code>)}
-        </>
+        <div className={styles.statusContainer}>
+            <div className={styles.statusHeaderContainer}>
+                <ExecutionStatusBadge
+                    phase={nodeExecution.closure.phase}
+                    type="node"
+                />
+                {isRunningPhase && (
+                    <InfoIcon
+                        className={styles.reasonsIcon}
+                        onClick={handleReasonsVisibility}
+                    />
+                )}
+            </div>
+            {isRunningPhase && isReasonsVisible && (
+                <div className={styles.statusBody}>
+                    <ExpandableMonospaceText
+                        // onExpandCollapse={onExpandCollapse}
+                        initialExpansionState={false}
+                        text={reasons.join('\n')}
+                    />
+                </div>
+            )}
+        </div>
     ) : null;
 
     const detailsContent = nodeExecution ? (
