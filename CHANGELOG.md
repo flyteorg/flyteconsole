@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.4](http://github.com/lyft/flyteconsole/compare/v0.25.3...v0.25.4) (2021-09-20)
+
+
+### Bug Fixes
+
+* ensure no leading or trailing whitespace on the string input ([#206](http://github.com/lyft/flyteconsole/issues/206)) ([a9a1e9b](http://github.com/lyft/flyteconsole/commit/a9a1e9bc2163360a7942e8feeb4c8a9ff85db707))
+
+## [0.25.3](http://github.com/lyft/flyteconsole/compare/v0.25.2...v0.25.3) (2021-09-16)
+
+
+### Bug Fixes
+
+* hide recover button for successful executions ([#203](http://github.com/lyft/flyteconsole/issues/203)) ([81dd608](http://github.com/lyft/flyteconsole/commit/81dd608d8605522a2c08725dc2986c933ee1deb5))
+
+## [0.25.2](http://github.com/lyft/flyteconsole/compare/v0.25.1...v0.25.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* repopulate struct input fields on relaunch form ([#201](http://github.com/lyft/flyteconsole/issues/201)) ([950e080](http://github.com/lyft/flyteconsole/commit/950e080a2c52c6294630f0ffd1410b0e45b50a8d))
+
 ## [0.25.1](http://github.com/lyft/flyteconsole/compare/v0.25.0...v0.25.1) (2021-09-13)
 
 

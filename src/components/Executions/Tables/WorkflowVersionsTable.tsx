@@ -2,45 +2,66 @@ import * as classnames from 'classnames';
 import { noWorkflowVersionsFoundString } from 'common/constants';
 import { useCommonStyles } from 'components/common/styles';
 import { ListProps } from 'components/common/types';
-import { DataList, DataListRef } from 'components/Tables/DataList';
+import PaginatedDataList from 'components/Tables/PaginatedDataList';
 import { Workflow } from 'models/Workflow/types';
+import { Identifier } from 'models/Common/types';
 import * as React from 'react';
-import { ListRowRenderer } from 'react-virtualized';
-import { ExecutionsTableHeader } from './ExecutionsTableHeader';
+import { useParams } from 'react-router';
+import { history } from 'routes/history';
 import { useExecutionTableStyles } from './styles';
 import { useWorkflowExecutionsTableState } from './useWorkflowExecutionTableState';
 import { useWorkflowVersionsTableColumns } from './useWorkflowVersionsTableColumns';
 import { WorkflowVersionRow } from './WorkflowVersionRow';
+import { Routes } from 'routes/routes';
+
+interface WorkflowVersionsTableProps extends ListProps<Workflow> {
+    versionView?: boolean;
+}
+
+interface WorkflowVersionRouteParams {
+    workflowVersion: string;
+}
 
 /**
  * Renders a table of WorkflowVersion records.
  * @param props
  * @constructor
  */
-export const WorkflowVersionsTable: React.FC<ListProps<Workflow>> = props => {
-    const { value: workflows } = props;
+export const WorkflowVersionsTable: React.FC<WorkflowVersionsTableProps> = props => {
+    const { value: workflows, versionView } = props;
     const state = useWorkflowExecutionsTableState();
     const commonStyles = useCommonStyles();
     const tableStyles = useExecutionTableStyles();
-    const listRef = React.useRef<DataListRef>(null);
+    const { workflowVersion } = useParams<WorkflowVersionRouteParams>();
 
     const columns = useWorkflowVersionsTableColumns();
 
     const retry = () => props.fetch();
 
-    // Custom renderer to allow us to append error content to workflow versions which
-    // are in a failed state
-    const rowRenderer: ListRowRenderer = rowProps => {
-        const workflow = workflows[rowProps.index];
-        return (
-            <WorkflowVersionRow
-                {...rowProps}
-                columns={columns}
-                workflow={workflow}
-                state={state}
-            />
-        );
-    };
+    const handleClickRow = React.useCallback(
+        ({ project, name, domain, version }: Identifier) => () => {
+            history.push(
+                Routes.WorkflowVersionDetails.makeUrl(
+                    project,
+                    domain,
+                    name,
+                    version
+                )
+            );
+        },
+        []
+    );
+
+    const rowRenderer = (row: Workflow) => (
+        <WorkflowVersionRow
+            columns={columns}
+            workflow={row}
+            state={state}
+            versionView={versionView}
+            onClick={versionView ? handleClickRow(row.id) : undefined}
+            isChecked={workflowVersion === row.id.version}
+        />
+    );
 
     return (
         <div
@@ -49,14 +70,13 @@ export const WorkflowVersionsTable: React.FC<ListProps<Workflow>> = props => {
                 commonStyles.flexFill
             )}
         >
-            <ExecutionsTableHeader columns={columns} />
-            <DataList
-                {...props}
-                onRetry={retry}
-                noRowsContent={noWorkflowVersionsFoundString}
-                moreItemsAvailable={false}
-                ref={listRef}
-                rowContentRenderer={rowRenderer}
+            <PaginatedDataList
+                columns={columns}
+                data={workflows}
+                rowRenderer={rowRenderer}
+                totalRows={workflows.length}
+                showRadioButton={versionView}
+                noDataString={noWorkflowVersionsFoundString}
             />
         </div>
     );
