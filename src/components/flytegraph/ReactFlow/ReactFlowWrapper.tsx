@@ -13,7 +13,9 @@ import {
     ReactFlowCustomStartNode,
     ReactFlowCustomTaskNode,
     ReactFlowCustomSubworkflowNode,
-    ReactFlowCustomMaxNested
+    ReactFlowCustomMaxNested,
+    ReactFlowStaticNested,
+    ReactFlowStaticNode
 } from './customNodeComponents';
 import setReactFlowGraphLayout from './utils';
 
@@ -28,7 +30,9 @@ const CustomNodeTypes = {
     FlyteNode_end: ReactFlowCustomEndNode,
     FlyteNode_nestedStart: ReactFlowCustomNestedPoint,
     FlyteNode_nestedEnd: ReactFlowCustomNestedPoint,
-    FlyteNode_nestedMaxDepth: ReactFlowCustomMaxNested
+    FlyteNode_nestedMaxDepth: ReactFlowCustomMaxNested,
+    FlyteNode_staticNode: ReactFlowStaticNode,
+    FlyteNode_staticNestedNode: ReactFlowStaticNested
 };
 
 /**
@@ -39,23 +43,31 @@ const CustomNodeTypes = {
  */
 const LayoutRC: React.FC<LayoutRCProps> = ({
     setElements,
-    setLayout
+    setLayout,
+    hasLayout
 }: LayoutRCProps) => {
-    const [computeLayout, setComputeLayout] = useState(true);
-
     /* strore is only populated onLoad for each flow */
     const nodes = useStoreState(store => store.nodes);
     const edges = useStoreState(store => store.edges);
+
+    const [computeLayout, setComputeLayout] = useState(true);
 
     if (nodes.length > 0 && computeLayout) {
         if (nodes[0].__rf.width) {
             setComputeLayout(false);
         }
     }
+
+    useEffect(() => {
+        if (!hasLayout && !computeLayout) {
+            setComputeLayout(true);
+        }
+    }, [hasLayout, computeLayout]);
+
     useEffect(() => {
         if (!computeLayout) {
             const nodesAndEdges = (nodes as any[]).concat(edges);
-            const graph = setReactFlowGraphLayout(nodesAndEdges, 'LR');
+            const { graph } = setReactFlowGraphLayout(nodesAndEdges, 'LR');
             setElements(graph);
             setLayout(true);
         }
@@ -81,10 +93,12 @@ const LayoutRC: React.FC<LayoutRCProps> = ({
  */
 export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     rfGraphJson,
-    backgroundStyle
+    backgroundStyle,
+    version
 }) => {
     const [elements, setElements] = useState(rfGraphJson);
-    const [layedOut, setLayout] = useState(false);
+    const [currentVersion, setCurrentVersion] = useState(version);
+    const [hasLayout, setHasLayout] = useState(false);
     const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
         null
     );
@@ -93,14 +107,22 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         setReactFlowInstance(rf);
     };
 
+    useEffect(() => {
+        if (version != currentVersion) {
+            setHasLayout(false);
+            setElements(rfGraphJson);
+        }
+    }, [version, rfGraphJson, currentVersion]);
+
     /**
      * Note: setLayout passed/called by <LayoutRC>
      */
     useEffect(() => {
-        if (layedOut && reactFlowInstance) {
+        if (hasLayout && reactFlowInstance) {
             reactFlowInstance?.fitView({ padding: 0 });
+            setCurrentVersion(version);
         }
-    }, [layedOut, reactFlowInstance]);
+    }, [hasLayout, reactFlowInstance]);
     /**
      * STEPS:
      *  - have each node click return nodes {text.data}
@@ -122,7 +144,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
                 />
             </ReactFlow>
             <LayoutRC
-                setLayout={setLayout}
+                hasLayout={hasLayout}
+                setLayout={setHasLayout}
                 setElements={setElements}
             ></LayoutRC>
         </ReactFlowProvider>
