@@ -83,12 +83,27 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const port = process.env.PORT || 3000;
-const server = app.listen(port, error => {
-    if (error) {
-        throw error;
-    }
-    console.log(`Server started: http://localhost:${port}/`);
-});
+
+// If process.env.USE_HTTPS
+const fs = require('fs')
+const https = require('https')
+var privateKey = fs.readFileSync('script/server.key');
+var certificate = fs.readFileSync('script/server.crt');
+
+const server = https.createServer({
+    key: privateKey,
+    cert: certificate
+}, app).listen(port);
+
+console.log(`Server started: https://localhost:${port}/`);
+// ELSE:
+
+// const server = app.listen(port, error => {
+//     if (error) {
+//         throw error;
+//     }
+//     console.log(`Server started: http://localhost:${port}/`);
+// });
 
 process.on('SIGTERM', () => {
     console.info('SIGTERM signal received. Shutting down.');
