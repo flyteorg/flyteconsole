@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.25.4](http://github.com/lyft/flyteconsole/compare/v0.25.3...v0.25.4) (2021-09-20)
+
+
+### Bug Fixes
+
+* ensure no leading or trailing whitespace on the string input ([#206](http://github.com/lyft/flyteconsole/issues/206)) ([a9a1e9b](http://github.com/lyft/flyteconsole/commit/a9a1e9bc2163360a7942e8feeb4c8a9ff85db707))
+
+## [0.25.3](http://github.com/lyft/flyteconsole/compare/v0.25.2...v0.25.3) (2021-09-16)
+
+
+### Bug Fixes
+
+* hide recover button for successful executions ([#203](http://github.com/lyft/flyteconsole/issues/203)) ([81dd608](http://github.com/lyft/flyteconsole/commit/81dd608d8605522a2c08725dc2986c933ee1deb5))
+
+## [0.25.2](http://github.com/lyft/flyteconsole/compare/v0.25.1...v0.25.2) (2021-09-16)
+
+
+### Bug Fixes
+
+* repopulate struct input fields on relaunch form ([#201](http://github.com/lyft/flyteconsole/issues/201)) ([950e080](http://github.com/lyft/flyteconsole/commit/950e080a2c52c6294630f0ffd1410b0e45b50a8d))
+
+## [0.25.1](http://github.com/lyft/flyteconsole/compare/v0.25.0...v0.25.1) (2021-09-13)
+
+
+### Bug Fixes
+
+* show field types on json launch form ([#199](http://github.com/lyft/flyteconsole/issues/199)) ([a42b9f8](http://github.com/lyft/flyteconsole/commit/a42b9f8520fcd24dee752111e606ad9ae9bd88f5))
+* this is rfc, do not deploy until resolved; details in comments ([#172](http://github.com/lyft/flyteconsole/issues/172)) ([67dd183](http://github.com/lyft/flyteconsole/commit/67dd18397caf40e350da40e0672e500eaa9f338a))
+
+# [0.25.0](http://github.com/lyft/flyteconsole/compare/v0.24.0...v0.25.0) (2021-08-31)
+
+
+### Features
+
+* add workflow versions table ([#193](http://github.com/lyft/flyteconsole/issues/193)) ([6fff87e](http://github.com/lyft/flyteconsole/commit/6fff87e40007fd15faae634eb6402045c067dd2c))
+
+# [0.24.0](http://github.com/lyft/flyteconsole/compare/v0.23.1...v0.24.0) (2021-08-27)
+
+
+### Features
+
+* add recover option to workflows ([#192](http://github.com/lyft/flyteconsole/issues/192)) ([818c686](http://github.com/lyft/flyteconsole/commit/818c6869ea9bbeea5f82d9b7f0131e927ce36fb3))
+
+## [0.23.1](http://github.com/lyft/flyteconsole/compare/v0.23.0...v0.23.1) (2021-08-26)
+
+
+### Bug Fixes
+
+* back button on execution detail screen ([#190](http://github.com/lyft/flyteconsole/issues/190)) ([291f02c](http://github.com/lyft/flyteconsole/commit/291f02c2e7fad029681b33227ce4f05f29b7a7ed))
+
+# [0.23.0](http://github.com/lyft/flyteconsole/compare/v0.22.1...v0.23.0) (2021-08-24)
+
+
+### Features
+
+* schema validator for struct type execution ([#186](http://github.com/lyft/flyteconsole/issues/186)) ([9744894](http://github.com/lyft/flyteconsole/commit/974489493e6444ac1ff4af87de3d7848336c12b3))
+
 ## [0.22.1](http://github.com/lyft/flyteconsole/compare/v0.22.0...v0.22.1) (2021-08-19)
 
 

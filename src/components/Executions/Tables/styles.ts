@@ -10,7 +10,8 @@ import {
 } from 'components/Theme/constants';
 import {
     nodeExecutionsTableColumnWidths,
-    workflowExecutionsTableColumnWidths
+    workflowExecutionsTableColumnWidths,
+    workflowVersionsTableColumnWidths
 } from './constants';
 
 export const selectedClassName = 'selected';
@@ -55,6 +56,9 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         '&:first-of-type': {
             marginLeft: theme.spacing(2)
         }
+    },
+    headerColumnVersion: {
+        width: theme.spacing(4)
     },
     headerColumnName: {
         fontSize: smallFontSize,
@@ -106,8 +110,8 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
         flexShrink: 0,
         marginRight: theme.spacing(1),
         minWidth: 0,
-        paddingBottom: theme.spacing(2),
-        paddingTop: theme.spacing(2),
+        paddingBottom: theme.spacing(1),
+        paddingTop: theme.spacing(1),
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap'
     },
@@ -186,5 +190,29 @@ export const useWorkflowExecutionsColumnStyles = makeStyles((theme: Theme) => ({
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
         textAlign: 'left'
+    }
+}));
+
+/** Style overrides specific to columns in `WorkflowVersionsTable`. */
+export const useWorkflowVersionsColumnStyles = makeStyles((theme: Theme) => ({
+    columnRadioButton: {
+        width: workflowVersionsTableColumnWidths.radio
+    },
+    columnName: {
+        flexBasis: workflowVersionsTableColumnWidths.name,
+        whiteSpace: 'normal',
+        flexGrow: 1
+    },
+    columnRelease: {
+        flexBasis: workflowVersionsTableColumnWidths.release
+    },
+    columnCreatedAt: {
+        flexBasis: workflowVersionsTableColumnWidths.createdAt
+    },
+    columnLastRun: {
+        flexBasis: workflowVersionsTableColumnWidths.lastRun
+    },
+    columnRecentRun: {
+        flexGrow: 1
     }
 }));
