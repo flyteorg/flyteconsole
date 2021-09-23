@@ -77,6 +77,7 @@ export const WorkflowVersionsTable: React.FC<WorkflowVersionsTableProps> = props
                 totalRows={workflows.length}
                 showRadioButton={versionView}
                 noDataString={noWorkflowVersionsFoundString}
+                fillEmptyRows={false}
             />
         </div>
     );
