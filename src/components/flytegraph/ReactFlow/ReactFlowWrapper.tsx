@@ -134,7 +134,9 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
      * React Flow's min height to make it render
      */
     const reactFlowStyle: React.CSSProperties = {
-        minHeight: 220
+        display: 'flex',
+        flex: `1 1 100%`,
+        flexDirection: 'column'
     };
 
     return (
