@@ -60,6 +60,7 @@ export const WorkflowVersionsTable: React.FC<WorkflowVersionsTableProps> = props
             versionView={versionView}
             onClick={versionView ? handleClickRow(row.id) : undefined}
             isChecked={workflowVersion === row.id.version}
+            key={`workflow-version-row-${row.id.version}`}
         />
     );
 
