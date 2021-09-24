@@ -43,9 +43,7 @@ export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({
     workflowId
 }) => {
     const containerStyle: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'column',
-        flex: `1 1 100%`,
+        height: 300,
         minHeight: 300,
         padding: '1rem 0'
     };
