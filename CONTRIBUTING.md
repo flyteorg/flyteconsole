@@ -59,7 +59,7 @@ URL of your target FlyteAdmin API instance. These instructions will use
       export ADMIN_API_USE_SSL="https"
     ```
 
-    *NOTE:* Add these to your local profile (eg, `./profile`) to prevent having to do this step each time
+    *NOTE:* Add these to your local profile (e.g., `./profile`) to prevent having to do this step each time
 
 2. Generate SSL certificate
 
@@ -93,4 +93,4 @@ URL of your target FlyteAdmin API instance. These instructions will use
 
    Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
 
-> Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (eg, in your `/.profile`.)
+> Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (e.g., in your `/.profile`.)

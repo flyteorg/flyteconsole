@@ -6,7 +6,7 @@
         Flyte Console
     </h1>
     <p align="center">
-        This is the web UI for the Flyte platform
+        Web UI for the Flyte platform
     </p>
     <h3 align="center">
         <a href="CONTRIBUTING.md">Contribution Guide</a>
@@ -38,10 +38,10 @@ can be installed by running `yarn` in the project directory.
 
 2. Now, export the following env variables:
 
-    ```
+    ``
     export ADMIN_API_URL=http://localhost:30081
     export DISABLE_AUTH=1
-    ```
+    ``
 
    > You can persist these environment variables either in the current shell or in a `.env` file at the root
      of the repository. A `.env` file will persist the settings across multiple terminal
@@ -49,15 +49,15 @@ can be installed by running `yarn` in the project directory.
 
 3. Start the server (uses localhost:3000)
 
-    ```bash
+    ``bash
     yarn start
-    ```
+    ``
 
 4. Explore your local copy at `http://localhost:3000`
 
 ## Environment Variables
 
-* ``ADMIN_API_URL`` (default: `window.location.origin <https://developer.mozilla.org/en-US/docs/Web/API/Window/location>`_)
+* `ADMIN_API_URL` (default: [window.location.origin](https://developer.mozilla.org/en-US/docs/Web/API/Window/location>))
 
     The Flyte Console displays information fetched from the FlyteAdmin API. This
     environment variable specifies the host prefix used in constructing API requests.
@@ -65,30 +65,30 @@ can be installed by running `yarn` in the project directory.
     *Note*: this is only the host portion of the API endpoint, consisting of the
     protocol, domain, and port (if not using the standard 80/443).
 
-    This value will be combined with a suffix (such as ``/api/v1``) to construct the
+    This value will be combined with a suffix (such as `/api/v1`) to construct the
     final URL used in an API request.
 
     *Default Behavior*
 
-    In most cases, ``flyteconsole`` will be hosted in the same cluster as the Admin
+    In most cases, `flyteconsole` will be hosted in the same cluster as the Admin
     API, meaning that the domain used to access the console is the same value used to
-    access the API. For this reason, if no value is set for ``ADMIN_API_URL``, the
+    access the API. For this reason, if no value is set for `ADMIN_API_URL`, the
     default behavior is to use the value of `window.location.origin`.
 
-* ``BASE_URL`` (default: ``undefined``)
+* `BASE_URL` (default: `undefined`)
 
     This allows running the console at a prefix on the target host. This is
     necessary when hosting the API and console on the same domain (with prefixes of
-    ``/api/v1`` and ``/console`` for example). For local development, this is
+    `/api/v1` and `/console` for example). For local development, this is
     usually not needed, so the default behavior is to run without a prefix.
 
-* ``CORS_PROXY_PREFIX`` (default: ``/cors_proxy``)
+* `CORS_PROXY_PREFIX` (default: `/cors_proxy`)
 
-    Sets the local endpoint for `CORS request proxying <cors-proxying_>`_.
+    Sets the local endpoint for [CORS request proxying](CONTRIBUTING.md#cors-proxying-recommended-setup).
 
 ## Run the server
 
-To start the local development server, run ``yarn start``. This will spin up a
+To start the local development server, run `yarn start`. This will spin up a
 Webpack development server, compile all of the code into bundles, and start the
 NodeJS server on the default port (3000). All requests to the NodeJS server will
 be stalled until the bundles have finished. The application will be accessible
