@@ -93,6 +93,7 @@ export const VersionDisplayModal: React.FC<VersionDisplayModalProps> = ({
                     <Link
                         href={`https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`}
                         className={styles.version}
+                        target="_blank"
                     >
                         {platformVersion}
                     </Link>
@@ -102,6 +103,7 @@ export const VersionDisplayModal: React.FC<VersionDisplayModalProps> = ({
                     <Link
                         href={`https://github.com/flyteorg/flyteadmin/releases/tag/v${adminVersion}`}
                         className={styles.version}
+                        target="_blank"
                     >
                         {adminVersion}
                     </Link>
@@ -113,6 +115,7 @@ export const VersionDisplayModal: React.FC<VersionDisplayModalProps> = ({
                         color: '#1982E3',
                         fontSize: '13px'
                     }}
+                    target="_blank"
                 >
                     https://docs.flyte.org/en/latest/
                 </Link>
