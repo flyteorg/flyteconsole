@@ -13,6 +13,9 @@ Flyte Console
 
     .. |CodeCoverage| image:: https://img.shields.io/codecov/c/github/lyft/flyteconsole.svg
         :target: https://codecov.io/gh/lyft/flyteconsole
+   
+    .. |Slack| image:: https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social
+        :target: https://forms.gle/UVuek9WfBoweiqcJA
 
 This is the web UI for the Flyte platform.
 
