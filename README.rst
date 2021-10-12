@@ -1,7 +1,7 @@
 #############
 Flyte Console
 #############
-|Current Release| |Build Status| |License| |CodeCoverage|
+|Current Release| |Build Status| |License| |CodeCoverage| |Slack|
     .. |Current Release| image:: https://img.shields.io/github/release/lyft/flyteconsole.svg
         :target: https://github.com/lyft/flyteconsole/releases/latest
         
