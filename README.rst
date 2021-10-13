@@ -15,7 +15,7 @@ Flyte Console
         :target: https://codecov.io/gh/lyft/flyteconsole
    
     .. |Slack| image:: https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social
-        :target: https://forms.gle/UVuek9WfBoweiqcJA
+        :target: https://slack.flyte.org
 
 This is the web UI for the Flyte platform.
 
