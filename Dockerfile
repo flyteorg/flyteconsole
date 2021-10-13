@@ -26,7 +26,7 @@ COPY --from=builder /app app
 WORKDIR /app
 ENV NODE_ENV=production PORT=8080
 EXPOSE 8080
-RUN groupadd -g 1000 flyte && useradd -r -u 1000 -g flyte flyte
-USER flyte
+
+USER 1000
 
 CMD ["index.js"]
