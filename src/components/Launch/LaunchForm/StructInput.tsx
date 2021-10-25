@@ -13,6 +13,13 @@ const muiTheme = createMuiTheme({
         MuiTextField: {
             variant: 'outlined'
         }
+    },
+    overrides: {
+        MuiButton: {
+            label: {
+                color: 'gray'
+            }
+        }
     }
 });
 
