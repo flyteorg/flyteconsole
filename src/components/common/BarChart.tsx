@@ -41,13 +41,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         cursor: 'pointer',
         width: '80%',
         marginLeft: '10%'
-    },
-    circle: {
-        borderRadius: '50%',
-        backgroundColor: 'purple',
-        height: 6,
-        marginTop: 3,
-        width: 6
     }
 }));
 
@@ -90,14 +83,12 @@ const BarChartItem: React.FC<BarChartItemProps> = ({
         <>
             <div
                 className={styles.itemBar}
-                style={{ backgroundColor: color, height: `${value}%` }}
-                onClick={onClick}
-            />
-            <div
-                className={styles.circle}
                 style={{
-                    backgroundColor: isSelected ? '#CC23E8' : 'transparent'
+                    backgroundColor: color,
+                    height: `${value}%`,
+                    opacity: isSelected ? '100%' : '50%'
                 }}
+                onClick={onClick}
             />
         </>
     );
@@ -177,8 +168,10 @@ export const BarChart: React.FC<BarChartProps> = ({
                         onClick={handleClickItem(item)}
                         key={`bar-chart-item-${index}`}
                         isSelected={
-                            item.metadata &&
-                            chartIds.includes(item.metadata.name)
+                            chartIds.length === 0
+                                ? true
+                                : item.metadata &&
+                                  chartIds.includes(item.metadata.name)
                         }
                     />
                 ))}
