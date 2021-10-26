@@ -60,16 +60,16 @@ const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
  */
 export const ExecutionFilters: React.FC<{
     filters: (FilterState | BooleanFilterState)[];
-    chartIds: string[];
-    clearCharts: () => void;
+    chartIds?: string[];
+    clearCharts?: () => void;
 }> = ({ filters, chartIds, clearCharts }) => {
     const styles = useStyles();
 
     filters = filters.map(filter => {
         const onChangeFunc = filter.onChange;
         filter.onChange = value => {
-            clearCharts();
-            onChangeFunc(value);
+            if (clearCharts) clearCharts();
+            if (onChangeFunc) onChangeFunc(value);
         };
         return filter;
     });
@@ -113,7 +113,7 @@ export const ExecutionFilters: React.FC<{
                     />
                 );
             })}
-            {chartIds.length > 0 && (
+            {chartIds && chartIds.length > 0 && (
                 <FilterPopoverButton
                     open={false}
                     active={true}
