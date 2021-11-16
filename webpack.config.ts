@@ -301,7 +301,8 @@ export const clientConfig: webpack.Configuration = {
                                 'Content-Type',
                                 'application/javascript; charset=UTF-8'
                             );
-                        })
+                        }),
+                    port: 7777
                 })
             ];
         }
