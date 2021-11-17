@@ -283,11 +283,11 @@ export const clientConfig: webpack.Configuration = {
             new ServePlugin({
                 middleware: (app, builtins) =>
                     app.use(async (ctx, next) => {
-                        await next();
                         ctx.setHeader(
                             'Content-Type',
                             'application/javascript; charset=UTF-8'
                         );
+                        await next();
                     }),
                 port: 7777
             })
