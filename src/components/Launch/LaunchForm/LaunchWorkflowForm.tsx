@@ -128,10 +128,10 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                         ) : null}
                         <LaunchFormAdvancedInputs
                             ref={advancedOptionsRef}
+                            state={state}
                             spec={{
                                 disableAll: state.context.disableAll,
-                                maxParallelism: state.context.maxParallelism,
-                                qualityOfService: state.context.qualityOfService
+                                maxParallelism: state.context.maxParallelism
                             }}
                         />
                     </AccordionDetails>
