@@ -38,7 +38,8 @@ const muiTheme = createMuiTheme({
         },
         MuiCard: {
             root: {
-                marginBottom: 16
+                marginBottom: 16,
+                width: '100%'
             }
         }
     },
@@ -51,7 +52,6 @@ const muiTheme = createMuiTheme({
 });
 
 interface LaunchAdvancedOptionsProps {
-    spec: Admin.IExecutionSpec;
     state: State<
         WorkflowLaunchContext,
         WorkflowLaunchEvent,
@@ -70,9 +70,8 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
 >(
     (
         {
-            spec,
             state: {
-                context: { launchPlan }
+                context: { launchPlan, ...other }
             }
         },
         ref
@@ -89,11 +88,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
         );
 
         React.useEffect(() => {
-            if (isValueValid(spec.disableAll)) {
-                setDisableAll(spec.disableAll!);
+            if (isValueValid(other.disableAll)) {
+                setDisableAll(other.disableAll!);
             }
-            if (isValueValid(spec.maxParallelism)) {
-                setMaxParallelism(`${spec.maxParallelism}`);
+            if (isValueValid(other.maxParallelism)) {
+                setMaxParallelism(`${other.maxParallelism}`);
             }
             if (
                 launchPlan?.spec.rawOutputDataConfig?.outputLocationPrefix !==
@@ -105,19 +104,23 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
                     launchPlan.spec.rawOutputDataConfig.outputLocationPrefix
                 );
             }
-            if (
-                launchPlan?.spec.labels?.values !== undefined &&
-                launchPlan?.spec.labels.values !== null
-            ) {
-                setLabelsParamData(launchPlan.spec.labels.values);
-            }
-            if (
-                launchPlan?.spec.annotations?.values !== undefined &&
-                launchPlan?.spec.annotations.values !== null
-            ) {
-                setAnnotationsParamData(launchPlan.spec.annotations.values);
-            }
-        }, [spec, launchPlan?.spec]);
+            const newLabels = {
+                ...(other.labels?.values || {}),
+                ...(launchPlan?.spec?.labels?.values || {})
+            };
+            const newAnnotations = {
+                ...(other.annotations?.values || {}),
+                ...(launchPlan?.spec?.annotations?.values || {})
+            };
+            setLabelsParamData(newLabels);
+            setAnnotationsParamData(newAnnotations);
+        }, [
+            other.disableAll,
+            other.maxParallelism,
+            other.labels,
+            other.annotations,
+            launchPlan?.spec
+        ]);
 
         React.useImperativeHandle(
             ref,

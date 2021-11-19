@@ -263,7 +263,8 @@ export function useLaunchWorkflowFormState({
         values: defaultInputValues,
         disableAll,
         maxParallelism,
-        qualityOfService
+        labels,
+        annotations
     } = initialParameters;
 
     const apiContext = useAPIContext();
@@ -298,7 +299,8 @@ export function useLaunchWorkflowFormState({
             sourceId,
             disableAll,
             maxParallelism,
-            qualityOfService
+            labels,
+            annotations
         }
     });
 
