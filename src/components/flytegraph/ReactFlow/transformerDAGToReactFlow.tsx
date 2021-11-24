@@ -3,6 +3,7 @@ import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { BuildRFNodeProps, ConvertDagProps, DagToFRProps } from './types';
+import { PRINT } from './ReactFlowWrapper';
 
 export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
@@ -141,7 +142,21 @@ export const dagToReactFlow = (props: DagToFRProps) => {
 export const ConvertFlyteDagToReactFlows = (
     props: ConvertDagProps
 ): Elements => {
+    console.log(
+        '@ConverFlyteDagToReactFlow: ------------------------------------'
+    );
+    console.log('\t - props:', props);
+    for (const execution in props.nodeExecutionsById) {
+        console.log(
+            `\t\t${execution} : ${
+                NodeExecutionPhase[
+                    props.nodeExecutionsById[execution].closure.phase
+                ]
+            }`
+        );
+    }
     const dagProps = { ...props, currentDepth: 0 } as DagToFRProps;
     const rfJson = dagToReactFlow(dagProps);
+    console.log('\t - rfJson', rfJson);
     return rfJson;
 };

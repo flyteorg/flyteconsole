@@ -257,32 +257,40 @@ async function fetchGroupsForParentNodeExecution(
         nodeExecution.id.executionId,
         finalConfig
     );
+
     const groupsByName = children.reduce<Map<string, NodeExecutionGroup>>(
         (out, child) => {
             const retryAttempt = formatRetryAttempt(child.metadata?.retryGroup);
             let group = out.get(retryAttempt);
+
             if (!group) {
                 group = { name: retryAttempt, nodeExecutions: [] };
                 out.set(retryAttempt, group);
             }
             /**
+             * @TODO delete this */
+            /**
              * GraphUX uses workflowClosure which uses scopedId
              * This builds a scopedId via parent nodeExecution
              * to enable mapping between graph and other components
              */
-            let scopedId: string | undefined =
-                nodeExecution.metadata?.specNodeId;
-            if (scopedId != undefined) {
-                scopedId += `-${child.metadata?.retryGroup}-${child.metadata?.specNodeId}`;
-                child['scopedId'] = scopedId;
-            } else {
-                child['scopedId'] = child.metadata?.specNodeId;
-            }
+            // let scopedId: string | undefined =
+            //     nodeExecution.metadata?.specNodeId;
+            // if (scopedId != undefined) {
+            //     scopedId += `-${child.metadata?.retryGroup}-${child.metadata?.specNodeId}`;
+            //     child['scopedId'] = scopedId;
+            // } else {
+            //     child['scopedId'] = child.metadata?.specNodeId;
+            // }
+
+            child['scopedId'] = child.id.nodeId;
+            child['fromUniqueParentId'] = nodeExecution.id.nodeId;
             group.nodeExecutions.push(child);
             return out;
         },
         new Map()
     );
+
     return Array.from(groupsByName.values());
 }
 
@@ -327,13 +335,28 @@ async function fetchAllChildNodeExecutions(
     nodeExecutions: NodeExecution[],
     config: RequestConfig
 ): Promise<Array<NodeExecutionGroup[]>> {
-    const executions: Array<NodeExecutionGroup[]> = await Promise.all(
-        nodeExecutions.map(exe => {
-            return fetchChildNodeExecutionGroups(queryClient, exe, config);
-        })
+    const executionGroups: Array<NodeExecutionGroup[]> = await Promise.all(
+        nodeExecutions.map(exe =>
+            fetchChildNodeExecutionGroups(queryClient, exe, config)
+        )
     );
-    return executions;
+
+    console.log('Executions:', executionGroups);
+    for (const group in executionGroups) {
+        const attemptGroup = executionGroups[group];
+        console.log('attemptGroup::', attemptGroup);
+        for (const attempt in attemptGroup) {
+            const executionList = attemptGroup[attempt].nodeExecutions;
+            for (const execution in executionList) {
+                if (isParentNode(executionList[execution])) {
+                    console.log('THIS IS A PARENT:', executionList[execution]);
+                }
+            }
+        }
+    }
+    return executionGroups;
 }
+
 /**
  *
  * @param nodeExecutions list of parent node executionId's
@@ -346,12 +369,31 @@ export function useAllChildNodeExecutionGroupsQuery(
 ): QueryObserverResult<Array<NodeExecutionGroup[]>, Error> {
     const queryClient = useQueryClient();
     const shouldEnableFn = groups => {
-        if (nodeExecutions[0] && groups.length > 0) {
-            if (!nodeExecutionIsTerminal(nodeExecutions[0])) {
-                return true;
-            }
+        console.log('\n@useAllChildNodeExecutionGroupsQuery');
+        console.log('\t groups:', groups);
+        console.log('\t nodeExecutions:', nodeExecutions);
+
+        // This contains nodeExecutions: the value is the call for uniqueParentId
+        // {
+        //     fromUniqueParentId: "n0",
+        //     id:{
+        //         "nodeId": "n0-0-n0-n1"
+        //     },
+        //     "scopedId: "n0-0-n0-n1"
+        // }
+
+        // if (isParentNode(nodeExecution)) {
+        //     return fetchGroupsForParentNodeExecution(
+        //         queryClient,
+        //         nodeExecution,
+        //         config
+        //     );
+        // }
+
+        if (groups.length > 0) {
             return groups.some(group => {
                 if (group.nodeExecutions?.length > 0) {
+                    /* Return true is any executions are not yet terminal (ie, they can change) */
                     return group.nodeExecutions.some(ne => {
                         return !nodeExecutionIsTerminal(ne);
                     });

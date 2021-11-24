@@ -7,6 +7,7 @@ export interface RFWrapperProps {
     backgroundStyle: RFBackgroundProps;
     type: RFGraphTypes;
     onNodeSelectionChanged?: any;
+    nodeExecutionsById?: any;
     version?: string;
 }
 
