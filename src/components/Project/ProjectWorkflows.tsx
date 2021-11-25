@@ -1,11 +1,13 @@
 import { WaitForData } from 'components/common/WaitForData';
-import { useWorkflowNameList } from 'components/hooks/useNamedEntity';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
+import { SearchableInput } from 'components/common/SearchableList';
 import { Admin } from 'flyteidl';
 import { limits } from 'models/AdminEntity/constants';
 import { FilterOperationName, SortDirection } from 'models/AdminEntity/types';
 import { workflowSortFields } from 'models/Workflow/constants';
 import * as React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useWorkflowInfoList } from '../Workflow/useWorkflowInfoList';
 
 export interface ProjectWorkflowsProps {
     projectId: string;
@@ -17,7 +19,7 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     domainId: domain,
     projectId: project
 }) => {
-    const workflowNames = useWorkflowNameList(
+    const workflows = useWorkflowInfoList(
         { domain, project },
         {
             limit: limits.NONE,
@@ -37,8 +39,8 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     );
 
     return (
-        <WaitForData {...workflowNames}>
-            <SearchableWorkflowNameList names={workflowNames.value} />
+        <WaitForData {...workflows}>
+            <SearchableWorkflowNameList workflows={workflows.value} />
         </WaitForData>
     );
 };
