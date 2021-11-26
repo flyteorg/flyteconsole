@@ -327,8 +327,7 @@ function fetchChildNodeExecutionGroups(
 
 /**
  * Query returns all children for a list of `nodeExecutions`
- * Note: diffrent from fetchGroupsForParentNodeExecution in that it expects a
- * list of nodeExecitions
+ * Will recursively gather all children for anyone that isParent()
  */
 async function fetchAllChildNodeExecutions(
     queryClient: QueryClient,
@@ -341,19 +340,33 @@ async function fetchAllChildNodeExecutions(
         )
     );
 
-    console.log('Executions:', executionGroups);
-    for (const group in executionGroups) {
-        const attemptGroup = executionGroups[group];
-        console.log('attemptGroup::', attemptGroup);
-        for (const attempt in attemptGroup) {
-            const executionList = attemptGroup[attempt].nodeExecutions;
-            for (const execution in executionList) {
-                if (isParentNode(executionList[execution])) {
-                    console.log('THIS IS A PARENT:', executionList[execution]);
+    /** Recursive check for nested/dynamic nodes */
+    const childrenFromChildrenNodes = [];
+    executionGroups.map(group =>
+        group.map(attempt => {
+            attempt.nodeExecutions.map(execution => {
+                if (isParentNode(execution)) {
+                    childrenFromChildrenNodes.push(execution);
                 }
-            }
+            });
+        })
+    );
+
+    /** Request and concact data from children */
+    if (childrenFromChildrenNodes.length > 0) {
+        console.log('\n\n\n#################### GOOD 3 ####################');
+        const childGroups = await fetchAllChildNodeExecutions(
+            queryClient,
+            childrenFromChildrenNodes,
+            config
+        );
+        for (const group in childGroups) {
+            executionGroups.push(childGroups[group]);
         }
     }
+    console.log(' - - Final - - -');
+    console.log('final:parentNodes:', childrenFromChildrenNodes);
+    console.log('final:executionGroups:', executionGroups);
     return executionGroups;
 }
 
@@ -369,27 +382,6 @@ export function useAllChildNodeExecutionGroupsQuery(
 ): QueryObserverResult<Array<NodeExecutionGroup[]>, Error> {
     const queryClient = useQueryClient();
     const shouldEnableFn = groups => {
-        console.log('\n@useAllChildNodeExecutionGroupsQuery');
-        console.log('\t groups:', groups);
-        console.log('\t nodeExecutions:', nodeExecutions);
-
-        // This contains nodeExecutions: the value is the call for uniqueParentId
-        // {
-        //     fromUniqueParentId: "n0",
-        //     id:{
-        //         "nodeId": "n0-0-n0-n1"
-        //     },
-        //     "scopedId: "n0-0-n0-n1"
-        // }
-
-        // if (isParentNode(nodeExecution)) {
-        //     return fetchGroupsForParentNodeExecution(
-        //         queryClient,
-        //         nodeExecution,
-        //         config
-        //     );
-        // }
-
         if (groups.length > 0) {
             return groups.some(group => {
                 if (group.nodeExecutions?.length > 0) {
