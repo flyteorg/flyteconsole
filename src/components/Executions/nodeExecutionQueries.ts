@@ -262,27 +262,10 @@ async function fetchGroupsForParentNodeExecution(
         (out, child) => {
             const retryAttempt = formatRetryAttempt(child.metadata?.retryGroup);
             let group = out.get(retryAttempt);
-
             if (!group) {
                 group = { name: retryAttempt, nodeExecutions: [] };
                 out.set(retryAttempt, group);
             }
-            /**
-             * @TODO delete this */
-            /**
-             * GraphUX uses workflowClosure which uses scopedId
-             * This builds a scopedId via parent nodeExecution
-             * to enable mapping between graph and other components
-             */
-            // let scopedId: string | undefined =
-            //     nodeExecution.metadata?.specNodeId;
-            // if (scopedId != undefined) {
-            //     scopedId += `-${child.metadata?.retryGroup}-${child.metadata?.specNodeId}`;
-            //     child['scopedId'] = scopedId;
-            // } else {
-            //     child['scopedId'] = child.metadata?.specNodeId;
-            // }
-
             child['scopedId'] = child.id.nodeId;
             child['fromUniqueParentId'] = nodeExecution.id.nodeId;
             group.nodeExecutions.push(child);
@@ -334,6 +317,10 @@ async function fetchAllChildNodeExecutions(
     nodeExecutions: NodeExecution[],
     config: RequestConfig
 ): Promise<Array<NodeExecutionGroup[]>> {
+    console.log('###############################################');
+    console.log('###############################################');
+    console.log('nodeExecutions:', nodeExecutions);
+    console.log('typeof nodeExecutions:', typeof nodeExecutions);
     const executionGroups: Array<NodeExecutionGroup[]> = await Promise.all(
         nodeExecutions.map(exe =>
             fetchChildNodeExecutionGroups(queryClient, exe, config)
@@ -354,7 +341,6 @@ async function fetchAllChildNodeExecutions(
 
     /** Request and concact data from children */
     if (childrenFromChildrenNodes.length > 0) {
-        console.log('\n\n\n#################### GOOD 3 ####################');
         const childGroups = await fetchAllChildNodeExecutions(
             queryClient,
             childrenFromChildrenNodes,
@@ -364,9 +350,6 @@ async function fetchAllChildNodeExecutions(
             executionGroups.push(childGroups[group]);
         }
     }
-    console.log(' - - Final - - -');
-    console.log('final:parentNodes:', childrenFromChildrenNodes);
-    console.log('final:executionGroups:', executionGroups);
     return executionGroups;
 }
 

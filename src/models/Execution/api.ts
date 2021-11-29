@@ -242,6 +242,26 @@ export const getNodeExecution = (
         config
     );
 
+/** Retrieves a full record (eg, dynamic workflows) for
+ * single `NodeExecution` */
+export const getDynamicWorkflowFromExecution = (
+    id: NodeExecutionIdentifier,
+    config?: RequestConfig
+) => {
+    const path = makeNodeExecutionPath(id);
+    console.log('@apis:getNodeExecutionDynamicWorkflow');
+    console.log('id', id);
+    console.log('config', config);
+    console.log('path:', path);
+    return getAdminEntity<Admin.NodeExecutionGetDataResponse, ExecutionData>(
+        {
+            path: path,
+            messageType: Admin.NodeExecutionGetDataResponse
+        },
+        config
+    );
+};
+
 /** Fetches data URLs for a NodeExecution */
 export const getNodeExecutionData = (
     id: NodeExecutionIdentifier,

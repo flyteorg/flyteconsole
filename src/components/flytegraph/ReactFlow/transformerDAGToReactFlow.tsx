@@ -142,10 +142,6 @@ export const dagToReactFlow = (props: DagToFRProps) => {
 export const ConvertFlyteDagToReactFlows = (
     props: ConvertDagProps
 ): Elements => {
-    console.log(
-        '@ConverFlyteDagToReactFlow: ------------------------------------'
-    );
-    console.log('\t - props:', props);
     for (const execution in props.nodeExecutionsById) {
         console.log(
             `\t\t${execution} : ${
@@ -157,6 +153,5 @@ export const ConvertFlyteDagToReactFlows = (
     }
     const dagProps = { ...props, currentDepth: 0 } as DagToFRProps;
     const rfJson = dagToReactFlow(dagProps);
-    console.log('\t - rfJson', rfJson);
     return rfJson;
 };
