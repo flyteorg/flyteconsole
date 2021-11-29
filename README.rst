@@ -148,6 +148,14 @@ a single module, you can specify that one specifically
 (ex. ``localStorage.debug = 'flyte:adminEntity'`` to only see decoded Flyte
 Admin API requests).
 
+============
+Google Analytics
+============
+
+This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>`_
+libary to include Google Analytics tracking code in a website or app. For all the environments, it is configured using ENABLE_GA environment variable.
+By default, it's enabled like this: ``ENABLED=true``. If you want to disable it, just remove the value. (ex. ``ENABLE_GA='``).
+
 .. _cors-proxying:
 
 ================================
