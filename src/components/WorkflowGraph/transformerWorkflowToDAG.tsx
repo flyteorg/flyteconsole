@@ -361,8 +361,9 @@ export const transformerWorkflowToDAG = (
     const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
 
     console.log('\n\n\n\n\n\n');
-    console.log('WORKFLOW:', workflow);
-    console.log('@buildDag:root:', dag);
+    console.log('@transformerWorkflowToDag:');
+    console.log('\t workflow:', workflow);
+    console.log('\t root:', dag);
 
     return { dag, staticExecutionIdsMap };
 };

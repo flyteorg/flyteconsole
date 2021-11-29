@@ -18,16 +18,6 @@ const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
         const oldStatus = previous[exe]?.closure.phase;
         const newStatus = nodeExecutionsById[exe]?.closure.phase;
         if (oldStatus != newStatus) {
-            console.log(
-                '#########################################################################'
-            );
-            console.log('@nodeExecutionStatusChanged: CHANGED DETECTED');
-            console.log(
-                `\t${exe}: old=${NodeExecutionPhase[oldStatus]} new=${NodeExecutionPhase[newStatus]}`
-            );
-            console.log(
-                '#########################################################################'
-            );
             return true;
         }
     }
@@ -36,11 +26,6 @@ const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
 
 const graphNodeCountChanged = (previous, data) => {
     if (previous.nodes.length !== data.nodes.length) {
-        console.log(
-            '#########################################################################'
-        );
-        console.log('@graphNodeCountChanged: CHANGED DETECTED');
-        console.log(`\told=${previous.nodes.length} new=${data.nodes.length}`);
         return true;
     } else {
         return false;

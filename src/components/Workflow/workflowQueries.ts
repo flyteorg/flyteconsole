@@ -35,14 +35,13 @@ export function makeNodeExecutionDynamicWorkflowQuery(
     queryClient: QueryClient,
     parentsToFetch
 ) {
-    console.log('@makeNodeExecutionDynamicWorkflowQuery:id', parentsToFetch);
     return {
         queryKey: [QueryType.DynamicWorkflowFromNodeExecution, parentsToFetch],
         queryFn: async () => {
             const dynamicWorkflows = await Promise.all(
                 Object.keys(parentsToFetch).map(id => {
-                    console.log('fetching:', id);
-                    return getNodeExecutionData(parentsToFetch[id]);
+                    const executionId = parentsToFetch[id];
+                    return getNodeExecutionData(executionId.id);
                 })
             );
             console.log('\n\n\n\n');

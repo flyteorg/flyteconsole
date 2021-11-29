@@ -317,10 +317,6 @@ async function fetchAllChildNodeExecutions(
     nodeExecutions: NodeExecution[],
     config: RequestConfig
 ): Promise<Array<NodeExecutionGroup[]>> {
-    console.log('###############################################');
-    console.log('###############################################');
-    console.log('nodeExecutions:', nodeExecutions);
-    console.log('typeof nodeExecutions:', typeof nodeExecutions);
     const executionGroups: Array<NodeExecutionGroup[]> = await Promise.all(
         nodeExecutions.map(exe =>
             fetchChildNodeExecutionGroups(queryClient, exe, config)

@@ -63,23 +63,23 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
         for (const executionId in allExecutions) {
             if (!staticExecutions[executionId]) {
                 const dynamicExecutionId = allExecutions[executionId];
-                console.log('Found dynamic:', dynamicExecutionId.id.nodeId);
                 parentsToFetch[dynamicExecutionId.fromUniqueParentId] =
                     dynamicExecutionId.id;
-            } else {
-                console.log('Not dynamic', executionId);
             }
         }
         const result = {};
         for (const parentId in parentsToFetch) {
             result[parentId] = allExecutions[parentId];
         }
-        console.log('checkForDynamicExeuctions: result:', result);
         return result;
     };
 
     const renderReactFlowGraph = dynamicWorkflows => {
-        console.log('@renderReactFlowGraph:dynamicWorkflows', dynamicWorkflows);
+        console.log('\n\n\n\n');
+        console.log('###########################################');
+        console.log('dag:', dag);
+        console.log('dynamicWorkflows', dynamicWorkflows);
+
         const merged = dag;
         return (
             <ReactFlowGraphComponent
