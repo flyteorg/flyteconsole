@@ -39,6 +39,26 @@ const ReactFlowGraphComponent = props => {
         nodeExecutionsById: nodeExecutionsById,
         onNodeSelectionChanged: onNodeSelectionChanged
     });
+    const [currentNestedView, setCurrentNestedView] = useState([]);
+
+    const onAddNestedView = executionId => {
+        console.log('@ReactFlowGraphComponent: addNestedView:', executionId);
+        setCurrentNestedView([...currentNestedView, executionId]);
+    };
+
+    const onRemoveNestedView = (executionId = null) => {
+        console.log('@ReactFlowGraphComponent: removeNestedView:', executionId);
+        const current = [...currentNestedView];
+        current.pop();
+        setCurrentNestedView(current);
+    };
+
+    useEffect(() => {
+        console.log(
+            '@ReactFlowGraphComponent: useEffect[currentNestedView]',
+            currentNestedView
+        );
+    }, [currentNestedView]);
 
     useEffect(() => {
         if (graphNodeCountChanged(state.data, data)) {
@@ -71,6 +91,9 @@ const ReactFlowGraphComponent = props => {
         root: state.data,
         nodeExecutionsById: state.nodeExecutionsById,
         onNodeSelectionChanged: state.onNodeSelectionChanged,
+        onAddNestedView: onAddNestedView,
+        onRemoveNestedView: onRemoveNestedView,
+        currentNestedView: currentNestedView,
         maxRenderDepth: 1
     } as ConvertDagProps);
 

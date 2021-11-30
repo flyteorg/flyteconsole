@@ -41,6 +41,9 @@ export interface BuildRFNodeProps {
     nodeExecutionsById: any;
     typeOverride: dTypes | null;
     onNodeSelectionChanged: any;
+    onAddNestedView?: any;
+    onRemoveNestedView?: any;
+    currentNestedView?: any;
     isStaticGraph: boolean;
 }
 
@@ -48,6 +51,9 @@ export interface ConvertDagProps {
     root: dNode;
     nodeExecutionsById: any;
     onNodeSelectionChanged: any;
+    onRemoveNestedView?: any;
+    onAddNestedView?: any;
+    currentNestedView?: any;
     maxRenderDepth: number;
     isStaticGraph: boolean;
 }
@@ -65,4 +71,6 @@ export interface RFCustomData {
     dag: any;
     taskType?: dTypes;
     onNodeSelectionChanged?: any;
+    onAddNestedView: any;
+    onRemoveNestedView: any;
 }

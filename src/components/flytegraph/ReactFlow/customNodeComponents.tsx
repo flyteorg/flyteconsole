@@ -158,8 +158,13 @@ export const ReactFlowCustomMaxNested = ({ data }: any) => {
         );
     };
 
+    const onClick = e => {
+        console.log('onclick: data', data);
+        data.onAddNestedView('test from custom component');
+    };
+
     return (
-        <div style={containerStyle}>
+        <div style={containerStyle} onClick={onClick}>
             {data.taskType ? renderTaskType() : null}
             <div style={styles}>{data.text}</div>
             {renderDefaultHandles(
@@ -252,9 +257,6 @@ export const ReactFlowStaticNode = ({ data }: any) => {
  */
 
 export const ReactFlowCustomTaskNode = ({ data }: any) => {
-    // console.log(`\n\n@ReactFlowCustomTaskNode: ${data.text}`);
-    // console.log('\t data.nodeType:', dTypes[data.nodeType]);
-    // console.log('\t data.nodeExecutionStatus:', data.nodeExecutionStatus);
     const styles = getGraphNodeStyle(data.nodeType, data.nodeExecutionStatus);
     const onNodeSelectionChanged = data.onNodeSelectionChanged;
     const [selectedNode, setSelectedNode] = useState(false);

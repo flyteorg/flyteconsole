@@ -35,7 +35,8 @@ export interface staticNodeExecutionIds {
  * @returns Display name
  */
 export const transformerWorkflowToDAG = (
-    workflow: CompiledWorkflowClosure
+    workflow: CompiledWorkflowClosure,
+    nestedDisplayState
 ): any => {
     const { primary } = workflow;
     const staticExecutionIdsMap = {};

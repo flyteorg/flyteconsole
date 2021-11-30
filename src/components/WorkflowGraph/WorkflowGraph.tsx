@@ -6,7 +6,6 @@ import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGr
 import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { DataError } from 'components/Errors/DataError';
-import { useGetDynamicWorkflowQuery } from 'components/Executions/nodeExecutionQueries';
 import { NodeExecutionsContext } from 'components/Executions/contexts';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useQuery, useQueryClient } from 'react-query';
@@ -49,7 +48,6 @@ function workflowToDag(workflow: Workflow): PrepareDAGResult {
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
     const { onNodeSelectionChanged, nodeExecutionsById, workflow } = props;
     const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
-
     /**
      * Note:
      *  Dynamic nodes are deteremined at runtime and thus do not come
@@ -74,10 +72,19 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
         return result;
     };
 
+    const dynamicParents = checkForDynamicExeuctions(
+        nodeExecutionsById,
+        staticExecutionIdsMap
+    );
+
+    const dynamicWorkflowQuery = useQuery(
+        makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents)
+    );
+
     const renderReactFlowGraph = dynamicWorkflows => {
         console.log('\n\n\n\n');
         console.log('###########################################');
-        console.log('dag:', dag);
+        console.log('workflow:', workflow);
         console.log('dynamicWorkflows', dynamicWorkflows);
 
         const merged = dag;
@@ -89,14 +96,6 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
             />
         );
     };
-
-    const dynamicParents = checkForDynamicExeuctions(
-        nodeExecutionsById,
-        staticExecutionIdsMap
-    );
-    const dynamicWorkflowQuery = useQuery(
-        makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents)
-    );
 
     if (error) {
         return (

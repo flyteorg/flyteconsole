@@ -3,7 +3,6 @@ import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { BuildRFNodeProps, ConvertDagProps, DagToFRProps } from './types';
-import { PRINT } from './ReactFlowWrapper';
 
 export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
@@ -26,7 +25,9 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
         dag,
         nodeExecutionsById,
         typeOverride,
-        onNodeSelectionChanged
+        onNodeSelectionChanged,
+        onAddNestedView,
+        onRemoveNestedView
     } = props;
 
     const type = typeOverride ? typeOverride : dNode.type;
@@ -59,6 +60,12 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
             if (onNodeSelectionChanged) {
                 onNodeSelectionChanged([dNode.scopedId]);
             }
+        },
+        onAddNestedView: () => {
+            onAddNestedView(dNode.scopedId);
+        },
+        onRemoveNestedView: () => {
+            onRemoveNestedView(dNode.scopedId);
         }
     };
 
@@ -86,6 +93,8 @@ export const dagToReactFlow = (props: DagToFRProps) => {
         nodeExecutionsById,
         currentDepth,
         onNodeSelectionChanged,
+        onAddNestedView,
+        onRemoveNestedView,
         maxRenderDepth,
         isStaticGraph
     } = props;
@@ -101,27 +110,40 @@ export const dagToReactFlow = (props: DagToFRProps) => {
             nodeExecutionsById: nodeExecutionsById,
             typeOverride: null,
             onNodeSelectionChanged: onNodeSelectionChanged,
+            onAddNestedView: onAddNestedView,
+            onRemoveNestedView: onRemoveNestedView,
             isStaticGraph: isStaticGraph
         } as BuildRFNodeProps;
-        if (dNode.nodes?.length > 0 && currentDepth <= maxRenderDepth) {
+        if (dNode.nodes?.length > 0) {
             /* Note: currentDepth will be replaced once nested toggle */
-            if (currentDepth == maxRenderDepth) {
-                buildNodeProps.typeOverride = isStaticGraph
-                    ? dTypes.staticNestedNode
-                    : dTypes.nestedMaxDepth;
+            const nestedDagProps: DagToFRProps = {
+                root: dNode,
+                nodeExecutionsById: nodeExecutionsById,
+                currentDepth: currentDepth + 1,
+                onNodeSelectionChanged: onNodeSelectionChanged,
+                onAddNestedView: onAddNestedView,
+                onRemoveNestedView: onRemoveNestedView,
+                maxRenderDepth: maxRenderDepth,
+                isStaticGraph: isStaticGraph
+            };
+
+            if (currentDepth == maxRenderDepth && isStaticGraph) {
+                buildNodeProps.typeOverride = dTypes.staticNestedNode;
             } else {
-                const nestedDagProps: DagToFRProps = {
-                    root: dNode,
-                    nodeExecutionsById: nodeExecutionsById,
-                    currentDepth: currentDepth + 1,
-                    onNodeSelectionChanged: onNodeSelectionChanged,
-                    maxRenderDepth: maxRenderDepth,
-                    isStaticGraph: isStaticGraph
-                };
                 buildNodeProps.dag = dagToReactFlow(nestedDagProps);
-                buildNodeProps.typeOverride = isStaticGraph
-                    ? dTypes.staticNode
-                    : null;
+                if (
+                    currentDepth == maxRenderDepth &&
+                    !(
+                        dNode.type == dTypes.nestedDisplay ||
+                        dNode.type == dTypes.nestedHistory
+                    )
+                ) {
+                    buildNodeProps.typeOverride = dTypes.nestedMaxDepth;
+                } else {
+                    buildNodeProps.typeOverride = isStaticGraph
+                        ? dTypes.staticNode
+                        : null;
+                }
             }
         } else {
             buildNodeProps.typeOverride = isStaticGraph
