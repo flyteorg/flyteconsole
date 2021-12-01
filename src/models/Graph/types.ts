@@ -25,8 +25,6 @@ export enum dTypes {
     nestedEnd,
     nestedStart,
     nestedMaxDepth,
-    nestedDisplay,
-    nestedHistory,
     staticNode,
     staticNestedNode
 }

@@ -58,7 +58,7 @@ export interface ConvertDagProps {
     isStaticGraph: boolean;
 }
 
-export interface DagToFRProps extends ConvertDagProps {
+export interface DagToReactFlowProps extends ConvertDagProps {
     currentDepth: number;
 }
 
