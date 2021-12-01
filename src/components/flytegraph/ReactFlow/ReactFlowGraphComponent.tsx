@@ -5,7 +5,6 @@ import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
-import { NodeExecutionPhase } from 'models/Execution/enums';
 
 /**
  * Renders workflow graph using React Flow.

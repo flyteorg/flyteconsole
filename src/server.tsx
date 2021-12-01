@@ -28,6 +28,7 @@ export default function serverRenderer({
     const isDev = env === 'development';
     const isProd = env === 'production';
     let html = '';
+    console.log('init server:');
     if (isProd) {
         html = fs
             .readFileSync(path.join(currentDirectory, 'dist/index.html'))

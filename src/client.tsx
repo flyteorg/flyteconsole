@@ -10,7 +10,7 @@ const render = (Component: React.FC) => {
 
 const initializeApp = () => {
     const App = require('./components/App/App').App;
-
+    console.log('init client:');
     if (env.NODE_ENV === 'development') {
         // We use style-loader in dev mode, but it causes a FOUC and some initial styling issues
         // so we'll give it time to add the styles before initial render.

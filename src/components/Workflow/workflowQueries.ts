@@ -43,9 +43,6 @@ export function makeNodeExecutionDynamicWorkflowQuery(
                     return getNodeExecutionData(executionId.id);
                 })
             );
-            console.log('\n\n\n\n');
-            console.log('$$$$$$ dynamicWorkflows:', dynamicWorkflows);
-            console.log('\n\n\n\n');
             return dynamicWorkflows;
         }
     };

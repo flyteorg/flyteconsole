@@ -60,6 +60,7 @@ export interface ConvertDagProps {
 
 export interface DagToReactFlowProps extends ConvertDagProps {
     currentDepth: number;
+    parents: any;
 }
 
 export interface RFCustomData {

@@ -91,17 +91,24 @@ export const nodeMapToArr = map => {
     return output;
 };
 
+/**
+ * This function taks in a DAG and transform that data into the
+ * ReactFlow format
+ */
 export const dagToReactFlow = (props: DagToReactFlowProps) => {
     const {
         root,
         nodeExecutionsById,
         currentDepth,
+        currentNestedView,
         onNodeSelectionChanged,
         onAddNestedView,
         onRemoveNestedView,
         maxRenderDepth,
         isStaticGraph
     } = props;
+
+    console.log('');
 
     const nodes: any = {};
     const edges: any = {};
@@ -118,8 +125,14 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
             onRemoveNestedView: onRemoveNestedView,
             isStaticGraph: isStaticGraph
         } as BuildRFNodeProps;
+
+        /**
+         * Note: if-cases are all nested; else-cases are all flat
+         *
+         * Important to note that both are only relative to the root
+         * dNode provided; so 'flat' could mean flat within nested
+         */
         if (dNode.nodes?.length > 0) {
-            /* Note: currentDepth will be replaced once nested toggle */
             const nestedDagProps: DagToReactFlowProps = {
                 root: dNode,
                 nodeExecutionsById: nodeExecutionsById,
@@ -128,22 +141,35 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
                 onAddNestedView: onAddNestedView,
                 onRemoveNestedView: onRemoveNestedView,
                 maxRenderDepth: maxRenderDepth,
+                currentNestedView: currentNestedView,
                 isStaticGraph: isStaticGraph
             };
 
+            /**
+             * Provide the current dNode with a dag regardless which
+             * render logic results
+             */
+            buildNodeProps.dag = dagToReactFlow(nestedDagProps);
+
+            /* Now decide on render logic */
             if (currentDepth >= maxRenderDepth && isStaticGraph) {
                 buildNodeProps.typeOverride = dTypes.staticNestedNode;
             } else {
-                buildNodeProps.dag = dagToReactFlow(nestedDagProps);
                 if (currentDepth >= maxRenderDepth) {
-                    // buildNodeProps.typeOverride = dTypes.nestedMaxDepth;
-                } else {
-                    buildNodeProps.typeOverride = isStaticGraph
-                        ? dTypes.staticNode
-                        : null;
+                    if (currentNestedView?.length > 0) {
+                        console.log('IF: THIS IS WHERE WE DO THE MAGIC');
+                        console.log('\tdNode:', dNode);
+                    } else {
+                        console.log(
+                            'ELSE: currentNestedView:',
+                            currentNestedView
+                        );
+                        buildNodeProps.typeOverride = dTypes.nestedMaxDepth;
+                    }
                 }
             }
         } else {
+            /* These cases are not nested */
             buildNodeProps.typeOverride = isStaticGraph
                 ? dTypes.staticNode
                 : null;
@@ -162,9 +188,12 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
 export const ConvertFlyteDagToReactFlows = (
     props: ConvertDagProps
 ): Elements => {
-    const dagProps = { ...props, currentDepth: 0 } as DagToReactFlowProps;
+    const dagProps = {
+        ...props,
+        currentDepth: 0,
+        parents: []
+    } as DagToReactFlowProps;
     const rfJson = dagToReactFlow(dagProps);
-
     console.log('RRFJASON:', rfJson);
     return rfJson;
 };
