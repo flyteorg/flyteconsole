@@ -55,7 +55,7 @@ export interface ConvertDagProps {
     onAddNestedView?: any;
     currentNestedView?: any;
     maxRenderDepth: number;
-    isStaticGraph: boolean;
+    isStaticGraph?: boolean;
 }
 
 export interface DagToReactFlowProps extends ConvertDagProps {

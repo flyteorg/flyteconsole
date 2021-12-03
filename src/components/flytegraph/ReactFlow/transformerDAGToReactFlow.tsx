@@ -168,25 +168,18 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         if (dNode.nodes?.length > 0) {
             let contextualRoot = dNode;
             if (currentView && currentView.parent == dNode.scopedId) {
-                console.log('What is this:');
-                console.log('currentView:', currentView);
-                console.log('currentView.parent:', currentView.parent);
-                console.log('root.scopedId:', root.scopedId);
-                console.log('dNode.scopedId:', dNode.scopedId);
-                console.log('dNode.nodes:', dNode.nodes);
                 for (let j = 0; j < dNode.nodes.length; j++) {
-                    console.log('dNode.nodes[j].id:', dNode.nodes[j].id);
                     if (dNode.nodes[j].scopedId == currentView.view) {
                         console.log('THIS IS IT!');
                         console.log('\t dNode.nodes[j].id:', dNode.nodes[j].id);
                         console.log('\t currentView.view:', currentView.view);
-                        break;
+                        contextualRoot = dNode.nodes[j];
                     }
                 }
             }
             const nestedDagProps: DagToReactFlowProps = {
-                root: dNode,
-                parentNode: root,
+                root: contextualRoot,
+                parentNode: dNode,
                 nodeExecutionsById: nodeExecutionsById,
                 currentDepth: currentDepth + 1,
                 onNodeSelectionChanged: onNodeSelectionChanged,

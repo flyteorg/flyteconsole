@@ -33,12 +33,13 @@ const graphNodeCountChanged = (previous, data) => {
 
 const ReactFlowGraphComponent = props => {
     const { data, onNodeSelectionChanged, nodeExecutionsById } = props;
+    const [currentNestedView, setCurrentNestedView] = useState([]);
     const [state, setState] = useState({
         data: data,
         nodeExecutionsById: nodeExecutionsById,
-        onNodeSelectionChanged: onNodeSelectionChanged
+        onNodeSelectionChanged: onNodeSelectionChanged,
+        rfGraphJson: null
     });
-    const [currentNestedView, setCurrentNestedView] = useState([]);
 
     const onAddNestedView = executionId => {
         console.log('@ReactFlowGraphComponent: addNestedView:', executionId);
@@ -52,9 +53,30 @@ const ReactFlowGraphComponent = props => {
         setCurrentNestedView(current);
     };
 
+    const buildReactFlowGraphData = () => {
+        return ConvertFlyteDagToReactFlows({
+            root: state.data,
+            nodeExecutionsById: state.nodeExecutionsById,
+            onNodeSelectionChanged: state.onNodeSelectionChanged,
+            onAddNestedView: onAddNestedView,
+            onRemoveNestedView: onRemoveNestedView,
+            currentNestedView: currentNestedView,
+            maxRenderDepth: 1
+        } as ConvertDagProps);
+    };
+
     useEffect(() => {
         console.log(
-            '@ReactFlowGraphComponent: useEffect[currentNestedView]',
+            'START: @ReactFlowGraphComponent: useEffect[currentNestedView]',
+            currentNestedView
+        );
+        const newRFGraphData = buildReactFlowGraphData();
+        setState(state => ({
+            ...state,
+            rfGraphJson: newRFGraphData
+        }));
+        console.log(
+            'END: @ReactFlowGraphComponent: useEffect[currentNestedView]',
             currentNestedView
         );
     }, [currentNestedView]);
@@ -86,23 +108,14 @@ const ReactFlowGraphComponent = props => {
         }));
     }, [onNodeSelectionChanged]);
 
-    const rfGraphJson = ConvertFlyteDagToReactFlows({
-        root: state.data,
-        nodeExecutionsById: state.nodeExecutionsById,
-        onNodeSelectionChanged: state.onNodeSelectionChanged,
-        onAddNestedView: onAddNestedView,
-        onRemoveNestedView: onRemoveNestedView,
-        currentNestedView: currentNestedView,
-        maxRenderDepth: 1
-    } as ConvertDagProps);
+    // if (!state.rfGraphJson) {
+    //     setState(state => ({
+    //         ...state,
+    //         rfGraphJson: buildReactFlowGraphData()
+    //     }));
+    // }
 
     const backgroundStyle = getRFBackground().nested;
-    const ReactFlowProps: RFWrapperProps = {
-        backgroundStyle,
-        rfGraphJson: rfGraphJson,
-        type: RFGraphTypes.main,
-        nodeExecutionsById: nodeExecutionsById
-    };
 
     const containerStyle: React.CSSProperties = {
         display: 'flex',
@@ -112,12 +125,23 @@ const ReactFlowGraphComponent = props => {
         minWidth: '200px'
     };
 
-    return (
-        <div style={containerStyle}>
-            <Legend />
-            <ReactFlowWrapper {...ReactFlowProps} />
-        </div>
-    );
+    const renderGraph = () => {
+        const ReactFlowProps: RFWrapperProps = {
+            backgroundStyle,
+            rfGraphJson: state.rfGraphJson,
+            type: RFGraphTypes.main,
+            nodeExecutionsById: nodeExecutionsById
+        };
+        console.log('@RENDER GRAPH:', ReactFlowProps.rfGraphJson);
+        return (
+            <div style={containerStyle}>
+                <Legend />
+                <ReactFlowWrapper {...ReactFlowProps} />
+            </div>
+        );
+    };
+
+    return state.rfGraphJson ? renderGraph() : <></>;
 };
 
 export default ReactFlowGraphComponent;
