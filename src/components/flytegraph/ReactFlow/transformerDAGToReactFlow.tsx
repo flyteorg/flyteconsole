@@ -2,7 +2,7 @@ import { dEdge, dTypes } from 'models/Graph/types';
 import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { BuildRFNodeProps, ConvertDagProps } from './types';
+import { BuildRFNodeProps, ConvertDagProps, RFGraphTypes } from './types';
 import e from 'express';
 
 export const buildCustomNodeName = (type: dTypes) => {
@@ -99,7 +99,6 @@ export const nodeMapToArr = map => {
  */
 export const dagToReactFlow = (props: DagToReactFlowProps) => {
     const {
-        root,
         nodeExecutionsById,
         currentDepth,
         currentNestedView,
@@ -109,6 +108,8 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         maxRenderDepth,
         isStaticGraph
     } = props;
+
+    let root = props.root;
 
     const nodes: any = {};
     const edges: any = {};
@@ -120,7 +121,30 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
 
     //root.nodes?.map(dNode => {
     for (let i = 0; i < root.nodes.length; i++) {
-        const dNode = root.nodes[i];
+        let dNode = root.nodes[i];
+
+        // if (
+        //     currentView &&
+        //     currentView.parent == root.scopedId &&
+        //     dNode.type == dTypes.subworkflow
+        // ) {
+        //     console.log('do something here');
+        //     console.log('\t dTypes[dNode.type]', dTypes[dNode.type]);
+        //     const showNestedProps: DagToReactFlowProps = {
+        //         root: dNode,
+        //         parentNode: root,
+        //         nodeExecutionsById: nodeExecutionsById,
+        //         currentDepth: currentDepth + 1,
+        //         onNodeSelectionChanged: onNodeSelectionChanged,
+        //         onAddNestedView: onAddNestedView,
+        //         onRemoveNestedView: onRemoveNestedView,
+        //         maxRenderDepth: maxRenderDepth,
+        //         currentNestedView: currentNestedView,
+        //         isStaticGraph: isStaticGraph
+        //     };
+        //     console.log('\t showNestedProps:', showNestedProps);
+        //     return dagToReactFlow(showNestedProps);
+        // }
         /* Base props to build RF Node */
         const buildNodeProps = {
             dNode: dNode,
@@ -134,12 +158,6 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
             isStaticGraph: isStaticGraph
         } as BuildRFNodeProps;
 
-        if (currentView && currentView.parent == root.scopedId) {
-            console.log('do something here');
-            console.log('\t root:', root);
-            console.log('\t currentView.parent:', currentView.parent);
-            console.log('\t root.scopedId:', root.scopedId);
-        }
         /**
          * Case: not a nested view so all if-cases are nested;
          * else-cases are all flat
@@ -148,6 +166,24 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
          * so 'flat' could mean flat within nested
          */
         if (dNode.nodes?.length > 0) {
+            let contextualRoot = dNode;
+            if (currentView && currentView.parent == dNode.scopedId) {
+                console.log('What is this:');
+                console.log('currentView:', currentView);
+                console.log('currentView.parent:', currentView.parent);
+                console.log('root.scopedId:', root.scopedId);
+                console.log('dNode.scopedId:', dNode.scopedId);
+                console.log('dNode.nodes:', dNode.nodes);
+                for (let j = 0; j < dNode.nodes.length; j++) {
+                    console.log('dNode.nodes[j].id:', dNode.nodes[j].id);
+                    if (dNode.nodes[j].scopedId == currentView.view) {
+                        console.log('THIS IS IT!');
+                        console.log('\t dNode.nodes[j].id:', dNode.nodes[j].id);
+                        console.log('\t currentView.view:', currentView.view);
+                        break;
+                    }
+                }
+            }
             const nestedDagProps: DagToReactFlowProps = {
                 root: dNode,
                 parentNode: root,
