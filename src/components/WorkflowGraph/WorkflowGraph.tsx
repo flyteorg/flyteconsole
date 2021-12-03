@@ -82,9 +82,9 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
     );
 
     const renderReactFlowGraph = dynamicWorkflows => {
-        console.log('@renderReactFlowGraph');
-        console.log('\tworkflow:', workflow);
-        console.log('\tdynamicWorkflows', dynamicWorkflows);
+        // console.log('@renderReactFlowGraph');
+        // console.log('\tworkflow:', workflow);
+        // console.log('\tdynamicWorkflows', dynamicWorkflows);
 
         const merged = dag;
         return (

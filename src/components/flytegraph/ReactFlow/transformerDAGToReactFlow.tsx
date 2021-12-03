@@ -2,11 +2,8 @@ import { dEdge, dTypes } from 'models/Graph/types';
 import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import {
-    BuildRFNodeProps,
-    ConvertDagProps,
-    DagToReactFlowProps
-} from './types';
+import { BuildRFNodeProps, ConvertDagProps } from './types';
+import e from 'express';
 
 export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
@@ -31,7 +28,8 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
         typeOverride,
         onNodeSelectionChanged,
         onAddNestedView,
-        onRemoveNestedView
+        onRemoveNestedView,
+        parentNode
     } = props;
 
     const type = typeOverride ? typeOverride : dNode.type;
@@ -54,6 +52,7 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
 
     const dataProps = {
         nodeExecutionStatus: nodeExecutionStatus,
+        parentNode: parentNode,
         text: displayName,
         handles: [],
         nodeType: type,
@@ -66,7 +65,10 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
             }
         },
         onAddNestedView: () => {
-            onAddNestedView(dNode.scopedId);
+            onAddNestedView({
+                parent: parentNode.scopedId,
+                view: dNode.scopedId
+            });
         },
         onRemoveNestedView: () => {
             onRemoveNestedView(dNode.scopedId);
@@ -108,16 +110,22 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         isStaticGraph
     } = props;
 
-    console.log('');
-
     const nodes: any = {};
     const edges: any = {};
 
-    root.nodes?.map(dNode => {
+    const currentView =
+        currentNestedView?.length > 0
+            ? currentNestedView[currentNestedView.length - 1]
+            : null;
+
+    //root.nodes?.map(dNode => {
+    for (let i = 0; i < root.nodes.length; i++) {
+        const dNode = root.nodes[i];
         /* Base props to build RF Node */
         const buildNodeProps = {
             dNode: dNode,
             dag: [],
+            parentNode: root,
             nodeExecutionsById: nodeExecutionsById,
             typeOverride: null,
             onNodeSelectionChanged: onNodeSelectionChanged,
@@ -126,15 +134,23 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
             isStaticGraph: isStaticGraph
         } as BuildRFNodeProps;
 
+        if (currentView && currentView.parent == root.scopedId) {
+            console.log('do something here');
+            console.log('\t root:', root);
+            console.log('\t currentView.parent:', currentView.parent);
+            console.log('\t root.scopedId:', root.scopedId);
+        }
         /**
-         * Note: if-cases are all nested; else-cases are all flat
+         * Case: not a nested view so all if-cases are nested;
+         * else-cases are all flat
          *
-         * Important to note that both are only relative to the root
-         * dNode provided; so 'flat' could mean flat within nested
+         * Note: both cases are relative to the root dNode provided
+         * so 'flat' could mean flat within nested
          */
         if (dNode.nodes?.length > 0) {
             const nestedDagProps: DagToReactFlowProps = {
                 root: dNode,
+                parentNode: root,
                 nodeExecutionsById: nodeExecutionsById,
                 currentDepth: currentDepth + 1,
                 onNodeSelectionChanged: onNodeSelectionChanged,
@@ -156,16 +172,7 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
                 buildNodeProps.typeOverride = dTypes.staticNestedNode;
             } else {
                 if (currentDepth >= maxRenderDepth) {
-                    if (currentNestedView?.length > 0) {
-                        console.log('IF: THIS IS WHERE WE DO THE MAGIC');
-                        console.log('\tdNode:', dNode);
-                    } else {
-                        console.log(
-                            'ELSE: currentNestedView:',
-                            currentNestedView
-                        );
-                        buildNodeProps.typeOverride = dTypes.nestedMaxDepth;
-                    }
+                    buildNodeProps.typeOverride = dTypes.nestedMaxDepth;
                 }
             }
         } else {
@@ -176,7 +183,8 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         }
         /* Build and add node to map */
         nodes[dNode.id] = buildReactFlowNode(buildNodeProps);
-    });
+    }
+
     root.edges?.map(edge => {
         const rfEdge = buildReactFlowEdge(edge);
         edges[rfEdge.id] = rfEdge;
