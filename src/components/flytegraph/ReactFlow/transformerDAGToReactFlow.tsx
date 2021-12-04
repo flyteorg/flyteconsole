@@ -120,7 +120,7 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
             : null;
 
     //root.nodes?.map(dNode => {
-    for (let i = 0; i < root.nodes.length; i++) {
+    for (let i = 0; i < root.nodes?.length; i++) {
         let dNode = root.nodes[i];
 
         // if (

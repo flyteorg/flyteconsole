@@ -23,9 +23,9 @@ export enum RFGraphTypes {
 }
 
 export interface LayoutRCProps {
-    setElements: any;
-    setLayout: any;
-    hasLayout: boolean;
+    setPositionedElements: any;
+    graphData: any;
+    nodeExecutionsById: any;
 }
 
 /* React Flow params and styles (background is styles) */

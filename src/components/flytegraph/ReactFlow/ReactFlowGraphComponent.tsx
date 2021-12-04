@@ -42,12 +42,10 @@ const ReactFlowGraphComponent = props => {
     });
 
     const onAddNestedView = executionId => {
-        console.log('@ReactFlowGraphComponent: addNestedView:', executionId);
         setCurrentNestedView([...currentNestedView, executionId]);
     };
 
     const onRemoveNestedView = (executionId = null) => {
-        console.log('@ReactFlowGraphComponent: removeNestedView:', executionId);
         const current = [...currentNestedView];
         current.pop();
         setCurrentNestedView(current);
@@ -66,19 +64,11 @@ const ReactFlowGraphComponent = props => {
     };
 
     useEffect(() => {
-        console.log(
-            'START: @ReactFlowGraphComponent: useEffect[currentNestedView]',
-            currentNestedView
-        );
         const newRFGraphData = buildReactFlowGraphData();
         setState(state => ({
             ...state,
             rfGraphJson: newRFGraphData
         }));
-        console.log(
-            'END: @ReactFlowGraphComponent: useEffect[currentNestedView]',
-            currentNestedView
-        );
     }, [currentNestedView]);
 
     useEffect(() => {
@@ -107,13 +97,6 @@ const ReactFlowGraphComponent = props => {
             onNodeSelectionChanged: onNodeSelectionChanged
         }));
     }, [onNodeSelectionChanged]);
-
-    // if (!state.rfGraphJson) {
-    //     setState(state => ({
-    //         ...state,
-    //         rfGraphJson: buildReactFlowGraphData()
-    //     }));
-    // }
 
     const backgroundStyle = getRFBackground().nested;
 
