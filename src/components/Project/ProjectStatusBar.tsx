@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { barChartColors } from 'components/common/constants';
+import { useCommonStyles } from 'components/common/styles';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
     barContainer: {
         display: 'block'
     },
@@ -26,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface ProjectStatusBarProps {
     items: WorkflowExecutionPhase[];
+    paths: string[];
 }
 
 /**
@@ -33,22 +36,31 @@ interface ProjectStatusBarProps {
  * @param items
  * @constructor
  */
-const ProjectStatusBar: React.FC<ProjectStatusBarProps> = ({ items }) => {
+const ProjectStatusBar: React.FC<ProjectStatusBarProps> = ({
+    items,
+    paths
+}) => {
     const styles = useStyles();
+    const commonStyles = useCommonStyles();
 
     return (
         <div className={styles.barContainer}>
             {items.map((item, idx) => {
                 return (
-                    <div
-                        className={classNames(styles.barItem, {
-                            [styles.successBarItem]:
-                                item === WorkflowExecutionPhase.SUCCEEDED,
-                            [styles.failedBarItem]:
-                                item >= WorkflowExecutionPhase.FAILED
-                        })}
+                    <Link
+                        className={commonStyles.linkUnstyled}
+                        to={paths[idx] ?? '#'}
                         key={`bar-item-${idx}`}
-                    />
+                    >
+                        <div
+                            className={classNames(styles.barItem, {
+                                [styles.successBarItem]:
+                                    item === WorkflowExecutionPhase.SUCCEEDED,
+                                [styles.failedBarItem]:
+                                    item >= WorkflowExecutionPhase.FAILED
+                            })}
+                        />
+                    </Link>
                 );
             })}
         </div>

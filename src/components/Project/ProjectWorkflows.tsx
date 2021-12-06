@@ -1,12 +1,10 @@
 import { WaitForData } from 'components/common/WaitForData';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
-import { SearchableInput } from 'components/common/SearchableList';
 import { Admin } from 'flyteidl';
 import { limits } from 'models/AdminEntity/constants';
 import { FilterOperationName, SortDirection } from 'models/AdminEntity/types';
 import { workflowSortFields } from 'models/Workflow/constants';
 import * as React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { useWorkflowInfoList } from '../Workflow/useWorkflowInfoList';
 
 export interface ProjectWorkflowsProps {
@@ -22,7 +20,7 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     const workflows = useWorkflowInfoList(
         { domain, project },
         {
-            limit: limits.NONE,
+            limit: limits.DEFAULT,
             sort: {
                 direction: SortDirection.ASCENDING,
                 key: workflowSortFields.name

@@ -1,4 +1,4 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import DeviceHub from '@material-ui/icons/DeviceHub';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
@@ -11,18 +11,25 @@ import {
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
-import { WorkflowListItem } from './types';
+import { WorkflowListStructureItem } from './types';
 import ProjectStatusBar from '../Project/ProjectStatusBar';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { workflowNoInputsString } from '../Launch/LaunchForm/constants';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
+import { useWorkflowInfoItem } from './useWorkflowInfoItem';
+import { Shimmer } from 'components/common/Shimmer';
+import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 
-interface SearchableWorkflowNameListProps {
-    workflows: WorkflowListItem[];
+interface SearchableWorkflowNameItemProps {
+    item: WorkflowListStructureItem;
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
+interface SearchableWorkflowNameListProps {
+    workflows: WorkflowListStructureItem[];
+}
+
+const useStyles = makeStyles(() => ({
     container: {
         padding: 13,
         paddingRight: 71
@@ -44,7 +51,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     itemDescriptionRow: {
         color: '#757575',
-        marginBottom: 30
+        marginBottom: 30,
+        width: '100%'
     },
     itemIcon: {
         marginRight: 14,
@@ -55,7 +63,9 @@ const useStyles = makeStyles((theme: Theme) => ({
         marginBottom: 10,
         '&:last-child': {
             marginBottom: 0
-        }
+        },
+        alignItems: 'center',
+        width: '100%'
     },
     itemLabel: {
         width: 140,
@@ -65,6 +75,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     searchInputContainer: {
         padding: '0 13px',
         margin: '32px 0 23px'
+    },
+    w100: {
+        flex: 1
     }
 }));
 
@@ -78,6 +91,106 @@ const padExecutions = (items: WorkflowExecutionPhase[]) => {
     return [...items, ...emptyExecutions].reverse();
 };
 
+const padExecutionPaths = (items: WorkflowExecutionIdentifier[]) => {
+    if (items.length >= 10) {
+        return items
+            .slice(0, 10)
+            .map(id => Routes.ExecutionDetails.makeUrl(id))
+            .reverse();
+    }
+    const emptyExecutions = new Array(10 - items.length).fill(null);
+    return [
+        ...items.map(id => Routes.ExecutionDetails.makeUrl(id)),
+        ...emptyExecutions
+    ].reverse();
+};
+
+/**
+ * Renders individual searchable workflow item
+ * @param item
+ * @returns
+ */
+const SearchableWorkflowNameItem: React.FC<SearchableWorkflowNameItemProps> = ({
+    item
+}) => {
+    const commonStyles = useCommonStyles();
+    const listStyles = useNamedEntityListStyles();
+    const styles = useStyles();
+    const { id, description } = item;
+    const { data: workflow, isLoading } = useWorkflowInfoItem(id);
+
+    return (
+        <Link
+            className={commonStyles.linkUnstyled}
+            to={Routes.WorkflowDetails.makeUrl(id.project, id.domain, id.name)}
+        >
+            <div
+                className={classNames(
+                    listStyles.searchResult,
+                    styles.itemContainer
+                )}
+            >
+                <div className={styles.itemName}>
+                    <DeviceHub className={styles.itemIcon} />
+                    <div>{id.name}</div>
+                </div>
+                <div className={styles.itemDescriptionRow}>
+                    {description?.length
+                        ? description
+                        : 'This workflow has no description.'}
+                </div>
+                <div className={styles.itemRow}>
+                    <div className={styles.itemLabel}>Last execution time</div>
+                    <div className={styles.w100}>
+                        {isLoading ? (
+                            <Shimmer />
+                        ) : workflow.latestExecutionTime ? (
+                            workflow.latestExecutionTime
+                        ) : (
+                            <em>No executions found</em>
+                        )}
+                    </div>
+                </div>
+                <div className={styles.itemRow}>
+                    <div className={styles.itemLabel}>Last 10 executions</div>
+                    {isLoading ? (
+                        <Shimmer />
+                    ) : (
+                        <ProjectStatusBar
+                            items={padExecutions(
+                                workflow.executionStatus || []
+                            )}
+                            paths={padExecutionPaths(
+                                workflow.executionIds || []
+                            )}
+                        />
+                    )}
+                </div>
+                <div className={styles.itemRow}>
+                    <div className={styles.itemLabel}>Inputs</div>
+                    <div className={styles.w100}>
+                        {isLoading ? (
+                            <Shimmer />
+                        ) : (
+                            workflow.inputs ?? <em>{workflowNoInputsString}</em>
+                        )}
+                    </div>
+                </div>
+                <div className={styles.itemRow}>
+                    <div className={styles.itemLabel}>Outputs</div>
+                    <div className={styles.w100}>
+                        {isLoading ? (
+                            <Shimmer />
+                        ) : (
+                            workflow?.outputs ?? <em>No output data found.</em>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </Link>
+    );
+};
+
 /**
  * Renders a searchable list of Workflow names, with associated descriptions
  * @param workflows
@@ -86,87 +199,16 @@ const padExecutions = (items: WorkflowExecutionPhase[]) => {
 export const SearchableWorkflowNameList: React.FC<SearchableWorkflowNameListProps> = ({
     workflows
 }) => {
-    const commonStyles = useCommonStyles();
-    const listStyles = useNamedEntityListStyles();
     const styles = useStyles();
     const { results, searchString, setSearchString } = useSearchableListState({
         items: workflows,
-        propertyGetter: ({ id, description, inputs }) =>
-            id.name + description + inputs
+        propertyGetter: ({ id }) => id.name
     });
     const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchString = event.target.value;
         setSearchString(searchString);
     };
     const onClear = () => setSearchString('');
-
-    const renderItem = (workflowItem: WorkflowListItem, idx: number) => {
-        const {
-            id,
-            inputs,
-            outputs,
-            latestExecutionTime,
-            description,
-            executionStatus
-        } = workflowItem;
-        const key = `${id.project}/${id.domain}/${id.name}/${idx}`;
-        return (
-            <Link
-                key={key}
-                className={commonStyles.linkUnstyled}
-                to={Routes.WorkflowDetails.makeUrl(
-                    id.project,
-                    id.domain,
-                    id.name
-                )}
-            >
-                <div
-                    className={classNames(
-                        listStyles.searchResult,
-                        styles.itemContainer
-                    )}
-                >
-                    <div className={styles.itemName}>
-                        <DeviceHub className={styles.itemIcon} />
-                        <div>{id.name}</div>
-                    </div>
-                    <div className={styles.itemDescriptionRow}>
-                        {description?.length
-                            ? description
-                            : 'This workflow has no description.'}
-                    </div>
-                    <div className={styles.itemRow}>
-                        <div className={styles.itemLabel}>
-                            Last execution time
-                        </div>
-                        <div>
-                            {latestExecutionTime ? (
-                                latestExecutionTime
-                            ) : (
-                                <em>No executions found</em>
-                            )}
-                        </div>
-                    </div>
-                    <div className={styles.itemRow}>
-                        <div className={styles.itemLabel}>
-                            Last 10 executions
-                        </div>
-                        <ProjectStatusBar
-                            items={padExecutions(executionStatus || [])}
-                        />
-                    </div>
-                    <div className={styles.itemRow}>
-                        <div className={styles.itemLabel}>Inputs</div>
-                        <div>{inputs ?? <em>{workflowNoInputsString}</em>}</div>
-                    </div>
-                    <div className={styles.itemRow}>
-                        <div className={styles.itemLabel}>Outputs</div>
-                        <div>{outputs ?? <em>No output data found.</em>}</div>
-                    </div>
-                </div>
-            </Link>
-        );
-    };
 
     return (
         <>
@@ -179,9 +221,12 @@ export const SearchableWorkflowNameList: React.FC<SearchableWorkflowNameListProp
                 placeholder="Search Workflow Name"
             />
             <div className={styles.container}>
-                {results.map((workflow, idx) =>
-                    renderItem(workflow.value, idx)
-                )}
+                {results.map((id, idx) => (
+                    <SearchableWorkflowNameItem
+                        item={id.value}
+                        key={`workflow-name-item-${idx}`}
+                    />
+                ))}
             </div>
         </>
     );

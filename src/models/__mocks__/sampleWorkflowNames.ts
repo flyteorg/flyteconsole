@@ -1,4 +1,4 @@
-import { WorkflowListItem } from 'components/Workflow/types';
+import { WorkflowListStructureItem } from 'components/Workflow/types';
 import { WorkflowId } from 'models/Workflow/types';
 
 export const sampleWorkflowIds: WorkflowId[] = [
@@ -34,8 +34,9 @@ export const sampleWorkflowIds: WorkflowId[] = [
     version: ''
 }));
 
-export const sampleWorkflowNames: WorkflowListItem[] = sampleWorkflowIds.map(
+export const sampleWorkflowNames: WorkflowListStructureItem[] = sampleWorkflowIds.map(
     id => ({
-        id
+        id,
+        description: ''
     })
 );
