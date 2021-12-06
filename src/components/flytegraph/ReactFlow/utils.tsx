@@ -264,16 +264,10 @@ export const getRFBackground = () => {
  */
 export const setReactFlowGraphLayout = (
     elements: Elements,
-    direction: string,
-    estimate = false
+    direction: string
 ) => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
-    const isHorizontal = direction === 'LR';
-
-    const ESTIMATE_HEIGHT = 25;
-    const ESTIMATE_WIDTH_FACTOR = 6;
-
     dagreGraph.setGraph({
         rankdir: direction,
         edgesep: 60,
@@ -281,16 +275,10 @@ export const setReactFlowGraphLayout = (
         ranker: 'longest-path',
         acyclicer: 'greedy'
     });
-
-    /**
-     * Note: this waits/assumes rendered dimensions from ReactFlow as .__rf
-     */
     elements.forEach(el => {
         if (isNode(el)) {
-            const nodeWidth = estimate
-                ? el.data.text.length * ESTIMATE_WIDTH_FACTOR
-                : el.__rf.width;
-            const nodeHeight = estimate ? ESTIMATE_HEIGHT : el.__rf.height;
+            const nodeWidth = el.__rf.width;
+            const nodeHeight = el.__rf.height;
             dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
         } else {
             dagreGraph.setEdge(el.source, el.target);
@@ -298,50 +286,20 @@ export const setReactFlowGraphLayout = (
     });
 
     dagre.layout(dagreGraph);
-    const graphWidth = dagreGraph.graph().width;
-    const graphHeight = dagreGraph.graph().height;
-    if (estimate) {
-        return {
-            estimatedDimensions: {
-                width: graphWidth,
-                height: graphHeight
-            }
-        };
-    } else {
-        return {
-            graph: elements.map(el => {
-                if (isNode(el)) {
-                    el.targetPosition = isHorizontal
-                        ? Position.Left
-                        : Position.Top;
-                    el.sourcePosition = isHorizontal
-                        ? Position.Right
-                        : Position.Bottom;
-                    const nodeWidth = estimate
-                        ? el.data.text.length * ESTIMATE_WIDTH_FACTOR
-                        : el.__rf.width;
-                    const nodeHeight = estimate
-                        ? ESTIMATE_HEIGHT
-                        : el.__rf.height;
-                    const nodeWithPosition = dagreGraph.node(el.id);
-
-                    /** Keep both position and .__rf.position in sync */
-                    const x = nodeWithPosition.x - nodeWidth / 2;
-                    const y = nodeWithPosition.y - nodeHeight / 2;
-                    el.position = {
-                        x: x,
-                        y: y
-                    };
-                    el.__rf.position = null;
+    return elements.map(nodeState => {
+        if (isNode(nodeState)) {
+            const node = dagreGraph.node(nodeState.id);
+            return {
+                ...nodeState,
+                position: {
+                    x: node.x - node.width / 2,
+                    y: node.y - node.height / 2
                 }
-                return el;
-            }),
-            dimensions: {
-                width: graphWidth,
-                height: graphHeight
-            }
-        };
-    }
+            };
+        } else {
+            return nodeState;
+        }
+    });
 };
 
 export default setReactFlowGraphLayout;

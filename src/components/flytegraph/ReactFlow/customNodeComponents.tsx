@@ -324,11 +324,13 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
  * @param props.data data property of ReactFlowGraphNodeData
  */
 export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
-    console.log('@ReactFlowCustomSubworkflowNode');
     const { dag } = data;
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    const { estimatedDimensions } = setReactFlowGraphLayout(dag, 'LR', true);
+    const estimatedDimensions = {
+        width: 500,
+        height: 400
+    };
     const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
     return (
         <>
@@ -357,10 +359,12 @@ export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
  */
 export const ReactFlowCustomBranchNode = ({ data }: any) => {
     const { dag } = data;
-    console.log('@ReactFlowCustomBranchNode: data', data);
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    const { estimatedDimensions } = setReactFlowGraphLayout(dag, 'LR', true);
+    const estimatedDimensions = {
+        width: 500,
+        height: 400
+    };
     const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
 
     return (

@@ -6,7 +6,7 @@ import ReactFlow, {
     useStoreState,
     useStoreActions
 } from 'react-flow-renderer';
-import { RFWrapperProps, LayoutRCProps } from './types';
+import { RFWrapperProps, LayoutRCProps, RFGraphTypes } from './types';
 import {
     ReactFlowCustomBranchNode,
     ReactFlowCustomEndNode,
@@ -42,21 +42,87 @@ const CustomNodeTypes = {
  * @param props:LayoutRC
  * @returns: void
  */
-const LayoutRC: React.FC<any> = () => {
+const LayoutReactFlow: React.FC<any> = ({
+    graphData,
+    backgroundStyle,
+    type
+}) => {
     /**
      * 1. store returns mutable objects; store will update on each change
      * 2. store is updated when elements are set
      */
+    const [shouldUpdate, setShouldUpdate] = useState(true);
+    const [instance, setInstance] = useState<null | any>(null);
+    const [graph, setGraph] = useState(graphData);
+    const nodes = useStoreState(store => store.nodes);
+    const edges = useStoreState(store => store.edges);
+    const setElements = useStoreActions(actions => actions.setElements);
 
-    useStoreState(store => {
-        const { nodes, edges } = store;
-        if (nodes.length > 0 && nodes[0].__rf.width && edges.length > 0) {
-            const nodesAndEdges = (nodes as any[]).concat(edges);
-            setReactFlowGraphLayout(nodesAndEdges, 'LR');
+    useEffect(() => {
+        if (instance && !shouldUpdate) {
+            instance.fitView({ padding: 0.2 });
         }
-    });
+    }, [shouldUpdate, instance]);
 
-    return null;
+    useEffect(() => {
+        if (!shouldUpdate) {
+            setElements(graph);
+        }
+    }, [graph, shouldUpdate, setElements]);
+
+    useEffect(() => {
+        setGraph(graphData);
+        setShouldUpdate(true);
+    }, [graphData]);
+
+    useEffect(() => {
+        if (
+            shouldUpdate &&
+            nodes.length > 0 &&
+            edges.length > 0 &&
+            nodes.every(
+                node => node.__rf.width != null && node.__rf.height != null
+            )
+        ) {
+            const nodesAndEdges = (nodes as any[]).concat(edges);
+            const elementsWithLayout = setReactFlowGraphLayout(
+                nodesAndEdges,
+                'LR'
+            );
+            console.log('type:', RFGraphTypes[type]);
+            console.log('elementsWithLayout:', elementsWithLayout);
+            setGraph(elementsWithLayout);
+            setShouldUpdate(false);
+        }
+    }, [nodes, edges]);
+
+    const onLoad = (rf: any) => {
+        setInstance(rf);
+    };
+
+    /**
+     * React Flow's min height to make it render
+     */
+    const reactFlowStyle: React.CSSProperties = {
+        display: 'flex',
+        flex: `1 1 100%`,
+        flexDirection: 'column'
+    };
+
+    return (
+        <ReactFlow
+            elements={graph}
+            onLoad={onLoad}
+            nodeTypes={CustomNodeTypes}
+            style={reactFlowStyle}
+        >
+            <Background
+                style={backgroundStyle.background}
+                color={backgroundStyle.gridColor}
+                gap={backgroundStyle.gridSpacing}
+            />
+        </ReactFlow>
+    );
 };
 
 /**
@@ -78,16 +144,14 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     rfGraphJson,
     backgroundStyle,
     version,
-    nodeExecutionsById
+    nodeExecutionsById,
+    type
 }) => {
     const [state, setState] = useState({
         rfGraphJson: rfGraphJson,
         version: version,
         nodeExecutionsById: nodeExecutionsById
     });
-    const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
-        null
-    );
 
     useEffect(() => {
         console.log('STATE_CHANGE: nodeExecutionsById');
@@ -109,43 +173,23 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         setState(state => ({ ...state, version: version }));
     }, [version]);
 
-    useEffect(() => {
-        if (reactFlowInstance) {
-            console.log('STATE_CHANGE: reactFlowInstance');
-            console.log('>>>>>> REFITTING');
-            reactFlowInstance?.fitView({ padding: 0 });
-        }
-    }, [reactFlowInstance]);
-
-    const onLoad = (rf: any) => {
-        setReactFlowInstance(rf);
-    };
-
-    /**
-     * React Flow's min height to make it render
-     */
-    const reactFlowStyle: React.CSSProperties = {
+    const containerStyle: React.CSSProperties = {
         display: 'flex',
         flex: `1 1 100%`,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        border: '3px solid red'
     };
 
     return (
+        // <div style={containerStyle}>
         <ReactFlowProvider>
-            <ReactFlow
-                elements={state.rfGraphJson}
-                onLoad={onLoad}
-                nodeTypes={CustomNodeTypes}
-                style={reactFlowStyle}
-            >
-                <Background
-                    style={backgroundStyle.background}
-                    color={backgroundStyle.gridColor}
-                    gap={backgroundStyle.gridSpacing}
-                />
-            </ReactFlow>
-            <LayoutRC graphData={state.rfGraphJson}></LayoutRC>
+            <LayoutReactFlow
+                type={type}
+                graphData={state.rfGraphJson}
+                backgroundStyle={backgroundStyle}
+            ></LayoutReactFlow>
         </ReactFlowProvider>
+        // </div>
     );
 };
 
