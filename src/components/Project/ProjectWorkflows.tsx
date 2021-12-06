@@ -20,7 +20,7 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     const workflows = useWorkflowInfoList(
         { domain, project },
         {
-            limit: limits.DEFAULT,
+            limit: limits.NONE,
             sort: {
                 direction: SortDirection.ASCENDING,
                 key: workflowSortFields.name
