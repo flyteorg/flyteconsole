@@ -122,29 +122,6 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
     //root.nodes?.map(dNode => {
     for (let i = 0; i < root.nodes?.length; i++) {
         let dNode = root.nodes[i];
-
-        // if (
-        //     currentView &&
-        //     currentView.parent == root.scopedId &&
-        //     dNode.type == dTypes.subworkflow
-        // ) {
-        //     console.log('do something here');
-        //     console.log('\t dTypes[dNode.type]', dTypes[dNode.type]);
-        //     const showNestedProps: DagToReactFlowProps = {
-        //         root: dNode,
-        //         parentNode: root,
-        //         nodeExecutionsById: nodeExecutionsById,
-        //         currentDepth: currentDepth + 1,
-        //         onNodeSelectionChanged: onNodeSelectionChanged,
-        //         onAddNestedView: onAddNestedView,
-        //         onRemoveNestedView: onRemoveNestedView,
-        //         maxRenderDepth: maxRenderDepth,
-        //         currentNestedView: currentNestedView,
-        //         isStaticGraph: isStaticGraph
-        //     };
-        //     console.log('\t showNestedProps:', showNestedProps);
-        //     return dagToReactFlow(showNestedProps);
-        // }
         /* Base props to build RF Node */
         const buildNodeProps = {
             dNode: dNode,
@@ -231,6 +208,6 @@ export const ConvertFlyteDagToReactFlows = (
         parents: []
     } as DagToReactFlowProps;
     const rfJson = dagToReactFlow(dagProps);
-    console.log('RRFJASON:', rfJson);
+    console.log('@ConvertFlyteDagToReactFlow: output:', rfJson);
     return rfJson;
 };

@@ -19,8 +19,6 @@ import {
     ReactFlowStaticNode
 } from './customNodeComponents';
 import setReactFlowGraphLayout from './utils';
-import { NodeExecutionPhase } from 'models/Execution/enums';
-import e from 'express';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -44,66 +42,19 @@ const CustomNodeTypes = {
  * @param props:LayoutRC
  * @returns: void
  */
-const LayoutRC: React.FC<LayoutRCProps> = ({
-    setPositionedElements,
-    needsRefresh,
-    graphData
-}: LayoutRCProps) => {
-    /* strore is only populated onLoad for each flow */
+const LayoutRC: React.FC<any> = () => {
+    /**
+     * 1. store returns mutable objects; store will update on each change
+     * 2. store is updated when elements are set
+     */
 
-    const test = useStoreActions(action => {
-        console.log('Actions:', action);
-        return 'whatevet';
-    });
-
-    const positionedGraph = useStoreState(store => {
-        if (needsRefresh) {
-            // console.log('@LayoutRC:positionedGraph graphData', graphData);
-            const { nodes, edges } = store;
-            if (nodes.length > 0 && nodes[0].__rf.width) {
-                const nodesAndEdges = (nodes as any[]).concat(edges);
-                const { graph } = setReactFlowGraphLayout(nodesAndEdges, 'LR');
-                return graph;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+    useStoreState(store => {
+        const { nodes, edges } = store;
+        if (nodes.length > 0 && nodes[0].__rf.width && edges.length > 0) {
+            const nodesAndEdges = (nodes as any[]).concat(edges);
+            setReactFlowGraphLayout(nodesAndEdges, 'LR');
         }
     });
-
-    useEffect(() => {
-        if (needsRefresh) {
-            // console.log('@LayoutRC: STATE_CHANGE: [needsRefresh, graphData');
-            // console.log('@LayoutRC:positionedGraph graphData', graphData);
-            // console.log('\t positionedGraph:', positionedGraph);
-            if (positionedGraph) {
-                setPositionedElements(positionedGraph);
-            }
-        }
-    }, [needsRefresh, graphData]);
-    // const edges = useStoreState(store => store.edges);
-    // const [computeLayout, setComputeLayout] = useState(true);
-
-    // if (nodes.length > 0 && computeLayout) {
-    //     if (nodes[0].__rf.width) {
-    //         setComputeLayout(false);
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     setComputeLayout(true);
-    // }, [graphData]);
-
-    // useEffect(() => {
-    //     if (!computeLayout) {
-    //         setRenderPositions();
-    //     }
-    // }, [computeLayout, nodeExecutionsById]);
-
-    // const setRenderPositions = () => {
-    //     console.log('\n@setRenderPositions');
-    // };
 
     return null;
 };
@@ -131,8 +82,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
 }) => {
     const [state, setState] = useState({
         rfGraphJson: rfGraphJson,
-        elements: rfGraphJson,
-        needsRefresh: true,
         version: version,
         nodeExecutionsById: nodeExecutionsById
     });
@@ -140,13 +89,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         null
     );
 
-    // console.log('\n\n@ReactFlowWrapper:');
-    // console.log('\t rfGraphJson:', state.rfGraphJson);
-    // console.log('\t elements:', state.elements);
-    // console.log('\t needsRefresh:', state.needsRefresh);
-
     useEffect(() => {
-        // console.log('STATE_CHANGE: nodeExecutionsById');
+        console.log('STATE_CHANGE: nodeExecutionsById');
         setState(state => ({
             ...state,
             nodeExecutionsById: nodeExecutionsById
@@ -154,11 +98,10 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     }, [nodeExecutionsById]);
 
     useEffect(() => {
-        // console.log('STATE_CHANGE: rfGraphJson');
+        console.log('STATE_CHANGE: rfGraphJson');
         setState(state => ({
             ...state,
-            rfGraphJson: rfGraphJson,
-            needsRefresh: true
+            rfGraphJson: rfGraphJson
         }));
     }, [rfGraphJson]);
 
@@ -167,21 +110,12 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     }, [version]);
 
     useEffect(() => {
-        if (reactFlowInstance && state.elements) {
-            // console.log('STATE_CHANGE: reactFlowInstance');
-            // console.log('>>>>>> REFITTING');
+        if (reactFlowInstance) {
+            console.log('STATE_CHANGE: reactFlowInstance');
+            console.log('>>>>>> REFITTING');
             reactFlowInstance?.fitView({ padding: 0 });
         }
-    }, [reactFlowInstance, state]);
-
-    const setPositionedElements = positionedElements => {
-        // console.log('>>>>> setPositionedElements', positionedElements);
-        setState(state => ({
-            ...state,
-            elements: positionedElements,
-            needsRefresh: false
-        }));
-    };
+    }, [reactFlowInstance]);
 
     const onLoad = (rf: any) => {
         setReactFlowInstance(rf);
@@ -199,7 +133,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     return (
         <ReactFlowProvider>
             <ReactFlow
-                elements={state.elements}
+                elements={state.rfGraphJson}
                 onLoad={onLoad}
                 nodeTypes={CustomNodeTypes}
                 style={reactFlowStyle}
@@ -210,11 +144,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
                     gap={backgroundStyle.gridSpacing}
                 />
             </ReactFlow>
-            <LayoutRC
-                graphData={state.rfGraphJson}
-                needsRefresh={state.needsRefresh}
-                setPositionedElements={setPositionedElements}
-            ></LayoutRC>
+            <LayoutRC graphData={state.rfGraphJson}></LayoutRC>
         </ReactFlowProvider>
     );
 };

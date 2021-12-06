@@ -332,10 +332,7 @@ export const setReactFlowGraphLayout = (
                         x: x,
                         y: y
                     };
-                    el.__rf.position = {
-                        x: x,
-                        y: y
-                    };
+                    el.__rf.position = null;
                 }
                 return el;
             }),

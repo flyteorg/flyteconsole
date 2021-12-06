@@ -33,6 +33,12 @@ const graphNodeCountChanged = (previous, data) => {
 
 const ReactFlowGraphComponent = props => {
     const { data, onNodeSelectionChanged, nodeExecutionsById } = props;
+    // const [currentNestedView, setCurrentNestedView] = useState([
+    //     {
+    //         parent: 'n1',
+    //         view: 'n1-0-n1'
+    //     }
+    // ]);
     const [currentNestedView, setCurrentNestedView] = useState([]);
     const [state, setState] = useState({
         data: data,
@@ -115,7 +121,6 @@ const ReactFlowGraphComponent = props => {
             type: RFGraphTypes.main,
             nodeExecutionsById: nodeExecutionsById
         };
-        console.log('@RENDER GRAPH:', ReactFlowProps.rfGraphJson);
         return (
             <div style={containerStyle}>
                 <Legend />

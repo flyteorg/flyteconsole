@@ -324,6 +324,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
  * @param props.data data property of ReactFlowGraphNodeData
  */
 export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
+    console.log('@ReactFlowCustomSubworkflowNode');
     const { dag } = data;
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
