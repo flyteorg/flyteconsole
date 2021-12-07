@@ -15,7 +15,8 @@ import setReactFlowGraphLayout, {
     getGraphNodeStyle,
     getRFBackground,
     getNestedContainerStyle,
-    getNestedGraphContainerStyle
+    getNestedGraphContainerStyle,
+    getEstimatedGraphDimensions
 } from './utils';
 import { RFGraphTypes, RFHandleProps } from './types';
 
@@ -327,10 +328,9 @@ export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
     const { dag } = data;
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    const estimatedDimensions = {
-        width: 500,
-        height: 400
-    };
+    // getEstimatedGraphDimensions
+    const estimatedDimensions = getEstimatedGraphDimensions(dag);
+    console.log('@estimatedDimensions', estimatedDimensions);
     const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
     return (
         <>

@@ -1,4 +1,4 @@
-import { dEdge, dTypes } from 'models/Graph/types';
+import { dEdge, dNode, dTypes } from 'models/Graph/types';
 import { ReactFlowGraphConfig } from './utils';
 import { Edge, Elements, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
@@ -7,6 +7,14 @@ import e from 'express';
 
 export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
+};
+
+export const isStartOrEndNode = (node: dNode) => {
+    return node.type == dTypes.start || node.type == dTypes.end;
+};
+
+export const isStartOrEndEdge = edge => {
+    return edge.sourceId == 'start-node' || edge.targetId == 'end-node';
 };
 
 export const buildReactFlowEdge = (edge: dEdge): Edge => {
@@ -106,10 +114,9 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         onAddNestedView,
         onRemoveNestedView,
         maxRenderDepth,
-        isStaticGraph
+        isStaticGraph,
+        root
     } = props;
-
-    let root = props.root;
 
     const nodes: any = {};
     const edges: any = {};
@@ -192,7 +199,21 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
     }
 
     root.edges?.map(edge => {
-        const rfEdge = buildReactFlowEdge(edge);
+        /**
+         * let outId = dNode.scopedId;
+    console.log('\ncheck:');
+    if (isStartOrEndNode(dNode) && !isStartOrEndNode(parentNode)) {
+        console.log('before:', outId);
+        console.log('parentNode:', parentNode);
+        outId = dNode.scopedId + parentNode.scopedId;
+        console.log('after:', outId);
+    } else {
+        console.log('>>> Not adding this:', dNode);
+    }
+         */
+        console.log('building edge:', edge);
+        console.log('root:', root);
+        const rfEdge = buildReactFlowEdge(edge, root);
         edges[rfEdge.id] = rfEdge;
     });
     const output = nodeMapToArr(nodes).concat(nodeMapToArr(edges));

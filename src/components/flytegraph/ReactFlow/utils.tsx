@@ -255,6 +255,39 @@ export const getRFBackground = () => {
     };
 };
 
+export const getEstimatedGraphDimensions = (
+    elements: Elements,
+    direction = 'LR'
+) => {
+    const ESTIMATE_HEIGHT = 25;
+    const ESTIMATE_WIDTH_FACTOR = 6;
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({
+        rankdir: direction,
+        edgesep: 60,
+        nodesep: 30,
+        ranker: 'longest-path',
+        acyclicer: 'greedy'
+    });
+    elements.forEach(el => {
+        if (isNode(el)) {
+            const nodeWidth = el.data.text.length * ESTIMATE_WIDTH_FACTOR;
+            const nodeHeight = ESTIMATE_HEIGHT;
+            dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
+        } else {
+            dagreGraph.setEdge(el.source, el.target);
+        }
+    });
+    dagre.layout(dagreGraph);
+    const graphWidth = dagreGraph.graph().width;
+    const graphHeight = dagreGraph.graph().height;
+    return {
+        width: graphWidth,
+        height: graphHeight
+    };
+};
+
 /**
  * Uses dagree/graphlib to compute graph layout
  * @see https://github.com/dagrejs/dagre/wiki

@@ -1,9 +1,4 @@
 import {
-    fetchNodeExecutionData,
-    makeNodeExecutionDynamicWorkflowQuery,
-    useGetDynamicWorkflowQuery
-} from 'components/Executions/nodeExecutionQueries';
-import {
     DISPLAY_NAME_END,
     DISPLAY_NAME_START
 } from 'components/flytegraph/ReactFlow/utils';
@@ -35,8 +30,7 @@ export interface staticNodeExecutionIds {
  * @returns Display name
  */
 export const transformerWorkflowToDAG = (
-    workflow: CompiledWorkflowClosure,
-    nestedDisplayState
+    workflow: CompiledWorkflowClosure
 ): any => {
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
