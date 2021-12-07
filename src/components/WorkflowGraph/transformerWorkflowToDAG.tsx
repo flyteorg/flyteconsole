@@ -35,12 +35,8 @@ export const transformerWorkflowToDAG = (
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
 
-    const createDNode = (
-        compiledNode: CompiledNode,
-        parentDNode?: dNode | null,
-        taskTemplate?: CompiledTask | null,
-        typeOverride?: dTypes | null
-    ): dNode => {
+    const createDNode = (props): dNode => {
+        const { compiledNode, parentDNode, taskTemplate, typeOverride } = props;
         const nodeValue =
             taskTemplate == null
                 ? compiledNode
@@ -73,6 +69,13 @@ export const transformerWorkflowToDAG = (
                 ? getNodeTypeFromCompiledNode(compiledNode)
                 : typeOverride;
 
+        let id = compiledNode.id;
+        if (parentDNode && (type == dTypes.start || type == dTypes.end)) {
+            console.log('\n Start/end:');
+            console.log('\t compiledNode', compiledNode);
+            console.log('\t parentNode', parentDNode);
+            console.log('\t type:', type);
+        }
         const output = {
             id: compiledNode.id,
             scopedId: scopedId,
@@ -88,29 +91,49 @@ export const transformerWorkflowToDAG = (
     };
 
     const buildBranchStartEndNodes = (root: dNode) => {
-        const startNode = createDNode(
-            {
+        // const startNode = createDNode(
+        //     {
+        //         id: `${root.id}-${startNodeId}`,
+        //         metadata: {
+        //             name: DISPLAY_NAME_START
+        //         }
+        //     } as CompiledNode,
+        //     null,
+        //     null,
+        //     dTypes.nestedStart
+        // );
+
+        // const endNode = createDNode(
+        //     {
+        //         id: `${root.id}-${endNodeId}`,
+        //         metadata: {
+        //             name: DISPLAY_NAME_END
+        //         }
+        //     } as CompiledNode,
+        //     null,
+        //     null,
+        //     dTypes.nestedEnd
+        // );
+
+        const startNode = createDNode({
+            compiledNode: {
                 id: `${root.id}-${startNodeId}`,
                 metadata: {
                     name: DISPLAY_NAME_START
                 }
             } as CompiledNode,
-            null,
-            null,
-            dTypes.nestedStart
-        );
+            typeOverride: dTypes.nestedStart
+        });
 
-        const endNode = createDNode(
-            {
+        const endNode = createDNode({
+            compiledNode: {
                 id: `${root.id}-${endNodeId}`,
                 metadata: {
                     name: DISPLAY_NAME_END
                 }
             } as CompiledNode,
-            null,
-            null,
-            dTypes.nestedEnd
-        );
+            typeOverride: dTypes.nestedEnd
+        });
 
         return {
             startNode,
@@ -276,7 +299,7 @@ export const transformerWorkflowToDAG = (
      * Handles parsing CompiledWorkflow data objects
      *
      * @param root          Root node for the graph that will be rendered
-     * @param context       The current workflow (could be child of main workflow)
+     * @param context       The current workflow (note: could be subworkflow)
      * @param type          Type (sub or primrary)
      * @param workflow      Main parent workflow
      */
@@ -353,10 +376,12 @@ export const transformerWorkflowToDAG = (
         }
     };
 
-    const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
-
     console.log('\n\n\n\n\n\n');
     console.log('@transformerWorkflowToDag:');
+    console.log('\t root:', dag);
+
+    const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
+
     console.log('\t root:', dag);
 
     return { dag, staticExecutionIdsMap };
