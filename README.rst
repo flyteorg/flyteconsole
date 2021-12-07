@@ -103,7 +103,7 @@ Sets the local endpoint for `CORS request proxying <cors-proxying_>`_.
 Running from docker image as localhost
 ======================================
 To run flyteconsole directly from your docker image as localhost you must set a
-few enviornment variables in your run command to setup the appliation.
+few environment variables in your run command to setup the appliation.
 
 ``BASE_URL="/console"`` (required)
 
