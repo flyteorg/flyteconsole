@@ -1,7 +1,7 @@
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dTypes } from 'models/Graph/types';
 import { CSSProperties } from 'react';
-import { Elements, isNode, Position } from 'react-flow-renderer';
+import { Elements, isNode, useUpdateNodeInternals } from 'react-flow-renderer';
 import { RFBackgroundProps } from './types';
 
 const dagre = require('dagre');
@@ -297,7 +297,7 @@ export const setReactFlowGraphLayout = (
                 }
             };
         } else {
-            return nodeState;
+            return { ...nodeState };
         }
     });
 };

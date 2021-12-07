@@ -4,7 +4,8 @@ import ReactFlow, {
     Background,
     ReactFlowProvider,
     useStoreState,
-    useStoreActions
+    useStoreActions,
+    useUpdateNodeInternals
 } from 'react-flow-renderer';
 import { RFWrapperProps, LayoutRCProps, RFGraphTypes } from './types';
 import {
@@ -51,6 +52,7 @@ const LayoutReactFlow: React.FC<any> = ({
      * 1. store returns mutable objects; store will update on each change
      * 2. store is updated when elements are set
      */
+    const updateNodeInternals = useUpdateNodeInternals();
     const [shouldUpdate, setShouldUpdate] = useState(true);
     const [instance, setInstance] = useState<null | any>(null);
     const [graph, setGraph] = useState(graphData);
@@ -60,12 +62,16 @@ const LayoutReactFlow: React.FC<any> = ({
 
     useEffect(() => {
         if (instance && !shouldUpdate) {
-            instance.fitView({ padding: 0.2 });
+            instance.fitView({ padding: 0.01 });
         }
     }, [shouldUpdate, instance]);
 
     useEffect(() => {
         if (!shouldUpdate) {
+            // const updatedGraph = graph.map(node => {
+            //     updateNodeInternals(node.id);
+            //     return node;
+            // });
             setElements(graph);
         }
     }, [graph, shouldUpdate, setElements]);
@@ -89,8 +95,8 @@ const LayoutReactFlow: React.FC<any> = ({
                 nodesAndEdges,
                 'LR'
             );
-            console.log('type:', RFGraphTypes[type]);
-            console.log('elementsWithLayout:', elementsWithLayout);
+            // console.log('type:', RFGraphTypes[type]);
+            // console.log('elementsWithLayout:', elementsWithLayout);
             setGraph(elementsWithLayout);
             setShouldUpdate(false);
         }
