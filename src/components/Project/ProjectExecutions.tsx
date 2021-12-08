@@ -1,4 +1,5 @@
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getCacheKey } from 'components/Cache/utils';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
@@ -13,12 +14,31 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { failedToLoadExecutionsString } from './constants';
+import { BarChart } from 'components/common/BarChart';
+import {
+    getExecutionTimeData,
+    getStartExecutionTime
+} from 'components/Entities/EntityExecutionsBarChart';
+import classNames from 'classnames';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
     container: {
         display: 'flex',
         flex: '1 1 auto',
         flexDirection: 'column'
+    },
+    header: {
+        paddingBottom: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        borderBottom: `1px solid ${theme.palette.divider}`
+    },
+    marginTop: {
+        marginTop: theme.spacing(2)
+    },
+    chartContainer: {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(3),
+        paddingTop: theme.spacing(1)
     }
 }));
 export interface ProjectExecutionsProps {
@@ -99,6 +119,23 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     if (filtersState.filters[4].status === 'LOADED') {
         return (
             <div className={styles.container}>
+                <Typography
+                    className={classNames(styles.header, styles.marginTop)}
+                    variant="h6"
+                >
+                    Last 100 Executions in the Project
+                </Typography>
+                <div className={styles.chartContainer}>
+                    <BarChart
+                        chartIds={[]}
+                        data={getExecutionTimeData(executions)}
+                        startDate={getStartExecutionTime(executions)}
+                        onClickItem={() => {}}
+                    />
+                </div>
+                <Typography className={styles.header} variant="h6">
+                    All Executions in the Project
+                </Typography>
                 <ExecutionFilters {...filtersState} />
                 <ErrorBoundary>{content}</ErrorBoundary>
             </div>

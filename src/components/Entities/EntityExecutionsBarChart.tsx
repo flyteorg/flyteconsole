@@ -36,7 +36,10 @@ export interface EntityExecutionsBarChartProps {
     chartIds: string[];
 }
 
-const getExecutionTimeData = (executions: Execution[], fillSize = 100) => {
+export const getExecutionTimeData = (
+    executions: Execution[],
+    fillSize = 100
+) => {
     const newExecutions = [...executions].reverse().map(execution => {
         const duration = getWorkflowExecutionTimingMS(execution)?.duration || 1;
         return {
@@ -73,7 +76,7 @@ const getExecutionTimeData = (executions: Execution[], fillSize = 100) => {
         .concat(newExecutions);
 };
 
-const getStartExecutionTime = (executions: Execution[]) => {
+export const getStartExecutionTime = (executions: Execution[]) => {
     if (executions.length === 0) {
         return '';
     }

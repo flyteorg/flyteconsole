@@ -31,28 +31,24 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
     const detailsQuery = useNodeExecutionDetails(execution);
     const commonStyles = useCommonStyles();
     const styles = useColumnStyles();
-    const nodeId = execution.id.nodeId;
 
     const isSelected =
         state.selectedExecution != null &&
         isEqual(execution.id, state.selectedExecution);
 
-    const renderReadableName = ({
-        displayId,
-        displayName
-    }: NodeExecutionDetails) => {
+    const renderReadableName = ({ displayName }: NodeExecutionDetails) => {
         const readableName = isSelected ? (
             <Typography
                 variant="body1"
                 className={styles.selectedExecutionName}
             >
-                {displayId || nodeId}
+                {displayName}
             </Typography>
         ) : (
             <SelectNodeExecutionLink
                 className={commonStyles.primaryLink}
                 execution={execution}
-                linkText={displayId || nodeId}
+                linkText={displayName || ''}
                 state={state}
             />
         );
@@ -108,7 +104,23 @@ export function generateColumns(
             cellRenderer: props => <NodeExecutionName {...props} />,
             className: styles.columnName,
             key: 'name',
-            label: 'node'
+            label: 'task name'
+        },
+        {
+            cellRenderer: props => (
+                <Typography color="textSecondary">
+                    {props.execution.id.nodeId}
+                </Typography>
+            ),
+            className: styles.columnNodeId,
+            key: 'nodeId',
+            label: 'node id'
+        },
+        {
+            cellRenderer: props => <NodeExecutionDisplayType {...props} />,
+            className: styles.columnType,
+            key: 'type',
+            label: 'type'
         },
         {
             cellRenderer: ({
@@ -132,12 +144,6 @@ export function generateColumns(
             className: styles.columnStatus,
             key: 'phase',
             label: 'status'
-        },
-        {
-            cellRenderer: props => <NodeExecutionDisplayType {...props} />,
-            className: styles.columnType,
-            key: 'type',
-            label: 'type'
         },
         {
             cellRenderer: ({ execution: { closure } }) => {
