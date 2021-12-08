@@ -150,7 +150,13 @@ export const transformerWorkflowToDAG = (
                 workflow.tasks
             ) as CompiledTask;
         }
-        const dNode = createDNode(node as CompiledNode, root, taskType);
+        // const dNode = createDNode(node as CompiledNode, root, taskType);
+        // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
+        const dNode = createDNode({
+            compiledNode: node as CompiledNode,
+            parentDNode: root,
+            taskTemplate: taskType
+        });
         root.nodes.push(dNode);
     };
 
@@ -174,7 +180,11 @@ export const transformerWorkflowToDAG = (
 
         /* Check: if thenNode has branch : else add theNode */
         if (thenNode.branchNode) {
-            const thenNodeDNode = createDNode(thenNode, root);
+            // const thenNodeDNode = createDNode(thenNode, root);
+            const thenNodeDNode = createDNode({
+                compiledNode: thenNode,
+                parentDNode: root
+            });
             buildDAG(thenNodeDNode, thenNode, dTypes.branch, workflow);
             root.nodes.push(thenNodeDNode);
         } else {
@@ -191,10 +201,15 @@ export const transformerWorkflowToDAG = (
             otherNode.map(otherItem => {
                 const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
                 if (otherCompiledNode.branchNode) {
-                    const otherDNodeBranch = createDNode(
-                        otherCompiledNode,
-                        root
-                    );
+                    // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
+                    // // const otherDNodeBranch = createDNode(
+                    //     otherCompiledNode,
+                    //     root
+                    // );
+                    const otherDNodeBranch = createDNode({
+                        compiledNode: otherCompiledNode,
+                        parentDNode: root
+                    });
                     buildDAG(
                         otherDNodeBranch,
                         otherCompiledNode,
@@ -238,26 +253,36 @@ export const transformerWorkflowToDAG = (
             if (isStartNode(compiledNode) && type == dTypes.subworkflow) {
                 /** @TODO Decide if we should implement this */
                 /* Case: override type as nestedStart node */
-                dNode = createDNode(compiledNode);
+                // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
+                dNode = createDNode({ compiledNode: compiledNode });
             } else if (isEndNode(compiledNode) && type == dTypes.subworkflow) {
                 /** @TODO Decide if we should implement this */
                 /* Case: override type as nestedEnd node */
-                dNode = createDNode(compiledNode);
+                dNode = createDNode({ compiledNode: compiledNode });
             } else if (compiledNode.branchNode) {
                 /* Case: recurse on branch node */
-                dNode = createDNode(compiledNode, null);
+                dNode = createDNode({
+                    compiledNode: compiledNode,
+                    parentDNode: null
+                });
                 buildDAG(dNode, compiledNode, dTypes.branch, workflow);
             } else if (compiledNode.workflowNode) {
                 /* Case: recurse on workflow node */
                 const id = compiledNode.workflowNode.subWorkflowRef;
                 const subworkflow = getSubWorkflowFromId(id, workflow);
                 if (!isStartNode(root)) {
-                    dNode = createDNode(compiledNode, root);
+                    dNode = createDNode({
+                        compiledNode: compiledNode,
+                        parentDNode: root
+                    });
                 } else {
                     /**
                      * @TODO may not need this else case
                      */
-                    dNode = createDNode(compiledNode, null);
+                    dNode = createDNode({
+                        compiledNode: compiledNode,
+                        parentDNode: null
+                    });
                 }
                 buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
             } else if (compiledNode.taskNode) {
@@ -266,10 +291,18 @@ export const transformerWorkflowToDAG = (
                     compiledNode.taskNode,
                     workflow.tasks
                 );
-                dNode = createDNode(compiledNode, root, taskType);
+                // dNode = createDNode(compiledNode, root, taskType);
+                dNode = createDNode({
+                    compiledNode: compiledNode,
+                    parentDNode: root,
+                    taskTemplate: taskType
+                });
             } else {
                 /* Else: primary start/finish nodes */
-                dNode = createDNode(compiledNode, root);
+                dNode = createDNode({
+                    compiledNode: compiledNode,
+                    parentDNode: root
+                });
             }
 
             root.nodes.push(dNode);
@@ -314,9 +347,15 @@ export const transformerWorkflowToDAG = (
         if (root) {
             contextualRoot = root;
         } else {
+            // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
+            // const primaryStart = createDNode({
+            //     id: startNodeId
+            // } as CompiledNode);
             const primaryStart = createDNode({
-                id: startNodeId
-            } as CompiledNode);
+                compiledNode: {
+                    id: startNodeId
+                } as CompiledNode
+            });
             contextualRoot = primaryStart;
         }
 
