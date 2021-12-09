@@ -9,10 +9,6 @@ export const buildCustomNodeName = (type: dTypes) => {
     return `${ReactFlowGraphConfig.customNodePrefix}_${dTypes[type]}`;
 };
 
-export const isStartOrEndNode = (node: dNode) => {
-    return node.type == dTypes.start || node.type == dTypes.end;
-};
-
 export const isStartOrEndEdge = edge => {
     return edge.sourceId == 'start-node' || edge.targetId == 'end-node';
 };
@@ -42,8 +38,8 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
 
     const type = typeOverride ? typeOverride : dNode.type;
     const taskType = dNode?.value?.template ? dNode.value.template.type : null;
-    const displayName = dNode.name;
-
+    // const displayName = dNode.name;
+    const displayName = dNode.scopedId;
     const mapNodeExecutionStatus = () => {
         if (nodeExecutionsById) {
             if (nodeExecutionsById[dNode.scopedId]) {
@@ -211,8 +207,6 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         console.log('>>> Not adding this:', dNode);
     }
          */
-        console.log('building edge:', edge);
-        console.log('root:', root);
         const rfEdge = buildReactFlowEdge(edge, root);
         edges[rfEdge.id] = rfEdge;
     });

@@ -14,6 +14,7 @@ import {
 import {
     isEndNode,
     isStartNode,
+    isStartOrEndNode,
     getDisplayName,
     getSubWorkflowFromId,
     getNodeTypeFromCompiledNode,
@@ -45,7 +46,14 @@ export const transformerWorkflowToDAG = (
         /* scopedId is used for requests; this creates format used by contract */
         let scopedId = '';
 
-        if (parentDNode && parentDNode.type != dTypes.start) {
+        if (
+            isStartOrEndNode(compiledNode) &&
+            parentDNode &&
+            !isStartOrEndNode(parentDNode)
+        ) {
+            /* Need to scope ids for start/end nodes for ReactFlow provider refresh */
+            scopedId = `${parentDNode.scopedId}-${compiledNode.id}`;
+        } else if (parentDNode && parentDNode.type != dTypes.start) {
             if (
                 parentDNode.type == dTypes.branch ||
                 parentDNode.type == dTypes.subworkflow
@@ -69,13 +77,6 @@ export const transformerWorkflowToDAG = (
                 ? getNodeTypeFromCompiledNode(compiledNode)
                 : typeOverride;
 
-        let id = compiledNode.id;
-        if (parentDNode && (type == dTypes.start || type == dTypes.end)) {
-            console.log('\n Start/end:');
-            console.log('\t compiledNode', compiledNode);
-            console.log('\t parentNode', parentDNode);
-            console.log('\t type:', type);
-        }
         const output = {
             id: compiledNode.id,
             scopedId: scopedId,
@@ -91,30 +92,6 @@ export const transformerWorkflowToDAG = (
     };
 
     const buildBranchStartEndNodes = (root: dNode) => {
-        // const startNode = createDNode(
-        //     {
-        //         id: `${root.id}-${startNodeId}`,
-        //         metadata: {
-        //             name: DISPLAY_NAME_START
-        //         }
-        //     } as CompiledNode,
-        //     null,
-        //     null,
-        //     dTypes.nestedStart
-        // );
-
-        // const endNode = createDNode(
-        //     {
-        //         id: `${root.id}-${endNodeId}`,
-        //         metadata: {
-        //             name: DISPLAY_NAME_END
-        //         }
-        //     } as CompiledNode,
-        //     null,
-        //     null,
-        //     dTypes.nestedEnd
-        // );
-
         const startNode = createDNode({
             compiledNode: {
                 id: `${root.id}-${startNodeId}`,
@@ -150,8 +127,6 @@ export const transformerWorkflowToDAG = (
                 workflow.tasks
             ) as CompiledTask;
         }
-        // const dNode = createDNode(node as CompiledNode, root, taskType);
-        // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
         const dNode = createDNode({
             compiledNode: node as CompiledNode,
             parentDNode: root,
@@ -201,11 +176,6 @@ export const transformerWorkflowToDAG = (
             otherNode.map(otherItem => {
                 const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
                 if (otherCompiledNode.branchNode) {
-                    // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
-                    // // const otherDNodeBranch = createDNode(
-                    //     otherCompiledNode,
-                    //     root
-                    // );
                     const otherDNodeBranch = createDNode({
                         compiledNode: otherCompiledNode,
                         parentDNode: root
@@ -250,15 +220,14 @@ export const transformerWorkflowToDAG = (
             const compiledNode: CompiledNode = contextWf.nodes[i];
             let dNode: dNode;
 
-            if (isStartNode(compiledNode) && type == dTypes.subworkflow) {
-                /** @TODO Decide if we should implement this */
-                /* Case: override type as nestedStart node */
-                // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
-                dNode = createDNode({ compiledNode: compiledNode });
-            } else if (isEndNode(compiledNode) && type == dTypes.subworkflow) {
-                /** @TODO Decide if we should implement this */
-                /* Case: override type as nestedEnd node */
-                dNode = createDNode({ compiledNode: compiledNode });
+            if (
+                (isStartNode(compiledNode) || isEndNode(compiledNode)) &&
+                type == dTypes.subworkflow
+            ) {
+                dNode = createDNode({
+                    compiledNode: compiledNode,
+                    parentDNode: root
+                });
             } else if (compiledNode.branchNode) {
                 /* Case: recurse on branch node */
                 dNode = createDNode({
@@ -291,7 +260,6 @@ export const transformerWorkflowToDAG = (
                     compiledNode.taskNode,
                     workflow.tasks
                 );
-                // dNode = createDNode(compiledNode, root, taskType);
                 dNode = createDNode({
                     compiledNode: compiledNode,
                     parentDNode: root,
@@ -347,10 +315,6 @@ export const transformerWorkflowToDAG = (
         if (root) {
             contextualRoot = root;
         } else {
-            // { compiledNode: null, parentDNode: null, taskTemplate: null, typeOverride: null}
-            // const primaryStart = createDNode({
-            //     id: startNodeId
-            // } as CompiledNode);
             const primaryStart = createDNode({
                 compiledNode: {
                     id: startNodeId
@@ -414,14 +378,6 @@ export const transformerWorkflowToDAG = (
                 break;
         }
     };
-
-    console.log('\n\n\n\n\n\n');
-    console.log('@transformerWorkflowToDag:');
-    console.log('\t root:', dag);
-
     const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
-
-    console.log('\t root:', dag);
-
     return { dag, staticExecutionIdsMap };
 };

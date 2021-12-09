@@ -11,6 +11,10 @@ import { dTypes } from 'models/Graph/types';
 export const DISPLAY_NAME_START = 'start';
 export const DISPLAY_NAME_END = 'end';
 
+export const isStartOrEndNode = (node: any) => {
+    return node.id === startNodeId || node.id === endNodeId;
+};
+
 export function isStartNode(node: any) {
     return node.id === startNodeId;
 }

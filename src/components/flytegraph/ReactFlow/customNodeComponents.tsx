@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import {
-    Handle,
-    getBezierPath,
-    getMarkerEnd,
-    Position
-} from 'react-flow-renderer';
+import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import setReactFlowGraphLayout, {
@@ -19,42 +14,6 @@ import setReactFlowGraphLayout, {
     getEstimatedGraphDimensions
 } from './utils';
 import { RFGraphTypes, RFHandleProps } from './types';
-
-export const customEdge = (
-    id,
-    sourceX,
-    sourceY,
-    targetX,
-    targetY,
-    sourcePosition,
-    targetPosition,
-    style = {},
-    data,
-    arrowHeadType,
-    markerEndId
-) => {
-    const edgePath = getBezierPath({
-        sourceX,
-        sourceY,
-        sourcePosition,
-        targetX,
-        targetY,
-        targetPosition
-    });
-    const markerEnd = getMarkerEnd(arrowHeadType, markerEndId);
-
-    return (
-        <>
-            <path
-                id={id}
-                style={style}
-                className="react-flow__edge-path"
-                d={edgePath}
-                markerEnd={markerEnd}
-            />
-        </>
-    );
-};
 
 export const renderDefaultHandles = (
     id: string,
@@ -106,11 +65,7 @@ export const renderStardEndHandles = (data: any) => {
         style: style
     };
 
-    return (
-        <>
-            <Handle {...handleProps} />
-        </>
-    );
+    return <Handle {...handleProps} />;
 };
 
 /**
@@ -328,10 +283,17 @@ export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
     const { dag } = data;
     const backgroundStyle = getRFBackground().nested;
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    // getEstimatedGraphDimensions
     const estimatedDimensions = getEstimatedGraphDimensions(dag);
-    console.log('@estimatedDimensions', estimatedDimensions);
     const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
+    const [graphData, setGraphData] = useState(dag);
+
+    useEffect(() => {
+        console.log(
+            '\n\n\n\n@ReactFlowCustomSubworkflowNode - USE_EFFECT[dag] (will render new RF wrapper)'
+        );
+        console.log('\t graph name:', dag[0].id);
+        setGraphData(dag);
+    }, [dag]);
     return (
         <>
             {renderDefaultHandles(
@@ -342,7 +304,7 @@ export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
             <div style={borderStyle}>
                 <div style={graphContainer}>
                     <ReactFlowWrapper
-                        rfGraphJson={dag}
+                        rfGraphJson={graphData}
                         backgroundStyle={backgroundStyle}
                         type={RFGraphTypes.nested}
                     />

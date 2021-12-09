@@ -20,6 +20,7 @@ import {
     ReactFlowStaticNode
 } from './customNodeComponents';
 import setReactFlowGraphLayout from './utils';
+import { dTypes } from 'models/Graph/types';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -52,33 +53,51 @@ const LayoutReactFlow: React.FC<any> = ({
      * 1. store returns mutable objects; store will update on each change
      * 2. store is updated when elements are set
      */
-    const [shouldUpdate, setShouldUpdate] = useState(true);
     const [instance, setInstance] = useState<null | any>(null);
-    const [graph, setGraph] = useState(graphData);
+    const [shouldUpdate, setShouldUpdate] = useState(true);
+    const [shouldRefit, setShouldRefit] = useState(false);
+    const [shouldClear, setShouldClear] = useState(false);
+    const [renderedGraph, setRenderedGraph] = useState(graphData);
     const nodes = useStoreState(store => store.nodes);
     const edges = useStoreState(store => store.edges);
     const setElements = useStoreActions(actions => actions.setElements);
 
     useEffect(() => {
-        if (instance && !shouldUpdate) {
+        if (instance && shouldRefit) {
+            console.log(
+                `\n\n@>>>>>> Rendering:Graph Data: ${RFGraphTypes[type]}:${graphData[0].id}`
+            );
+            console.log('\t renderedGraph:', renderedGraph);
             instance.fitView({ padding: 0.01 });
+            setShouldRefit(false);
         }
-    }, [shouldUpdate, instance]);
+    }, [shouldRefit, instance]);
 
     useEffect(() => {
         if (!shouldUpdate) {
-            setElements(graph);
+            // setElements is load function for reactFlow
+
+            console.log(
+                `\n\n[renderedGraph] ${RFGraphTypes[type]}:${graphData[0].id}  (set ReactFlow elements)`
+            );
+            console.log('\t graphData:', graphData);
+            setElements(renderedGraph);
         }
-    }, [graph, shouldUpdate, setElements]);
+    }, [renderedGraph]);
 
     useEffect(() => {
-        setGraph(graphData);
+        console.log(
+            `\n\n[graphData] ${RFGraphTypes[type]}:${graphData[0].id}  (incoming from props)`
+        );
+        console.log('\t graphData:', graphData);
+        setRenderedGraph(graphData);
         setShouldUpdate(true);
-    }, [graphData]);
+    }, [graphData, setShouldUpdate, setRenderedGraph]);
 
     useEffect(() => {
         if (
             shouldUpdate &&
+            !shouldRefit &&
             nodes.length > 0 &&
             edges.length > 0 &&
             nodes.every(
@@ -90,13 +109,32 @@ const LayoutReactFlow: React.FC<any> = ({
                 nodesAndEdges,
                 'LR'
             );
-            setGraph(elementsWithLayout);
+
+            console.log(
+                `\n\n[nodes, edges] ${RFGraphTypes[type]}:${graphData[0].id}  (ReactFlow just loaded new elements)`
+            );
+            console.log('\t graphData:', graphData);
+            /** @TODO may not need to use this timeout */
             setShouldUpdate(false);
+            startRefreshTimer(elementsWithLayout);
         }
     }, [nodes, edges]);
 
+    const renderNewGraph = data => {
+        setRenderedGraph(data);
+        setShouldRefit(true);
+    };
+
     const onLoad = (rf: any) => {
         setInstance(rf);
+    };
+
+    const startRefreshTimer = data => {
+        const timeout = type == RFGraphTypes.nested ? 200 : 500;
+        // setElements([{}]);
+        setTimeout(() => {
+            renderNewGraph(data);
+        }, 1);
     };
 
     /**
@@ -110,7 +148,7 @@ const LayoutReactFlow: React.FC<any> = ({
 
     return (
         <ReactFlow
-            elements={graph}
+            elements={renderedGraph}
             onLoad={onLoad}
             nodeTypes={CustomNodeTypes}
             style={reactFlowStyle}
@@ -153,7 +191,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     });
 
     useEffect(() => {
-        console.log('STATE_CHANGE: nodeExecutionsById');
+        // console.log('STATE_CHANGE: nodeExecutionsById');
         setState(state => ({
             ...state,
             nodeExecutionsById: nodeExecutionsById
@@ -161,7 +199,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     }, [nodeExecutionsById]);
 
     useEffect(() => {
-        console.log('STATE_CHANGE: rfGraphJson');
+        // console.log('STATE_CHANGE: rfGraphJson');
         setState(state => ({
             ...state,
             rfGraphJson: rfGraphJson
