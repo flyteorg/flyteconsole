@@ -56,8 +56,7 @@ const LayoutReactFlow: React.FC<any> = ({
     const [instance, setInstance] = useState<null | any>(null);
     const [shouldUpdate, setShouldUpdate] = useState(true);
     const [shouldRefit, setShouldRefit] = useState(false);
-    const [shouldClear, setShouldClear] = useState(false);
-    const [renderedGraph, setRenderedGraph] = useState(graphData);
+    const [graphWithPositions, setGraphWithPositions] = useState(graphData);
     const nodes = useStoreState(store => store.nodes);
     const edges = useStoreState(store => store.edges);
     const setElements = useStoreActions(actions => actions.setElements);
@@ -65,9 +64,9 @@ const LayoutReactFlow: React.FC<any> = ({
     useEffect(() => {
         if (instance && shouldRefit) {
             console.log(
-                `\n\n@>>>>>> Rendering:Graph Data: ${RFGraphTypes[type]}:${graphData[0].id}`
+                `\n\n@>>>>>> Rendering/Fitting: ${RFGraphTypes[type]}:${graphData[0].id}`
             );
-            console.log('\t renderedGraph:', renderedGraph);
+            console.log('\t renderedGraph:', graphWithPositions);
             instance.fitView({ padding: 0.01 });
             setShouldRefit(false);
         }
@@ -78,21 +77,24 @@ const LayoutReactFlow: React.FC<any> = ({
             // setElements is load function for reactFlow
 
             console.log(
-                `\n\n[renderedGraph] ${RFGraphTypes[type]}:${graphData[0].id}  (set ReactFlow elements)`
+                `\n\n[graphWithPositions] ${RFGraphTypes[type]}:${graphData[0].id}  ---> ReactFlow.setElements()`
             );
             console.log('\t graphData:', graphData);
-            setElements(renderedGraph);
+            setElements(graphWithPositions);
         }
-    }, [renderedGraph]);
+    }, [graphWithPositions]);
 
     useEffect(() => {
         console.log(
-            `\n\n[graphData] ${RFGraphTypes[type]}:${graphData[0].id}  (incoming from props)`
+            `\n\n[graphData] ${RFGraphTypes[type]}:${graphData[0].id}  --> (incoming from props)`
         );
         console.log('\t graphData:', graphData);
-        setRenderedGraph(graphData);
-        setShouldUpdate(true);
-    }, [graphData, setShouldUpdate, setRenderedGraph]);
+        if (!shouldUpdate) {
+            setElements(graphData);
+            setShouldUpdate(true);
+            setShouldRefit(false);
+        }
+    }, [graphData, setShouldUpdate]);
 
     useEffect(() => {
         if (
@@ -111,17 +113,16 @@ const LayoutReactFlow: React.FC<any> = ({
             );
 
             console.log(
-                `\n\n[nodes, edges] ${RFGraphTypes[type]}:${graphData[0].id}  (ReactFlow just loaded new elements)`
+                `\n\n[useStore(nodes, edges)] ${RFGraphTypes[type]}:${graphData[0].id}  --- ReactFlow.store detected elements`
             );
             console.log('\t graphData:', graphData);
-            /** @TODO may not need to use this timeout */
             setShouldUpdate(false);
-            startRefreshTimer(elementsWithLayout);
+            renderPositionedElements(elementsWithLayout);
         }
     }, [nodes, edges]);
 
-    const renderNewGraph = data => {
-        setRenderedGraph(data);
+    const renderPositionedElements = data => {
+        setGraphWithPositions(data);
         setShouldRefit(true);
     };
 
@@ -129,13 +130,14 @@ const LayoutReactFlow: React.FC<any> = ({
         setInstance(rf);
     };
 
-    const startRefreshTimer = data => {
-        const timeout = type == RFGraphTypes.nested ? 200 : 500;
-        // setElements([{}]);
-        setTimeout(() => {
-            renderNewGraph(data);
-        }, 1);
-    };
+    // const startRefreshTimer = data => {
+    //     const timeout = type == RFGraphTypes.nested ? 100 : 500;
+    //     setElements([{}]);
+    //     setTimeout(() => {
+    //         renderPositionedElements(data);
+    //     }, timeout);
+    //     renderPositionedElements(data);
+    // };
 
     /**
      * React Flow's min height to make it render
@@ -148,10 +150,11 @@ const LayoutReactFlow: React.FC<any> = ({
 
     return (
         <ReactFlow
-            elements={renderedGraph}
+            elements={graphWithPositions}
             onLoad={onLoad}
             nodeTypes={CustomNodeTypes}
             style={reactFlowStyle}
+            onlyRenderVisibleElements={false}
         >
             <Background
                 style={backgroundStyle.background}
@@ -209,6 +212,9 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     useEffect(() => {
         setState(state => ({ ...state, version: version }));
     }, [version]);
+
+    const key = `${rfGraphJson[0]?.id}${rfGraphJson[1]?.id}${type}`;
+    console.log('key:', key);
 
     return (
         <ReactFlowProvider>

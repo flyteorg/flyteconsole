@@ -299,10 +299,6 @@ export const setReactFlowGraphLayout = (
     elements: Elements,
     direction: string
 ) => {
-    console.log('\n\n\n\n\n\n');
-    console.log('$$$$$$$$$$$$$$$$$$');
-    console.log('element:', elements);
-
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
     dagreGraph.setGraph({
@@ -334,7 +330,6 @@ export const setReactFlowGraphLayout = (
                 }
             };
         } else {
-            console.log('EDGE->nodeState:', nodeState);
             return { ...nodeState };
         }
     });
