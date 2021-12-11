@@ -37,18 +37,19 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
         isEqual(execution.id, state.selectedExecution);
 
     const renderReadableName = ({ displayName }: NodeExecutionDetails) => {
+        const truncatedName = displayName?.split('.').pop() || '';
         const readableName = isSelected ? (
             <Typography
                 variant="body1"
                 className={styles.selectedExecutionName}
             >
-                {displayName}
+                {truncatedName}
             </Typography>
         ) : (
             <SelectNodeExecutionLink
                 className={commonStyles.primaryLink}
                 execution={execution}
-                linkText={displayName || ''}
+                linkText={truncatedName || ''}
                 state={state}
             />
         );
@@ -71,12 +72,24 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
     );
 };
 
+const NodeExecutionDisplayId: React.FC<NodeExecutionCellRendererData> = ({
+    execution
+}) => {
+    const detailsQuery = useNodeExecutionDetails(execution);
+    const extractDisplayId = ({ displayId }: NodeExecutionDetails) =>
+        displayId || execution.id.nodeId;
+    return <WaitForQuery query={detailsQuery}>{extractDisplayId}</WaitForQuery>;
+};
+
 const NodeExecutionDisplayType: React.FC<NodeExecutionCellRendererData> = ({
     execution
 }) => {
     const detailsQuery = useNodeExecutionDetails(execution);
-    const extractDisplayType = ({ displayType }: NodeExecutionDetails) =>
-        displayType;
+    const extractDisplayType = ({ displayType }: NodeExecutionDetails) => (
+        <Typography color="textSecondary">
+            {displayType || execution.id.nodeId}
+        </Typography>
+    );
     return (
         <WaitForQuery query={detailsQuery}>{extractDisplayType}</WaitForQuery>
     );
@@ -107,11 +120,7 @@ export function generateColumns(
             label: 'task name'
         },
         {
-            cellRenderer: props => (
-                <Typography color="textSecondary">
-                    {props.execution.id.nodeId}
-                </Typography>
-            ),
+            cellRenderer: props => <NodeExecutionDisplayId {...props} />,
             className: styles.columnNodeId,
             key: 'nodeId',
             label: 'node id'
