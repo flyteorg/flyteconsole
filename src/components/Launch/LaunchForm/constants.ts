@@ -1,5 +1,11 @@
 import { BlobDimensionality, SimpleType } from 'models/Common/types';
-import { BlobValue, InputType, RoleType } from './types';
+import {
+    BlobValue,
+    InputType,
+    RoleType,
+    AuthRoleTypes,
+    AuthRoleMeta
+} from './types';
 
 export const formStrings = {
     cancel: 'Cancel',
@@ -25,6 +31,21 @@ export const roleTypes: { [k in RoleTypesKey]: RoleType } = {
         inputLabel: 'service account name',
         label: 'Kubernetes Service Account',
         value: 'kubernetesServiceAccount'
+    }
+};
+
+export const AuthRoleStrings: { [k in AuthRoleTypes]: AuthRoleMeta } = {
+    [AuthRoleTypes.k8]: {
+        helperText: 'example: default-service-account',
+        inputLabel: 'service account name',
+        label: 'Kubernetes Service Account',
+        value: 'kubernetesServiceAccount'
+    },
+    [AuthRoleTypes.IAM]: {
+        helperText: 'example: arn:aws:iam::12345678:role/defaultrole',
+        inputLabel: 'role urn',
+        label: 'IAM Role',
+        value: 'assumableIamRole'
     }
 };
 
