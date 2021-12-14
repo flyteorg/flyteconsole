@@ -18,6 +18,10 @@ export const tabs = {
     graph: {
         id: 'graph',
         label: 'Graph'
+    },
+    timeline: {
+        id: 'timeline',
+        label: 'Timeline'
     }
 };
 
