@@ -36,7 +36,6 @@ module.exports = {
     ADMIN_API_USE_SSL,
     BASE_URL,
     CORS_PROXY_PREFIX,
-    DISABLE_AUTH,
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,

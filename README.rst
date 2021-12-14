@@ -45,7 +45,6 @@ Quickstart
    .. code:: bash
 
        export ADMIN_API_URL=http://localhost:30081
-       export DISABLE_AUTH=1
 
    .. note::
 
@@ -98,6 +97,26 @@ usually not needed, so the default behavior is to run without a prefix.
 ``CORS_PROXY_PREFIX`` (default: ``/cors_proxy``)
 
 Sets the local endpoint for `CORS request proxying <cors-proxying_>`_.
+
+======================================
+Running from docker image as localhost
+======================================
+To run flyteconsole directly from your docker image as localhost you must set a
+few environment variables in your run command to setup the appliation.
+
+``BASE_URL="/console"`` (required)
+
+``CONFIG_DIR="/etc/flyte/config"`` (required)
+
+``DISABLE_AUTH="1"`` (optional)
+
+This example assumes building from ``v0.30.0`` on port ``8080``
+
+   .. code:: bash
+
+      docker run -p 8080:8080 -e BASE_URL="/console" -e CONFIG_DIR="/etc/flyte/config" -e DISABLE_AUTH="1" ghcr.io/flyteorg/flyteconsole:v0.30.0
+
+
 
 ===============
 Run the server
@@ -225,10 +244,9 @@ URL of your target FlyteAdmin API instance. These instructions will use
 
 .. note:: Hint
 
-   Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (eg, in your `/.profile`.)
+   Ensure you don't have `ADMIN_API_URL` set (eg, in your `/.profile`.)
 
 =======
 Release
 =======
-To release, you have to annotate the PR message to include either #minor,
-#patch or #major
+To release, you have to annotate the PR message to include one of the following `commit-analyzer types <https://github.com/semantic-release/commit-analyzer#rules-matching>`_.
