@@ -9,10 +9,8 @@ import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from 'models/AdminEntity/types';
 import { ResourceIdentifier } from 'models/Common/types';
-import { Execution, WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { Execution } from 'models/Execution/types';
 import { executionSortFields } from 'models/Execution/constants';
-import { Routes } from 'routes/routes';
-import { history } from 'routes/history';
 import { executionFilterGenerator } from './generators';
 import {
     getWorkflowExecutionPhaseConstants,
@@ -69,7 +67,7 @@ export const getExecutionTimeData = (
     }
     return new Array(fillSize - newExecutions.length)
         .fill(0)
-        .map(_ => ({
+        .map(() => ({
             value: 1,
             color: '#e5e5e5'
         }))

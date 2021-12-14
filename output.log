@@ -1,3 +1,0 @@
-yarn run v1.22.11
-$ NODE_ENV=test jest --config=jest.config.js --testPathPattern=src/components/Executions/Tables/test --verbose
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
