@@ -15,6 +15,7 @@ import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { ExecutionChildrenLoader } from './ExecutionChildrenLoader';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
+import { ExecutionTimeline } from './Timeline/ExecutionTimeline';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filters: {
@@ -80,11 +81,16 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
         );
     };
 
+    const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => {
+        return <ExecutionTimeline nodeExecutions={nodeExecutions} />;
+    };
+
     return (
         <>
             <Tabs className={styles.tabs} {...tabState}>
                 <Tab value={tabs.nodes.id} label={tabs.nodes.label} />
                 <Tab value={tabs.graph.id} label={tabs.graph.label} />
+                <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
             </Tabs>
             <NodeExecutionDetailsContextProvider
                 workflowId={execution.closure.workflowId}
@@ -109,6 +115,14 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
                             query={nodeExecutionsQuery}
                         >
                             {renderExecutionLoader}
+                        </WaitForQuery>
+                    )}
+                    {tabState.value === tabs.timeline.id && (
+                        <WaitForQuery
+                            errorComponent={DataError}
+                            query={nodeExecutionsQuery}
+                        >
+                            {renderExecutionsTimeline}
                         </WaitForQuery>
                     )}
                 </div>
