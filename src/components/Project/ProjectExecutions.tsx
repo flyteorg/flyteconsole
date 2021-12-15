@@ -22,6 +22,8 @@ import {
 import classNames from 'classnames';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { WaitForData } from 'components/common/WaitForData';
+import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -95,6 +97,10 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         [query.data?.pages]
     );
 
+    const handleBarChartItemClick = React.useCallback(item => {
+        history.push(Routes.ExecutionDetails.makeUrl(item.metadata));
+    }, []);
+
     const last100Executions = useWorkflowExecutions(
         { domain, project },
         {
@@ -144,7 +150,7 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
                             startDate={getStartExecutionTime(
                                 last100Executions.value
                             )}
-                            onClickItem={() => {}}
+                            onClickItem={handleBarChartItemClick}
                         />
                     </WaitForData>
                 </div>
