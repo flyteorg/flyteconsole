@@ -20,6 +20,8 @@ import {
     getStartExecutionTime
 } from 'components/Entities/EntityExecutionsBarChart';
 import classNames from 'classnames';
+import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
+import { WaitForData } from 'components/common/WaitForData';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -93,6 +95,15 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         [query.data?.pages]
     );
 
+    const last100Executions = useWorkflowExecutions(
+        { domain, project },
+        {
+            sort: defaultSort,
+            filter: filtersState.appliedFilters,
+            limit: 100
+        }
+    );
+
     const fetch = React.useCallback(() => query.fetchNextPage(), [query]);
 
     const content = query.isLoadingError ? (
@@ -126,12 +137,16 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
                     Last 100 Executions in the Project
                 </Typography>
                 <div className={styles.chartContainer}>
-                    <BarChart
-                        chartIds={[]}
-                        data={getExecutionTimeData(executions)}
-                        startDate={getStartExecutionTime(executions)}
-                        onClickItem={() => {}}
-                    />
+                    <WaitForData {...last100Executions}>
+                        <BarChart
+                            chartIds={[]}
+                            data={getExecutionTimeData(last100Executions.value)}
+                            startDate={getStartExecutionTime(
+                                last100Executions.value
+                            )}
+                            onClickItem={() => {}}
+                        />
+                    </WaitForData>
                 </div>
                 <Typography className={styles.header} variant="h6">
                     All Executions in the Project
