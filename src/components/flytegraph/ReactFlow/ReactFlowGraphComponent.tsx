@@ -71,6 +71,7 @@ const ReactFlowGraphComponent = props => {
 
     useEffect(() => {
         const newRFGraphData = buildReactFlowGraphData();
+        console.log('NEW GRAPH DATA (REFRESHED', newRFGraphData);
         setState(state => ({
             ...state,
             rfGraphJson: newRFGraphData

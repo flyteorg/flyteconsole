@@ -33,7 +33,7 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
         onNodeSelectionChanged,
         onAddNestedView,
         onRemoveNestedView,
-        parentNode
+        parentNodeId
     } = props;
 
     const type = typeOverride ? typeOverride : dNode.type;
@@ -56,7 +56,7 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
 
     const dataProps = {
         nodeExecutionStatus: nodeExecutionStatus,
-        parentNode: parentNode,
+        parentNodeId: parentNodeId,
         text: displayName,
         handles: [],
         nodeType: type,
@@ -70,7 +70,7 @@ export const buildReactFlowNode = (props: BuildRFNodeProps): Node => {
         },
         onAddNestedView: () => {
             onAddNestedView({
-                parent: parentNode.scopedId,
+                parent: parentNodeId,
                 view: dNode.scopedId
             });
         },
@@ -129,7 +129,7 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
         const buildNodeProps = {
             dNode: dNode,
             dag: [],
-            parentNode: root,
+            parentNodeId: root.scopedId,
             nodeExecutionsById: nodeExecutionsById,
             typeOverride: null,
             onNodeSelectionChanged: onNodeSelectionChanged,
@@ -159,7 +159,7 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
             }
             const nestedDagProps: DagToReactFlowProps = {
                 root: contextualRoot,
-                parentNode: dNode,
+                parentNodeId: dNode.scopedId,
                 nodeExecutionsById: nodeExecutionsById,
                 currentDepth: currentDepth + 1,
                 onNodeSelectionChanged: onNodeSelectionChanged,
@@ -195,18 +195,6 @@ export const dagToReactFlow = (props: DagToReactFlowProps) => {
     }
 
     root.edges?.map(edge => {
-        /**
-         * let outId = dNode.scopedId;
-    console.log('\ncheck:');
-    if (isStartOrEndNode(dNode) && !isStartOrEndNode(parentNode)) {
-        console.log('before:', outId);
-        console.log('parentNode:', parentNode);
-        outId = dNode.scopedId + parentNode.scopedId;
-        console.log('after:', outId);
-    } else {
-        console.log('>>> Not adding this:', dNode);
-    }
-         */
         const rfEdge = buildReactFlowEdge(edge, root);
         edges[rfEdge.id] = rfEdge;
     });

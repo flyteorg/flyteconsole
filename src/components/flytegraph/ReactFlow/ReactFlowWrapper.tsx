@@ -194,7 +194,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     });
 
     useEffect(() => {
-        // console.log('STATE_CHANGE: nodeExecutionsById');
         setState(state => ({
             ...state,
             nodeExecutionsById: nodeExecutionsById
@@ -202,7 +201,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     }, [nodeExecutionsById]);
 
     useEffect(() => {
-        // console.log('STATE_CHANGE: rfGraphJson');
         setState(state => ({
             ...state,
             rfGraphJson: rfGraphJson
