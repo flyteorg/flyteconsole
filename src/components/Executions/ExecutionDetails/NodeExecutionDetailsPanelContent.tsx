@@ -40,6 +40,11 @@ import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { RemoteLiteralMapViewer } from 'components/Literals/RemoteLiteralMapViewer';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
+import { dNode } from 'models/Graph/types';
+import {
+    transformWorkflowToKeyedDag,
+    getNodeNameFromDag
+} from 'components/WorkflowGraph/utils';
 
 const useStyles = makeStyles((theme: Theme) => {
     const paddingVertical = `${theme.spacing(2)}px`;
@@ -239,20 +244,15 @@ const NodeExecutionTabs: React.FC<{
 };
 
 const WorkflowTabs: React.FC<{
-    workflow: Workflow;
+    dagData: dNode;
     nodeId: string;
-}> = ({ workflow, nodeId }) => {
+}> = ({ dagData, nodeId }) => {
     const styles = useStyles();
     const tabState = useTabState(tabIds, tabIds.inputs);
     const commonStyles = useCommonStyles();
     let tabContent: JSX.Element | null = null;
-    const currentNode = workflow.closure?.compiledWorkflow.primary.template.nodes.find(
-        node => node.id === nodeId
-    );
-    const taskName = currentNode.metadata.name;
-    const taskTemplate = workflow.closure.compiledWorkflow.tasks.find(task =>
-        taskName.includes(task.template.id.name)
-    );
+    console.log('555', { dagData, nodeId });
+    const taskTemplate = dagData[nodeId].value.template;
 
     switch (tabState.value) {
         case tabIds.inputs: {
@@ -260,7 +260,7 @@ const WorkflowTabs: React.FC<{
                 <div className={commonStyles.detailsPanelCard}>
                     <div className={commonStyles.detailsPanelCardContent}>
                         <RemoteLiteralMapViewer
-                            blob={taskTemplate.template.interface.inputs}
+                            blob={taskTemplate.interface.inputs}
                         />
                     </div>
                 </div>
@@ -293,7 +293,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 }) => {
     const queryClient = useQueryClient();
     const [isReasonsVisible, setReasonsVisible] = React.useState(false);
-    const [workflow, setWorkflow] = React.useState<Workflow | null>(null);
+    const [dag, setDag] = React.useState<dNode | null>(null);
     const nodeExecutionQuery = useQuery<NodeExecution, Error>({
         ...makeNodeExecutionQuery(nodeExecutionId),
         // The selected NodeExecution has been fetched at this point, we don't want to
@@ -307,7 +307,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
     const nodeExecution = nodeExecutionQuery.data;
 
-    const getWorkflow = async () => {
+    const getWorkflowDag = async () => {
         const workflowExecution = await fetchWorkflowExecution(
             queryClient,
             nodeExecutionId.executionId
@@ -316,13 +316,16 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
             queryClient,
             workflowExecution.closure.workflowId
         );
-        if (workflowData) setWorkflow(workflowData);
+        if (workflowData) {
+            const keyedDag = transformWorkflowToKeyedDag(workflowData);
+            setDag(keyedDag);
+        }
     };
 
     if (!nodeExecution) {
-        getWorkflow();
+        getWorkflowDag();
     } else {
-        if (workflow) setWorkflow(null);
+        if (dag) setDag(null);
     }
     const listTaskExecutionsQuery = useQuery<
         PaginatedEntityResponse<TaskExecution>,
@@ -435,17 +438,16 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
                         variant="subtitle1"
                         color="textSecondary"
                     >
-                        {workflow ? workflow.id.name : displayName}
+                        {dag
+                            ? getNodeNameFromDag(dag, nodeExecutionId.nodeId)
+                            : displayName}
                     </Typography>
                     {statusContent}
-                    {!workflow && detailsContent}
+                    {!dag && detailsContent}
                 </div>
             </header>
-            {workflow ? (
-                <WorkflowTabs
-                    nodeId={nodeExecutionId.nodeId}
-                    workflow={workflow}
-                />
+            {dag ? (
+                <WorkflowTabs nodeId={nodeExecutionId.nodeId} dagData={dag} />
             ) : (
                 tabsContent
             )}
