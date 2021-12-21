@@ -261,6 +261,7 @@ const WorkflowTabs: React.FC<{
                     <div className={commonStyles.detailsPanelCardContent}>
                         <RemoteLiteralMapViewer
                             blob={taskTemplate.interface.inputs}
+                            map={null}
                         />
                     </div>
                 </div>
@@ -293,7 +294,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 }) => {
     const queryClient = useQueryClient();
     const [isReasonsVisible, setReasonsVisible] = React.useState(false);
-    const [dag, setDag] = React.useState<dNode | null>(null);
+    const [dag, setDag] = React.useState<any>(null);
     const nodeExecutionQuery = useQuery<NodeExecution, Error>({
         ...makeNodeExecutionQuery(nodeExecutionId),
         // The selected NodeExecution has been fetched at this point, we don't want to

@@ -121,6 +121,8 @@ export const getNodeNameFromDag = (dagData: dNode, nodeId: string) =>
     dagData[nodeId].value.taskNode.referenceId.name;
 
 export const transformWorkflowToKeyedDag = (workflow: Workflow) => {
+    if (!workflow.closure?.compiledWorkflow) return {};
+
     const dagData = transformerWorkflowToDAG(
         workflow.closure?.compiledWorkflow
     );
