@@ -251,7 +251,6 @@ const WorkflowTabs: React.FC<{
     const tabState = useTabState(tabIds, tabIds.inputs);
     const commonStyles = useCommonStyles();
     let tabContent: JSX.Element | null = null;
-    console.log('555', { dagData, nodeId });
     const taskTemplate = dagData[nodeId].value.template;
 
     switch (tabState.value) {

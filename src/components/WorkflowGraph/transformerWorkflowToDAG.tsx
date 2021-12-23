@@ -255,7 +255,7 @@ export const buildOutWorkflowEdges = (
     const list = context.downstream[ingress].ids;
     for (let i = 0; i < list.length; i++) {
         const edge: dEdge = {
-            sourceId: nodeMap[ingress].dNode.scopedId,
+            sourceId: nodeMap[ingress] && nodeMap[ingress].dNode.scopedId,
             targetId: nodeMap[list[i]].dNode.scopedId
         };
         root.edges.push(edge);
