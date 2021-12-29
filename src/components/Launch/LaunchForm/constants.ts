@@ -1,11 +1,5 @@
 import { BlobDimensionality, SimpleType } from 'models/Common/types';
-import {
-    BlobValue,
-    InputType,
-    RoleType,
-    AuthRoleTypes,
-    AuthRoleMeta
-} from './types';
+import { BlobValue, InputType, AuthRoleTypes, AuthRoleMeta } from './types';
 
 export const formStrings = {
     cancel: 'Cancel',
@@ -18,21 +12,21 @@ export const formStrings = {
     launchPlan: 'Launch Plan'
 };
 
-type RoleTypesKey = 'iamRole' | 'k8sServiceAccount';
-export const roleTypes: { [k in RoleTypesKey]: RoleType } = {
-    iamRole: {
-        helperText: 'example: arn:aws:iam::12345678:role/defaultrole',
-        inputLabel: 'role urn',
-        label: 'IAM Role',
-        value: 'assumableIamRole'
-    },
-    k8sServiceAccount: {
-        helperText: 'example: default-service-account',
-        inputLabel: 'service account name',
-        label: 'Kubernetes Service Account',
-        value: 'kubernetesServiceAccount'
-    }
-};
+// type RoleTypesKey = 'iamRole' | 'k8sServiceAccount';
+// export const roleTypes: { [k in RoleTypesKey]: RoleType } = {
+//     iamRole: {
+//         helperText: 'example: arn:aws:iam::12345678:role/defaultrole',
+//         inputLabel: 'role urn',
+//         label: 'IAM Role',
+//         value: 'assumableIamRole'
+//     },
+//     k8sServiceAccount: {
+//         helperText: 'example: default-service-account',
+//         inputLabel: 'service account name',
+//         label: 'Kubernetes Service Account',
+//         value: 'kubernetesServiceAccount'
+//     }
+// };
 
 export const AuthRoleStrings: { [k in AuthRoleTypes]: AuthRoleMeta } = {
     [AuthRoleTypes.k8]: {

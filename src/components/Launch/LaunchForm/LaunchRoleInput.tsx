@@ -109,7 +109,9 @@ export const LaunchRoleInputImpl: React.RefForwardingComponent<
                     </Typography>
                 </div>
                 <TextField
-                    id={`launchform-role-${AuthRoleStrings[AuthRoleTypes.IAM]}`}
+                    id={`launchform-role-${
+                        AuthRoleStrings[AuthRoleTypes.IAM].inputLabel
+                    }`}
                     helperText={AuthRoleStrings[AuthRoleTypes.IAM].helperText}
                     fullWidth={true}
                     label={AuthRoleStrings[AuthRoleTypes.IAM].inputLabel}
@@ -126,7 +128,9 @@ export const LaunchRoleInputImpl: React.RefForwardingComponent<
                     </Typography>
                 </div>
                 <TextField
-                    id={`launchform-role-${AuthRoleStrings[AuthRoleTypes.k8]}`}
+                    id={`launchform-role-${
+                        AuthRoleStrings[AuthRoleTypes.k8].inputLabel
+                    }`}
                     helperText={AuthRoleStrings[AuthRoleTypes.k8].helperText}
                     fullWidth={true}
                     label={AuthRoleStrings[AuthRoleTypes.k8].inputLabel}

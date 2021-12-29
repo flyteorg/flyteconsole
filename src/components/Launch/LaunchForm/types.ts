@@ -71,6 +71,7 @@ export interface TaskInitialLaunchParameters
     extends BaseInitialLaunchParameters {
     taskId?: Identifier;
     authRole?: Admin.IAuthRole;
+    securityContext?: Core.ISecurityContext;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
     taskId: NamedEntityIdentifier;
