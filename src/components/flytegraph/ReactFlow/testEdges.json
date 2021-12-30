@@ -1,0 +1,38 @@
+[
+    {
+        "id": "[start-node]->[n1-0-node-t1-parent]",
+        "source": "start-node",
+        "target": "n1-0-node-t1-parent",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default",
+        "targetHandle": null
+    },
+    {
+        "id": "[n1-0-node-t1-parent]->[end-node]",
+        "source": "n1-0-node-t1-parent",
+        "target": "end-node",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default",
+        "targetHandle": null
+    },
+    {
+        "id": "[n1-0-node-t1-parent]->[n1-0-n1]",
+        "source": "n1-0-node-t1-parent",
+        "target": "n1-0-n1",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default",
+        "targetHandle": null
+    },
+    {
+        "id": "[n1-0-n1]->[end-node]",
+        "source": "n1-0-n1",
+        "target": "end-node",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default",
+        "targetHandle": null
+    }
+]

@@ -1,0 +1,78 @@
+[
+    {
+        "id": "start-node",
+        "type": "FlyteNode_start",
+        "data": {
+            "nodeExecutionStatus": 7,
+            "text": "start",
+            "handles": [],
+            "nodeType": 4,
+            "scopedId": "start-node",
+            "dag": [],
+            "taskType": null
+        },
+        "position": {
+            "x": 0,
+            "y": 1.5
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "end-node",
+        "type": "FlyteNode_end",
+        "data": {
+            "nodeExecutionStatus": 7,
+            "text": "end",
+            "handles": [],
+            "nodeType": 5,
+            "scopedId": "end-node",
+            "dag": [],
+            "taskType": null
+        },
+        "position": {
+            "x": 300,
+            "y": 1.5
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "n1-0-node-t1-parent",
+        "type": "FlyteNode_task",
+        "data": {
+            "nodeExecutionStatus": 3,
+            "text": "t1",
+            "handles": [],
+            "nodeType": 0,
+            "scopedId": "n1-0-node-t1-parent",
+            "dag": [],
+            "taskType": "python-task"
+        },
+        "position": {
+            "x": 96,
+            "y": 0
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "n1-0-n1",
+        "type": "FlyteNode_nestedMaxDepth",
+        "data": {
+            "nodeExecutionStatus": 3,
+            "text": "my_subwf",
+            "handles": [],
+            "nodeType": 8,
+            "scopedId": "n1-0-n1",
+            "dag": [],
+            "taskType": null
+        },
+        "position": {
+            "x": 184,
+            "y": 32.5
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    }
+]

@@ -7,6 +7,8 @@ import ReactFlow, {
     useNodesState
 } from 'react-flow-renderer';
 import { RFWrapperProps, RFGraphTypes } from './types';
+import * as testNodes from './testNodes.json';
+import * as testEdges from './testEdges.json';
 import {
     ReactFlowCustomBranchNode,
     ReactFlowCustomEndNode,
@@ -72,52 +74,54 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         background: 'rgba(90,55,190,.2)'
     };
 
-    const initialNodes = [
-        {
-            id: '1',
-            data: { label: 'Node 1' },
-            position: { x: 0, y: 0 },
-            //isParentNode: true,
-            style: tempStyle
-        },
-        // {
-        //     id: '3',
-        //     data: { label: 'Nested Node 1 -->3' },
-        //     position: { x: 0, y: 0 },
-        //     parentNode: '1',
-        //     style: tempStyle
-        // },
-        {
-            id: '4',
-            data: { label: 'Node 4' },
-            position: { x: 0, y: 0 },
-            style: tempStyle
-        },
-        {
-            id: '5',
-            data: { label: 'Node 5' },
-            position: { x: 0, y: 0 },
-            style: tempStyle
-        }
-        // {
-        //     id: '2',
-        //     data: { label: 'Nested Node 1->2' },
-        //     position: { x: 0, y: 0 },
-        //     parentNode: '1',
-        //     style: tempStyle
-        // }
-    ];
+    // const initialNodes = [
+    //     {
+    //         id: '1',
+    //         data: { label: 'Node 1' },
+    //         position: { x: 0, y: 0 },
+    //         isParentNode: true,
+    //         style: tempStyle
+    //     },
+    //     {
+    //         id: '3',
+    //         data: { label: 'Nested Node 1 -->3' },
+    //         position: { x: 0, y: 0 },
+    //         parentNode: '1',
+    //         style: tempStyle
+    //     },
+    //     {
+    //         id: '4',
+    //         data: { label: 'Node 4' },
+    //         position: { x: 0, y: 0 },
+    //         style: tempStyle
+    //     },
+    //     {
+    //         id: '5',
+    //         data: { label: 'Node 5' },
+    //         position: { x: 0, y: 0 },
+    //         style: tempStyle
+    //     },
+    //     {
+    //         id: '2',
+    //         data: { label: 'Nested Node 1->2' },
+    //         position: { x: 0, y: 0 },
+    //         parentNode: '1',
+    //         style: tempStyle
+    //     }
+    // ];
 
-    const initialEdges = [
-        { id: 'e1-2', source: '1', target: '2', zIndex: 1, parent: '1' },
-        { id: 'e2-3', source: '2', target: '3', zIndex: 1, parent: '1' },
-        { id: 'e1-3', source: '1', target: '3', zIndex: 1, parent: '1' },
-        { id: 'e1-4', source: '1', target: '4' },
-        { id: 'e1-5', source: '1', target: '5' }
-    ];
+    // const initialEdges = [
+    //     { id: 'e1-2', source: '1', target: '2', zIndex: 1, parent: '1' },
+    //     { id: 'e2-3', source: '2', target: '3', zIndex: 1, parent: '1' },
+    //     { id: 'e1-3', source: '1', target: '3', zIndex: 1, parent: '1' },
+    //     { id: 'e1-4', source: '1', target: '4' },
+    //     { id: 'e1-5', source: '1', target: '5' }
+    // ];
 
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
+    console.log('TEST:', testNodes);
+
+    const [nodes, setNodes] = useState(testNodes);
+    const [edges, setEdges] = useState(testEdges);
 
     const onNodesChange = useCallback(changes => {
         if (changes.length == nodes.length) {
