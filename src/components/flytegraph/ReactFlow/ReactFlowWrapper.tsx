@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ReactFlow, {
+    applyEdgeChanges,
+    applyNodeChanges,
     Background,
-    ReactFlowProvider,
-    useStoreState,
-    useStoreActions,
-    useUpdateNodeInternals
+    useNodesState
 } from 'react-flow-renderer';
-import { RFWrapperProps, LayoutRCProps, RFGraphTypes } from './types';
+import { RFWrapperProps, RFGraphTypes } from './types';
 import {
     ReactFlowCustomBranchNode,
     ReactFlowCustomEndNode,
@@ -19,8 +18,8 @@ import {
     ReactFlowStaticNested,
     ReactFlowStaticNode
 } from './customNodeComponents';
-import setReactFlowGraphLayout from './utils';
-import { dTypes } from 'models/Graph/types';
+import zIndex from '@material-ui/core/styles/zIndex';
+import { testPosition, flattenNestedGraphs } from './utils';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -38,123 +37,119 @@ const CustomNodeTypes = {
     FlyteNode_staticNestedNode: ReactFlowStaticNested
 };
 
-/**
- * Renderless component waits for ReactFlow to give rendered
- * dimensions before computing layout
- * @param props:LayoutRC
- * @returns: void
- */
-const LayoutReactFlow: React.FC<any> = ({
-    graphData,
+export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
+    rfGraphJson,
     backgroundStyle,
-    type
+    version,
+    nodeExecutionsById
 }) => {
-    /**
-     * 1. store returns mutable objects; store will update on each change
-     * 2. store is updated when elements are set
-     */
-    const [instance, setInstance] = useState<null | any>(null);
-    const [shouldUpdate, setShouldUpdate] = useState(true);
-    const [shouldRefit, setShouldRefit] = useState(false);
-    const [graphWithPositions, setGraphWithPositions] = useState(graphData);
-    const nodes = useStoreState(store => store.nodes);
-    const edges = useStoreState(store => store.edges);
-    const setElements = useStoreActions(actions => actions.setElements);
+    // const [state, setState] = useState({
+    //     rfGraphJson: rfGraphJson,
+    //     version: version,
+    //     nodeExecutionsById: nodeExecutionsById
+    // });
 
-    useEffect(() => {
-        if (instance && shouldRefit) {
-            console.log(
-                `\n\n@>>>>>> Rendering/Fitting: ${RFGraphTypes[type]}:${graphData[0].id}`
-            );
-            console.log('\t renderedGraph:', graphWithPositions);
-            instance.fitView({ padding: 0.01 });
-            setShouldRefit(false);
-        }
-    }, [shouldRefit, instance]);
+    // useEffect(() => {
+    //     setState(state => ({
+    //         ...state,
+    //         nodeExecutionsById: nodeExecutionsById
+    //     }));
+    // }, [nodeExecutionsById]);
 
-    useEffect(() => {
-        if (!shouldUpdate) {
-            // setElements is load function for reactFlow
+    // useEffect(() => {
+    //     setState(state => ({
+    //         ...state,
+    //         rfGraphJson: rfGraphJson
+    //     }));
+    // }, [rfGraphJson]);
 
-            console.log(
-                `\n\n[graphWithPositions] ${RFGraphTypes[type]}:${graphData[0].id}  ---> ReactFlow.setElements()`
-            );
-            console.log('\t graphData:', graphData);
-            setElements(graphWithPositions);
-        }
-    }, [graphWithPositions]);
+    // useEffect(() => {
+    //     setState(state => ({ ...state, version: version }));
+    // }, [version]);
 
-    useEffect(() => {
-        console.log(
-            `\n\n[graphData] ${RFGraphTypes[type]}:${graphData[0].id}  --> (incoming from props)`
-        );
-        console.log('\t graphData:', graphData);
-        if (!shouldUpdate) {
-            setElements(graphData);
-            setShouldUpdate(true);
-            setShouldRefit(false);
-        }
-    }, [graphData, setShouldUpdate]);
-
-    useEffect(() => {
-        if (
-            shouldUpdate &&
-            !shouldRefit &&
-            nodes.length > 0 &&
-            edges.length > 0 &&
-            nodes.every(
-                node => node.__rf.width != null && node.__rf.height != null
-            )
-        ) {
-            const nodesAndEdges = (nodes as any[]).concat(edges);
-            const elementsWithLayout = setReactFlowGraphLayout(
-                nodesAndEdges,
-                'LR'
-            );
-
-            console.log(
-                `\n\n[useStore(nodes, edges)] ${RFGraphTypes[type]}:${graphData[0].id}  --- ReactFlow.store detected elements`
-            );
-            console.log('\t graphData:', graphData);
-            setShouldUpdate(false);
-            renderPositionedElements(elementsWithLayout);
-        }
-    }, [nodes, edges]);
-
-    const renderPositionedElements = data => {
-        setGraphWithPositions(data);
-        setShouldRefit(true);
+    const tempStyle = {
+        border: '1px solid blue',
+        background: 'rgba(90,55,190,.2)'
     };
 
-    const onLoad = (rf: any) => {
-        setInstance(rf);
-    };
+    const initialNodes = [
+        {
+            id: '1',
+            data: { label: 'Node 1' },
+            position: { x: 0, y: 0 },
+            //isParentNode: true,
+            style: tempStyle
+        },
+        // {
+        //     id: '3',
+        //     data: { label: 'Nested Node 1 -->3' },
+        //     position: { x: 0, y: 0 },
+        //     parentNode: '1',
+        //     style: tempStyle
+        // },
+        {
+            id: '4',
+            data: { label: 'Node 4' },
+            position: { x: 0, y: 0 },
+            style: tempStyle
+        },
+        {
+            id: '5',
+            data: { label: 'Node 5' },
+            position: { x: 0, y: 0 },
+            style: tempStyle
+        }
+        // {
+        //     id: '2',
+        //     data: { label: 'Nested Node 1->2' },
+        //     position: { x: 0, y: 0 },
+        //     parentNode: '1',
+        //     style: tempStyle
+        // }
+    ];
 
-    // const startRefreshTimer = data => {
-    //     const timeout = type == RFGraphTypes.nested ? 100 : 500;
-    //     setElements([{}]);
-    //     setTimeout(() => {
-    //         renderPositionedElements(data);
-    //     }, timeout);
-    //     renderPositionedElements(data);
-    // };
+    const initialEdges = [
+        { id: 'e1-2', source: '1', target: '2', zIndex: 1, parent: '1' },
+        { id: 'e2-3', source: '2', target: '3', zIndex: 1, parent: '1' },
+        { id: 'e1-3', source: '1', target: '3', zIndex: 1, parent: '1' },
+        { id: 'e1-4', source: '1', target: '4' },
+        { id: 'e1-5', source: '1', target: '5' }
+    ];
 
-    /**
-     * React Flow's min height to make it render
-     */
+    const [nodes, setNodes] = useState(initialNodes);
+    const [edges, setEdges] = useState(initialEdges);
+
+    const onNodesChange = useCallback(changes => {
+        if (changes.length == nodes.length) {
+            const nodesWithDimensions: any[] = [];
+            for (let i = 0; i < changes.length; i++) {
+                nodesWithDimensions.push({
+                    ...nodes[i],
+                    ['dimensions']: changes[i].dimensions
+                });
+            }
+            const newNodes = testPosition(nodesWithDimensions, edges, 'LR');
+            const flattened = flattenNestedGraphs(newNodes.graph);
+            console.log('FLATTENED:', flattened);
+            setNodes(flattened);
+        }
+    }, []);
+
     const reactFlowStyle: React.CSSProperties = {
         display: 'flex',
         flex: `1 1 100%`,
         flexDirection: 'column'
     };
 
+    console.log('RENDER:', nodes);
     return (
         <ReactFlow
-            elements={graphWithPositions}
-            onLoad={onLoad}
+            nodes={nodes}
+            edges={edges}
             nodeTypes={CustomNodeTypes}
+            onNodesChange={onNodesChange}
             style={reactFlowStyle}
-            onlyRenderVisibleElements={false}
+            fitViewOnInit
         >
             <Background
                 style={backgroundStyle.background}
@@ -162,65 +157,5 @@ const LayoutReactFlow: React.FC<any> = ({
                 gap={backgroundStyle.gridSpacing}
             />
         </ReactFlow>
-    );
-};
-
-/**
- * Notes:
- * To support nested graphs we wrap each flow inside its own provider/store
- * which allows us to contextualize fitView to only render when its own
- * elements change (not parents/children)
- *
- * Workflow:
- *  - set initial (unpositioned) elements and wait for onload
- *  - position elements (with rendered dimensions) in <LayoutRC>
- *  - fit view
- *
- * @see   https://reactflow.dev/docs/
- * @param props:ReactFlowWrapperProps
- * @returns rendered component
- */
-export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
-    rfGraphJson,
-    backgroundStyle,
-    version,
-    nodeExecutionsById,
-    type
-}) => {
-    const [state, setState] = useState({
-        rfGraphJson: rfGraphJson,
-        version: version,
-        nodeExecutionsById: nodeExecutionsById
-    });
-
-    useEffect(() => {
-        setState(state => ({
-            ...state,
-            nodeExecutionsById: nodeExecutionsById
-        }));
-    }, [nodeExecutionsById]);
-
-    useEffect(() => {
-        setState(state => ({
-            ...state,
-            rfGraphJson: rfGraphJson
-        }));
-    }, [rfGraphJson]);
-
-    useEffect(() => {
-        setState(state => ({ ...state, version: version }));
-    }, [version]);
-
-    const key = `${rfGraphJson[0]?.id}${rfGraphJson[1]?.id}${type}`;
-    console.log('key:', key);
-
-    return (
-        <ReactFlowProvider>
-            <LayoutReactFlow
-                type={type}
-                graphData={state.rfGraphJson}
-                backgroundStyle={backgroundStyle}
-            ></LayoutReactFlow>
-        </ReactFlowProvider>
     );
 };

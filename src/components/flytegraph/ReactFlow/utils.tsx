@@ -288,6 +288,152 @@ export const getEstimatedGraphDimensions = (
     };
 };
 
+export const flattenNestedGraphs = nodes => {
+    const output = nodes.reduce((acc, currentNode) => {
+        if (currentNode.nestedGraph) {
+            acc = acc.concat(currentNode.nestedGraph.graph);
+            delete currentNode.nestedGraph;
+        }
+        acc.push(currentNode);
+        return acc;
+    }, []);
+    return output;
+};
+
+export const computeGraphPositions = (nodes, edges, direction = 'LR') => {
+    console.log('@computeGraphPositions');
+    console.log('\t nodes:', nodes);
+    console.log('\t edges:', edges);
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({
+        rankdir: direction,
+        edgesep: 60,
+        nodesep: 30,
+        ranker: 'longest-path',
+        acyclicer: 'greedy'
+    });
+    nodes.forEach(n => {
+        dagreGraph.setNode(n.id, n.dimensions);
+    });
+    edges.forEach(e => {
+        dagreGraph.setEdge(e.source, e.target);
+    });
+    dagre.layout(dagreGraph);
+    const dimensions = {
+        width: dagreGraph.graph().width,
+        height: dagreGraph.graph().height
+    };
+    const graph = nodes.map(el => {
+        const positionedNode = dagreGraph.node(el.id);
+        const x = positionedNode.x - positionedNode.width / 2;
+        const y = positionedNode.y - positionedNode.height / 2;
+        console.log('\tmapping nodes:');
+        console.log('\t\t x:', x);
+        console.log('\t\t y:', y);
+        /* If isParentNode, shift all its children */
+        if (el.isParentNode) {
+            console.log('\t\t\t el.isParentNode:', el);
+            // const shiftedPositions = el.nestedGraph.graph.map(nestedNode => {
+            //     const output = {
+            //         ...nestedNode,
+            //         position: {
+            //             x: nestedNode.position.x + x,
+            //             y: nestedNode.position.y + y
+            //         }
+            //     };
+            //     return output;
+            // });
+            // el.nestedGraph.graph = shiftedPositions;
+        }
+        return {
+            ...el,
+            position: {
+                x: x,
+                y: y
+            }
+        };
+    });
+    console.log('>> return:');
+    console.log('\t >> dimensions:', dimensions);
+    console.log('\t >> graph:', graph);
+    return { graph, dimensions };
+};
+
+export const testPosition = (nodes, edges, direction = 'LR') => {
+    console.log('@testPosition:', nodes, edges);
+    const parents = {};
+    const primaryNodes = [];
+    const primaryEdges = [];
+    const dagreGraph = new dagre.graphlib.Graph();
+    dagreGraph.setDefaultEdgeLabel(() => ({}));
+    dagreGraph.setGraph({
+        rankdir: direction,
+        edgesep: 60,
+        nodesep: 30,
+        ranker: 'longest-path',
+        acyclicer: 'greedy'
+    });
+    /* (1) set aside all nested nodes/edges */
+    nodes.forEach(n => {
+        if (n.parentNode) {
+            if (parents[n.parentNode]) {
+                parents[n.parentNode].nodes.push(n);
+            } else {
+                parents[n.parentNode] = {
+                    nodes: [n],
+                    edges: []
+                };
+            }
+        } else {
+            primaryNodes.push(n);
+        }
+    });
+    edges.forEach(e => {
+        if (parents[e.parent]) {
+            parents[e.parent].edges.push(e);
+        } else {
+            primaryEdges.push(e);
+        }
+    });
+
+    /* (2) get nested dimensions */
+    Object.keys(parents).map(k => {
+        const parent = parents[k];
+        const { graph, dimensions } = computeGraphPositions(
+            parent.nodes,
+            parent.edges,
+            direction
+        );
+        parent['graph'] = graph;
+        parent['nestedDimensions'] = dimensions;
+    });
+
+    /* (3) Resize parent containers */
+    for (let i = 0; i < primaryNodes.length; i++) {
+        const node = primaryNodes[i];
+        if (node.isParentNode) {
+            const nestedGraph = parents[node.id];
+            node['nestedGraph'] = nestedGraph;
+            // DELETE THIS ONCE CUSTOM NODES
+            if (node.style) {
+                node.style = {
+                    ...node.style,
+                    ...nestedGraph.nestedDimensions
+                };
+            }
+        }
+    }
+
+    const output = computeGraphPositions(primaryNodes, primaryEdges, direction);
+
+    // console.log('@TestPosition: primaryNodes:', primaryNodes);
+    // console.log('@TestPosition: primaryEdges:', primaryEdges);
+    // console.log('@TestPosition: parents', parents);
+    // console.log('@TestPosition: output.graph', output);
+    return output;
+};
+
 /**
  * Uses dagree/graphlib to compute graph layout
  * @see https://github.com/dagrejs/dagre/wiki
