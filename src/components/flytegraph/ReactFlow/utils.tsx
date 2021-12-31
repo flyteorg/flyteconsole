@@ -1,7 +1,6 @@
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dTypes } from 'models/Graph/types';
 import { CSSProperties } from 'react';
-import { Elements, isNode, useUpdateNodeInternals } from 'react-flow-renderer';
 import { RFBackgroundProps } from './types';
 
 const dagre = require('dagre');
@@ -10,6 +9,7 @@ export const COLOR_EXECUTED = '#2892f4';
 export const COLOR_NOT_EXECUTED = '#c6c6c6';
 export const COLOR_TASK_TYPE = '#666666';
 export const COLOR_GRAPH_BACKGROUND = '#666666';
+export const GRAPH_PADDING_FACTOR = 50;
 
 export const DISPLAY_NAME_START = 'start';
 export const DISPLAY_NAME_END = 'end';
@@ -133,7 +133,10 @@ export const getNestedContainerStyle = nodeExecutionStatus => {
     const style = {
         border: `1px dashed ${getStatusColor(nodeExecutionStatus)}`,
         borderRadius: '8px',
-        background: 'rgba(255,255,255,.9)'
+        background: 'rgba(255,255,255,.9)',
+        width: '100%',
+        height: '100%',
+        padding: '.25rem'
     } as React.CSSProperties;
     return style;
 };
@@ -255,12 +258,23 @@ export const getRFBackground = () => {
     };
 };
 
-export const getEstimatedGraphDimensions = (
-    elements: Elements,
+export interface PositionProps {
+    nodes: any;
+    edges: any;
+    parentMap: any;
+    direction?: string;
+}
+
+/**
+ * Computes positions for provided nodes
+ * @param PositionProps
+ * @returns
+ */
+export const computeChildNodePositions = ({
+    nodes,
+    edges,
     direction = 'LR'
-) => {
-    const ESTIMATE_HEIGHT = 25;
-    const ESTIMATE_WIDTH_FACTOR = 6;
+}: PositionProps) => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
     dagreGraph.setGraph({
@@ -270,53 +284,10 @@ export const getEstimatedGraphDimensions = (
         ranker: 'longest-path',
         acyclicer: 'greedy'
     });
-    elements.forEach(el => {
-        if (isNode(el)) {
-            const nodeWidth = el.data.text.length * ESTIMATE_WIDTH_FACTOR;
-            const nodeHeight = ESTIMATE_HEIGHT;
-            dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-        } else {
-            dagreGraph.setEdge(el.source, el.target);
-        }
-    });
-    dagre.layout(dagreGraph);
-    const graphWidth = dagreGraph.graph().width;
-    const graphHeight = dagreGraph.graph().height;
-    return {
-        width: graphWidth,
-        height: graphHeight
-    };
-};
-
-export const flattenNestedGraphs = nodes => {
-    const output = nodes.reduce((acc, currentNode) => {
-        if (currentNode.nestedGraph) {
-            acc = acc.concat(currentNode.nestedGraph.graph);
-            delete currentNode.nestedGraph;
-        }
-        acc.push(currentNode);
-        return acc;
-    }, []);
-    return output;
-};
-
-export const computeGraphPositions = (nodes, edges, direction = 'LR') => {
-    console.log('@computeGraphPositions');
-    console.log('\t nodes:', nodes);
-    console.log('\t edges:', edges);
-    const dagreGraph = new dagre.graphlib.Graph();
-    dagreGraph.setDefaultEdgeLabel(() => ({}));
-    dagreGraph.setGraph({
-        rankdir: direction,
-        edgesep: 60,
-        nodesep: 30,
-        ranker: 'longest-path',
-        acyclicer: 'greedy'
-    });
-    nodes.forEach(n => {
+    nodes.map(n => {
         dagreGraph.setNode(n.id, n.dimensions);
     });
-    edges.forEach(e => {
+    edges.map(e => {
         dagreGraph.setEdge(e.source, e.target);
     });
     dagre.layout(dagreGraph);
@@ -325,27 +296,9 @@ export const computeGraphPositions = (nodes, edges, direction = 'LR') => {
         height: dagreGraph.graph().height
     };
     const graph = nodes.map(el => {
-        const positionedNode = dagreGraph.node(el.id);
-        const x = positionedNode.x - positionedNode.width / 2;
-        const y = positionedNode.y - positionedNode.height / 2;
-        console.log('\tmapping nodes:');
-        console.log('\t\t x:', x);
-        console.log('\t\t y:', y);
-        /* If isParentNode, shift all its children */
-        if (el.isParentNode) {
-            console.log('\t\t\t el.isParentNode:', el);
-            // const shiftedPositions = el.nestedGraph.graph.map(nestedNode => {
-            //     const output = {
-            //         ...nestedNode,
-            //         position: {
-            //             x: nestedNode.position.x + x,
-            //             y: nestedNode.position.y + y
-            //         }
-            //     };
-            //     return output;
-            // });
-            // el.nestedGraph.graph = shiftedPositions;
-        }
+        const node = dagreGraph.node(el.id);
+        const x = node.x - node.width / 2;
+        const y = node.y - node.height / 2;
         return {
             ...el,
             position: {
@@ -354,17 +307,21 @@ export const computeGraphPositions = (nodes, edges, direction = 'LR') => {
             }
         };
     });
-    console.log('>> return:');
-    console.log('\t >> dimensions:', dimensions);
-    console.log('\t >> graph:', graph);
     return { graph, dimensions };
 };
 
-export const testPosition = (nodes, edges, direction = 'LR') => {
-    console.log('@testPosition:', nodes, edges);
-    const parents = {};
-    const primaryNodes = [];
-    const primaryEdges = [];
+/**
+ * Computes positions for root-level nodes in a graph by filtering out
+ * all children (nodes that have parents).
+ * @param PositionProps
+ * @returns
+ */
+export const computeRootNodePositions = ({
+    nodes,
+    edges,
+    parentMap,
+    direction = 'LR'
+}: PositionProps) => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
     dagreGraph.setGraph({
@@ -374,111 +331,191 @@ export const testPosition = (nodes, edges, direction = 'LR') => {
         ranker: 'longest-path',
         acyclicer: 'greedy'
     });
-    /* (1) set aside all nested nodes/edges */
-    nodes.forEach(n => {
-        if (n.parentNode) {
-            if (parents[n.parentNode]) {
-                parents[n.parentNode].nodes.push(n);
-            } else {
-                parents[n.parentNode] = {
-                    nodes: [n],
-                    edges: []
-                };
+
+    /* Filter all children from creating dagree nodes */
+    nodes.map(n => {
+        if (n.isRootParentNode) {
+            dagreGraph.setNode(n.id, {
+                width: parentMap[n.id].childGraphDimensions.width,
+                height: parentMap[n.id].childGraphDimensions.height
+            });
+        } else if (!n.parentNode) {
+            dagreGraph.setNode(n.id, n.dimensions);
+        }
+    });
+
+    /* Filter all children from creating dagree edges */
+    edges.map(e => {
+        if (!e.parent) {
+            dagreGraph.setEdge(e.source, e.target);
+        }
+    });
+
+    /* Compute graph posistions for root-level nodes */
+    dagre.layout(dagreGraph);
+    const dimensions = {
+        width: dagreGraph.graph().width,
+        height: dagreGraph.graph().height
+    };
+
+    /* Merge dagre positions to rf elements*/
+    const graph = nodes.map(el => {
+        const node = dagreGraph.node(el.id);
+        if (node) {
+            const x = node.x - node.width / 2;
+            const y = node.y - node.height / 2;
+            if (parentMap && el.isRootParentNode) {
+                el.style = parentMap[el.id].childGraphDimensions;
             }
-        } else {
-            primaryNodes.push(n);
-        }
-    });
-    edges.forEach(e => {
-        if (parents[e.parent]) {
-            parents[e.parent].edges.push(e);
-        } else {
-            primaryEdges.push(e);
-        }
-    });
-
-    /* (2) get nested dimensions */
-    Object.keys(parents).map(k => {
-        const parent = parents[k];
-        const { graph, dimensions } = computeGraphPositions(
-            parent.nodes,
-            parent.edges,
-            direction
-        );
-        parent['graph'] = graph;
-        parent['nestedDimensions'] = dimensions;
-    });
-
-    /* (3) Resize parent containers */
-    for (let i = 0; i < primaryNodes.length; i++) {
-        const node = primaryNodes[i];
-        if (node.isParentNode) {
-            const nestedGraph = parents[node.id];
-            node['nestedGraph'] = nestedGraph;
-            // DELETE THIS ONCE CUSTOM NODES
-            if (node.style) {
-                node.style = {
-                    ...node.style,
-                    ...nestedGraph.nestedDimensions
-                };
+            return {
+                ...el,
+                position: {
+                    x: x,
+                    y: y
+                }
+            };
+        } else if (parentMap) {
+            /* Case: Overwrite children positions with computed values */
+            const parent = parentMap[el.parentNode];
+            for (let i = 0; i < parent.nodes.length; i++) {
+                const node = parent.nodes[i];
+                if (node.id == el.id) {
+                    return {
+                        ...el,
+                        position: { ...node.position }
+                    };
+                }
             }
         }
-    }
-
-    const output = computeGraphPositions(primaryNodes, primaryEdges, direction);
-
-    // console.log('@TestPosition: primaryNodes:', primaryNodes);
-    // console.log('@TestPosition: primaryEdges:', primaryEdges);
-    // console.log('@TestPosition: parents', parents);
-    // console.log('@TestPosition: output.graph', output);
-    return output;
+    });
+    return { graph, dimensions };
 };
 
 /**
- * Uses dagree/graphlib to compute graph layout
- * @see https://github.com/dagrejs/dagre/wiki
- * @param elements      Graph elements (nodes/edges) in JSON format
- * @param direction     Direction to render graph
- * @returns
+ * Returns positioned nodes and edges.
+ *
+ * Note: Handles nesting by first "rendering" all child graphs to calculate their rendered
+ * dimensions and setting those values as the dimentions (width/height) for parent/container.
+ * Once those dimensions have been set (for parent/container nodes) we can set root-level node
+ * positions.
+ *
+ * @param nodes
+ * @param edges
+ * @param currentNestedView
+ * @param direction
+ * @returns Array of ReactFlow nodes
  */
-export const setReactFlowGraphLayout = (
-    elements: Elements,
-    direction: string
+export const getPositionedNodes = (
+    nodes,
+    edges,
+    currentNestedView,
+    direction = 'LR'
 ) => {
-    const dagreGraph = new dagre.graphlib.Graph();
-    dagreGraph.setDefaultEdgeLabel(() => ({}));
-    dagreGraph.setGraph({
-        rankdir: direction,
-        edgesep: 60,
-        nodesep: 30,
-        ranker: 'longest-path',
-        acyclicer: 'greedy'
+    const parentMap = {};
+    /* (1) Collect all child graphs in parentMap */
+    nodes.forEach(node => {
+        if (node.isRootParentNode) {
+            parentMap[node.id] = {
+                nodes: [],
+                edges: [],
+                childGraphDimensions: {
+                    width: 0,
+                    height: 0
+                },
+                self: node
+            };
+        }
+        if (node.parentNode) {
+            if (parentMap[node.parentNode]) {
+                if (parentMap[node.parentNode].nodes) {
+                    parentMap[node.parentNode].nodes.push(node);
+                } else {
+                    parentMap[node.parentNode].nodes = [node];
+                }
+            }
+        }
     });
-    elements.forEach(el => {
-        if (isNode(el)) {
-            const nodeWidth = el.__rf.width;
-            const nodeHeight = el.__rf.height;
-            dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-        } else {
-            dagreGraph.setEdge(el.source, el.target);
+    edges.forEach(edge => {
+        if (edge.parent) {
+            if (parentMap[edge.parent].edges) {
+                parentMap[edge.parent].edges.push(edge);
+            } else {
+                parentMap[edge.parent].edges = [edge];
+            }
         }
     });
 
-    dagre.layout(dagreGraph);
-    return elements.map(nodeState => {
-        if (isNode(nodeState)) {
-            const node = dagreGraph.node(nodeState.id);
-            return {
-                ...nodeState,
-                position: {
-                    x: node.x - node.width / 2,
-                    y: node.y - node.height / 2
-                }
-            };
-        } else {
-            return { ...nodeState };
+    console.log('@tuils CASE 5');
+    /* (2) Compute child graph positiions/dimensions */
+    for (const parentId in parentMap) {
+        const children = parentMap[parentId];
+        const childGraph = computeChildNodePositions({
+            nodes: children.nodes,
+            edges: children.edges,
+            direction: direction
+        });
+        let nestedDepth = 1;
+        if (
+            currentNestedView &&
+            currentNestedView[parentId] &&
+            currentNestedView[parentId].length > 0
+        ) {
+            nestedDepth = currentNestedView[parentId].length;
         }
+        const borderPadding = GRAPH_PADDING_FACTOR * nestedDepth;
+        const width = childGraph.dimensions.width + borderPadding;
+        const height = childGraph.dimensions.height + borderPadding;
+
+        parentMap[parentId].childGraphDimensions = {
+            width: width,
+            height: height
+        };
+        const relativePosNodes = childGraph.graph.map(node => {
+            const position = node.position;
+            position.y = position.y + GRAPH_PADDING_FACTOR / 2;
+            position.x = position.x + GRAPH_PADDING_FACTOR / 2;
+            return {
+                ...node,
+                position
+            };
+        });
+        parentMap[parentId].nodes = relativePosNodes;
+        parentMap[parentId].self.dimensions.width = width;
+        parentMap[parentId].self.dimensions.height = height;
+    }
+    console.log('>>>> Utils: output=>parentMap:', parentMap);
+
+    /* (3) Compute positions of root-level nodes */
+    const { graph, dimensions } = computeRootNodePositions({
+        nodes: nodes,
+        edges: edges,
+        direction: direction,
+        parentMap: parentMap
     });
+    return graph;
 };
 
-export default setReactFlowGraphLayout;
+export const ReactFlowIdHash = (nodes, edges) => {
+    const key = Math.floor(Math.random() * 10000).toString();
+    const properties = ['id', 'source', 'target', 'parent', 'parentNode'];
+    const hashGraph = nodes.map(node => {
+        const updates = {};
+        properties.forEach(prop => {
+            if (node[prop]) {
+                updates[prop] = `${key}-${node[prop]}`;
+            }
+        });
+        return { ...node, ...updates };
+    });
+
+    const hashEdges = edges.map(edge => {
+        const updates = {};
+        properties.forEach(prop => {
+            if (edge[prop]) {
+                updates[prop] = `${key}-${edge[prop]}`;
+            }
+        });
+        return { ...edge, ...updates };
+    });
+    return { hashGraph, hashEdges };
+};

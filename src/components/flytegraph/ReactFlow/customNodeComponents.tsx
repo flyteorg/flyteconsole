@@ -2,18 +2,16 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
-import { ReactFlowWrapper } from './ReactFlowWrapper';
-import setReactFlowGraphLayout, {
+import {
     COLOR_TASK_TYPE,
     COLOR_GRAPH_BACKGROUND,
     getGraphHandleStyle,
     getGraphNodeStyle,
     getRFBackground,
-    getNestedContainerStyle,
-    getNestedGraphContainerStyle,
-    getEstimatedGraphDimensions
+    getNestedContainerStyle
 } from './utils';
 import { RFGraphTypes, RFHandleProps } from './types';
+import { forEach } from 'lodash';
 
 export const renderDefaultHandles = (
     id: string,
@@ -21,14 +19,14 @@ export const renderDefaultHandles = (
     targetStyle: any
 ) => {
     const leftHandleProps: RFHandleProps = {
-        id: `rf-handle-left-${id}`,
+        id: `edge-left-${id}`,
         type: 'target',
         position: Position.Left,
         style: targetStyle
     };
 
     const rightHandleProps: RFHandleProps = {
-        id: `rf-handle-right-${id}`,
+        id: `edge-right-${id}`,
         type: 'source',
         position: Position.Right,
         style: sourceStyle
@@ -115,8 +113,7 @@ export const ReactFlowCustomMaxNested = ({ data }: any) => {
     };
 
     const onClick = e => {
-        console.log('onclick: data', data);
-        data.onAddNestedView('test from custom component');
+        data.onAddNestedView();
     };
 
     return (
@@ -248,20 +245,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
             </div>
         );
     };
-
-    /**
-     * @TODO
-     * Decide if we want to make all nodes clickable
-     */
-    // const isClickable =
-    //     data.nodeExecutionStatus == RFNodeExecutionStatus.executed;
-
     return (
-        // <div
-        //     {...(isClickable && {
-        //         onClick: handleClick
-        //     })}
-        // >
         <div onClick={handleClick}>
             {data.taskType ? renderTaskType() : null}
             <div style={styles}>{data.text}</div>
@@ -279,72 +263,115 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowCustomSubworkflowNode = ({ data }: any) => {
-    const { dag } = data;
-    const backgroundStyle = getRFBackground().nested;
+export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    const estimatedDimensions = getEstimatedGraphDimensions(dag);
-    const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
-    const [graphData, setGraphData] = useState(dag);
 
-    useEffect(() => {
-        console.log(
-            '\n\n\n\n@ReactFlowCustomSubworkflowNode - USE_EFFECT[dag] (will render new RF wrapper)'
+    const handleNestedViewClick = e => {
+        const index = e.target.id.substr(
+            e.target.id.indexOf('_') + 1,
+            e.target.id.length
         );
-        console.log('\t graph name:', dag[0].id);
-        setGraphData(dag);
-    }, [dag]);
-    return (
-        <>
-            {renderDefaultHandles(
-                data.scopedId,
-                getGraphHandleStyle('source'),
-                getGraphHandleStyle('target')
-            )}
-            <div style={borderStyle}>
-                <div style={graphContainer}>
-                    <ReactFlowWrapper
-                        rfGraphJson={graphData}
-                        backgroundStyle={backgroundStyle}
-                        type={RFGraphTypes.nested}
-                    />
-                </div>
-            </div>
-        </>
-    );
-};
-
-/**
- * Custom component renders Branch nodes as indepdenet flow
- * and any edge handles.
- * @param props.data data property of ReactFlowGraphNodeData
- */
-export const ReactFlowCustomBranchNode = ({ data }: any) => {
-    const { dag } = data;
-    const backgroundStyle = getRFBackground().nested;
-    const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
-    const estimatedDimensions = {
-        width: 500,
-        height: 400
+        data.onRemoveNestedView(data.scopedId, index);
     };
-    const graphContainer = getNestedGraphContainerStyle(estimatedDimensions);
+
+    const handleRootClick = () => {
+        data.onRemoveNestedView(data.scopedId, -1);
+    };
+
+    const currentNestedDepth = data.currentNestedView?.length || 0;
+
+    const BreadElement = ({ nestedView, index }) => {
+        const liStyles = {
+            paddingLeft: '.25rem',
+            color: '#626262',
+            border: '1px solid red',
+            '&::before': {
+                content: `''`,
+                position: 'absolute',
+                width: '50px',
+                height: '50px',
+                background: 'blue'
+            }
+        };
+        const onClick =
+            currentNestedDepth > index + 1 ? handleNestedViewClick : null;
+        return (
+            <li
+                onClick={onClick}
+                style={liStyles}
+                id={`${data.scopedId}_${index}`}
+            >
+                {nestedView}
+            </li>
+        );
+    };
+
+    const BorderElement = props => {
+        return <div style={borderStyle}>{props.children}</div>;
+    };
+
+    const BorderContainer = props => {
+        let output = BorderElement(props);
+        for (let i = 0; i < currentNestedDepth; i++) {
+            output = <BorderElement>{output}</BorderElement>;
+        }
+        return output;
+    };
+
+    const renderBreadCrumb = () => {
+        const breadContainerStyle = {
+            position: 'absolute',
+            display: 'flex',
+            width: '100%',
+            marginTop: '-1rem',
+            fontSize: '10px'
+        };
+        const olStyles = {
+            margin: 0,
+            padding: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            listStyle: 'none',
+            listStyleImage: 'none',
+            listStylePosition: 'none',
+            clear: 'none'
+        };
+        const headerStyle = {
+            color: '#8B37FF',
+            fontSize: '10px'
+        };
+
+        const rootClick = currentNestedDepth > 0 ? handleRootClick : null;
+        return (
+            <div style={breadContainerStyle}>
+                <header style={headerStyle} onClick={rootClick}>
+                    {data.text}
+                </header>
+                <ol style={olStyles}>
+                    {data.currentNestedView?.map((nestedView, i) => {
+                        return (
+                            <BreadElement
+                                nestedView={nestedView}
+                                index={i}
+                                key={nestedView}
+                            />
+                        );
+                    })}
+                </ol>
+            </div>
+        );
+    };
 
     return (
         <>
-            {renderDefaultHandles(
-                data.scopedId,
-                getGraphHandleStyle('source'),
-                getGraphHandleStyle('target')
-            )}
-            <div style={borderStyle}>
-                <div style={graphContainer}>
-                    <ReactFlowWrapper
-                        rfGraphJson={dag}
-                        backgroundStyle={backgroundStyle}
-                        type={RFGraphTypes.nested}
-                    />
-                </div>
-            </div>
+            {renderBreadCrumb()}
+            <BorderContainer>
+                {renderDefaultHandles(
+                    data.scopedId,
+                    getGraphHandleStyle('source'),
+                    getGraphHandleStyle('target')
+                )}
+            </BorderContainer>
         </>
     );
 };

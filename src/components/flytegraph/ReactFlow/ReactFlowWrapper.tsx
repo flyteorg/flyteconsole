@@ -1,35 +1,25 @@
 import * as React from 'react';
 import { useState, useEffect, useCallback } from 'react';
-import ReactFlow, {
-    applyEdgeChanges,
-    applyNodeChanges,
-    Background,
-    useNodesState
-} from 'react-flow-renderer';
-import { RFWrapperProps, RFGraphTypes } from './types';
-import * as testNodes from './testNodes.json';
-import * as testEdges from './testEdges.json';
+import ReactFlow, { Background } from 'react-flow-renderer';
+import { RFWrapperProps } from './types';
 import {
-    ReactFlowCustomBranchNode,
     ReactFlowCustomEndNode,
     ReactFlowCustomNestedPoint,
     ReactFlowCustomStartNode,
     ReactFlowCustomTaskNode,
-    ReactFlowCustomSubworkflowNode,
+    ReactFlowSubWorkflowContainer,
     ReactFlowCustomMaxNested,
     ReactFlowStaticNested,
     ReactFlowStaticNode
 } from './customNodeComponents';
-import zIndex from '@material-ui/core/styles/zIndex';
-import { testPosition, flattenNestedGraphs } from './utils';
+import { getPositionedNodes, ReactFlowIdHash } from './utils';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
  */
 const CustomNodeTypes = {
     FlyteNode_task: ReactFlowCustomTaskNode,
-    FlyteNode_subworkflow: ReactFlowCustomSubworkflowNode,
-    FlyteNode_branch: ReactFlowCustomBranchNode,
+    FlyteNode_subworkflow: ReactFlowSubWorkflowContainer,
     FlyteNode_start: ReactFlowCustomStartNode,
     FlyteNode_end: ReactFlowCustomEndNode,
     FlyteNode_nestedStart: ReactFlowCustomNestedPoint,
@@ -42,102 +32,77 @@ const CustomNodeTypes = {
 export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     rfGraphJson,
     backgroundStyle,
+    currentNestedView,
     version,
     nodeExecutionsById
 }) => {
-    // const [state, setState] = useState({
-    //     rfGraphJson: rfGraphJson,
-    //     version: version,
-    //     nodeExecutionsById: nodeExecutionsById
-    // });
+    const [state, setState] = useState({
+        shouldUpdate: true,
+        nodes: rfGraphJson.nodes,
+        edges: rfGraphJson.edges
+    });
+    const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
+        null
+    );
 
-    // useEffect(() => {
-    //     setState(state => ({
-    //         ...state,
-    //         nodeExecutionsById: nodeExecutionsById
-    //     }));
-    // }, [nodeExecutionsById]);
+    useEffect(() => {
+        if (reactFlowInstance && state.shouldUpdate == false) {
+            reactFlowInstance?.fitView();
+        }
+    }, [state.shouldUpdate, reactFlowInstance]);
 
-    // useEffect(() => {
-    //     setState(state => ({
-    //         ...state,
-    //         rfGraphJson: rfGraphJson
-    //     }));
-    // }, [rfGraphJson]);
+    useEffect(() => {
+        setState(state => ({
+            ...state,
+            shouldUpdate: true,
+            nodes: rfGraphJson.nodes,
+            edges: rfGraphJson.edges
+        }));
+    }, [rfGraphJson]);
 
-    // useEffect(() => {
-    //     setState(state => ({ ...state, version: version }));
-    // }, [version]);
-
-    const tempStyle = {
-        border: '1px solid blue',
-        background: 'rgba(90,55,190,.2)'
+    const onLoad = (rf: any) => {
+        setReactFlowInstance(rf);
     };
 
-    // const initialNodes = [
-    //     {
-    //         id: '1',
-    //         data: { label: 'Node 1' },
-    //         position: { x: 0, y: 0 },
-    //         isParentNode: true,
-    //         style: tempStyle
-    //     },
-    //     {
-    //         id: '3',
-    //         data: { label: 'Nested Node 1 -->3' },
-    //         position: { x: 0, y: 0 },
-    //         parentNode: '1',
-    //         style: tempStyle
-    //     },
-    //     {
-    //         id: '4',
-    //         data: { label: 'Node 4' },
-    //         position: { x: 0, y: 0 },
-    //         style: tempStyle
-    //     },
-    //     {
-    //         id: '5',
-    //         data: { label: 'Node 5' },
-    //         position: { x: 0, y: 0 },
-    //         style: tempStyle
-    //     },
-    //     {
-    //         id: '2',
-    //         data: { label: 'Nested Node 1->2' },
-    //         position: { x: 0, y: 0 },
-    //         parentNode: '1',
-    //         style: tempStyle
-    //     }
-    // ];
+    const onNodesChange = useCallback(
+        changes => {
+            console.log('@ReactFlowWrapper: CASE 0');
+            console.log('\t changes.length:', changes.length);
+            console.log('\t state.nodes.length:', state.nodes.length);
+            console.log('\t state.shouldUpdate:', state.shouldUpdate);
+            if (changes.length == state.nodes.length && state.shouldUpdate) {
+                const nodesWithDimensions: any[] = [];
+                for (let i = 0; i < changes.length; i++) {
+                    nodesWithDimensions.push({
+                        ...state.nodes[i],
+                        ['dimensions']: changes[i].dimensions
+                    });
+                }
+                console.log('@ReactFlowWrapper: CASE 1');
+                console.log('\t nodesWithDimensions:', nodesWithDimensions);
+                console.log('\t state.edges:', state.edges);
+                console.log('\t currentNestedView:', currentNestedView);
+                const positionedNodes = getPositionedNodes(
+                    nodesWithDimensions,
+                    state.edges,
+                    currentNestedView,
+                    'LR'
+                );
+                const { hashGraph, hashEdges } = ReactFlowIdHash(
+                    positionedNodes,
+                    state.edges
+                );
 
-    // const initialEdges = [
-    //     { id: 'e1-2', source: '1', target: '2', zIndex: 1, parent: '1' },
-    //     { id: 'e2-3', source: '2', target: '3', zIndex: 1, parent: '1' },
-    //     { id: 'e1-3', source: '1', target: '3', zIndex: 1, parent: '1' },
-    //     { id: 'e1-4', source: '1', target: '4' },
-    //     { id: 'e1-5', source: '1', target: '5' }
-    // ];
-
-    console.log('TEST:', testNodes);
-
-    const [nodes, setNodes] = useState(testNodes);
-    const [edges, setEdges] = useState(testEdges);
-
-    const onNodesChange = useCallback(changes => {
-        if (changes.length == nodes.length) {
-            const nodesWithDimensions: any[] = [];
-            for (let i = 0; i < changes.length; i++) {
-                nodesWithDimensions.push({
-                    ...nodes[i],
-                    ['dimensions']: changes[i].dimensions
-                });
+                setState(state => ({
+                    ...state,
+                    shouldUpdate: false,
+                    nodes: hashGraph,
+                    edges: hashEdges
+                }));
             }
-            const newNodes = testPosition(nodesWithDimensions, edges, 'LR');
-            const flattened = flattenNestedGraphs(newNodes.graph);
-            console.log('FLATTENED:', flattened);
-            setNodes(flattened);
-        }
-    }, []);
+        },
+        [state.shouldUpdate]
+    );
 
     const reactFlowStyle: React.CSSProperties = {
         display: 'flex',
@@ -145,14 +110,14 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         flexDirection: 'column'
     };
 
-    console.log('RENDER:', nodes);
     return (
         <ReactFlow
-            nodes={nodes}
-            edges={edges}
+            nodes={state.nodes}
+            edges={state.edges}
             nodeTypes={CustomNodeTypes}
             onNodesChange={onNodesChange}
             style={reactFlowStyle}
+            onPaneReady={onLoad}
             fitViewOnInit
         >
             <Background

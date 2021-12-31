@@ -86,7 +86,7 @@ export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
     } else if (isEndNode(node)) {
         return dTypes.end;
     } else if (node.branchNode) {
-        return dTypes.branch;
+        return dTypes.subworkflow;
     } else if (node.workflowNode) {
         return dTypes.subworkflow;
     } else {

@@ -1,16 +1,10 @@
 import * as React from 'react';
-import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformerDAGToReactFlow';
+import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { useState, useEffect } from 'react';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
-
-/**
- * Renders workflow graph using React Flow.
- * @param props.data    DAG from transformerWorkflowToDAG
- * @returns ReactFlow Graph as <ReactFlowWrapper>
- */
 
 const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
     for (const exe in nodeExecutionsById) {
@@ -33,50 +27,60 @@ const graphNodeCountChanged = (previous, data) => {
 
 const ReactFlowGraphComponent = props => {
     const { data, onNodeSelectionChanged, nodeExecutionsById } = props;
-    // const [currentNestedView, setCurrentNestedView] = useState([
-    //     {
-    //         parent: 'n1',
-    //         view: 'n1-0-n1'
-    //     }
-    // ]);
-    const [currentNestedView, setCurrentNestedView] = useState([]);
     const [state, setState] = useState({
         data: data,
+        currentNestedView: {},
         nodeExecutionsById: nodeExecutionsById,
         onNodeSelectionChanged: onNodeSelectionChanged,
         rfGraphJson: null
     });
 
-    const onAddNestedView = executionId => {
-        setCurrentNestedView([...currentNestedView, executionId]);
+    const onAddNestedView = view => {
+        const currentView = state.currentNestedView[view.parent] || [];
+        const newView = {
+            [view.parent]: [view.view, ...currentView]
+        };
+        setState(state => ({
+            ...state,
+            currentNestedView: { ...state.currentNestedView, ...newView }
+        }));
     };
 
-    const onRemoveNestedView = (executionId = null) => {
-        const current = [...currentNestedView];
-        current.pop();
-        setCurrentNestedView(current);
+    const onRemoveNestedView = (viewParent, viewIndex) => {
+        const currentNestedView = { ...state.currentNestedView };
+        currentNestedView[viewParent] = currentNestedView[viewParent]?.filter(
+            (item, i) => i <= viewIndex
+        );
+        if (currentNestedView[viewParent]?.length < 1) {
+            delete currentNestedView[viewParent];
+        }
+        setState(state => ({
+            ...state,
+            currentNestedView
+        }));
     };
 
     const buildReactFlowGraphData = () => {
+        console.log('@ReactFlowGraphComponent: case 1');
         return ConvertFlyteDagToReactFlows({
             root: state.data,
             nodeExecutionsById: state.nodeExecutionsById,
             onNodeSelectionChanged: state.onNodeSelectionChanged,
             onAddNestedView: onAddNestedView,
             onRemoveNestedView: onRemoveNestedView,
-            currentNestedView: currentNestedView,
+            currentNestedView: state.currentNestedView,
             maxRenderDepth: 1
         } as ConvertDagProps);
     };
 
     useEffect(() => {
         const newRFGraphData = buildReactFlowGraphData();
-        console.log('NEW GRAPH DATA (REFRESHED', newRFGraphData);
+        console.log('@ReactFlowGraphComponent: newRFGraphData', newRFGraphData);
         setState(state => ({
             ...state,
             rfGraphJson: newRFGraphData
         }));
-    }, [currentNestedView]);
+    }, [state.currentNestedView]);
 
     useEffect(() => {
         if (graphNodeCountChanged(state.data, data)) {
@@ -120,7 +124,8 @@ const ReactFlowGraphComponent = props => {
             backgroundStyle,
             rfGraphJson: state.rfGraphJson,
             type: RFGraphTypes.main,
-            nodeExecutionsById: nodeExecutionsById
+            nodeExecutionsById: nodeExecutionsById,
+            currentNestedView: state.currentNestedView
         };
         return (
             <div style={containerStyle}>

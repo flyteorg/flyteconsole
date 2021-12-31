@@ -1,0 +1,328 @@
+[
+    {
+        "id": "start-node",
+        "type": "FlyteNode_start",
+        "data": {
+            "nodeExecutionStatus": 7,
+            "text": "start",
+            "handles": [],
+            "nodeType": 4,
+            "scopedId": "start-node",
+            "dag": [],
+            "taskType": null
+        },
+        "position": {
+            "x": 0,
+            "y": 0
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "end-node",
+        "type": "FlyteNode_end",
+        "data": {
+            "nodeExecutionStatus": 7,
+            "text": "end",
+            "handles": [],
+            "nodeType": 5,
+            "scopedId": "end-node",
+            "dag": [],
+            "taskType": null
+        },
+        "position": {
+            "x": 0,
+            "y": 0
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "n0",
+        "type": "FlyteNode_subworkflow",
+        "data": {
+            "nodeExecutionStatus": 3,
+            "text": "my_subwf",
+            "handles": [],
+            "nodeType": 3,
+            "scopedId": "n0",
+            "dag": [
+                {
+                    "id": "start-node",
+                    "type": "FlyteNode_start",
+                    "data": {
+                        "nodeExecutionStatus": 7,
+                        "text": "start",
+                        "handles": [],
+                        "nodeType": 4,
+                        "scopedId": "start-node",
+                        "dag": [],
+                        "taskType": null
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "end-node",
+                    "type": "FlyteNode_end",
+                    "data": {
+                        "nodeExecutionStatus": 7,
+                        "text": "end",
+                        "handles": [],
+                        "nodeType": 5,
+                        "scopedId": "end-node",
+                        "dag": [],
+                        "taskType": null
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "n0-0-n0",
+                    "type": "FlyteNode_task",
+                    "data": {
+                        "nodeExecutionStatus": 3,
+                        "text": "t1",
+                        "handles": [],
+                        "nodeType": 0,
+                        "scopedId": "n0-0-n0",
+                        "dag": [],
+                        "taskType": "python-task"
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "n0-0-n1",
+                    "type": "FlyteNode_task",
+                    "data": {
+                        "nodeExecutionStatus": 3,
+                        "text": "t1",
+                        "handles": [],
+                        "nodeType": 0,
+                        "scopedId": "n0-0-n1",
+                        "dag": [],
+                        "taskType": "python-task"
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "[start-node]->[n0-0-n0]",
+                    "source": "start-node",
+                    "target": "n0-0-n0",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n0-0-n0]->[end-node]",
+                    "source": "n0-0-n0",
+                    "target": "end-node",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n0-0-n0]->[n0-0-n1]",
+                    "source": "n0-0-n0",
+                    "target": "n0-0-n1",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n0-0-n1]->[end-node]",
+                    "source": "n0-0-n1",
+                    "target": "end-node",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                }
+            ],
+            "taskType": null
+        },
+        "position": {
+            "x": 0,
+            "y": 0
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "n1",
+        "type": "FlyteNode_subworkflow",
+        "data": {
+            "nodeExecutionStatus": 3,
+            "text": "parent_wf",
+            "handles": [],
+            "nodeType": 3,
+            "scopedId": "n1",
+            "dag": [
+                {
+                    "id": "start-node",
+                    "type": "FlyteNode_start",
+                    "data": {
+                        "nodeExecutionStatus": 7,
+                        "text": "start",
+                        "handles": [],
+                        "nodeType": 4,
+                        "scopedId": "start-node",
+                        "dag": [],
+                        "taskType": null
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "end-node",
+                    "type": "FlyteNode_end",
+                    "data": {
+                        "nodeExecutionStatus": 7,
+                        "text": "end",
+                        "handles": [],
+                        "nodeType": 5,
+                        "scopedId": "end-node",
+                        "dag": [],
+                        "taskType": null
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "n1-0-node-t1-parent",
+                    "type": "FlyteNode_task",
+                    "data": {
+                        "nodeExecutionStatus": 3,
+                        "text": "t1",
+                        "handles": [],
+                        "nodeType": 0,
+                        "scopedId": "n1-0-node-t1-parent",
+                        "dag": [],
+                        "taskType": "python-task"
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "n1-0-n1",
+                    "type": "FlyteNode_nestedMaxDepth",
+                    "data": {
+                        "nodeExecutionStatus": 3,
+                        "text": "my_subwf",
+                        "handles": [],
+                        "nodeType": 8,
+                        "scopedId": "n1-0-n1",
+                        "dag": [],
+                        "taskType": null
+                    },
+                    "position": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "sourcePosition": "right",
+                    "targetPosition": "left"
+                },
+                {
+                    "id": "[start-node]->[n1-0-node-t1-parent]",
+                    "source": "start-node",
+                    "target": "n1-0-node-t1-parent",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n1-0-node-t1-parent]->[end-node]",
+                    "source": "n1-0-node-t1-parent",
+                    "target": "end-node",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n1-0-node-t1-parent]->[n1-0-n1]",
+                    "source": "n1-0-node-t1-parent",
+                    "target": "n1-0-n1",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                },
+                {
+                    "id": "[n1-0-n1]->[end-node]",
+                    "source": "n1-0-n1",
+                    "target": "end-node",
+                    "sourceHandle": "left-handle",
+                    "arrowHeadType": "arrowClosed",
+                    "type": "default"
+                }
+            ],
+            "taskType": null
+        },
+        "position": {
+            "x": 0,
+            "y": 0
+        },
+        "sourcePosition": "right",
+        "targetPosition": "left"
+    },
+    {
+        "id": "[start-node]->[n0]",
+        "source": "start-node",
+        "target": "n0",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default"
+    },
+    {
+        "id": "[n0]->[end-node]",
+        "source": "n0",
+        "target": "end-node",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default"
+    },
+    {
+        "id": "[start-node]->[n1]",
+        "source": "start-node",
+        "target": "n1",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default"
+    },
+    {
+        "id": "[n1]->[end-node]",
+        "source": "n1",
+        "target": "end-node",
+        "sourceHandle": "left-handle",
+        "arrowHeadType": "arrowClosed",
+        "type": "default"
+    }
+]

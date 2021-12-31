@@ -33,8 +33,19 @@ export interface staticNodeExecutionIds {
 export const transformerWorkflowToDAG = (
     workflow: CompiledWorkflowClosure
 ): any => {
+    console.log('@transformerWorkflowToDAG input(workflow):', workflow);
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
+
+    const createDEdge = ({ sourceId, targetId }): dEdge => {
+        const id = `${sourceId}->${targetId}`;
+        const edge: dEdge = {
+            sourceId: sourceId,
+            targetId: targetId,
+            id: id
+        };
+        return edge;
+    };
 
     const createDNode = (props): dNode => {
         const { compiledNode, parentDNode, taskTemplate, typeOverride } = props;
@@ -58,8 +69,9 @@ export const transformerWorkflowToDAG = (
                 parentDNode.type == dTypes.branch ||
                 parentDNode.type == dTypes.subworkflow
             ) {
-                /* Note: request contract indicates nested (subworkflow, branch) with -0- */
-                scopedId = `${parentDNode.scopedId}-0-${compiledNode.id}`;
+                /* Note: request contract indicates nested (subworkflow, branch) with -${retries}- */
+                const retries = compiledNode.metadata?.retries.retries;
+                scopedId = `${parentDNode.scopedId}-${retries}-${compiledNode.id}`;
             } else {
                 scopedId = `${parentDNode.scopedId}-${compiledNode.id}`;
             }
@@ -285,10 +297,12 @@ export const transformerWorkflowToDAG = (
     ) => {
         const list = context.downstream[ingress].ids;
         for (let i = 0; i < list.length; i++) {
-            const edge: dEdge = {
-                sourceId: nodeMap[ingress].dNode.scopedId,
-                targetId: nodeMap[list[i]].dNode.scopedId
-            };
+            const source = nodeMap[ingress].dNode.scopedId;
+            const target = nodeMap[list[i]].dNode.scopedId;
+            const edge: dEdge = createDEdge({
+                sourceId: source,
+                targetId: target
+            });
             root.edges.push(edge);
             if (context.downstream[list[i]]) {
                 buildOutWorkflowEdges(root, context, list[i], nodeMap);
@@ -375,9 +389,9 @@ export const transformerWorkflowToDAG = (
                 break;
             case dTypes.primary:
                 return parseWorkflow(root, context, graphType, workflow);
-                break;
         }
     };
     const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
+    console.log('@workflowToDag =>', dag);
     return { dag, staticExecutionIdsMap };
 };
