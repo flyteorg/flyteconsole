@@ -117,8 +117,22 @@ export const getTaskTypeFromCompiledNode = (
     return null;
 };
 
-export const getNodeNameFromDag = (dagData: dNode, nodeId: string) =>
-    dagData[nodeId].value.taskNode.referenceId.name;
+export const getNodeNameFromDag = (dagData: dNode, nodeId: string) => {
+    const id = nodeId.slice(nodeId.lastIndexOf('-') + 1);
+    const value = dagData[id].value;
+
+    if (value.taskNode) {
+        return value.taskNode.referenceId.name;
+    } else if (value.workflowNode) {
+        const {
+            workflowNode: {
+                subWorkflowRef: { name }
+            }
+        } = value;
+        return name;
+    }
+    return '';
+};
 
 export const transformWorkflowToKeyedDag = (workflow: Workflow) => {
     if (!workflow.closure?.compiledWorkflow) return {};
