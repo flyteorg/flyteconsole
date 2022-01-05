@@ -81,9 +81,12 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
         );
     };
 
-    const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => {
-        return <ExecutionTimeline nodeExecutions={nodeExecutions} />;
-    };
+    const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => (
+        <ExecutionTimeline
+            nodeExecutions={nodeExecutions}
+            workflowId={execution.closure.workflowId}
+        />
+    );
 
     return (
         <>
