@@ -19,22 +19,6 @@ function valueText(value: number) {
     return `${value}s`;
 }
 
-function ValueLabelComponent(props: Props) {
-    const { children, open, value } = props;
-
-    return (
-        <Tooltip
-            arrow
-            open={open}
-            enterTouchDelay={0}
-            placement="top"
-            title={value}
-        >
-            {children}
-        </Tooltip>
-    );
-}
-
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
         borderTop: `1px solid ${theme.palette.divider}`,
@@ -116,7 +100,7 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
 }) => {
     const styles = useStyles();
     const [timezone, setTimezone] = React.useState(TimeZone.Local);
-    const [timeInterval, setTimeInterval] = React.useState(0);
+    const [timeInterval, setTimeInterval] = React.useState(1);
 
     const marks = React.useMemo(
         () => [
@@ -169,6 +153,16 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
         }
     };
 
+    const getTitle = React.useCallback(
+        value => {
+            if (value === 0) {
+                return '1s';
+            }
+            return formatSeconds(maxTime * percentage[value - 1]);
+        },
+        [maxTime]
+    );
+
     return (
         <div className={styles.container}>
             <CustomSlider
@@ -176,7 +170,17 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
                 onChange={handleTimeIntervalChange}
                 marks={marks}
                 max={5}
-                ValueLabelComponent={ValueLabelComponent}
+                ValueLabelComponent={({ children, open, value }) => (
+                    <Tooltip
+                        arrow
+                        open={open}
+                        enterTouchDelay={0}
+                        placement="top"
+                        title={getTitle(value)}
+                    >
+                        {children}
+                    </Tooltip>
+                )}
                 valueLabelDisplay="on"
                 getAriaValueText={valueText}
             />
