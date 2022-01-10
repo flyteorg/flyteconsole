@@ -3,13 +3,16 @@ import * as moment from 'moment-timezone';
 import { statusColors, tableHeaderColor } from 'components/Theme/constants';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
 import { NodeExecutionsTimelineContext } from './context';
 import { NodeExecutionName } from './NodeExecutionName';
 import { DetailsPanel } from 'components/common/DetailsPanel';
+import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 import { Chart as ChartJS, registerables } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { Bar } from 'react-chartjs-2';
 import { ExecutionTimelineFooter } from './ExecutionTimelineFooter';
@@ -23,7 +26,7 @@ import { dNode } from 'models/Graph/types';
 import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDAG';
 import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
 
-ChartJS.register(...registerables);
+ChartJS.register(...registerables, ChartDataLabels);
 
 interface Props {
     nodeExecutions: NodeExecution[];
@@ -34,17 +37,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     wrapper: {
         display: 'flex',
         flexDirection: 'column',
-        flex: 1
+        flex: '1 1 100%'
     },
     container: {
         display: 'flex',
-        flex: 1,
-        overflowY: 'scroll'
+        flex: '1 1 0',
+        overflowY: 'auto'
     },
     taskNames: {
         display: 'flex',
         flexDirection: 'column',
-        borderRight: `1px solid ${theme.palette.divider}`
+        borderRight: `1px solid ${theme.palette.divider}`,
+        overflowY: 'auto'
     },
     taskNamesHeader: {
         textTransform: 'uppercase',
@@ -53,16 +57,38 @@ const useStyles = makeStyles((theme: Theme) => ({
         lineHeight: '16px',
         color: tableHeaderColor,
         height: 45,
+        flexBasis: 45,
         display: 'flex',
         alignItems: 'center',
         borderBottom: `4px solid ${theme.palette.divider}`,
         paddingLeft: 30
     },
+    taskNamesList: {
+        overflowY: 'scroll',
+        flex: 1
+    },
     taskDurations: {
         borderLeft: `1px solid ${theme.palette.divider}`,
         marginLeft: 4,
         flex: 1,
-        overflow: 'auto'
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    taskDurationsLabelsView: {
+        overflow: 'hidden',
+        borderBottom: `4px solid ${theme.palette.divider}`
+    },
+    taskDurationsLabelItem: {
+        fontSize: 12,
+        fontFamily: 'Open Sans',
+        fontWeight: 'bold',
+        color: COLOR_SPECTRUM.gray40.color,
+        paddingLeft: 10
+    },
+    taskDurationsView: {
+        flex: 1,
+        overflowY: 'hidden'
     },
     namesContainer: {
         display: 'flex',
@@ -71,7 +97,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         justifyContent: 'center',
         padding: '0 30px',
         height: 56,
-        width: 300,
+        width: 256,
         borderBottom: `1px solid ${theme.palette.divider}`,
         whiteSpace: 'nowrap'
     },
@@ -83,44 +109,56 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
 }));
 
-function TaskNames({ executions, nodes }) {
-    const state = React.useContext(NodeExecutionsTimelineContext);
-    const styles = useStyles();
-
-    return (
-        <>
-            {nodes.map(node => {
-                const execution = executions.find(
-                    exec => exec.id.nodeId === node.id
-                );
-                if (execution) {
-                    return (
-                        <NodeExecutionName
-                            execution={execution}
-                            state={state}
-                            key={`timeline-${execution.id.nodeId}`}
-                        />
-                    );
-                }
-                return (
-                    <div
-                        className={styles.namesContainer}
-                        key={`task-name-${node.id}`}
-                    >
-                        {node.name}
-                        <Typography
-                            variant="subtitle1"
-                            color="textSecondary"
-                            className={styles.displayName}
-                        >
-                            {node.value.template.id.name}
-                        </Typography>
-                    </div>
-                );
-            })}
-        </>
-    );
+interface TaskNamesProps {
+    executions: NodeExecution[];
+    nodes: dNode[];
 }
+
+const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
+    (props, ref) => {
+        const { executions, nodes } = props;
+        const state = React.useContext(NodeExecutionsTimelineContext);
+        const styles = useStyles();
+
+        const executionsMap = React.useMemo(
+            () =>
+                executions.reduce(
+                    (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
+                    {}
+                ),
+            [executions]
+        );
+
+        return (
+            <div className={styles.taskNamesList} ref={ref}>
+                {executions.map(execution => (
+                    <NodeExecutionName
+                        execution={execution}
+                        state={state}
+                        key={`task-name-${execution.id.nodeId}`}
+                    />
+                ))}
+                {nodes
+                    .filter(node => !executionsMap[node.id])
+                    .map(node => (
+                        <div
+                            className={styles.namesContainer}
+                            key={`task-name-${node.id}`}
+                        >
+                            {node.name}
+                            <Typography
+                                variant="subtitle1"
+                                color="textSecondary"
+                                className={styles.displayName}
+                            >
+                                {node.value.template.id.name}
+                            </Typography>
+                        </div>
+                    ))}
+            </div>
+        );
+    }
+);
 
 const INTERVAL_LENGTH = 110;
 
@@ -156,7 +194,10 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const [chartTimeInterval, setChartTimeInterval] = React.useState(12);
     const [chartTimezone, setChartTimezone] = React.useState(TimeZone.Local);
     const [chartWidth, setChartWidth] = React.useState(0);
+    const [labelInterval, setLabelInterval] = React.useState(INTERVAL_LENGTH);
     const durationsRef = React.useRef<HTMLDivElement>(null);
+    const durationsLabelsRef = React.useRef<HTMLDivElement>(null);
+    const taskNamesRef = React.createRef<HTMLDivElement>();
 
     const { nodes: originalNodes } = transformerWorkflowToDAG(
         closure.compiledWorkflow!
@@ -165,13 +206,14 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         node => !isStartNode(node) && !isEndNode(node)
     );
 
-    const executionsMap = React.useMemo(() => {
-        const mapData = {};
-        nodeExecutions.forEach(execution => {
-            mapData[execution.id.nodeId] = execution;
-        });
-        return mapData;
-    }, [nodeExecutions]);
+    const executionsMap = React.useMemo(
+        () =>
+            nodeExecutions.reduce(
+                (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
+                {}
+            ),
+        [nodeExecutions]
+    );
 
     const timelineContext = React.useMemo(
         () => ({ selectedExecution, setSelectedExecution }),
@@ -182,23 +224,41 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const handleTimeIntervalChange = interval => setChartTimeInterval(interval);
     const handleTimezoneChange = tz => setChartTimezone(tz);
 
-    console.log(nodeExecutions, nodes);
-
     const durationData = React.useMemo(() => {
-        return nodes.map(nodeId => {
-            const execution = executionsMap[nodeId.id];
-            if (!execution || !execution.closure.duration) {
+        const definedExecutions = nodeExecutions.map(execution => {
+            if (execution.closure.phase === NodeExecutionPhase.RUNNING) {
+                if (!execution.closure.startedAt) {
+                    return 0;
+                }
+                return (
+                    (Date.now() -
+                        timestampToDate(
+                            execution.closure.startedAt
+                        ).getTime()) /
+                    1000
+                );
+            }
+            if (!execution.closure.duration) {
                 return 0;
             }
             return durationToMilliseconds(execution.closure.duration) / 1000;
         });
-    }, [executionsMap, nodes]);
+        return [
+            ...definedExecutions,
+            ...nodes.filter(node => !executionsMap[node.id]).map(() => -1)
+        ];
+    }, [nodeExecutions, executionsMap, nodes]);
 
     const colorData = React.useMemo(() => {
-        return durationData.map(duration => {
-            return duration === 0 ? statusColors.UNKNOWN : statusColors.SUCCESS;
+        return nodes.map(nodeId => {
+            const execution = executionsMap[nodeId.id];
+            return !execution
+                ? statusColors.UNKNOWN
+                : execution.closure.phase === NodeExecutionPhase.RUNNING
+                ? '#4b92ed'
+                : statusColors.SUCCESS;
         });
-    }, [durationData]);
+    }, [executionsMap, nodes]);
 
     const startedAt = React.useMemo(() => {
         if (nodeExecutions.length === 0) {
@@ -208,18 +268,43 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     }, [nodeExecutions]);
 
     const stackedData = React.useMemo(() => {
-        return nodes.map(node => {
-            const exec = executionsMap[node.id];
-            if (!exec) {
-                return 100;
+        let undefinedStart = 0;
+        for (const exec of nodeExecutions) {
+            if (exec.closure.startedAt) {
+                const absoluteDuration =
+                    timestampToDate(exec.closure.startedAt).getTime() -
+                    startedAt.getTime() +
+                    (exec.closure.duration
+                        ? durationToMilliseconds(exec.closure.duration)
+                        : 0);
+                if (absoluteDuration > undefinedStart) {
+                    undefinedStart = absoluteDuration;
+                }
             }
-            return (
-                (timestampToDate(exec.closure.startedAt!).getTime() -
-                    startedAt.getTime()) /
-                1000
-            );
+        }
+        undefinedStart = undefinedStart / 1000;
+
+        const definedExecutions = nodeExecutions.map(execution =>
+            execution.closure.startedAt
+                ? (timestampToDate(execution.closure.startedAt).getTime() -
+                      startedAt.getTime()) /
+                  1000
+                : 0
+        );
+
+        return [
+            ...definedExecutions,
+            ...nodes
+                .filter(node => !executionsMap[node.id])
+                .map(() => undefinedStart)
+        ];
+    }, [nodes, nodeExecutions, executionsMap, startedAt]);
+
+    const stackedColorData = React.useMemo(() => {
+        return durationData.map(duration => {
+            return duration === 0 ? '#4AE3AE40' : 'rgba(0, 0, 0, 0)';
         });
-    }, [nodes, executionsMap, startedAt]);
+    }, [durationData]);
 
     const chartData = React.useMemo(() => {
         return {
@@ -227,47 +312,101 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
             datasets: [
                 {
                     data: stackedData,
-                    backgroundColor: 'rgba(0, 0, 0, 0)',
-                    borderWidth: 0
+                    backgroundColor: stackedColorData,
+                    barThickness: 50,
+                    borderWidth: 0,
+                    datalabels: {
+                        labels: {
+                            title: null
+                        }
+                    }
                 },
                 {
                     data: durationData.map(duration => {
-                        console.log(duration);
-                        return duration === 0 ? 0.5 : duration;
+                        return duration === -1
+                            ? 10
+                            : duration === 0
+                            ? 0.5
+                            : duration;
                     }),
                     backgroundColor: colorData,
                     barThickness: 50,
-                    borderWidth: 0
+                    borderWidth: 0,
+                    datalabels: {
+                        color: '#292936',
+                        align: 'start',
+                        formatter: function(value, context) {
+                            if (durationData[context.dataIndex] === -1) {
+                                return '';
+                            }
+                            return Math.round(value) + 's';
+                        }
+                    }
                 }
             ]
         };
-    }, [durationData, stackedData, colorData]);
-
-    console.log(durationData);
+    }, [durationData, stackedData, colorData, stackedColorData]);
 
     const totalDuration = React.useMemo(() => {
-        return durationData.reduce((prev, cur) => prev + cur, 0);
-    }, [durationData]);
+        const durations = durationData.map(
+            (duration, idx) => duration + stackedData[idx]
+        );
+        return Math.max(...durations);
+    }, [durationData, stackedData]);
 
     React.useEffect(() => {
-        const calcWidth = (totalDuration * INTERVAL_LENGTH) / chartTimeInterval;
+        const calcWidth =
+            Math.ceil(totalDuration / chartTimeInterval) * INTERVAL_LENGTH;
         if (!durationsRef.current) {
             setChartWidth(calcWidth);
+            setLabelInterval(INTERVAL_LENGTH);
         } else if (calcWidth < durationsRef.current.clientWidth) {
+            setLabelInterval(
+                durationsRef.current.clientWidth /
+                    Math.ceil(totalDuration / chartTimeInterval)
+            );
             setChartWidth(durationsRef.current.clientWidth);
         } else {
             setChartWidth(calcWidth);
+            setLabelInterval(INTERVAL_LENGTH);
         }
     }, [totalDuration, chartTimeInterval, durationsRef]);
 
     React.useEffect(() => {
-        const el = durationsRef.current;
-        if (el) {
+        const durationsView = durationsRef?.current;
+        const labelsView = durationsLabelsRef?.current;
+        if (durationsView && labelsView) {
             const handleScroll = e => {
-                el.scrollTo({
-                    left: el.scrollLeft + e.deltaY,
+                durationsView.scrollTo({
+                    left: durationsView.scrollLeft + e.deltaY,
                     behavior: 'smooth'
                 });
+                labelsView.scrollTo({
+                    left: labelsView.scrollLeft + e.deltaY,
+                    behavior: 'smooth'
+                });
+            };
+
+            durationsView.addEventListener('wheel', handleScroll);
+
+            return () =>
+                durationsView.removeEventListener('wheel', handleScroll);
+        }
+
+        return () => {};
+    }, [durationsRef, durationsLabelsRef]);
+
+    React.useEffect(() => {
+        const el = taskNamesRef.current;
+        if (el) {
+            const handleScroll = e => {
+                const canvasView = durationsRef?.current;
+                if (canvasView) {
+                    canvasView.scrollTo({
+                        top: canvasView.scrollTop + e.deltaY,
+                        behavior: 'smooth'
+                    });
+                }
             };
 
             el.addEventListener('wheel', handleScroll);
@@ -276,7 +415,21 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         }
 
         return () => {};
-    }, [durationsRef]);
+    }, [taskNamesRef, durationsRef]);
+
+    const labels = React.useMemo(() => {
+        const lbs = new Array(
+            Math.ceil(totalDuration / chartTimeInterval)
+        ).fill(0);
+        return lbs.map((_, idx) => {
+            const time = moment.utc(
+                new Date(startedAt.getTime() + idx * chartTimeInterval * 1000)
+            );
+            return chartTimezone === TimeZone.UTC
+                ? time.format('hh:mm:ss A')
+                : time.local().format('hh:mm:ss A');
+        });
+    }, [chartTimezone, startedAt, chartTimeInterval, totalDuration]);
 
     const options = {
         animation: false as const,
@@ -306,21 +459,11 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                 format: Intl.DateTimeFormat,
                 position: 'top' as const,
                 ticks: {
-                    align: 'start' as const,
-                    callback: function(value) {
-                        const time = moment.utc(
-                            new Date(startedAt.getTime() + value * 1000)
-                        );
-                        return chartTimezone === TimeZone.UTC
-                            ? time.format('hh:mm:ss A')
-                            : time.local().format('hh:mm:ss A');
-                    },
+                    display: false,
+                    autoSkip: false,
                     stepSize: chartTimeInterval
                 },
-                stacked: true,
-                afterTickToLabelConversion: function(scaleInstance) {
-                    scaleInstance.ticks[scaleInstance.ticks.length - 1] = {};
-                }
+                stacked: true
             },
             y: {
                 stacked: true
@@ -336,18 +479,57 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                         <Typography className={styles.taskNamesHeader}>
                             Task Name
                         </Typography>
-                        <TaskNames executions={nodeExecutions} nodes={nodes} />
+                        <TaskNames
+                            executions={nodeExecutions}
+                            nodes={nodes}
+                            ref={taskNamesRef}
+                        />
                     </div>
-                    <div className={styles.taskDurations} ref={durationsRef}>
+                    <div className={styles.taskDurations}>
                         <div
-                            style={{
-                                width: `${chartWidth}px`,
-                                height: `${55 * durationData.length + 52}px`,
-                                marginTop: 15,
-                                marginLeft: -10
-                            }}
+                            className={styles.taskDurationsLabelsView}
+                            ref={durationsLabelsRef}
                         >
-                            <Bar options={options} data={chartData} />
+                            <div
+                                style={{
+                                    width: `${chartWidth}px`,
+                                    height: 41,
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                {labels.map((label, idx) => {
+                                    return (
+                                        <div
+                                            className={
+                                                styles.taskDurationsLabelItem
+                                            }
+                                            style={{
+                                                width: `${labelInterval}px`
+                                            }}
+                                            key={`duration-tick-${idx}`}
+                                        >
+                                            {label}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        <div
+                            className={styles.taskDurationsView}
+                            ref={durationsRef}
+                        >
+                            <div
+                                style={{
+                                    width: `${chartWidth + 20}px`,
+                                    height: `${55 * durationData.length +
+                                        42}px`,
+                                    marginTop: -11,
+                                    marginLeft: -15
+                                }}
+                            >
+                                <Bar options={options} data={chartData} />
+                            </div>
                         </div>
                     </div>
                 </NodeExecutionsTimelineContext.Provider>
