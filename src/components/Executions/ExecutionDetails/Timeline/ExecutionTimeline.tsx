@@ -225,23 +225,21 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const handleTimezoneChange = tz => setChartTimezone(tz);
 
     const durationData = React.useMemo(() => {
-        const definedExecutions = nodeExecutions.map(execution => {
-            if (execution.closure.phase === NodeExecutionPhase.RUNNING) {
-                if (!execution.closure.startedAt) {
+        const definedExecutions = nodeExecutions.map(exec => {
+            if (exec.closure.phase === NodeExecutionPhase.RUNNING) {
+                if (!exec.closure.startedAt) {
                     return 0;
                 }
                 return (
                     (Date.now() -
-                        timestampToDate(
-                            execution.closure.startedAt
-                        ).getTime()) /
+                        timestampToDate(exec.closure.startedAt).getTime()) /
                     1000
                 );
             }
-            if (!execution.closure.duration) {
+            if (!exec.closure.duration) {
                 return 0;
             }
-            return durationToMilliseconds(execution.closure.duration) / 1000;
+            return durationToMilliseconds(exec.closure.duration) / 1000;
         });
         return [
             ...definedExecutions,
@@ -250,15 +248,18 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     }, [nodeExecutions, executionsMap, nodes]);
 
     const colorData = React.useMemo(() => {
-        return nodes.map(nodeId => {
-            const execution = executionsMap[nodeId.id];
-            return !execution
-                ? statusColors.UNKNOWN
-                : execution.closure.phase === NodeExecutionPhase.RUNNING
+        const definedExecutions = nodeExecutions.map(exec =>
+            exec.closure.phase === NodeExecutionPhase.RUNNING
                 ? '#4b92ed'
-                : statusColors.SUCCESS;
-        });
-    }, [executionsMap, nodes]);
+                : statusColors.SUCCESS
+        );
+        return [
+            ...definedExecutions,
+            ...nodes
+                .filter(node => !executionsMap[node.id])
+                .map(() => statusColors.UNKNOWN)
+        ];
+    }, [nodeExecutions, executionsMap, nodes]);
 
     const startedAt = React.useMemo(() => {
         if (nodeExecutions.length === 0) {
@@ -271,12 +272,15 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         let undefinedStart = 0;
         for (const exec of nodeExecutions) {
             if (exec.closure.startedAt) {
+                const startedTime = timestampToDate(
+                    exec.closure.startedAt
+                ).getTime();
                 const absoluteDuration =
-                    timestampToDate(exec.closure.startedAt).getTime() -
+                    startedTime -
                     startedAt.getTime() +
                     (exec.closure.duration
                         ? durationToMilliseconds(exec.closure.duration)
-                        : 0);
+                        : Date.now() - startedTime);
                 if (absoluteDuration > undefinedStart) {
                     undefinedStart = absoluteDuration;
                 }
@@ -284,9 +288,9 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         }
         undefinedStart = undefinedStart / 1000;
 
-        const definedExecutions = nodeExecutions.map(execution =>
-            execution.closure.startedAt
-                ? (timestampToDate(execution.closure.startedAt).getTime() -
+        const definedExecutions = nodeExecutions.map(exec =>
+            exec.closure.startedAt
+                ? (timestampToDate(exec.closure.startedAt).getTime() -
                       startedAt.getTime()) /
                   1000
                 : 0
