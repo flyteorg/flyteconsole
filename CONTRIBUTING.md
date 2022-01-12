@@ -32,6 +32,45 @@ a single module, you can specify that one specifically
 (ex. ``localStorage.debug = 'flyte:adminEntity'`` to only see decoded Flyte
 Admin API requests).
 
+## Google Analytics
+
+This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>`_
+libary to include Google Analytics tracking code in a website or app. For all the environments, it is configured using ENABLE_GA environment variable.
+By default, it's enabled like this: ``ENABLE_GA=true``. If you want to disable it, just set it false. (ex. ``ENABLE_GA=false``).
+
+## 📦 Install Dependencies
+
+Running flyteconsole locally requires [NodeJS](https://nodejs.org) and
+[yarn](https://yarnpkg.com). We recommend for you to use **asdf** to manage NodeJS version.
+You can find currently used versions in `.tool-versions` file.
+
+* Install asdf through homebrew
+``` bash
+brew install asdf
+```
+
+* (Optional) If you are using **M1 MacBook**, you will need to install `vips` for proper build experience
+``` bash
+brew install vips
+```
+
+* Add Yarn plugin to asdf, to manage yarn versions
+``` bash
+asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
+brew install gpg
+```
+
+* From flyteconsole directory - install proper NodeJS and yarn versions:
+``` bash
+asdf install
+```
+
+* Install nodepackages
+``` bash
+yarn install
+```
+
+
 ## CORS Proxying: Recommended Setup
 
 In the common hosting arrangement, all API requests will be to the same origin
