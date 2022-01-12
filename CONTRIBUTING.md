@@ -122,7 +122,7 @@ URL of your target FlyteAdmin API instance. These instructions will use
 
 4. Install Chrome plugin: [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf)
 
-    *NOTE:* Activate plugin (toggle to "on")
+    >*NOTE:* Activate plugin (toggle to "on")
 
 5. Start `flyteconsole`
 
