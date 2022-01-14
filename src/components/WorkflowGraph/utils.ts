@@ -4,7 +4,7 @@ import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
-import { transformerWorkflowToDAG } from './transformerWorkflowToDAG';
+import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**
  * @TODO these are dupes for testing, remove once tests fixed
  */
@@ -124,12 +124,7 @@ export const getNodeNameFromDag = (dagData: dNode, nodeId: string) => {
     if (value.taskNode) {
         return value.taskNode.referenceId.name;
     } else if (value.workflowNode) {
-        const {
-            workflowNode: {
-                subWorkflowRef: { name }
-            }
-        } = value;
-        return name;
+        return value.workflowNode.subWorkflowRef.name;
     }
     return '';
 };
@@ -137,7 +132,7 @@ export const getNodeNameFromDag = (dagData: dNode, nodeId: string) => {
 export const transformWorkflowToKeyedDag = (workflow: Workflow) => {
     if (!workflow.closure?.compiledWorkflow) return {};
 
-    const dagData = transformerWorkflowToDAG(
+    const dagData = transformerWorkflowToDag(
         workflow.closure?.compiledWorkflow
     );
     const data = {};

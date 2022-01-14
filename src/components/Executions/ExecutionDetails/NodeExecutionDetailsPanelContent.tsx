@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
@@ -292,6 +293,12 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     nodeExecutionId,
     onClose
 }) => {
+    const [mounted, setMounted] = useState(true);
+    useEffect(() => {
+        return () => {
+            setMounted(false);
+        };
+    }, []);
     const queryClient = useQueryClient();
     const [isReasonsVisible, setReasonsVisible] = React.useState(false);
     const [dag, setDag] = React.useState<any>(null);
@@ -319,7 +326,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         );
         if (workflowData) {
             const keyedDag = transformWorkflowToKeyedDag(workflowData);
-            setDag(keyedDag);
+            if (mounted) setDag(keyedDag);
         }
     };
 

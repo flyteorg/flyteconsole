@@ -25,7 +25,7 @@ import {
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const transformerWorkflowToDAG = (
+export const transformerWorkflowToDag = (
     workflow: CompiledWorkflowClosure
 ): dNode => {
     const { primary } = workflow;
