@@ -12,9 +12,8 @@ import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-
 import { Bar } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ExecutionTimelineFooter } from './ExecutionTimelineFooter';
 import { TimeZone } from './constant';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
@@ -337,8 +336,8 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                     barThickness: 50,
                     borderWidth: 0,
                     datalabels: {
-                        color: '#292936',
-                        align: 'start',
+                        color: '#292936' as const,
+                        align: 'start' as const,
                         formatter: function(value, context) {
                             if (durationData[context.dataIndex] === -1) {
                                 return '';
