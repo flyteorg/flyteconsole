@@ -85,7 +85,7 @@ const formatSeconds = t => {
     return `${Math.floor(time / 60)}m ${time % 60}s`;
 };
 
-const percentage = [0.1, 0.25, 0.5, 0.75, 1];
+const percentage = [0, 0.1, 0.25, 0.5, 0.75, 1];
 
 interface ExecutionTimelineFooterProps {
     maxTime: number;
@@ -102,34 +102,22 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
     const [timezone, setTimezone] = React.useState(TimeZone.Local);
     const [timeInterval, setTimeInterval] = React.useState(1);
 
-    const marks = React.useMemo(
-        () => [
-            {
-                value: 0,
-                label: '1s'
-            },
-            {
-                value: 1,
-                label: formatSeconds(maxTime * 0.1)
-            },
-            {
-                value: 2,
-                label: formatSeconds(maxTime * 0.25)
-            },
-            {
-                value: 3,
-                label: formatSeconds(maxTime * 0.5)
-            },
-            {
-                value: 4,
-                label: formatSeconds(maxTime * 0.75)
-            },
-            {
-                value: 5,
-                label: formatSeconds(maxTime)
-            }
-        ],
+    const getTitle = React.useCallback(
+        value => {
+            return value === 0
+                ? '1s'
+                : formatSeconds(maxTime * percentage[value]);
+        },
         [maxTime]
+    );
+
+    const marks = React.useMemo(
+        () =>
+            percentage.map((_, index) => ({
+                value: index,
+                label: getTitle(index)
+            })),
+        [getTitle]
     );
 
     const handleTimezoneChange = (
@@ -146,22 +134,10 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
         setTimeInterval(newValue);
         if (onTimeIntervalChange) {
             onTimeIntervalChange(
-                newValue === 0
-                    ? 1
-                    : Math.floor(maxTime * percentage[newValue - 1])
+                newValue === 0 ? 1 : Math.floor(maxTime * percentage[newValue])
             );
         }
     };
-
-    const getTitle = React.useCallback(
-        value => {
-            if (value === 0) {
-                return '1s';
-            }
-            return formatSeconds(maxTime * percentage[value - 1]);
-        },
-        [maxTime]
-    );
 
     return (
         <div className={styles.container}>
