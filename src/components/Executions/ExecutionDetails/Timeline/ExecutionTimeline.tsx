@@ -161,10 +161,7 @@ const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
 
 const INTERVAL_LENGTH = 110;
 
-export const ExecutionTimeline: React.FC<Props> = ({
-    nodeExecutions,
-    workflowId
-}) => {
+const ExecutionTimeline: React.FC<Props> = ({ nodeExecutions, workflowId }) => {
     const workflowQuery = useQuery<Workflow, Error>(
         makeWorkflowQuery(useQueryClient(), workflowId)
     );
@@ -556,3 +553,5 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         </div>
     );
 };
+
+export default ExecutionTimeline;
