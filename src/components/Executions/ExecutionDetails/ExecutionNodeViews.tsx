@@ -14,7 +14,7 @@ import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { ExecutionChildrenLoader } from './ExecutionChildrenLoader';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
-import { ExecutionTimeline } from './Timeline/ExecutionTimeline';
+import ExecutionTimeline from './Timeline/ExecutionTimeline';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filters: {
