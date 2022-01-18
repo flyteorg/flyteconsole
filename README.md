@@ -33,11 +33,12 @@
 
 ## 📦 Install Dependencies
 Running flyteconsole locally requires [NodeJS](https://nodejs.org) and
-[yarn](https://yarnpkg.com). Once these are installed, all of the dependencies
-can be installed by running `yarn install` in the project directory.
+[yarn](https://yarnpkg.com). Once these are installed, you can run application locally.
+For help with installing dependencies look into
+[Installation section](https://github.com/flyteorg/flyteconsole/blob/narusina/fflags/CONTRIBUTING.md#-install-dependencies).
 
 ## 🚀 Quick Start
-1. Follow [Start a Local flyte backend](https://docs.flyte.org/en/latest/getting_started/first_run.html), like:
+1. Follow [Start a Local flyte backend](https://docs.flyte.org/en/latest/getting_started/index.html), like:
     ```bash
     docker run --rm --privileged -p 30081:30081 -p 30082:30082 -p 30084:30084 cr.flyte.org/flyteorg/flyte-sandbox
     ``` 
@@ -110,10 +111,14 @@ docker run -p 8080:8080 -e BASE_URL="/console" -e CONFIG_DIR="/etc/flyte/config"
 
 ### Run the server
 
-To start the local development server, run `yarn start`. This will spin up a
-Webpack development server, compile all of the code into bundles, and start the
-NodeJS server on the default port (3000). All requests to the NodeJS server will
-be stalled until the bundles have finished. The application will be accessible
+To start the local development server run:
+```bash
+yarn install    # to install node_modules
+yarn start      # to start application   
+```
+This will spin up a Webpack development server, compile all of the code into bundles, 
+and start the NodeJS server on the default port (3000). All requests to the NodeJS server 
+will be stalled until the bundles have finished. The application will be accessible
 at http://localhost:3000 (if using the default port).
 
 
@@ -134,9 +139,6 @@ For continious development we are using:
   \- adds tracking code to the app or website. To disable use `ENABLE_GA=false`
 
 More info on each section could be found at [CONTRIBUTING.md](CONTRIBUTING.md)
-
-For help with **installing dependencies** look into
-[Installation section](https://github.com/flyteorg/flyteconsole/blob/narusina/fflags/CONTRIBUTING.md#-install-dependencies)
 
 ### CORS Proxying: Recommended setup
 
