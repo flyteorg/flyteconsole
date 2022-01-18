@@ -18,5 +18,6 @@ export const defaultFlagConfig: FeatureFlagConfig = {
     'test-flag-true': true,
 
     // Production - new code should be turned off by default
+    // If you need to turn it on locally -> update runtimeConfig in ./index.tsx file
     'launch-plan': false
 };

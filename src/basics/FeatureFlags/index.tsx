@@ -18,7 +18,12 @@ import {
 
 export { FeatureFlag } from './defaultConfig';
 
-let runtimeConfig = { ...defaultFlagConfig };
+// To turn on flag for local development only - update flag value here
+// REMOVE change prior to commit
+let runtimeConfig: FeatureFlagConfig = {
+    ...defaultFlagConfig
+    // 'test-flag-true': true,  <== locally turns flag on
+};
 
 interface FeatureFlagState {
     flags: FeatureFlagConfig;
