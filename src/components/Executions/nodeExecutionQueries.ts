@@ -1,3 +1,4 @@
+import { compareTimestampsAscending } from 'common/utils';
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
@@ -335,6 +336,41 @@ async function fetchAllChildNodeExecutions(
     );
     return executions;
 }
+
+/**
+ * Query returns all children (not only direct childs) for a list of `nodeExecutions`
+ */
+ async function fetchAllTreeNodeExecutions(
+    queryClient: QueryClient,
+    nodeExecutions: NodeExecution[],
+    config: RequestConfig
+): Promise<NodeExecution[]> {
+    const queue: NodeExecution[] = [...nodeExecutions]
+    let left = 0;
+    let right = queue.length;
+
+    while(left < right) {
+        const top: NodeExecution = queue[left++];
+        const executionGroups: NodeExecutionGroup[] = await fetchChildNodeExecutionGroups(
+            queryClient,
+            top,
+            config
+        )
+        for(let i = 0; i < executionGroups.length; i++) {
+            for(let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
+                queue.push(executionGroups[i].nodeExecutions[j])
+                right++
+            }
+        }
+    }
+
+    const sorted: NodeExecution[] = queue.sort(
+        (na: NodeExecution, nb: NodeExecution) => compareTimestampsAscending(na?.closure?.startedAt, nb?.closure?.startedAt)
+    );
+
+    return sorted
+}
+
 /**
  *
  * @param nodeExecutions list of parent node executionId's
@@ -374,6 +410,50 @@ export function useAllChildNodeExecutionGroupsQuery(
             ],
             queryFn: () =>
                 fetchAllChildNodeExecutions(queryClient, nodeExecutions, config)
+        },
+        shouldEnableFn
+    );
+}
+
+/**
+ *
+ * @param nodeExecutions list of parent node executionId's
+ * @param config
+ * @returns
+ */
+ export function useAllTreeNodeExecutionGroupsQuery(
+    nodeExecutions: NodeExecution[],
+    config: RequestConfig
+): QueryObserverResult<NodeExecution[], Error> {
+    const queryClient = useQueryClient();
+    const shouldEnableFn = groups => {
+        if (nodeExecutions[0] && groups.length > 0) {
+            if (!nodeExecutionIsTerminal(nodeExecutions[0])) {
+                return true;
+            }
+            return groups.some(group => {
+                if (group.nodeExecutions?.length > 0) {
+                    return group.nodeExecutions.some(ne => {
+                        return !nodeExecutionIsTerminal(ne);
+                    });
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            return false;
+        }
+    };
+
+    return useConditionalQuery<NodeExecution[]>(
+        {
+            queryKey: [
+                QueryType.NodeExecutionTreeList,
+                nodeExecutions[0]?.id,
+                config
+            ],
+            queryFn: () =>
+                fetchAllTreeNodeExecutions(queryClient, nodeExecutions, config)
         },
         shouldEnableFn
     );

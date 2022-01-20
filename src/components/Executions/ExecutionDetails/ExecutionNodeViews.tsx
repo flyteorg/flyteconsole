@@ -15,7 +15,7 @@ import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { ExecutionChildrenLoader } from './ExecutionChildrenLoader';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
-import ExecutionTimeline from './Timeline/ExecutionTimeline';
+import { ExecutionTimelineLoader } from './Timeline/ExecutionTimelineLoader';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filters: {
@@ -82,7 +82,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
     };
 
     const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => (
-        <ExecutionTimeline
+        <ExecutionTimelineLoader
             nodeExecutions={nodeExecutions}
             workflowId={execution.closure.workflowId}
         />
