@@ -340,35 +340,39 @@ async function fetchAllChildNodeExecutions(
 /**
  * Query returns all children (not only direct childs) for a list of `nodeExecutions`
  */
- async function fetchAllTreeNodeExecutions(
+async function fetchAllTreeNodeExecutions(
     queryClient: QueryClient,
     nodeExecutions: NodeExecution[],
     config: RequestConfig
 ): Promise<NodeExecution[]> {
-    const queue: NodeExecution[] = [...nodeExecutions]
+    const queue: NodeExecution[] = [...nodeExecutions];
     let left = 0;
     let right = queue.length;
 
-    while(left < right) {
+    while (left < right) {
         const top: NodeExecution = queue[left++];
         const executionGroups: NodeExecutionGroup[] = await fetchChildNodeExecutionGroups(
             queryClient,
             top,
             config
-        )
-        for(let i = 0; i < executionGroups.length; i++) {
-            for(let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
-                queue.push(executionGroups[i].nodeExecutions[j])
-                right++
+        );
+        for (let i = 0; i < executionGroups.length; i++) {
+            for (let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
+                queue.push(executionGroups[i].nodeExecutions[j]);
+                right++;
             }
         }
     }
 
     const sorted: NodeExecution[] = queue.sort(
-        (na: NodeExecution, nb: NodeExecution) => compareTimestampsAscending(na?.closure?.startedAt, nb?.closure?.startedAt)
+        (na: NodeExecution, nb: NodeExecution) =>
+            compareTimestampsAscending(
+                na.closure.startedAt!,
+                nb.closure.startedAt!
+            )
     );
 
-    return sorted
+    return sorted;
 }
 
 /**
@@ -421,7 +425,7 @@ export function useAllChildNodeExecutionGroupsQuery(
  * @param config
  * @returns
  */
- export function useAllTreeNodeExecutionGroupsQuery(
+export function useAllTreeNodeExecutionGroupsQuery(
     nodeExecutions: NodeExecution[],
     config: RequestConfig
 ): QueryObserverResult<NodeExecution[], Error> {

@@ -22,7 +22,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { dNode } from 'models/Graph/types';
-import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDAG';
+import { transformerWorkflowToPlainNodes } from 'components/WorkflowGraph/transformerWorkflowToDAG';
 import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
 
 ChartJS.register(...registerables, ChartDataLabels);
@@ -138,11 +138,11 @@ const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                     />
                 ))}
                 {nodes
-                    .filter(node => !executionsMap[node.id])
+                    .filter(node => !executionsMap[node.scopedId])
                     .map(node => (
                         <div
                             className={styles.namesContainer}
-                            key={`task-name-${node.id}`}
+                            key={`task-name-${node.scopedId}`}
                         >
                             {node.name}
                             <Typography
@@ -150,7 +150,7 @@ const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                                 color="textSecondary"
                                 className={styles.displayName}
                             >
-                                {node.value.template.id.name}
+                                {node.value.template?.id?.name}
                             </Typography>
                         </div>
                     ))}
@@ -179,6 +179,23 @@ const ExecutionTimeline: React.FC<Props> = ({ nodeExecutions, workflowId }) => {
     );
 };
 
+function convertToPlainNodes(nodes: dNode[]): dNode[] {
+    const result: dNode[] = [];
+    if (!nodes || nodes.length === 0) {
+        return result;
+    }
+    nodes.forEach(node => {
+        if (isStartNode(node) || isEndNode(node)) {
+            return;
+        }
+        result.push(node);
+        if (node.nodes.length > 0) {
+            result.push(...convertToPlainNodes(node.nodes));
+        }
+    });
+    return result;
+}
+
 export const ExecutionTimelineWithNodes: React.FC<Props & {
     closure: WorkflowClosure;
 }> = ({ nodeExecutions, closure }) => {
@@ -195,12 +212,10 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const durationsLabelsRef = React.useRef<HTMLDivElement>(null);
     const taskNamesRef = React.createRef<HTMLDivElement>();
 
-    const { nodes: originalNodes } = transformerWorkflowToDAG(
+    const { nodes: originalNodes } = transformerWorkflowToPlainNodes(
         closure.compiledWorkflow!
     );
-    const nodes = originalNodes.filter(
-        node => !isStartNode(node) && !isEndNode(node)
-    );
+    const nodes = convertToPlainNodes(originalNodes);
 
     const executionsMap = React.useMemo(
         () =>
@@ -239,7 +254,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         });
         return [
             ...definedExecutions,
-            ...nodes.filter(node => !executionsMap[node.id]).map(() => -1)
+            ...nodes.filter(node => !executionsMap[node.scopedId]).map(() => -1)
         ];
     }, [nodeExecutions, executionsMap, nodes]);
 
@@ -252,7 +267,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         return [
             ...definedExecutions,
             ...nodes
-                .filter(node => !executionsMap[node.id])
+                .filter(node => !executionsMap[node.scopedId])
                 .map(() => statusColors.UNKNOWN)
         ];
     }, [nodeExecutions, executionsMap, nodes]);
@@ -295,7 +310,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         return [
             ...definedExecutions,
             ...nodes
-                .filter(node => !executionsMap[node.id])
+                .filter(node => !executionsMap[node.scopedId])
                 .map(() => undefinedStart)
         ];
     }, [nodes, nodeExecutions, executionsMap, startedAt]);
