@@ -22,9 +22,10 @@ import { useQuery, useQueryClient } from 'react-query';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { dNode } from 'models/Graph/types';
-import { transformerWorkflowToPlainNodes } from 'components/WorkflowGraph/transformerWorkflowToDAG';
+import { transformerWorkflowToPlainNodes } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
 
+// Register components to be usable by chart.js
 ChartJS.register(...registerables, ChartDataLabels);
 
 interface Props {
@@ -235,6 +236,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const handleTimeIntervalChange = interval => setChartTimeInterval(interval);
     const handleTimezoneChange = tz => setChartTimezone(tz);
 
+    // Divide by 1000 to calculate all duration data be second based.
     const durationData = React.useMemo(() => {
         const definedExecutions = nodeExecutions.map(exec => {
             if (exec.closure.phase === NodeExecutionPhase.RUNNING) {
