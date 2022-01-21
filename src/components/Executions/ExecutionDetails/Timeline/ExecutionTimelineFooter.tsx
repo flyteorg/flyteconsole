@@ -9,12 +9,6 @@ import * as React from 'react';
 import { TimeZone } from './constant';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 
-type Props = {
-    children: React.ReactElement;
-    open: boolean;
-    value: number;
-};
-
 function valueText(value: number) {
     return `${value}s`;
 }
@@ -31,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const CustomSlider = withStyles({
     root: {
-        color: '#665AFF',
+        color: COLOR_SPECTRUM.indigo60.color,
         height: 4,
         padding: '15px 0',
         width: 360
@@ -39,11 +33,11 @@ const CustomSlider = withStyles({
     active: {},
     valueLabel: {
         left: 'calc(-50% + 12px)',
-        color: '#000',
+        color: COLOR_SPECTRUM.black.color,
         top: -22,
         '& *': {
             background: 'transparent',
-            color: '#000'
+            color: COLOR_SPECTRUM.black.color
         }
     },
     track: {
