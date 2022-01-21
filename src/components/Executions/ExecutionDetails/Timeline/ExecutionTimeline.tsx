@@ -330,7 +330,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                 {
                     data: stackedData,
                     backgroundColor: stackedColorData,
-                    barThickness: 50,
+                    barPercentage: 1,
                     borderWidth: 0,
                     datalabels: {
                         labels: {
@@ -347,7 +347,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                             : duration;
                     }),
                     backgroundColor: colorData,
-                    barThickness: 50,
+                    barPercentage: 1,
                     borderWidth: 0,
                     datalabels: {
                         color: '#292936' as const,
@@ -539,9 +539,9 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                             <div
                                 style={{
                                     width: `${chartWidth + 20}px`,
-                                    height: `${55 * durationData.length +
-                                        42}px`,
-                                    marginTop: -11,
+                                    height: `${56 * durationData.length +
+                                        20}px`,
+                                    marginTop: -10,
                                     marginLeft: -15
                                 }}
                             >
