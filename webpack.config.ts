@@ -248,7 +248,8 @@ export const clientConfig: webpack.Configuration = {
                 uglifyOptions: {
                     compress: {
                         collapse_vars: false,
-                        warnings: false
+                        warnings: false,
+                        inline: false
                     },
                     output: { comments: false }
                 }
