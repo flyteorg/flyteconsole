@@ -275,10 +275,13 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     }, [nodeExecutions, executionsMap, nodes]);
 
     const startedAt = React.useMemo(() => {
-        if (nodeExecutions.length === 0) {
+        if (
+            nodeExecutions.length === 0 ||
+            !nodeExecutions[0].closure.startedAt
+        ) {
             return new Date();
         }
-        return timestampToDate(nodeExecutions[0].closure.startedAt!);
+        return timestampToDate(nodeExecutions[0].closure.startedAt);
     }, [nodeExecutions]);
 
     const stackedData = React.useMemo(() => {
@@ -370,6 +373,8 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         );
         return Math.max(...durations);
     }, [durationData, stackedData]);
+
+    console.log(durationData, stackedData);
 
     React.useEffect(() => {
         const calcWidth =

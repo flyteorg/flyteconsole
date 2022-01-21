@@ -366,11 +366,18 @@ async function fetchAllTreeNodeExecutions(
     }
 
     const sorted: NodeExecution[] = queue.sort(
-        (na: NodeExecution, nb: NodeExecution) =>
-            compareTimestampsAscending(
-                na.closure.startedAt!,
-                nb.closure.startedAt!
-            )
+        (na: NodeExecution, nb: NodeExecution) => {
+            if (!na.closure.startedAt) {
+                return 1;
+            }
+            if (!nb.closure.startedAt) {
+                return -1;
+            }
+            return compareTimestampsAscending(
+                na.closure.startedAt,
+                nb.closure.startedAt
+            );
+        }
     );
 
     return sorted;
