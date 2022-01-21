@@ -374,8 +374,6 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         return Math.max(...durations);
     }, [durationData, stackedData]);
 
-    console.log(durationData, stackedData);
-
     React.useEffect(() => {
         const calcWidth =
             Math.ceil(totalDuration / chartTimeInterval) * INTERVAL_LENGTH;
