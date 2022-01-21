@@ -22,6 +22,7 @@ import {
 } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { QueryClient, QueryObserverResult, useQueryClient } from 'react-query';
+import { executionRefreshIntervalMs } from './constants';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
@@ -431,22 +432,10 @@ export function useAllTreeNodeExecutionGroupsQuery(
 ): QueryObserverResult<NodeExecution[], Error> {
     const queryClient = useQueryClient();
     const shouldEnableFn = groups => {
-        if (nodeExecutions[0] && groups.length > 0) {
-            if (!nodeExecutionIsTerminal(nodeExecutions[0])) {
-                return true;
-            }
-            return groups.some(group => {
-                if (group.nodeExecutions?.length > 0) {
-                    return group.nodeExecutions.some(ne => {
-                        return !nodeExecutionIsTerminal(ne);
-                    });
-                } else {
-                    return false;
-                }
-            });
-        } else {
-            return false;
+        if (nodeExecutions.some(ne => !nodeExecutionIsTerminal(ne))) {
+            return true;
         }
+        return groups.some(group => !nodeExecutionIsTerminal(group));
     };
 
     return useConditionalQuery<NodeExecution[]>(
@@ -457,7 +446,8 @@ export function useAllTreeNodeExecutionGroupsQuery(
                 config
             ],
             queryFn: () =>
-                fetchAllTreeNodeExecutions(queryClient, nodeExecutions, config)
+                fetchAllTreeNodeExecutions(queryClient, nodeExecutions, config),
+            refetchInterval: executionRefreshIntervalMs
         },
         shouldEnableFn
     );
