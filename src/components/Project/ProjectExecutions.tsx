@@ -21,6 +21,7 @@ import {
 } from 'components/Entities/EntityExecutionsBarChart';
 import classNames from 'classnames';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
+import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
@@ -62,10 +63,14 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
 }) => {
     const styles = useStyles();
     const filtersState = useWorkflowExecutionFiltersState();
+    const archivedFilter = useExecutionShowArchivedState();
 
+    const filters = React.useMemo(() => {
+        return [...filtersState.appliedFilters, archivedFilter.getFilter()];
+    }, [filtersState, archivedFilter]);
     const config = {
         sort: defaultSort,
-        filter: filtersState.appliedFilters
+        filter: filters
     };
 
     // Remount the table whenever we change project/domain/filters to ensure
@@ -75,9 +80,9 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
             getCacheKey({
                 domain,
                 project,
-                filters: filtersState.appliedFilters
+                filters: filters
             }),
-        [domain, project, filtersState.appliedFilters]
+        [domain, project, filters]
     );
 
     const query = useInfiniteQuery({
@@ -105,7 +110,7 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         { domain, project },
         {
             sort: defaultSort,
-            filter: filtersState.appliedFilters,
+            filter: filters,
             limit: 100
         }
     );
@@ -157,7 +162,11 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
                 <Typography className={styles.header} variant="h6">
                     All Executions in the Project
                 </Typography>
-                <ExecutionFilters {...filtersState} />
+                <ExecutionFilters
+                    {...filtersState}
+                    showArchived={archivedFilter.showArchived}
+                    onArchiveFilterChange={archivedFilter.setShowArchived}
+                />
                 <ErrorBoundary>{content}</ErrorBoundary>
             </div>
         );

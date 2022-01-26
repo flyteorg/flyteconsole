@@ -105,7 +105,7 @@ export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> =
 
     const baseFilters = React.useMemo(
         () => executionFilterGenerator[resourceType](id),
-        [id]
+        [id, resourceType]
     );
 
     const executions = useWorkflowExecutions(
@@ -117,13 +117,16 @@ export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> =
         }
     );
 
-    const handleClickItem = React.useCallback(item => {
-        if (item.metadata) {
-            onToggle(item.metadata.name);
-            // const executionId = item.metadata as WorkflowExecutionIdentifier;
-            // history.push(Routes.ExecutionDetails.makeUrl(executionId));
-        }
-    }, []);
+    const handleClickItem = React.useCallback(
+        item => {
+            if (item.metadata) {
+                onToggle(item.metadata.name);
+                // const executionId = item.metadata as WorkflowExecutionIdentifier;
+                // history.push(Routes.ExecutionDetails.makeUrl(executionId));
+            }
+        },
+        [onToggle]
+    );
 
     /** Don't render component until finish fetching user profile */
     if (filtersState.filters[4].status !== 'LOADED') {

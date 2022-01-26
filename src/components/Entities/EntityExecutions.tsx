@@ -1,8 +1,10 @@
+import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common/WaitForData';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
+import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { isLoadingState } from 'components/hooks/fetchMachine';
@@ -10,7 +12,6 @@ import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from 'models/AdminEntity/types';
 import { ResourceIdentifier } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
-import * as React from 'react';
 import { executionFilterGenerator } from './generators';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -38,6 +39,12 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
     const { domain, project, resourceType } = id;
     const styles = useStyles();
     const filtersState = useWorkflowExecutionFiltersState();
+    const {
+        showArchived,
+        setShowArchived,
+        getFilter: getAcrhiveFilter
+    } = useExecutionShowArchivedState();
+
     const sort = {
         key: executionSortFields.createdAt,
         direction: SortDirection.DESCENDING
@@ -52,15 +59,21 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
         { domain, project },
         {
             sort,
-            filter: [...baseFilters, ...filtersState.appliedFilters],
+            filter: [
+                ...baseFilters,
+                ...filtersState.appliedFilters,
+                getAcrhiveFilter()
+            ],
             limit: 100
         }
     );
 
-    if (chartIds.length > 0)
+    if (chartIds.length > 0) {
         executions.value = executions.value.filter(item =>
             chartIds.includes(item.id.name)
         );
+    }
+
     /** Don't render component until finish fetching user profile */
     if (filtersState.filters[4].status !== 'LOADED') {
         return null;
@@ -76,6 +89,8 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
                     {...filtersState}
                     chartIds={chartIds}
                     clearCharts={clearCharts}
+                    showArchived={showArchived}
+                    onArchiveFilterChange={setShowArchived}
                 />
             </div>
             <WaitForData {...executions}>
