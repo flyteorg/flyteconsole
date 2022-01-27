@@ -25,6 +25,7 @@ import { useExecutionShowArchivedState } from 'components/Executions/filters/use
 import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
+import { compact } from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) => ({
     container: {
@@ -62,15 +63,16 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     projectId: project
 }) => {
     const styles = useStyles();
-    const filtersState = useWorkflowExecutionFiltersState();
     const archivedFilter = useExecutionShowArchivedState();
+    const filtersState = useWorkflowExecutionFiltersState();
 
-    const filters = React.useMemo(() => {
-        return [...filtersState.appliedFilters, archivedFilter.getFilter()];
-    }, [filtersState, archivedFilter]);
+    const allFilters = compact([
+        ...filtersState.appliedFilters,
+        archivedFilter.getFilter()
+    ]);
     const config = {
         sort: defaultSort,
-        filter: filters
+        filter: allFilters
     };
 
     // Remount the table whenever we change project/domain/filters to ensure
@@ -80,9 +82,9 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
             getCacheKey({
                 domain,
                 project,
-                filters: filters
+                filters: allFilters
             }),
-        [domain, project, filters]
+        [domain, project, allFilters]
     );
 
     const query = useInfiniteQuery({
@@ -106,11 +108,12 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
         history.push(Routes.ExecutionDetails.makeUrl(item.metadata));
     }, []);
 
+    // to show only in bar chart view
     const last100Executions = useWorkflowExecutions(
         { domain, project },
         {
             sort: defaultSort,
-            filter: filters,
+            filter: allFilters,
             limit: 100
         }
     );
@@ -138,7 +141,8 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     );
 
     /** Don't render component until finish fetching user profile */
-    if (filtersState.filters[4].status === 'LOADED') {
+    const filterLength = filtersState.filters.length;
+    if (filtersState.filters[filterLength - 1].status === 'LOADED') {
         return (
             <div className={styles.container}>
                 <Typography

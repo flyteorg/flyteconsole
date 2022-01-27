@@ -13,6 +13,7 @@ import { SortDirection } from 'models/AdminEntity/types';
 import { ResourceIdentifier } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator } from './generators';
+import { compact } from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) => ({
     filtersContainer: {
@@ -39,11 +40,7 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
     const { domain, project, resourceType } = id;
     const styles = useStyles();
     const filtersState = useWorkflowExecutionFiltersState();
-    const {
-        showArchived,
-        setShowArchived,
-        getFilter: getAcrhiveFilter
-    } = useExecutionShowArchivedState();
+    const archivedFilter = useExecutionShowArchivedState();
 
     const sort = {
         key: executionSortFields.createdAt,
@@ -55,15 +52,16 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
         [id, resourceType]
     );
 
+    const allFilters = compact([
+        ...baseFilters,
+        ...filtersState.appliedFilters,
+        archivedFilter.getFilter()
+    ]);
     const executions = useWorkflowExecutions(
         { domain, project },
         {
             sort,
-            filter: [
-                ...baseFilters,
-                ...filtersState.appliedFilters,
-                getAcrhiveFilter()
-            ],
+            filter: allFilters,
             limit: 100
         }
     );
@@ -75,7 +73,8 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
     }
 
     /** Don't render component until finish fetching user profile */
-    if (filtersState.filters[4].status !== 'LOADED') {
+    const lastIndex = filtersState.filters.length - 1;
+    if (filtersState.filters[lastIndex].status !== 'LOADED') {
         return null;
     }
 
@@ -89,8 +88,8 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
                     {...filtersState}
                     chartIds={chartIds}
                     clearCharts={clearCharts}
-                    showArchived={showArchived}
-                    onArchiveFilterChange={setShowArchived}
+                    showArchived={archivedFilter.showArchived}
+                    onArchiveFilterChange={archivedFilter.setShowArchived}
                 />
             </div>
             <WaitForData {...executions}>

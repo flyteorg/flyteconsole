@@ -5,7 +5,7 @@ import { ExecutionState } from 'models/Execution/enums';
 interface ArchiveFilterState {
     showArchived: boolean;
     setShowArchived: (newValue: boolean) => void;
-    getFilter: () => FilterOperation;
+    getFilter: () => FilterOperation | null;
 }
 
 /**
@@ -14,13 +14,17 @@ interface ArchiveFilterState {
 export function useExecutionShowArchivedState(): ArchiveFilterState {
     const [showArchived, setShowArchived] = useState(false);
 
-    const getFilter = (): FilterOperation => {
+    // By default all values are returned with EXECUTION_ACTIVE state,
+    // so filter need to be applied only for ARCHIVED executions
+    const getFilter = (): FilterOperation | null => {
+        if (!showArchived) {
+            return null;
+        }
+
         return {
             key: 'state',
             operation: FilterOperationName.EQ,
-            value: showArchived
-                ? ExecutionState.EXECUTION_ARCHIVED
-                : ExecutionState.EXECUTION_ACTIVE
+            value: ExecutionState.EXECUTION_ARCHIVED
         };
     };
 
