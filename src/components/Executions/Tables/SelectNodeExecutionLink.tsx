@@ -14,12 +14,7 @@ export const SelectNodeExecutionLink: React.FC<{
 }> = ({ className, execution, linkText, state }) => {
     const onClick = () => state.setSelectedExecution(execution.id);
     return (
-        <Link
-            className={className}
-            component="button"
-            onClick={onClick}
-            variant="body1"
-        >
+        <Link className={className} onClick={onClick} variant="body1">
             {linkText}
         </Link>
     );

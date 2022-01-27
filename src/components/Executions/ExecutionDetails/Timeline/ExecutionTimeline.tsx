@@ -423,15 +423,15 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                 const canvasView = durationsRef?.current;
                 if (canvasView) {
                     canvasView.scrollTo({
-                        top: canvasView.scrollTop + e.deltaY,
-                        behavior: 'smooth'
+                        top: e.srcElement.scrollTop
+                        // behavior: 'smooth'
                     });
                 }
             };
 
-            el.addEventListener('wheel', handleScroll);
+            el.addEventListener('scroll', handleScroll);
 
-            return () => el.removeEventListener('wheel', handleScroll);
+            return () => el.removeEventListener('scroll', handleScroll);
         }
 
         return () => {};
