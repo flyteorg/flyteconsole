@@ -1,6 +1,7 @@
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getCacheKey } from 'components/Cache/utils';
+import { fetchStates } from 'components/hooks/types';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { DataError } from 'components/Errors/DataError';
@@ -141,8 +142,8 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     );
 
     /** Don't render component until finish fetching user profile */
-    const filterLength = filtersState.filters.length;
-    if (filtersState.filters[filterLength - 1].status === 'LOADED') {
+    const lastIndex = filtersState.filters.length - 1;
+    if (filtersState.filters[lastIndex].status === fetchStates.LOADED) {
         return (
             <div className={styles.container}>
                 <Typography

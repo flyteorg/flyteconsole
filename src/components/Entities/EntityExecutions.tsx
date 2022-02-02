@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
+import { fetchStates } from 'components/hooks/types';
 import { WaitForData } from 'components/common/WaitForData';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
@@ -74,7 +75,7 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
 
     /** Don't render component until finish fetching user profile */
     const lastIndex = filtersState.filters.length - 1;
-    if (filtersState.filters[lastIndex].status !== 'LOADED') {
+    if (filtersState.filters[lastIndex].status !== fetchStates.LOADED) {
         return null;
     }
 

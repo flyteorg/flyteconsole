@@ -6,6 +6,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
         paddingLeft: theme.spacing(1)
     },
     columnName: {
+        flexGrow: 1,
         flexBasis: workflowExecutionsTableColumnWidths.name,
         whiteSpace: 'normal'
     },
@@ -23,11 +24,10 @@ export const useStyles = makeStyles((theme: Theme) => ({
         textAlign: 'right'
     },
     columnActions: {
-        flexGrow: 1,
         flexBasis: workflowExecutionsTableColumnWidths.actions,
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
-        textAlign: 'left'
+        textAlign: 'right'
     },
     rightMargin: {
         marginRight: theme.spacing(1)
