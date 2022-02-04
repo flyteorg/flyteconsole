@@ -32,7 +32,7 @@ import {
 } from '../nodeExecutionQueries';
 import { TaskExecutionsList } from '../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionDetails } from '../types';
-import { useNodeExecutionDetails } from '../useNodeExecutionDetails';
+import { useNodeExecutionDetails } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
@@ -210,6 +210,12 @@ const NodeExecutionTabs: React.FC<{
     const styles = useStyles();
     const tabState = useTabState(tabIds, defaultTab);
 
+    if (tabState.value === tabIds.task && !taskTemplate) {
+        // Reset tab value, if task tab is selected, while no taskTemplate is avaible
+        // can happen when user switches between nodeExecutions without closing the drawer
+        tabState.reset();
+    }
+
     let tabContent: JSX.Element | null = null;
     switch (tabState.value) {
         case tabIds.executions: {
@@ -347,15 +353,8 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
     const commonStyles = useCommonStyles();
     const styles = useStyles();
-    const detailsQuery = useNodeExecutionDetails(nodeExecution);
-    const displayName = detailsQuery.data ? (
-        detailsQuery.data.displayName
-    ) : (
-        <Skeleton />
-    );
-    const taskTemplate = detailsQuery.data
-        ? detailsQuery.data.taskTemplate
-        : null;
+    const details = useNodeExecutionDetails(nodeExecution);
+    const displayName = details.displayName ?? <Skeleton />;
 
     const isRunningPhase = React.useMemo(() => {
         return (
@@ -400,17 +399,14 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
             <NodeExecutionCacheStatus
                 taskNodeMetadata={nodeExecution.closure.taskNodeMetadata}
             />
-            <ExecutionTypeDetails
-                details={detailsQuery.data}
-                execution={nodeExecution}
-            />
+            <ExecutionTypeDetails details={details} execution={nodeExecution} />
         </>
     ) : null;
 
     const tabsContent = nodeExecution ? (
         <NodeExecutionTabs
             nodeExecution={nodeExecution}
-            taskTemplate={taskTemplate}
+            taskTemplate={details.taskTemplate}
         />
     ) : null;
     return (

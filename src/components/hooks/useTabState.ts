@@ -6,9 +6,11 @@ export function useTabState(
 ) {
     const [value, setValue] = useState(defaultValue);
     const onChange = (event: any, tabId: string) => setValue(tabId);
+    const reset = () => setValue(defaultValue);
 
     return {
         onChange,
+        reset,
         value
     };
 }
