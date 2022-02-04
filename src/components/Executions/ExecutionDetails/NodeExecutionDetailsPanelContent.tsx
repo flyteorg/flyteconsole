@@ -332,6 +332,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         );
         if (workflowData) {
             const keyedDag = transformWorkflowToKeyedDag(workflowData);
+            //TODO: here is a memory leak, instead of mounted we should update it in useEffect with isCurrent check
             if (mounted) setDag(keyedDag);
         }
     };

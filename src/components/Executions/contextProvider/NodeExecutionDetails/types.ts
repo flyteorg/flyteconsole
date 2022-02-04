@@ -1,11 +1,8 @@
-import {
-    NodeExecutionDetails,
-    NodeExecutionDisplayType
-} from 'components/Executions/types';
+import { NodeExecutionDisplayType } from 'components/Executions/types';
 import { Core } from 'flyteidl';
 
-export const UNKNOWN_DETAILS: NodeExecutionDetails = {
-    displayId: '',
+export const UNKNOWN_DETAILS = {
+    displayId: 'unknownNode',
     displayType: NodeExecutionDisplayType.Unknown
 };
 

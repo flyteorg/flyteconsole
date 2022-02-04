@@ -8,6 +8,8 @@ import {
     waitFor
 } from '@testing-library/react';
 import { cacheStatusMessages } from 'components/Executions/constants';
+import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { UNKNOWN_DETAILS } from 'components/Executions/contextProvider/NodeExecutionDetails/types';
 import {
     ExecutionContext,
     ExecutionContextData,
@@ -26,6 +28,7 @@ import {
     dynamicPythonTaskWorkflow
 } from 'mocks/data/fixtures/dynamicPythonWorkflow';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
+import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { notFoundError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
@@ -48,6 +51,10 @@ import {
 } from 'test/utils';
 import { titleStrings } from '../constants';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
+
+jest.mock('components/Workflow/workflowQueries');
+// we will mock differently this function depending on the test
+const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
 describe('NodeExecutionsTable', () => {
     let workflowExecution: Execution;
@@ -113,7 +120,11 @@ describe('NodeExecutionsTable', () => {
                     value={requestConfig}
                 >
                     <ExecutionContext.Provider value={executionContext}>
-                        <TestTable />
+                        <NodeExecutionDetailsContextProvider
+                            workflowId={mockWorkflowId}
+                        >
+                            <TestTable />
+                        </NodeExecutionDetailsContextProvider>
                     </ExecutionContext.Provider>
                 </NodeExecutionsRequestConfigContext.Provider>
             </QueryClientProvider>
@@ -126,6 +137,9 @@ describe('NodeExecutionsTable', () => {
             fixture = basicPythonWorkflow.generate();
             workflowExecution = fixture.workflowExecutions.top.data;
             insertFixture(mockServer, fixture);
+            fetchWorkflow.mockImplementation(() =>
+                Promise.resolve(fixture.workflows.top)
+            );
 
             executionContext = {
                 execution: workflowExecution
@@ -167,7 +181,7 @@ describe('NodeExecutionsTable', () => {
 
             const { container } = renderTable();
             const pythonNodeNameEl = await waitFor(() =>
-                getByText(container, nodeExecution.id.nodeId)
+                getByText(container, UNKNOWN_DETAILS.displayId)
             );
             const rowEl = findNearestAncestorByRole(
                 pythonNodeNameEl,
@@ -208,11 +222,12 @@ describe('NodeExecutionsTable', () => {
                 it(`renders correct icon for ${Core.CatalogCacheStatus[cacheStatusValue]}`, async () => {
                     taskNodeMetadata.cacheStatus = cacheStatusValue;
                     updateNodeExecutions([cachedNodeExecution]);
-                    const { getByTitle } = await renderTable();
+                    const { getByTitle } = renderTable();
+
                     await waitFor(() =>
                         expect(
                             getByTitle(cacheStatusMessages[cacheStatusValue])
-                        )
+                        ).toBeDefined()
                     );
                 })
             );
@@ -224,10 +239,10 @@ describe('NodeExecutionsTable', () => {
                 it(`renders no icon for ${Core.CatalogCacheStatus[cacheStatusValue]}`, async () => {
                     taskNodeMetadata.cacheStatus = cacheStatusValue;
                     updateNodeExecutions([cachedNodeExecution]);
-                    const { getByText, queryByTitle } = await renderTable();
-                    await waitFor(() =>
-                        getByText(cachedNodeExecution.id.nodeId)
-                    );
+                    const { getByText, queryByTitle } = renderTable();
+                    await waitFor(() => {
+                        getByText(cachedNodeExecution.id.nodeId);
+                    });
                     expect(
                         queryByTitle(cacheStatusMessages[cacheStatusValue])
                     ).toBeNull();
@@ -243,6 +258,9 @@ describe('NodeExecutionsTable', () => {
                 fixture = dynamicPythonNodeExecutionWorkflow.generate();
                 workflowExecution = fixture.workflowExecutions.top.data;
                 insertFixture(mockServer, fixture);
+                fetchWorkflow.mockImplementation(() =>
+                    Promise.resolve(fixture.workflows.top)
+                );
                 executionContext = { execution: workflowExecution };
             });
 
@@ -338,6 +356,9 @@ describe('NodeExecutionsTable', () => {
             beforeEach(() => {
                 fixture = dynamicPythonTaskWorkflow.generate();
                 workflowExecution = fixture.workflowExecutions.top.data;
+                fetchWorkflow.mockImplementation(() =>
+                    Promise.resolve(fixture.workflows.top)
+                );
                 executionContext = {
                     execution: workflowExecution
                 };
@@ -387,6 +408,9 @@ describe('NodeExecutionsTable', () => {
             beforeEach(() => {
                 fixture = dynamicExternalSubWorkflow.generate();
                 insertFixture(mockServer, fixture);
+                fetchWorkflow.mockImplementation(() =>
+                    Promise.resolve(fixture.workflows.top)
+                );
                 workflowExecution = fixture.workflowExecutions.top.data;
                 executionContext = {
                     execution: workflowExecution
@@ -459,6 +483,9 @@ describe('NodeExecutionsTable', () => {
                 { filters: 'eq(phase,FAILED)' }
             );
 
+            fetchWorkflow.mockImplementation(() =>
+                Promise.resolve(fixture.workflows.top)
+            );
             executionContext = {
                 execution: workflowExecution
             };
@@ -468,6 +495,9 @@ describe('NodeExecutionsTable', () => {
             const { getByText, queryByText } = renderTable();
             const { nodeExecutions } = fixture.workflowExecutions.top;
 
+            console.warn(
+                `NOTE_ID:  ${nodeExecutions.failedNode.data.id.nodeId}`
+            );
             await waitFor(() =>
                 expect(getByText(nodeExecutions.failedNode.data.id.nodeId))
             );
@@ -485,6 +515,9 @@ describe('NodeExecutionsTable', () => {
             fixture = basicPythonWorkflow.generate();
             workflowExecution = fixture.workflowExecutions.top.data;
             insertFixture(mockServer, fixture);
+            fetchWorkflow.mockImplementation(() =>
+                Promise.resolve(fixture.workflows.top)
+            );
 
             executionContext = {
                 execution: workflowExecution
@@ -527,6 +560,9 @@ describe('NodeExecutionsTable', () => {
                 fixture = dynamicPythonNodeExecutionWorkflow.generate();
                 workflowExecution = fixture.workflowExecutions.top.data;
                 insertFixture(mockServer, fixture);
+                fetchWorkflow.mockImplementation(() =>
+                    Promise.resolve(fixture.workflows.top)
+                );
                 executionContext = { execution: workflowExecution };
             });
 

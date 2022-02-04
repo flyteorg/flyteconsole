@@ -25,7 +25,7 @@ export const NodeExecutionDetailsContext = createContext<
     /** Default values used if ContextProvider wasn't initialized. */
     getNodeExecutionDetails: () => {
         console.error(
-            'ERROR: No NodeExecutionDetailsContextProvider was find in parent components.'
+            'ERROR: No NodeExecutionDetailsContextProvider was found in parent components.'
         );
         return UNKNOWN_DETAILS;
     }
@@ -136,28 +136,3 @@ export const NodeExecutionDetailsContextProvider = (
         </NodeExecutionDetailsContext.Provider>
     );
 };
-
-/*
-narusina - to check:
-
-6. Check tests
-
-Test view: 
-https://localhost.demo.nuclyde.io:3000/projects/flytesnacks/domains/development/executions/rnktdb3skr?duration=all
-https://demo.nuclyde.io/api/v1/workflows/flytesnacks/development/core.control_flow.subworkflows.other_root_wf/nested_example_1
-
-https://localhost.demo.nuclyde.io:3000/projects/flytesnacks/domains/development/executions/ubcn6jgs59?duration=all
-https://demo.nuclyde.io/api/v1/workflows/flytesnacks/development/core.control_flow.subworkflows.nested_parent_wf/demo-9-1-core-2
-
-Branch 
-https://localhost.demo.nuclyde.io:3000/projects/flytesnacks/domains/development/executions/ynbgv5b4ar?duration=all
-https://demo.nuclyde.io/api/v1/workflows/flytesnacks/development/core.control_flow.run_conditions.so_nested/d8cb4e7c43adbeccc02a6ac322eff49f94d57fe3
-
-
-Show info Branch Nodes:
-https://github.com/flyteorg/flyte/issues/655
-
-Ideally code should use WorkflowToDAG.tsx
-src/components/WorkflowGraph/transformerWorkflowToDAG.tsx
-
-*/
