@@ -1,21 +1,22 @@
 import * as React from 'react';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Core } from 'flyteidl';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution } from 'models/Execution/types';
-import { NodeExecutionDetails } from '../../types';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
+import { NodeExecutionDetails } from '../../types';
 import { isIdEqual, UNKNOWN_DETAILS } from './types';
 import {
     createExecutionDetails,
     CurrentExecutionDetails
 } from './createExecutionArray';
+import { getTaskThroughExecution } from './getTaskThroughExecution';
 
 interface NodeExecutionDetailsState {
     getNodeExecutionDetails: (
         nodeExecution?: NodeExecution
-    ) => NodeExecutionDetails;
+    ) => Promise<NodeExecutionDetails>;
 }
 
 /** Use this Context to redefine Provider returns in storybooks */
@@ -23,7 +24,7 @@ export const NodeExecutionDetailsContext = createContext<
     NodeExecutionDetailsState
 >({
     /** Default values used if ContextProvider wasn't initialized. */
-    getNodeExecutionDetails: () => {
+    getNodeExecutionDetails: async () => {
         console.error(
             'ERROR: No NodeExecutionDetailsContextProvider was found in parent components.'
         );
@@ -41,16 +42,13 @@ export const useNodeExecutionDetails = (nodeExecution?: NodeExecution) =>
 export const useNodeExecutionContext = (): NodeExecutionDetailsState =>
     useContext(NodeExecutionDetailsContext);
 
-interface ExecutionDetailsProviderProps {
+interface ProviderProps {
     workflowId: Identifier;
     children?: React.ReactNode;
 }
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow*/
-export const NodeExecutionDetailsContextProvider = (
-    props: ExecutionDetailsProviderProps
-) => {
-    const queryClient = useQueryClient();
+export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     // workflow Identifier - separated to parameters, to minimize re-render count
     // as useEffect doesn't know how to do deep comparison
     const { resourceType, project, domain, name, version } = props.workflowId;
@@ -59,14 +57,24 @@ export const NodeExecutionDetailsContextProvider = (
         executionTree,
         setExecutionTree
     ] = useState<CurrentExecutionDetails | null>(null);
-    const [parentMap, setParentMap] = useState<Map<string, Core.IIdentifier>>(
+    const [parentMap, setParentMap] = useState(
         new Map<string, Core.IIdentifier>()
     );
+    const [tasks, setTasks] = useState(new Map<string, NodeExecutionDetails>());
 
     const resetState = () => {
         setExecutionTree(null);
         setParentMap(new Map<string, Core.IIdentifier>());
     };
+
+    const queryClient = useQueryClient();
+    const isMounted = useRef(false);
+    useEffect(() => {
+        isMounted.current = true;
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
 
     useEffect(() => {
         let isCurrent = true;
@@ -100,9 +108,24 @@ export const NodeExecutionDetailsContextProvider = (
         };
     }, [queryClient, resourceType, project, domain, name, version]);
 
-    const getDetails = (
+    const checkForDynamicTasks = async (nodeExecution: NodeExecution) => {
+        const taskDetails = await getTaskThroughExecution(
+            queryClient,
+            nodeExecution
+        );
+
+        const tasksMap = tasks;
+        tasksMap.set(nodeExecution.id.nodeId, taskDetails);
+        if (isMounted.current) {
+            setTasks(tasksMap);
+        }
+
+        return taskDetails;
+    };
+
+    const getDetails = async (
         nodeExecution?: NodeExecution
-    ): NodeExecutionDetails => {
+    ): Promise<NodeExecutionDetails> => {
         if (!executionTree || !nodeExecution) {
             return UNKNOWN_DETAILS;
         }
@@ -123,6 +146,18 @@ export const NodeExecutionDetailsContextProvider = (
             nodeDetail = nodeDetail.filter(n =>
                 isIdEqual(n.parentTemplate, parentTemplate)
             );
+        }
+
+        if (nodeDetail.length === 0) {
+            let details = tasks.get(nodeExecution.id.nodeId);
+            if (details) {
+                // we already have looked for it and found
+                return details;
+            }
+
+            // look for specific task by nodeId in current execution
+            details = await checkForDynamicTasks(nodeExecution);
+            return details;
         }
 
         return nodeDetail?.[0] ?? UNKNOWN_DETAILS;

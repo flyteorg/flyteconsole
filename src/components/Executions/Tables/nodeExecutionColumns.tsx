@@ -11,7 +11,7 @@ import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { TaskNodeMetadata } from 'models/Execution/types';
 import * as React from 'react';
-import { useNodeExecutionDetails } from '../contextProvider/NodeExecutionDetails';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { getNodeExecutionTimingMS } from '../utils';
@@ -26,7 +26,21 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({
     execution,
     state
 }) => {
-    const { displayName } = useNodeExecutionDetails(execution);
+    const detailsContext = useNodeExecutionContext();
+    const [displayName, setDisplayName] = React.useState<string | undefined>();
+
+    React.useEffect(() => {
+        let isCurrent = true;
+        detailsContext.getNodeExecutionDetails(execution).then(res => {
+            if (isCurrent) {
+                setDisplayName(res.displayName);
+            }
+        });
+        return () => {
+            isCurrent = false;
+        };
+    });
+
     const commonStyles = useCommonStyles();
     const styles = useColumnStyles();
 
@@ -34,7 +48,8 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({
         state.selectedExecution != null &&
         isEqual(execution.id, state.selectedExecution);
 
-    const truncatedName = displayName?.split('.').pop() || '';
+    const name = displayName ?? execution.id.nodeId;
+    const truncatedName = name?.split('.').pop() || name;
 
     const readableName = isSelected ? (
         <Typography variant="body1" className={styles.selectedExecutionName}>
@@ -60,15 +75,43 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({
 };
 
 const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
-    const details = useNodeExecutionDetails(execution);
-    return <>{details.displayId ?? execution.id.nodeId}</>;
+    const detailsContext = useNodeExecutionContext();
+    const [displayId, setDisplayId] = React.useState<string | undefined>();
+
+    React.useEffect(() => {
+        let isCurrent = true;
+        detailsContext.getNodeExecutionDetails(execution).then(res => {
+            if (isCurrent) {
+                setDisplayId(res.displayId);
+            }
+        });
+        return () => {
+            isCurrent = false;
+        };
+    });
+
+    return <>{displayId ?? execution.id.nodeId}</>;
 };
 
 const DisplayType: React.FC<NodeExecutionCellRendererData> = ({
     execution
 }) => {
-    const details = useNodeExecutionDetails(execution);
-    return <Typography color="textSecondary">{details.displayType}</Typography>;
+    const detailsContext = useNodeExecutionContext();
+    const [type, setType] = React.useState<string | undefined>();
+
+    React.useEffect(() => {
+        let isCurrent = true;
+        detailsContext.getNodeExecutionDetails(execution).then(res => {
+            if (isCurrent) {
+                setType(res.displayType);
+            }
+        });
+        return () => {
+            isCurrent = false;
+        };
+    });
+
+    return <Typography color="textSecondary">{type}</Typography>;
 };
 
 const hiddenCacheStatuses = [

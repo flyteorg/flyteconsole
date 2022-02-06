@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Tab from '@material-ui/core/Tab';
@@ -32,7 +32,7 @@ import {
 } from '../nodeExecutionQueries';
 import { TaskExecutionsList } from '../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionDetails } from '../types';
-import { useNodeExecutionDetails } from '../contextProvider/NodeExecutionDetails';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
 import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
@@ -213,7 +213,9 @@ const NodeExecutionTabs: React.FC<{
     if (tabState.value === tabIds.task && !taskTemplate) {
         // Reset tab value, if task tab is selected, while no taskTemplate is avaible
         // can happen when user switches between nodeExecutions without closing the drawer
-        tabState.reset();
+        tabState.onChange(() => {
+            /* */
+        }, defaultTab);
     }
 
     let tabContent: JSX.Element | null = null;
@@ -299,20 +301,41 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     nodeExecutionId,
     onClose
 }) => {
-    const [mounted, setMounted] = useState(true);
+    const isMounted = useRef(false);
     useEffect(() => {
+        isMounted.current = true;
         return () => {
-            setMounted(false);
+            isMounted.current = false;
         };
     }, []);
+
     const queryClient = useQueryClient();
+    const detailsContext = useNodeExecutionContext();
+
     const [isReasonsVisible, setReasonsVisible] = React.useState(false);
     const [dag, setDag] = React.useState<any>(null);
+    const [details, setDetails] = React.useState<
+        NodeExecutionDetails | undefined
+    >();
+
     const nodeExecutionQuery = useQuery<NodeExecution, Error>({
         ...makeNodeExecutionQuery(nodeExecutionId),
         // The selected NodeExecution has been fetched at this point, we don't want to
         // issue an additional fetch.
         staleTime: Infinity
+    });
+
+    React.useEffect(() => {
+        let isCurrent = true;
+        detailsContext.getNodeExecutionDetails(nodeExecution).then(res => {
+            if (isCurrent) {
+                setDetails(res);
+            }
+        });
+
+        return () => {
+            isCurrent = false;
+        };
     });
 
     React.useEffect(() => {
@@ -332,8 +355,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         );
         if (workflowData) {
             const keyedDag = transformWorkflowToKeyedDag(workflowData);
-            //TODO: here is a memory leak, instead of mounted we should update it in useEffect with isCurrent check
-            if (mounted) setDag(keyedDag);
+            if (isMounted.current) setDag(keyedDag);
         }
     };
 
@@ -354,8 +376,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
     const commonStyles = useCommonStyles();
     const styles = useStyles();
-    const details = useNodeExecutionDetails(nodeExecution);
-    const displayName = details.displayName ?? <Skeleton />;
+    const displayName = details?.displayName ?? <Skeleton />;
 
     const isRunningPhase = React.useMemo(() => {
         return (
@@ -407,7 +428,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     const tabsContent = nodeExecution ? (
         <NodeExecutionTabs
             nodeExecution={nodeExecution}
-            taskTemplate={details.taskTemplate}
+            taskTemplate={details?.taskTemplate}
         />
     ) : null;
     return (
