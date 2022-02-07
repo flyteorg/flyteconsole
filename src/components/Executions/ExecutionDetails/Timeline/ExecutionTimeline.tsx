@@ -246,7 +246,6 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                         exe.id.nodeId === node.id &&
                         exe.scopedId === node.scopedId
                 );
-                console.log(index);
                 return {
                     ...node,
                     execution: index >= 0 ? nodeExecutions[index] : undefined
@@ -256,15 +255,6 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     }, [closure.compiledWorkflow]);
 
     const nodes = convertToPlainNodes(originalNodes);
-
-    // const executionsMap = React.useMemo(
-    //     () =>
-    //         nodeExecutions.reduce(
-    //             (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
-    //             {}
-    //         ),
-    //     [nodeExecutions]
-    // );
 
     const timelineContext = React.useMemo(
         () => ({ selectedExecution, setSelectedExecution }),
