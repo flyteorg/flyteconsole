@@ -23,7 +23,12 @@ import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { dNode } from 'models/Graph/types';
 import { transformerWorkflowToPlainNodes } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
+import {
+    isEndNode,
+    isStartNode,
+    isExpanded
+} from 'components/WorkflowGraph/utils';
+import { RowExpander } from '../../Tables/RowExpander';
 
 // Register components to be usable by chart.js
 ChartJS.register(...registerables, ChartDataLabels);
@@ -92,69 +97,84 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     namesContainer: {
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '0 30px',
+        padding: '0 10px',
         height: 56,
         width: 256,
         borderBottom: `1px solid ${theme.palette.divider}`,
         whiteSpace: 'nowrap'
+    },
+    namesContainerExpander: {
+        display: 'flex',
+        marginTop: 'auto',
+        marginBottom: 'auto'
+    },
+    namesContainerBody: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        whiteSpace: 'nowrap',
+        height: '100%',
+        overflow: 'hidden'
     },
     displayName: {
         marginTop: 4,
         textOverflow: 'ellipsis',
         width: '100%',
         overflow: 'hidden'
+    },
+    leaf: {
+        width: 30
     }
 }));
 
 interface TaskNamesProps {
     executions: NodeExecution[];
     nodes: dNode[];
+    onToggle: (id: string, scopeId: string) => void;
 }
 
 const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
     (props, ref) => {
-        const { executions, nodes } = props;
-        const state = React.useContext(NodeExecutionsTimelineContext);
+        const { nodes, onToggle } = props;
         const styles = useStyles();
-
-        const executionsMap = React.useMemo(
-            () =>
-                executions.reduce(
-                    (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
-                    {}
-                ),
-            [executions]
-        );
 
         return (
             <div className={styles.taskNamesList} ref={ref}>
-                {executions.map(execution => (
-                    <NodeExecutionName
-                        execution={execution}
-                        state={state}
-                        key={`task-name-${execution.id.nodeId}`}
-                    />
-                ))}
-                {nodes
-                    .filter(node => !executionsMap[node.scopedId])
-                    .map(node => (
-                        <div
-                            className={styles.namesContainer}
-                            key={`task-name-${node.scopedId}`}
-                        >
+                {nodes.map(node => (
+                    <div
+                        className={styles.namesContainer}
+                        key={`task-name-${node.scopedId}`}
+                        style={{ paddingLeft: (node?.level || 0) * 16 }}
+                    >
+                        <div className={styles.namesContainerExpander}>
+                            {node.nodes?.length ? (
+                                <RowExpander
+                                    expanded={node.expanded || false}
+                                    onClick={() =>
+                                        onToggle(node.id, node.scopedId)
+                                    }
+                                />
+                            ) : (
+                                <div className={styles.leaf} />
+                            )}
+                        </div>
+
+                        <div className={styles.namesContainerBody}>
                             {node.name}
                             <Typography
                                 variant="subtitle1"
                                 color="textSecondary"
                                 className={styles.displayName}
                             >
-                                {node.value.template?.id?.name}
+                                {node.value.metadata?.name}
                             </Typography>
                         </div>
-                    ))}
+                    </div>
+                ))}
             </div>
         );
     }
@@ -180,7 +200,7 @@ const ExecutionTimeline: React.FC<Props> = ({ nodeExecutions, workflowId }) => {
     );
 };
 
-function convertToPlainNodes(nodes: dNode[]): dNode[] {
+function convertToPlainNodes(nodes: dNode[], level = 0): dNode[] {
     const result: dNode[] = [];
     if (!nodes || nodes.length === 0) {
         return result;
@@ -189,9 +209,9 @@ function convertToPlainNodes(nodes: dNode[]): dNode[] {
         if (isStartNode(node) || isEndNode(node)) {
             return;
         }
-        result.push(node);
-        if (node.nodes.length > 0) {
-            result.push(...convertToPlainNodes(node.nodes));
+        result.push({ ...node, level });
+        if (node.nodes.length > 0 && isExpanded(node)) {
+            result.push(...convertToPlainNodes(node.nodes, level + 1));
         }
     });
     return result;
@@ -213,19 +233,38 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     const durationsLabelsRef = React.useRef<HTMLDivElement>(null);
     const taskNamesRef = React.createRef<HTMLDivElement>();
 
-    const { nodes: originalNodes } = transformerWorkflowToPlainNodes(
-        closure.compiledWorkflow!
-    );
+    const [originalNodes, setOriginalNodes] = React.useState<dNode[]>([]);
+
+    React.useEffect(() => {
+        const { nodes: originalNodes } = transformerWorkflowToPlainNodes(
+            closure.compiledWorkflow!
+        );
+        setOriginalNodes(
+            originalNodes.map(node => {
+                const index = nodeExecutions.findIndex(
+                    exe =>
+                        exe.id.nodeId === node.id &&
+                        exe.scopedId === node.scopedId
+                );
+                console.log(index);
+                return {
+                    ...node,
+                    execution: index >= 0 ? nodeExecutions[index] : undefined
+                };
+            })
+        );
+    }, [closure.compiledWorkflow]);
+
     const nodes = convertToPlainNodes(originalNodes);
 
-    const executionsMap = React.useMemo(
-        () =>
-            nodeExecutions.reduce(
-                (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
-                {}
-            ),
-        [nodeExecutions]
-    );
+    // const executionsMap = React.useMemo(
+    //     () =>
+    //         nodeExecutions.reduce(
+    //             (mapData, cur) => ({ ...mapData, [cur.id.nodeId]: cur }),
+    //             {}
+    //         ),
+    //     [nodeExecutions]
+    // );
 
     const timelineContext = React.useMemo(
         () => ({ selectedExecution, setSelectedExecution }),
@@ -238,7 +277,9 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
 
     // Divide by 1000 to calculate all duration data be second based.
     const durationData = React.useMemo(() => {
-        const definedExecutions = nodeExecutions.map(exec => {
+        const definedExecutions = nodes.map(node => {
+            const exec = node.execution;
+            if (!exec) return 0;
             if (exec.closure.phase === NodeExecutionPhase.RUNNING) {
                 if (!exec.closure.startedAt) {
                     return 0;
@@ -254,48 +295,38 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
             }
             return durationToMilliseconds(exec.closure.duration) / 1000;
         });
-        return [
-            ...definedExecutions,
-            ...nodes.filter(node => !executionsMap[node.scopedId]).map(() => -1)
-        ];
-    }, [nodeExecutions, executionsMap, nodes]);
+        return definedExecutions;
+    }, [nodes]);
 
     const colorData = React.useMemo(() => {
-        const definedExecutions = nodeExecutions.map(exec =>
-            exec.closure.phase === NodeExecutionPhase.RUNNING
+        const definedExecutions = nodes.map(({ execution }) =>
+            execution?.closure.phase === NodeExecutionPhase.RUNNING
                 ? '#4b92ed'
                 : statusColors.SUCCESS
         );
-        return [
-            ...definedExecutions,
-            ...nodes
-                .filter(node => !executionsMap[node.scopedId])
-                .map(() => statusColors.UNKNOWN)
-        ];
-    }, [nodeExecutions, executionsMap, nodes]);
+        return definedExecutions;
+    }, [nodes]);
 
     const startedAt = React.useMemo(() => {
-        if (
-            nodeExecutions.length === 0 ||
-            !nodeExecutions[0].closure.startedAt
-        ) {
+        if (nodes.length === 0 || !nodes[0].execution?.closure.startedAt) {
             return new Date();
         }
-        return timestampToDate(nodeExecutions[0].closure.startedAt);
-    }, [nodeExecutions]);
+        return timestampToDate(nodes[0].execution?.closure.startedAt);
+    }, [nodes]);
 
     const stackedData = React.useMemo(() => {
         let undefinedStart = 0;
-        for (const exec of nodeExecutions) {
-            if (exec.closure.startedAt) {
+        for (const node of nodes) {
+            const exec = node.execution;
+            if (exec?.closure.startedAt) {
                 const startedTime = timestampToDate(
-                    exec.closure.startedAt
+                    exec?.closure.startedAt
                 ).getTime();
                 const absoluteDuration =
                     startedTime -
                     startedAt.getTime() +
-                    (exec.closure.duration
-                        ? durationToMilliseconds(exec.closure.duration)
+                    (exec?.closure.duration
+                        ? durationToMilliseconds(exec?.closure.duration)
                         : Date.now() - startedTime);
                 if (absoluteDuration > undefinedStart) {
                     undefinedStart = absoluteDuration;
@@ -304,21 +335,16 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         }
         undefinedStart = undefinedStart / 1000;
 
-        const definedExecutions = nodeExecutions.map(exec =>
-            exec.closure.startedAt
-                ? (timestampToDate(exec.closure.startedAt).getTime() -
+        const definedExecutions = nodes.map(({ execution }) =>
+            execution?.closure.startedAt
+                ? (timestampToDate(execution?.closure.startedAt).getTime() -
                       startedAt.getTime()) /
                   1000
                 : 0
         );
 
-        return [
-            ...definedExecutions,
-            ...nodes
-                .filter(node => !executionsMap[node.scopedId])
-                .map(() => undefinedStart)
-        ];
-    }, [nodes, nodeExecutions, executionsMap, startedAt]);
+        return definedExecutions;
+    }, [nodes, startedAt]);
 
     const stackedColorData = React.useMemo(() => {
         return durationData.map(duration => {
@@ -438,9 +464,8 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
     }, [taskNamesRef, durationsRef]);
 
     const labels = React.useMemo(() => {
-        const lbs = new Array(
-            Math.ceil(totalDuration / chartTimeInterval)
-        ).fill(0);
+        const len = Math.ceil(totalDuration / chartTimeInterval);
+        const lbs = len > 0 ? new Array(len).fill(0) : [];
         return lbs.map((_, idx) => {
             const time = moment.utc(
                 new Date(startedAt.getTime() + idx * chartTimeInterval * 1000)
@@ -491,6 +516,29 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
         }
     };
 
+    const toggleNode = (id: string, scopeId: string) => {
+        const searchNode = (nodes: dNode[]) => {
+            if (!nodes || nodes.length === 0) {
+                return;
+            }
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
+                if (isStartNode(node) || isEndNode(node)) {
+                    continue;
+                }
+                if (node.id === id && node.scopedId === scopeId) {
+                    nodes[i].expanded = !nodes[i].expanded;
+                    return;
+                }
+                if (node.nodes.length > 0 && isExpanded(node)) {
+                    searchNode(node.nodes);
+                }
+            }
+        };
+        searchNode(originalNodes);
+        setOriginalNodes([...originalNodes]);
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.container}>
@@ -503,6 +551,7 @@ export const ExecutionTimelineWithNodes: React.FC<Props & {
                             executions={nodeExecutions}
                             nodes={nodes}
                             ref={taskNamesRef}
+                            onToggle={toggleNode}
                         />
                     </div>
                     <div className={styles.taskDurations}>

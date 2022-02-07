@@ -8,7 +8,6 @@ export enum QueryType {
     NodeExecution = 'nodeExecution',
     NodeExecutionList = 'nodeExecutionList',
     NodeExecutionChildList = 'nodeExecutionChildList',
-    NodeExecutionTreeList = 'nodeExecutionTreeList',
     TaskExecution = 'taskExecution',
     TaskExecutionList = 'taskExecutionList',
     TaskExecutionChildList = 'taskExecutionChildList',

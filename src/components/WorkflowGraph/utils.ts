@@ -19,6 +19,10 @@ export function isEndNode(node: any) {
     return node.id === endNodeId;
 }
 
+export function isExpanded(node: any) {
+    return !!node.expanded;
+}
+
 /**
  * Utility funciton assumes (loose) parity between [a]->[b] if matching
  * keys have matching values.

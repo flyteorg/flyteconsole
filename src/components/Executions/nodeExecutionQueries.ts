@@ -1,4 +1,3 @@
-import { compareTimestampsAscending } from 'common/utils';
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
@@ -339,51 +338,6 @@ async function fetchAllChildNodeExecutions(
 }
 
 /**
- * Query returns all children (not only direct childs) for a list of `nodeExecutions`
- */
-async function fetchAllTreeNodeExecutions(
-    queryClient: QueryClient,
-    nodeExecutions: NodeExecution[],
-    config: RequestConfig
-): Promise<NodeExecution[]> {
-    const queue: NodeExecution[] = [...nodeExecutions];
-    let left = 0;
-    let right = queue.length;
-
-    while (left < right) {
-        const top: NodeExecution = queue[left++];
-        const executionGroups: NodeExecutionGroup[] = await fetchChildNodeExecutionGroups(
-            queryClient,
-            top,
-            config
-        );
-        for (let i = 0; i < executionGroups.length; i++) {
-            for (let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
-                queue.push(executionGroups[i].nodeExecutions[j]);
-                right++;
-            }
-        }
-    }
-
-    const sorted: NodeExecution[] = queue.sort(
-        (na: NodeExecution, nb: NodeExecution) => {
-            if (!na.closure.startedAt) {
-                return 1;
-            }
-            if (!nb.closure.startedAt) {
-                return -1;
-            }
-            return compareTimestampsAscending(
-                na.closure.startedAt,
-                nb.closure.startedAt
-            );
-        }
-    );
-
-    return sorted;
-}
-
-/**
  *
  * @param nodeExecutions list of parent node executionId's
  * @param config
@@ -422,39 +376,6 @@ export function useAllChildNodeExecutionGroupsQuery(
             ],
             queryFn: () =>
                 fetchAllChildNodeExecutions(queryClient, nodeExecutions, config)
-        },
-        shouldEnableFn
-    );
-}
-
-/**
- *
- * @param nodeExecutions list of parent node executionId's
- * @param config
- * @returns
- */
-export function useAllTreeNodeExecutionGroupsQuery(
-    nodeExecutions: NodeExecution[],
-    config: RequestConfig
-): QueryObserverResult<NodeExecution[], Error> {
-    const queryClient = useQueryClient();
-    const shouldEnableFn = groups => {
-        if (nodeExecutions.some(ne => !nodeExecutionIsTerminal(ne))) {
-            return true;
-        }
-        return groups.some(group => !nodeExecutionIsTerminal(group));
-    };
-
-    return useConditionalQuery<NodeExecution[]>(
-        {
-            queryKey: [
-                QueryType.NodeExecutionTreeList,
-                nodeExecutions[0]?.id,
-                config
-            ],
-            queryFn: () =>
-                fetchAllTreeNodeExecutions(queryClient, nodeExecutions, config),
-            refetchInterval: executionRefreshIntervalMs
         },
         shouldEnableFn
     );
