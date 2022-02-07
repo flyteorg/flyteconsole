@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const fixture = basicPythonWorkflow.generate();
 const workflowExecution = fixture.workflowExecutions.top.data;
 
-const getNodeExecutionDetails = () => {
+const getNodeExecutionDetails = async () => {
     return {
         displayId: 'node0',
         displayName: 'basic.byton.workflow.unique.task_name',
