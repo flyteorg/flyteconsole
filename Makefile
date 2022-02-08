@@ -19,6 +19,13 @@ build_prod:
 	yarn run clean
 	BASE_URL=/console yarn run build:prod
 
+.PHONY: build_oc
+build_oc:
+	yarn install --production
+	yarn install
+	yarn run clean
+	yarn run build:prod
+
 # test_unit runs all unit tests
 .PHONY: test_unit
 test_unit:
