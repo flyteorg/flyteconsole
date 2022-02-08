@@ -1,0 +1,14 @@
+{
+  "version": "0.41.0",
+  "name": "flyteconsole",
+  "description": "The web UI for the Flyte platform",
+  "icons": {
+    "60": "2a8f493c/firefox_app_60x60.png",
+    "128": "2a8f493c/firefox_app_128x128.png",
+    "512": "2a8f493c/firefox_app_512x512.png"
+  },
+  "developer": {
+    "name": "Lyft",
+    "url": null
+  }
+}

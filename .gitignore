@@ -7,7 +7,6 @@
 # Packages
 bin/
 build/
-dist/
 downloads/
 env/
 lib/
