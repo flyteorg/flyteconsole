@@ -24,7 +24,6 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 const STATUS_URL = process.env.STATUS_URL;
 
 // Configure Google Analytics
-const ENABLE_GA = process.env.ENABLE_GA || false;
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
 
 module.exports = {
@@ -35,13 +34,11 @@ module.exports = {
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,
-    ENABLE_GA,
     GA_TRACKING_ID,
     processEnv: {
         ADMIN_API_URL,
         BASE_URL,
         CORS_PROXY_PREFIX,
-        ENABLE_GA,
         GA_TRACKING_ID,
         NODE_ENV,
         STATUS_URL
