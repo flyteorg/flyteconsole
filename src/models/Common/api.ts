@@ -125,11 +125,15 @@ export const listNamedEntities = (
  */
 export const getUserProfile = async () => {
     const path = getProfileUrl();
+    console.log('@api: getUserProfile:path:', path);
+    console.log('@api: getUserProfile:defaultAxiosConfig:', defaultAxiosConfig);
     try {
+        console.log('SUCCESS');
         const { data } = await axios.get<UserProfile>(path, defaultAxiosConfig);
         return data;
     } catch (e) {
         const { message } = transformRequestError(e, path);
+        console.log('FAIL');
         log.error(`Failed to fetch user profile: ${message}`);
         return null;
     }

@@ -11,7 +11,7 @@ const ADMIN_API_URL = 'http://localhost:8088'
 // Use this to create SSL server
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
-const BASE_URL = process.env.BASE_URL || '/console';
+const BASE_URL = process.env.BASE_URL || '';
 const CORS_PROXY_PREFIX = process.env.CORS_PROXY_PREFIX || '/cors_proxy';
 
 // Defines a file to be required which will provide implementations for
