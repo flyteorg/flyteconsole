@@ -11,7 +11,7 @@ const ADMIN_API_URL = 'http://localhost:8088'
 // Use this to create SSL server
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
-const BASE_URL = process.env.BASE_URL || '';
+const BASE_URL = process.env.BASE_URL || '/console';
 const CORS_PROXY_PREFIX = process.env.CORS_PROXY_PREFIX || '/cors_proxy';
 
 // Defines a file to be required which will provide implementations for
@@ -22,8 +22,6 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 // to show informational banners to the user.
 // If it has no protocol, it will be treated as relative to window.location.origin
 const STATUS_URL = process.env.STATUS_URL;
-
-const DISABLE_AUTH = true;
 
 // Configure Google Analytics
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
@@ -36,14 +34,12 @@ module.exports = {
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,
-    DISABLE_AUTH,
     GA_TRACKING_ID,
     processEnv: {
         ADMIN_API_URL,
         BASE_URL,
         CORS_PROXY_PREFIX,
         GA_TRACKING_ID,
-        DISABLE_AUTH,
         NODE_ENV,
         STATUS_URL
     }
