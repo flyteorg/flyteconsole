@@ -51,7 +51,8 @@ function useLoginStatus(): LoginStatus {
     // Whenever we detect expired credentials, trigger a login redirect automatically
     React.useEffect(() => {
         if (expired) {
-            console.log('Admin expired');
+            console.log('Admin expired-------');
+            console.log('redirecting to =>', getLoginUrl());
             window.location.href = getLoginUrl();
         }
     }, [expired]);

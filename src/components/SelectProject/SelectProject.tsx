@@ -29,26 +29,31 @@ const renderProjectList = (results: SearchResult<Project>[]) => (
 
 /** The view component for the landing page of the application. */
 export const SelectProject: React.FC = () => {
+    console.log('components/SelectProject/SelectProject:1');
     const styles = useStyles();
     const projects = useProjects();
+    console.log('components/SelectProject/SelectProject:2');
     return (
-        <WaitForData {...projects}>
-            <div className={styles.container}>
-                <h1>Welcome to Flyte</h1>
-                <Typography variant="h6">
-                    <p>Select a project to get started...</p>
-                </Typography>
-                <section className={styles.buttonContainer}>
-                    <div className={styles.searchContainer}>
-                        <SearchableList
-                            items={projects.value}
-                            placeholder="Search for projects by name"
-                            propertyGetter="name"
-                            renderContent={renderProjectList}
-                        />
-                    </div>
-                </section>
-            </div>
-        </WaitForData>
+        <>
+            <h1>DOES IT GET THIS FAR? (components/SelectProject)</h1>
+            <WaitForData {...projects}>
+                <div className={styles.container}>
+                    <h1>Welcome to Flyte</h1>
+                    <Typography variant="h6">
+                        <p>Select a project to get started...</p>
+                    </Typography>
+                    <section className={styles.buttonContainer}>
+                        <div className={styles.searchContainer}>
+                            <SearchableList
+                                items={projects.value}
+                                placeholder="Search for projects by name"
+                                propertyGetter="name"
+                                renderContent={renderProjectList}
+                            />
+                        </div>
+                    </section>
+                </div>
+            </WaitForData>
+        </>
     );
 };

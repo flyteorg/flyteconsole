@@ -14,9 +14,11 @@ export const QueryAuthorizationObserver: React.FC = () => {
         const unsubscribe = queryCache.subscribe(
             (query?: Query | undefined) => {
                 if (!query || !query.state.error) {
+                    console.log('components/data/QueryAuthorizationObserver:1');
                     return;
                 }
                 if (query.state.error instanceof NotAuthorizedError) {
+                    console.log('components/data/QueryAuthorizationObserver:2');
                     // Stop all in-progress and future requests
                     onlineManager.setOnline(false);
                     // Trigger auth flow

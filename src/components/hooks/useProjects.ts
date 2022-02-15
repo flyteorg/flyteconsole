@@ -11,7 +11,9 @@ const fetchableKey = Symbol('ProjectsList');
 const makeProjectCacheKey = (id: string) => ({ id, collection: fetchableKey });
 
 const doFetchProjects = async (cache: ValueCache) => {
+    console.log('components/hooks/doFetchProjects:1');
     const projects = await listProjects();
+    console.log('components/hooks/doFetchProjects:2');
     // Individually cache the projects so that we can retrieve them by id
     return projects.map(p =>
         cache.mergeValue(makeProjectCacheKey(p.id), p)
@@ -20,8 +22,9 @@ const doFetchProjects = async (cache: ValueCache) => {
 
 /** A hook for fetching the list of available projects*/
 export function useProjects(): FetchableData<Project[]> {
+    console.log('components/hooks/useProjects:1');
     const cache = useContext(CacheContext);
-
+    console.log('components/hooks/useProjects:2');
     return useFetchableData<Project[], symbol>(
         {
             debugName: 'Projects',
