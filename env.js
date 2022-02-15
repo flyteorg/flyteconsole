@@ -23,6 +23,8 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 // If it has no protocol, it will be treated as relative to window.location.origin
 const STATUS_URL = process.env.STATUS_URL;
 
+const DISABLE_AUTH = true;
+
 // Configure Google Analytics
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
 
@@ -34,12 +36,14 @@ module.exports = {
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,
+    DISABLE_AUTH,
     GA_TRACKING_ID,
     processEnv: {
         ADMIN_API_URL,
         BASE_URL,
         CORS_PROXY_PREFIX,
         GA_TRACKING_ID,
+        DISABLE_AUTH,
         NODE_ENV,
         STATUS_URL
     }
