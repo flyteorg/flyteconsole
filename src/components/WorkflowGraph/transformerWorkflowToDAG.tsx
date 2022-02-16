@@ -25,6 +25,16 @@ export interface staticNodeExecutionIds {
     staticNodeId: string;
 }
 
+export const debugOnName = (compiledNode, name = 'okta') => {
+    const displayName = getDisplayName(compiledNode);
+    if (displayName == name) {
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+        return true;
+    } else {
+        return false;
+    }
+};
+
 /**
  * Returns a DAG from Flyte workflow request data
  * @param context input can be either CompiledWorkflow or CompiledNode
@@ -56,7 +66,6 @@ export const transformerWorkflowToDAG = (
 
         /* scopedId is used for requests; this creates format used by contract */
         let scopedId = '';
-
         if (
             isStartOrEndNode(compiledNode) &&
             parentDNode &&
@@ -131,6 +140,9 @@ export const transformerWorkflowToDAG = (
     };
 
     const buildBranchNodeWidthType = (node, root, workflow) => {
+        console.log('@buildBranchNodeWidthType:');
+        console.log('\t => node', node.id);
+        console.log('\t => root', root.id);
         const taskNode = node.taskNode as TaskNode;
         let taskType: CompiledTask | null = null;
         if (taskNode) {
@@ -167,7 +179,7 @@ export const transformerWorkflowToDAG = (
 
         /* Check: if thenNode has branch : else add theNode */
         if (thenNode.branchNode) {
-            // const thenNodeDNode = createDNode(thenNode, root);
+            console.log('BRANCH CASE 1');
             const thenNodeDNode = createDNode({
                 compiledNode: thenNode,
                 parentDNode: root
@@ -175,11 +187,13 @@ export const transformerWorkflowToDAG = (
             buildDAG(thenNodeDNode, thenNode, dTypes.branch, workflow);
             root.nodes.push(thenNodeDNode);
         } else {
+            console.log('BRANCH CASE 2');
             buildBranchNodeWidthType(thenNode, root, workflow);
         }
 
         /* Check: else case */
         if (elseNode) {
+            console.log('BRANCH CASE 3');
             buildBranchNodeWidthType(elseNode, root, workflow);
         }
 
@@ -188,6 +202,7 @@ export const transformerWorkflowToDAG = (
             otherNode.map(otherItem => {
                 const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
                 if (otherCompiledNode.branchNode) {
+                    console.log('BRANCH CASE 4');
                     const otherDNodeBranch = createDNode({
                         compiledNode: otherCompiledNode,
                         parentDNode: root
@@ -244,7 +259,7 @@ export const transformerWorkflowToDAG = (
                 /* Case: recurse on branch node */
                 dNode = createDNode({
                     compiledNode: compiledNode,
-                    parentDNode: null
+                    parentDNode: root
                 });
                 buildDAG(dNode, compiledNode, dTypes.branch, workflow);
             } else if (compiledNode.workflowNode) {
@@ -262,7 +277,7 @@ export const transformerWorkflowToDAG = (
                      */
                     dNode = createDNode({
                         compiledNode: compiledNode,
-                        parentDNode: null
+                        parentDNode: root
                     });
                 }
                 buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
@@ -392,6 +407,6 @@ export const transformerWorkflowToDAG = (
         }
     };
     const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
-    console.log('@workflowToDag =>', dag);
+    console.log('\n\n\n\n\n@workflowToDag =>', dag);
     return { dag, staticExecutionIdsMap };
 };

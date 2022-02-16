@@ -61,7 +61,6 @@ const ReactFlowGraphComponent = props => {
     };
 
     const buildReactFlowGraphData = () => {
-        console.log('@ReactFlowGraphComponent: case 1');
         return ConvertFlyteDagToReactFlows({
             root: state.data,
             nodeExecutionsById: state.nodeExecutionsById,
@@ -75,7 +74,6 @@ const ReactFlowGraphComponent = props => {
 
     useEffect(() => {
         const newRFGraphData = buildReactFlowGraphData();
-        console.log('@ReactFlowGraphComponent: newRFGraphData', newRFGraphData);
         setState(state => ({
             ...state,
             rfGraphJson: newRFGraphData

@@ -66,10 +66,11 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
 
     const onNodesChange = useCallback(
         changes => {
-            console.log('@ReactFlowWrapper: CASE 0');
+            console.log('@ReactFlowWrapper: onNodesChanged');
             console.log('\t changes.length:', changes.length);
             console.log('\t state.nodes.length:', state.nodes.length);
             console.log('\t state.shouldUpdate:', state.shouldUpdate);
+            console.log('\t currentNestedView:', currentNestedView);
             if (changes.length == state.nodes.length && state.shouldUpdate) {
                 const nodesWithDimensions: any[] = [];
                 for (let i = 0; i < changes.length; i++) {
@@ -78,10 +79,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
                         ['dimensions']: changes[i].dimensions
                     });
                 }
-                console.log('@ReactFlowWrapper: CASE 1');
-                console.log('\t nodesWithDimensions:', nodesWithDimensions);
-                console.log('\t state.edges:', state.edges);
-                console.log('\t currentNestedView:', currentNestedView);
                 const positionedNodes = getPositionedNodes(
                     nodesWithDimensions,
                     state.edges,

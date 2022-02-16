@@ -177,6 +177,8 @@ export const nodesToArray = nodes => {
 
 export const buildGraphMapping = (props): ReactFlowGraphMapping => {
     const dag: dNode = props.root;
+
+    console.log('>>>>>>>>>>>>>>>> DAG:', dag);
     const {
         nodeExecutionsById,
         onNodeSelectionChanged,
@@ -292,6 +294,16 @@ export const renderGraph = (
         };
         const nestedContent: string[] = [];
 
+        /**
+         * Compute which nested content will be populated into a subworkflow container.
+         *
+         * Function returns array of id's.  These id's are then matched to rootParentMap
+         * values for determining which nodes to show
+         *
+         * Note: currentNestedView is a mapping where
+         *  k: rootParentId
+         *  v: array of depth where last value in array is current view
+         */
         for (const nestedParentId in graphMapping.rootParentMap) {
             const rootParent = currentNestedView[nestedParentId];
             if (rootParent) {
@@ -302,28 +314,22 @@ export const renderGraph = (
             }
         }
 
-        /**
-         * NOTES:
-         *  - Problem is that n3 says its parent is n3
-         */
-
         for (const rootParentId in graphMapping.rootParentMap) {
-            const rootParent = graphMapping.rootParentMap[rootParentId];
-            /* Merge nested graphs */
+            const parentMapContext = graphMapping.rootParentMap[rootParentId];
             for (let i = 0; i < nestedContent.length; i++) {
-                const childGraphId = nestedContent[i];
-                if (rootParent[childGraphId]) {
+                const nestedChildGraphId = nestedContent[i];
+                if (parentMapContext[nestedChildGraphId]) {
                     nestedChildGraphs.nodes = {
                         ...nestedChildGraphs.nodes,
-                        ...rootParent[childGraphId].nodes
+                        ...parentMapContext[nestedChildGraphId].nodes
                     };
                     nestedChildGraphs.edges = {
                         ...nestedChildGraphs.edges,
-                        ...rootParent[childGraphId].edges
+                        ...parentMapContext[nestedChildGraphId].edges
                     };
                 }
             }
-            console.log('');
+            console.log('\t graphMapping:', graphMapping);
             for (const parentKey in graphMapping.root.nodes) {
                 const parentNode = graphMapping.root.nodes[parentKey];
                 if (parentNode.id == rootParentId) {
@@ -331,20 +337,37 @@ export const renderGraph = (
                     parentNode['style'] = {};
                 }
             }
-            /** @TODO refactor this; we need this step but can prob be done better */
+            /**
+             *  @TODO refactor this; we need this step but can prob be done better
+             *  The issue is that somehow/somewhere root-level nodes are being added
+             *  to these nestedGraphs and if the appear in the output they break
+             *  reactFlow because a node can have a self-referencing "parentNode"
+             *
+             *  eg. { id: "n0", parentNode: "n0"} will break
+             *
+             */
             for (const nodeId in nestedChildGraphs.nodes) {
                 const node = nestedChildGraphs.nodes[nodeId];
-                if (node.type == 'FlyteNode_subworkflow') {
-                    node.type = 'FlyteNode_nestedMaxDepth';
+                for (const rootId in graphMapping.rootParentMap) {
+                    if (node.id == rootId) {
+                        delete nestedChildGraphs.nodes[nodeId];
+                    } else {
+                        if (node.type == 'FlyteNode_subworkflow') {
+                            node.type = 'FlyteNode_nestedMaxDepth';
+                        }
+                    }
                 }
             }
         }
+
+        console.log('>>> nestedChildGraphs:', nestedChildGraphs);
+        console.log('>>> graphMapping.root:', graphMapping.root);
         const output = { ...graphMapping.root };
         output.nodes = { ...output.nodes, ...nestedChildGraphs.nodes };
         output.edges = { ...output.edges, ...nestedChildGraphs.edges };
         output.nodes = nodesToArray(output.nodes);
         output.edges = edgesToArray(output.edges);
-        console.log('\t output:', output);
+        console.log('\t -----> output:', output);
         return output;
     } else {
         return graphMapping.root;

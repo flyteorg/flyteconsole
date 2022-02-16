@@ -414,6 +414,9 @@ export const getPositionedNodes = (
     const parentMap = {};
     /* (1) Collect all child graphs in parentMap */
     nodes.forEach(node => {
+        if (node.id == 'n3') {
+            console.log('NODE N3 ==> ', node);
+        }
         if (node.isRootParentNode) {
             parentMap[node.id] = {
                 nodes: [],
@@ -437,15 +440,20 @@ export const getPositionedNodes = (
     });
     edges.forEach(edge => {
         if (edge.parent) {
-            if (parentMap[edge.parent].edges) {
-                parentMap[edge.parent].edges.push(edge);
+            if (parentMap[edge.parent]) {
+                if (parentMap[edge.parent].edges) {
+                    parentMap[edge.parent].edges.push(edge);
+                } else {
+                    parentMap[edge.parent].edges = [edge];
+                }
             } else {
-                parentMap[edge.parent].edges = [edge];
+                console.log('PARENT NOT FOUND:', edge);
+                console.log('\t paremtMap:', parentMap);
+                console.log('\t edge.parent:', edge.parent);
             }
         }
     });
 
-    console.log('@tuils CASE 5');
     /* (2) Compute child graph positiions/dimensions */
     for (const parentId in parentMap) {
         const children = parentMap[parentId];
