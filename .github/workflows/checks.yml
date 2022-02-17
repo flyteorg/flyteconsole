@@ -53,6 +53,7 @@ jobs:
 
   release:
     name: Generate Release
+    if: ${{ github.event_name != 'pull_request' }}
     needs: [ unit_tests_with_coverage, lint_project, build_docker_image ]
     runs-on: ubuntu-latest
     steps:
