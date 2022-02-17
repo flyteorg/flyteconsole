@@ -140,9 +140,6 @@ export const transformerWorkflowToDAG = (
     };
 
     const buildBranchNodeWidthType = (node, root, workflow) => {
-        console.log('@buildBranchNodeWidthType:');
-        console.log('\t => node', node.id);
-        console.log('\t => root', root.id);
         const taskNode = node.taskNode as TaskNode;
         let taskType: CompiledTask | null = null;
         if (taskNode) {
@@ -177,23 +174,30 @@ export const transformerWorkflowToDAG = (
         const elseNode = parentCompiledNode.branchNode?.ifElse
             ?.elseNode as CompiledNode;
 
-        /* Check: if thenNode has branch : else add theNode */
+        /* Check: if thenNode has branch */
         if (thenNode.branchNode) {
-            console.log('BRANCH CASE 1');
             const thenNodeDNode = createDNode({
                 compiledNode: thenNode,
                 parentDNode: root
             });
             buildDAG(thenNodeDNode, thenNode, dTypes.branch, workflow);
             root.nodes.push(thenNodeDNode);
+        } else if (thenNode.workflowNode) {
+            /* Check: if thenNode has subworkflow */
+            const id = thenNode.workflowNode.subWorkflowRef;
+            const subworkflow = getSubWorkflowFromId(id, workflow);
+            const dNode = createDNode({
+                compiledNode: thenNode,
+                parentDNode: root
+            });
+            buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
+            root.nodes.push(dNode);
         } else {
-            console.log('BRANCH CASE 2');
             buildBranchNodeWidthType(thenNode, root, workflow);
         }
 
         /* Check: else case */
         if (elseNode) {
-            console.log('BRANCH CASE 3');
             buildBranchNodeWidthType(elseNode, root, workflow);
         }
 
@@ -202,7 +206,6 @@ export const transformerWorkflowToDAG = (
             otherNode.map(otherItem => {
                 const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
                 if (otherCompiledNode.branchNode) {
-                    console.log('BRANCH CASE 4');
                     const otherDNodeBranch = createDNode({
                         compiledNode: otherCompiledNode,
                         parentDNode: root
@@ -213,6 +216,17 @@ export const transformerWorkflowToDAG = (
                         dTypes.branch,
                         workflow
                     );
+                } else if (otherCompiledNode.workflowNode) {
+                    /* Check: if thenNode has subworkflow */
+                    const id = otherCompiledNode.workflowNode.subWorkflowRef;
+                    const subworkflow = getSubWorkflowFromId(id, workflow);
+                    const dNode = createDNode({
+                        compiledNode: otherCompiledNode,
+                        parentDNode: root
+                    });
+                    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+                    buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
+                    root.nodes.push(dNode);
                 } else {
                     buildBranchNodeWidthType(otherCompiledNode, root, workflow);
                 }
@@ -351,7 +365,6 @@ export const transformerWorkflowToDAG = (
             });
             contextualRoot = primaryStart;
         }
-
         /* Build Nodes */
         buildNodesFromWFContext(
             contextualRoot,
