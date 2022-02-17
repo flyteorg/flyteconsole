@@ -284,14 +284,7 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
         const liStyles = {
             paddingLeft: '.25rem',
             color: '#626262',
-            border: '1px solid red',
-            '&::before': {
-                content: `''`,
-                position: 'absolute',
-                width: '50px',
-                height: '50px',
-                background: 'blue'
-            }
+            border: '1px solid red'
         };
         const onClick =
             currentNestedDepth > index + 1 ? handleNestedViewClick : null;
@@ -330,11 +323,10 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
             margin: 0,
             padding: 0,
             display: 'flex',
-            flexDirection: 'column',
             listStyle: 'none',
             listStyleImage: 'none',
             listStylePosition: 'none',
-            clear: 'none'
+            width: '500px'
         };
         const headerStyle = {
             color: '#8B37FF',
