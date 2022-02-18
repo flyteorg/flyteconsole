@@ -5,6 +5,9 @@ import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
+import { createDebugLogger } from '../utils';
+
+const debug = createDebugLogger('@ReactFlowGraphComponent');
 
 const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
     for (const exe in nodeExecutionsById) {
@@ -26,9 +29,15 @@ const graphNodeCountChanged = (previous, data) => {
 };
 
 const ReactFlowGraphComponent = props => {
-    const { data, onNodeSelectionChanged, nodeExecutionsById } = props;
+    const {
+        data,
+        onNodeSelectionChanged,
+        nodeExecutionsById,
+        dynamicWorkflows
+    } = props;
     const [state, setState] = useState({
         data: data,
+        dynamicWorkflows: dynamicWorkflows,
         currentNestedView: {},
         nodeExecutionsById: nodeExecutionsById,
         onNodeSelectionChanged: onNodeSelectionChanged,
@@ -36,10 +45,7 @@ const ReactFlowGraphComponent = props => {
     });
 
     const onAddNestedView = view => {
-        console.log('@addNestedView:');
-        console.log('\t view:', view);
-        console.log('\t view.parent:', view.parent);
-        console.log('\t view.view', view.view);
+        debug('@addNestedView:', view);
         const currentView = state.currentNestedView[view.parent] || [];
         const newView = {
             [view.parent]: [...currentView, view.view]

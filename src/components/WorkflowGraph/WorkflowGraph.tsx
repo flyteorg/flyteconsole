@@ -10,6 +10,7 @@ import { NodeExecutionsContext } from 'components/Executions/contexts';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useQuery, useQueryClient } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
+import { createDebugLogger } from 'components/flytegraph/utils';
 
 export interface WorkflowGraphProps {
     onNodeSelectionChanged: (selectedNodes: string[]) => void;
@@ -23,6 +24,8 @@ interface PrepareDAGResult {
     staticExecutionIdsMap?: any;
     error?: Error;
 }
+
+const debug = createDebugLogger('@WorkflowGraph');
 
 function workflowToDag(workflow: Workflow): PrepareDAGResult {
     try {
@@ -86,9 +89,11 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
         // console.log('\tworkflow:', workflow);
         // console.log('\tdynamicWorkflows', dynamicWorkflows);
         // console.log('\tdag', dag);
+        debug('DYNAMIC:', dynamicWorkflows);
         const merged = dag;
         return (
             <ReactFlowGraphComponent
+                dynamicWorkflows={dynamicWorkflows}
                 nodeExecutionsById={nodeExecutionsById}
                 data={merged}
                 onNodeSelectionChanged={onNodeSelectionChanged}

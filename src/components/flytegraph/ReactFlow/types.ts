@@ -3,7 +3,7 @@ import { dNode, dTypes } from 'models/Graph/types';
 import { Elements, HandleProps } from 'react-flow-renderer';
 
 export interface RFWrapperProps {
-    rfGraphJson: Elements;
+    rfGraphJson: any;
     backgroundStyle: RFBackgroundProps;
     type: RFGraphTypes;
     onNodeSelectionChanged?: any;

@@ -13,6 +13,9 @@ import {
     ReactFlowStaticNode
 } from './customNodeComponents';
 import { getPositionedNodes, ReactFlowIdHash } from './utils';
+import { createDebugLogger } from '../utils';
+
+const debug = createDebugLogger('@ReactFlowWrapper');
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -66,11 +69,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
 
     const onNodesChange = useCallback(
         changes => {
-            console.log('@ReactFlowWrapper: onNodesChanged');
-            console.log('\t changes.length:', changes.length);
-            console.log('\t state.nodes.length:', state.nodes.length);
-            console.log('\t state.shouldUpdate:', state.shouldUpdate);
-            console.log('\t currentNestedView:', currentNestedView);
+            debug('\t currentNestedView:', currentNestedView);
             if (changes.length == state.nodes.length && state.shouldUpdate) {
                 const nodesWithDimensions: any[] = [];
                 for (let i = 0; i < changes.length; i++) {

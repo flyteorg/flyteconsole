@@ -3,6 +3,7 @@ import { ReactFlowGraphConfig } from './utils';
 import { Edge, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { ConvertDagProps } from './types';
+import { createDebugLogger } from '../utils';
 
 interface rfNode extends Node {
     isRootParentNode?: boolean;
@@ -16,6 +17,8 @@ interface ReactFlowGraph {
     nodes: any;
     edges: any;
 }
+
+const debug = createDebugLogger('@TransformerDAGToReactFlow');
 
 export interface ReactFlowGraphMapping {
     root: ReactFlowGraph;
@@ -45,6 +48,7 @@ interface BuildDataProps {
     onAddNestedView: any;
     onRemoveNestedView: any;
     rootParentNode: dNode;
+    currentNestedView: string[];
 }
 export const buildReactFlowDataProps = (props: BuildDataProps) => {
     const {
@@ -131,7 +135,6 @@ export const buildReactFlowNode = ({
     }
 
     if (output.parentNode == node.scopedId) {
-        console.log('>>>>>> SAME PARENT NODE ID', node);
         delete output.parentNode;
     }
 
@@ -178,7 +181,6 @@ export const nodesToArray = nodes => {
 export const buildGraphMapping = (props): ReactFlowGraphMapping => {
     const dag: dNode = props.root;
 
-    console.log('>>>>>>>>>>>>>>>> DAG:', dag);
     const {
         nodeExecutionsById,
         onNodeSelectionChanged,
@@ -263,8 +265,8 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
         });
         contextNode.edges.map((edge: dEdge) => {
             const reactFlowEdge = buildReactFlowEdge({ edge, rootParentNode });
-            if (rootParentNode) {
-                context?.edges[reactFlowEdge.id] = reactFlowEdge;
+            if (rootParentNode && context) {
+                context.edges[reactFlowEdge.id] = reactFlowEdge;
             } else {
                 root.edges[reactFlowEdge.id] = reactFlowEdge;
             }
@@ -284,9 +286,8 @@ export const renderGraph = (
     currentNestedView,
     maxRenderDepth = 0
 ) => {
-    console.log('>>> transformerDAGToReactFlow:@renderGraph');
-    console.log('\t graphMapping:', graphMapping);
-    console.log('\t currentNestedView:', currentNestedView);
+    debug('\t graphMapping:', graphMapping);
+    debug('\t currentNestedView:', currentNestedView);
     if (maxRenderDepth > 0) {
         const nestedChildGraphs: ReactFlowGraph = {
             nodes: {},
@@ -329,7 +330,6 @@ export const renderGraph = (
                     };
                 }
             }
-            console.log('\t graphMapping:', graphMapping);
             for (const parentKey in graphMapping.root.nodes) {
                 const parentNode = graphMapping.root.nodes[parentKey];
                 if (parentNode.id == rootParentId) {
@@ -359,15 +359,11 @@ export const renderGraph = (
                 }
             }
         }
-
-        console.log('>>> nestedChildGraphs:', nestedChildGraphs);
-        console.log('>>> graphMapping.root:', graphMapping.root);
         const output = { ...graphMapping.root };
         output.nodes = { ...output.nodes, ...nestedChildGraphs.nodes };
         output.edges = { ...output.edges, ...nestedChildGraphs.edges };
         output.nodes = nodesToArray(output.nodes);
         output.edges = edgesToArray(output.edges);
-        console.log('\t -----> output:', output);
         return output;
     } else {
         return graphMapping.root;
@@ -375,8 +371,6 @@ export const renderGraph = (
 };
 
 export const ConvertFlyteDagToReactFlows = (props: ConvertDagProps) => {
-    console.log('@DagToReactFlow:ConvertFlyteDagToReactFlows:');
-    console.log('\t props.root:', props.root);
     const graphMapping: ReactFlowGraphMapping = buildGraphMapping(props);
     return renderGraph(
         graphMapping,

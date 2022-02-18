@@ -1,4 +1,5 @@
 import { QueryInput, QueryType } from 'components/data/types';
+import { retriesToZero } from 'components/flytegraph/ReactFlow/utils';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
 import {
@@ -86,6 +87,14 @@ export function makeNodeExecutionListQuery(
     id: WorkflowExecutionIdentifier,
     config?: RequestConfig
 ): QueryInput<NodeExecution[]> {
+    /**
+     * Note on scopedId:
+     * We use scopedId as a key between various UI elements built from static data
+     * (eg, CompiledWorkflowClosure for the graph) that need to be mapped to runtime
+     * values like nodeExecutions; rendering from a static entity has no way to know
+     * the actual retry value so we use '0' for this key -- the actual value of retries
+     * remains as the nodeId.
+     */
     return {
         queryKey: [QueryType.NodeExecutionList, id, config],
         queryFn: async () => {
@@ -93,10 +102,12 @@ export function makeNodeExecutionListQuery(
                 (await listNodeExecutions(id, config)).entities
             );
             nodeExecutions.map(exe => {
-                if (exe.metadata) {
-                    return (exe.scopedId = exe.metadata.specNodeId);
+                if (exe.metadata?.specNodeId) {
+                    return (exe.scopedId = retriesToZero(
+                        exe.metadata.specNodeId
+                    ));
                 } else {
-                    return (exe.scopedId = exe.id.nodeId);
+                    return (exe.scopedId = retriesToZero(exe.id.nodeId));
                 }
             });
             cacheNodeExecutions(queryClient, nodeExecutions);

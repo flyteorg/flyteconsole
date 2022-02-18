@@ -22,6 +22,17 @@ export const ReactFlowGraphConfig = {
     edgeType: 'default'
 };
 
+/**
+ * Function replaces all retry values with '0' to be used a key between static/runtime
+ * values.
+ * @param id   NodeExcution nodeId.
+ * @returns    nodeId with all retry values replaces with '0'
+ */
+export const retriesToZero = (id: string): string => {
+    const output = id.replace(/(-[0-9]-)/g, '-0-');
+    return output;
+};
+
 export const getGraphHandleStyle = (
     handleType: string,
     type?: dTypes
@@ -414,9 +425,6 @@ export const getPositionedNodes = (
     const parentMap = {};
     /* (1) Collect all child graphs in parentMap */
     nodes.forEach(node => {
-        if (node.id == 'n3') {
-            console.log('NODE N3 ==> ', node);
-        }
         if (node.isRootParentNode) {
             parentMap[node.id] = {
                 nodes: [],
@@ -446,10 +454,6 @@ export const getPositionedNodes = (
                 } else {
                     parentMap[edge.parent].edges = [edge];
                 }
-            } else {
-                console.log('PARENT NOT FOUND:', edge);
-                console.log('\t paremtMap:', parentMap);
-                console.log('\t edge.parent:', edge.parent);
             }
         }
     });
@@ -491,8 +495,6 @@ export const getPositionedNodes = (
         parentMap[parentId].self.dimensions.width = width;
         parentMap[parentId].self.dimensions.height = height;
     }
-    console.log('>>>> Utils: output=>parentMap:', parentMap);
-
     /* (3) Compute positions of root-level nodes */
     const { graph, dimensions } = computeRootNodePositions({
         nodes: nodes,

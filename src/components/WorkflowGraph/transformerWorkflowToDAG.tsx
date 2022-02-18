@@ -2,18 +2,16 @@ import {
     DISPLAY_NAME_END,
     DISPLAY_NAME_START
 } from 'components/flytegraph/ReactFlow/utils';
+import { createDebugLogger } from 'components/flytegraph/utils';
 import { dTypes, dEdge, dNode } from 'models/Graph/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import { CompiledNode, ConnectionSet, TaskNode } from 'models/Node/types';
-import { CompiledTask } from 'models/Task/types';
+import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import {
     CompiledWorkflow,
-    CompiledWorkflowClosure,
-    WorkflowTemplate
+    CompiledWorkflowClosure
 } from 'models/Workflow/types';
 import {
-    isEndNode,
-    isStartNode,
     isStartOrEndNode,
     getDisplayName,
     getSubWorkflowFromId,
@@ -25,15 +23,7 @@ export interface staticNodeExecutionIds {
     staticNodeId: string;
 }
 
-export const debugOnName = (compiledNode, name = 'okta') => {
-    const displayName = getDisplayName(compiledNode);
-    if (displayName == name) {
-        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-        return true;
-    } else {
-        return false;
-    }
-};
+const debug = createDebugLogger('@TransformerWorkflowToDAG');
 
 /**
  * Returns a DAG from Flyte workflow request data
@@ -43,11 +33,14 @@ export const debugOnName = (compiledNode, name = 'okta') => {
 export const transformerWorkflowToDAG = (
     workflow: CompiledWorkflowClosure
 ): any => {
-    console.log('@transformerWorkflowToDAG input(workflow):', workflow);
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
 
-    const createDEdge = ({ sourceId, targetId }): dEdge => {
+    interface CreateDEdgeProps {
+        sourceId: string;
+        targetId: string;
+    }
+    const createDEdge = ({ sourceId, targetId }: CreateDEdgeProps): dEdge => {
         const id = `${sourceId}->${targetId}`;
         const edge: dEdge = {
             sourceId: sourceId,
@@ -57,30 +50,42 @@ export const transformerWorkflowToDAG = (
         return edge;
     };
 
-    const createDNode = (props): dNode => {
+    interface CreateDNodeProps {
+        compiledNode: CompiledNode;
+        parentDNode?: dNode;
+        taskTemplate?: CompiledTask;
+        typeOverride?: dTypes;
+    }
+    const createDNode = (props: CreateDNodeProps): dNode => {
         const { compiledNode, parentDNode, taskTemplate, typeOverride } = props;
         const nodeValue =
             taskTemplate == null
                 ? compiledNode
                 : { ...compiledNode, ...taskTemplate };
 
-        /* scopedId is used for requests; this creates format used by contract */
+        /**
+         * Note on scopedId:
+         * We need to be able to map nodeExecution's to their corresponding nodes. The problem is that nodeExecutions come
+         * back with a scoped id's (eg, {parentId}-{retry}-{childId}) while nodes are contextual (eg, 'n3' vs 'n0-0-n1-0-n3').
+         * Further, even if we try to construct these values here we cannot know the actual retry value until run-time.
+         *
+         * To mitigate this we've added a new property on NodeExecutions that is the same as an executions scopedId but
+         * assuming '0' for each retry. We then construct that same scopedId here with the same solution of '0' for retries
+         * which allows us to map them regardless of what the actual retry value is.
+         */
         let scopedId = '';
         if (
             isStartOrEndNode(compiledNode) &&
             parentDNode &&
             !isStartOrEndNode(parentDNode)
         ) {
-            /* Need to scope ids for start/end nodes for ReactFlow provider refresh */
             scopedId = `${parentDNode.scopedId}-${compiledNode.id}`;
         } else if (parentDNode && parentDNode.type != dTypes.start) {
             if (
                 parentDNode.type == dTypes.branch ||
                 parentDNode.type == dTypes.subworkflow
             ) {
-                /* Note: request contract indicates nested (subworkflow, branch) with -${retries}- */
-                const retries = compiledNode.metadata?.retries.retries;
-                scopedId = `${parentDNode.scopedId}-${retries}-${compiledNode.id}`;
+                scopedId = `${parentDNode.scopedId}-0-${compiledNode.id}`;
             } else {
                 scopedId = `${parentDNode.scopedId}-${compiledNode.id}`;
             }
@@ -88,11 +93,6 @@ export const transformerWorkflowToDAG = (
             /* Case: primary workflow nodes won't have parents */
             scopedId = compiledNode.id;
         }
-
-        /**
-         * @TODO decide if we want to nested/standard start/end in
-         *       UX; saving untilthat is decided.
-         */
         const type =
             typeOverride == null
                 ? getNodeTypeFromCompiledNode(compiledNode)
@@ -139,186 +139,7 @@ export const transformerWorkflowToDAG = (
         };
     };
 
-    const buildBranchNodeWidthType = (node, root, workflow) => {
-        const taskNode = node.taskNode as TaskNode;
-        let taskType: CompiledTask | null = null;
-        if (taskNode) {
-            taskType = getTaskTypeFromCompiledNode(
-                taskNode,
-                workflow.tasks
-            ) as CompiledTask;
-        }
-        const dNode = createDNode({
-            compiledNode: node as CompiledNode,
-            parentDNode: root,
-            taskTemplate: taskType
-        });
-        root.nodes.push(dNode);
-    };
-
-    /**
-     * Will parse values when dealing with a Branch and recursively find and build
-     * any other node types.
-     * @param root      Parent root for Branch; will render independent DAG and
-     *                  add as a child node of root.
-     * @param parentCompiledNode   CompiledNode of origin
-     */
-    const parseBranch = (
-        root: dNode,
-        parentCompiledNode: CompiledNode,
-        workflow: CompiledWorkflowClosure
-    ) => {
-        const otherNode = parentCompiledNode.branchNode?.ifElse?.other;
-        const thenNode = parentCompiledNode.branchNode?.ifElse?.case
-            ?.thenNode as CompiledNode;
-        const elseNode = parentCompiledNode.branchNode?.ifElse
-            ?.elseNode as CompiledNode;
-
-        /* Check: if thenNode has branch */
-        if (thenNode.branchNode) {
-            const thenNodeDNode = createDNode({
-                compiledNode: thenNode,
-                parentDNode: root
-            });
-            buildDAG(thenNodeDNode, thenNode, dTypes.branch, workflow);
-            root.nodes.push(thenNodeDNode);
-        } else if (thenNode.workflowNode) {
-            /* Check: if thenNode has subworkflow */
-            const id = thenNode.workflowNode.subWorkflowRef;
-            const subworkflow = getSubWorkflowFromId(id, workflow);
-            const dNode = createDNode({
-                compiledNode: thenNode,
-                parentDNode: root
-            });
-            buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
-            root.nodes.push(dNode);
-        } else {
-            buildBranchNodeWidthType(thenNode, root, workflow);
-        }
-
-        /* Check: else case */
-        if (elseNode) {
-            buildBranchNodeWidthType(elseNode, root, workflow);
-        }
-
-        /* Check: other case */
-        if (otherNode) {
-            otherNode.map(otherItem => {
-                const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
-                if (otherCompiledNode.branchNode) {
-                    const otherDNodeBranch = createDNode({
-                        compiledNode: otherCompiledNode,
-                        parentDNode: root
-                    });
-                    buildDAG(
-                        otherDNodeBranch,
-                        otherCompiledNode,
-                        dTypes.branch,
-                        workflow
-                    );
-                } else if (otherCompiledNode.workflowNode) {
-                    /* Check: if thenNode has subworkflow */
-                    const id = otherCompiledNode.workflowNode.subWorkflowRef;
-                    const subworkflow = getSubWorkflowFromId(id, workflow);
-                    const dNode = createDNode({
-                        compiledNode: otherCompiledNode,
-                        parentDNode: root
-                    });
-                    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$');
-                    buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
-                    root.nodes.push(dNode);
-                } else {
-                    buildBranchNodeWidthType(otherCompiledNode, root, workflow);
-                }
-            });
-        }
-
-        /* Add edges and add start/end nodes */
-        const { startNode, endNode } = buildBranchStartEndNodes(root);
-        for (let i = 0; i < root.nodes.length; i++) {
-            const startEdge: dEdge = {
-                sourceId: startNode.id,
-                targetId: root.nodes[i].scopedId
-            };
-            const endEdge: dEdge = {
-                sourceId: root.nodes[i].scopedId,
-                targetId: endNode.id
-            };
-            root.edges.push(startEdge);
-            root.edges.push(endEdge);
-        }
-        root.nodes.push(startNode);
-        root.nodes.push(endNode);
-    };
-
-    const buildNodesFromWFContext = (
-        root: dNode,
-        contextWf: WorkflowTemplate,
-        type: dTypes,
-        workflow: CompiledWorkflowClosure
-    ): void => {
-        for (let i = 0; i < contextWf.nodes.length; i++) {
-            const compiledNode: CompiledNode = contextWf.nodes[i];
-            let dNode: dNode;
-
-            if (
-                (isStartNode(compiledNode) || isEndNode(compiledNode)) &&
-                type == dTypes.subworkflow
-            ) {
-                dNode = createDNode({
-                    compiledNode: compiledNode,
-                    parentDNode: root
-                });
-            } else if (compiledNode.branchNode) {
-                /* Case: recurse on branch node */
-                dNode = createDNode({
-                    compiledNode: compiledNode,
-                    parentDNode: root
-                });
-                buildDAG(dNode, compiledNode, dTypes.branch, workflow);
-            } else if (compiledNode.workflowNode) {
-                /* Case: recurse on workflow node */
-                const id = compiledNode.workflowNode.subWorkflowRef;
-                const subworkflow = getSubWorkflowFromId(id, workflow);
-                if (!isStartNode(root)) {
-                    dNode = createDNode({
-                        compiledNode: compiledNode,
-                        parentDNode: root
-                    });
-                } else {
-                    /**
-                     * @TODO may not need this else case
-                     */
-                    dNode = createDNode({
-                        compiledNode: compiledNode,
-                        parentDNode: root
-                    });
-                }
-                buildDAG(dNode, subworkflow, dTypes.subworkflow, workflow);
-            } else if (compiledNode.taskNode) {
-                /* Case: build task node */
-                const taskType = getTaskTypeFromCompiledNode(
-                    compiledNode.taskNode,
-                    workflow.tasks
-                );
-                dNode = createDNode({
-                    compiledNode: compiledNode,
-                    parentDNode: root,
-                    taskTemplate: taskType
-                });
-            } else {
-                /* Else: primary start/finish nodes */
-                dNode = createDNode({
-                    compiledNode: compiledNode,
-                    parentDNode: root
-                });
-            }
-
-            root.nodes.push(dNode);
-        }
-    };
-
-    const buildOutWorkflowEdges = (
+    const buildWorkflowEdges = (
         root,
         context: ConnectionSet,
         ingress,
@@ -334,51 +155,137 @@ export const transformerWorkflowToDAG = (
             });
             root.edges.push(edge);
             if (context.downstream[list[i]]) {
-                buildOutWorkflowEdges(root, context, list[i], nodeMap);
+                buildWorkflowEdges(root, context, list[i], nodeMap);
             }
         }
     };
 
     /**
-     * Handles parsing CompiledWorkflow data objects
+     * Handles parsing CompiledNode
+     *
+     * @param node           CompiledNode to parse
+     * @param root          Root node for the graph that will be rendered
+     * @param workflow      Main/root workflow
+     */
+    interface ParseNodeProps {
+        node: CompiledNode;
+        root?: dNode;
+    }
+    const parseNode = ({ node, root }: ParseNodeProps) => {
+        let dNode;
+        if (node.branchNode) {
+            dNode = createDNode({
+                compiledNode: node,
+                parentDNode: root
+            });
+            buildDAG(dNode, node, dTypes.branch);
+        } else if (node.workflowNode) {
+            const id = node.workflowNode.subWorkflowRef;
+            const subworkflow = getSubWorkflowFromId(id, workflow);
+            dNode = createDNode({
+                compiledNode: node,
+                parentDNode: root
+            });
+            buildDAG(dNode, subworkflow, dTypes.subworkflow);
+        } else if (node.taskNode) {
+            const taskNode = node.taskNode as TaskNode;
+            const taskType: CompiledTask = getTaskTypeFromCompiledNode(
+                taskNode,
+                workflow.tasks
+            ) as CompiledTask;
+            dNode = createDNode({
+                compiledNode: node as CompiledNode,
+                parentDNode: root,
+                taskTemplate: taskType
+            });
+        } else {
+            dNode = createDNode({
+                compiledNode: node,
+                parentDNode: root
+            });
+        }
+        root?.nodes.push(dNode);
+    };
+
+    /**
+     * Handles parsing branch from CompiledNode
+     *
+     * @param root          Root node for the branch that will be rendered
+     * @param context       Current branch node being parsed
+     * @param workflow      Main/root workflow
+     */
+    interface ParseBranchProps {
+        root: dNode;
+        context: CompiledNode;
+    }
+    const parseBranch = ({ root, context }: ParseBranchProps) => {
+        const otherNode = context.branchNode?.ifElse?.other;
+        const thenNode = context.branchNode?.ifElse?.case
+            ?.thenNode as CompiledNode;
+        const elseNode = context.branchNode?.ifElse?.elseNode as CompiledNode;
+
+        /* Check: then (if) case */
+        if (thenNode) {
+            parseNode({ node: thenNode, root: root });
+        }
+
+        /* Check: else case */
+        if (elseNode) {
+            parseNode({ node: elseNode, root: root });
+        }
+
+        /* Check: other (else-if) case */
+        if (otherNode) {
+            otherNode.map(otherItem => {
+                const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
+                parseNode({
+                    node: otherCompiledNode,
+                    root: root
+                });
+            });
+        }
+
+        /* Add edges and add start/end nodes */
+        const { startNode, endNode } = buildBranchStartEndNodes(root);
+        for (let i = 0; i < root.nodes.length; i++) {
+            const startEdge: dEdge = createDEdge({
+                sourceId: startNode.id,
+                targetId: root.nodes[i].scopedId
+            });
+            const endEdge: dEdge = createDEdge({
+                sourceId: root.nodes[i].scopedId,
+                targetId: endNode.id
+            });
+            root.edges.push(startEdge);
+            root.edges.push(endEdge);
+        }
+        root.nodes.push(startNode);
+        root.nodes.push(endNode);
+    };
+
+    /**
+     * Handles parsing CompiledWorkflow
      *
      * @param root          Root node for the graph that will be rendered
-     * @param context       The current workflow (note: could be subworkflow)
-     * @param type          Type (sub or primrary)
-     * @param workflow      Main parent workflow
+     * @param context       The current workflow being parsed
+     * @param workflow      Main/root workflow
      */
-    const parseWorkflow = (
-        root,
-        context: CompiledWorkflow,
-        type: dTypes,
-        workflow: CompiledWorkflowClosure
-    ) => {
-        /* Note: only Primary workflow is null, all others have root */
-        let contextualRoot;
-        if (root) {
-            contextualRoot = root;
-        } else {
-            const primaryStart = createDNode({
-                compiledNode: {
-                    id: startNodeId
-                } as CompiledNode
+    const parseWorkflow = (root, context: CompiledWorkflow) => {
+        /* Build Nodes from template */
+        for (let i = 0; i < context.template.nodes.length; i++) {
+            const compiledNode: CompiledNode = context.template.nodes[i];
+            parseNode({
+                node: compiledNode,
+                root: root
             });
-            contextualRoot = primaryStart;
         }
-        /* Build Nodes */
-        buildNodesFromWFContext(
-            contextualRoot,
-            context.template,
-            type,
-            workflow
-        );
 
         const nodesList = context.template.nodes;
         const nodeMap = {};
 
-        /* Create mapping of id => dNode for all child nodes of root to build edges */
-        for (let i = 0; i < contextualRoot.nodes.length; i++) {
-            const dNode = contextualRoot.nodes[i];
+        /* Create mapping of CompiledNode.id => dNode.id to build edges */
+        for (let i = 0; i < root.nodes.length; i++) {
+            const dNode = root.nodes[i];
             nodeMap[dNode.id] = {
                 dNode: dNode,
                 compiledNode: nodesList[i]
@@ -386,40 +293,35 @@ export const transformerWorkflowToDAG = (
         }
 
         /* Build Edges */
-        buildOutWorkflowEdges(
-            contextualRoot,
-            context.connections,
-            startNodeId,
-            nodeMap
-        );
-        return contextualRoot;
+        buildWorkflowEdges(root, context.connections, startNodeId, nodeMap);
+        return root;
     };
 
     /**
-     * Mutates root (if passed) by recursively rendering DAG of given context.
+     * Recursively renders DAG of given context.
      *
-     * @param root          Root node of DAG
+     * @param root          Root node of DAG (note: will mutate root)
      * @param graphType     DAG type (eg, branch, workflow)
      * @param context       Pointer to current context of response
      */
-    const buildDAG = (
-        root: dNode | null,
-        context: any,
-        graphType: dTypes,
-        workflow: CompiledWorkflowClosure
-    ) => {
+    const buildDAG = (root: dNode, context: any, graphType: dTypes) => {
         switch (graphType) {
             case dTypes.branch:
-                parseBranch(root as dNode, context, workflow);
+                parseBranch({ root, context });
                 break;
             case dTypes.subworkflow:
-                parseWorkflow(root, context, graphType, workflow);
+                parseWorkflow(root, context);
                 break;
             case dTypes.primary:
-                return parseWorkflow(root, context, graphType, workflow);
+                return parseWorkflow(root, context);
         }
     };
-    const dag: dNode = buildDAG(null, primary, dTypes.primary, workflow);
-    console.log('\n\n\n\n\n@workflowToDag =>', dag);
+    const primaryWorkflowRoot = createDNode({
+        compiledNode: {
+            id: startNodeId
+        } as CompiledNode
+    });
+    const dag: dNode = buildDAG(primaryWorkflowRoot, primary, dTypes.primary);
+    debug('output:', dag);
     return { dag, staticExecutionIdsMap };
 };
