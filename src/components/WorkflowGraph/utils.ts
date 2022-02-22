@@ -1,6 +1,9 @@
 import { Identifier } from 'models/Common/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { CompiledWorkflow } from 'models/Workflow/types';
+import {
+    CompiledWorkflow,
+    CompiledWorkflowClosure
+} from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes } from 'models/Graph/types';
@@ -80,6 +83,23 @@ export const getWorkflowId = (workflow: CompiledWorkflow): string => {
     return workflow.template.id.name;
 };
 
+export const createWorkflowNodeFromDynamic = dw => {
+    // workflowNode: WorkflowNode
+    //     subWorkflowRef: Identifier
+    //     domain: "development"
+    //     name: "core.control_flow.subworkflows.my_subwf"
+    //     project: "flytesnacks"
+    //     resourceType: 2
+    //     version: "demo-9-1-core-2"
+    return {
+        subWorkflowRef: {
+            domain: 'development',
+            name: '',
+            project: ''
+        }
+    };
+};
+
 export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
     if (isStartNode(node)) {
         return dTypes.start;
@@ -96,6 +116,9 @@ export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
 
 export const getSubWorkflowFromId = (id, workflow) => {
     const { subWorkflows } = workflow;
+    console.log('@getSubworkflows:');
+    console.log('\t id:', id);
+    console.log('\t workflow:', workflow);
     /* Find current matching entitity from subWorkflows */
     for (const k in subWorkflows) {
         const subWorkflowId = subWorkflows[k].template.id;

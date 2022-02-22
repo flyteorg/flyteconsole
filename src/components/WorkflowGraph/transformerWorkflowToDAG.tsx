@@ -31,7 +31,8 @@ const debug = createDebugLogger('@TransformerWorkflowToDAG');
  * @returns Display name
  */
 export const transformerWorkflowToDAG = (
-    workflow: CompiledWorkflowClosure
+    workflow: CompiledWorkflowClosure,
+    dynamicToMerge
 ): any => {
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
@@ -173,6 +174,42 @@ export const transformerWorkflowToDAG = (
     }
     const parseNode = ({ node, root }: ParseNodeProps) => {
         let dNode;
+        console.log('\n\n\nparseNode>>>>>>>>>>>>>> ');
+        console.log('\t root:', root);
+        console.log('\t node:', node);
+        if (dynamicToMerge && dynamicToMerge[node.id]) {
+            console.log('CASE: Found dynamic node');
+            const dynamicNode = dynamicToMerge[node.id];
+            const dynamicWorkflow = dynamicNode.dynamicWorkflow;
+            if (dynamicWorkflow) {
+                const dSubId = dynamicWorkflow.id;
+                const dPrimary = dynamicWorkflow.compiledWorkflow.primary;
+                const dSubWorkflows =
+                    dynamicWorkflow.compiledWorkflow.subWorkflows;
+
+                node['workflowNode'] = {
+                    subWorkflowRef: dSubId
+                };
+
+                if (getSubWorkflowFromId(dSubId, workflow) === false) {
+                    workflow.subWorkflows.push(dPrimary);
+                }
+            } else if (dynamicNode.workflowNode) {
+                console.log('$$$$$$$$$$$$$$$ FOUND');
+                const dynamicNodeSubWorkflow = getSubWorkflowFromId(
+                    dynamicNode.workflowNode.subWorkflowRef,
+                    dynamicNode.workflowNode
+                );
+                if (dynamicNodeSubWorkflow) {
+                    console.log('adding SUBWORKFLOW:');
+                    workflow.subWorkflows.push(dynamicNode.workflowNode);
+                } else {
+                    console.log('NOT adding SUBWORKFLOW:');
+                }
+            }
+            //workflow.subWorkflows.push(dPrimary);
+            //workflow.subWorkflows.push(dSubWorkflows[0]);
+        }
         if (node.branchNode) {
             dNode = createDNode({
                 compiledNode: node,
@@ -180,13 +217,29 @@ export const transformerWorkflowToDAG = (
             });
             buildDAG(dNode, node, dTypes.branch);
         } else if (node.workflowNode) {
+            console.log('------------------------- CASE 1:');
             const id = node.workflowNode.subWorkflowRef;
-            const subworkflow = getSubWorkflowFromId(id, workflow);
-            dNode = createDNode({
-                compiledNode: node,
-                parentDNode: root
-            });
-            buildDAG(dNode, subworkflow, dTypes.subworkflow);
+            console.log('\t node:', node);
+            console.log('\t root:', root);
+            console.log('\t subworkflowId:', id);
+            console.log('\t workflow:', workflow);
+            let subworkflow = getSubWorkflowFromId(id, workflow);
+            if (!subworkflow) {
+                // console.log('PUSHING NEW SUBWORKFLOW:', node.workflowNode);
+                // workflow.subWorkflows.push(node.workflowNode);
+                // subworkflow = getSubWorkflowFromId(id, workflow);
+                dNode = createDNode({
+                    compiledNode: node,
+                    parentDNode: root
+                });
+            } else {
+                dNode = createDNode({
+                    compiledNode: node,
+                    parentDNode: root
+                });
+                console.log('SUBWORKFLOW:', subworkflow);
+                buildDAG(dNode, subworkflow, dTypes.subworkflow);
+            }
         } else if (node.taskNode) {
             const taskNode = node.taskNode as TaskNode;
             const taskType: CompiledTask = getTaskTypeFromCompiledNode(
@@ -272,6 +325,9 @@ export const transformerWorkflowToDAG = (
      */
     const parseWorkflow = (root, context: CompiledWorkflow) => {
         /* Build Nodes from template */
+        console.log('@parseWorkflow:');
+        console.log('\t root:', root);
+        console.log('\t context:', context);
         for (let i = 0; i < context.template.nodes.length; i++) {
             const compiledNode: CompiledNode = context.template.nodes[i];
             parseNode({
