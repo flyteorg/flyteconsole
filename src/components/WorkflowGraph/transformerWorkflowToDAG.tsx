@@ -175,41 +175,36 @@ export const transformerWorkflowToDAG = (
     const parseNode = ({ node, root }: ParseNodeProps) => {
         let dNode;
         console.log('\n\n\nparseNode>>>>>>>>>>>>>> ');
-        console.log('\t root:', root);
-        console.log('\t node:', node);
         if (dynamicToMerge && dynamicToMerge[node.id]) {
-            console.log('CASE: Found dynamic node');
+            console.log('\tCASE: dynamicNode');
             const dynamicNode = dynamicToMerge[node.id];
             const dynamicWorkflow = dynamicNode.dynamicWorkflow;
             if (dynamicWorkflow) {
-                const dSubId = dynamicWorkflow.id;
-                const dPrimary = dynamicWorkflow.compiledWorkflow.primary;
+                const dWorkflowId = dynamicWorkflow.id;
+                const dPrimaryWorkflow =
+                    dynamicWorkflow.compiledWorkflow.primary;
+                node['workflowNode'] = {
+                    subWorkflowRef: dWorkflowId
+                };
+                if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
+                    workflow.subWorkflows.push(dPrimaryWorkflow);
+                }
+
                 const dSubWorkflows =
                     dynamicWorkflow.compiledWorkflow.subWorkflows;
 
-                node['workflowNode'] = {
-                    subWorkflowRef: dSubId
-                };
-
-                if (getSubWorkflowFromId(dSubId, workflow) === false) {
-                    workflow.subWorkflows.push(dPrimary);
-                }
-            } else if (dynamicNode.workflowNode) {
-                console.log('$$$$$$$$$$$$$$$ FOUND');
-                const dynamicNodeSubWorkflow = getSubWorkflowFromId(
-                    dynamicNode.workflowNode.subWorkflowRef,
-                    dynamicNode.workflowNode
-                );
-                if (dynamicNodeSubWorkflow) {
-                    console.log('adding SUBWORKFLOW:');
-                    workflow.subWorkflows.push(dynamicNode.workflowNode);
-                } else {
-                    console.log('NOT adding SUBWORKFLOW:');
+                for (let i = 0; i < dSubWorkflows.length; i++) {
+                    const subworkflow = dSubWorkflows[i];
+                    const subId = subworkflow.template.id;
+                    if (getSubWorkflowFromId(subId, workflow) === false) {
+                        console.log('ADDING SUBWORKFLOW:', subworkflow);
+                        workflow.subWorkflows.push(subworkflow);
+                    }
                 }
             }
-            //workflow.subWorkflows.push(dPrimary);
-            //workflow.subWorkflows.push(dSubWorkflows[0]);
+            delete dynamicToMerge[node.id];
         }
+
         if (node.branchNode) {
             dNode = createDNode({
                 compiledNode: node,
@@ -217,29 +212,13 @@ export const transformerWorkflowToDAG = (
             });
             buildDAG(dNode, node, dTypes.branch);
         } else if (node.workflowNode) {
-            console.log('------------------------- CASE 1:');
             const id = node.workflowNode.subWorkflowRef;
-            console.log('\t node:', node);
-            console.log('\t root:', root);
-            console.log('\t subworkflowId:', id);
-            console.log('\t workflow:', workflow);
             let subworkflow = getSubWorkflowFromId(id, workflow);
-            if (!subworkflow) {
-                // console.log('PUSHING NEW SUBWORKFLOW:', node.workflowNode);
-                // workflow.subWorkflows.push(node.workflowNode);
-                // subworkflow = getSubWorkflowFromId(id, workflow);
-                dNode = createDNode({
-                    compiledNode: node,
-                    parentDNode: root
-                });
-            } else {
-                dNode = createDNode({
-                    compiledNode: node,
-                    parentDNode: root
-                });
-                console.log('SUBWORKFLOW:', subworkflow);
-                buildDAG(dNode, subworkflow, dTypes.subworkflow);
-            }
+            dNode = createDNode({
+                compiledNode: node,
+                parentDNode: root
+            });
+            buildDAG(dNode, subworkflow, dTypes.subworkflow);
         } else if (node.taskNode) {
             const taskNode = node.taskNode as TaskNode;
             const taskType: CompiledTask = getTaskTypeFromCompiledNode(

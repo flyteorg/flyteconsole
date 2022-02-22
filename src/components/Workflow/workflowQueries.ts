@@ -47,7 +47,10 @@ export function makeNodeExecutionDynamicWorkflowQuery(
             ).then(values => {
                 const output = {};
                 for (let i = 0; i < values.length; i++) {
-                    output[values[i].key] = values[i].value;
+                    /* Filter to only include dynamicWorkflow */
+                    if (values[i].value.dynamicWorkflow) {
+                        output[values[i].key] = values[i].value;
+                    }
                 }
                 return output;
             });

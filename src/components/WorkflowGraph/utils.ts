@@ -116,9 +116,6 @@ export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
 
 export const getSubWorkflowFromId = (id, workflow) => {
     const { subWorkflows } = workflow;
-    console.log('@getSubworkflows:');
-    console.log('\t id:', id);
-    console.log('\t workflow:', workflow);
     /* Find current matching entitity from subWorkflows */
     for (const k in subWorkflows) {
         const subWorkflowId = subWorkflows[k].template.id;
