@@ -7,11 +7,9 @@ import {
     COLOR_GRAPH_BACKGROUND,
     getGraphHandleStyle,
     getGraphNodeStyle,
-    getRFBackground,
     getNestedContainerStyle
 } from './utils';
-import { RFGraphTypes, RFHandleProps } from './types';
-import { forEach } from 'lodash';
+import { RFHandleProps } from './types';
 
 export const renderDefaultHandles = (
     id: string,
@@ -264,6 +262,9 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
  * @param props.data data property of ReactFlowGraphNodeData
  */
 export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
+    const BREAD_FONT_SIZE = '9px';
+    const BREAD_COLOR_ACTIVE = '#8B37FF';
+    const BREAD_COLOR_INACTIVE = '#000';
     const borderStyle = getNestedContainerStyle(data.nodeExecutionStatus);
 
     const handleNestedViewClick = e => {
@@ -281,20 +282,36 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
     const currentNestedDepth = data.currentNestedView?.length || 0;
 
     const BreadElement = ({ nestedView, index }) => {
-        const liStyles = {
-            paddingLeft: '.25rem',
-            color: '#626262',
-            border: '1px solid red'
+        const liStyles: React.CSSProperties = {
+            cursor: 'pointer',
+            fontSize: BREAD_FONT_SIZE,
+            color: BREAD_COLOR_ACTIVE
+        };
+
+        const liStyleInactive: React.CSSProperties = { ...liStyles };
+        liStyleInactive['color'] = BREAD_COLOR_INACTIVE;
+
+        const beforeStyle: React.CSSProperties = {
+            cursor: 'pointer',
+            color: BREAD_COLOR_ACTIVE,
+            padding: '0 .2rem',
+            fontSize: BREAD_FONT_SIZE
         };
         const onClick =
             currentNestedDepth > index + 1 ? handleNestedViewClick : null;
         return (
             <li
                 onClick={onClick}
-                style={liStyles}
+                style={
+                    index == currentNestedDepth - 1 ? liStyleInactive : liStyles
+                }
                 id={`${data.scopedId}_${index}`}
             >
+                {index == 0 ? <span style={beforeStyle}>{'>'}</span> : null}
                 {nestedView}
+                {index < currentNestedDepth - 1 ? (
+                    <span style={beforeStyle}>{'>'}</span>
+                ) : null}
             </li>
         );
     };
@@ -312,25 +329,25 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
     };
 
     const renderBreadCrumb = () => {
-        const breadContainerStyle = {
+        const breadContainerStyle: React.CSSProperties = {
             position: 'absolute',
             display: 'flex',
             width: '100%',
-            marginTop: '-1rem',
-            fontSize: '10px'
+            marginTop: '-1rem'
         };
-        const olStyles = {
+        const olStyles: React.CSSProperties = {
             margin: 0,
             padding: 0,
             display: 'flex',
             listStyle: 'none',
             listStyleImage: 'none',
-            listStylePosition: 'none',
-            width: '500px'
+            minWidth: '1rem'
         };
-        const headerStyle = {
-            color: '#8B37FF',
-            fontSize: '10px'
+        const headerStyle: React.CSSProperties = {
+            color: BREAD_COLOR_ACTIVE,
+            fontSize: BREAD_FONT_SIZE,
+            margin: 0,
+            padding: 0
         };
 
         const rootClick = currentNestedDepth > 0 ? handleRootClick : null;
