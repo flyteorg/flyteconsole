@@ -32,7 +32,7 @@ const debug = createDebugLogger('@TransformerWorkflowToDAG');
  */
 export const transformerWorkflowToDAG = (
     workflow: CompiledWorkflowClosure,
-    dynamicToMerge
+    dynamicToMerge: any | null = null
 ): any => {
     const { primary } = workflow;
     const staticExecutionIdsMap = {};
@@ -174,12 +174,16 @@ export const transformerWorkflowToDAG = (
     }
     const parseNode = ({ node, root }: ParseNodeProps) => {
         let dNode;
-        console.log('\n\n\nparseNode>>>>>>>>>>>>>> ');
+        /**
+         * Note: if node is dynamic we must add dynamicWorkflow
+         * as a subworkflow on the root workflow. We also need to check
+         * if the dynamic workflow has any subworkflows and add them too.
+         */
         if (dynamicToMerge && dynamicToMerge[node.id]) {
-            console.log('\tCASE: dynamicNode');
-            const dynamicNode = dynamicToMerge[node.id];
-            const dynamicWorkflow = dynamicNode.dynamicWorkflow;
+            const dynamicWorkflow = dynamicToMerge[node.id].dynamicWorkflow;
+
             if (dynamicWorkflow) {
+                /* 1. Add primary workflow */
                 const dWorkflowId = dynamicWorkflow.id;
                 const dPrimaryWorkflow =
                     dynamicWorkflow.compiledWorkflow.primary;
@@ -187,9 +191,10 @@ export const transformerWorkflowToDAG = (
                     subWorkflowRef: dWorkflowId
                 };
                 if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
-                    workflow.subWorkflows.push(dPrimaryWorkflow);
+                    workflow.subWorkflows?.push(dPrimaryWorkflow);
                 }
 
+                /* 2. Check for subworkflows */
                 const dSubWorkflows =
                     dynamicWorkflow.compiledWorkflow.subWorkflows;
 
@@ -197,11 +202,11 @@ export const transformerWorkflowToDAG = (
                     const subworkflow = dSubWorkflows[i];
                     const subId = subworkflow.template.id;
                     if (getSubWorkflowFromId(subId, workflow) === false) {
-                        console.log('ADDING SUBWORKFLOW:', subworkflow);
-                        workflow.subWorkflows.push(subworkflow);
+                        workflow.subWorkflows?.push(subworkflow);
                     }
                 }
             }
+            /* Remove value when done to prevent infinite loop */
             delete dynamicToMerge[node.id];
         }
 
@@ -244,7 +249,6 @@ export const transformerWorkflowToDAG = (
      *
      * @param root          Root node for the branch that will be rendered
      * @param context       Current branch node being parsed
-     * @param workflow      Main/root workflow
      */
     interface ParseBranchProps {
         root: dNode;
@@ -300,13 +304,9 @@ export const transformerWorkflowToDAG = (
      *
      * @param root          Root node for the graph that will be rendered
      * @param context       The current workflow being parsed
-     * @param workflow      Main/root workflow
      */
     const parseWorkflow = (root, context: CompiledWorkflow) => {
         /* Build Nodes from template */
-        console.log('@parseWorkflow:');
-        console.log('\t root:', root);
-        console.log('\t context:', context);
         for (let i = 0; i < context.template.nodes.length; i++) {
             const compiledNode: CompiledNode = context.template.nodes[i];
             parseNode({

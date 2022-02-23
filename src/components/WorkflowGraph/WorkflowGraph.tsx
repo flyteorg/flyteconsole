@@ -1,6 +1,10 @@
 import { transformerWorkflowToDAG } from './transformerWorkflowToDAG';
 import { dNode } from 'models/Graph/types';
-import { Workflow } from 'models/Workflow/types';
+import {
+    CompiledWorkflow,
+    CompiledWorkflowClosure,
+    Workflow
+} from 'models/Workflow/types';
 import * as React from 'react';
 import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
 import { Error } from 'models/Common/types';
@@ -57,21 +61,16 @@ export interface DynamicWorkflowMapping {
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
     const { onNodeSelectionChanged, nodeExecutionsById, workflow } = props;
     const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
-    console.log('STATIC EXECUTIONS:', staticExecutionIdsMap);
-    console.log('>>>>>> nodeExecutionsById:', nodeExecutionsById);
     /**
      * Note:
      *  Dynamic nodes are deteremined at runtime and thus do not come
      *  down as part of the workflow closure. We can detect and place
-     *  dynamic nodes by finding orphan execution id's and then map
+     *  dynamic nodes by finding orphan execution id's and then mapping
      *  those executions into the dag by using the executions 'uniqueParentId'
      *  to render that node as a subworkflow
      */
     const checkForDynamicExeuctions = (allExecutions, staticExecutions) => {
         const parentsToFetch = {};
-        console.log('allExecutions:', allExecutions);
-        console.log('staticExecutions:', staticExecutions);
-
         for (const executionId in allExecutions) {
             if (!staticExecutions[executionId]) {
                 const dynamicExecutionId = allExecutions[executionId];
@@ -84,8 +83,6 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
             }
         }
         const result = {};
-        console.log('parenttoFetch:', parentsToFetch);
-        // console.log('error:', allExecutions.jason.porte);
         for (const parentId in parentsToFetch) {
             result[parentId] = allExecutions[parentId];
         }
@@ -101,22 +98,19 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
         makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents)
     );
     const renderReactFlowGraph = dynamicWorkflows => {
-        debug('DYNAMIC:', dynamicWorkflows);
-        // createWorkflowNodeFromDynamic
+        debug('DynamicWorkflows:', dynamicWorkflows);
         let mergedDag = dag;
-        let mergedStaticMap = staticExecutionIdsMap;
         for (const dynamicId in dynamicWorkflows) {
             if (staticExecutionIdsMap[dynamicId]) {
-                const dynamicWorkflow = transformerWorkflowToDAG(
-                    workflow.closure?.compiledWorkflow,
-                    dynamicWorkflows
-                );
-                mergedDag = dynamicWorkflow.dag;
-                mergedStaticMap = dynamicWorkflow.staticExecutionIdsMap;
+                if (workflow.closure?.compiledWorkflow) {
+                    const dynamicWorkflow = transformerWorkflowToDAG(
+                        workflow.closure?.compiledWorkflow,
+                        dynamicWorkflows
+                    );
+                    mergedDag = dynamicWorkflow.dag;
+                }
             }
         }
-
-        console.log('DAG:', mergedDag);
         const merged = mergedDag;
         return (
             <ReactFlowGraphComponent
