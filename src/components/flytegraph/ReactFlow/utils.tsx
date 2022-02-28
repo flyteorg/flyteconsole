@@ -168,7 +168,9 @@ export const getGraphNodeStyle = (
         minWidth: '.5rem',
         minHeight: '.5rem',
         height: 'auto',
-        width: 'auto'
+        width: 'auto',
+        zIndex: 100000,
+        position: 'relative'
     };
 
     const nestedPoint = {

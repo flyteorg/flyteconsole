@@ -179,35 +179,43 @@ export const transformerWorkflowToDAG = (
          * as a subworkflow on the root workflow. We also need to check
          * if the dynamic workflow has any subworkflows and add them too.
          */
-        if (dynamicToMerge && dynamicToMerge[node.id]) {
-            const dynamicWorkflow = dynamicToMerge[node.id].dynamicWorkflow;
+        if (dynamicToMerge) {
+            const scopedId = `${root?.scopedId}-0-${node.id}`;
+            const id = dynamicToMerge[scopedId] != null ? scopedId : node.id;
+            if (dynamicToMerge[id]) {
+                const dynamicWorkflow = dynamicToMerge[id].dynamicWorkflow;
 
-            if (dynamicWorkflow) {
-                /* 1. Add primary workflow */
-                const dWorkflowId = dynamicWorkflow.id;
-                const dPrimaryWorkflow =
-                    dynamicWorkflow.compiledWorkflow.primary;
-                node['workflowNode'] = {
-                    subWorkflowRef: dWorkflowId
-                };
-                if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
-                    workflow.subWorkflows?.push(dPrimaryWorkflow);
-                }
+                if (dynamicWorkflow) {
+                    const dWorkflowId =
+                        dynamicWorkflow.metadata?.specNodeId ||
+                        dynamicWorkflow.id;
+                    const dPrimaryWorkflow =
+                        dynamicWorkflow.compiledWorkflow.primary;
 
-                /* 2. Check for subworkflows */
-                const dSubWorkflows =
-                    dynamicWorkflow.compiledWorkflow.subWorkflows;
+                    node['workflowNode'] = {
+                        subWorkflowRef: dWorkflowId
+                    };
 
-                for (let i = 0; i < dSubWorkflows.length; i++) {
-                    const subworkflow = dSubWorkflows[i];
-                    const subId = subworkflow.template.id;
-                    if (getSubWorkflowFromId(subId, workflow) === false) {
-                        workflow.subWorkflows?.push(subworkflow);
+                    /* 1. Add primary workflow as subworkflow on root */
+                    if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
+                        workflow.subWorkflows?.push(dPrimaryWorkflow);
+                    }
+
+                    /* 2. Add subworkflows as subworkflows on root */
+                    const dSubWorkflows =
+                        dynamicWorkflow.compiledWorkflow.subWorkflows;
+
+                    for (let i = 0; i < dSubWorkflows.length; i++) {
+                        const subworkflow = dSubWorkflows[i];
+                        const subId = subworkflow.template.id;
+                        if (getSubWorkflowFromId(subId, workflow) === false) {
+                            workflow.subWorkflows?.push(subworkflow);
+                        }
                     }
                 }
+                /* Remove entry when done to prevent infinite loop */
+                delete dynamicToMerge[node.id];
             }
-            /* Remove value when done to prevent infinite loop */
-            delete dynamicToMerge[node.id];
         }
 
         if (node.branchNode) {

@@ -62,7 +62,7 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
     } = props;
 
     const taskType = node.value?.template ? node.value.template.type : null;
-    const displayName = node.scopedId;
+    const displayName = node.name;
     const mapNodeExecutionStatus = () => {
         if (nodeExecutionsById) {
             if (nodeExecutionsById[node.scopedId]) {
@@ -298,12 +298,12 @@ export const renderGraph = (
         /**
          * Compute which nested content will be populated into a subworkflow container.
          *
-         * Function returns array of id's.  These id's are then matched to rootParentMap
+         * Function returns array of id's. These id's are then matched to rootParentMap
          * values for determining which nodes to show
          *
          * Note: currentNestedView is a mapping where
          *  k: rootParentId
-         *  v: array of depth where last value in array is current view
+         *  v: array of nested depth with last value as current view
          */
         for (const nestedParentId in graphMapping.rootParentMap) {
             const rootParent = currentNestedView[nestedParentId];

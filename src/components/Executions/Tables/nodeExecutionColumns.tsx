@@ -7,6 +7,7 @@ import {
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { WaitForQuery } from 'components/common/WaitForQuery';
+import { getDisplayName } from 'components/WorkflowGraph/utils';
 import { Core } from 'flyteidl';
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
@@ -50,9 +51,9 @@ const NodeExecutionName: React.FC<NodeExecutionCellRendererData> = ({
         />
     );
 
-    const renderNodeSpecName = ({ displayId }: NodeExecutionDetails) => (
+    const renderNodeSpecName = (nodeExecutionDetails: NodeExecutionDetails) => (
         <Typography variant="subtitle1" color="textSecondary">
-            {displayId}
+            {getDisplayName(nodeExecutionDetails)}
         </Typography>
     );
 

@@ -42,7 +42,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     const [state, setState] = useState({
         shouldUpdate: true,
         nodes: rfGraphJson.nodes,
-        edges: rfGraphJson.edges
+        edges: rfGraphJson.edges,
+        version: version
     });
     const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
         null

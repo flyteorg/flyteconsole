@@ -73,12 +73,14 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
         const parentsToFetch = {};
         for (const executionId in allExecutions) {
             if (!staticExecutions[executionId]) {
-                const dynamicExecutionId = allExecutions[executionId];
-                const uniqueParentId = dynamicExecutionId.fromUniqueParentId;
+                const dynamicExecution = allExecutions[executionId];
+                const dynamicExecutionId =
+                    dynamicExecution.metadata.specNodeId || dynamicExecution.id;
+                const uniqueParentId = dynamicExecution.fromUniqueParentId;
                 if (parentsToFetch[uniqueParentId]) {
-                    parentsToFetch[uniqueParentId].push(dynamicExecutionId.id);
+                    parentsToFetch[uniqueParentId].push(dynamicExecutionId);
                 } else {
-                    parentsToFetch[uniqueParentId] = [dynamicExecutionId.id];
+                    parentsToFetch[uniqueParentId] = [dynamicExecutionId];
                 }
             }
         }
