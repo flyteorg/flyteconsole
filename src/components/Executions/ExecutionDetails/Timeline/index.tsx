@@ -33,7 +33,8 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
   const styles = useStyles();
 
   const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(null);
-  const [chartTimeInterval, setChartTimeInterval] = React.useState(12); //narusina - should use 1-6 point system instead of real numbers
+  // @todo - narusina - should use 1-6 point system instead of real numbers
+  const [chartTimeInterval, setChartTimeInterval] = React.useState(12);
   const [chartTimezone, setChartTimezone] = React.useState(TimeZone.Local);
 
   const onCloseDetailsPanel = () => setSelectedExecution(null);
@@ -49,7 +50,6 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
   ]);
 
   const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => {
-    console.log(`!!! NODE: ${nodeExecutions.length}`);
     return (
       <ExecutionTimeline
         nodeExecutions={nodeExecutions}
@@ -70,7 +70,8 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
           </NodeExecutionsTimelineContext.Provider>
         </div>
         <ExecutionTimelineFooter
-          maxTime={120} // narusina - this time should depend on longest execution, currently always cupped to 2 min
+          // @todo - narusina - this time should depend on longest execution, currently always cupped to 2 min
+          maxTime={120}
           onTimeIntervalChange={handleTimeIntervalChange}
           onTimezoneChange={handleTimezoneChange}
         />

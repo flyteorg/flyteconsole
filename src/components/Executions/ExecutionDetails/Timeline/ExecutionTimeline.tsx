@@ -84,26 +84,33 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   const taskNamesRef = React.createRef<HTMLDivElement>();
 
   const [originalNodes, setOriginalNodes] = React.useState<dNode[]>([]);
+  const [showNodes, setShowNodes] = React.useState<dNode[]>([]);
 
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
-  // narusina - we need to propely merge executions with planeNodes instead of original Nodes
   React.useEffect(() => {
-    const { nodes: originalNodes } = transformerWorkflowToPlainNodes(compiledWorkflowClosure!);
-    setOriginalNodes(
-      originalNodes.map(node => {
-        const index = nodeExecutions.findIndex(exe => exe.id.nodeId === node.id && exe.scopedId === node.scopedId);
+    const nodes: dNode[] = compiledWorkflowClosure
+      ? transformerWorkflowToPlainNodes(compiledWorkflowClosure).nodes
+      : [];
+    // we remove start/end node info in the root dNode list during first assignment
+    const initializeNodes = convertToPlainNodes(nodes);
+    setOriginalNodes(initializeNodes);
+  }, [compiledWorkflowClosure]);
+
+  React.useEffect(() => {
+    const initializeNodes = convertToPlainNodes(originalNodes);
+    setShowNodes(
+      initializeNodes.map(node => {
+        const index = nodeExecutions.findIndex(exe => exe.scopedId === node.scopedId);
         return {
           ...node,
           execution: index >= 0 ? nodeExecutions[index] : undefined
         };
       })
     );
-  }, [compiledWorkflowClosure, nodeExecutions]);
+  }, [originalNodes, nodeExecutions]);
 
-  const nodes = convertToPlainNodes(originalNodes);
-
-  const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({ nodes: nodes });
+  const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({ nodes: showNodes });
   const styles = useStyles({ chartWidth: chartWidth, durationLength: durationLength });
 
   React.useEffect(() => {
@@ -200,7 +207,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     <>
       <div className={styles.taskNames}>
         <Typography className={styles.taskNamesHeader}>Task Name</Typography>
-        <TaskNames nodes={nodes} ref={taskNamesRef} onToggle={toggleNode} />
+        <TaskNames nodes={showNodes} ref={taskNamesRef} onToggle={toggleNode} />
       </div>
       <div className={styles.taskDurations}>
         <div className={styles.taskDurationsLabelsView} ref={durationsLabelsRef}>
