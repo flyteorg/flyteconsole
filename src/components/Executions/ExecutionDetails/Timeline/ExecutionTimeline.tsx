@@ -15,6 +15,7 @@ import { TaskNames } from './taskNames';
 import { convertToPlainNodes, getBarOptions, TimeZone } from './helpers';
 import { ChartHeader } from './chartHeader';
 import { useChartDurationData } from './chartData';
+import { useScaleContext } from './scaleContext';
 
 // Register components to be usable by chart.js
 ChartJS.register(...registerables, ChartDataLabels);
@@ -72,11 +73,10 @@ const INTERVAL_LENGTH = 110;
 
 interface ExProps {
   nodeExecutions: NodeExecution[];
-  chartTimeInterval: number;
   chartTimezone: string;
 }
 
-export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTimeInterval, chartTimezone }) => {
+export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTimezone }) => {
   const [chartWidth, setChartWidth] = React.useState(0);
   const [labelInterval, setLabelInterval] = React.useState(INTERVAL_LENGTH);
   const durationsRef = React.useRef<HTMLDivElement>(null);
@@ -111,14 +111,16 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   }, [originalNodes, nodeExecutions]);
 
   const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({ nodes: showNodes });
+  const { chartInterval: chartTimeInterval, setMaxValue } = useScaleContext();
   const styles = useStyles({ chartWidth: chartWidth, durationLength: durationLength });
 
   React.useEffect(() => {
+    setMaxValue(totalDuration);
+  }, [totalDuration, setMaxValue]);
+
+  React.useEffect(() => {
     const calcWidth = Math.ceil(totalDuration / chartTimeInterval) * INTERVAL_LENGTH;
-    if (!durationsRef.current) {
-      setChartWidth(calcWidth);
-      setLabelInterval(INTERVAL_LENGTH);
-    } else if (calcWidth < durationsRef.current.clientWidth) {
+    if (durationsRef.current && calcWidth < durationsRef.current.clientWidth) {
       setLabelInterval(durationsRef.current.clientWidth / Math.ceil(totalDuration / chartTimeInterval));
       setChartWidth(durationsRef.current.clientWidth);
     } else {
@@ -147,7 +149,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
       return () => durationsView.removeEventListener('wheel', handleScroll);
     }
 
-    return () => {};
+    return () => {
+      /**/
+    };
   }, [durationsRef, durationsLabelsRef]);
 
   React.useEffect(() => {
@@ -168,7 +172,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
       return () => el.removeEventListener('scroll', handleScroll);
     }
 
-    return () => {};
+    return () => {
+      /**/
+    };
   }, [taskNamesRef, durationsRef]);
 
   const toggleNode = (id: string, scopeId: string) => {

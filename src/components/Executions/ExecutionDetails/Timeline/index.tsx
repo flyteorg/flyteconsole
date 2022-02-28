@@ -11,6 +11,7 @@ import { NodeExecutionsTimelineContext } from './context';
 import { ExecutionTimelineFooter } from './ExecutionTimelineFooter';
 import { ExecutionTimeline } from './ExecutionTimeline';
 import { TimeZone } from './helpers';
+import { ScaleProvider } from './scaleContext';
 
 const useStyles = makeStyles(() => ({
   wrapper: {
@@ -33,12 +34,9 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
   const styles = useStyles();
 
   const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(null);
-  // @todo - narusina - should use 1-6 point system instead of real numbers
-  const [chartTimeInterval, setChartTimeInterval] = React.useState(12);
   const [chartTimezone, setChartTimezone] = React.useState(TimeZone.Local);
 
   const onCloseDetailsPanel = () => setSelectedExecution(null);
-  const handleTimeIntervalChange = interval => setChartTimeInterval(interval);
   const handleTimezoneChange = tz => setChartTimezone(tz);
 
   const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);
@@ -50,17 +48,11 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
   ]);
 
   const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => {
-    return (
-      <ExecutionTimeline
-        nodeExecutions={nodeExecutions}
-        chartTimeInterval={chartTimeInterval}
-        chartTimezone={chartTimezone}
-      />
-    );
+    return <ExecutionTimeline nodeExecutions={nodeExecutions} chartTimezone={chartTimezone} />;
   };
 
   return (
-    <>
+    <ScaleProvider>
       <div className={styles.wrapper}>
         <div className={styles.container}>
           <NodeExecutionsTimelineContext.Provider value={timelineContext}>
@@ -69,12 +61,7 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
             </WaitForQuery>
           </NodeExecutionsTimelineContext.Provider>
         </div>
-        <ExecutionTimelineFooter
-          // @todo - narusina - this time should depend on longest execution, currently always cupped to 2 min
-          maxTime={120}
-          onTimeIntervalChange={handleTimeIntervalChange}
-          onTimezoneChange={handleTimezoneChange}
-        />
+        <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
       </div>
 
       {/* Side panel, shows information for specific node */}
@@ -83,6 +70,6 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
           <NodeExecutionDetailsPanelContent onClose={onCloseDetailsPanel} nodeExecutionId={selectedExecution} />
         )}
       </DetailsPanel>
-    </>
+    </ScaleProvider>
   );
 };
