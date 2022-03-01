@@ -50,16 +50,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface TaskNamesProps {
   nodes: dNode[];
+  onScroll: () => void;
   onToggle: (id: string, scopeId: string) => void;
 }
 
 export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>((props, ref) => {
   const state = React.useContext(NodeExecutionsTimelineContext);
-  const { nodes, onToggle } = props;
+  const { nodes, onScroll, onToggle } = props;
   const styles = useStyles();
 
   return (
-    <div className={styles.taskNamesList} ref={ref}>
+    <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
       {nodes.map(node => {
         const templateName = getNodeTemplateName(node);
         return (

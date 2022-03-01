@@ -129,53 +129,26 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     }
   }, [totalDuration, chartTimeInterval, durationsRef]);
 
-  React.useEffect(() => {
-    const durationsView = durationsRef?.current;
-    const labelsView = durationsLabelsRef?.current;
-    if (durationsView && labelsView) {
-      const handleScroll = e => {
-        durationsView.scrollTo({
-          left: durationsView.scrollLeft + e.deltaY,
-          behavior: 'smooth'
-        });
-        labelsView.scrollTo({
-          left: labelsView.scrollLeft + e.deltaY,
-          behavior: 'smooth'
-        });
-      };
-
-      durationsView.addEventListener('wheel', handleScroll);
-
-      return () => durationsView.removeEventListener('wheel', handleScroll);
+  const onGraphScroll = () => {
+    // cover horizontal scroll only
+    const scrollLeft = durationsRef?.current?.scrollLeft ?? 0;
+    const labelView = durationsLabelsRef?.current;
+    if (labelView) {
+      labelView.scrollTo({
+        left: scrollLeft
+      });
     }
+  };
 
-    return () => {
-      /**/
-    };
-  }, [durationsRef, durationsLabelsRef]);
-
-  React.useEffect(() => {
-    const el = taskNamesRef.current;
-    if (el) {
-      const handleScroll = e => {
-        const canvasView = durationsRef?.current;
-        if (canvasView) {
-          canvasView.scrollTo({
-            top: e.srcElement.scrollTop
-            // behavior: 'smooth'
-          });
-        }
-      };
-
-      el.addEventListener('scroll', handleScroll);
-
-      return () => el.removeEventListener('scroll', handleScroll);
+  const onVerticalNodesScroll = () => {
+    const scrollTop = taskNamesRef?.current?.scrollTop ?? 0;
+    const graphView = durationsRef?.current;
+    if (graphView) {
+      graphView.scrollTo({
+        top: scrollTop
+      });
     }
-
-    return () => {
-      /**/
-    };
-  }, [taskNamesRef, durationsRef]);
+  };
 
   const toggleNode = (id: string, scopeId: string) => {
     const searchNode = (nodes: dNode[]) => {
@@ -213,13 +186,13 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     <>
       <div className={styles.taskNames}>
         <Typography className={styles.taskNamesHeader}>Task Name</Typography>
-        <TaskNames nodes={showNodes} ref={taskNamesRef} onToggle={toggleNode} />
+        <TaskNames nodes={showNodes} ref={taskNamesRef} onToggle={toggleNode} onScroll={onVerticalNodesScroll} />
       </div>
       <div className={styles.taskDurations}>
         <div className={styles.taskDurationsLabelsView} ref={durationsLabelsRef}>
           <ChartHeader labels={labels} chartWidth={chartWidth} labelInterval={labelInterval} />
         </div>
-        <div className={styles.taskDurationsView} ref={durationsRef}>
+        <div className={styles.taskDurationsView} ref={durationsRef} onScroll={onGraphScroll}>
           <div className={styles.chartHeader}>
             <Bar options={getBarOptions(chartTimeInterval)} data={chartData} />
           </div>
