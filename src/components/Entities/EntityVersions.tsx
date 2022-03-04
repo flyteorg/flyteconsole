@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     viewAll: {
         color: interactiveTextColor,
         cursor: 'pointer'
+    },
+    viewAllContainer: {
+        border: '2px dotted blue',
+        overflowY: 'scroll'
     }
 }));
 
@@ -100,11 +104,13 @@ export const EntityVersions: React.FC<EntityVersionsProps> = ({
                 </div>
             )}
             <WaitForData {...versions}>
-                <WorkflowVersionsTable
-                    {...versions}
-                    isFetching={isLoadingState(versions.state)}
-                    versionView={versionView}
-                />
+                <div className={styles.viewAllContainer}>
+                    <WorkflowVersionsTable
+                        {...versions}
+                        isFetching={isLoadingState(versions.state)}
+                        versionView={versionView}
+                    />
+                </div>
             </WaitForData>
         </>
     );

@@ -36,12 +36,30 @@ const useStyles = makeStyles((theme: Theme) => ({
         margin: `0 -${theme.spacing(contentMarginGridUnits)}px`,
         flexBasis: theme.spacing(80)
     },
+    verionDetailsContatiner: {
+        display: 'flex',
+        flex: '1 1 auto',
+        height: '100%',
+        flexWrap: 'nowrap',
+        flexDirection: 'column',
+        border: '4px solid green',
+        overflow: 'hidden'
+    },
+    staticGraphContainer: {
+        display: 'flex',
+        flex: '1 0 auto',
+        height: '40rem',
+        border: '2px solid orange'
+    },
     versionsContainer: {
         display: 'flex',
-        flexDirection: 'column'
+        flex: '0 1 auto',
+        maxHeight: '40rem',
+        flexDirection: 'column',
+        overflow: 'hidden'
     },
     versionView: {
-        flex: '1 1 auto'
+        flex: '0 0 auto'
     },
     schedulesContainer: {
         flex: '1 2 auto',
@@ -109,9 +127,13 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({
                 </div>
             )}
             {sections.versions ? (
-                <>
+                <div className={classNames(styles.verionDetailsContatiner)}>
                     {showStaticGraph ? (
-                        <StaticGraphContainer workflowId={workflowId} />
+                        <div
+                            className={classNames(styles.staticGraphContainer)}
+                        >
+                            <StaticGraphContainer workflowId={workflowId} />
+                        </div>
                     ) : null}
                     <div
                         className={classNames(styles.versionsContainer, {
@@ -120,7 +142,7 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({
                     >
                         <EntityVersions id={id} versionView={versionView} />
                     </div>
-                </>
+                </div>
             ) : null}
             {!versionView && (
                 <EntityExecutionsBarChart

@@ -47,9 +47,10 @@ export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({
     workflowId
 }) => {
     const containerStyle: React.CSSProperties = {
-        height: 500,
-        minHeight: 300,
-        padding: '1rem 0'
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        border: '2px dotted red'
     };
     const workflowQuery = useQuery<Workflow, Error>(
         makeWorkflowQuery(useQueryClient(), workflowId)
