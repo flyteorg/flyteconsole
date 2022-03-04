@@ -5,8 +5,8 @@ import { Elements, HandleProps } from 'react-flow-renderer';
 export interface RFWrapperProps {
     rfGraphJson: any;
     backgroundStyle: RFBackgroundProps;
-    type: RFGraphTypes;
-    currentNestedView: any;
+    type?: RFGraphTypes;
+    currentNestedView?: any[];
     onNodeSelectionChanged?: any;
     nodeExecutionsById?: any;
     version?: string;

@@ -1,10 +1,6 @@
 import { transformerWorkflowToDAG } from './transformerWorkflowToDAG';
 import { dNode } from 'models/Graph/types';
-import {
-    CompiledWorkflow,
-    CompiledWorkflowClosure,
-    Workflow
-} from 'models/Workflow/types';
+import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
 import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
 import { Error } from 'models/Common/types';

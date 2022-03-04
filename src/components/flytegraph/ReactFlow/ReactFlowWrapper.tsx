@@ -45,6 +45,12 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         edges: rfGraphJson.edges,
         version: version
     });
+
+    console.log('##########################################################');
+    console.log('ReactFlowWrapper:');
+    console.log('\t state.nodes:', state.nodes);
+    console.log('\t state.edges:', state.edges);
+
     const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
         null
     );

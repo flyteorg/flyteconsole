@@ -112,16 +112,18 @@ interface BuildNodeProps {
     dataProps: any;
     rootParentNode?: dNode;
     parentNode?: dNode;
+    typeOverride?: dTypes;
 }
 export const buildReactFlowNode = ({
     node,
     dataProps,
     rootParentNode,
-    parentNode
+    parentNode,
+    typeOverride
 }: BuildNodeProps): rfNode => {
     const output: rfNode = {
         id: node.scopedId,
-        type: buildCustomNodeName(node.type),
+        type: buildCustomNodeName(typeOverride || node.type),
         data: { text: node.scopedId },
         position: { x: 0, y: 0 },
         style: {},
@@ -180,13 +182,13 @@ export const nodesToArray = nodes => {
 
 export const buildGraphMapping = (props): ReactFlowGraphMapping => {
     const dag: dNode = props.root;
-
     const {
         nodeExecutionsById,
         onNodeSelectionChanged,
         onAddNestedView,
         onRemoveNestedView,
-        currentNestedView
+        currentNestedView,
+        isStaticGraph
     } = props;
     const nodeDataProps = {
         nodeExecutionsById,
@@ -252,13 +254,17 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
                     node: node,
                     dataProps: nodeDataProps,
                     rootParentNode: rootParentNode,
-                    parentNode: contextParent
+                    parentNode: contextParent,
+                    typeOverride:
+                        isStaticGraph == true ? dTypes.staticNode : undefined
                 });
                 context.nodes[reactFlowNode.id] = reactFlowNode;
             } else {
                 const reactFlowNode = buildReactFlowNode({
                     node: node,
-                    dataProps: nodeDataProps
+                    dataProps: nodeDataProps,
+                    typeOverride:
+                        isStaticGraph == true ? dTypes.staticNode : undefined
                 });
                 root.nodes[reactFlowNode.id] = reactFlowNode;
             }
@@ -281,14 +287,21 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
     };
 };
 
-export const renderGraph = (
+export interface RenderGraphProps {
+    graphMapping: any;
+    currentNestedView?: any[];
+    maxRenderDepth?: number;
+    isStaticGraph?: boolean;
+}
+export const renderGraph = ({
     graphMapping,
     currentNestedView,
-    maxRenderDepth = 0
-) => {
+    maxRenderDepth = 0,
+    isStaticGraph = false
+}) => {
     debug('\t graphMapping:', graphMapping);
     debug('\t currentNestedView:', currentNestedView);
-    if (maxRenderDepth > 0) {
+    if (maxRenderDepth > 0 && !isStaticGraph) {
         const nestedChildGraphs: ReactFlowGraph = {
             nodes: {},
             edges: {}
@@ -366,15 +379,19 @@ export const renderGraph = (
         output.edges = edgesToArray(output.edges);
         return output;
     } else {
-        return graphMapping.root;
+        const output = { ...graphMapping.root };
+        output.nodes = nodesToArray(output.nodes);
+        output.edges = edgesToArray(output.edges);
+        return output;
     }
 };
 
 export const ConvertFlyteDagToReactFlows = (props: ConvertDagProps) => {
     const graphMapping: ReactFlowGraphMapping = buildGraphMapping(props);
-    return renderGraph(
-        graphMapping,
-        props.currentNestedView,
-        props.maxRenderDepth
-    );
+    return renderGraph({
+        graphMapping: graphMapping,
+        currentNestedView: props.currentNestedView,
+        maxRenderDepth: props.maxRenderDepth,
+        isStaticGraph: props.isStaticGraph
+    });
 };

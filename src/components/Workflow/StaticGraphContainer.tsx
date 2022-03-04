@@ -11,7 +11,6 @@ import { dNode } from 'models/Graph/types';
 import { getRFBackground } from 'components/flytegraph/ReactFlow/utils';
 import {
     ConvertDagProps,
-    RFGraphTypes,
     RFWrapperProps
 } from 'components/flytegraph/ReactFlow/types';
 
@@ -19,18 +18,23 @@ export const renderStaticGraph = props => {
     const workflow = props.closure.compiledWorkflow;
     const version = props.id.version;
 
-    const dag: dNode = transformerWorkflowToDAG(workflow);
+    const { dag, staticExecutionIdsMap }: dNode = transformerWorkflowToDAG(
+        workflow
+    );
     const rfGraphJson = ConvertFlyteDagToReactFlows({
         root: dag,
         maxRenderDepth: 0,
+        currentNestedView: [],
         isStaticGraph: true
     } as ConvertDagProps);
+
+    console.log('@StaticGraphContainer: rfGraphJSON:', rfGraphJson);
+
     const backgroundStyle = getRFBackground().static;
     const ReactFlowProps: RFWrapperProps = {
         backgroundStyle,
         rfGraphJson: rfGraphJson,
-        type: RFGraphTypes.static,
-        version: version
+        currentNestedView: []
     };
     return <ReactFlowWrapper {...ReactFlowProps} />;
 };
@@ -43,7 +47,7 @@ export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({
     workflowId
 }) => {
     const containerStyle: React.CSSProperties = {
-        height: 300,
+        height: 500,
         minHeight: 300,
         padding: '1rem 0'
     };
