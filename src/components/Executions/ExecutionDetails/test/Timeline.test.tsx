@@ -1,7 +1,5 @@
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { filterLabels } from 'components/Executions/filters/constants';
-import { nodeExecutionStatusFilters } from 'components/Executions/filters/statusFilters';
+import { render, waitFor } from '@testing-library/react';
 import { muiTheme } from 'components/Theme/muiTheme';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
@@ -10,8 +8,6 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
-import { tabs } from '../constants';
-import { ExecutionNodeViews } from '../ExecutionNodeViews';
 import { ExecutionNodesTimeline } from '../Timeline';
 
 // We don't need to verify the content of the graph component here and it is
