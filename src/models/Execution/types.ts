@@ -6,6 +6,7 @@ import {
     TaskLog,
     UrlBlob
 } from 'models/Common/types';
+import { CompiledWorkflow } from 'models/Workflow/types';
 import {
     ExecutionMode,
     NodeExecutionPhase,
@@ -137,4 +138,5 @@ export interface ExecutionData {
     outputs: UrlBlob;
     fullInputs: LiteralMap | null;
     fullOutputs: LiteralMap | null;
+    dynamicWorkflow?: CompiledWorkflow;
 }

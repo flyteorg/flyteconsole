@@ -1,12 +1,12 @@
 import { NodeExecutionsById } from 'models/Execution/types';
 import { dNode, dTypes } from 'models/Graph/types';
-import { Elements, HandleProps } from 'react-flow-renderer';
+import { HandleProps } from 'react-flow-renderer';
 
 export interface RFWrapperProps {
     rfGraphJson: any;
     backgroundStyle: RFBackgroundProps;
     type?: RFGraphTypes;
-    currentNestedView?: any[];
+    currentNestedView?: any;
     onNodeSelectionChanged?: any;
     nodeExecutionsById?: any;
     version?: string;

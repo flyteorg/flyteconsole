@@ -7,7 +7,6 @@ import { DataError } from 'components/Errors/DataError';
 import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDAG';
 import { ReactFlowWrapper } from 'components/flytegraph/ReactFlow/ReactFlowWrapper';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
-import { dNode } from 'models/Graph/types';
 import { getRFBackground } from 'components/flytegraph/ReactFlow/utils';
 import {
     ConvertDagProps,
@@ -16,9 +15,7 @@ import {
 
 export const renderStaticGraph = props => {
     const workflow = props.closure.compiledWorkflow;
-    const version = props.id.version;
-
-    const { dag }: dNode = transformerWorkflowToDAG(workflow);
+    const { dag } = transformerWorkflowToDAG(workflow);
     const rfGraphJson = ConvertFlyteDagToReactFlows({
         root: dag,
         maxRenderDepth: 0,

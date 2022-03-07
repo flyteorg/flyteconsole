@@ -1,9 +1,10 @@
 import { QueryInput, QueryType } from 'components/data/types';
+import { DataError } from 'components/Errors/DataError';
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { getNodeExecutionData } from 'models/Execution/api';
 import { getWorkflow } from 'models/Workflow/api';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
-import { QueryClient } from 'react-query';
+import { QueryClient, QueryObserverResult } from 'react-query';
 
 export function makeWorkflowQuery(
     queryClient: QueryClient,
@@ -33,19 +34,22 @@ export function makeWorkflowQuery(
 export function makeNodeExecutionDynamicWorkflowQuery(
     queryClient: QueryClient,
     parentsToFetch
-) {
+): QueryInput<{ [key: string]: any }> {
     return {
         queryKey: [QueryType.DynamicWorkflowFromNodeExecution, parentsToFetch],
         queryFn: async () => {
             return await Promise.all(
                 Object.keys(parentsToFetch).map(id => {
                     const executionId = parentsToFetch[id];
-                    return getNodeExecutionData(executionId.id).then(value => {
-                        return { key: id, value: value };
-                    });
+                    const data = getNodeExecutionData(executionId.id).then(
+                        value => {
+                            return { key: id, value: value };
+                        }
+                    );
+                    return data;
                 })
             ).then(values => {
-                const output = {};
+                const output: { [key: string]: any } = {};
                 for (let i = 0; i < values.length; i++) {
                     /* Filter to only include dynamicWorkflow */
                     if (values[i].value.dynamicWorkflow) {

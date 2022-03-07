@@ -335,7 +335,7 @@ async function fetchAllChildNodeExecutions(
     );
 
     /** Recursive check for nested/dynamic nodes */
-    const childrenFromChildrenNodes = [];
+    const childrenFromChildrenNodes: NodeExecution[] = [];
     executionGroups.map(group =>
         group.map(attempt => {
             attempt.nodeExecutions.map(execution => {

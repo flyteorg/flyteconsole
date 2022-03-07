@@ -271,7 +271,7 @@ export const getRFBackground = () => {
 export interface PositionProps {
     nodes: any;
     edges: any;
-    parentMap: any;
+    parentMap?: any;
     direction?: string;
 }
 

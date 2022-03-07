@@ -298,7 +298,7 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
             fontSize: BREAD_FONT_SIZE
         };
         const onClick =
-            currentNestedDepth > index + 1 ? handleNestedViewClick : null;
+            currentNestedDepth > index + 1 ? handleNestedViewClick : undefined;
         return (
             <li
                 onClick={onClick}
@@ -350,7 +350,7 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
             padding: 0
         };
 
-        const rootClick = currentNestedDepth > 0 ? handleRootClick : null;
+        const rootClick = currentNestedDepth > 0 ? handleRootClick : undefined;
         return (
             <div style={breadContainerStyle}>
                 <header style={headerStyle} onClick={rootClick}>

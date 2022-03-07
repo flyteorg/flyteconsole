@@ -57,7 +57,7 @@ const ReactFlowGraphComponent = props => {
     };
 
     const onRemoveNestedView = (viewParent, viewIndex) => {
-        const currentNestedView = { ...state.currentNestedView };
+        const currentNestedView: any = { ...state.currentNestedView };
         currentNestedView[viewParent] = currentNestedView[viewParent]?.filter(
             (item, i) => i <= viewIndex
         );
