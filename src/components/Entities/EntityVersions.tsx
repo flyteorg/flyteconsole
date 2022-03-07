@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme: Theme) => ({
         cursor: 'pointer'
     },
     viewAllContainer: {
-        border: '2px dotted blue',
         overflowY: 'scroll'
     }
 }));

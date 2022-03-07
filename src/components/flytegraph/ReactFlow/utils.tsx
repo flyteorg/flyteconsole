@@ -253,20 +253,17 @@ export const getRFBackground = () => {
                 border: '1px solid #444',
                 backgroundColor: 'rgba(255,255,255,1)'
             },
-            gridColor: '#ccc',
-            gridSpacing: 20
+            gridColor: 'none'
         } as RFBackgroundProps,
         nested: {
-            gridColor: 'none',
-            gridSpacing: 1
+            gridColor: 'none'
         } as RFBackgroundProps,
         static: {
             background: {
                 border: 'none',
                 backgroundColor: 'rgb(255,255,255)'
             },
-            gridColor: 'none',
-            gridSpacing: 20
+            gridColor: 'none'
         } as RFBackgroundProps
     };
 };

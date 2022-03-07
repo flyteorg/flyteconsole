@@ -38,26 +38,24 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     verionDetailsContatiner: {
         display: 'flex',
-        flex: '1 1 auto',
-        height: '100%',
-        paddingBottom: '-5rem',
-        flexWrap: 'nowrap',
         flexDirection: 'column',
-        border: '4px solid green',
+        flexWrap: 'nowrap',
         overflow: 'hidden'
+    },
+    versionDetailsContainerStaticGraph: {
+        height: `calc(100vh - ${theme.spacing(1)}rem)`
     },
     staticGraphContainer: {
         display: 'flex',
-        flex: '0 0 auto',
-        height: '40rem',
-        border: '2px solid orange'
+        height: '60%',
+        width: '100%',
+        flex: '1'
     },
     versionsContainer: {
         display: 'flex',
-        flex: '1 0 auto',
-        maxHeight: '40rem',
-        flexDirection: 'column',
-        overflow: 'hidden'
+        flex: '0 1 auto',
+        height: '40%',
+        flexDirection: 'column'
     },
     versionView: {
         flex: '0 0 auto'
@@ -128,7 +126,11 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({
                 </div>
             )}
             {sections.versions ? (
-                <div className={classNames(styles.verionDetailsContatiner)}>
+                <div
+                    className={classNames(styles.verionDetailsContatiner, {
+                        [styles.versionDetailsContainerStaticGraph]: versionView
+                    })}
+                >
                     {showStaticGraph ? (
                         <div
                             className={classNames(styles.staticGraphContainer)}

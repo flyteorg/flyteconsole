@@ -18,17 +18,13 @@ export const renderStaticGraph = props => {
     const workflow = props.closure.compiledWorkflow;
     const version = props.id.version;
 
-    const { dag, staticExecutionIdsMap }: dNode = transformerWorkflowToDAG(
-        workflow
-    );
+    const { dag }: dNode = transformerWorkflowToDAG(workflow);
     const rfGraphJson = ConvertFlyteDagToReactFlows({
         root: dag,
         maxRenderDepth: 0,
         currentNestedView: [],
         isStaticGraph: true
     } as ConvertDagProps);
-
-    console.log('@StaticGraphContainer: rfGraphJSON:', rfGraphJson);
 
     const backgroundStyle = getRFBackground().static;
     const ReactFlowProps: RFWrapperProps = {
@@ -48,9 +44,7 @@ export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({
 }) => {
     const containerStyle: React.CSSProperties = {
         display: 'flex',
-        height: '100%',
-        width: '100%',
-        border: '2px dotted red'
+        width: '100%'
     };
     const workflowQuery = useQuery<Workflow, Error>(
         makeWorkflowQuery(useQueryClient(), workflowId)
