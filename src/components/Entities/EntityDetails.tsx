@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
         display: 'flex',
         flex: '1 1 auto',
         height: '100%',
+        paddingBottom: '-5rem',
         flexWrap: 'nowrap',
         flexDirection: 'column',
         border: '4px solid green',
@@ -47,13 +48,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     staticGraphContainer: {
         display: 'flex',
-        flex: '1 0 auto',
+        flex: '0 0 auto',
         height: '40rem',
         border: '2px solid orange'
     },
     versionsContainer: {
         display: 'flex',
-        flex: '0 1 auto',
+        flex: '1 0 auto',
         maxHeight: '40rem',
         flexDirection: 'column',
         overflow: 'hidden'
