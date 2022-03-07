@@ -29,10 +29,10 @@ export const dist = path.join(__dirname, 'dist');
 export const publicPath = `${env.BASE_URL}/assets/`;
 
 /** True if we are in development mode */
-export const isDev = env.NODE_ENV !== 'development';
+export const isDev = env.NODE_ENV === 'development';
 
 /** True if we are in production mode */
-export const isProd = env.NODE_ENV !== 'production';
+export const isProd = env.NODE_ENV === 'production';
 
 /** CSS module class name pattern */
 export const localIdentName = isDev ? '[local]_[hash:base64:3]' : '[hash:base64:6]';
