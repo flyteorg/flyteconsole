@@ -150,8 +150,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     }
   };
 
-  const toggleNode = (id: string, scopeId: string) => {
-    const searchNode = (nodes: dNode[]) => {
+  const toggleNode = (id: string, scopeId: string, level: number) => {
+    const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
         return;
       }
@@ -160,16 +160,16 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
         if (isStartNode(node) || isEndNode(node)) {
           continue;
         }
-        if (node.id === id && node.scopedId === scopeId) {
+        if (node.id === id && node.scopedId === scopeId && nodeLevel === level) {
           nodes[i].expanded = !nodes[i].expanded;
           return;
         }
         if (node.nodes.length > 0 && isExpanded(node)) {
-          searchNode(node.nodes);
+          searchNode(node.nodes, nodeLevel + 1);
         }
       }
     };
-    searchNode(originalNodes);
+    searchNode(originalNodes, 0);
     setOriginalNodes([...originalNodes]);
   };
 
