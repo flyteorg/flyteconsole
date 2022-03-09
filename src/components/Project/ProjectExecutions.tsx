@@ -1,5 +1,7 @@
-import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getCacheKey } from 'components/Cache/utils';
+import { fetchStates } from 'components/hooks/types';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { DataError } from 'components/Errors/DataError';
@@ -13,12 +15,37 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { failedToLoadExecutionsString } from './constants';
+import { BarChart } from 'components/common/BarChart';
+import {
+    getExecutionTimeData,
+    getStartExecutionTime
+} from 'components/Entities/EntityExecutionsBarChart';
+import classNames from 'classnames';
+import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
+import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
+import { WaitForData } from 'components/common/WaitForData';
+import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
+import { compact } from 'lodash';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
     container: {
         display: 'flex',
         flex: '1 1 auto',
         flexDirection: 'column'
+    },
+    header: {
+        paddingBottom: theme.spacing(1),
+        paddingLeft: theme.spacing(1),
+        borderBottom: `1px solid ${theme.palette.divider}`
+    },
+    marginTop: {
+        marginTop: theme.spacing(2)
+    },
+    chartContainer: {
+        paddingLeft: theme.spacing(1),
+        paddingRight: theme.spacing(3),
+        paddingTop: theme.spacing(1)
     }
 }));
 export interface ProjectExecutionsProps {
@@ -37,11 +64,16 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     projectId: project
 }) => {
     const styles = useStyles();
+    const archivedFilter = useExecutionShowArchivedState();
     const filtersState = useWorkflowExecutionFiltersState();
 
+    const allFilters = compact([
+        ...filtersState.appliedFilters,
+        archivedFilter.getFilter()
+    ]);
     const config = {
         sort: defaultSort,
-        filter: filtersState.appliedFilters
+        filter: allFilters
     };
 
     // Remount the table whenever we change project/domain/filters to ensure
@@ -51,9 +83,9 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
             getCacheKey({
                 domain,
                 project,
-                filters: filtersState.appliedFilters
+                filters: allFilters
             }),
-        [domain, project, filtersState.appliedFilters]
+        [domain, project, allFilters]
     );
 
     const query = useInfiniteQuery({
@@ -71,6 +103,20 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
                   )
                 : [],
         [query.data?.pages]
+    );
+
+    const handleBarChartItemClick = React.useCallback(item => {
+        history.push(Routes.ExecutionDetails.makeUrl(item.metadata));
+    }, []);
+
+    // to show only in bar chart view
+    const last100Executions = useWorkflowExecutions(
+        { domain, project },
+        {
+            sort: defaultSort,
+            filter: allFilters,
+            limit: 100
+        }
     );
 
     const fetch = React.useCallback(() => query.fetchNextPage(), [query]);
@@ -96,10 +142,36 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
     );
 
     /** Don't render component until finish fetching user profile */
-    if (filtersState.filters[4].status === 'LOADED') {
+    const lastIndex = filtersState.filters.length - 1;
+    if (filtersState.filters[lastIndex].status === fetchStates.LOADED) {
         return (
             <div className={styles.container}>
-                <ExecutionFilters {...filtersState} />
+                <Typography
+                    className={classNames(styles.header, styles.marginTop)}
+                    variant="h6"
+                >
+                    Last 100 Executions in the Project
+                </Typography>
+                <div className={styles.chartContainer}>
+                    <WaitForData {...last100Executions}>
+                        <BarChart
+                            chartIds={[]}
+                            data={getExecutionTimeData(last100Executions.value)}
+                            startDate={getStartExecutionTime(
+                                last100Executions.value
+                            )}
+                            onClickItem={handleBarChartItemClick}
+                        />
+                    </WaitForData>
+                </div>
+                <Typography className={styles.header} variant="h6">
+                    All Executions in the Project
+                </Typography>
+                <ExecutionFilters
+                    {...filtersState}
+                    showArchived={archivedFilter.showArchived}
+                    onArchiveFilterChange={archivedFilter.setShowArchived}
+                />
                 <ErrorBoundary>{content}</ErrorBoundary>
             </div>
         );

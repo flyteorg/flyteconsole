@@ -3,16 +3,15 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { formatDateUTC, millisecondsToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
+import { fetchStates } from 'components/hooks/types';
 import { BarChart } from 'components/common/BarChart';
 import { WaitForData } from 'components/common/WaitForData';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from 'models/AdminEntity/types';
 import { ResourceIdentifier } from 'models/Common/types';
-import { Execution, WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { Execution } from 'models/Execution/types';
 import { executionSortFields } from 'models/Execution/constants';
-import { Routes } from 'routes/routes';
-import { history } from 'routes/history';
 import { executionFilterGenerator } from './generators';
 import {
     getWorkflowExecutionPhaseConstants,
@@ -36,7 +35,10 @@ export interface EntityExecutionsBarChartProps {
     chartIds: string[];
 }
 
-const getExecutionTimeData = (executions: Execution[], fillSize = 100) => {
+export const getExecutionTimeData = (
+    executions: Execution[],
+    fillSize = 100
+) => {
     const newExecutions = [...executions].reverse().map(execution => {
         const duration = getWorkflowExecutionTimingMS(execution)?.duration || 1;
         return {
@@ -52,9 +54,9 @@ const getExecutionTimeData = (executions: Execution[], fillSize = 100) => {
                     <span>Running time: {millisecondsToHMS(duration)}</span>
                     <span>
                         Started at:{' '}
-                        {execution.closure.startedAt != null &&
+                        {execution.closure.startedAt &&
                             formatDateUTC(
-                                timestampToDate(execution.closure.startedAt!)
+                                timestampToDate(execution.closure.startedAt)
                             )}
                     </span>
                 </div>
@@ -66,14 +68,14 @@ const getExecutionTimeData = (executions: Execution[], fillSize = 100) => {
     }
     return new Array(fillSize - newExecutions.length)
         .fill(0)
-        .map(_ => ({
+        .map(() => ({
             value: 1,
             color: '#e5e5e5'
         }))
         .concat(newExecutions);
 };
 
-const getStartExecutionTime = (executions: Execution[]) => {
+export const getStartExecutionTime = (executions: Execution[]) => {
     if (executions.length === 0) {
         return '';
     }
@@ -104,7 +106,7 @@ export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> =
 
     const baseFilters = React.useMemo(
         () => executionFilterGenerator[resourceType](id),
-        [id]
+        [id, resourceType]
     );
 
     const executions = useWorkflowExecutions(
@@ -116,18 +118,18 @@ export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> =
         }
     );
 
-    console.log(executions);
-
-    const handleClickItem = React.useCallback(item => {
-        if (item.metadata) {
-            onToggle(item.metadata.name);
-            // const executionId = item.metadata as WorkflowExecutionIdentifier;
-            // history.push(Routes.ExecutionDetails.makeUrl(executionId));
-        }
-    }, []);
+    const handleClickItem = React.useCallback(
+        item => {
+            if (item.metadata) {
+                onToggle(item.metadata.name);
+            }
+        },
+        [onToggle]
+    );
 
     /** Don't render component until finish fetching user profile */
-    if (filtersState.filters[4].status !== 'LOADED') {
+    const lastIndex = filtersState.filters.length - 1;
+    if (filtersState.filters[lastIndex].status !== fetchStates.LOADED) {
         return null;
     }
 

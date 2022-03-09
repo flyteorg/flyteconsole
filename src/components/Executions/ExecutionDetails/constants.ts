@@ -4,7 +4,12 @@ export enum ExecutionMetadataLabels {
     duration = 'Duration',
     time = 'Time',
     relatedTo = 'Related to',
-    version = 'Version'
+    version = 'Version',
+    serviceAccount = 'Service Account',
+    iam = 'IAM Role',
+    rawOutputPrefix = 'Raw Output Prefix',
+    parallelism = 'Parallelism',
+    securityContextDefault = 'default'
 }
 
 export const tabs = {
@@ -15,6 +20,10 @@ export const tabs = {
     graph: {
         id: 'graph',
         label: 'Graph'
+    },
+    timeline: {
+        id: 'timeline',
+        label: 'Timeline'
     }
 };
 

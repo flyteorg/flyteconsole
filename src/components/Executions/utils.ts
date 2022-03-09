@@ -6,6 +6,7 @@ import {
     terminalTaskExecutionStates
 } from 'models/Execution/constants';
 import {
+    ExecutionState,
     NodeExecutionPhase,
     TaskExecutionPhase,
     WorkflowExecutionPhase
@@ -22,14 +23,7 @@ import {
     taskExecutionPhaseConstants,
     workflowExecutionPhaseConstants
 } from './constants';
-import {
-    CompiledBranchNode,
-    CompiledTaskNode,
-    CompiledWorkflowNode,
-    ExecutionPhaseConstants,
-    ParentNodeExecution,
-    WorkflowNodeExecution
-} from './types';
+import { ExecutionPhaseConstants, ParentNodeExecution } from './types';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
@@ -41,13 +35,6 @@ export function getWorkflowExecutionPhaseConstants(
         workflowExecutionPhaseConstants[phase] ||
         workflowExecutionPhaseConstants[WorkflowExecutionPhase.UNDEFINED]
     );
-}
-
-/** Maps a `WorkflowExecutionPhase` value to a corresponding color string */
-export function workflowExecutionPhaseToColor(
-    phase: WorkflowExecutionPhase
-): string {
-    return getWorkflowExecutionPhaseConstants(phase).badgeColor;
 }
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
@@ -62,11 +49,6 @@ export function getNodeExecutionPhaseConstants(
     );
 }
 
-/** Maps a `NodeExecutionPhase` value to a corresponding color string */
-export function nodeExecutionPhaseToColor(phase: NodeExecutionPhase): string {
-    return getNodeExecutionPhaseConstants(phase).badgeColor;
-}
-
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
  */
@@ -77,11 +59,6 @@ export function getTaskExecutionPhaseConstants(
         taskExecutionPhaseConstants[phase] ||
         taskExecutionPhaseConstants[TaskExecutionPhase.UNDEFINED]
     );
-}
-
-/** Maps a `TaskExecutionPhase` value to a corresponding color string */
-export function taskExecutionPhaseToColor(phase: TaskExecutionPhase): string {
-    return getTaskExecutionPhaseConstants(phase).badgeColor;
 }
 
 /** Determines if a workflow execution can be considered finalized and will not
@@ -111,11 +88,6 @@ export const nodeExecutionIsTerminal = (nodeExecution: NodeExecution) =>
 export const taskExecutionIsTerminal = (taskExecution: TaskExecution) =>
     taskExecution.closure &&
     terminalTaskExecutionStates.includes(taskExecution.closure.phase);
-
-/** Returns a NodeId from a given NodeExecution  */
-export function getNodeExecutionSpecId(nodeExecution: NodeExecution): string {
-    return nodeExecution.id.nodeId;
-}
 
 interface GetExecutionDurationMSArgs {
     closure: BaseExecutionClosure;
@@ -160,28 +132,21 @@ export function isParentNode(
     );
 }
 
-export function isWorkflowNodeExecution(
-    nodeExecution: NodeExecution
-): nodeExecution is WorkflowNodeExecution {
-    return nodeExecution.closure.workflowNodeMetadata != null;
-}
-
-export function isCompiledTaskNode(
-    node: CompiledNode
-): node is CompiledTaskNode {
-    return node.taskNode != null;
-}
-
-export function isCompiledWorkflowNode(
-    node: CompiledNode
-): node is CompiledWorkflowNode {
-    return node.workflowNode != null;
-}
-
-export function isCompiledBranchNode(
-    node: CompiledNode
-): node is CompiledBranchNode {
-    return node.branchNode != null;
+export function flattenBranchNodes(node: CompiledNode): CompiledNode[] {
+    const ifElse = node.branchNode?.ifElse;
+    if (!ifElse) {
+        return [node];
+    }
+    return [
+        node,
+        ...[
+            ifElse.case?.thenNode,
+            ifElse.elseNode,
+            ...(ifElse.other?.map(x => x.thenNode) ?? [])
+        ]
+            .filter((x): x is CompiledNode => !!x)
+            .flatMap(flattenBranchNodes)
+    ];
 }
 
 /** Returns timing information (duration, queue time, ...) for a WorkflowExecution */
@@ -203,4 +168,9 @@ export function getTaskExecutionTimingMS(execution: TaskExecution) {
     const { closure } = execution;
     const isTerminal = taskExecutionIsTerminal(execution);
     return getExecutionTimingMS({ closure, isTerminal });
+}
+
+export function isExecutionArchived(execution: Execution): boolean {
+    const state = execution.closure.stateChangeDetails?.state ?? null;
+    return !!state && state === ExecutionState.EXECUTION_ARCHIVED;
 }

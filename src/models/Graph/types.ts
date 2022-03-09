@@ -1,4 +1,3 @@
-import { CompiledNode } from 'models/Node/types';
 import { NodeExecution } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 
@@ -57,4 +56,7 @@ export interface dNode {
     value?: any;
     nodes: Array<dNode>;
     edges: Array<dEdge>;
+    expanded?: boolean;
+    level?: number;
+    execution?: NodeExecution;
 }

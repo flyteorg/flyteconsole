@@ -3,6 +3,125 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.43.0](http://github.com/lyft/flyteconsole/compare/v0.42.1...v0.43.0) (2022-02-15)
+
+
+### Features
+
+* timeline view ([#265](http://github.com/lyft/flyteconsole/issues/265)) ([f499895](http://github.com/lyft/flyteconsole/commit/f499895fb99878766118634e2fe256a4dfa98a7e))
+
+## [0.42.1](http://github.com/lyft/flyteconsole/compare/v0.42.0...v0.42.1) (2022-02-11)
+
+
+### Bug Fixes
+
+* **#278:** wrong nodeExecutions details are showed in node executions list ([#277](http://github.com/lyft/flyteconsole/issues/277)) ([15878ab](http://github.com/lyft/flyteconsole/commit/15878abe4e31f79ae3afbf29ab41b66e941e6ee1)), closes [#278](http://github.com/lyft/flyteconsole/issues/278)
+
+# [0.42.0](http://github.com/lyft/flyteconsole/compare/v0.41.0...v0.42.0) (2022-02-10)
+
+
+### Features
+
+* **#281:** allow to collapse/expand workflow version section ([#282](http://github.com/lyft/flyteconsole/issues/282)) ([a4ac862](http://github.com/lyft/flyteconsole/commit/a4ac8627280f6793113d7538023a6644cf43f429)), closes [#281](http://github.com/lyft/flyteconsole/issues/281)
+
+# [0.41.0](http://github.com/lyft/flyteconsole/compare/v0.40.0...v0.41.0) (2022-02-03)
+
+
+### Features
+
+* archive/unarchive workflow's execution ([#271](http://github.com/lyft/flyteconsole/issues/271)) ([2c6c041](http://github.com/lyft/flyteconsole/commit/2c6c04147bf27219e5bcaf77642250ed8385b564))
+
+# [0.40.0](http://github.com/lyft/flyteconsole/compare/v0.39.1...v0.40.0) (2022-01-18)
+
+
+### Features
+
+* show details panel for failed node ([#254](http://github.com/lyft/flyteconsole/issues/254)) ([e276493](http://github.com/lyft/flyteconsole/commit/e276493e956958a8e5858785ad5f5a4d31d5eb76))
+
+## [0.39.1](http://github.com/lyft/flyteconsole/compare/v0.39.0...v0.39.1) (2022-01-14)
+
+
+### Bug Fixes
+
+* recent workflow bug on filtering executions ([#264](http://github.com/lyft/flyteconsole/issues/264)) #patch ([0e82355](http://github.com/lyft/flyteconsole/commit/0e823553bca31d0882c767e12235601e359a6475))
+
+# [0.39.0](http://github.com/lyft/flyteconsole/compare/v0.38.0...v0.39.0) (2022-01-11)
+
+
+### Features
+
+* load 100 executions on each filter ([#257](http://github.com/lyft/flyteconsole/issues/257)) ([1a0c3ce](http://github.com/lyft/flyteconsole/commit/1a0c3cecbcde382bb0386e46249708d284f2c188))
+
+# [0.38.0](http://github.com/lyft/flyteconsole/compare/v0.37.1...v0.38.0) (2022-01-06)
+
+
+### Features
+
+* handle 'Aborting' workflow execution phases ([#256](http://github.com/lyft/flyteconsole/issues/256)) ([3231441](http://github.com/lyft/flyteconsole/commit/3231441e38b782eb83f754a8e4aa7c7ed19ce9e1))
+
+## [0.37.1](http://github.com/lyft/flyteconsole/compare/v0.37.0...v0.37.1) (2022-01-05)
+
+
+### Bug Fixes
+
+* Fixed missing Authrole values on ExecutionMetaDataExtra ([#255](http://github.com/lyft/flyteconsole/issues/255)) ([71af238](http://github.com/lyft/flyteconsole/commit/71af238e7fe9b9e0c698627865c807ff981fbaac))
+
+# [0.37.0](http://github.com/lyft/flyteconsole/compare/v0.36.0...v0.37.0) (2021-12-29)
+
+
+### Features
+
+* Add support for securityContext in launch form. ([#253](http://github.com/lyft/flyteconsole/issues/253)) ([af1818b](http://github.com/lyft/flyteconsole/commit/af1818b3c92211b12dd0f91fdbafac73b1c190f1))
+
+# [0.36.0](http://github.com/lyft/flyteconsole/compare/v0.35.0...v0.36.0) (2021-12-15)
+
+
+### Features
+
+* update node list view and add executions bar chart ([#252](http://github.com/lyft/flyteconsole/issues/252)) ([cca633e](http://github.com/lyft/flyteconsole/commit/cca633e1b597b5a4d22ba30f19d75eaf6fa3a1ff))
+
+# [0.35.0](http://github.com/lyft/flyteconsole/compare/v0.34.0...v0.35.0) (2021-12-15)
+
+
+### Features
+
+* integrate analytics ([#244](http://github.com/lyft/flyteconsole/issues/244)) ([2726b07](http://github.com/lyft/flyteconsole/commit/2726b07a012a8a12b35752fbe714e1a148f630f7))
+
+# [0.34.0](http://github.com/lyft/flyteconsole/compare/v0.33.1...v0.34.0) (2021-12-09)
+
+
+### Features
+
+* Remove disable auth var ([#251](http://github.com/lyft/flyteconsole/issues/251)) ([a701c08](http://github.com/lyft/flyteconsole/commit/a701c085be4eea3f72ef3bd46694b9253aa3addf))
+
+## [0.33.1](http://github.com/lyft/flyteconsole/compare/v0.33.0...v0.33.1) (2021-12-07)
+
+
+### Bug Fixes
+
+* performance issue related to search ([#250](http://github.com/lyft/flyteconsole/issues/250)) ([210a3ff](http://github.com/lyft/flyteconsole/commit/210a3ff49e220f8ed8268a21dfd030e9dc6d175b))
+
+# [0.33.0](http://github.com/lyft/flyteconsole/compare/v0.32.0...v0.33.0) (2021-12-07)
+
+
+### Features
+
+* add advanced launch options to execution details ([#242](http://github.com/lyft/flyteconsole/issues/242)) ([711600d](http://github.com/lyft/flyteconsole/commit/711600d3eefe67451362d7c7454e2b8b4ea39d76))
+
+# [0.32.0](http://github.com/lyft/flyteconsole/compare/v0.31.4...v0.32.0) (2021-12-07)
+
+
+### Features
+
+* update workflow search UX ([#245](http://github.com/lyft/flyteconsole/issues/245)) ([d1ab6bf](http://github.com/lyft/flyteconsole/commit/d1ab6bfdf750a1127f106cf3c77f3cebca94f53e))
+
+## [0.31.4](http://github.com/lyft/flyteconsole/compare/v0.31.3...v0.31.4) (2021-11-25)
+
+
+### Bug Fixes
+
+* Update README with correct release procedure ([#247](http://github.com/lyft/flyteconsole/issues/247)) ([e920b08](http://github.com/lyft/flyteconsole/commit/e920b08f9f5422a9fbaf8ca0ff8915631b30960d))
+
 ## [0.31.3](http://github.com/lyft/flyteconsole/compare/v0.31.2...v0.31.3) (2021-11-19)
 
 

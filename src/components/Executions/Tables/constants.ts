@@ -1,6 +1,6 @@
 export const workflowExecutionsTableColumnWidths = {
     duration: 100,
-    inputsOutputs: 140,
+    actions: 130,
     lastRun: 130,
     name: 360,
     phase: 120,
@@ -9,8 +9,9 @@ export const workflowExecutionsTableColumnWidths = {
 
 export const nodeExecutionsTableColumnWidths = {
     duration: 100,
-    logs: 225,
+    logs: 100,
     type: 144,
+    nodeId: 144,
     name: 380,
     phase: 150,
     startedAt: 200

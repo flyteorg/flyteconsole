@@ -27,14 +27,15 @@ export interface BaseExecutionClosure {
 }
 
 export interface ExecutionClosure extends Admin.IExecutionClosure {
+    workflowId: Identifier;
     createdAt: Protobuf.ITimestamp;
-    computedInputs?: LiteralMap;
+    startedAt?: Protobuf.ITimestamp;
     duration?: Protobuf.Duration;
-    error?: ExecutionError;
+    computedInputs?: LiteralMap;
     outputs?: LiteralMapBlob;
     phase: WorkflowExecutionPhase;
-    startedAt?: Protobuf.ITimestamp;
-    workflowId: Identifier;
+    error?: ExecutionError;
+    stateChangeDetails?: Admin.IExecutionStateChangeDetails;
 }
 
 export interface ExecutionMetadata extends Admin.IExecutionMetadata {
@@ -47,6 +48,7 @@ export interface ExecutionMetadata extends Admin.IExecutionMetadata {
 
 export interface ExecutionSpec extends Admin.IExecutionSpec {
     authRole?: Admin.IAuthRole;
+    securityContext?: Core.ISecurityContext;
     inputs: LiteralMap;
     launchPlan: Identifier;
     metadata: ExecutionMetadata;
@@ -90,6 +92,7 @@ export interface NodeExecution extends Admin.INodeExecution {
     inputUri: string;
     closure: NodeExecutionClosure;
     metadata?: NodeExecutionMetadata;
+    parentId?: string;
     scopedId?: string;
 }
 

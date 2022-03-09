@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { dashedValueString } from 'common/constants';
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
@@ -12,6 +12,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';
 import { ExecutionMetadataLabels } from './constants';
+import { ExecutionMetadataExtra } from './ExecutionMetadataExtra';
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -138,6 +139,7 @@ export const ExecutionMetadata: React.FC<{
                         </Typography>
                     </div>
                 ))}
+                <ExecutionMetadataExtra execution={execution} />
             </div>
 
             {error || abortMetadata ? (

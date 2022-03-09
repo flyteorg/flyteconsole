@@ -1,13 +1,14 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import * as classnames from 'classnames';
+import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WaitForData } from 'components/common/WaitForData';
 import { useNamedEntity } from 'components/hooks/useNamedEntity';
 import { NamedEntityMetadata, ResourceIdentifier } from 'models/Common/types';
 import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
-import { noDescriptionStrings } from './constants';
+import { entityStrings } from './constants';
+import t from './strings';
 
 const Skeleton = reactLoadingSkeleton;
 
@@ -42,7 +43,10 @@ export const EntityDescription: React.FC<{
                     >
                         {hasDescription
                             ? metadata.description
-                            : noDescriptionStrings[id.resourceType]}
+                            : t(
+                                  'noDescription',
+                                  entityStrings[id.resourceType]
+                              )}
                     </span>
                 </WaitForData>
             </Typography>
