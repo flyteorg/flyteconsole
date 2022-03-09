@@ -36,8 +36,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     rfGraphJson,
     backgroundStyle,
     currentNestedView,
-    version,
-    nodeExecutionsById
+    version
 }) => {
     const [state, setState] = useState({
         shouldUpdate: true,
@@ -45,11 +44,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
         edges: rfGraphJson.edges,
         version: version
     });
-
-    console.log('##########################################################');
-    console.log('ReactFlowWrapper:');
-    console.log('\t state.nodes:', state.nodes);
-    console.log('\t state.edges:', state.edges);
 
     const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(
         null
@@ -76,7 +70,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
 
     const onNodesChange = useCallback(
         changes => {
-            debug('\t currentNestedView:', currentNestedView);
             if (changes.length == state.nodes.length && state.shouldUpdate) {
                 const nodesWithDimensions: any[] = [];
                 for (let i = 0; i < changes.length; i++) {
