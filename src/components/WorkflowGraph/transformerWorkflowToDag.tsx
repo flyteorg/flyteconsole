@@ -3,7 +3,7 @@ import { createDebugLogger } from 'components/flytegraph/utils';
 import { dTypes, dEdge, dNode } from 'models/Graph/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import { CompiledNode, ConnectionSet, TaskNode } from 'models/Node/types';
-import { CompiledTask, TaskTemplate } from 'models/Task/types';
+import { CompiledTask } from 'models/Task/types';
 import { CompiledWorkflow, CompiledWorkflowClosure } from 'models/Workflow/types';
 import {
   isStartOrEndNode,
@@ -195,7 +195,7 @@ export const transformerWorkflowToDAG = (workflow: CompiledWorkflowClosure, dyna
       buildDAG(dNode, node, dTypes.branch);
     } else if (node.workflowNode) {
       const id = node.workflowNode.subWorkflowRef;
-      let subworkflow = getSubWorkflowFromId(id, workflow);
+      const subworkflow = getSubWorkflowFromId(id, workflow);
       dNode = createDNode({
         compiledNode: node,
         parentDNode: root
