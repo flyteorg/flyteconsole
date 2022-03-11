@@ -215,6 +215,9 @@ async function fetchGroupsForParentNodeExecution(
     }
   };
 
+  const parentScopeId = nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
+  nodeExecution.scopedId = parentScopeId;
+
   const children = await fetchNodeExecutionList(queryClient, nodeExecution.id.executionId, finalConfig);
 
   const groupsByName = children.reduce<Map<string, NodeExecutionGroup>>((out, child) => {
@@ -224,7 +227,16 @@ async function fetchGroupsForParentNodeExecution(
       group = { name: retryAttempt, nodeExecutions: [] };
       out.set(retryAttempt, group);
     }
-    child['scopedId'] = child.id.nodeId;
+
+    /** GraphUX uses workflowClosure which uses scopedId. This builds a scopedId via parent
+     *  nodeExecution to enable mapping between graph and other components     */
+    let scopedId = parentScopeId;
+    if (scopedId != undefined) {
+      scopedId += `-${child.metadata?.retryGroup}-${child.metadata?.specNodeId}`;
+      child['scopedId'] = scopedId;
+    } else {
+      child['scopedId'] = child.metadata?.specNodeId;
+    }
     child['fromUniqueParentId'] = nodeExecution.id.nodeId;
     group.nodeExecutions.push(child);
     return out;

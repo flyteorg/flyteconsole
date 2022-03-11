@@ -3,7 +3,6 @@ import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'commo
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { Core } from 'flyteidl';
-import { getDisplayName } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { TaskNodeMetadata } from 'models/Execution/types';
@@ -37,7 +36,7 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
 
   const isSelected = state.selectedExecution != null && isEqual(execution.id, state.selectedExecution);
 
-  const name = getDisplayName(execution.id.nodeId);
+  const name = displayName ?? execution.id.nodeId;
   const truncatedName = name?.split('.').pop() || name;
 
   const readableName = isSelected ? (

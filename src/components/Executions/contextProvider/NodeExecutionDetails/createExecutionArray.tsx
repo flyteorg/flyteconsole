@@ -83,7 +83,7 @@ export function createExecutionDetails(workflow: Workflow): CurrentExecutionDeta
   const compiledWorkflow = workflow.closure?.compiledWorkflow;
   const { tasks = [] } = compiledWorkflow;
 
-  let dNodes = transformerWorkflowToDAG(compiledWorkflow).nodes ?? [];
+  let dNodes = transformerWorkflowToDAG(compiledWorkflow).dag.nodes ?? [];
   dNodes = convertToPlainNodes(dNodes);
 
   dNodes.forEach(n => {

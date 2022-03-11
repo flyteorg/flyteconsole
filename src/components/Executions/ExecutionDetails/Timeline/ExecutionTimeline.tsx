@@ -89,7 +89,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   React.useEffect(() => {
-    const nodes: dNode[] = compiledWorkflowClosure ? transformerWorkflowToDAG(compiledWorkflowClosure).nodes : [];
+    const nodes: dNode[] = compiledWorkflowClosure ? transformerWorkflowToDAG(compiledWorkflowClosure).dag.nodes : [];
     // we remove start/end node info in the root dNode list during first assignment
     const initializeNodes = convertToPlainNodes(nodes);
     setOriginalNodes(initializeNodes);
