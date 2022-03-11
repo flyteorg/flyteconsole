@@ -6,7 +6,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { makeStyles, Typography } from '@material-ui/core';
 
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDAG';
+import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { isEndNode, isStartNode, isExpanded } from 'components/WorkflowGraph/utils';
 import { tableHeaderColor } from 'components/Theme/constants';
 import { NodeExecution } from 'models/Execution/types';
