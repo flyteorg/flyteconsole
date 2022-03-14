@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
@@ -63,6 +63,7 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
 };
 
 const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
+  const commonStyles = useCommonStyles();
   const detailsContext = useNodeExecutionContext();
   const [displayId, setDisplayId] = React.useState<string | undefined>();
 
@@ -78,7 +79,12 @@ const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
     };
   });
 
-  return <>{displayId ?? execution.id.nodeId}</>;
+  const nodeId = displayId ?? execution.id.nodeId;
+  return (
+    <Tooltip arrow title={nodeId} placement="top-start">
+      <div className={commonStyles.truncateText}>{nodeId}</div>
+    </Tooltip>
+  );
 };
 
 const DisplayType: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
