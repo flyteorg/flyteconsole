@@ -48,7 +48,7 @@ export const checkIfObjectsAreSame = (a, b) => {
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const getDisplayName = (context: any, truncate: boolean = true): string => {
+export const getDisplayName = (context: any, truncate = true): string => {
   let displayName = '';
   if (context.metadata) {
     // Compiled Node with Meta
@@ -86,13 +86,6 @@ export const getWorkflowId = (workflow: CompiledWorkflow): string => {
 };
 
 export const createWorkflowNodeFromDynamic = dw => {
-  // workflowNode: WorkflowNode
-  //     subWorkflowRef: Identifier
-  //     domain: "development"
-  //     name: "core.control_flow.subworkflows.my_subwf"
-  //     project: "flytesnacks"
-  //     resourceType: 2
-  //     version: "demo-9-1-core-2"
   return {
     subWorkflowRef: {
       domain: 'development',
