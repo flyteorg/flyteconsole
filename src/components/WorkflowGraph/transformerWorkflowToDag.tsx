@@ -17,14 +17,14 @@ export interface staticNodeExecutionIds {
   staticNodeId: string;
 }
 
-const debug = createDebugLogger('@transformerWorkflowToDAG');
+const debug = createDebugLogger('@transformerWorkflowToDag');
 
 /**
  * Returns a DAG from Flyte workflow request data
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const transformerWorkflowToDAG = (workflow: CompiledWorkflowClosure, dynamicToMerge: any | null = null): any => {
+export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dynamicToMerge: any | null = null): any => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
 
@@ -120,16 +120,19 @@ export const transformerWorkflowToDAG = (workflow: CompiledWorkflowClosure, dyna
 
   const buildWorkflowEdges = (root, context: ConnectionSet, ingress, nodeMap) => {
     const list = context.downstream[ingress].ids;
+
     for (let i = 0; i < list.length; i++) {
-      const source = nodeMap[ingress].dNode.scopedId;
-      const target = nodeMap[list[i]].dNode.scopedId;
-      const edge: dEdge = createDEdge({
-        sourceId: source,
-        targetId: target
-      });
-      root.edges.push(edge);
-      if (context.downstream[list[i]]) {
-        buildWorkflowEdges(root, context, list[i], nodeMap);
+      const source = nodeMap[ingress]?.dNode.scopedId;
+      const target = nodeMap[list[i]]?.dNode.scopedId;
+      if (source && target) {
+        const edge: dEdge = createDEdge({
+          sourceId: source,
+          targetId: target
+        });
+        root.edges.push(edge);
+        if (context.downstream[list[i]]) {
+          buildWorkflowEdges(root, context, list[i], nodeMap);
+        }
       }
     }
   };

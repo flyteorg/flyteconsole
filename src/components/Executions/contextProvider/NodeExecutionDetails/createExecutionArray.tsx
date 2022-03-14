@@ -1,4 +1,4 @@
-import { transformerWorkflowToDAG } from 'components/WorkflowGraph/transformerWorkflowToDag';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { NodeExecutionDetails, NodeExecutionDisplayType } from 'components/Executions/types';
 import { Workflow } from 'models/Workflow/types';
 import { Identifier } from 'models/Common/types';
@@ -83,7 +83,7 @@ export function createExecutionDetails(workflow: Workflow): CurrentExecutionDeta
   const compiledWorkflow = workflow.closure?.compiledWorkflow;
   const { tasks = [] } = compiledWorkflow;
 
-  let dNodes = transformerWorkflowToDAG(compiledWorkflow).dag.nodes ?? [];
+  let dNodes = transformerWorkflowToDag(compiledWorkflow).dag.nodes ?? [];
   dNodes = convertToPlainNodes(dNodes);
 
   dNodes.forEach(n => {

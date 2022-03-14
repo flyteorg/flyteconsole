@@ -4,7 +4,7 @@ import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
-import { transformerWorkflowToDAG } from './transformerWorkflowToDAG';
+import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**
  * @TODO these are dupes for testing, remove once tests fixed
  */
@@ -12,7 +12,7 @@ export const DISPLAY_NAME_START = 'start';
 export const DISPLAY_NAME_END = 'end';
 
 export const isStartOrEndNode = (node: any) => {
-    return node.id === startNodeId || node.id === endNodeId;
+  return node.id === startNodeId || node.id === endNodeId;
 };
 
 export function isStartNode(node: any) {
@@ -48,38 +48,32 @@ export const checkIfObjectsAreSame = (a, b) => {
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const getDisplayName = (
-    context: any,
-    truncate: boolean = true
-): string => {
-    let displayName = '';
-    if (context.metadata) {
-        // Compiled Node with Meta
-        displayName = context.metadata.name;
-    } else if (context.displayId) {
-        // NodeExecutionDetails
-        displayName = context.displayId;
-    } else if (context.template?.id?.name) {
-        // CompiledWorkflow
-        displayName = context.template.id.name;
-    } else if (context.id) {
-        // Compiled Node (start/end)
-        displayName = context.id;
-    }
+export const getDisplayName = (context: any, truncate: boolean = true): string => {
+  let displayName = '';
+  if (context.metadata) {
+    // Compiled Node with Meta
+    displayName = context.metadata.name;
+  } else if (context.displayId) {
+    // NodeExecutionDetails
+    displayName = context.displayId;
+  } else if (context.template?.id?.name) {
+    // CompiledWorkflow
+    displayName = context.template.id.name;
+  } else if (context.id) {
+    // Compiled Node (start/end)
+    displayName = context.id;
+  }
 
-    if (displayName == startNodeId) {
-        return DISPLAY_NAME_START;
-    } else if (displayName == endNodeId) {
-        return DISPLAY_NAME_END;
-    } else if (displayName.indexOf('.') > 0 && truncate) {
-        /* Note: for displaying truncated task name */
-        return displayName.substring(
-            displayName.lastIndexOf('.') + 1,
-            displayName.length
-        );
-    }
+  if (displayName == startNodeId) {
+    return DISPLAY_NAME_START;
+  } else if (displayName == endNodeId) {
+    return DISPLAY_NAME_END;
+  } else if (displayName.indexOf('.') > 0 && truncate) {
+    /* Note: for displaying truncated task name */
+    return displayName.substring(displayName.lastIndexOf('.') + 1, displayName.length);
+  }
 
-    return displayName;
+  return displayName;
 };
 
 /**
@@ -92,34 +86,34 @@ export const getWorkflowId = (workflow: CompiledWorkflow): string => {
 };
 
 export const createWorkflowNodeFromDynamic = dw => {
-    // workflowNode: WorkflowNode
-    //     subWorkflowRef: Identifier
-    //     domain: "development"
-    //     name: "core.control_flow.subworkflows.my_subwf"
-    //     project: "flytesnacks"
-    //     resourceType: 2
-    //     version: "demo-9-1-core-2"
-    return {
-        subWorkflowRef: {
-            domain: 'development',
-            name: '',
-            project: ''
-        }
-    };
+  // workflowNode: WorkflowNode
+  //     subWorkflowRef: Identifier
+  //     domain: "development"
+  //     name: "core.control_flow.subworkflows.my_subwf"
+  //     project: "flytesnacks"
+  //     resourceType: 2
+  //     version: "demo-9-1-core-2"
+  return {
+    subWorkflowRef: {
+      domain: 'development',
+      name: '',
+      project: ''
+    }
+  };
 };
 
 export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
-    if (isStartNode(node)) {
-        return dTypes.start;
-    } else if (isEndNode(node)) {
-        return dTypes.end;
-    } else if (node.branchNode) {
-        return dTypes.subworkflow;
-    } else if (node.workflowNode) {
-        return dTypes.subworkflow;
-    } else {
-        return dTypes.task;
-    }
+  if (isStartNode(node)) {
+    return dTypes.start;
+  } else if (isEndNode(node)) {
+    return dTypes.end;
+  } else if (node.branchNode) {
+    return dTypes.subworkflow;
+  } else if (node.workflowNode) {
+    return dTypes.subworkflow;
+  } else {
+    return dTypes.task;
+  }
 };
 
 export const getSubWorkflowFromId = (id, workflow) => {
@@ -171,9 +165,9 @@ export const getNodeTemplateName = (node: dNode) => {
 export const transformWorkflowToKeyedDag = (workflow: Workflow) => {
   if (!workflow.closure?.compiledWorkflow) return {};
 
-  const dagData = transformerWorkflowToDAG(workflow.closure?.compiledWorkflow);
+  const { dag } = transformerWorkflowToDag(workflow.closure?.compiledWorkflow);
   const data = {};
-  dagData.nodes.forEach(node => {
+  dag.nodes.forEach(node => {
     data[`${node.id}`] = node;
   });
   return data;
