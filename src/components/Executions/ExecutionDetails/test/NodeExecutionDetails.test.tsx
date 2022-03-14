@@ -45,7 +45,6 @@ describe('NodeExecutionDetails', () => {
 
   it('renders name for task nodes', async () => {
     const { name } = fixture.tasks.python.id;
-    console.log('>>>>>>>>>>>>>> NAME:', name);
     const { getByText } = renderComponent();
     await waitFor(() => expect(getByText(name)));
   });
