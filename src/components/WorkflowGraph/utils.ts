@@ -4,11 +4,7 @@ import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
-<<<<<<< HEAD
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
-=======
-import { transformerWorkflowToDAG } from './transformerWorkflowToDag';
->>>>>>> 6a5f3dff2e956e5e4834344a8bd09037685cd139
 /**
  * @TODO these are dupes for testing, remove once tests fixed
  */
@@ -90,16 +86,6 @@ export const getWorkflowId = (workflow: CompiledWorkflow): string => {
 };
 
 export const createWorkflowNodeFromDynamic = dw => {
-<<<<<<< HEAD
-=======
-  // workflowNode: WorkflowNode
-  //     subWorkflowRef: Identifier
-  //     domain: "development"
-  //     name: "core.control_flow.subworkflows.my_subwf"
-  //     project: "flytesnacks"
-  //     resourceType: 2
-  //     version: "demo-9-1-core-2"
->>>>>>> 6a5f3dff2e956e5e4834344a8bd09037685cd139
   return {
     subWorkflowRef: {
       domain: 'development',
