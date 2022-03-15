@@ -45,20 +45,19 @@ module.exports = {
 
     // classic
     'no-unused-vars': 'off', // 364
-    'no-use-before-define': 'off', // 49 - warn
+    'no-use-before-define': 'warn', // 49
     'no-shadow': 'off', // 104
-    'no-redeclare': 'off', // 16 - warn
+    'no-redeclare': 'warn', // 16
     'no-param-reassign': 'off', // 28
-    'no-unused-expressions': 'off', // 6 - warn
+    'no-unused-expressions': 'warn', // 6
     'prefer-destructuring': 'off', // 34
-    'max-classes-per-file': 'off', // 2 - warn
-
+    'max-classes-per-file': 'warn', // 2
     'no-empty-function': 'off',
-    'no-useless-constructor': 'off',
+    'no-useless-constructor': 'warn',
     'no-useless-computed-key': 'off',
     'no-restricted-syntax': 'off',
     'no-else-return': 'off',
-    'no-console': 'off',
+    'no-console': 'warn',
     'no-plusplus': 'off',
     'no-var': 'off',
     'no-continue': 'off',
@@ -89,18 +88,17 @@ module.exports = {
     'prefer-promise-reject-errors': 'off',
     'prefer-arrow-callback': 'off',
     'func-names': 'off',
-    eqeqeq: 'off',
-    camelcase: 'off',
+    eqeqeq: 'warn',
+    camelcase: 'warn',
 
     // import
-    'import/no-dynamic-require': 'off', // 1 - warn
+    'import/no-dynamic-require': 'warn', // 1
 
     // react
     'react/button-has-type': 'off', // 5
-    'react/jsx-no-useless-fragment': 'off', // 15 - warn
-    'react/no-access-state-in-setstate': 'off', // 2- warn
-    'react/jsx-no-bind': 'off', // 3 - warn
-
+    'react/jsx-no-useless-fragment': 'off', // 15
+    'react/no-access-state-in-setstate': 'warn', // 2
+    'react/jsx-no-bind': 'warn', // 3
     'react/prop-types': 'off',
     'react/jsx-curly-brace-presence': 'off',
     'react/self-closing-comp': 'off',
@@ -115,8 +113,8 @@ module.exports = {
     'react/state-in-constructor': 'off',
     'react/no-children-prop': 'off',
     'react/sort-comp': 'off',
-    // jsx-a11y
 
+    // jsx-a11y
     'jsx-a11y/aria-role': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'jsx-a11y/click-events-have-key-events': 'off',
