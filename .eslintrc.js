@@ -2,41 +2,136 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es6: true,
-    node: true
+    es2021: true,
   },
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react-hooks', 'jest'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:jest/recommended',
-    'prettier',
-    'prettier/@typescript-eslint'
-  ],
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
+  plugins: ['react', '@typescript-eslint'],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
   rules: {
-    // Rules we don't want to be enabled
-    'no-unused-vars': 'off', // disabled to let "@typescript-eslint/no-unused-vars" do it's job
-    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-    'jest/no-mocks-import': 'off',
+    // "off" or 0: turn off the rule completely; "warn" or 1;  "error" or 2
+    'arrow-body-style': 'off',
+    'import/extensions': 'off',
+    'import/prefer-default-export': 'off',
+    'react/jsx-filename-extension': [2, { extensions: ['.jsx', '.tsx'] }],
 
-    // temporarily disabled
-    '@typescript-eslint/no-var-requires': 'off', // 27
-    '@typescript-eslint/ban-types': 'warn', // 62
-    '@typescript-eslint/no-empty-function': 'warn', // 60
-    '@typescript-eslint/explicit-module-boundary-types': 'off', // 296
-    '@typescript-eslint/no-explicit-any': 'warn', // 118
-    '@typescript-eslint/no-non-null-assertion': 'warn', // 59
-    'react-hooks/exhaustive-deps': 'warn' // 24
+    // up for discussion
+    'react/function-component-definition': 'off',
+
+    // temporarily changed to warning
+    indent: 'off',
+    'comma-dangle': 'off',
+    // 1, 2: 33050 -> 8327
+    'lines-between-class-members': 'off',
+    'no-unused-vars': 'off',
+    'import/no-unresolved': 'off',
+    'import/newline-after-import': 'off',
+    // 4603 -> 2937
+    'no-undef': 'off',
+    'react/jsx-boolean-value': 'off',
+    'react/jsx-no-useless-fragment': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'import/no-extraneous-dependencies': 'off', // serious thing
+    'no-use-before-define': 'off',
+    // 2937 -> 910
+    'no-shadow': 'off',
+    'no-redeclare': 'off',
+    'no-param-reassign': 'off',
+    'prefer-destructuring': 'off',
+    // 910 -> 725
+    'react/button-has-type': 'off',
+    'react/destructuring-assignment': 'off',
+    'react/no-access-state-in-setstate': 'off',
+    'react/jsx-no-bind': 'off',
+    'no-unused-expressions': 'off',
+    'max-classes-per-file': 'off',
+    'spaced-comment': 'off',
+    'no-else-return': 'off',
+    'no-console': 'off',
+    eqeqeq: 'off',
+    'no-plusplus': 'off',
+    'object-shorthand': 'off',
+    // 725 -> 460
+    'operator-assignment': 'off',
+    'array-callback-return': 'off',
+    'global-require': 'off',
+    'no-restricted-syntax': 'off',
+    'dot-notation': 'off',
+    'guard-for-in': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'react/prop-types': 'off',
+    'no-useless-computed-key': 'off',
+    'react/jsx-curly-brace-presence': 'off',
+    'react/self-closing-comp': 'off',
+    // 460 -> 287
+    'react/no-unstable-nested-components': 'off',
+    'react/sort-comp': 'off',
+    'no-empty-function': 'off',
+    'no-useless-constructor': 'off',
+    'one-var': 'off',
+    'consistent-return': 'off',
+    'jsx-a11y/aria-role': 'off',
+    'jest/valid-title': 'off',
+    'react/no-unescaped-entities': 'off',
+    'react/require-default-props': 'off',
+    'no-restricted-globals': 'off',
+    'jsx-a11y/anchor-is-valid': 'off',
+    'import/order': 'off',
+    // 287 -> 107
+    'react/no-unused-prop-types': 'off',
+    'react/no-array-index-key': 'off',
+    'no-unneeded-ternary': 'off',
+    camelcase: 'off',
+    'import/no-useless-path-segments': 'off',
+    'no-return-await': 'off',
+    'no-nested-ternary': 'off',
+    'prefer-promise-reject-errors': 'off',
+    'no-return-assign': 'off',
+    'no-await-in-loop': 'off',
+    'no-undef-init': 'off',
+    'react/jsx-no-constructed-context-values': 'off',
+    'jsx-a11y/control-has-associated-label': 'off',
+    'vars-on-top': 'off',
+    'no-var': 'off',
+    'import/no-dynamic-require': 'off',
+    'prefer-arrow-callback': 'off',
+    'func-names': 'off',
+    'no-continue': 'off',
+    'valid-typeof': 'off',
+    'no-unsafe-optional-chaining': 'off',
+    'default-case': 'off',
+    'no-throw-literal': 'off',
+    'react/no-unused-state': 'off',
+    'react/static-property-placement': 'off',
+    'react/state-in-constructor': 'off',
+    'react/no-children-prop': 'off',
+    'prefer-object-spread': 'off',
+    'no-lonely-if': 'off',
+    'prefer-template': 'off',
   },
   overrides: [
     {
       // overrides for test files
       files: ['*.spec.*', '*.test.*', 'src/**/test/*'],
       rules: {
-        '@typescript-eslint/no-explicit-any': 'off'
-      }
-    }
-  ]
+        '@typescript-eslint/no-explicit-any': 'off',
+        'import/no-extraneous-dependencies': 'off',
+      },
+    },
+  ],
 };

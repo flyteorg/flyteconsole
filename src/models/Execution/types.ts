@@ -48,7 +48,7 @@ export interface Execution extends Admin.IExecution {
   spec: ExecutionSpec;
 }
 
-/** Node executions **/
+/** Node executions */
 export interface WorkflowNodeMetadata {
   executionId: WorkflowExecutionIdentifier;
 }
@@ -97,7 +97,7 @@ export interface NodeExecutionClosure extends Admin.INodeExecutionClosure {
   workflowNodeMetadata?: WorkflowNodeMetadata;
 }
 
-/** Task executions **/
+/** Task executions */
 
 export interface TaskExecutionIdentifier extends Core.ITaskExecutionIdentifier {
   taskId: Identifier;
