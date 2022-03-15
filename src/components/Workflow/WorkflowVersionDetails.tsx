@@ -16,21 +16,21 @@ const useStyles = makeStyles((_theme: Theme) => ({
     flexDirection: 'column',
     flexWrap: 'nowrap',
     overflow: 'hidden',
-    height: `calc(100vh - ${_theme.spacing(1)}rem)`
+    height: `calc(100vh - ${_theme.spacing(1)}rem)`,
   },
   staticGraphContainer: {
     display: 'flex',
     height: '60%',
     width: '100%',
-    flex: '1'
+    flex: '1',
   },
   versionsContainer: {
     display: 'flex',
     flex: '0 1 auto',
     height: '40%',
     flexDirection: 'column',
-    overflowY: 'scroll'
-  }
+    overflowY: 'scroll',
+  },
 }));
 
 interface WorkflowVersionDetailsRouteParams {
@@ -50,7 +50,7 @@ const WorkflowVersionDetailsContainer: React.FC<WorkflowVersionDetailsRouteParam
   projectId,
   domainId,
   workflowName,
-  workflowVersion
+  workflowVersion,
 }) => {
   const workflowId = React.useMemo<WorkflowId>(
     () => ({
@@ -58,9 +58,9 @@ const WorkflowVersionDetailsContainer: React.FC<WorkflowVersionDetailsRouteParam
       project: projectId,
       domain: domainId,
       name: workflowName,
-      version: workflowVersion
+      version: workflowVersion,
     }),
-    [projectId, domainId, workflowName, workflowVersion]
+    [projectId, domainId, workflowName, workflowVersion],
   );
 
   const id = workflowId as ResourceIdentifier;
@@ -84,5 +84,5 @@ const WorkflowVersionDetailsContainer: React.FC<WorkflowVersionDetailsRouteParam
 };
 
 export const WorkflowVersionDetails = withRouteParams<WorkflowVersionDetailsRouteParams>(
-  WorkflowVersionDetailsContainer
+  WorkflowVersionDetailsContainer,
 );

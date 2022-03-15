@@ -10,21 +10,21 @@ import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/tra
 import { getRFBackground } from 'components/flytegraph/ReactFlow/utils';
 import { ConvertDagProps, RFWrapperProps } from 'components/flytegraph/ReactFlow/types';
 
-export const renderStaticGraph = props => {
+export const renderStaticGraph = (props) => {
   const workflow = props.closure.compiledWorkflow;
   const { dag } = transformerWorkflowToDag(workflow);
   const rfGraphJson = ConvertFlyteDagToReactFlows({
     root: dag,
     maxRenderDepth: 0,
     currentNestedView: [],
-    isStaticGraph: true
+    isStaticGraph: true,
   } as ConvertDagProps);
 
   const backgroundStyle = getRFBackground().static;
   const ReactFlowProps: RFWrapperProps = {
     backgroundStyle,
     rfGraphJson: rfGraphJson,
-    currentNestedView: []
+    currentNestedView: [],
   };
   return <ReactFlowWrapper {...ReactFlowProps} />;
 };
@@ -36,7 +36,7 @@ export interface StaticGraphContainerProps {
 export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({ workflowId }) => {
   const containerStyle: React.CSSProperties = {
     display: 'flex',
-    width: '100%'
+    width: '100%',
   };
   const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(useQueryClient(), workflowId));
 

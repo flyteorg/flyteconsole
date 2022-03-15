@@ -42,7 +42,7 @@ function workflowToDag(workflow: Workflow): PrepareDAGResult {
   } catch (e) {
     return {
       dag: null,
-      error: e as Error
+      error: e as Error,
     };
   }
 }
@@ -52,7 +52,7 @@ export interface DynamicWorkflowMapping {
   dynamicWorkflow: any;
   dynamicExecutions: any[];
 }
-export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
+export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
   const { onNodeSelectionChanged, nodeExecutionsById, workflow } = props;
   const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
   /**
@@ -87,7 +87,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = props => {
   const dynamicParents = checkForDynamicExeuctions(nodeExecutionsById, staticExecutionIdsMap);
 
   const dynamicWorkflowQuery = useQuery(makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents));
-  const renderReactFlowGraph = dynamicWorkflows => {
+  const renderReactFlowGraph = (dynamicWorkflows) => {
     debug('DynamicWorkflows:', dynamicWorkflows);
     let mergedDag = dag;
     for (const dynamicId in dynamicWorkflows) {

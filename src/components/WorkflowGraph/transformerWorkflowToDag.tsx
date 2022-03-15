@@ -10,7 +10,7 @@ import {
   getDisplayName,
   getSubWorkflowFromId,
   getNodeTypeFromCompiledNode,
-  getTaskTypeFromCompiledNode
+  getTaskTypeFromCompiledNode,
 } from './utils';
 
 export interface staticNodeExecutionIds {
@@ -37,7 +37,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
     const edge: dEdge = {
       sourceId: sourceId,
       targetId: targetId,
-      id: id
+      id: id,
     };
     return edge;
   };
@@ -84,7 +84,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       type: type,
       name: getDisplayName(compiledNode),
       nodes: [],
-      edges: []
+      edges: [],
     } as dNode;
 
     staticExecutionIdsMap[output.scopedId] = compiledNode;
@@ -96,25 +96,25 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       compiledNode: {
         id: `${root.id}-${startNodeId}`,
         metadata: {
-          name: DISPLAY_NAME_START
-        }
+          name: DISPLAY_NAME_START,
+        },
       } as CompiledNode,
-      typeOverride: dTypes.nestedStart
+      typeOverride: dTypes.nestedStart,
     });
 
     const endNode = createDNode({
       compiledNode: {
         id: `${root.id}-${endNodeId}`,
         metadata: {
-          name: DISPLAY_NAME_END
-        }
+          name: DISPLAY_NAME_END,
+        },
       } as CompiledNode,
-      typeOverride: dTypes.nestedEnd
+      typeOverride: dTypes.nestedEnd,
     });
 
     return {
       startNode,
-      endNode
+      endNode,
     };
   };
 
@@ -127,7 +127,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       if (source && target) {
         const edge: dEdge = createDEdge({
           sourceId: source,
-          targetId: target
+          targetId: target,
         });
         root.edges.push(edge);
         if (context.downstream[list[i]]) {
@@ -166,7 +166,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
           const dPrimaryWorkflow = dynamicWorkflow.compiledWorkflow.primary;
 
           node['workflowNode'] = {
-            subWorkflowRef: dWorkflowId
+            subWorkflowRef: dWorkflowId,
           };
 
           /* 1. Add primary workflow as subworkflow on root */
@@ -193,7 +193,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
     if (node.branchNode) {
       dNode = createDNode({
         compiledNode: node,
-        parentDNode: root
+        parentDNode: root,
       });
       buildDAG(dNode, node, dTypes.branch);
     } else if (node.workflowNode) {
@@ -201,7 +201,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       const subworkflow = getSubWorkflowFromId(id, workflow);
       dNode = createDNode({
         compiledNode: node,
-        parentDNode: root
+        parentDNode: root,
       });
       buildDAG(dNode, subworkflow, dTypes.subworkflow);
     } else if (node.taskNode) {
@@ -210,12 +210,12 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       dNode = createDNode({
         compiledNode: node as CompiledNode,
         parentDNode: root,
-        taskTemplate: taskType
+        taskTemplate: taskType,
       });
     } else {
       dNode = createDNode({
         compiledNode: node,
-        parentDNode: root
+        parentDNode: root,
       });
     }
     root?.nodes.push(dNode);
@@ -248,11 +248,11 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
 
     /* Check: other (else-if) case */
     if (otherNode) {
-      otherNode.map(otherItem => {
+      otherNode.map((otherItem) => {
         const otherCompiledNode: CompiledNode = otherItem.thenNode as CompiledNode;
         parseNode({
           node: otherCompiledNode,
-          root: root
+          root: root,
         });
       });
     }
@@ -262,11 +262,11 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
     for (let i = 0; i < root.nodes.length; i++) {
       const startEdge: dEdge = createDEdge({
         sourceId: startNode.id,
-        targetId: root.nodes[i].scopedId
+        targetId: root.nodes[i].scopedId,
       });
       const endEdge: dEdge = createDEdge({
         sourceId: root.nodes[i].scopedId,
-        targetId: endNode.id
+        targetId: endNode.id,
       });
       root.edges.push(startEdge);
       root.edges.push(endEdge);
@@ -287,7 +287,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       const compiledNode: CompiledNode = context.template.nodes[i];
       parseNode({
         node: compiledNode,
-        root: root
+        root: root,
       });
     }
 
@@ -299,7 +299,7 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       const dNode = root.nodes[i];
       nodeMap[dNode.id] = {
         dNode: dNode,
-        compiledNode: nodesList[i]
+        compiledNode: nodesList[i],
       };
     }
 
@@ -329,8 +329,8 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
   };
   const primaryWorkflowRoot = createDNode({
     compiledNode: {
-      id: startNodeId
-    } as CompiledNode
+      id: startNodeId,
+    } as CompiledNode,
   });
   const dag: dNode = buildDAG(primaryWorkflowRoot, primary, dTypes.primary);
   debug('output:', dag);
