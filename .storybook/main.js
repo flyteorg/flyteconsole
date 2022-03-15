@@ -1,6 +1,6 @@
 module.exports = {
   core: {
-    builder: 'webpack5'
+    builder: 'webpack5',
   },
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-interactions'],
@@ -15,9 +15,9 @@ module.exports = {
         // flyteidl.d.ts file.
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: ['babel-loader', { loader: 'ts-loader', options: { transpileOnly: true } }]
-      }
+        use: ['babel-loader', { loader: 'ts-loader', options: { transpileOnly: true } }],
+      },
     ];
     return config;
-  }
+  },
 };
