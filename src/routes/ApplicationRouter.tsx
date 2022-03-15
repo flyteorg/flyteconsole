@@ -7,7 +7,7 @@ import { Routes } from './routes';
 
 function withContentContainer<P>(
   WrappedComponent: React.ComponentType<P>,
-  contentContainerProps?: ContentContainerProps
+  contentContainerProps?: ContentContainerProps,
 ) {
   return (props: P) => (
     <ContentContainer center={true} {...contentContainerProps}>
@@ -23,7 +23,7 @@ export const ApplicationRouter: React.FC = () => (
         path={Routes.ExecutionDetails.path}
         component={withContentContainer(components.executionDetails, {
           center: false,
-          noMargin: true
+          noMargin: true,
         })}
       />
       <Route path={Routes.TaskDetails.path} component={withSideNavigation(components.taskDetails)} />
@@ -35,7 +35,7 @@ export const ApplicationRouter: React.FC = () => (
       <Route
         path={Routes.ProjectDetails.path}
         component={withSideNavigation(components.projectDetails, {
-          noMargin: true
+          noMargin: true,
         })}
       />
       <Route path={Routes.SelectProject.path} exact={true} component={withContentContainer(components.selectProject)} />

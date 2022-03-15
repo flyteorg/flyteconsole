@@ -13,7 +13,7 @@ export enum QueryType {
   TaskTemplate = 'taskTemplate',
   Workflow = 'workflow',
   WorkflowExecution = 'workflowExecution',
-  WorkflowExecutionList = 'workflowExecutionList'
+  WorkflowExecutionList = 'workflowExecutionList',
 }
 
 type QueryKeyArray = [QueryType, ...unknown[]];

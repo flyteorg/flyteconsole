@@ -12,12 +12,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
     width: '100%',
     '& > *': {
-      marginBottom: theme.spacing(2)
-    }
+      marginBottom: theme.spacing(2),
+    },
   },
   errorContainer: {
-    padding: theme.spacing(2)
-  }
+    padding: theme.spacing(2),
+  },
 }));
 
 const ThrowError = () => {
