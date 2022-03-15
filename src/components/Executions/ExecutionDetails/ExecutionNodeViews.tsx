@@ -22,19 +22,19 @@ import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filters: {
-    paddingLeft: theme.spacing(3)
+    paddingLeft: theme.spacing(3),
   },
   nodesContainer: {
     borderTop: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     flex: '1 1 100%',
     flexDirection: 'column',
-    minHeight: 0
+    minHeight: 0,
   },
   tabs: {
     background: secondaryBackgroundColor,
-    paddingLeft: theme.spacing(3.5)
-  }
+    paddingLeft: theme.spacing(3.5),
+  },
 }));
 
 export interface ExecutionNodeViewsProps {
@@ -49,7 +49,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const tabState = useTabState(tabs, defaultTab);
 
   const {
-    closure: { abortMetadata }
+    closure: { abortMetadata },
   } = execution;
 
   /* We want to maintain the filter selection when switching away from the Nodes

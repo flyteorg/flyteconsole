@@ -30,7 +30,7 @@ export const ScaleContext = createContext<TimelineScaleState>({
   },
   setScaleFactor: () => {
     console.error('ERROR: No ScaleContextProvider was found in parent components.');
-  }
+  },
 });
 
 /** Could be used to access the whole TimelineScaleState */
@@ -69,7 +69,7 @@ export const ScaleProvider = (props: ScaleProviderProps) => {
     for (let i = 0; i < percentage.length; ++i) {
       newMarks.push({
         value: i,
-        label: formatSeconds(getIntervalValue(i))
+        label: formatSeconds(getIntervalValue(i)),
       });
     }
     setMarks(newMarks);

@@ -15,8 +15,8 @@ interface NodeExecutionTimelineNameData {
 
 const useStyles = makeStyles((_theme: Theme) => ({
   selectedExecutionName: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 }));
 
 export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({ name, execution, state }) => {

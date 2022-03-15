@@ -25,18 +25,18 @@ interface StyleProps {
   durationLength: number;
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   chartHeader: (props: StyleProps) => ({
     marginTop: -10,
     marginLeft: -15,
     width: `${props.chartWidth + 20}px`,
-    height: `${56 * props.durationLength + 20}px`
+    height: `${56 * props.durationLength + 20}px`,
   }),
   taskNames: {
     display: 'flex',
     flexDirection: 'column',
     borderRight: `1px solid ${theme.palette.divider}`,
-    overflowY: 'auto'
+    overflowY: 'auto',
   },
   taskNamesHeader: {
     textTransform: 'uppercase',
@@ -49,7 +49,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     borderBottom: `4px solid ${theme.palette.divider}`,
-    paddingLeft: 30
+    paddingLeft: 30,
   },
   taskDurations: {
     borderLeft: `1px solid ${theme.palette.divider}`,
@@ -57,16 +57,16 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     overflow: 'hidden',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   taskDurationsLabelsView: {
     overflow: 'hidden',
-    borderBottom: `4px solid ${theme.palette.divider}`
+    borderBottom: `4px solid ${theme.palette.divider}`,
   },
   taskDurationsView: {
     flex: 1,
-    overflowY: 'hidden'
-  }
+    overflowY: 'hidden',
+  },
 }));
 
 const INTERVAL_LENGTH = 110;
@@ -98,13 +98,13 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   React.useEffect(() => {
     const initializeNodes = convertToPlainNodes(originalNodes);
     setShowNodes(
-      initializeNodes.map(node => {
-        const index = nodeExecutions.findIndex(exe => exe.scopedId === node.scopedId);
+      initializeNodes.map((node) => {
+        const index = nodeExecutions.findIndex((exe) => exe.scopedId === node.scopedId);
         return {
           ...node,
-          execution: index >= 0 ? nodeExecutions[index] : undefined
+          execution: index >= 0 ? nodeExecutions[index] : undefined,
         };
-      })
+      }),
     );
   }, [originalNodes, nodeExecutions]);
 
@@ -133,7 +133,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     const labelView = durationsLabelsRef?.current;
     if (labelView) {
       labelView.scrollTo({
-        left: scrollLeft
+        left: scrollLeft,
       });
     }
   };
@@ -143,7 +143,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     const graphView = durationsRef?.current;
     if (graphView) {
       graphView.scrollTo({
-        top: scrollTop
+        top: scrollTop,
       });
     }
   };

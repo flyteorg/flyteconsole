@@ -28,9 +28,9 @@ export const NodeExecutionDetailsContext = createContext<NodeExecutionDetailsSta
     project: NOT_AVAILABLE,
     domain: NOT_AVAILABLE,
     name: NOT_AVAILABLE,
-    version: NOT_AVAILABLE
+    version: NOT_AVAILABLE,
   },
-  compiledWorkflowClosure: null
+  compiledWorkflowClosure: null,
 });
 
 /**  Should be used to get NodeExecutionDetails for a specific nodeExecution. */
@@ -76,7 +76,7 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
         project,
         domain,
         name,
-        version
+        version,
       };
       const workflow = await fetchWorkflow(queryClient, workflowId);
       if (!workflow) {
@@ -118,7 +118,7 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     }
 
     const specId = nodeExecution.scopedId || nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
-    const nodeDetail = executionTree.nodes.filter(n => n.scopedId === specId);
+    const nodeDetail = executionTree.nodes.filter((n) => n.scopedId === specId);
     if (nodeDetail.length === 0) {
       let details = tasks.get(nodeExecution.id.nodeId);
       if (details) {
