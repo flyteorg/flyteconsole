@@ -1,10 +1,10 @@
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import * as React from 'react';
+import { NodeExecution } from 'models/Execution/types';
 import { useAllChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionWorkflowGraph } from './ExecutionWorkflowGraph';
-import { NodeExecution } from 'models/Execution/types';
 
 export const ExecutionChildrenLoader = ({ nodeExecutions, workflowId }) => {
   const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);

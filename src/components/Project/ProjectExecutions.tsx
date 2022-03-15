@@ -14,7 +14,6 @@ import { executionSortFields } from 'models/Execution/constants';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
-import { failedToLoadExecutionsString } from './constants';
 import { BarChart } from 'components/common/BarChart';
 import {
   getExecutionTimeData,
@@ -27,6 +26,7 @@ import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { compact } from 'lodash';
+import { failedToLoadExecutionsString } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

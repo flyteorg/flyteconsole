@@ -1,9 +1,9 @@
 import { FilterOperationName } from 'models/AdminEntity/types';
 import { UserProfile } from 'models/Common/types';
 import { useState } from 'react';
+import { useUserProfile } from 'components/hooks/useUserProfile';
 import { BooleanFilterState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';
-import { useUserProfile } from 'components/hooks/useUserProfile';
 
 function getUserId(profile: UserProfile): string {
   return profile.sub ? profile.sub : '';

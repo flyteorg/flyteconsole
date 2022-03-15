@@ -6,8 +6,8 @@ import Close from '@material-ui/icons/Close';
 import Search from '@material-ui/icons/Search';
 import { bodyFontSize } from 'components/Theme/constants';
 import * as React from 'react';
-import { PropertyGetter, SearchResult, useSearchableListState } from './useSearchableListState';
 import classNames from 'classnames';
+import { PropertyGetter, SearchResult, useSearchableListState } from './useSearchableListState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

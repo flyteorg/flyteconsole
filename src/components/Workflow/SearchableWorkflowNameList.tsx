@@ -7,16 +7,16 @@ import { separatorColor, primaryTextColor, workflowLabelColor } from 'components
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
+import { WorkflowExecutionPhase } from 'models/Execution/enums';
+import { Shimmer } from 'components/common/Shimmer';
+import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { debounce } from 'lodash';
 import { WorkflowListStructureItem } from './types';
 import ProjectStatusBar from '../Project/ProjectStatusBar';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { workflowNoInputsString } from '../Launch/LaunchForm/constants';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
 import { useWorkflowInfoItem } from './useWorkflowInfoItem';
-import { Shimmer } from 'components/common/Shimmer';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
-import { debounce } from 'lodash';
 
 interface SearchableWorkflowNameItemProps {
   item: WorkflowListStructureItem;

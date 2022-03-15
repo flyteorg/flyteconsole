@@ -13,7 +13,7 @@ import {
   getNodeTypeFromCompiledNode,
   isStartNode,
   isEndNode,
-} from '../../WorkflowGraph/utils';
+} from '../utils';
 
 describe('getDisplayName', () => {
   it('should return correct name', () => {

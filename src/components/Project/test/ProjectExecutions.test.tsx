@@ -13,12 +13,12 @@ import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'test/utils';
-import { failedToLoadExecutionsString } from '../constants';
-import { ProjectExecutions } from '../ProjectExecutions';
 
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { getUserProfile } from 'models/Common/api';
+import { ProjectExecutions } from '../ProjectExecutions';
+import { failedToLoadExecutionsString } from '../constants';
 
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
 jest.mock('notistack', () => ({

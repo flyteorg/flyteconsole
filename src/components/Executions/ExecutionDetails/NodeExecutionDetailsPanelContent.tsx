@@ -21,6 +21,10 @@ import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
+import { RemoteLiteralMapViewer } from 'components/Literals/RemoteLiteralMapViewer';
+import { fetchWorkflow } from 'components/Workflow/workflowQueries';
+import { dNode } from 'models/Graph/types';
+import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/WorkflowGraph/utils';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { TaskExecutionsList } from '../TaskExecutionsList/TaskExecutionsList';
@@ -32,10 +36,6 @@ import { NodeExecutionTaskDetails } from './NodeExecutionTaskDetails';
 import { getTaskExecutionDetailReasons } from './utils';
 import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
-import { RemoteLiteralMapViewer } from 'components/Literals/RemoteLiteralMapViewer';
-import { fetchWorkflow } from 'components/Workflow/workflowQueries';
-import { dNode } from 'models/Graph/types';
-import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/WorkflowGraph/utils';
 
 const useStyles = makeStyles((theme: Theme) => {
   const paddingVertical = `${theme.spacing(2)}px`;

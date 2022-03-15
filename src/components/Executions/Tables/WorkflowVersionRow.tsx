@@ -4,9 +4,9 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { ListRowProps } from 'react-virtualized';
 import { Workflow } from 'models/Workflow/types';
+import TableRow from '@material-ui/core/TableRow';
 import { useWorkflowVersionsColumnStyles } from './styles';
 import { WorkflowExecutionsTableState, WorkflowVersionColumnDefinition } from './types';
-import TableRow from '@material-ui/core/TableRow';
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {

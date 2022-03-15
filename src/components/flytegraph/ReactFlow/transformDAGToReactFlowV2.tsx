@@ -1,7 +1,7 @@
 import { dEdge, dNode, dTypes } from 'models/Graph/types';
-import { ReactFlowGraphConfig } from './utils';
 import { Edge, Node, Position } from 'react-flow-renderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 import { createDebugLogger } from '../utils';
 

@@ -5,11 +5,11 @@ import { listExecutions } from 'models/Execution/api';
 import { listWorkflows } from 'models/Workflow/api';
 import { listLaunchPlans } from 'models/Launch/api';
 import { workflowSortFields } from 'models/Workflow/constants';
-import { getInputsForWorkflow, getOutputsForWorkflow } from '../Launch/LaunchForm/getInputs';
 import * as Long from 'long';
 import { formatDateUTC } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useQuery } from 'react-query';
+import { getInputsForWorkflow, getOutputsForWorkflow } from '../Launch/LaunchForm/getInputs';
 
 export const useWorkflowInfoItem = ({ domain, project, name }: NamedEntityIdentifier) => {
   const {

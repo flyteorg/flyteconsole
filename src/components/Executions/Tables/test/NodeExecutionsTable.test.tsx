@@ -46,9 +46,9 @@ import {
   enableQueryLogger,
   findNearestAncestorByRole,
 } from 'test/utils';
+import * as moduleApi from 'components/Executions/contextProvider/NodeExecutionDetails/getTaskThroughExecution';
 import { titleStrings } from '../constants';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
-import * as moduleApi from 'components/Executions/contextProvider/NodeExecutionDetails/getTaskThroughExecution';
 
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');

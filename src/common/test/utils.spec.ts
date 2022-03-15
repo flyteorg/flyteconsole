@@ -1,6 +1,7 @@
 import { env } from 'common/env';
 
 import { long, obj } from 'test/utils';
+import { Protobuf } from 'flyteidl';
 import {
   compareTimestampsAscending,
   createCorsProxyURL,
@@ -12,8 +13,6 @@ import {
   millisecondsToDuration,
   timestampToDate,
 } from '../utils';
-
-import { Protobuf } from 'flyteidl';
 
 jest.mock('common/env', () => ({
   env: jest.requireActual('common/env').env,

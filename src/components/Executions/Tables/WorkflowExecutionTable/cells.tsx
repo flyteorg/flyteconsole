@@ -6,14 +6,14 @@ import LaunchPlanIcon from '@material-ui/icons/AssignmentOutlined';
 import InputOutputIcon from '@material-ui/icons/Tv';
 import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
-import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
 
-import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
 import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
-import { WorkflowExecutionsTableState } from '../types';
 import classnames from 'classnames';
+import { WorkflowExecutionsTableState } from '../types';
+import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
+import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
 import { useStyles } from './styles';
 import t from './strings';
 

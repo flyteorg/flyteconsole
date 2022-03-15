@@ -8,11 +8,11 @@ import { Identifier } from 'models/Common/types';
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { history } from 'routes/history';
+import { Routes } from 'routes/routes';
 import { useExecutionTableStyles } from './styles';
 import { useWorkflowExecutionsTableState } from './useWorkflowExecutionTableState';
 import { useWorkflowVersionsTableColumns } from './useWorkflowVersionsTableColumns';
 import { WorkflowVersionRow } from './WorkflowVersionRow';
-import { Routes } from 'routes/routes';
 
 interface WorkflowVersionsTableProps extends ListProps<Workflow> {
   versionView?: boolean;

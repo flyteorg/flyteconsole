@@ -1,4 +1,3 @@
-import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 import { dNode } from 'models/Graph/types';
 import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
@@ -12,6 +11,7 @@ import { useQuery, useQueryClient } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { createDebugLogger } from 'components/flytegraph/utils';
 import { CompiledNode } from 'models/Node/types';
+import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 
 export interface WorkflowGraphProps {
   onNodeSelectionChanged: (selectedNodes: string[]) => void;

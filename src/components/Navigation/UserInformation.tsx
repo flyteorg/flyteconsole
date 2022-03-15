@@ -3,8 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { WaitForData } from 'components/common/WaitForData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { getLoginUrl } from 'models/AdminEntity/utils';
-import { VersionDisplayModal } from './VersionDisplayModal';
 import * as React from 'react';
+import { VersionDisplayModal } from './VersionDisplayModal';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

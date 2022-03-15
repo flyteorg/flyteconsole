@@ -2,10 +2,10 @@ import * as React from 'react';
 import { makeStyles, Theme, Typography } from '@material-ui/core';
 
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
-import { NodeExecutionName } from './NodeExecutionName';
-import { NodeExecutionsTimelineContext } from './context';
 import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
+import { NodeExecutionName } from './NodeExecutionName';
+import { NodeExecutionsTimelineContext } from './context';
 
 const useStyles = makeStyles((theme: Theme) => ({
   taskNamesList: {

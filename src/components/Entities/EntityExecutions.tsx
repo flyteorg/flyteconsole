@@ -13,8 +13,8 @@ import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from 'models/AdminEntity/types';
 import { ResourceIdentifier } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
-import { executionFilterGenerator } from './generators';
 import { compact } from 'lodash';
+import { executionFilterGenerator } from './generators';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filtersContainer: {

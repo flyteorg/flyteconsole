@@ -9,6 +9,7 @@ import { DataError } from 'components/Errors/DataError';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { Execution, NodeExecution } from 'models/Execution/types';
+import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 import { NodeExecutionDetailsContextProvider } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
@@ -18,7 +19,6 @@ import { tabs } from './constants';
 import { ExecutionChildrenLoader } from './ExecutionChildrenLoader';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 import { ExecutionNodesTimeline } from './Timeline';
-import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filters: {

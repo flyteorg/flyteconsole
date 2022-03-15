@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { useQuery, useQueryClient } from 'react-query';
-import { makeWorkflowQuery } from './workflowQueries';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
@@ -9,6 +8,7 @@ import { ReactFlowWrapper } from 'components/flytegraph/ReactFlow/ReactFlowWrapp
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { getRFBackground } from 'components/flytegraph/ReactFlow/utils';
 import { ConvertDagProps, RFWrapperProps } from 'components/flytegraph/ReactFlow/types';
+import { makeWorkflowQuery } from './workflowQueries';
 
 export const renderStaticGraph = (props) => {
   const workflow = props.closure.compiledWorkflow;
