@@ -5,7 +5,7 @@ import { InputProps, InputType } from './types';
 import { UnsupportedInput } from './UnsupportedInput';
 import { getLaunchInputId } from './utils';
 
-/** Handles rendering of the input component for a Collection of SimpleType values*/
+/** Handles rendering of the input component for a Collection of SimpleType values */
 export const CollectionInput: React.FC<InputProps> = (props) => {
   const {
     error,

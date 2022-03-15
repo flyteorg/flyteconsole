@@ -33,6 +33,7 @@ export class ExpandableContentLink extends React.Component<ExpandableContentLink
     button: false,
     expandedText: 'Hide',
   };
+
   state = {
     showContent: false,
   };

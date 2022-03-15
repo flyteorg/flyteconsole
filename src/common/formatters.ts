@@ -124,7 +124,7 @@ export function durationToYMWDHMS(duration: moment.Duration): string {
   return `(${sign}) ${parts.join(' ')}`;
 }
 
-/** Converts a protobuf Duration value to (H M S) format (ex. 2h 3m 30s)*/
+/** Converts a protobuf Duration value to (H M S) format (ex. 2h 3m 30s) */
 export function protobufDurationToHMS(duration: Protobuf.IDuration) {
   return millisecondsToHMS(durationToMilliseconds(duration));
 }

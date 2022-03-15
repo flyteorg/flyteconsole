@@ -16,7 +16,7 @@ const doFetchProjects = async (cache: ValueCache) => {
   return projects.map((p) => cache.mergeValue(makeProjectCacheKey(p.id), p)) as Project[];
 };
 
-/** A hook for fetching the list of available projects*/
+/** A hook for fetching the list of available projects */
 export function useProjects(): FetchableData<Project[]> {
   const cache = useContext(CacheContext);
 

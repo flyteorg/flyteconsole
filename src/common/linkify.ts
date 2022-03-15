@@ -1,4 +1,5 @@
 import * as LinkifyIt from 'linkify-it';
+
 export const linkify = new LinkifyIt();
 
 export type LinkifiedTextChunkType = 'text' | 'link';

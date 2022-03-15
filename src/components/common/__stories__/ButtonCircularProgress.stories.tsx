@@ -11,6 +11,7 @@ const ButtonWithProgress: React.FC = () => {
       const timeout = setTimeout(() => setLoading(false), 2000);
       return () => clearTimeout(timeout);
     }
+    return;
   }, [loading]);
   const onClick = () => setLoading(true);
   return (

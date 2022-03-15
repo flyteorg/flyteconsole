@@ -50,7 +50,7 @@ interface ScaleProviderProps {
   children?: React.ReactNode;
 }
 
-/** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow*/
+/** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const ScaleProvider = (props: ScaleProviderProps) => {
   const [maxValue, setMaxValue] = React.useState(DEFAULT_MAX);
   const [scaleFactor, setScaleFactor] = React.useState<number>(DEFAULT_SCALE_FACTOR);

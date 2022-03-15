@@ -13,7 +13,7 @@ type LocalCacheConfig = { [k: string]: string };
 /*
  * THe default value could be present as any simple type or as a valid JSON object
  * with all field names wrapped in double quotes
- **/
+ */
 export const defaultLocalCacheConfig: LocalCacheConfig = {
   // Test
   'test-setting-bool': 'false',

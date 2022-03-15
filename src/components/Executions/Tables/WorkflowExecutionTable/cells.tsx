@@ -82,7 +82,7 @@ export function getActionsCell(
   showLaunchPlan: boolean,
   wrapperClassName: string,
   iconClassName: string,
-  onArchiveClick?: () => void, //(newState: ExecutionState) => void,
+  onArchiveClick?: () => void, // (newState: ExecutionState) => void,
 ): React.ReactNode {
   const isArchived = isExecutionArchived(execution);
   const onClick = () => state.setSelectedIOExecution(execution);

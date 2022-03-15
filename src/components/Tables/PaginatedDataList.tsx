@@ -206,15 +206,15 @@ const PaginatedDataList = <T,>({
             </TableBody>
           </Table>
         </TableContainer>
-        {/*<TablePagination*/}
-        {/*    rowsPerPageOptions={[5, 10, 25]}*/}
-        {/*    component="div"*/}
-        {/*    count={totalRows}*/}
-        {/*    rowsPerPage={rowsPerPage}*/}
-        {/*    page={page}*/}
-        {/*    onChangePage={handleChangePage}*/}
-        {/*    onChangeRowsPerPage={handleChangeRowsPerPage}*/}
-        {/*/>*/}
+        {/* <TablePagination */}
+        {/*    rowsPerPageOptions={[5, 10, 25]} */}
+        {/*    component="div" */}
+        {/*    count={totalRows} */}
+        {/*    rowsPerPage={rowsPerPage} */}
+        {/*    page={page} */}
+        {/*    onChangePage={handleChangePage} */}
+        {/*    onChangeRowsPerPage={handleChangeRowsPerPage} */}
+        {/* /> */}
       </Paper>
     </div>
   );

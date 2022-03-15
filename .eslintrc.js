@@ -26,39 +26,44 @@ module.exports = {
     'arrow-body-style': 'off',
     'import/extensions': 'off',
     'import/prefer-default-export': 'off',
+    'react/jsx-boolean-value': 'off',
     'react/jsx-filename-extension': [2, { extensions: ['.jsx', '.tsx'] }],
+    'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
 
     // up for discussion
     'react/function-component-definition': 'off',
-
-    // temporarily changed to warning
-    indent: 'off',
-    'comma-dangle': 'off',
-    // 1, 2: 33050 -> 8327
-    'lines-between-class-members': 'off',
-    'no-unused-vars': 'off',
-    'import/no-unresolved': 'off',
-    'import/newline-after-import': 'off',
-    // 4603 -> 2937
-    'no-undef': 'off',
-    'react/jsx-boolean-value': 'off',
-    'react/jsx-no-useless-fragment': 'off',
-    'react/jsx-props-no-spreading': 'off',
-    'import/no-extraneous-dependencies': 'off', // serious thing
-    'no-use-before-define': 'off',
-    // 2937 -> 910
-    'no-shadow': 'off',
-    'no-redeclare': 'off',
-    'no-param-reassign': 'off',
-    'prefer-destructuring': 'off',
-    // 910 -> 725
-    'react/button-has-type': 'off',
     'react/destructuring-assignment': 'off',
-    'react/no-access-state-in-setstate': 'off',
-    'react/jsx-no-bind': 'off',
-    'no-unused-expressions': 'off',
-    'max-classes-per-file': 'off',
-    'spaced-comment': 'off',
+
+    /**
+     * temporarily off or warn
+     * */
+    // some setup of eslint or prettier needed
+    'no-undef': 'off', // 1066
+    'import/no-unresolved': 'off', // 1275
+    'import/no-extraneous-dependencies': 'off', // 715 - !important
+    'react/jsx-props-no-spreading': 'off', // 119
+
+    // classic
+    'no-unused-vars': 'off', // 364
+    'no-use-before-define': 'off', // 49 - warn
+    'no-shadow': 'off', // 104
+    'no-redeclare': 'off', // 16 - warn
+    'no-param-reassign': 'off', // 28
+    'no-unused-expressions': 'off', // 6 - warn
+    'prefer-destructuring': 'off', // 34
+    'max-classes-per-file': 'off', // 2 - warn
+
+    // import
+
+    // react
+    'react/button-has-type': 'off', // 5
+    'react/jsx-no-useless-fragment': 'off', // 15 - warn
+    'react/no-access-state-in-setstate': 'off', // 2- warn
+    'react/jsx-no-bind': 'off', // 3 - warn
+
+    // jsx-a11y
+
+    // 910 -> 725
     'no-else-return': 'off',
     'no-console': 'off',
     eqeqeq: 'off',
@@ -123,6 +128,7 @@ module.exports = {
     'prefer-object-spread': 'off',
     'no-lonely-if': 'off',
     'prefer-template': 'off',
+    'no-useless-return': 'off',
   },
   overrides: [
     {

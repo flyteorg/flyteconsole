@@ -41,7 +41,7 @@ export const useFeatureFlag = (flag: FeatureFlag) =>
 /** useFatureFlagContext - could be used to set flags from code */
 export const useFatureFlagContext = () => useContext(FeatureFlagContext);
 
-/** FeatureFlagsProvider - should wrap top level component for Production or feature flag related testing*/
+/** FeatureFlagsProvider - should wrap top level component for Production or feature flag related testing */
 export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   const [flags, setFlags] = useState<FeatureFlagConfig>({
     ...defaultFlagConfig,

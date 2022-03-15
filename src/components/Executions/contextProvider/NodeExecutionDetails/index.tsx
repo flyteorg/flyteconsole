@@ -46,7 +46,7 @@ interface ProviderProps {
   children?: React.ReactNode;
 }
 
-/** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow*/
+/** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
   // workflow Identifier - separated to parameters, to minimize re-render count
   // as useEffect doesn't know how to do deep comparison

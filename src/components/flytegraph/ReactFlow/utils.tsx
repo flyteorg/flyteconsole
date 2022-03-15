@@ -359,7 +359,7 @@ export const computeRootNodePositions = ({
     height: dagreGraph.graph().height,
   };
 
-  /* Merge dagre positions to rf elements*/
+  /* Merge dagre positions to rf elements */
   const graph = nodes.map((el) => {
     const node = dagreGraph.node(el.id);
     if (node) {

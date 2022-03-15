@@ -20,6 +20,7 @@ export class RenderedGraph<T> extends React.Component<RenderedGraphProps<T>, Ren
   };
 
   private containerClickHandler: DragFilteringClickHandler;
+
   constructor(props: RenderedGraphProps<T>) {
     super(props);
     this.containerClickHandler = new DragFilteringClickHandler(this.onContainerClick);

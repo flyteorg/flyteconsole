@@ -144,7 +144,7 @@ export function fetchTaskExecutionChildList(
   return queryClient.fetchQuery(makeTaskExecutionChildListQuery(queryClient, id, config));
 }
 
-/** --- Queries for fetching children of a NodeExecution --- **/
+/** --- Queries for fetching children of a NodeExecution --- */
 
 async function fetchGroupForTaskExecution(
   queryClient: QueryClient,

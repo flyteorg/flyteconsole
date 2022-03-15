@@ -28,6 +28,7 @@ export class Layout<T> extends React.Component<LayoutProps<T>> {
     (data, config) => layoutGraph(data, config),
     layoutArgsAreEqual as EqualityFn,
   );
+
   public render() {
     const { config, data } = this.props;
     return this.props.children(this.layoutGraph(data, config));

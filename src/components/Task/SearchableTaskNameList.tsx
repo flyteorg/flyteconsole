@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { SimpleTaskInterface } from './SimpleTaskInterface';
 import { useLatestTaskVersion } from './useLatestTask';
+
 const Skeleton = reactLoadingSkeleton;
 
 const useStyles = makeStyles((theme: Theme) => ({

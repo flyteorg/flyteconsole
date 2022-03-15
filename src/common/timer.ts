@@ -1,8 +1,10 @@
 class Timer {
   public readonly startTime = window.performance.now();
+
   public get time() {
     return window.performance.now() - this.startTime;
   }
+
   public get timeStringMS() {
     return `${this.time.toFixed(2)}ms`;
   }
