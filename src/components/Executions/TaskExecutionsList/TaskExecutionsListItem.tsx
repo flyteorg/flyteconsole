@@ -13,20 +13,20 @@ import { formatRetryAttempt } from './utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
   detailsLink: {
-    fontWeight: 'normal'
+    fontWeight: 'normal',
   },
   header: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   title: {
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   showDetailsButton: {
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(1),
   },
   section: {
-    marginBottom: theme.spacing(2)
-  }
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 interface TaskExecutionsListItemProps {
