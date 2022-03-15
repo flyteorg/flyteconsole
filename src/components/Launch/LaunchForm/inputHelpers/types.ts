@@ -12,7 +12,10 @@ export type LiteralToInputConterterFn = (
   typeDefinition: InputTypeDefinition,
 ) => InputValue | undefined;
 
-export type ValidationParams = Pick<InputProps, 'initialValue' | 'name' | 'required' | 'typeDefinition' | 'value'>;
+export type ValidationParams = Pick<
+  InputProps,
+  'initialValue' | 'name' | 'required' | 'typeDefinition' | 'value'
+>;
 
 export type InputValidatorParams = ValidationParams & { value: InputValue };
 

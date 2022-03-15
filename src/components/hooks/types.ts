@@ -37,7 +37,11 @@ export interface FetchStateContext<T> {
 
 export type FetchableState<T> = State<FetchStateContext<T>, FetchEventObject, FetchStateSchema>;
 
-export type FetchMachine<T> = StateMachine<FetchStateContext<T>, FetchStateSchema, FetchEventObject>;
+export type FetchMachine<T> = StateMachine<
+  FetchStateContext<T>,
+  FetchStateSchema,
+  FetchEventObject
+>;
 
 export interface FetchableData<T> {
   debugName: string;

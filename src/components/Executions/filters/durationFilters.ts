@@ -3,7 +3,13 @@ import { FilterMap } from './types';
 
 const key = 'duration';
 
-export type DurationFilterKey = 'all' | 'lt1hour' | 'gt1hour' | '2to3hours' | '3to4hours' | 'gte4hours';
+export type DurationFilterKey =
+  | 'all'
+  | 'lt1hour'
+  | 'gt1hour'
+  | '2to3hours'
+  | '3to4hours'
+  | 'gte4hours';
 
 /** A set of WorkflowExecution duration filters to be consumed by a SingleFilterState.
  * Duration values are in seconds.

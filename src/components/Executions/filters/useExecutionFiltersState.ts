@@ -2,7 +2,10 @@ import { compact, flatMap } from 'lodash';
 import { FilterOperation } from 'models/AdminEntity/types';
 import { filterLabels } from './constants';
 import { durationFilters } from './durationFilters';
-import { nodeExecutionStartTimeFilters, workflowExecutionStartTimeFilters } from './startTimeFilters';
+import {
+  nodeExecutionStartTimeFilters,
+  workflowExecutionStartTimeFilters,
+} from './startTimeFilters';
 import { nodeExecutionStatusFilters, workflowExecutionStatusFilters } from './statusFilters';
 import { FilterState } from './types';
 import { useMultiFilterState } from './useMultiFilterState';

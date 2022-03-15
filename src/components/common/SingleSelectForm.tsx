@@ -1,4 +1,12 @@
-import { FormControl, FormControlLabel, FormLabel, makeStyles, Radio, RadioGroup, Theme } from '@material-ui/core';
+import {
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  makeStyles,
+  Radio,
+  RadioGroup,
+  Theme,
+} from '@material-ui/core';
 import * as React from 'react';
 import { useCommonStyles } from './styles';
 
@@ -27,7 +35,12 @@ export interface SingleSelectFormProps {
 }
 
 /** Form content for rendering a header and list of radios. */
-export const SingleSelectForm: React.FC<SingleSelectFormProps> = ({ label, onChange, values, selectedValue }) => {
+export const SingleSelectForm: React.FC<SingleSelectFormProps> = ({
+  label,
+  onChange,
+  values,
+  selectedValue,
+}) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const handleChange = (event: React.ChangeEvent<{}>, value: string) => onChange(value);

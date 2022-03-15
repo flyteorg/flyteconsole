@@ -31,7 +31,8 @@ export function getInputsForWorkflow(
     const [name, parameter] = value;
     const required = !!parameter.required;
     const workflowInput = workflowInputs[name];
-    const description = workflowInput && workflowInput.description ? workflowInput.description : emptyDescription;
+    const description =
+      workflowInput && workflowInput.description ? workflowInput.description : emptyDescription;
 
     const typeDefinition = getInputDefintionForLiteralType(parameter.var.type);
     const typeLabel = formatLabelWithType(name, typeDefinition);
@@ -67,7 +68,10 @@ export function getOutputsForWorkflow(launchPlan: LaunchPlan): string[] {
   });
 }
 
-export function getInputsForTask(task: Task, initialValues: LiteralValueMap = new Map()): ParsedInput[] {
+export function getInputsForTask(
+  task: Task,
+  initialValues: LiteralValueMap = new Map(),
+): ParsedInput[] {
   if (!task) {
     return [];
   }

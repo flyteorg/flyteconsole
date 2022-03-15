@@ -1,7 +1,11 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { bodyFontFamily, smallFontSize, statusColors } from 'components/Theme/constants';
-import { NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
+import {
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from 'models/Execution/enums';
 import * as React from 'react';
 import {
   getNodeExecutionPhaseConstants,

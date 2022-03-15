@@ -45,7 +45,10 @@ function workflowExecutionListQueryParams(params: QueryParamsMap): QueryParamsMa
   return finalParams;
 }
 
-function makeFullIdentifier(id: Partial<Identifier>, resourceType: ResourceType): Required<Identifier> {
+function makeFullIdentifier(
+  id: Partial<Identifier>,
+  resourceType: ResourceType,
+): Required<Identifier> {
   if (!isValidIdentifier(id)) {
     throw new Error(`Received incomplete Identifier: ${id}`);
   }
@@ -98,11 +101,18 @@ function insertItem(store: Map<string, unknown>, id: unknown, value: unknown) {
 }
 
 type RestRequest = MockedRequest<DefaultRequestBodyType, RequestParams>;
-type RestResolver = ResponseResolver<MockedRequest<DefaultRequestBodyType, RequestParams>, RestContext, any>;
+type RestResolver = ResponseResolver<
+  MockedRequest<DefaultRequestBodyType, RequestParams>,
+  RestContext,
+  any
+>;
 type QueryParamsMap = Record<string, string>;
 
 function getQueryParams(req: RestRequest): QueryParamsMap {
-  return Array.from(req.url.searchParams.entries()).reduce((out, [key, value]) => ({ ...out, [key]: value }), {});
+  return Array.from(req.url.searchParams.entries()).reduce(
+    (out, [key, value]) => ({ ...out, [key]: value }),
+    {},
+  );
 }
 
 function catchResponseErrors(resolver: RestResolver): RestResolver {
@@ -129,7 +139,9 @@ function adminEntityHandler<DataType>({
 }: AdminEntityHandlerConfig<DataType>) {
   return rest.get(
     adminApiUrl(path),
-    catchResponseErrors((req, res, ctx) => res(...protobufResponse(ctx, getDataForRequest(req), responseEncoder))),
+    catchResponseErrors((req, res, ctx) =>
+      res(...protobufResponse(ctx, getDataForRequest(req), responseEncoder)),
+    ),
   );
 }
 
@@ -164,13 +176,19 @@ export interface AdminServer {
    * Note: Does not insert single `TaskExecution` records. Those must be inserted
    * separately.
    */
-  insertTaskExecutionList(id: NodeExecutionIdentifier, data: RequireIdField<Partial<TaskExecution>>[]): void;
+  insertTaskExecutionList(
+    id: NodeExecutionIdentifier,
+    data: RequireIdField<Partial<TaskExecution>>[],
+  ): void;
   /** Inserts a list of `NodeExecution` records to be returned for a parent
    * `TaskExecution`.
    * Note: Does not insert single `NodeExecution` records. Those must be inserted
    * separately.
    */
-  insertTaskExecutionChildList(id: TaskExecutionIdentifier, data: RequireIdField<Partial<NodeExecution>>[]): void;
+  insertTaskExecutionChildList(
+    id: TaskExecutionIdentifier,
+    data: RequireIdField<Partial<NodeExecution>>[],
+  ): void;
   /** Inserts a single `Workflow` record. */
   insertWorkflow(data: RequireIdField<Partial<Workflow>>): void;
   /** Inserts a single `Execution` record. */
@@ -334,7 +352,9 @@ export function createAdminServer(): CreateAdminServerResult {
       ]);
       return {
         nodeExecutions: data.map((nodeExecutionId) =>
-          Admin.NodeExecution.create(getItem(entityMap, [EntityType.NodeExecution, nodeExecutionId])),
+          Admin.NodeExecution.create(
+            getItem(entityMap, [EntityType.NodeExecution, nodeExecutionId]),
+          ),
         ),
       };
     },
@@ -371,7 +391,10 @@ export function createAdminServer(): CreateAdminServerResult {
         executionId: { project, domain, name },
         nodeId,
       };
-      const data = getItem<TaskExecutionIdentifier[]>(entityMap, [EntityType.TaskExecutionList, id]);
+      const data = getItem<TaskExecutionIdentifier[]>(entityMap, [
+        EntityType.TaskExecutionList,
+        id,
+      ]);
       return {
         taskExecutions: data.map((taskExecutionId) => {
           try {
@@ -393,11 +416,17 @@ export function createAdminServer(): CreateAdminServerResult {
     path: `/children${taskExecutionPath}`,
     getDataForRequest: (req) => {
       const id = taskExecutionIdFromParams(req.params);
-      const data = getItem<NodeExecutionIdentifier[]>(entityMap, [EntityType.TaskExecutionChildList, id]);
+      const data = getItem<NodeExecutionIdentifier[]>(entityMap, [
+        EntityType.TaskExecutionChildList,
+        id,
+      ]);
       return {
         nodeExecutions: data.map((nodeExecutionId) => {
           try {
-            const execution = getItem<Admin.INodeExecution>(entityMap, [EntityType.NodeExecution, nodeExecutionId]);
+            const execution = getItem<Admin.INodeExecution>(entityMap, [
+              EntityType.NodeExecution,
+              nodeExecutionId,
+            ]);
             return Admin.NodeExecution.create(execution);
           } catch (e) {
             throw unexpectedError(`Unexpected missing child item: ${obj(nodeExecutionId)}`);
@@ -424,7 +453,11 @@ export function createAdminServer(): CreateAdminServerResult {
     ],
     server: {
       insertLaunchPlan: (launchPlan) =>
-        insertItem(entityMap, [EntityType.LaunchPlan, launchPlanIdentifier(launchPlan.id)], launchPlan),
+        insertItem(
+          entityMap,
+          [EntityType.LaunchPlan, launchPlanIdentifier(launchPlan.id)],
+          launchPlan,
+        ),
       insertProjects: (projects) => insertItem(entityMap, EntityType.ProjectList, projects),
       insertTask: (task) => insertItem(entityMap, [EntityType.Task, taskIdentifier(task.id)], task),
       insertWorkflow: (workflow) =>
@@ -437,7 +470,8 @@ export function createAdminServer(): CreateAdminServerResult {
           [EntityType.WorkflowExecutionList, scope, workflowExecutionListQueryParams(query)],
           data instanceof RequestError ? data : data.map(({ id }) => id),
         ),
-      insertNodeExecution: (execution) => insertItem(entityMap, [EntityType.NodeExecution, execution.id], execution),
+      insertNodeExecution: (execution) =>
+        insertItem(entityMap, [EntityType.NodeExecution, execution.id], execution),
       insertNodeExecutionList: (parentExecutionId, data, query: QueryParamsMap = {}) =>
         insertItem(
           entityMap,
@@ -445,7 +479,11 @@ export function createAdminServer(): CreateAdminServerResult {
           data instanceof RequestError ? data : data.map(({ id }) => id),
         ),
       insertTaskExecution: (execution) =>
-        insertItem(entityMap, [EntityType.TaskExecution, normalizeTaskExecutionIdentifier(execution.id)], execution),
+        insertItem(
+          entityMap,
+          [EntityType.TaskExecution, normalizeTaskExecutionIdentifier(execution.id)],
+          execution,
+        ),
       insertTaskExecutionList: (parentExecutionId, executions) =>
         insertItem(
           entityMap,

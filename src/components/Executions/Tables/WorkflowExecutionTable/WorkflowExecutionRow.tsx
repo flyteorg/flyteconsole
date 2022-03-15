@@ -13,7 +13,10 @@ import { ExpandableExecutionError } from '../ExpandableExecutionError';
 import { useExecutionTableStyles } from '../styles';
 import { WorkflowExecutionColumnDefinition, WorkflowExecutionsTableState } from '../types';
 import { showOnHoverClass } from './cells';
-import { useConfirmationSection, useWorkflowExecutionsTableColumns } from './useWorkflowExecutionsTableColumns';
+import {
+  useConfirmationSection,
+  useWorkflowExecutionsTableColumns,
+} from './useWorkflowExecutionsTableColumns';
 import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -58,27 +61,34 @@ export const WorkflowExecutionRow: React.FC<WorkflowExecutionRowProps> = ({
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const mutation = useMutation((newState: ExecutionState) => updateExecution(execution.id, newState), {
-    onMutate: () => setIsUpdating(true),
-    onSuccess: () => {
-      enqueueSnackbar(t('archiveSuccess', !isArchived), {
-        variant: 'success',
-      });
-      setHideItem(true);
-      // ensure to collapse error info and re-calculate rows positions.
-      onExpandCollapseError?.(false);
+  const mutation = useMutation(
+    (newState: ExecutionState) => updateExecution(execution.id, newState),
+    {
+      onMutate: () => setIsUpdating(true),
+      onSuccess: () => {
+        enqueueSnackbar(t('archiveSuccess', !isArchived), {
+          variant: 'success',
+        });
+        setHideItem(true);
+        // ensure to collapse error info and re-calculate rows positions.
+        onExpandCollapseError?.(false);
+      },
+      onError: () => {
+        enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, {
+          variant: 'error',
+        });
+      },
+      onSettled: () => {
+        setShowConfirmation(false);
+        setIsUpdating(false);
+      },
     },
-    onError: () => {
-      enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, { variant: 'error' });
-    },
-    onSettled: () => {
-      setShowConfirmation(false);
-      setIsUpdating(false);
-    },
-  });
+  );
 
   const onArchiveConfirmClick = () => {
-    mutation.mutate(isArchived ? ExecutionState.EXECUTION_ACTIVE : ExecutionState.EXECUTION_ARCHIVED);
+    mutation.mutate(
+      isArchived ? ExecutionState.EXECUTION_ACTIVE : ExecutionState.EXECUTION_ARCHIVED,
+    );
   };
 
   const columns = useWorkflowExecutionsTableColumns({
@@ -97,7 +107,11 @@ export const WorkflowExecutionRow: React.FC<WorkflowExecutionRowProps> = ({
   const { abortMetadata, error } = execution.closure;
   const showErrorInfo = !isArchived && (error || abortMetadata);
 
-  const renderCell = ({ className, key: columnKey, cellRenderer }: WorkflowExecutionColumnDefinition): JSX.Element => (
+  const renderCell = ({
+    className,
+    key: columnKey,
+    cellRenderer,
+  }: WorkflowExecutionColumnDefinition): JSX.Element => (
     <div key={columnKey} className={classnames(tableStyles.rowColumn, className)}>
       {cellRenderer({ execution, state })}
     </div>
@@ -108,7 +122,10 @@ export const WorkflowExecutionRow: React.FC<WorkflowExecutionRowProps> = ({
   }
 
   return (
-    <div className={classnames(tableStyles.row, styles.row, tableStyles.borderBottom)} style={style}>
+    <div
+      className={classnames(tableStyles.row, styles.row, tableStyles.borderBottom)}
+      style={style}
+    >
       <div className={tableStyles.rowColumns}>
         {!showConfirmation ? columns.map(renderCell) : columnsWithApproval.map(renderCell)}
       </div>

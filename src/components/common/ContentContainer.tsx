@@ -1,7 +1,12 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { contentContainerId } from 'common/constants';
-import { contentMarginGridUnits, maxContainerGridWidth, navbarGridHeight, sideNavGridWidth } from 'common/layout';
+import {
+  contentMarginGridUnits,
+  maxContainerGridWidth,
+  navbarGridHeight,
+  sideNavGridWidth,
+} from 'common/layout';
 import * as React from 'react';
 import { detailsPanelWidth } from './constants';
 import { DetailsPanel } from './DetailsPanel';

@@ -58,12 +58,17 @@ interface ProjectRoute extends Pick<NavLinkProps, 'isActive'> {
   text: string;
 }
 
-const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({ domainId, projectId, section }) => {
+const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
+  domainId,
+  projectId,
+  section,
+}) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
   const projects = useProjects();
-  const onProjectSelected = (project: Project) => history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  const onProjectSelected = (project: Project) =>
+    history.push(Routes.ProjectDetails.makeUrl(project.id, section));
 
   const routes: ProjectRoute[] = [
     {
@@ -139,4 +144,5 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({ domainI
 };
 
 /** Renders the left side navigation between and within projects */
-export const ProjectNavigation = withRouteParams<ProjectNavigationRouteParams>(ProjectNavigationImpl);
+export const ProjectNavigation =
+  withRouteParams<ProjectNavigationRouteParams>(ProjectNavigationImpl);

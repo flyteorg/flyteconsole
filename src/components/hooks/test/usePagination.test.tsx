@@ -30,7 +30,9 @@ const PaginationTester = ({ config, doFetch }: PaginationTesterProps) => {
           ))}
         </ul>
       </div>
-      <div aria-label={moreItemsAvailableLabel}>{fetchable.moreItemsAvailable ? 'true' : 'false'}</div>
+      <div aria-label={moreItemsAvailableLabel}>
+        {fetchable.moreItemsAvailable ? 'true' : 'false'}
+      </div>
       <button aria-label={fetchLabel} onClick={onClickFetch}>
         Fetch Data
       </button>
@@ -84,7 +86,10 @@ describe('usePagination', () => {
 
     fireEvent.click(fetchButton);
     await waitForLastItemRendered(container);
-    expect(doFetch).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ token: `${config.limit}` }));
+    expect(doFetch).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ token: `${config.limit}` }),
+    );
   });
 
   it('should reset token when config changes', async () => {

@@ -15,7 +15,8 @@ import { isEnterInputsState } from './utils';
 
 /** Renders the form for initiating a Launch request based on a Task */
 export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
-  const { formInputsRef, roleInputRef, state, service, taskSourceSelectorState } = useLaunchTaskFormState(props);
+  const { formInputsRef, roleInputRef, state, service, taskSourceSelectorState } =
+    useLaunchTaskFormState(props);
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
   const baseService = service as BaseLaunchService;
@@ -26,11 +27,13 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
     return getCacheKey(state.context.parsedInputs);
   }, [state.context.parsedInputs]);
 
-  const { fetchSearchResults, onSelectTaskVersion, selectedTask, taskSelectorOptions } = taskSourceSelectorState;
+  const { fetchSearchResults, onSelectTaskVersion, selectedTask, taskSelectorOptions } =
+    taskSourceSelectorState;
 
-  const showTaskSelector = ![LaunchState.LOADING_TASK_VERSIONS, LaunchState.FAILED_LOADING_TASK_VERSIONS].some(
-    state.matches,
-  );
+  const showTaskSelector = ![
+    LaunchState.LOADING_TASK_VERSIONS,
+    LaunchState.FAILED_LOADING_TASK_VERSIONS,
+  ].some(state.matches);
 
   // TODO: We removed all loading indicators here. Decide if we want skeletons
   // instead.

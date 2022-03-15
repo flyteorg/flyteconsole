@@ -69,7 +69,9 @@ export function convertFlyteGraphToDAG(workflow: CompiledWorkflowClosure): DAGNo
   });
 
   // Filter out any nodes with no parents (except for the start node)
-  const result = values(nodeMap).filter((n) => n.id === startNodeId || (n.parentIds && n.parentIds.length > 0));
+  const result = values(nodeMap).filter(
+    (n) => n.id === startNodeId || (n.parentIds && n.parentIds.length > 0),
+  );
 
   log(`Compilation time: ${timer.timeStringMS}`);
   return result;

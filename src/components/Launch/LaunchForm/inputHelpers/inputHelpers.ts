@@ -9,7 +9,11 @@ type ToLiteralParams = Pick<InputProps, 'initialValue' | 'typeDefinition' | 'val
 /** Converts a type/InputValue combination to a `Core.ILiteral` which can be
  * submitted to Admin for creating an execution.
  */
-export function inputToLiteral({ initialValue, typeDefinition, value }: ToLiteralParams): Core.ILiteral {
+export function inputToLiteral({
+  initialValue,
+  typeDefinition,
+  value,
+}: ToLiteralParams): Core.ILiteral {
   if (value == null) {
     return initialValue != null ? initialValue : literalNone();
   }
@@ -19,7 +23,9 @@ export function inputToLiteral({ initialValue, typeDefinition, value }: ToLitera
 }
 
 /** Generates the default value (if any) for a given type. */
-export function defaultValueForInputType(typeDefinition: InputTypeDefinition): InputValue | undefined {
+export function defaultValueForInputType(
+  typeDefinition: InputTypeDefinition,
+): InputValue | undefined {
   return getHelperForInput(typeDefinition.type).defaultValue;
 }
 

@@ -44,7 +44,11 @@ const ProjectStatusBar: React.FC<ProjectStatusBarProps> = ({ items, paths }) => 
     <div className={styles.barContainer}>
       {items.map((item, idx) => {
         return (
-          <Link className={commonStyles.linkUnstyled} to={paths[idx] ?? '#'} key={`bar-item-${idx}`}>
+          <Link
+            className={commonStyles.linkUnstyled}
+            to={paths[idx] ?? '#'}
+            key={`bar-item-${idx}`}
+          >
             <div
               className={classNames(styles.barItem, {
                 [styles.successBarItem]: item === WorkflowExecutionPhase.SUCCEEDED,

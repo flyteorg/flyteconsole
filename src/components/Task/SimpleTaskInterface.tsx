@@ -50,7 +50,8 @@ const VariablesList: React.FC<{ variables: Record<string, Variable> }> = ({ vari
 
 /** Renders Task interface details as two basic string lists with type annotations. */
 export const SimpleTaskInterface: React.FC<{ task: Task }> = ({ task }) => {
-  const { inputs = emptyVariables, outputs = emptyVariables } = task.closure.compiledTask.template.interface || {};
+  const { inputs = emptyVariables, outputs = emptyVariables } =
+    task.closure.compiledTask.template.interface || {};
   return (
     <div>
       <DetailsGroup

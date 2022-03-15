@@ -35,11 +35,17 @@ interface ListIdentifiersConfig {
  * levels above it (project and domain)
  * @param requestConfig A standard `RequestConfig` object
  */
-export const listIdentifiers = ({ type, scope }: ListIdentifiersConfig, requestConfig?: RequestConfig) => {
+export const listIdentifiers = (
+  { type, scope }: ListIdentifiersConfig,
+  requestConfig?: RequestConfig,
+) => {
   const prefix = identifierPrefixes[type];
   const path = scope ? makeIdentifierPath(prefix, scope) : prefix;
 
-  return getAdminEntity<Admin.NamedEntityIdentifierList, PaginatedEntityResponse<NamedEntityIdentifier>>(
+  return getAdminEntity<
+    Admin.NamedEntityIdentifierList,
+    PaginatedEntityResponse<NamedEntityIdentifier>
+  >(
     {
       path,
       messageType: Admin.NamedEntityIdentifierList,

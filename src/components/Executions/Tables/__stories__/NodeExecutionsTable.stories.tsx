@@ -37,7 +37,9 @@ stories.addDecorator((story) => {
 stories.add('Basic', () => {
   const query = useQuery(makeNodeExecutionListQuery(useQueryClient(), workflowExecution.id));
   return query.data ? (
-    <NodeExecutionDetailsContext.Provider value={{ getNodeExecutionDetails, workflowId, compiledWorkflowClosure }}>
+    <NodeExecutionDetailsContext.Provider
+      value={{ getNodeExecutionDetails, workflowId, compiledWorkflowClosure }}
+    >
       <NodeExecutionsTable nodeExecutions={query.data} />
     </NodeExecutionDetailsContext.Provider>
   ) : (
@@ -46,7 +48,9 @@ stories.add('Basic', () => {
 });
 stories.add('With no items', () => {
   return (
-    <NodeExecutionDetailsContext.Provider value={{ getNodeExecutionDetails, workflowId, compiledWorkflowClosure }}>
+    <NodeExecutionDetailsContext.Provider
+      value={{ getNodeExecutionDetails, workflowId, compiledWorkflowClosure }}
+    >
       <NodeExecutionsTable nodeExecutions={[]} />
     </NodeExecutionDetailsContext.Provider>
   );

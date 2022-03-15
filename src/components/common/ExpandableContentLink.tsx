@@ -59,7 +59,12 @@ export class ExpandableContentLink extends React.Component<ExpandableContentLink
     }
 
     return (
-      <Link className={toggleClassName} component="button" variant="body1" onClick={this.toggleContent}>
+      <Link
+        className={toggleClassName}
+        component="button"
+        variant="body1"
+        onClick={this.toggleContent}
+      >
         {text}
       </Link>
     );

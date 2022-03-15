@@ -8,13 +8,19 @@ import { useMemo, useState } from 'react';
 import { SearchableSelectorOption } from './SearchableSelector';
 import { WorkflowSourceSelectorState } from './types';
 import { useVersionSelectorOptions } from './useVersionSelectorOptions';
-import { launchPlansToSearchableSelectorOptions, versionsToSearchableSelectorOptions } from './utils';
+import {
+  launchPlansToSearchableSelectorOptions,
+  versionsToSearchableSelectorOptions,
+} from './utils';
 
 function useLaunchPlanSelectorOptions(launchPlans: LaunchPlan[]) {
   return useMemo(() => launchPlansToSearchableSelectorOptions(launchPlans), [launchPlans]);
 }
 
-function generateFetchSearchResults({ listWorkflows }: APIContextValue, workflowId: NamedEntityIdentifier) {
+function generateFetchSearchResults(
+  { listWorkflows }: APIContextValue,
+  workflowId: NamedEntityIdentifier,
+) {
   return async (query: string) => {
     const { project, domain, name } = workflowId;
     const { entities: workflows } = await listWorkflows(

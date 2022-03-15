@@ -16,7 +16,9 @@ export const ExecutionsTableHeader: React.FC<{
   return (
     <div className={tableStyles.headerRow}>
       {versionView && (
-        <div className={classnames(tableStyles.headerColumn, tableStyles.headerColumnVersion)}>&nbsp;</div>
+        <div className={classnames(tableStyles.headerColumn, tableStyles.headerColumnVersion)}>
+          &nbsp;
+        </div>
       )}
       {columns.map(({ key, label, className }) => {
         const labelContent = isFunction(label) ? (

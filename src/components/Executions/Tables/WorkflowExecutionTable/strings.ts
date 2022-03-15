@@ -13,7 +13,8 @@ const str = {
   inputOutputTooltip: 'View Inputs &amp; Outputs',
   launchPlanTooltip: 'View Launch Plan',
   archiveAction: (isArchived: boolean) => (isArchived ? 'Unarchive' : 'Archive'),
-  archiveSuccess: (isArchived: boolean) => `Item was successfully ${isArchived ? 'archived' : 'unarchived'}`,
+  archiveSuccess: (isArchived: boolean) =>
+    `Item was successfully ${isArchived ? 'archived' : 'unarchived'}`,
   archiveError: (isArchived: boolean) =>
     `Error: Something went wrong, we can not ${isArchived ? 'archive' : 'unarchive'} item`,
   lastRunStartedAt: (startedAt?: Protobuf.ITimestamp) => {

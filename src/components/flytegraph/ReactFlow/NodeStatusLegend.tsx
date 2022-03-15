@@ -73,7 +73,12 @@ export const Legend = () => {
     return (
       <div style={legendContainerStyle}>
         {Object.keys(nodePhaseColorMapping).map((phase) => {
-          return <LegendItem {...nodePhaseColorMapping[phase]} key={`gl-${nodePhaseColorMapping[phase].text}`} />;
+          return (
+            <LegendItem
+              {...nodePhaseColorMapping[phase]}
+              key={`gl-${nodePhaseColorMapping[phase].text}`}
+            />
+          );
         })}
         <LegendItem color={'#aaa'} text={'Nested'} />
       </div>

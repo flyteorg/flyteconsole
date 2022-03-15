@@ -10,4 +10,6 @@ function renderCollectionItem(value: any, index: number) {
 /** Renders a LiteralCollection as a formatted list */
 export const LiteralCollectionViewer: React.FC<{
   collection: LiteralCollection;
-}> = ({ collection }) => <PrintList values={collection.literals} renderValue={renderCollectionItem} />;
+}> = ({ collection }) => (
+  <PrintList values={collection.literals} renderValue={renderCollectionItem} />
+);

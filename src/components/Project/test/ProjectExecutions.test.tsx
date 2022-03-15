@@ -56,7 +56,10 @@ describe('ProjectExecutions', () => {
     failedTaskFixture = oneFailedTaskWorkflow.generate();
     insertFixture(mockServer, basicPythonFixture);
     insertFixture(mockServer, failedTaskFixture);
-    executions1 = [basicPythonFixture.workflowExecutions.top.data, failedTaskFixture.workflowExecutions.top.data];
+    executions1 = [
+      basicPythonFixture.workflowExecutions.top.data,
+      failedTaskFixture.workflowExecutions.top.data,
+    ];
     executions2 = [];
     const { domain, project } = executions1[0].id;
     scope = { domain, project };
@@ -115,7 +118,11 @@ describe('ProjectExecutions', () => {
     // when the request fails.
     beforeEach(() => {
       disableQueryLogger();
-      mockServer.insertWorkflowExecutionList(scope, unexpectedError(errorMessage), defaultQueryParams1);
+      mockServer.insertWorkflowExecutionList(
+        scope,
+        unexpectedError(errorMessage),
+        defaultQueryParams1,
+      );
     });
     afterEach(() => {
       enableQueryLogger();

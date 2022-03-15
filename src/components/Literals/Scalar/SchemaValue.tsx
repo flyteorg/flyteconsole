@@ -43,7 +43,11 @@ export const SchemaValue: React.FC<{ schema: Schema }> = ({ schema }) => {
     columns = (
       <>
         <ValueLabel label="columns" />
-        <PrintList values={schema.type.columns} getKeyForItem={getColumnKey} renderValue={renderSchemaColumn} />
+        <PrintList
+          values={schema.type.columns}
+          getKeyForItem={getColumnKey}
+          renderValue={renderSchemaColumn}
+        />
       </>
     );
   }

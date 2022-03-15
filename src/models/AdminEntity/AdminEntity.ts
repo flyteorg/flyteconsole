@@ -80,7 +80,11 @@ function identityTransformer(msg: any) {
 
 /** GETs an entity by path and decodes/transforms it using provided functions */
 export async function getAdminEntity<ResponseType, TransformedType>(
-  { path, messageType, transform = identityTransformer }: GetEntityParams<ResponseType, TransformedType>,
+  {
+    path,
+    messageType,
+    transform = identityTransformer,
+  }: GetEntityParams<ResponseType, TransformedType>,
   config?: RequestConfig,
 ): Promise<TransformedType> {
   const data: ArrayBuffer = await request('get', path, config);

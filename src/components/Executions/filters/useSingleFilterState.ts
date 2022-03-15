@@ -40,7 +40,9 @@ export function useSingleFilterState<FilterKey extends string>({
 }: SingleFilterStateArgs<FilterKey>): SingleFilterState<FilterKey> {
   const { params, setQueryStateValue } = useQueryState<Record<string, string>>();
   const queryStateValue = params[queryStateKey];
-  const [selectedOption, setSelectedOption] = useState(valueOrDefault(options, queryStateValue, defaultValue));
+  const [selectedOption, setSelectedOption] = useState(
+    valueOrDefault(options, queryStateValue, defaultValue),
+  );
   const active = selectedOption.value !== defaultValue.value;
   const button = useFilterButtonState();
 

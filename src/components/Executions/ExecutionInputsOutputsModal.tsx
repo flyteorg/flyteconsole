@@ -42,7 +42,12 @@ const RemoteExecutionInputs: React.FC<{ execution: Execution }> = ({ execution }
   const executionData = useWorkflowExecutionData(execution.id);
   return (
     <WaitForData {...executionData} spinnerVariant="none">
-      {() => <RemoteLiteralMapViewer map={executionData.value.fullInputs} blob={executionData.value.inputs} />}
+      {() => (
+        <RemoteLiteralMapViewer
+          map={executionData.value.fullInputs}
+          blob={executionData.value.inputs}
+        />
+      )}
     </WaitForData>
   );
 };
@@ -51,7 +56,12 @@ const RemoteExecutionOutputs: React.FC<{ execution: Execution }> = ({ execution 
   const executionData = useWorkflowExecutionData(execution.id);
   return (
     <WaitForData {...executionData} spinnerVariant="none">
-      {() => <RemoteLiteralMapViewer map={executionData.value.fullOutputs} blob={executionData.value.outputs} />}
+      {() => (
+        <RemoteLiteralMapViewer
+          map={executionData.value.fullOutputs}
+          blob={executionData.value.outputs}
+        />
+      )}
     </WaitForData>
   );
 };
@@ -71,7 +81,11 @@ const RenderOutputs: React.FC<{ execution: Execution }> = ({ execution }) => {
 
   // Small outputs will be stored directly in the execution.
   // For larger outputs, we need to fetch them using the /data endpoint
-  return outputs.uri ? <RemoteExecutionOutputs execution={execution} /> : <LiteralMapViewer map={outputs.values} />;
+  return outputs.uri ? (
+    <RemoteExecutionOutputs execution={execution} />
+  ) : (
+    <LiteralMapViewer map={outputs.values} />
+  );
 };
 
 interface RenderDialogProps {
@@ -106,10 +120,18 @@ interface ExecutionInputsOutputsModalProps {
 /** Renders a Modal that will load/display the inputs/outputs for a given
  * Execution in a tabbed/scrollable container
  */
-export const ExecutionInputsOutputsModal: React.FC<ExecutionInputsOutputsModalProps> = ({ execution, onClose }) => {
+export const ExecutionInputsOutputsModal: React.FC<ExecutionInputsOutputsModalProps> = ({
+  execution,
+  onClose,
+}) => {
   const styles = useStyles();
   return (
-    <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={!!execution} onClose={onClose}>
+    <Dialog
+      PaperProps={{ className: styles.dialog }}
+      maxWidth={false}
+      open={!!execution}
+      onClose={onClose}
+    >
       {execution ? <RenderDialog execution={execution} onClose={onClose} /> : <div />}
     </Dialog>
   );

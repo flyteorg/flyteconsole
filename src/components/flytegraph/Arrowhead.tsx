@@ -8,7 +8,15 @@ import * as React from 'react';
  */
 export const Arrowhead: React.FC<{ id: string; fill: string }> = ({ fill, id }) => {
   return (
-    <marker id={id} viewBox="0 0 10 15" refX="5" refY="7.5" markerWidth="7" markerHeight="10.5" orient="auto">
+    <marker
+      id={id}
+      viewBox="0 0 10 15"
+      refX="5"
+      refY="7.5"
+      markerWidth="7"
+      markerHeight="10.5"
+      orient="auto"
+    >
       <path d="M 0 0 L 10 7.5 L 0 15 z" fill={fill} />
     </marker>
   );

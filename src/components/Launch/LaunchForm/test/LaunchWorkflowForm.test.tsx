@@ -1,5 +1,13 @@
 import { ThemeProvider } from '@material-ui/styles';
-import { act, fireEvent, getAllByRole, getByRole, queryAllByRole, render, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  getAllByRole,
+  getByRole,
+  queryAllByRole,
+  render,
+  waitFor,
+} from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from 'components/Theme/muiTheme';
@@ -26,8 +34,18 @@ import {
 import { LaunchForm } from '../LaunchForm';
 import { LaunchFormProps, WorkflowInitialLaunchParameters } from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
-import { createMockInputsInterface, mockSimpleVariables, simpleVariableDefaults } from '../__mocks__/mockInputs';
-import { binaryInputName, booleanInputName, integerInputName, stringInputName, stringNoLabelName } from './constants';
+import {
+  createMockInputsInterface,
+  mockSimpleVariables,
+  simpleVariableDefaults,
+} from '../__mocks__/mockInputs';
+import {
+  binaryInputName,
+  booleanInputName,
+  integerInputName,
+  stringInputName,
+  stringNoLabelName,
+} from './constants';
 import { createMockObjects } from './utils';
 
 describe('LaunchForm: Workflow', () => {
@@ -59,7 +77,8 @@ describe('LaunchForm: Workflow', () => {
       id,
     };
     workflow.closure = createMockWorkflowClosure();
-    workflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(variables);
+    workflow.closure!.compiledWorkflow!.primary.template.interface =
+      createMockInputsInterface(variables);
     return workflow;
   };
 
@@ -78,40 +97,46 @@ describe('LaunchForm: Workflow', () => {
     workflowId = mockWorkflow.id;
     mockCreateWorkflowExecution = jest.fn();
     // Return our mock inputs for any version requested
-    mockGetWorkflow = jest.fn().mockImplementation((id) => Promise.resolve(createMockWorkflowWithInputs(id)));
-    mockListLaunchPlans = jest.fn().mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
-      // If the scope has a filter, the calling
-      // code is searching for a specific item. So we'll
-      // return a single-item list containing it.
-      if (filter && filter[0].key === 'version') {
-        const launchPlan = { ...mockSingleLaunchPlan };
-        launchPlan.id = {
-          ...scope,
-          version: filter[0].value,
-        } as Identifier;
-        return Promise.resolve({
-          entities: [launchPlan],
-        });
-      }
-      return Promise.resolve({ entities: mockLaunchPlans });
-    });
+    mockGetWorkflow = jest
+      .fn()
+      .mockImplementation((id) => Promise.resolve(createMockWorkflowWithInputs(id)));
+    mockListLaunchPlans = jest
+      .fn()
+      .mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
+        // If the scope has a filter, the calling
+        // code is searching for a specific item. So we'll
+        // return a single-item list containing it.
+        if (filter && filter[0].key === 'version') {
+          const launchPlan = { ...mockSingleLaunchPlan };
+          launchPlan.id = {
+            ...scope,
+            version: filter[0].value,
+          } as Identifier;
+          return Promise.resolve({
+            entities: [launchPlan],
+          });
+        }
+        return Promise.resolve({ entities: mockLaunchPlans });
+      });
 
     // For workflow/task list endpoints: If the scope has a filter, the calling
     // code is searching for a specific item. So we'll return a single-item
     // list containing it.
-    mockListWorkflows = jest.fn().mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
-      if (filter && filter[0].key === 'version') {
-        const workflow = { ...mockWorkflowVersions[0] };
-        workflow.id = {
-          ...scope,
-          version: filter[0].value,
-        } as Identifier;
-        return Promise.resolve({
-          entities: [workflow],
-        });
-      }
-      return Promise.resolve({ entities: mockWorkflowVersions });
-    });
+    mockListWorkflows = jest
+      .fn()
+      .mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
+        if (filter && filter[0].key === 'version') {
+          const workflow = { ...mockWorkflowVersions[0] };
+          workflow.id = {
+            ...scope,
+            version: filter[0].value,
+          } as Identifier;
+          return Promise.resolve({
+            entities: [workflow],
+          });
+        }
+        return Promise.resolve({ entities: mockWorkflowVersions });
+      });
   };
 
   const renderForm = (props?: Partial<LaunchFormProps>) => {
@@ -132,7 +157,9 @@ describe('LaunchForm: Workflow', () => {
   };
 
   const getSubmitButton = (container: HTMLElement) => {
-    const buttons = queryAllByRole(container, 'button').filter((el) => el.getAttribute('type') === 'submit');
+    const buttons = queryAllByRole(container, 'button').filter(
+      (el) => el.getAttribute('type') === 'submit',
+    );
     expect(buttons.length).toBe(1);
     return buttons[0];
   };
@@ -184,7 +211,9 @@ describe('LaunchForm: Workflow', () => {
     it('should select the most recent workflow version by default', async () => {
       const { getByLabelText } = renderForm();
       await waitFor(() => {});
-      expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(mockWorkflowVersions[0].id.version);
+      expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(
+        mockWorkflowVersions[0].id.version,
+      );
     });
 
     it('should select the launch plan matching the workflow name by default', async () => {
@@ -403,10 +432,12 @@ describe('LaunchForm: Workflow', () => {
     describe('Input Values', () => {
       it('Should send false for untouched toggles', async () => {
         let inputs: Core.ILiteralMap = {};
-        mockCreateWorkflowExecution.mockImplementation(({ inputs: passedInputs }: CreateWorkflowExecutionArguments) => {
-          inputs = passedInputs;
-          return pendingPromise();
-        });
+        mockCreateWorkflowExecution.mockImplementation(
+          ({ inputs: passedInputs }: CreateWorkflowExecutionArguments) => {
+            inputs = passedInputs;
+            return pendingPromise();
+          },
+        );
 
         const { container } = renderForm();
         await waitFor(() => {});
@@ -462,7 +493,9 @@ describe('LaunchForm: Workflow', () => {
         };
         const { getByLabelText } = renderForm({ initialParameters });
         await waitFor(() => {});
-        expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(mockWorkflowVersions[2].id.version);
+        expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(
+          mockWorkflowVersions[2].id.version,
+        );
       });
 
       it('should only include one instance of the preferred version in the selector', async () => {
@@ -478,7 +511,9 @@ describe('LaunchForm: Workflow', () => {
         const items = await waitFor(() => getAllByRole(versionDiv, 'menuitem'));
 
         const expectedVersion = mockWorkflowVersions[2].id.version;
-        expect(items.filter((item) => item.textContent && item.textContent.includes(expectedVersion))).toHaveLength(1);
+        expect(
+          items.filter((item) => item.textContent && item.textContent.includes(expectedVersion)),
+        ).toHaveLength(1);
       });
 
       it('should fall back to the first item in the list if preferred workflow is not found', async () => {
@@ -498,7 +533,9 @@ describe('LaunchForm: Workflow', () => {
         };
         const { getByLabelText } = renderForm({ initialParameters });
         await waitFor(() => {});
-        expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(mockWorkflowVersions[0].id.version);
+        expect(getByLabelText(formStrings.workflowVersion)).toHaveValue(
+          mockWorkflowVersions[0].id.version,
+        );
       });
 
       it('should prefer the provided launch plan', async () => {
@@ -523,7 +560,9 @@ describe('LaunchForm: Workflow', () => {
         const items = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
 
         const expectedName = mockLaunchPlans[1].id.name;
-        expect(items.filter((item) => item.textContent && item.textContent.includes(expectedName))).toHaveLength(1);
+        expect(
+          items.filter((item) => item.textContent && item.textContent.includes(expectedName)),
+        ).toHaveLength(1);
       });
 
       it('should fall back to the default launch plan if the preferred is not found', async () => {
@@ -649,7 +688,10 @@ describe('LaunchForm: Workflow', () => {
         });
         await waitFor(() => {});
         const { project, domain, name } = mockWorkflowVersions[2].id;
-        expect(mockListWorkflows).toHaveBeenCalledWith({ project, domain, name }, expect.anything());
+        expect(mockListWorkflows).toHaveBeenCalledWith(
+          { project, domain, name },
+          expect.anything(),
+        );
       });
     });
 

@@ -79,14 +79,20 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({ executi
 };
 
 /** The view component for the Execution Details page */
-export const ExecutionDetailsContainer: React.FC<ExecutionDetailsProps> = ({ executionId, domainId, projectId }) => {
+export const ExecutionDetailsContainer: React.FC<ExecutionDetailsProps> = ({
+  executionId,
+  domainId,
+  projectId,
+}) => {
   const id = {
     project: projectId,
     domain: domainId,
     name: executionId,
   };
 
-  const renderExecutionDetails = (execution: Execution) => <RenderExecutionDetails execution={execution} />;
+  const renderExecutionDetails = (execution: Execution) => (
+    <RenderExecutionDetails execution={execution} />
+  );
 
   return (
     <WaitForQuery
@@ -99,4 +105,5 @@ export const ExecutionDetailsContainer: React.FC<ExecutionDetailsProps> = ({ exe
   );
 };
 
-export const ExecutionDetails = withRouteParams<ExecutionDetailsRouteParams>(ExecutionDetailsContainer);
+export const ExecutionDetails =
+  withRouteParams<ExecutionDetailsRouteParams>(ExecutionDetailsContainer);

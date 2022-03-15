@@ -82,7 +82,9 @@ export function useWorkflowExecutionsTableColumns(
  * Returns a confirmation section to be used in a row instead of regular column cells
  * when an action confrimation is required from user
  */
-export function useConfirmationSection(props: ApprovalDoubleCellProps): WorkflowExecutionColumnDefinition {
+export function useConfirmationSection(
+  props: ApprovalDoubleCellProps,
+): WorkflowExecutionColumnDefinition {
   const styles = useStyles();
 
   const approve: WorkflowExecutionColumnDefinition = {

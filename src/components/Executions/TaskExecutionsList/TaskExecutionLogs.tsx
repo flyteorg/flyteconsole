@@ -36,7 +36,9 @@ const TaskLogList: React.FC<{ logs: TaskLog[] }> = ({ logs }) => {
 /** Renders log links from a `TaskExecution`, if they exist. Otherwise renders
  * a message indicating that no logs are available.
  */
-export const TaskExecutionLogs: React.FC<{ taskExecution: TaskExecution }> = ({ taskExecution }) => {
+export const TaskExecutionLogs: React.FC<{ taskExecution: TaskExecution }> = ({
+  taskExecution,
+}) => {
   const styles = useStyles();
   return (
     <section>

@@ -4,7 +4,14 @@ import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
-import { assign, DoneInvokeEvent, Machine, MachineConfig, MachineOptions, StatesConfig } from 'xstate';
+import {
+  assign,
+  DoneInvokeEvent,
+  Machine,
+  MachineConfig,
+  MachineOptions,
+  StatesConfig,
+} from 'xstate';
 import { LiteralValueMap, ParsedInput } from './types';
 
 export type SelectWorkflowVersionEvent = {
@@ -39,7 +46,10 @@ export type BaseLaunchEvent =
   | ExecutionCreatedEvent
   | ErrorEvent;
 
-export type TaskLaunchEvent = BaseLaunchEvent | TaskVersionOptionsLoadedEvent | SelectTaskVersionEvent;
+export type TaskLaunchEvent =
+  | BaseLaunchEvent
+  | TaskVersionOptionsLoadedEvent
+  | SelectTaskVersionEvent;
 
 export type WorkflowLaunchEvent =
   | BaseLaunchEvent
@@ -312,7 +322,11 @@ const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLau
   },
 };
 
-export const taskLaunchMachineConfig: MachineConfig<TaskLaunchContext, TaskLaunchSchema, TaskLaunchEvent> = {
+export const taskLaunchMachineConfig: MachineConfig<
+  TaskLaunchContext,
+  TaskLaunchSchema,
+  TaskLaunchEvent
+> = {
   id: 'launchTask',
   context: { ...defaultBaseContext },
   initial: LaunchState.LOADING_TASK_VERSIONS,
@@ -369,7 +383,11 @@ export const workflowLaunchMachineConfig: MachineConfig<
     },
   },
   states: {
-    ...(baseStateConfig as StatesConfig<WorkflowLaunchContext, WorkflowLaunchSchema, WorkflowLaunchEvent>),
+    ...(baseStateConfig as StatesConfig<
+      WorkflowLaunchContext,
+      WorkflowLaunchSchema,
+      WorkflowLaunchEvent
+    >),
     [LaunchState.LOADING_WORKFLOW_VERSIONS]: {
       invoke: {
         src: 'loadWorkflowVersions',
@@ -478,7 +496,8 @@ export const workflowLaunchMachine = Machine(workflowLaunchMachineConfig, {
   },
   services: {
     ...baseServices,
-    loadWorkflowVersions: () => Promise.reject('No `loadWorkflowVersions` service has been provided'),
+    loadWorkflowVersions: () =>
+      Promise.reject('No `loadWorkflowVersions` service has been provided'),
     loadLaunchPlans: () => Promise.reject('No `loadLaunchPlans` service has been provided'),
   },
 });

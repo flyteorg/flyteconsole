@@ -89,7 +89,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   React.useEffect(() => {
-    const nodes: dNode[] = compiledWorkflowClosure ? transformerWorkflowToDag(compiledWorkflowClosure).dag.nodes : [];
+    const nodes: dNode[] = compiledWorkflowClosure
+      ? transformerWorkflowToDag(compiledWorkflowClosure).dag.nodes
+      : [];
     // we remove start/end node info in the root dNode list during first assignment
     const initializeNodes = convertToPlainNodes(nodes);
     setOriginalNodes(initializeNodes);
@@ -108,7 +110,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     );
   }, [originalNodes, nodeExecutions]);
 
-  const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({ nodes: showNodes });
+  const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({
+    nodes: showNodes,
+  });
   const { chartInterval: chartTimeInterval, setMaxValue } = useScaleContext();
   const styles = useStyles({ chartWidth: chartWidth, durationLength: durationLength });
 
@@ -119,7 +123,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   React.useEffect(() => {
     const calcWidth = Math.ceil(totalDuration / chartTimeInterval) * INTERVAL_LENGTH;
     if (durationsRef.current && calcWidth < durationsRef.current.clientWidth) {
-      setLabelInterval(durationsRef.current.clientWidth / Math.ceil(totalDuration / chartTimeInterval));
+      setLabelInterval(
+        durationsRef.current.clientWidth / Math.ceil(totalDuration / chartTimeInterval),
+      );
       setChartWidth(durationsRef.current.clientWidth);
     } else {
       setChartWidth(calcWidth);
@@ -176,7 +182,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     const lbs = len > 0 ? new Array(len).fill(0) : [];
     return lbs.map((_, idx) => {
       const time = moment.utc(new Date(startedAt.getTime() + idx * chartTimeInterval * 1000));
-      return chartTimezone === TimeZone.UTC ? time.format('hh:mm:ss A') : time.local().format('hh:mm:ss A');
+      return chartTimezone === TimeZone.UTC
+        ? time.format('hh:mm:ss A')
+        : time.local().format('hh:mm:ss A');
     });
   }, [chartTimezone, startedAt, chartTimeInterval, totalDuration]);
 
@@ -184,7 +192,12 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
     <>
       <div className={styles.taskNames}>
         <Typography className={styles.taskNamesHeader}>Task Name</Typography>
-        <TaskNames nodes={showNodes} ref={taskNamesRef} onToggle={toggleNode} onScroll={onVerticalNodesScroll} />
+        <TaskNames
+          nodes={showNodes}
+          ref={taskNamesRef}
+          onToggle={toggleNode}
+          onScroll={onVerticalNodesScroll}
+        />
       </div>
       <div className={styles.taskDurations}>
         <div className={styles.taskDurationsLabelsView} ref={durationsLabelsRef}>

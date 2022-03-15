@@ -83,7 +83,8 @@ export const useWorkflowInfoItem = ({ domain, project, name }: NamedEntityIdenti
         entities: [launchPlan],
       } = await listLaunchPlans({ domain, project, name }, { limit: 1 });
       const parsedInputs = getInputsForWorkflow(workflow, launchPlan, undefined);
-      const inputs = parsedInputs.length > 0 ? parsedInputs.map((input) => input.label).join(', ') : undefined;
+      const inputs =
+        parsedInputs.length > 0 ? parsedInputs.map((input) => input.label).join(', ') : undefined;
       const parsedOutputs = getOutputsForWorkflow(launchPlan);
       const outputs = parsedOutputs.length > 0 ? parsedOutputs.join(', ') : undefined;
       return { id, inputs, outputs };

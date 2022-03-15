@@ -22,7 +22,9 @@ export function blobLiteral({
   };
 }
 
-export function collectionInputTypeDefinition(typeDefinition: InputTypeDefinition): InputTypeDefinition {
+export function collectionInputTypeDefinition(
+  typeDefinition: InputTypeDefinition,
+): InputTypeDefinition {
   return {
     literalType: {
       collectionType: typeDefinition.literalType,
@@ -32,7 +34,9 @@ export function collectionInputTypeDefinition(typeDefinition: InputTypeDefinitio
   };
 }
 
-export function nestedCollectionInputTypeDefinition(typeDefinition: InputTypeDefinition): InputTypeDefinition {
+export function nestedCollectionInputTypeDefinition(
+  typeDefinition: InputTypeDefinition,
+): InputTypeDefinition {
   return {
     literalType: {
       collectionType: {

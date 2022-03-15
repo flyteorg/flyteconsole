@@ -177,7 +177,11 @@ export interface NameIdentifierScope extends DomainIdentifierScope {
   name: string;
 }
 
-export type IdentifierScope = ProjectIdentifierScope | DomainIdentifierScope | NameIdentifierScope | Identifier;
+export type IdentifierScope =
+  | ProjectIdentifierScope
+  | DomainIdentifierScope
+  | NameIdentifierScope
+  | Identifier;
 
 export interface UserProfile {
   sub: string;

@@ -1,6 +1,15 @@
-import { negativeTextColor, positiveTextColor, secondaryTextColor, statusColors } from 'components/Theme/constants';
+import {
+  negativeTextColor,
+  positiveTextColor,
+  secondaryTextColor,
+  statusColors,
+} from 'components/Theme/constants';
 import { Core } from 'flyteidl';
-import { NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
+import {
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from 'models/Execution/enums';
 import { TaskType } from 'models/Task/constants';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 
@@ -191,7 +200,8 @@ export const cacheStatusMessages: { [k in Core.CatalogCacheStatus]: string } = {
   [Core.CatalogCacheStatus.CACHE_LOOKUP_FAILURE]: 'Failed to lookup cache information.',
   [Core.CatalogCacheStatus.CACHE_MISS]: 'No cached output was found for this execution.',
   [Core.CatalogCacheStatus.CACHE_POPULATED]: 'The result of this execution was written to cache.',
-  [Core.CatalogCacheStatus.CACHE_PUT_FAILURE]: 'Failed to write output for this execution to cache.',
+  [Core.CatalogCacheStatus.CACHE_PUT_FAILURE]:
+    'Failed to write output for this execution to cache.',
 };
 export const unknownCacheStatusString = 'Cache status is unknown';
 export const viewSourceExecutionString = 'View source execution';

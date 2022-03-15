@@ -87,7 +87,12 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
         </div>
         <div>
           {launchable ? (
-            <Button color="primary" id="launch-workflow" onClick={() => setShowLaunchForm(true)} variant="contained">
+            <Button
+              color="primary"
+              id="launch-workflow"
+              onClick={() => setShowLaunchForm(true)}
+              variant="contained"
+            >
               {t('launchStrings', entityStrings[id.resourceType])}
             </Button>
           ) : null}

@@ -30,7 +30,9 @@ function activeLaunchPlansForWorkflowIdFilter(workflowId: NamedEntityIdentifier)
   ];
 }
 
-export function useWorkflowSchedules(workflowId: NamedEntityIdentifier): FetchableData<LaunchPlan[]> {
+export function useWorkflowSchedules(
+  workflowId: NamedEntityIdentifier,
+): FetchableData<LaunchPlan[]> {
   const { project, domain } = workflowId;
   return useLaunchPlans(
     { project, domain },

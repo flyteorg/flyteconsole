@@ -67,7 +67,9 @@ export const StructInput: React.FC<InputProps> = (props) => {
     const keys = Object.keys(literalType?.metadata?.fields?.definitions?.structValue?.fields);
 
     if (keys[0]) {
-      parsedJson = protobufValueToPrimitive(literalType.metadata.fields.definitions.structValue.fields[`${keys[0]}`]);
+      parsedJson = protobufValueToPrimitive(
+        literalType.metadata.fields.definitions.structValue.fields[`${keys[0]}`],
+      );
 
       if (parsedJson) {
         parsedJson = formatJson(parsedJson);
@@ -76,7 +78,9 @@ export const StructInput: React.FC<InputProps> = (props) => {
     }
   }
 
-  const [paramData, setParamData] = useState(jsonFormRenderable && value ? JSON.parse(value as string) : {});
+  const [paramData, setParamData] = useState(
+    jsonFormRenderable && value ? JSON.parse(value as string) : {},
+  );
 
   const onFormChange = ({ formData }, _e) => {
     onChange(JSON.stringify(formData));
@@ -88,7 +92,11 @@ export const StructInput: React.FC<InputProps> = (props) => {
       <Card>
         <CardHeader title={label} style={{ borderBottom: 'solid 1px gray' }} />
         <CardContent>
-          <Form schema={JSON.parse(JSON.stringify(parsedJson))} formData={paramData} onChange={onFormChange}>
+          <Form
+            schema={JSON.parse(JSON.stringify(parsedJson))}
+            formData={paramData}
+            onChange={onFormChange}
+          >
             <div></div>
           </Form>
         </CardContent>

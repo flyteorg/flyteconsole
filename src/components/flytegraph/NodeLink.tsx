@@ -30,7 +30,11 @@ export const NodeLink: React.FC<NodeLinkRendererProps<any>> = ({ config, link })
   // For simple straight paths, no midpoints will have been
   // generated, so we must add one.
   const midpoints = points && points.length ? points : [getMidpoint(source, target)];
-  const finalPoints: Point[] = [{ x: source.x, y: source.y }, ...midpoints, { x: target.x, y: target.y }];
+  const finalPoints: Point[] = [
+    { x: source.x, y: source.y },
+    ...midpoints,
+    { x: target.x, y: target.y },
+  ];
 
   return (
     <path

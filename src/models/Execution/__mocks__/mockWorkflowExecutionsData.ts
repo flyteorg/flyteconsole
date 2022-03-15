@@ -69,7 +69,10 @@ export const mockWorkflowExecutionResponse: Execution = {
 
 export const mockExecution = mockWorkflowExecutionResponse as Execution;
 
-export const createMockWorkflowExecutionsListResponse = (length: number, archiveState?: ExecutionState) => ({
+export const createMockWorkflowExecutionsListResponse = (
+  length: number,
+  archiveState?: ExecutionState,
+) => ({
   executions: Array.from({ length }, (_, idx) => {
     const execution = cloneDeep(mockExecution);
     const startedAtDate = new Date(Date.now() - 1000 * 60 * (idx + 1));

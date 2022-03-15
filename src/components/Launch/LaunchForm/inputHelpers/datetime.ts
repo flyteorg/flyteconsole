@@ -11,7 +11,10 @@ function parseDate(value: InputValue) {
 }
 
 function fromLiteral(literal: Core.ILiteral): InputValue {
-  const value = extractLiteralWithCheck<Protobuf.ITimestamp>(literal, primitiveLiteralPaths.scalarDatetime);
+  const value = extractLiteralWithCheck<Protobuf.ITimestamp>(
+    literal,
+    primitiveLiteralPaths.scalarDatetime,
+  );
   return timestampToDate(value).toISOString();
 }
 

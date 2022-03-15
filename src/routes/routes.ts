@@ -15,7 +15,8 @@ export class Routes {
   static NotFound = {};
   // Projects
   static ProjectDetails = {
-    makeUrl: (project: string, section?: string) => makeProjectBoundPath(project, section ? `/${section}` : ''),
+    makeUrl: (project: string, section?: string) =>
+      makeProjectBoundPath(project, section ? `/${section}` : ''),
     path: projectBasePath,
     sections: {
       executions: {
@@ -36,15 +37,18 @@ export class Routes {
     },
   };
   static ProjectExecutions = {
-    makeUrl: (project: string, domain: string) => makeProjectDomainBoundPath(project, domain, '/executions'),
+    makeUrl: (project: string, domain: string) =>
+      makeProjectDomainBoundPath(project, domain, '/executions'),
     path: `${projectDomainBasePath}/executions`,
   };
   static ProjectTasks = {
-    makeUrl: (project: string, domain: string) => makeProjectDomainBoundPath(project, domain, '/tasks'),
+    makeUrl: (project: string, domain: string) =>
+      makeProjectDomainBoundPath(project, domain, '/tasks'),
     path: `${projectDomainBasePath}/tasks`,
   };
   static ProjectWorkflows = {
-    makeUrl: (project: string, domain: string) => makeProjectDomainBoundPath(project, domain, '/workflows'),
+    makeUrl: (project: string, domain: string) =>
+      makeProjectDomainBoundPath(project, domain, '/workflows'),
     path: `${projectDomainBasePath}/workflows`,
   };
 

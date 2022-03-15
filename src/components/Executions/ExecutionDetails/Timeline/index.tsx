@@ -33,7 +33,9 @@ interface TimelineProps {
 export const ExecutionNodesTimeline = (props: TimelineProps) => {
   const styles = useStyles();
 
-  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(null);
+  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(
+    null,
+  );
   const [chartTimezone, setChartTimezone] = React.useState(TimeZone.Local);
 
   const onCloseDetailsPanel = () => setSelectedExecution(null);
@@ -67,7 +69,10 @@ export const ExecutionNodesTimeline = (props: TimelineProps) => {
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={selectedExecution !== null} onClose={onCloseDetailsPanel}>
         {selectedExecution && (
-          <NodeExecutionDetailsPanelContent onClose={onCloseDetailsPanel} nodeExecutionId={selectedExecution} />
+          <NodeExecutionDetailsPanelContent
+            onClose={onCloseDetailsPanel}
+            nodeExecutionId={selectedExecution}
+          />
         )}
       </DetailsPanel>
     </ScaleProvider>

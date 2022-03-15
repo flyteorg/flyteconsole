@@ -12,7 +12,11 @@ import { TaskNodeMetadata } from 'models/Execution/types';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
-import { cacheStatusMessages, unknownCacheStatusString, viewSourceExecutionString } from './constants';
+import {
+  cacheStatusMessages,
+  unknownCacheStatusString,
+  viewSourceExecutionString,
+} from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
   cacheStatus: {
@@ -90,7 +94,11 @@ export const NodeExecutionCacheStatus: React.FC<NodeExecutionCacheStatusProps> =
   return variant === 'iconOnly' ? (
     <Tooltip title={message} aria-label="cache status">
       <NodeExecutionCacheStatusIcon
-        className={classnames(commonStyles.iconLeft, commonStyles.iconRight, commonStyles.iconSecondary)}
+        className={classnames(
+          commonStyles.iconLeft,
+          commonStyles.iconRight,
+          commonStyles.iconSecondary,
+        )}
         status={taskNodeMetadata.cacheStatus}
       />
     </Tooltip>

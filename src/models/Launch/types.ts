@@ -1,5 +1,12 @@
 import { Admin } from 'flyteidl';
-import { Identifier, LiteralMap, Notification, ParameterMap, Schedule, VariableMap } from 'models/Common/types';
+import {
+  Identifier,
+  LiteralMap,
+  Notification,
+  ParameterMap,
+  Schedule,
+  VariableMap,
+} from 'models/Common/types';
 
 export interface LaunchPlanMetadata extends Admin.ILaunchPlanMetadata {
   notifications: Notification[];

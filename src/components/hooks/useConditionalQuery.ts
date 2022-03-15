@@ -1,6 +1,7 @@
 import { QueryKey, useQuery, useQueryClient, UseQueryOptions } from 'react-query';
 
-interface ConditionalQueryOptions<TData, TError, TQueryFnData> extends UseQueryOptions<TData, TError, TQueryFnData> {
+interface ConditionalQueryOptions<TData, TError, TQueryFnData>
+  extends UseQueryOptions<TData, TError, TQueryFnData> {
   queryKey: QueryKey;
 }
 

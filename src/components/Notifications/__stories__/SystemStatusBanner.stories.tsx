@@ -18,12 +18,14 @@ const longTextStatus: SystemStatus = {
 
 const degradedStatus: SystemStatus = {
   status: 'degraded',
-  message: 'Something is a bit wrong with the system. We can probably still do some things, but may be slow about it.',
+  message:
+    'Something is a bit wrong with the system. We can probably still do some things, but may be slow about it.',
 };
 
 const downStatus: SystemStatus = {
   status: 'down',
-  message: 'We are down. You should probably go get a cup of coffee while the administrators attempt to troubleshoot.',
+  message:
+    'We are down. You should probably go get a cup of coffee while the administrators attempt to troubleshoot.',
 };
 
 const renderBanner = (status: SystemStatus) => (

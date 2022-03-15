@@ -69,13 +69,19 @@ export const MultiSelectForm: React.FC<MultiSelectFormProps> = ({
     ({ target: { checked } }: React.ChangeEvent<HTMLInputElement>) =>
       onChange({ ...selectedStates, [name]: checked });
 
-  const handleClickReset = () => onChange(values.reduce((out, { value }) => ({ ...out, [value]: false }), {}));
+  const handleClickReset = () =>
+    onChange(values.reduce((out, { value }) => ({ ...out, [value]: false }), {}));
 
   // Using a placeholder element with fixed horizontal
   // layout to prevent the form changing size when we show the
   // reset link
   const resetControl = showReset ? (
-    <Link className={styles.resetLink} component="button" variant="body1" onClick={handleClickReset}>
+    <Link
+      className={styles.resetLink}
+      component="button"
+      variant="body1"
+      onClick={handleClickReset}
+    >
       Reset
     </Link>
   ) : (

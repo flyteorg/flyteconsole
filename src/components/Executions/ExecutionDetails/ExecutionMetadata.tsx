@@ -96,7 +96,10 @@ export const ExecutionMetadata: React.FC<{
     details.push({
       label: ExecutionMetadataLabels.relatedTo,
       value: (
-        <RouterLink className={commonStyles.primaryLink} to={Routes.ExecutionDetails.makeUrl(referenceExecution)}>
+        <RouterLink
+          className={commonStyles.primaryLink}
+          to={Routes.ExecutionDetails.makeUrl(referenceExecution)}
+        >
           {referenceExecution.name}
         </RouterLink>
       ),
@@ -111,7 +114,11 @@ export const ExecutionMetadata: React.FC<{
             <Typography className={commonStyles.truncateText} variant="subtitle1">
               {label}
             </Typography>
-            <Typography className={commonStyles.truncateText} variant="h6" data-testid={`metadata-${label}`}>
+            <Typography
+              className={commonStyles.truncateText}
+              variant="h6"
+              data-testid={`metadata-${label}`}
+            >
               {value}
             </Typography>
           </div>

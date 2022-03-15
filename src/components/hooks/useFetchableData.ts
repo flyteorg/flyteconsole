@@ -125,17 +125,20 @@ export function useFetchableData<T extends object, DataType>(
     [apiContext, cache, cacheKey, data, debugName, doFetch, useCache],
   );
 
-  const [lastState, sendEvent] = useMachine<FetchStateContext<T>, FetchEventObject>(fetchMachine as FetchMachine<T>, {
-    ...defaultStateMachineConfig,
-    context: {
-      debugName,
-      defaultValue,
-      value: defaultValue,
+  const [lastState, sendEvent] = useMachine<FetchStateContext<T>, FetchEventObject>(
+    fetchMachine as FetchMachine<T>,
+    {
+      ...defaultStateMachineConfig,
+      context: {
+        debugName,
+        defaultValue,
+        value: defaultValue,
+      },
+      services: {
+        doFetch: fetchFn,
+      },
     },
-    services: {
-      doFetch: fetchFn,
-    },
-  });
+  );
 
   const fetch = useMemo(() => () => sendEvent(fetchEvents.LOAD), [sendEvent]);
   let state = lastState;

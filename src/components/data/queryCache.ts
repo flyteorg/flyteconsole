@@ -1,5 +1,11 @@
 import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
-import { DefaultOptions, hashQueryKey, QueryCache, QueryClient, QueryKeyHashFunction } from 'react-query';
+import {
+  DefaultOptions,
+  hashQueryKey,
+  QueryCache,
+  QueryClient,
+  QueryKeyHashFunction,
+} from 'react-query';
 import { normalizeQueryKey } from './utils';
 
 const allowedFailures = 3;
@@ -9,7 +15,8 @@ function isErrorRetryable(error: any) {
   return !(error instanceof NotAuthorizedError) && !(error instanceof NotFoundError);
 }
 
-const queryKeyHashFn: QueryKeyHashFunction = (queryKey) => hashQueryKey(normalizeQueryKey(queryKey));
+const queryKeyHashFn: QueryKeyHashFunction = (queryKey) =>
+  hashQueryKey(normalizeQueryKey(queryKey));
 
 export function createQueryClient(options?: Partial<DefaultOptions>) {
   const queryCache = new QueryCache();

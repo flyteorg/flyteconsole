@@ -13,7 +13,10 @@ export class DragFilteringClickHandler {
   private yPos = 0;
   private dragging = false;
 
-  constructor(private listener: DragFilteringClickHandlerListener, private dragThresholdPx: number = 2) {}
+  constructor(
+    private listener: DragFilteringClickHandlerListener,
+    private dragThresholdPx: number = 2,
+  ) {}
 
   public onMouseDown = (event: React.MouseEvent) => {
     this.dragging = true;

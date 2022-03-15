@@ -30,6 +30,10 @@ stories.add('ProjectSelector', () => {
   const [selectedProject, setSelectedProject] = React.useState(projects[0]);
   const onProjectSelected = (project: Project) => setSelectedProject(project);
   return (
-    <ProjectSelector projects={projects} selectedProject={selectedProject} onProjectSelected={onProjectSelected} />
+    <ProjectSelector
+      projects={projects}
+      selectedProject={selectedProject}
+      onProjectSelected={onProjectSelected}
+    />
   );
 });

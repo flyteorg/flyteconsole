@@ -52,7 +52,11 @@ export interface ProjectSelectorProps {
 /** A complex selector that shows the current project when collapsed, and
  * renders a searchable list of projects when expanded.
  */
-export const ProjectSelector: React.FC<ProjectSelectorProps> = ({ projects, selectedProject, onProjectSelected }) => {
+export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
+  projects,
+  selectedProject,
+  onProjectSelected,
+}) => {
   const styles = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const commonStyles = useCommonStyles();
@@ -78,7 +82,9 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({ projects, sele
       >
         <header className={styles.header}>
           <div className={commonStyles.microHeader}>PROJECT</div>
-          <div className={classnames(commonStyles.mutedHeader, commonStyles.textWrapped)}>{selectedProject.name}</div>
+          <div className={classnames(commonStyles.mutedHeader, commonStyles.textWrapped)}>
+            {selectedProject.name}
+          </div>
         </header>
         <ExpandMore fontSize="large" className={styles.expandIcon} />
       </ButtonBase>

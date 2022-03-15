@@ -13,7 +13,10 @@ export interface ProjectWorkflowsProps {
 }
 
 /** A listing of the Workflows registered for a project */
-export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({ domainId: domain, projectId: project }) => {
+export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
+  domainId: domain,
+  projectId: project,
+}) => {
   const workflows = useWorkflowInfoList(
     { domain, project },
     {

@@ -1,4 +1,12 @@
-import { Binary, Blob, Error, Primitive, ProtobufStruct, Scalar, Schema } from 'models/Common/types';
+import {
+  Binary,
+  Blob,
+  Error,
+  Primitive,
+  ProtobufStruct,
+  Scalar,
+  Schema,
+} from 'models/Common/types';
 import * as React from 'react';
 import { PrintValue } from '../PrintValue';
 import { UnsupportedType } from '../UnsupportedType';
@@ -18,7 +26,12 @@ export const ScalarValue: React.FC<{
 }> = ({ label, scalar }) => {
   switch (scalar.value) {
     case 'primitive':
-      return <PrintValue label={label} value={<PrimitiveValue primitive={scalar.primitive as Primitive} />} />;
+      return (
+        <PrintValue
+          label={label}
+          value={<PrimitiveValue primitive={scalar.primitive as Primitive} />}
+        />
+      );
     case 'blob':
       return (
         <>

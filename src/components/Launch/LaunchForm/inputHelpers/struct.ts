@@ -75,14 +75,17 @@ function protobufStructToObject(struct: Protobuf.IStruct): Dictionary<any> {
 }
 
 function objectToProtobufStruct(obj: Dictionary<any>): Protobuf.IStruct {
-  const fields = Object.entries(obj).reduce<Record<string, Protobuf.IValue>>((out, [key, value]) => {
-    try {
-      out[key] = primitiveToProtobufValue(value);
-      return out;
-    } catch (e) {
-      throw new Error(`Failed to convert value ${key} to Protobuf.Value: ${e}`);
-    }
-  }, {});
+  const fields = Object.entries(obj).reduce<Record<string, Protobuf.IValue>>(
+    (out, [key, value]) => {
+      try {
+        out[key] = primitiveToProtobufValue(value);
+        return out;
+      } catch (e) {
+        throw new Error(`Failed to convert value ${key} to Protobuf.Value: ${e}`);
+      }
+    },
+    {},
+  );
 
   return { fields };
 }

@@ -69,7 +69,9 @@ interface ExecutionTimelineFooterProps {
   onTimezoneChange?: (timezone: string) => void;
 }
 
-export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = ({ onTimezoneChange }) => {
+export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = ({
+  onTimezoneChange,
+}) => {
   const styles = useStyles();
   const [timezone, setTimezone] = React.useState(TimeZone.Local);
 
@@ -98,7 +100,13 @@ export const ExecutionTimelineFooter: React.FC<ExecutionTimelineFooterProps> = (
         valueLabelDisplay="on"
         getAriaValueText={valueText}
       />
-      <RadioGroup row aria-label="timezone" name="timezone" value={timezone} onChange={handleTimezoneChange}>
+      <RadioGroup
+        row
+        aria-label="timezone"
+        name="timezone"
+        value={timezone}
+        onChange={handleTimezoneChange}
+      >
         <FormControlLabel value={TimeZone.Local} control={<Radio />} label="Local Time" />
         <FormControlLabel value={TimeZone.UTC} control={<Radio />} label="UTC" />
       </RadioGroup>

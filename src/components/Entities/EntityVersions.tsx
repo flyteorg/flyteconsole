@@ -59,7 +59,10 @@ export const EntityVersions: React.FC<EntityVersionsProps> = ({ id, showAll = fa
     direction: SortDirection.DESCENDING,
   };
 
-  const baseFilters = React.useMemo(() => executionFilterGenerator[resourceType](id), [id, resourceType]);
+  const baseFilters = React.useMemo(
+    () => executionFilterGenerator[resourceType](id),
+    [id, resourceType],
+  );
 
   const versions = useWorkflowVersions(
     { domain, project },
@@ -72,7 +75,14 @@ export const EntityVersions: React.FC<EntityVersionsProps> = ({ id, showAll = fa
 
   const preventDefault = (e) => e.preventDefault();
   const handleViewAll = React.useCallback(() => {
-    history.push(Routes.WorkflowVersionDetails.makeUrl(project, domain, name, versions.value[0].id.version ?? ''));
+    history.push(
+      Routes.WorkflowVersionDetails.makeUrl(
+        project,
+        domain,
+        name,
+        versions.value[0].id.version ?? '',
+      ),
+    );
   }, [project, domain, name, versions]);
 
   return (
@@ -102,7 +112,11 @@ export const EntityVersions: React.FC<EntityVersionsProps> = ({ id, showAll = fa
       )}
       <WaitForData {...versions}>
         {showTable || showAll ? (
-          <WorkflowVersionsTable {...versions} isFetching={isLoadingState(versions.state)} versionView={showAll} />
+          <WorkflowVersionsTable
+            {...versions}
+            isFetching={isLoadingState(versions.state)}
+            versionView={showAll}
+          />
         ) : (
           <div className={styles.divider} />
         )}

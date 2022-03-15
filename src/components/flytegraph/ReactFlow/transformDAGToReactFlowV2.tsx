@@ -232,7 +232,9 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
         const rootParentId = rootParentNode.scopedId;
         const contextParentId = contextParent?.scopedId;
         rootParentMap[rootParentId] = rootParentMap[rootParentId] || {};
-        rootParentMap[rootParentId][contextParentId] = rootParentMap[rootParentId][contextParentId] || {
+        rootParentMap[rootParentId][contextParentId] = rootParentMap[rootParentId][
+          contextParentId
+        ] || {
           nodes: {},
           edges: {},
         };
@@ -278,7 +280,12 @@ export interface RenderGraphProps {
   maxRenderDepth?: number;
   isStaticGraph?: boolean;
 }
-export const renderGraph = ({ graphMapping, currentNestedView, maxRenderDepth = 0, isStaticGraph = false }) => {
+export const renderGraph = ({
+  graphMapping,
+  currentNestedView,
+  maxRenderDepth = 0,
+  isStaticGraph = false,
+}) => {
   debug('\t graphMapping:', graphMapping);
   debug('\t currentNestedView:', currentNestedView);
   if (maxRenderDepth > 0 && !isStaticGraph) {

@@ -76,7 +76,12 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
             ['dimensions']: changes[i].dimensions,
           });
         }
-        const positionedNodes = getPositionedNodes(nodesWithDimensions, state.edges, currentNestedView, 'LR');
+        const positionedNodes = getPositionedNodes(
+          nodesWithDimensions,
+          state.edges,
+          currentNestedView,
+          'LR',
+        );
         const { hashGraph, hashEdges } = ReactFlowIdHash(positionedNodes, state.edges);
 
         setState((state) => ({

@@ -116,7 +116,10 @@ function getFilteredItems<T>(targets: SearchTarget<T>[], searchString: string): 
  * resulting list of items being highlighted where characters in the search
  * string match characters in the item
  */
-export const useSearchableListState = <T extends {}>({ items, propertyGetter }: SearchableListStateArgs<T>) => {
+export const useSearchableListState = <T extends {}>({
+  items,
+  propertyGetter,
+}: SearchableListStateArgs<T>) => {
   const [preparedItems, setPreparedItems] = useState<PreparedItem<T>[]>([]);
   const [results, setResults] = useState<SearchResult<T>[]>([]);
   const [searchString, setSearchString] = useState('');
@@ -133,7 +136,9 @@ export const useSearchableListState = <T extends {}>({ items, propertyGetter }: 
   }, [items]);
 
   useEffect(() => {
-    setResults(searchString.length === 0 ? unfilteredResults : getFilteredItems(preparedItems, searchString));
+    setResults(
+      searchString.length === 0 ? unfilteredResults : getFilteredItems(preparedItems, searchString),
+    );
   }, [preparedItems, unfilteredResults, searchString]);
 
   return {

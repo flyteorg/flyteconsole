@@ -44,7 +44,8 @@ export const TerminateExecutionForm: React.FC<{
     terminateExecution,
   } = useTerminateExecutionState(onClose);
 
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = ({ target: { value } }) => setCause(value);
+  const onChange: React.ChangeEventHandler<HTMLInputElement> = ({ target: { value } }) =>
+    setCause(value);
 
   const submit: React.FormEventHandler = (event) => {
     event.preventDefault();
@@ -73,7 +74,13 @@ export const TerminateExecutionForm: React.FC<{
       </FormControl>
       {error && <p className={commonStyles.errorText}>{`${error}`}</p>}
       <div className={commonStyles.formButtonGroup}>
-        <Button color="primary" disabled={terminating} onClick={submit} type="submit" variant="contained">
+        <Button
+          color="primary"
+          disabled={terminating}
+          onClick={submit}
+          type="submit"
+          variant="contained"
+        >
           Terminate
           {terminating && <ButtonCircularProgress />}
         </Button>

@@ -3,7 +3,10 @@ import { APIContext, APIContextValue } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { LaunchFormProps, LiteralValueMap } from 'components/Launch/LaunchForm/types';
-import { createInputCacheKey, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
+import {
+  createInputCacheKey,
+  getInputDefintionForLiteralType,
+} from 'components/Launch/LaunchForm/utils';
 import { mockSimpleVariables } from 'components/Launch/LaunchForm/__mocks__/mockInputs';
 import { primitiveLiteral } from 'components/Launch/LaunchForm/__mocks__/utils';
 import { Admin } from 'flyteidl';
@@ -30,7 +33,10 @@ jest.mock('components/Launch/LaunchForm/LaunchForm', () => ({
   LaunchForm: jest.fn(() => mockContentString),
 }));
 
-function createValuesMap(inputDefinitions: Record<string, Variable>, { literals }: LiteralMap): LiteralValueMap {
+function createValuesMap(
+  inputDefinitions: Record<string, Variable>,
+  { literals }: LiteralMap,
+): LiteralValueMap {
   return Object.entries(inputDefinitions).reduce((out, [name, input]) => {
     out.set(createInputCacheKey(name, getInputDefintionForLiteralType(input.type)), literals[name]);
     return out;

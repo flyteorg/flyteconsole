@@ -17,7 +17,9 @@ describe('ProjectWorkflows', () => {
   let mockListNamedEntities: jest.Mock<ReturnType<typeof listNamedEntities>>;
 
   beforeEach(() => {
-    workflowNames = ['MyWorkflow', 'MyOtherWorkflow'].map((name) => createWorkflowName({ domain, name, project }));
+    workflowNames = ['MyWorkflow', 'MyOtherWorkflow'].map((name) =>
+      createWorkflowName({ domain, name, project }),
+    );
     mockListNamedEntities = jest.fn().mockResolvedValue({ entities: workflowNames });
   });
 

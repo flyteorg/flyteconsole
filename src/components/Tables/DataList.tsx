@@ -4,7 +4,14 @@ import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { tablePlaceholderColor } from 'components/Theme/constants';
 import * as React from 'react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, Index, List, ListRowRenderer } from 'react-virtualized';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  Index,
+  List,
+  ListRowRenderer,
+} from 'react-virtualized';
 import { headerGridHeight, tableGridPadding } from './constants';
 import { LoadMoreRowContent } from './LoadMoreRowContent';
 
@@ -57,7 +64,10 @@ export interface DataListRef {
   recomputeRowHeights(index: number): void;
 }
 
-const DataListImplComponent: React.RefForwardingComponent<DataListRef, DataListImplProps> = (props, ref) => {
+const DataListImplComponent: React.RefForwardingComponent<DataListRef, DataListImplProps> = (
+  props,
+  ref,
+) => {
   const {
     height,
     value: items,
@@ -119,7 +129,11 @@ const DataListImplComponent: React.RefForwardingComponent<DataListRef, DataListI
 
   const noRowsRenderer = () => (
     <div className={styles.noRowsContent}>
-      {typeof NoRowsContent === 'string' ? <Typography variant="h6">{NoRowsContent}</Typography> : <NoRowsContent />}
+      {typeof NoRowsContent === 'string' ? (
+        <Typography variant="h6">{NoRowsContent}</Typography>
+      ) : (
+        <NoRowsContent />
+      )}
     </div>
   );
 
@@ -128,7 +142,12 @@ const DataListImplComponent: React.RefForwardingComponent<DataListRef, DataListI
     let content: React.ReactNode;
     if (index === items.length) {
       content = (
-        <LoadMoreRowContent loadMoreRows={loadMoreRows} isFetching={isFetching} lastError={lastError} style={style} />
+        <LoadMoreRowContent
+          loadMoreRows={loadMoreRows}
+          isFetching={isFetching}
+          lastError={lastError}
+          style={style}
+        />
       );
     } else {
       content = rowContentRenderer(rowProps);
@@ -177,7 +196,10 @@ const DataListImpl = React.forwardRef(DataListImplComponent);
  * doesn't have an explicit width/height set). When passing an explicit width/height,
  * the auto-sizing behavior is disabled and a slightly simpler component tree will be rendered.
  */
-const DataListComponent: React.RefForwardingComponent<DataListRef, DataListProps> = (props, ref) => {
+const DataListComponent: React.RefForwardingComponent<DataListRef, DataListProps> = (
+  props,
+  ref,
+) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
@@ -188,7 +210,9 @@ const DataListComponent: React.RefForwardingComponent<DataListRef, DataListProps
     <div className={classnames(styles.listContainer, commonStyles.flexFill)}>
       <div className={commonStyles.flexFill}>
         <AutoSizer>
-          {({ height, width }) => <DataListImpl {...props} ref={ref} width={width} height={height} />}
+          {({ height, width }) => (
+            <DataListImpl {...props} ref={ref} width={width} height={height} />
+          )}
         </AutoSizer>
       </div>
     </div>

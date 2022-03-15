@@ -40,7 +40,12 @@ import { Execution, NodeExecution, TaskNodeMetadata } from 'models/Execution/typ
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
-import { createTestQueryClient, disableQueryLogger, enableQueryLogger, findNearestAncestorByRole } from 'test/utils';
+import {
+  createTestQueryClient,
+  disableQueryLogger,
+  enableQueryLogger,
+  findNearestAncestorByRole,
+} from 'test/utils';
 import { titleStrings } from '../constants';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 import * as moduleApi from 'components/Executions/contextProvider/NodeExecutionDetails/getTaskThroughExecution';
@@ -59,7 +64,8 @@ describe('NodeExecutionsTable', () => {
     queryClient = createTestQueryClient();
   });
 
-  const shouldUpdateFn = (nodeExecutions: NodeExecution[]) => nodeExecutions.some((ne) => !nodeExecutionIsTerminal(ne));
+  const shouldUpdateFn = (nodeExecutions: NodeExecution[]) =>
+    nodeExecutions.some((ne) => !nodeExecutionIsTerminal(ne));
 
   const selectNode = async (container: HTMLElement, truncatedName: string, nodeId: string) => {
     const nodeNameAnchor = await waitFor(() => getByText(container, truncatedName));
@@ -150,7 +156,9 @@ describe('NodeExecutionsTable', () => {
         const childNodeExecution =
           fixture.workflowExecutions.top.nodeExecutions.dynamicNode.nodeExecutions.firstChild.data;
         const { container } = renderTable();
-        const dynamicTaskNameEl = await waitFor(() => getByText(container, fixture.tasks.dynamic.id.name));
+        const dynamicTaskNameEl = await waitFor(() =>
+          getByText(container, fixture.tasks.dynamic.id.name),
+        );
         const dynamicRowEl = findNearestAncestorByRole(dynamicTaskNameEl, 'listitem');
         const parentNodeEl = await expandParentNode(dynamicRowEl);
         const truncatedName = fixture.tasks.python.id.name.split('.').pop() || '';
@@ -202,7 +210,9 @@ describe('NodeExecutionsTable', () => {
       mockServer.insertTaskExecutionList(nodeExecution.id, []);
 
       const { container } = renderTable();
-      const pythonNodeNameEl = await waitFor(() => getAllByText(container, nodeExecution.id.nodeId));
+      const pythonNodeNameEl = await waitFor(() =>
+        getAllByText(container, nodeExecution.id.nodeId),
+      );
       const rowEl = findNearestAncestorByRole(pythonNodeNameEl?.[0], 'listitem');
       await waitFor(() => expect(getByText(rowEl, NodeExecutionDisplayType.Unknown)));
     });
@@ -239,20 +249,23 @@ describe('NodeExecutionsTable', () => {
           updateNodeExecutions([cachedNodeExecution]);
           const { getByTitle } = renderTable();
 
-          await waitFor(() => expect(getByTitle(cacheStatusMessages[cacheStatusValue])).toBeDefined());
+          await waitFor(() =>
+            expect(getByTitle(cacheStatusMessages[cacheStatusValue])).toBeDefined(),
+          );
         }),
       );
 
-      [Core.CatalogCacheStatus.CACHE_DISABLED, Core.CatalogCacheStatus.CACHE_MISS].forEach((cacheStatusValue) =>
-        it(`renders no icon for ${Core.CatalogCacheStatus[cacheStatusValue]}`, async () => {
-          taskNodeMetadata.cacheStatus = cacheStatusValue;
-          updateNodeExecutions([cachedNodeExecution]);
-          const { getByText, queryByTitle } = renderTable();
-          await waitFor(() => {
-            getByText(cachedNodeExecution.id.nodeId);
-          });
-          expect(queryByTitle(cacheStatusMessages[cacheStatusValue])).toBeNull();
-        }),
+      [Core.CatalogCacheStatus.CACHE_DISABLED, Core.CatalogCacheStatus.CACHE_MISS].forEach(
+        (cacheStatusValue) =>
+          it(`renders no icon for ${Core.CatalogCacheStatus[cacheStatusValue]}`, async () => {
+            taskNodeMetadata.cacheStatus = cacheStatusValue;
+            updateNodeExecutions([cachedNodeExecution]);
+            const { getByText, queryByTitle } = renderTable();
+            await waitFor(() => {
+              getByText(cachedNodeExecution.id.nodeId);
+            });
+            expect(queryByTitle(cacheStatusMessages[cacheStatusValue])).toBeNull();
+          }),
       );
     });
   });
@@ -270,7 +283,9 @@ describe('NodeExecutionsTable', () => {
 
       it('correctly renders children', async () => {
         const { container } = renderTable();
-        const dynamicTaskNameEl = await waitFor(() => getByText(container, fixture.tasks.dynamic.id.name));
+        const dynamicTaskNameEl = await waitFor(() =>
+          getByText(container, fixture.tasks.dynamic.id.name),
+        );
         const dynamicRowEl = findNearestAncestorByRole(dynamicTaskNameEl, 'listitem');
         const childContainerList = await expandParentNode(dynamicRowEl);
         await waitFor(() => expect(getByText(childContainerList[0], fixture.tasks.python.id.name)));
@@ -280,7 +295,9 @@ describe('NodeExecutionsTable', () => {
         const { nodeExecutions } = fixture.workflowExecutions.top;
         // We returned two task execution attempts, each with children
         const { container } = renderTable();
-        const nodeNameEl = await waitFor(() => getByText(container, nodeExecutions.dynamicNode.data.id.nodeId));
+        const nodeNameEl = await waitFor(() =>
+          getByText(container, nodeExecutions.dynamicNode.data.id.nodeId),
+        );
         const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
         const childGroups = await expandParentNode(rowEl);
         expect(childGroups).toHaveLength(2);
@@ -302,20 +319,28 @@ describe('NodeExecutionsTable', () => {
           } = fixture.workflowExecutions.top;
           const parentNodeExecution = nodeExecutions.dynamicNode.data;
           // Simulate an error when attempting to list children of first NE.
-          mockServer.insertNodeExecutionList(workflowExecutionId, notFoundError(parentNodeExecution.id.nodeId), {
-            [nodeExecutionQueryParams.parentNodeId]: parentNodeExecution.id.nodeId,
-          });
+          mockServer.insertNodeExecutionList(
+            workflowExecutionId,
+            notFoundError(parentNodeExecution.id.nodeId),
+            {
+              [nodeExecutionQueryParams.parentNodeId]: parentNodeExecution.id.nodeId,
+            },
+          );
 
           const { container, getByTitle } = renderTable();
           // We expect to find an error icon in place of the child expander
-          const errorIconButton = await waitFor(() => getByTitle(titleStrings.childGroupFetchFailed));
+          const errorIconButton = await waitFor(() =>
+            getByTitle(titleStrings.childGroupFetchFailed),
+          );
           // restore proper handler for node execution children
           insertFixture(mockServer, fixture);
           // click error icon
           await fireEvent.click(errorIconButton);
 
           // wait for expander and open it to verify children loaded correctly
-          const nodeNameEl = await waitFor(() => getByText(container, nodeExecutions.dynamicNode.data.id.nodeId));
+          const nodeNameEl = await waitFor(() =>
+            getByText(container, nodeExecutions.dynamicNode.data.id.nodeId),
+          );
           const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
           const childGroups = await expandParentNode(rowEl);
           expect(childGroups.length).toBeGreaterThan(0);
@@ -339,7 +364,9 @@ describe('NodeExecutionsTable', () => {
         // which runs the basic python task. Expand it and then
         // look for the python task name to verify it was rendered.
         const { container } = renderTable();
-        const dynamicTaskNameEl = await waitFor(() => getByText(container, fixture.tasks.dynamic.id.name));
+        const dynamicTaskNameEl = await waitFor(() =>
+          getByText(container, fixture.tasks.dynamic.id.name),
+        );
         const dynamicRowEl = findNearestAncestorByRole(dynamicTaskNameEl, 'listitem');
         const childContainerList = await expandParentNode(dynamicRowEl);
         await waitFor(() => expect(getByText(childContainerList[0], fixture.tasks.python.id.name)));
@@ -349,7 +376,10 @@ describe('NodeExecutionsTable', () => {
         // We returned two task execution attempts, each with children
         const { container } = renderTable();
         const nodeNameEl = await waitFor(() =>
-          getByText(container, fixture.workflowExecutions.top.nodeExecutions.dynamicNode.data.id.nodeId),
+          getByText(
+            container,
+            fixture.workflowExecutions.top.nodeExecutions.dynamicNode.data.id.nodeId,
+          ),
         );
         const rowEl = findNearestAncestorByRole(nodeNameEl, 'listitem');
         const childGroups = await expandParentNode(rowEl);
@@ -385,16 +415,20 @@ describe('NodeExecutionsTable', () => {
 
       it('correctly renders children', async () => {
         const { container } = renderTable();
-        const dynamicTaskNameEl = await waitFor(() => getByText(container, fixture.tasks.generateSubWorkflow.id.name));
+        const dynamicTaskNameEl = await waitFor(() =>
+          getByText(container, fixture.tasks.generateSubWorkflow.id.name),
+        );
         const dynamicRowEl = findNearestAncestorByRole(dynamicTaskNameEl, 'listitem');
         const childContainerList = await expandParentNode(dynamicRowEl);
-        await waitFor(() => expect(getByText(childContainerList[0], fixture.workflows.sub.id.name)));
+        await waitFor(() =>
+          expect(getByText(childContainerList[0], fixture.workflows.sub.id.name)),
+        );
       });
 
       it('correctly renders groups', async () => {
         const parentNodeId =
-          fixture.workflowExecutions.top.nodeExecutions.dynamicWorkflowGenerator.data.metadata?.specNodeId ||
-          'not found';
+          fixture.workflowExecutions.top.nodeExecutions.dynamicWorkflowGenerator.data.metadata
+            ?.specNodeId || 'not found';
         // We returned a single WF execution child, so there should only
         // be one child group
         const { container } = renderTable();

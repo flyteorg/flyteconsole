@@ -22,7 +22,8 @@ export interface QueryInput<T> extends QueryObserverOptions<T, Error> {
   queryFn: QueryObserverOptions<T, Error>['queryFn'];
 }
 
-export interface InfiniteQueryInput<T> extends InfiniteQueryObserverOptions<InfiniteQueryPage<T>, Error> {
+export interface InfiniteQueryInput<T>
+  extends InfiniteQueryObserverOptions<InfiniteQueryPage<T>, Error> {
   queryKey: QueryKeyArray;
   queryFn: InfiniteQueryObserverOptions<InfiniteQueryPage<T>, Error>['queryFn'];
 }

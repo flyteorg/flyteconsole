@@ -28,4 +28,5 @@ export const WorkflowDetailsContainer: React.FC<WorkflowDetailsRouteParams> = ({
   return <EntityDetails id={id} />;
 };
 
-export const WorkflowDetails = withRouteParams<WorkflowDetailsRouteParams>(WorkflowDetailsContainer);
+export const WorkflowDetails =
+  withRouteParams<WorkflowDetailsRouteParams>(WorkflowDetailsContainer);

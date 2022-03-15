@@ -12,12 +12,18 @@ describe('linkify/getLinkifiedTextChunks', () => {
   const testCases: [string, LinkifiedTextChunk[]][] = [
     ['No match expected', [text('No match expected')]],
     ['Points to http://example.com', [text('Points to '), link('http://example.com')]],
-    ['https://example.com link is at beginning', [link('https://example.com'), text(' link is at beginning')]],
+    [
+      'https://example.com link is at beginning',
+      [link('https://example.com'), text(' link is at beginning')],
+    ],
     [
       'A link to http://example.com is in the middle',
       [text('A link to '), link('http://example.com'), text(' is in the middle')],
     ],
-    ['A link at the end to http://example.com', [text('A link at the end to '), link('http://example.com')]],
+    [
+      'A link at the end to http://example.com',
+      [text('A link at the end to '), link('http://example.com')],
+    ],
     [
       'A link to http://example.com and another link to https://flyte.org in the middle.',
       [

@@ -34,7 +34,9 @@ interface TaskExecutionsListItemProps {
 }
 
 /** Renders an individual `TaskExecution` record as part of a list */
-export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({ taskExecution }) => {
+export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({
+  taskExecution,
+}) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const { closure } = taskExecution;

@@ -16,7 +16,10 @@ import * as React from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { failedToLoadExecutionsString } from './constants';
 import { BarChart } from 'components/common/BarChart';
-import { getExecutionTimeData, getStartExecutionTime } from 'components/Entities/EntityExecutionsBarChart';
+import {
+  getExecutionTimeData,
+  getStartExecutionTime,
+} from 'components/Entities/EntityExecutionsBarChart';
 import classNames from 'classnames';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
@@ -56,7 +59,10 @@ const defaultSort = {
 };
 
 /** A listing of all executions across a project/domain combination. */
-export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({ domainId: domain, projectId: project }) => {
+export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
+  domainId: domain,
+  projectId: project,
+}) => {
   const styles = useStyles();
   const archivedFilter = useExecutionShowArchivedState();
   const filtersState = useWorkflowExecutionFiltersState();
@@ -86,7 +92,10 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({ domainId: 
   // useInfiniteQuery returns pages of items, but the table would like a single
   // flat list.
   const executions = React.useMemo(
-    () => (query.data?.pages ? query.data.pages.reduce<Execution[]>((acc, { data }) => acc.concat(data), []) : []),
+    () =>
+      query.data?.pages
+        ? query.data.pages.reduce<Execution[]>((acc, { data }) => acc.concat(data), [])
+        : [],
     [query.data?.pages],
   );
 

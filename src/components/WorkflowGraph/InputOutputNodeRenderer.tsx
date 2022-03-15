@@ -28,6 +28,10 @@ export const InputOutputNodeRenderer: React.FC<InputOutputNodeRendererProps> = (
   const textWidth = getTextWidthForLabel(label, config.fontSize);
 
   return (
-    <Node {...props} config={{ ...config, fillColor, cornerRounding: 0 }} node={{ ...node, textWidth, id: label }} />
+    <Node
+      {...props}
+      config={{ ...config, fillColor, cornerRounding: 0 }}
+      node={{ ...node, textWidth, id: label }}
+    />
   );
 };

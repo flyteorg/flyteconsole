@@ -66,6 +66,8 @@ export function insertFixture(
     Object.values(workflows).forEach(server.insertWorkflow);
   }
   if (workflowExecutions) {
-    Object.values(workflowExecutions).forEach((execution) => insertWorkflowExecutionData(server, execution));
+    Object.values(workflowExecutions).forEach((execution) =>
+      insertWorkflowExecutionData(server, execution),
+    );
   }
 }

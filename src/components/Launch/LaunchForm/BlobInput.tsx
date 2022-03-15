@@ -1,4 +1,12 @@
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import {
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { BlobDimensionality } from 'models/Common/types';
 import * as React from 'react';
@@ -41,14 +49,18 @@ export const BlobInput: React.FC<InputProps> = (props) => {
     });
   };
 
-  const handleFormatChange = ({ target: { value: format } }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormatChange = ({
+    target: { value: format },
+  }: React.ChangeEvent<HTMLInputElement>) => {
     onChange({
       ...blobValue,
       format,
     });
   };
 
-  const handleDimensionalityChange = ({ target: { value } }: React.ChangeEvent<{ value: unknown }>) => {
+  const handleDimensionalityChange = ({
+    target: { value },
+  }: React.ChangeEvent<{ value: unknown }>) => {
     onChange({
       ...blobValue,
       dimensionality: value as BlobDimensionality,

@@ -8,7 +8,9 @@ export function isSingleTaskExecution(execution: Execution) {
 }
 
 export function getExecutionSourceId(execution: Execution): Identifier {
-  return isSingleTaskExecution(execution) ? execution.spec.launchPlan : execution.closure.workflowId;
+  return isSingleTaskExecution(execution)
+    ? execution.spec.launchPlan
+    : execution.closure.workflowId;
 }
 
 export function getExecutionBackLink(execution: Execution): string {

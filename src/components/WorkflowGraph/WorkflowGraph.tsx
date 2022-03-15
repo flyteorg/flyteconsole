@@ -86,14 +86,19 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
 
   const dynamicParents = checkForDynamicExeuctions(nodeExecutionsById, staticExecutionIdsMap);
 
-  const dynamicWorkflowQuery = useQuery(makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents));
+  const dynamicWorkflowQuery = useQuery(
+    makeNodeExecutionDynamicWorkflowQuery(useQueryClient(), dynamicParents),
+  );
   const renderReactFlowGraph = (dynamicWorkflows) => {
     debug('DynamicWorkflows:', dynamicWorkflows);
     let mergedDag = dag;
     for (const dynamicId in dynamicWorkflows) {
       if (staticExecutionIdsMap[dynamicId]) {
         if (workflow.closure?.compiledWorkflow) {
-          const dynamicWorkflow = transformerWorkflowToDag(workflow.closure?.compiledWorkflow, dynamicWorkflows);
+          const dynamicWorkflow = transformerWorkflowToDag(
+            workflow.closure?.compiledWorkflow,
+            dynamicWorkflows,
+          );
           mergedDag = dynamicWorkflow.dag;
         }
       }

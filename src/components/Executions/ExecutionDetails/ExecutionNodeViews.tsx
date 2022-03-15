@@ -57,16 +57,27 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     we will only pass filters to the execution state when on the nodes tab. */
   const appliedFilters = tabState.value === tabs.nodes.id ? filterState.appliedFilters : [];
 
-  const { nodeExecutionsQuery, nodeExecutionsRequestConfig } = useExecutionNodeViewsState(execution, appliedFilters);
+  const { nodeExecutionsQuery, nodeExecutionsRequestConfig } = useExecutionNodeViewsState(
+    execution,
+    appliedFilters,
+  );
 
   const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
     <NodeExecutionsRequestConfigContext.Provider value={nodeExecutionsRequestConfig}>
-      <NodeExecutionsTable abortMetadata={abortMetadata ?? undefined} nodeExecutions={nodeExecutions} />
+      <NodeExecutionsTable
+        abortMetadata={abortMetadata ?? undefined}
+        nodeExecutions={nodeExecutions}
+      />
     </NodeExecutionsRequestConfigContext.Provider>
   );
 
   const renderExecutionLoader = (nodeExecutions: NodeExecution[]) => {
-    return <ExecutionChildrenLoader nodeExecutions={nodeExecutions} workflowId={execution.closure.workflowId} />;
+    return (
+      <ExecutionChildrenLoader
+        nodeExecutions={nodeExecutions}
+        workflowId={execution.closure.workflowId}
+      />
+    );
   };
 
   const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => (

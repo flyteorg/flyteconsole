@@ -4,7 +4,10 @@ import { action } from '@storybook/addon-actions';
 import * as React from 'react';
 
 import { ExecutionFilters } from '../ExecutionFilters';
-import { useWorkflowExecutionFiltersState, useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import {
+  useWorkflowExecutionFiltersState,
+  useNodeExecutionFiltersState,
+} from '../filters/useExecutionFiltersState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -28,4 +31,6 @@ stories.add('Workflow executions - all', () => (
     onArchiveFilterChange={action('onArchiveFilterChange')}
   />
 ));
-stories.add('Workflow executions - minimal', () => <ExecutionFilters {...useWorkflowExecutionFiltersState()} />);
+stories.add('Workflow executions - minimal', () => (
+  <ExecutionFilters {...useWorkflowExecutionFiltersState()} />
+));

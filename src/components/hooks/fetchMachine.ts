@@ -1,5 +1,12 @@
 import { assign, Machine, State, StateNodeConfig } from 'xstate';
-import { FetchEventObject, fetchEvents, FetchMachine, FetchStateContext, fetchStates, FetchStateSchema } from './types';
+import {
+  FetchEventObject,
+  fetchEvents,
+  FetchMachine,
+  FetchStateContext,
+  fetchStates,
+  FetchStateSchema,
+} from './types';
 
 /** Helper function to determine if the State object from a fetchMachine
  * is one in which data is being fetched.
@@ -40,7 +47,10 @@ const defaultContext: Partial<FetchStateContext<unknown>> = {
 };
 
 /** A generic state machine for representing fetchable data. */
-export const fetchMachine: FetchMachine<unknown> = Machine<FetchStateContext<unknown>, FetchEventObject>({
+export const fetchMachine: FetchMachine<unknown> = Machine<
+  FetchStateContext<unknown>,
+  FetchEventObject
+>({
   id: 'fetch',
   initial: fetchStates.IDLE,
   states: {
@@ -57,7 +67,10 @@ export const fetchMachine: FetchMachine<unknown> = Machine<FetchStateContext<unk
         [fetchEvents.LOAD]: `#fetch.${fetchStates.LOADING}`,
       },
     },
-    [fetchStates.LOADING]: makeLoadConfig(`#fetch.${fetchStates.LOADED}`, `#fetch.${fetchStates.FAILED}`),
+    [fetchStates.LOADING]: makeLoadConfig(
+      `#fetch.${fetchStates.LOADED}`,
+      `#fetch.${fetchStates.FAILED}`,
+    ),
     [fetchStates.LOADED]: {
       on: {
         [fetchEvents.RESET]: `#fetch.${fetchStates.IDLE}`,
@@ -70,8 +83,14 @@ export const fetchMachine: FetchMachine<unknown> = Machine<FetchStateContext<unk
         [fetchEvents.LOAD]: `#fetch.${fetchStates.FAILED_RETRYING}`,
       },
     },
-    [fetchStates.FAILED_RETRYING]: makeLoadConfig(`#fetch.${fetchStates.LOADED}`, `#fetch.${fetchStates.FAILED}`),
-    [fetchStates.REFRESHING]: makeLoadConfig(`#fetch.${fetchStates.LOADED}`, `#fetch.${fetchStates.REFRESH_FAILED}`),
+    [fetchStates.FAILED_RETRYING]: makeLoadConfig(
+      `#fetch.${fetchStates.LOADED}`,
+      `#fetch.${fetchStates.FAILED}`,
+    ),
+    [fetchStates.REFRESHING]: makeLoadConfig(
+      `#fetch.${fetchStates.LOADED}`,
+      `#fetch.${fetchStates.REFRESH_FAILED}`,
+    ),
     [fetchStates.REFRESH_FAILED]: {
       on: {
         [fetchEvents.RESET]: `#fetch.${fetchStates.IDLE}`,

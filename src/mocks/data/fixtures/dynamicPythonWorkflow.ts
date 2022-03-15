@@ -91,7 +91,9 @@ function generateWithDynamicTaskChild() {
     }),
   ];
   const dynamicNodeExecution = generateNodeExecution(execution, dynamicNodeId);
-  const dynamicTaskExecution = generateTaskExecution(dynamicNodeExecution, dynamicTask, { isParent: true });
+  const dynamicTaskExecution = generateTaskExecution(dynamicNodeExecution, dynamicTask, {
+    isParent: true,
+  });
   return {
     launchPlans: { top: launchPlan },
     tasks: { dynamic: dynamicTask, python: pythonTask },
@@ -129,7 +131,9 @@ function generateWithDynamicTaskChild() {
 
 function generateWithNodeExecutionChild() {
   const { dynamicTask, pythonTask, workflow, launchPlan, execution } = getSharedEntities();
-  const dynamicNodeExecution = generateNodeExecution(execution, dynamicNodeId, { metadata: { isParentNode: true } });
+  const dynamicNodeExecution = generateNodeExecution(execution, dynamicNodeId, {
+    metadata: { isParentNode: true },
+  });
   const dynamicTaskExecution = generateTaskExecution(dynamicNodeExecution, dynamicTask);
   const pythonNodeExecutions = [
     generateNodeExecution(execution, `${pythonNodeId}-1`, {

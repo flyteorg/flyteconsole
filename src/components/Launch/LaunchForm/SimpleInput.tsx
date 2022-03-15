@@ -1,4 +1,12 @@
-import { FormControl, FormControlLabel, FormHelperText, MenuItem, Select, Switch, TextField } from '@material-ui/core';
+import {
+  FormControl,
+  FormControlLabel,
+  FormHelperText,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import * as React from 'react';
 import { DatetimeInput } from './DatetimeInput';
@@ -71,8 +79,14 @@ export const SimpleInput: React.FC<InputProps> = (props) => {
     case InputType.Enum:
       return (
         <FormControl className={classes.formControl}>
-          <Select id={getLaunchInputId(name)} label={label} value={value} onChange={handleEnumChange}>
-            {literalType && literalType.enumType?.values.map((item) => <MenuItem value={item}>{item}</MenuItem>)}
+          <Select
+            id={getLaunchInputId(name)}
+            label={label}
+            value={value}
+            onChange={handleEnumChange}
+          >
+            {literalType &&
+              literalType.enumType?.values.map((item) => <MenuItem value={item}>{item}</MenuItem>)}
           </Select>
           <FormHelperText>{label}</FormHelperText>
         </FormControl>

@@ -15,7 +15,10 @@ export const NodeExecutionOutputs: React.FC<{ execution: NodeExecution }> = ({ e
         <>
           <div className={commonStyles.detailsPanelCard}>
             <div className={commonStyles.detailsPanelCardContent}>
-              <RemoteLiteralMapViewer map={executionData.value.fullOutputs} blob={executionData.value.outputs} />
+              <RemoteLiteralMapViewer
+                map={executionData.value.fullOutputs}
+                blob={executionData.value.outputs}
+              />
             </div>
           </div>
         </>

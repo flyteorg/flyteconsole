@@ -5,7 +5,9 @@ import { Identifier } from 'models/Common/types';
 import { Task, TaskClosure } from 'models/Task/types';
 import * as simpleClosure from './simpleTaskClosure.json';
 
-const decodedClosure = Admin.TaskClosure.create(simpleClosure as unknown as Admin.ITaskClosure) as TaskClosure;
+const decodedClosure = Admin.TaskClosure.create(
+  simpleClosure as unknown as Admin.ITaskClosure,
+) as TaskClosure;
 
 const taskId: (name: string, version: string) => Identifier = (name, version) => ({
   name,
@@ -14,7 +16,10 @@ const taskId: (name: string, version: string) => Identifier = (name, version) =>
   domain: 'development',
 });
 
-export const createMockTask: (name: string, version?: string) => Task = (name: string, version = 'abcdefg') => ({
+export const createMockTask: (name: string, version?: string) => Task = (
+  name: string,
+  version = 'abcdefg',
+) => ({
   id: taskId(name, version),
   closure: createMockTaskClosure(),
 });

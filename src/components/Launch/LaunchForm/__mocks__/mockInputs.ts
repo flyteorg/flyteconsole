@@ -80,15 +80,21 @@ export const simpleVariableDefaults: Record<SimpleVariableKey, Core.ILiteral> = 
   },
 };
 
-export const mockCollectionVariables: Record<string, Variable> = mapValues(mockSimpleVariables, (v) => ({
-  description: `A collection of: ${v.description}`,
-  type: { collectionType: v.type },
-}));
+export const mockCollectionVariables: Record<string, Variable> = mapValues(
+  mockSimpleVariables,
+  (v) => ({
+    description: `A collection of: ${v.description}`,
+    type: { collectionType: v.type },
+  }),
+);
 
-export const mockNestedCollectionVariables: Record<string, Variable> = mapValues(mockCollectionVariables, (v) => ({
-  description: `${v.description} (nested)`,
-  type: { collectionType: v.type },
-}));
+export const mockNestedCollectionVariables: Record<string, Variable> = mapValues(
+  mockCollectionVariables,
+  (v) => ({
+    description: `${v.description} (nested)`,
+    type: { collectionType: v.type },
+  }),
+);
 
 export function createMockInputsInterface(variables: Record<string, Variable>): TypedInterface {
   return {

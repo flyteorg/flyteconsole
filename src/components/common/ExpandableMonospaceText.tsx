@@ -145,7 +145,12 @@ export const ExpandableMonospaceText: React.FC<ExpandableMonospaceTextProps> = (
         >
           {expandButtonText}
         </ButtonBase>
-        <Button color="primary" className={styles.copyButton} onClick={onClickCopy} variant="outlined">
+        <Button
+          color="primary"
+          className={styles.copyButton}
+          onClick={onClickCopy}
+          variant="outlined"
+        >
           <FileCopy fontSize="small" />
         </Button>
       </div>

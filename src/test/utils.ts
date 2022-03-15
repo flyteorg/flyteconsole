@@ -60,7 +60,9 @@ export function findNearestAncestorByRole(element: HTMLElement, role: string): H
     }
     parent = parent.parentElement;
   }
-  throw new Error(`Failed to find element with role ${role} in ancestor tree.\n${prettyDOM(document.body)}`);
+  throw new Error(
+    `Failed to find element with role ${role} in ancestor tree.\n${prettyDOM(document.body)}`,
+  );
 }
 
 const silentLogger: Logger = {

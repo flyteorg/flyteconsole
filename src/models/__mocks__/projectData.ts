@@ -7,7 +7,8 @@ const makeDomain: (id: string) => Domain = (id) => ({
   name: id,
 });
 
-const makeDomainList: (domainIds: string[]) => Domain[] = (domainIds) => domainIds.map((id) => makeDomain(id));
+const makeDomainList: (domainIds: string[]) => Domain[] = (domainIds) =>
+  domainIds.map((id) => makeDomain(id));
 
 export const createMockProjects: () => Project[] = () =>
   mockProjectIds.map((id) => ({

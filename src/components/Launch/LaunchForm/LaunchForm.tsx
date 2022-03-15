@@ -14,7 +14,11 @@ export const LaunchForm: React.FC<LaunchFormProps> = (props) => {
 
   return (
     <InputValueCacheContext.Provider value={inputValueCache}>
-      {isWorkflowPropsObject(props) ? <LaunchWorkflowForm {...props} /> : <LaunchTaskForm {...props} />}
+      {isWorkflowPropsObject(props) ? (
+        <LaunchWorkflowForm {...props} />
+      ) : (
+        <LaunchTaskForm {...props} />
+      )}
     </InputValueCacheContext.Provider>
   );
 };

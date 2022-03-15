@@ -24,7 +24,10 @@ const debug = createDebugLogger('@transformerWorkflowToDag');
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dynamicToMerge: any | null = null): any => {
+export const transformerWorkflowToDag = (
+  workflow: CompiledWorkflowClosure,
+  dynamicToMerge: any | null = null,
+): any => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
 
@@ -206,7 +209,10 @@ export const transformerWorkflowToDag = (workflow: CompiledWorkflowClosure, dyna
       buildDAG(dNode, subworkflow, dTypes.subworkflow);
     } else if (node.taskNode) {
       const taskNode = node.taskNode as TaskNode;
-      const taskType: CompiledTask = getTaskTypeFromCompiledNode(taskNode, workflow.tasks) as CompiledTask;
+      const taskType: CompiledTask = getTaskTypeFromCompiledNode(
+        taskNode,
+        workflow.tasks,
+      ) as CompiledTask;
       dNode = createDNode({
         compiledNode: node as CompiledNode,
         parentDNode: root,

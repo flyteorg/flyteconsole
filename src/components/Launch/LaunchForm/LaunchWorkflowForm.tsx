@@ -16,8 +16,14 @@ import { LaunchFormAdvancedInputs } from './LaunchFormAdvancedInputs';
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => {
-  const { formInputsRef, roleInputRef, advancedOptionsRef, state, service, workflowSourceSelectorState } =
-    useLaunchWorkflowFormState(props);
+  const {
+    formInputsRef,
+    roleInputRef,
+    advancedOptionsRef,
+    state,
+    service,
+    workflowSourceSelectorState,
+  } = useLaunchWorkflowFormState(props);
 
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
@@ -45,7 +51,9 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
   ].some(state.matches);
   const showLaunchPlanSelector =
     state.context.workflowVersion &&
-    ![LaunchState.LOADING_LAUNCH_PLANS, LaunchState.FAILED_LOADING_LAUNCH_PLANS].some(state.matches);
+    ![LaunchState.LOADING_LAUNCH_PLANS, LaunchState.FAILED_LOADING_LAUNCH_PLANS].some(
+      state.matches,
+    );
 
   return (
     <>

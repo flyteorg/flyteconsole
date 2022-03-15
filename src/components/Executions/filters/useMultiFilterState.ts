@@ -27,7 +27,10 @@ interface MultiFilterStateArgs<FilterKey extends string, DataType extends Filter
  * defaults to `VALUE_IN`).
  * The current state of the filter will be synced with the query string using the provided `queryStateKey` value.
  */
-export function useMultiFilterState<FilterKey extends string, DataType extends FilterOperationValue>({
+export function useMultiFilterState<
+  FilterKey extends string,
+  DataType extends FilterOperationValue,
+>({
   options,
   defaultValue,
   filterKey,
@@ -36,17 +39,15 @@ export function useMultiFilterState<FilterKey extends string, DataType extends F
   listHeader,
   queryStateKey,
 }: MultiFilterStateArgs<FilterKey, DataType>): MultiFilterState<FilterKey, DataType> {
-  const defaultMappedOptions = mapValues(options, (_, key) => defaultValue.includes(key as FilterKey)) as Record<
-    FilterKey,
-    boolean
-  >;
+  const defaultMappedOptions = mapValues(options, (_, key) =>
+    defaultValue.includes(key as FilterKey),
+  ) as Record<FilterKey, boolean>;
   const { params, setQueryStateValue } = useQueryState<Record<string, string>>();
   const queryStateValue = params[queryStateKey];
   const parsedQueryState = deserializeFromQueryState(queryStateValue);
-  const queryStateSelected = mapValues(options, (_, key) => parsedQueryState.includes(key)) as Record<
-    FilterKey,
-    boolean
-  >;
+  const queryStateSelected = mapValues(options, (_, key) =>
+    parsedQueryState.includes(key),
+  ) as Record<FilterKey, boolean>;
 
   const [selected, setSelected] = useState({
     ...defaultMappedOptions,

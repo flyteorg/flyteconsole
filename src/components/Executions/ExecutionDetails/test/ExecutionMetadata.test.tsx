@@ -33,7 +33,9 @@ describe('ExecutionMetadata', () => {
     const { getByTestId } = renderMetadata();
 
     expect(execution.spec.metadata.systemMetadata?.executionCluster).toBeDefined();
-    expect(getByTestId(clusterTestId)).toHaveTextContent(execution.spec.metadata.systemMetadata!.executionCluster!);
+    expect(getByTestId(clusterTestId)).toHaveTextContent(
+      execution.spec.metadata.systemMetadata!.executionCluster!,
+    );
   });
 
   it('shows empty string for cluster if no metadata', () => {

@@ -33,7 +33,11 @@ export interface EntityExecutionsProps {
 }
 
 /** The tab/page content for viewing a workflow's executions */
-export const EntityExecutions: React.FC<EntityExecutionsProps> = ({ id, chartIds, clearCharts }) => {
+export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
+  id,
+  chartIds,
+  clearCharts,
+}) => {
   const { domain, project, resourceType } = id;
   const styles = useStyles();
   const filtersState = useWorkflowExecutionFiltersState();
@@ -44,9 +48,16 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({ id, chartIds
     direction: SortDirection.DESCENDING,
   };
 
-  const baseFilters = React.useMemo(() => executionFilterGenerator[resourceType](id), [id, resourceType]);
+  const baseFilters = React.useMemo(
+    () => executionFilterGenerator[resourceType](id),
+    [id, resourceType],
+  );
 
-  const allFilters = compact([...baseFilters, ...filtersState.appliedFilters, archivedFilter.getFilter()]);
+  const allFilters = compact([
+    ...baseFilters,
+    ...filtersState.appliedFilters,
+    archivedFilter.getFilter(),
+  ]);
   const executions = useWorkflowExecutions(
     { domain, project },
     {

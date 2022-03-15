@@ -168,7 +168,8 @@ export function getLaunchInputId(name: string): string {
  */
 export function getUnsupportedRequiredInputs(inputs: ParsedInput[]): ParsedInput[] {
   return inputs.filter(
-    (input) => !typeIsSupported(input.typeDefinition) && input.required && input.initialValue === undefined,
+    (input) =>
+      !typeIsSupported(input.typeDefinition) && input.required && input.initialValue === undefined,
   );
 }
 

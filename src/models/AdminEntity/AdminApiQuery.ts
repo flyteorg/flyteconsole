@@ -1,4 +1,10 @@
-import { FilterOperation, FilterOperationList, FilterOperationName, Sort, SortDirection } from './types';
+import {
+  FilterOperation,
+  FilterOperationList,
+  FilterOperationName,
+  Sort,
+  SortDirection,
+} from './types';
 
 import { sortQueryKeys } from './constants';
 

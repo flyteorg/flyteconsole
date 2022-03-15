@@ -13,7 +13,10 @@ import { ResourceIdentifier } from 'models/Common/types';
 import { Execution } from 'models/Execution/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator } from './generators';
-import { getWorkflowExecutionPhaseConstants, getWorkflowExecutionTimingMS } from '../Executions/utils';
+import {
+  getWorkflowExecutionPhaseConstants,
+  getWorkflowExecutionTimingMS,
+} from '../Executions/utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
@@ -46,7 +49,9 @@ export const getExecutionTimeData = (executions: Execution[], fillSize = 100) =>
           </span>
           <span>Running time: {millisecondsToHMS(duration)}</span>
           <span>
-            Started at: {execution.closure.startedAt && formatDateUTC(timestampToDate(execution.closure.startedAt))}
+            Started at:{' '}
+            {execution.closure.startedAt &&
+              formatDateUTC(timestampToDate(execution.closure.startedAt))}
           </span>
         </div>
       ),
@@ -80,7 +85,11 @@ export const getStartExecutionTime = (executions: Execution[]) => {
  * @param id
  * @constructor
  */
-export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> = ({ id, onToggle, chartIds }) => {
+export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> = ({
+  id,
+  onToggle,
+  chartIds,
+}) => {
   const styles = useStyles();
   const { domain, project, resourceType } = id;
   const filtersState = useWorkflowExecutionFiltersState();
@@ -89,7 +98,10 @@ export const EntityExecutionsBarChart: React.FC<EntityExecutionsBarChartProps> =
     direction: SortDirection.DESCENDING,
   };
 
-  const baseFilters = React.useMemo(() => executionFilterGenerator[resourceType](id), [id, resourceType]);
+  const baseFilters = React.useMemo(
+    () => executionFilterGenerator[resourceType](id),
+    [id, resourceType],
+  );
 
   const executions = useWorkflowExecutions(
     { domain, project },

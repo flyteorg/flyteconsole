@@ -4,9 +4,13 @@ import { isObject, isPlainObject } from 'lodash';
 /** Offsets a given `Protobuf.ITimestamp` by a value in seconds. Useful
  * for creating start time relationships between parent/child or sibling executions.
  */
-export function timeStampOffset(timeStamp: Protobuf.ITimestamp, offsetSeconds: number): Protobuf.Timestamp {
+export function timeStampOffset(
+  timeStamp: Protobuf.ITimestamp,
+  offsetSeconds: number,
+): Protobuf.Timestamp {
   const output = new Protobuf.Timestamp(timeStamp);
-  output.seconds = offsetSeconds < 0 ? output.seconds.subtract(offsetSeconds) : output.seconds.add(offsetSeconds);
+  output.seconds =
+    offsetSeconds < 0 ? output.seconds.subtract(offsetSeconds) : output.seconds.add(offsetSeconds);
   return output;
 }
 

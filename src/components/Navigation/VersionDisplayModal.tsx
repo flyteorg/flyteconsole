@@ -65,13 +65,21 @@ export const VersionDisplayModal: React.FC<VersionDisplayModalProps> = ({ onClos
 
   const adminVersion =
     version && version.value && version.value.controlPlaneVersion
-      ? version.value.controlPlaneVersion.Version?.slice(1, version.value.controlPlaneVersion.Version?.indexOf('-'))
+      ? version.value.controlPlaneVersion.Version?.slice(
+          1,
+          version.value.controlPlaneVersion.Version?.indexOf('-'),
+        )
       : null;
 
   const { DISABLE_GA } = env;
 
   return (
-    <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={true} onClose={onClose}>
+    <Dialog
+      PaperProps={{ className: styles.dialog }}
+      maxWidth={false}
+      open={true}
+      onClose={onClose}
+    >
       <ClosableDialogTitle onClose={onClose}>{}</ClosableDialogTitle>
       <DialogContent className={styles.content}>
         <svg height={32} viewBox="100 162 200 175">

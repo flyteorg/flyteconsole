@@ -26,7 +26,9 @@ const RenderSchedules: React.FC<{
         const { schedule } = launchPlan.spec.entityMetadata;
         const frequencyString = getScheduleFrequencyString(schedule);
         const offsetString = getScheduleOffsetString(schedule);
-        const scheduleString = offsetString ? `${frequencyString} (offset by ${offsetString})` : frequencyString;
+        const scheduleString = offsetString
+          ? `${frequencyString} (offset by ${offsetString})`
+          : frequencyString;
         return <li key={idx}>{scheduleString}</li>;
       })}
     </ul>

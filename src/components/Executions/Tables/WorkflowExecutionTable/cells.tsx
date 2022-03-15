@@ -87,11 +87,17 @@ export function getActionsCell(
   const isArchived = isExecutionArchived(execution);
   const onClick = () => state.setSelectedIOExecution(execution);
 
-  const getArchiveIcon = (isArchived: boolean) => (isArchived ? <UnarchiveOutline /> : <ArchiveOutlined />);
+  const getArchiveIcon = (isArchived: boolean) =>
+    isArchived ? <UnarchiveOutline /> : <ArchiveOutlined />;
 
   return (
     <div className={classnames(wrapperClassName, showOnHoverClass)}>
-      <IconButton size="small" title={t('inputOutputTooltip')} onClick={onClick} className={iconClassName}>
+      <IconButton
+        size="small"
+        title={t('inputOutputTooltip')}
+        onClick={onClick}
+        className={iconClassName}
+      >
         <InputOutputIcon />
       </IconButton>
       {showLaunchPlan && (
@@ -107,7 +113,11 @@ export function getActionsCell(
         </IconButton>
       )}
       {!!onArchiveClick && (
-        <IconButton size="small" title={t('archiveActionString', isArchived)} onClick={onArchiveClick}>
+        <IconButton
+          size="small"
+          title={t('archiveActionString', isArchived)}
+          onClick={onArchiveClick}
+        >
           {getArchiveIcon(isArchived)}
         </IconButton>
       )}
@@ -145,7 +155,11 @@ export function ApprovalDoubleCell(props: ApprovalDoubleCellProps) {
         color="primary"
         className={styles.confirmationButton}
         disableElevation
-        onClick={() => onConfirmClick(isArchived ? ExecutionState.EXECUTION_ACTIVE : ExecutionState.EXECUTION_ARCHIVED)}
+        onClick={() =>
+          onConfirmClick(
+            isArchived ? ExecutionState.EXECUTION_ACTIVE : ExecutionState.EXECUTION_ARCHIVED,
+          )
+        }
       >
         {t('archiveAction', isArchived)}
       </Button>

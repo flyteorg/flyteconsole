@@ -110,7 +110,10 @@ function determineLayoutFunctions<T extends GraphInputNode>(nodes: T[]): LayoutF
  * root node of the arranged graph, which exposes functions for retrieving the
  * links and descendants.
  */
-export function layoutGraph<T extends GraphInputNode>(input: T[], config: GraphConfig): GraphLayoutResult<T> {
+export function layoutGraph<T extends GraphInputNode>(
+  input: T[],
+  config: GraphConfig,
+): GraphLayoutResult<T> {
   const {
     node: { fontSize, textPadding },
   } = config;
@@ -156,7 +159,10 @@ export function layoutGraph<T extends GraphInputNode>(input: T[], config: GraphC
   // Find the minimum scale needed to ensure nodes don't overlap
   const graphScale = findNeededHorizontalColumnScale(columns);
 
-  const maxOuterColumnWidth = Math.max(columns[0].maxWidth / 2, columns[columns.length - 1].maxWidth / 2);
+  const maxOuterColumnWidth = Math.max(
+    columns[0].maxWidth / 2,
+    columns[columns.length - 1].maxWidth / 2,
+  );
 
   // we want enough padding on the sides to account for node
   // width and enough on top to account for node height, given that

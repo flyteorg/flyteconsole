@@ -1,11 +1,19 @@
 import { Protobuf } from 'flyteidl';
-import { NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
+import {
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from 'models/Execution/enums';
 import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
 import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
 import { createMockTaskExecutionsListResponse } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import { createMockWorkflowExecutionsListResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import { long, waitFor } from 'test/utils';
-import { getNodeExecutionTimingMS, getTaskExecutionTimingMS, getWorkflowExecutionTimingMS } from '../utils';
+import {
+  getNodeExecutionTimingMS,
+  getTaskExecutionTimingMS,
+  getWorkflowExecutionTimingMS,
+} from '../utils';
 
 const getMockWorkflowExecution = () => createMockWorkflowExecutionsListResponse(1).executions[0];
 const getMockNodeExecution = () => createMockNodeExecutions(1).executions[0];

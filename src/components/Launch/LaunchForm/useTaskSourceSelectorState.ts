@@ -54,7 +54,9 @@ export function useTaskSourceSelectorState({
 }: UseTaskSourceSelectorStateArgs): TaskSourceSelectorState {
   const apiContext = useAPIContext();
   const taskSelectorOptions = useVersionSelectorOptions(taskVersionOptions);
-  const [taskVersionSearchOptions, setTaskVersionSearchOptions] = useState<SearchableSelectorOption<Identifier>[]>([]);
+  const [taskVersionSearchOptions, setTaskVersionSearchOptions] = useState<
+    SearchableSelectorOption<Identifier>[]
+  >([]);
 
   const selectedTask = useMemo(() => {
     if (!taskVersion) {
@@ -62,7 +64,9 @@ export function useTaskSourceSelectorState({
     }
     // Search both the default and search results to match our selected task
     // with the correct SearchableSelector item.
-    return [...taskSelectorOptions, ...taskVersionSearchOptions].find((option) => option.id === taskVersion.version);
+    return [...taskSelectorOptions, ...taskVersionSearchOptions].find(
+      (option) => option.id === taskVersion.version,
+    );
   }, [taskVersion, taskVersionOptions]);
 
   const onSelectTaskVersion = useMemo(

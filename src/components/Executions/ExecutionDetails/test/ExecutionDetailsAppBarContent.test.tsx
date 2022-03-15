@@ -99,7 +99,9 @@ describe('ExecutionDetailsAppBarContent', () => {
   it('renders the workflow name in the app bar content', async () => {
     const { getByText } = renderContent();
     const { project, domain } = execution.id;
-    await waitFor(() => expect(getByText(`${project}/${domain}/${sourceId.name}/`)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(getByText(`${project}/${domain}/${sourceId.name}/`)).toBeInTheDocument(),
+    );
   });
 
   describe('for single task executions', () => {
@@ -121,7 +123,9 @@ describe('ExecutionDetailsAppBarContent', () => {
     it('renders the task name in the app bar content', async () => {
       const { getByText } = renderContent();
       const { project, domain } = execution.id;
-      await waitFor(() => expect(getByText(`${project}/${domain}/${sourceId.name}/`)).toBeInTheDocument());
+      await waitFor(() =>
+        expect(getByText(`${project}/${domain}/${sourceId.name}/`)).toBeInTheDocument(),
+      );
     });
   });
 });

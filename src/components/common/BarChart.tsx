@@ -69,7 +69,13 @@ interface BarChartProps {
  * @param color
  * @constructor
  */
-const BarChartItem: React.FC<BarChartItemProps> = ({ value, color, isSelected, tooltip, onClick }) => {
+const BarChartItem: React.FC<BarChartItemProps> = ({
+  value,
+  color,
+  isSelected,
+  tooltip,
+  onClick,
+}) => {
   const styles = useStyles();
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
@@ -154,7 +160,9 @@ export const BarChart: React.FC<BarChartProps> = ({ chartIds, data, startDate, o
             tooltip={item.tooltip}
             onClick={handleClickItem(item)}
             key={`bar-chart-item-${index}`}
-            isSelected={chartIds.length === 0 ? true : item.metadata && chartIds.includes(item.metadata.name)}
+            isSelected={
+              chartIds.length === 0 ? true : item.metadata && chartIds.includes(item.metadata.name)
+            }
           />
         ))}
       </div>

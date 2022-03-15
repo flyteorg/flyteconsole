@@ -1,4 +1,11 @@
-import { Button, FormControl, FormLabel, makeStyles, OutlinedInput, Theme } from '@material-ui/core';
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  makeStyles,
+  OutlinedInput,
+  Theme,
+} from '@material-ui/core';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -21,10 +28,16 @@ export interface SearchInputFormProps {
 /** Form content for rendering a header and search input. The value is applied
  * on submission of the form.
  */
-export const SearchInputForm: React.FC<SearchInputFormProps> = ({ label, placeholder, onChange, defaultValue }) => {
+export const SearchInputForm: React.FC<SearchInputFormProps> = ({
+  label,
+  placeholder,
+  onChange,
+  defaultValue,
+}) => {
   const [value, setValue] = React.useState(defaultValue);
   const styles = useStyles();
-  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = ({ target: { value } }) => setValue(value);
+  const onInputChange: React.ChangeEventHandler<HTMLInputElement> = ({ target: { value } }) =>
+    setValue(value);
 
   const onSubmit: React.FormEventHandler = (event) => {
     event.preventDefault();

@@ -23,12 +23,21 @@ const TaskExecutionsListContent: React.FC<{
 }> = ({ taskExecutions }) => {
   const styles = useStyles();
   if (!taskExecutions.length) {
-    return <NonIdealState className={styles.noExecutionsMessage} size="small" title={noExecutionsFoundString} />;
+    return (
+      <NonIdealState
+        className={styles.noExecutionsMessage}
+        size="small"
+        title={noExecutionsFoundString}
+      />
+    );
   }
   return (
     <>
       {taskExecutions.map((taskExecution) => (
-        <TaskExecutionsListItem key={getUniqueTaskExecutionName(taskExecution)} taskExecution={taskExecution} />
+        <TaskExecutionsListItem
+          key={getUniqueTaskExecutionName(taskExecution)}
+          taskExecution={taskExecution}
+        />
       ))}
     </>
   );

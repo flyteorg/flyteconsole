@@ -5,31 +5,54 @@ import {
   terminalNodeExecutionStates,
   terminalTaskExecutionStates,
 } from 'models/Execution/constants';
-import { ExecutionState, NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
-import { BaseExecutionClosure, Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+import {
+  ExecutionState,
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from 'models/Execution/enums';
+import {
+  BaseExecutionClosure,
+  Execution,
+  NodeExecution,
+  TaskExecution,
+} from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
-import { nodeExecutionPhaseConstants, taskExecutionPhaseConstants, workflowExecutionPhaseConstants } from './constants';
+import {
+  nodeExecutionPhaseConstants,
+  taskExecutionPhaseConstants,
+  workflowExecutionPhaseConstants,
+} from './constants';
 import { ExecutionPhaseConstants, ParentNodeExecution } from './types';
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
  */
-export function getWorkflowExecutionPhaseConstants(phase: WorkflowExecutionPhase): ExecutionPhaseConstants {
-  return workflowExecutionPhaseConstants[phase] || workflowExecutionPhaseConstants[WorkflowExecutionPhase.UNDEFINED];
+export function getWorkflowExecutionPhaseConstants(
+  phase: WorkflowExecutionPhase,
+): ExecutionPhaseConstants {
+  return (
+    workflowExecutionPhaseConstants[phase] ||
+    workflowExecutionPhaseConstants[WorkflowExecutionPhase.UNDEFINED]
+  );
 }
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
  */
 export function getNodeExecutionPhaseConstants(phase: NodeExecutionPhase): ExecutionPhaseConstants {
-  return nodeExecutionPhaseConstants[phase] || nodeExecutionPhaseConstants[NodeExecutionPhase.UNDEFINED];
+  return (
+    nodeExecutionPhaseConstants[phase] || nodeExecutionPhaseConstants[NodeExecutionPhase.UNDEFINED]
+  );
 }
 
 /** Given an execution phase, returns a set of constants (i.e. color, display
  * string) used to represent it in various UI components.
  */
 export function getTaskExecutionPhaseConstants(phase: TaskExecutionPhase): ExecutionPhaseConstants {
-  return taskExecutionPhaseConstants[phase] || taskExecutionPhaseConstants[TaskExecutionPhase.UNDEFINED];
+  return (
+    taskExecutionPhaseConstants[phase] || taskExecutionPhaseConstants[TaskExecutionPhase.UNDEFINED]
+  );
 }
 
 /** Determines if a workflow execution can be considered finalized and will not
@@ -77,7 +100,9 @@ function getExecutionTimingMS({
 
   const createdAtDate = timestampToDate(createdAt);
   const durationMS =
-    isTerminal && duration != null ? durationToMilliseconds(duration) : Date.now() - createdAtDate.getTime();
+    isTerminal && duration != null
+      ? durationToMilliseconds(duration)
+      : Date.now() - createdAtDate.getTime();
   const queuedMS = timestampToDate(startedAt).getTime() - createdAtDate.getTime();
 
   return { duration: durationMS, queued: queuedMS };

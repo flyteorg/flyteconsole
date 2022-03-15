@@ -65,10 +65,18 @@ function generate() {
               nodes: [
                 {
                   ...taskNodeIds(pythonNodeId, pythonTask),
-                  inputs: [bindingFromNode(variableNames.basicString, startNodeId, variableNames.basicString)],
+                  inputs: [
+                    bindingFromNode(
+                      variableNames.basicString,
+                      startNodeId,
+                      variableNames.basicString,
+                    ),
+                  ],
                 },
               ],
-              outputs: [bindingFromNode(variableNames.basicString, pythonNodeId, variableNames.basicString)],
+              outputs: [
+                bindingFromNode(variableNames.basicString, pythonNodeId, variableNames.basicString),
+              ],
             },
           },
           tasks: [pythonTask.closure.compiledTask],

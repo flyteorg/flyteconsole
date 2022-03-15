@@ -11,7 +11,11 @@ export interface TaskDetailsRouteParams {
 export type TaskDetailsProps = TaskDetailsRouteParams;
 
 /** The view component for the Task landing page */
-export const TaskDetailsContainer: React.FC<TaskDetailsRouteParams> = ({ projectId, domainId, taskName }) => {
+export const TaskDetailsContainer: React.FC<TaskDetailsRouteParams> = ({
+  projectId,
+  domainId,
+  taskName,
+}) => {
   const id = React.useMemo<ResourceIdentifier>(
     () => ({
       resourceType: ResourceType.TASK,

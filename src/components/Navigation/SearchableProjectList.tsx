@@ -92,7 +92,10 @@ export interface SearchableProjectListProps {
 /** Given a list of Projects, renders a searchable list of items which
  * navigate to the details page for the project on click
  */
-export const SearchableProjectList: React.FC<SearchableProjectListProps> = ({ onProjectSelected, projects }) => {
+export const SearchableProjectList: React.FC<SearchableProjectListProps> = ({
+  onProjectSelected,
+  projects,
+}) => {
   const styles = useStyles();
 
   const renderItems = (results: SearchResult<Project>[]) => (

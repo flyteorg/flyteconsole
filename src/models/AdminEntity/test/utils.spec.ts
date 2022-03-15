@@ -1,5 +1,10 @@
 import { env } from 'common/env';
-import { adminApiUrl, createPaginationTransformer, decodeProtoResponse, encodeProtoPayload } from '../utils';
+import {
+  adminApiUrl,
+  createPaginationTransformer,
+  decodeProtoResponse,
+  encodeProtoPayload,
+} from '../utils';
 
 jest.mock('common/env', () => ({
   env: jest.requireActual('common/env').env,

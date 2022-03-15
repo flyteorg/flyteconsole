@@ -60,10 +60,10 @@ const RenderFormInputs: React.FC<{
   );
 };
 
-export const LaunchFormInputsImpl: React.RefForwardingComponent<LaunchFormInputsRef, LaunchFormInputsProps> = (
-  { state, variant },
-  ref,
-) => {
+export const LaunchFormInputsImpl: React.RefForwardingComponent<
+  LaunchFormInputsRef,
+  LaunchFormInputsProps
+> = ({ state, variant }, ref) => {
   const { parsedInputs, unsupportedRequiredInputs, showErrors } = state.context;
   const { getValues, inputs, validate } = useFormInputsState(parsedInputs);
   React.useImperativeHandle(ref, () => ({

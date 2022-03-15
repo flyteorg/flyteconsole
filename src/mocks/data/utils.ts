@@ -24,7 +24,11 @@ export function taskNodeIds(id: string, task: Task): TaskNodeIdsResult {
 }
 
 /** Generates a binding indicating consumption of outputs from an upstream node. */
-export function bindingFromNode(inputName: string, upstreamNodeId: string, upstreamInputName: string): Binding {
+export function bindingFromNode(
+  inputName: string,
+  upstreamNodeId: string,
+  upstreamInputName: string,
+): Binding {
   return {
     var: inputName,
     binding: {
@@ -75,7 +79,10 @@ export function makeNodeExecutionOutputUri({
 }
 
 /** Combines parent `Execution` id and `nodeId` into a `NodeExecutionIdentifier` */
-export function nodeExecutionId(executionId: WorkflowExecutionIdentifier, nodeId: string): NodeExecutionIdentifier {
+export function nodeExecutionId(
+  executionId: WorkflowExecutionIdentifier,
+  nodeId: string,
+): NodeExecutionIdentifier {
   return {
     nodeId,
     executionId: { ...executionId },
@@ -95,7 +102,11 @@ export function sampleLogs(): TaskLog[] {
 /** Combines the needed fields from a parent `NodeExecution`, `Task` and `retryAttempt`
  * into a `TaskExecutionIdentifier`.
  */
-export function taskExecutionId(nodeExecution: NodeExecution, task: Task, retryAttempt = 0): TaskExecutionIdentifier {
+export function taskExecutionId(
+  nodeExecution: NodeExecution,
+  task: Task,
+  retryAttempt = 0,
+): TaskExecutionIdentifier {
   return {
     retryAttempt,
     nodeExecutionId: { ...nodeExecution.id },

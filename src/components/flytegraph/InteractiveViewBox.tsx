@@ -49,7 +49,11 @@ const defaultDragData: DragData = { xPos: 0, yPos: 0 };
 /** Translates a ViewBoxRect by a given x/y, clamping it within the original
  * (natural) dimensions
  */
-function translateViewBox(viewBox: ViewBoxRect, translateX: number, translateY: number): ViewBoxRect {
+function translateViewBox(
+  viewBox: ViewBoxRect,
+  translateX: number,
+  translateY: number,
+): ViewBoxRect {
   const x = Math.min(Math.max(0, viewBox.x - translateX), viewBox.naturalWidth - viewBox.width);
   const y = Math.min(Math.max(0, viewBox.y - translateY), viewBox.naturalHeight - viewBox.height);
   return { ...viewBox, x, y };

@@ -25,10 +25,10 @@ const RoleDescription = () => (
   </>
 );
 
-export const LaunchRoleInputImpl: React.RefForwardingComponent<LaunchRoleInputRef, LaunchRoleInputProps> = (
-  props,
-  ref,
-) => {
+export const LaunchRoleInputImpl: React.RefForwardingComponent<
+  LaunchRoleInputRef,
+  LaunchRoleInputProps
+> = (props, ref) => {
   const [state, setState] = React.useState({
     [AuthRoleTypes.IAM]: '',
     [AuthRoleTypes.k8]: '',

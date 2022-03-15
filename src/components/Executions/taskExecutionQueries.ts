@@ -1,7 +1,11 @@
 import { QueryInput, QueryType } from 'components/data/types';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { getTaskExecution, listTaskExecutions } from 'models/Execution/api';
-import { NodeExecutionIdentifier, TaskExecution, TaskExecutionIdentifier } from 'models/Execution/types';
+import {
+  NodeExecutionIdentifier,
+  TaskExecution,
+  TaskExecutionIdentifier,
+} from 'models/Execution/types';
 import { QueryClient } from 'react-query';
 
 /** A query for fetching a single `TaskExecution` by id. */
@@ -37,6 +41,10 @@ export function makeTaskExecutionListQuery(
 }
 
 /** Composable fetch function which wraps `makeTaskExecutionListQuery` */
-export function fetchTaskExecutionList(queryClient: QueryClient, id: NodeExecutionIdentifier, config?: RequestConfig) {
+export function fetchTaskExecutionList(
+  queryClient: QueryClient,
+  id: NodeExecutionIdentifier,
+  config?: RequestConfig,
+) {
   return queryClient.fetchQuery(makeTaskExecutionListQuery(queryClient, id, config));
 }

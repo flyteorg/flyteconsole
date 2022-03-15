@@ -38,7 +38,9 @@ export function useWorkflowExecutionQuery(id: WorkflowExecutionIdentifier) {
 }
 
 /** Fetches the signed URLs for NodeExecution data (inputs/outputs) */
-export function useWorkflowExecutionData(id: WorkflowExecutionIdentifier): FetchableData<ExecutionData> {
+export function useWorkflowExecutionData(
+  id: WorkflowExecutionIdentifier,
+): FetchableData<ExecutionData> {
   const { getExecutionData } = useAPIContext();
   return useFetchableData<ExecutionData, WorkflowExecutionIdentifier>(
     {
@@ -54,7 +56,10 @@ export function useWorkflowExecutionData(id: WorkflowExecutionIdentifier): Fetch
  * This function is meant to be consumed by hooks which are composing data.
  * If you're calling it from a component, consider using `useTaskExecutions` instead.
  */
-export const fetchWorkflowExecutionInputs = async (execution: Execution, apiContext: APIContextValue) => {
+export const fetchWorkflowExecutionInputs = async (
+  execution: Execution,
+  apiContext: APIContextValue,
+) => {
   const { getExecutionData, getRemoteLiteralMap } = apiContext;
   if (execution.closure.computedInputs) {
     return execution.closure.computedInputs;

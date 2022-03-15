@@ -32,8 +32,18 @@ import {
 import { LaunchForm } from '../LaunchForm';
 import { AuthRoleTypes, LaunchFormProps, TaskInitialLaunchParameters } from '../types';
 import { createInputCacheKey, getInputDefintionForLiteralType } from '../utils';
-import { createMockInputsInterface, mockSimpleVariables, simpleVariableDefaults } from '../__mocks__/mockInputs';
-import { binaryInputName, floatInputName, iamRoleString, integerInputName, stringInputName } from './constants';
+import {
+  createMockInputsInterface,
+  mockSimpleVariables,
+  simpleVariableDefaults,
+} from '../__mocks__/mockInputs';
+import {
+  binaryInputName,
+  floatInputName,
+  iamRoleString,
+  integerInputName,
+  stringInputName,
+} from './constants';
 import { createMockObjects } from './utils';
 
 describe('LaunchForm: Task', () => {
@@ -89,24 +99,28 @@ describe('LaunchForm: Task', () => {
     taskId = mockTask.id;
     mockCreateWorkflowExecution = jest.fn();
     // Return our mock inputs for any version requested
-    mockGetTask = jest.fn().mockImplementation((id) => Promise.resolve(createMockTaskWithInputs(id)));
+    mockGetTask = jest
+      .fn()
+      .mockImplementation((id) => Promise.resolve(createMockTaskWithInputs(id)));
 
     // For workflow/task list endpoints: If the scope has a filter, the calling
     // code is searching for a specific item. So we'll return a single-item
     // list containing it.
-    mockListTasks = jest.fn().mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
-      if (filter && filter[0].key === 'version') {
-        const task = { ...mockTaskVersions[0] };
-        task.id = {
-          ...scope,
-          version: filter[0].value,
-        } as Identifier;
-        return Promise.resolve({
-          entities: [task],
-        });
-      }
-      return Promise.resolve({ entities: mockTaskVersions });
-    });
+    mockListTasks = jest
+      .fn()
+      .mockImplementation((scope: Partial<Identifier>, { filter }: RequestConfig) => {
+        if (filter && filter[0].key === 'version') {
+          const task = { ...mockTaskVersions[0] };
+          task.id = {
+            ...scope,
+            version: filter[0].value,
+          } as Identifier;
+          return Promise.resolve({
+            entities: [task],
+          });
+        }
+        return Promise.resolve({ entities: mockTaskVersions });
+      });
   };
 
   const renderForm = (props?: Partial<LaunchFormProps>) => {
@@ -126,7 +140,9 @@ describe('LaunchForm: Task', () => {
   };
 
   const getSubmitButton = (container: HTMLElement) => {
-    const buttons = queryAllByRole(container, 'button').filter((el) => el.getAttribute('type') === 'submit');
+    const buttons = queryAllByRole(container, 'button').filter(
+      (el) => el.getAttribute('type') === 'submit',
+    );
     expect(buttons.length).toBe(1);
     return buttons[0];
   };
@@ -184,7 +200,8 @@ describe('LaunchForm: Task', () => {
 
   describe('With Inputs', () => {
     beforeEach(() => {
-      const { simpleString, simpleInteger, simpleFloat, simpleBoolean } = cloneDeep(mockSimpleVariables);
+      const { simpleString, simpleInteger, simpleFloat, simpleBoolean } =
+        cloneDeep(mockSimpleVariables);
       // Only taking supported variable types since they are all required.
       variables = {
         simpleString,
@@ -376,9 +393,9 @@ describe('LaunchForm: Task', () => {
             initialParameters,
           });
           await waitFor(() =>
-            expect(getByLabelText(AuthRoleStrings[AuthRoleTypes.IAM].inputLabel, { exact: false })).toHaveValue(
-              initialValues.iam,
-            ),
+            expect(
+              getByLabelText(AuthRoleStrings[AuthRoleTypes.IAM].inputLabel, { exact: false }),
+            ).toHaveValue(initialValues.iam),
           );
         });
 
@@ -387,9 +404,9 @@ describe('LaunchForm: Task', () => {
             initialParameters,
           });
           await waitFor(() =>
-            expect(getByLabelText(AuthRoleStrings[AuthRoleTypes.k8].inputLabel, { exact: false })).toHaveValue(
-              initialValues.k8,
-            ),
+            expect(
+              getByLabelText(AuthRoleStrings[AuthRoleTypes.k8].inputLabel, { exact: false }),
+            ).toHaveValue(initialValues.k8),
           );
         });
       });
@@ -416,7 +433,9 @@ describe('LaunchForm: Task', () => {
         };
         const { getByLabelText } = renderForm({ initialParameters });
         await waitFor(() =>
-          expect(getByLabelText(formStrings.taskVersion)).toHaveValue(mockTaskVersions[2].id.version),
+          expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
+            mockTaskVersions[2].id.version,
+          ),
         );
       });
 
@@ -433,7 +452,9 @@ describe('LaunchForm: Task', () => {
         const items = await waitFor(() => getAllByRole(versionDiv, 'menuitem'));
 
         const expectedVersion = mockTaskVersions[2].id.version;
-        expect(items.filter((item) => item.textContent && item.textContent.includes(expectedVersion))).toHaveLength(1);
+        expect(
+          items.filter((item) => item.textContent && item.textContent.includes(expectedVersion)),
+        ).toHaveLength(1);
       });
 
       it('should fall back to the first item in the list if preferred version is not found', async () => {
@@ -453,7 +474,9 @@ describe('LaunchForm: Task', () => {
         };
         const { getByLabelText } = renderForm({ initialParameters });
         await waitFor(() =>
-          expect(getByLabelText(formStrings.taskVersion)).toHaveValue(mockTaskVersions[0].id.version),
+          expect(getByLabelText(formStrings.taskVersion)).toHaveValue(
+            mockTaskVersions[0].id.version,
+          ),
         );
       });
 
@@ -471,7 +494,9 @@ describe('LaunchForm: Task', () => {
         const { getByLabelText } = renderForm({
           initialParameters: { values },
         });
-        await waitFor(() => expect(getByLabelText(stringInputName, { exact: false })).toHaveValue(stringValue));
+        await waitFor(() =>
+          expect(getByLabelText(stringInputName, { exact: false })).toHaveValue(stringValue),
+        );
       });
 
       it('loads preferred task version when it does not exist in the list of suggestions', async () => {
@@ -481,7 +506,9 @@ describe('LaunchForm: Task', () => {
           taskId: missingTask.id,
         };
         const { getByLabelText } = renderForm({ initialParameters });
-        await waitFor(() => expect(getByLabelText(formStrings.taskVersion)).toHaveValue(missingTask.id.version));
+        await waitFor(() =>
+          expect(getByLabelText(formStrings.taskVersion)).toHaveValue(missingTask.id.version),
+        );
       });
 
       it('should select contents of task version input on focus', async () => {
@@ -513,7 +540,9 @@ describe('LaunchForm: Task', () => {
         });
 
         const { project, domain, name } = mockTaskVersions[2].id;
-        await waitFor(() => expect(mockListTasks).toHaveBeenCalledWith({ project, domain, name }, expect.anything()));
+        await waitFor(() =>
+          expect(mockListTasks).toHaveBeenCalledWith({ project, domain, name }, expect.anything()),
+        );
       });
     });
 

@@ -45,7 +45,8 @@ describe('timestampToDate', () => {
   ];
 
   cases.forEach(([input, expected]) =>
-    it(`should return ${expected} for input ${obj(input)}`, () => expect(timestampToDate(input)).toEqual(expected)),
+    it(`should return ${expected} for input ${obj(input)}`, () =>
+      expect(timestampToDate(input)).toEqual(expected)),
   );
 });
 
@@ -58,7 +59,8 @@ describe('dateToTimestamp', () => {
   ];
 
   cases.forEach(([input, expected]) =>
-    it(`should return ${obj(expected)} for input ${input} }`, () => expect(dateToTimestamp(input)).toEqual(expected)),
+    it(`should return ${obj(expected)} for input ${input} }`, () =>
+      expect(dateToTimestamp(input)).toEqual(expected)),
   );
 });
 

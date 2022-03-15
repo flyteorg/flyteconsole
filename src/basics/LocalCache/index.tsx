@@ -11,7 +11,9 @@ export function ClearLocalCache() {
 const getDefault = (setting: LocalCacheItem) => {
   const result = defaultLocalCacheConfig[setting];
   if (!result) {
-    console.error(`ERROR: LocalCacheItem ${setting} doesn't have default value provided in defaultLocalCacheConfig`);
+    console.error(
+      `ERROR: LocalCacheItem ${setting} doesn't have default value provided in defaultLocalCacheConfig`,
+    );
     return null;
   }
   return JSON.parse(result);

@@ -2,7 +2,12 @@ import { env } from 'common/env';
 import { createDebugLogger } from 'common/log';
 import { createLocalURL, ensureSlashPrefixed } from 'common/utils';
 import { apiPrefix } from './constants';
-import { AdminEntityTransformer, DecodableType, EncodableType, PaginatedEntityResponse } from './types';
+import {
+  AdminEntityTransformer,
+  DecodableType,
+  EncodableType,
+  PaginatedEntityResponse,
+} from './types';
 
 const debug = createDebugLogger('adminEntity');
 const loginEndpoint = '/login';
@@ -22,7 +27,9 @@ export function adminApiUrl(url: string) {
  * to the current location after completing the flow.
  */
 export function getLoginUrl(redirectUrl: string = window.location.href) {
-  const baseUrl = env.ADMIN_API_URL ? `${env.ADMIN_API_URL}${loginEndpoint}` : createLocalURL(loginEndpoint);
+  const baseUrl = env.ADMIN_API_URL
+    ? `${env.ADMIN_API_URL}${loginEndpoint}`
+    : createLocalURL(loginEndpoint);
   return `${baseUrl}?${redirectParam}=${redirectUrl}`;
 }
 

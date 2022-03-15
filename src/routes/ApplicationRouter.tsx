@@ -26,8 +26,15 @@ export const ApplicationRouter: React.FC = () => (
           noMargin: true,
         })}
       />
-      <Route path={Routes.TaskDetails.path} component={withSideNavigation(components.taskDetails)} />
-      <Route exact path={Routes.WorkflowDetails.path} component={withSideNavigation(components.workflowDetails)} />
+      <Route
+        path={Routes.TaskDetails.path}
+        component={withSideNavigation(components.taskDetails)}
+      />
+      <Route
+        exact
+        path={Routes.WorkflowDetails.path}
+        component={withSideNavigation(components.workflowDetails)}
+      />
       <Route
         path={Routes.WorkflowVersionDetails.path}
         component={withSideNavigation(components.workflowVersionDetails)}
@@ -38,7 +45,11 @@ export const ApplicationRouter: React.FC = () => (
           noMargin: true,
         })}
       />
-      <Route path={Routes.SelectProject.path} exact={true} component={withContentContainer(components.selectProject)} />
+      <Route
+        path={Routes.SelectProject.path}
+        exact={true}
+        component={withContentContainer(components.selectProject)}
+      />
       <Route component={withContentContainer(components.notFound)} />
     </Switch>
   </>

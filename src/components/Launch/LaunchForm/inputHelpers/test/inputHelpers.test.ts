@@ -68,7 +68,9 @@ describe('literalToInputValue', () => {
 
   describe('Collections', () => {
     literalToInputTestCases.map(([typeDefinition, input, output]) => {
-      it(`should correctly convert collection of ${typeDefinition.type}: ${stringifyValue(input)}`, () => {
+      it(`should correctly convert collection of ${typeDefinition.type}: ${stringifyValue(
+        input,
+      )}`, () => {
         const collection: Core.ILiteral = {
           collection: {
             // Duplicate it to test comma separation
@@ -77,7 +79,10 @@ describe('literalToInputValue', () => {
         };
         const stringifiedValue = collectionChildToString(typeDefinition.type, output);
         const expectedString = `[${stringifiedValue},${stringifiedValue}]`;
-        const result = literalToInputValue(collectionInputTypeDefinition(typeDefinition), collection);
+        const result = literalToInputValue(
+          collectionInputTypeDefinition(typeDefinition),
+          collection,
+        );
         expect(result).toEqual(expectedString);
       });
     });
@@ -95,7 +100,9 @@ describe('literalToInputValue', () => {
         type: InputType.None,
       };
 
-      expect(literalToInputValue(collectionInputTypeDefinition(typeDefinition), collection)).toEqual('[]');
+      expect(
+        literalToInputValue(collectionInputTypeDefinition(typeDefinition), collection),
+      ).toEqual('[]');
     });
   });
 
@@ -114,7 +121,9 @@ describe('literalToInputValue', () => {
 describe('inputToLiteral', () => {
   describe('Scalars', () => {
     literalTestCases.map(([typeDefinition, input, output]) => {
-      it(`should correctly convert ${typeDefinition.type}: ${stringifyValue(input)} (${typeof input})`, () =>
+      it(`should correctly convert ${typeDefinition.type}: ${stringifyValue(
+        input,
+      )} (${typeof input})`, () =>
         expect(inputToLiteral(makeSimpleInput(typeDefinition, input))).toEqual(output));
     });
   });
@@ -156,7 +165,9 @@ describe('inputToLiteral', () => {
       it(`should correctly convert nested collection of type ${
         typeDefinition.type
       }: ${nestedCollectionValue} (${typeof input})`, () => {
-        const result = inputToLiteral(makeNestedCollectionInput(typeDefinition, nestedCollectionValue));
+        const result = inputToLiteral(
+          makeNestedCollectionInput(typeDefinition, nestedCollectionValue),
+        );
         expect(result.collection!.literals![0].collection!.literals![0]).toEqual(output);
       });
     });
@@ -193,7 +204,9 @@ describe('inputToLiteral', () => {
   describe('Unsupported Types', () => {
     unsupportedTypes.map((typeDefinition) =>
       it(`should return empty value for type: ${typeDefinition.type}`, () => {
-        expect(inputToLiteral(makeSimpleInput(typeDefinition, '')).scalar).toEqual({ noneType: {} });
+        expect(inputToLiteral(makeSimpleInput(typeDefinition, '')).scalar).toEqual({
+          noneType: {},
+        });
       }),
     );
   });

@@ -73,7 +73,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const isExpandable = childGroups.length > 0;
   const tableStyles = useExecutionTableStyles();
 
-  const selected = state.selectedExecution ? isEqual(state.selectedExecution, nodeExecution) : false;
+  const selected = state.selectedExecution
+    ? isEqual(state.selectedExecution, nodeExecution)
+    : false;
   const { error } = nodeExecution.closure;
 
   const expanderContent = childGroupsQuery.error ? (
@@ -82,7 +84,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     <RowExpander expanded={expanded} onClick={toggleExpanded} />
   ) : null;
 
-  const errorContent = error ? <ExpandableExecutionError error={error} abortMetadata={abortMetadata} /> : null;
+  const errorContent = error ? (
+    <ExpandableExecutionError error={error} abortMetadata={abortMetadata} />
+  ) : null;
 
   const extraContent = expanded ? (
     <div
@@ -90,7 +94,11 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         [tableStyles.borderBottom]: level === 0,
       })}
     >
-      <NodeExecutionChildren abortMetadata={abortMetadata} childGroups={childGroups} level={level + 1} />
+      <NodeExecutionChildren
+        abortMetadata={abortMetadata}
+        childGroups={childGroups}
+        level={level + 1}
+      />
     </div>
   ) : null;
 
@@ -110,7 +118,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         style={rowContentStyle}
       >
         <div className={tableStyles.rowColumns}>
-          <div className={classnames(tableStyles.rowColumn, tableStyles.expander)}>{expanderContent}</div>
+          <div className={classnames(tableStyles.rowColumn, tableStyles.expander)}>
+            {expanderContent}
+          </div>
           {columns.map(({ className, key: columnKey, cellRenderer }) => (
             <div key={columnKey} className={classnames(tableStyles.rowColumn, className)}>
               {cellRenderer({

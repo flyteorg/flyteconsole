@@ -7,7 +7,10 @@ import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import { extractLiteralWithCheck } from './utils';
 
 function fromLiteral(literal: Core.ILiteral): InputValue {
-  const value = extractLiteralWithCheck<Protobuf.IDuration>(literal, primitiveLiteralPaths.scalarDuration);
+  const value = extractLiteralWithCheck<Protobuf.IDuration>(
+    literal,
+    primitiveLiteralPaths.scalarDuration,
+  );
   return durationToMilliseconds(value);
 }
 

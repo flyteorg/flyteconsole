@@ -1,4 +1,11 @@
-import { fireEvent, getByText, render, RenderResult, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import {
+  fireEvent,
+  getByText,
+  render,
+  RenderResult,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import * as React from 'react';
 import { labels } from '../constants';
 import { MoreOptionsMenu, MoreOptionsMenuItem } from '../MoreOptionsMenu';

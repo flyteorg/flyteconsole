@@ -1,4 +1,7 @@
-import { collectionInputTypeDefinition, nestedCollectionInputTypeDefinition } from '../../__mocks__/utils';
+import {
+  collectionInputTypeDefinition,
+  nestedCollectionInputTypeDefinition,
+} from '../../__mocks__/utils';
 import { InputTypeDefinition } from '../../types';
 import { typeIsSupported } from '../utils';
 import { supportedPrimitives, unsupportedTypes } from './testCases';

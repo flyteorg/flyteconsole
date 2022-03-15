@@ -18,9 +18,15 @@ export interface ExecutionWorkflowGraphProps {
 }
 
 /** Wraps a WorkflowGraph, customizing it to also show execution statuses */
-export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({ nodeExecutions, workflowId }) => {
+export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
+  nodeExecutions,
+  workflowId,
+}) => {
   const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(useQueryClient(), workflowId));
-  const nodeExecutionsById = React.useMemo(() => keyBy(nodeExecutions, 'id.nodeId'), [nodeExecutions]);
+  const nodeExecutionsById = React.useMemo(
+    () => keyBy(nodeExecutions, 'id.nodeId'),
+    [nodeExecutions],
+  );
 
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
   const onNodeSelectionChanged = (newSelection: string[]) => {
@@ -63,7 +69,10 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({ 
       </NodeExecutionsContext.Provider>
       <DetailsPanel open={selectedExecution !== null} onClose={onCloseDetailsPanel}>
         {selectedExecution && (
-          <NodeExecutionDetailsPanelContent onClose={onCloseDetailsPanel} nodeExecutionId={selectedExecution} />
+          <NodeExecutionDetailsPanelContent
+            onClose={onCloseDetailsPanel}
+            nodeExecutionId={selectedExecution}
+          />
         )}
       </DetailsPanel>
     </>

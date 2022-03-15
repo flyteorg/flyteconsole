@@ -12,7 +12,8 @@ export const useChartDurationData = (props: DataProps) => {
   const colorData = React.useMemo(() => {
     const definedExecutions = props.nodes.map(
       ({ execution }) =>
-        getNodeExecutionPhaseConstants(execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED).badgeColor,
+        getNodeExecutionPhaseConstants(execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED)
+          .badgeColor,
     );
     return definedExecutions;
   }, [props.nodes]);
@@ -33,7 +34,9 @@ export const useChartDurationData = (props: DataProps) => {
         const absoluteDuration =
           startedTime -
           startedAt.getTime() +
-          (exec?.closure.duration ? durationToMilliseconds(exec?.closure.duration) : Date.now() - startedTime);
+          (exec?.closure.duration
+            ? durationToMilliseconds(exec?.closure.duration)
+            : Date.now() - startedTime);
         if (absoluteDuration > undefinedStart) {
           undefinedStart = absoluteDuration;
         }

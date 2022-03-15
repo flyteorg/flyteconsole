@@ -18,7 +18,10 @@ const nodeIds = {
 const subWorkflowTaskName = `${topWorkflowName}.LaunchSubworkflowTask`;
 
 function generate() {
-  const launchSubWorkflowTask = generateTask({ name: subWorkflowTaskName }, { template: { type: 'dynamic-task' } });
+  const launchSubWorkflowTask = generateTask(
+    { name: subWorkflowTaskName },
+    { template: { type: 'dynamic-task' } },
+  );
   const topWorkflow = generateWorkflow(
     { name: topWorkflowName },
     {
@@ -63,7 +66,9 @@ function generate() {
     },
   });
 
-  const topTaskExecution = generateTaskExecution(topNodeExecution, launchSubWorkflowTask, { isParent: true });
+  const topTaskExecution = generateTaskExecution(topNodeExecution, launchSubWorkflowTask, {
+    isParent: true,
+  });
 
   const subWorkflowPythonTask = generateTask(
     { name: `${topWorkflowName}.PythonTask` },

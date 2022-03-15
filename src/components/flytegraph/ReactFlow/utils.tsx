@@ -147,7 +147,10 @@ export const getNestedContainerStyle = (nodeExecutionStatus) => {
   return style;
 };
 
-export const getGraphNodeStyle = (type: dTypes, nodeExecutionStatus?: NodeExecutionPhase): CSSProperties => {
+export const getGraphNodeStyle = (
+  type: dTypes,
+  nodeExecutionStatus?: NodeExecutionPhase,
+): CSSProperties => {
   /** Base styles for displaying graph nodes */
   const baseStyle = {
     boxShadow: '1px 3px 5px rgba(0,0,0,.2)',
@@ -314,7 +317,12 @@ export const computeChildNodePositions = ({ nodes, edges, direction = 'LR' }: Po
  * @param PositionProps
  * @returns
  */
-export const computeRootNodePositions = ({ nodes, edges, parentMap, direction = 'LR' }: PositionProps) => {
+export const computeRootNodePositions = ({
+  nodes,
+  edges,
+  parentMap,
+  direction = 'LR',
+}: PositionProps) => {
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
   dagreGraph.setGraph({
@@ -444,7 +452,11 @@ export const getPositionedNodes = (nodes, edges, currentNestedView, direction = 
       direction: direction,
     });
     let nestedDepth = 1;
-    if (currentNestedView && currentNestedView[parentId] && currentNestedView[parentId].length > 0) {
+    if (
+      currentNestedView &&
+      currentNestedView[parentId] &&
+      currentNestedView[parentId].length > 0
+    ) {
       nestedDepth = currentNestedView[parentId].length;
     }
     const borderPadding = GRAPH_PADDING_FACTOR * nestedDepth;

@@ -118,7 +118,10 @@ async function loadWorkflowVersions(
     });
   }
 
-  const [workflowsResult, preferredWorkflowResult] = await Promise.all([workflowsPromise, preferredWorkflowPromise]);
+  const [workflowsResult, preferredWorkflowResult] = await Promise.all([
+    workflowsPromise,
+    preferredWorkflowPromise,
+  ]);
   const merged = [...workflowsResult.entities, ...preferredWorkflowResult.entities];
   return uniqBy(merged, ({ id: { version } }) => version);
 }
@@ -134,7 +137,11 @@ async function loadInputs(
     throw new Error('Failed to load inputs: missing launchPlan');
   }
   const workflow = await getWorkflow(workflowVersion);
-  const parsedInputs: ParsedInput[] = getInputsForWorkflow(workflow, launchPlan, defaultInputValues);
+  const parsedInputs: ParsedInput[] = getInputsForWorkflow(
+    workflow,
+    launchPlan,
+    defaultInputValues,
+  );
 
   return {
     parsedInputs,
@@ -161,7 +168,8 @@ async function submit(
 
   const { authRole, securityContext } = roleInputRef.current?.getValue() as LaunchRoles;
   const literals = formInputsRef.current.getValues();
-  const { disableAll, labels, annotations, maxParallelism } = advancedOptionsRef.current?.getValues() || {};
+  const { disableAll, labels, annotations, maxParallelism } =
+    advancedOptionsRef.current?.getValues() || {};
   const launchPlanId = launchPlan.id;
   const { domain, project } = workflowVersion;
 
@@ -248,28 +256,34 @@ export function useLaunchWorkflowFormState({
     [apiContext, formInputsRef, roleInputRef, advancedOptionsRef],
   );
 
-  const [state, sendEvent, service] = useMachine<WorkflowLaunchContext, WorkflowLaunchEvent, WorkflowLaunchTypestate>(
-    workflowLaunchMachine,
-    {
-      ...defaultStateMachineConfig,
-      services,
-      context: {
-        defaultAuthRole,
-        securityContext,
-        defaultInputValues,
-        preferredLaunchPlanId,
-        preferredWorkflowId,
-        referenceExecutionId,
-        sourceId,
-        disableAll,
-        maxParallelism,
-        labels,
-        annotations,
-      },
+  const [state, sendEvent, service] = useMachine<
+    WorkflowLaunchContext,
+    WorkflowLaunchEvent,
+    WorkflowLaunchTypestate
+  >(workflowLaunchMachine, {
+    ...defaultStateMachineConfig,
+    services,
+    context: {
+      defaultAuthRole,
+      securityContext,
+      defaultInputValues,
+      preferredLaunchPlanId,
+      preferredWorkflowId,
+      referenceExecutionId,
+      sourceId,
+      disableAll,
+      maxParallelism,
+      labels,
+      annotations,
     },
-  );
+  });
 
-  const { launchPlanOptions = [], launchPlan, workflowVersionOptions = [], workflowVersion } = state.context;
+  const {
+    launchPlanOptions = [],
+    launchPlan,
+    workflowVersionOptions = [],
+    workflowVersion,
+  } = state.context;
 
   const selectWorkflowVersion = (newWorkflow: WorkflowId) => {
     if (newWorkflow === workflowVersion) {
@@ -308,7 +322,9 @@ export function useLaunchWorkflowFormState({
         if (workflowVersionOptions.length > 0) {
           let workflowToSelect = workflowVersionOptions[0];
           if (preferredWorkflowId) {
-            const preferred = workflowVersionOptions.find(({ id }) => isEqual(id, preferredWorkflowId));
+            const preferred = workflowVersionOptions.find(({ id }) =>
+              isEqual(id, preferredWorkflowId),
+            );
             if (preferred) {
               workflowToSelect = preferred;
             }
@@ -335,7 +351,9 @@ export function useLaunchWorkflowFormState({
          * 4. The first launch plan in the list
          */
         if (launchPlan) {
-          const lastSelected = launchPlanOptions.find(({ id: { name } }) => name === launchPlan.id.name);
+          const lastSelected = launchPlanOptions.find(
+            ({ id: { name } }) => name === launchPlan.id.name,
+          );
           if (lastSelected) {
             launchPlanToSelect = lastSelected;
           }
@@ -345,7 +363,9 @@ export function useLaunchWorkflowFormState({
             launchPlanToSelect = preferred;
           }
         } else {
-          const defaultLaunchPlan = launchPlanOptions.find(({ id: { name } }) => name === sourceId.name);
+          const defaultLaunchPlan = launchPlanOptions.find(
+            ({ id: { name } }) => name === sourceId.name,
+          );
           if (defaultLaunchPlan) {
             launchPlanToSelect = defaultLaunchPlan;
           }

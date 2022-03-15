@@ -12,7 +12,10 @@ export interface ProjectTasksProps {
 }
 
 /** A listing of the Tasks registered for a project */
-export const ProjectTasks: React.FC<ProjectTasksProps> = ({ domainId: domain, projectId: project }) => {
+export const ProjectTasks: React.FC<ProjectTasksProps> = ({
+  domainId: domain,
+  projectId: project,
+}) => {
   const taskNames = useTaskNameList(
     { domain, project },
     {

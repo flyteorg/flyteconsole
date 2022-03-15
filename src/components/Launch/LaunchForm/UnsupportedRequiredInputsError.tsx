@@ -33,7 +33,10 @@ export interface UnsupportedRequiredInputsErrorProps {
 /** An informational error to be shown if a Workflow cannot be launch due to
  * required inputs for which we will not be able to provide a value.
  */
-export const UnsupportedRequiredInputsError: React.FC<UnsupportedRequiredInputsErrorProps> = ({ inputs, variant }) => {
+export const UnsupportedRequiredInputsError: React.FC<UnsupportedRequiredInputsErrorProps> = ({
+  inputs,
+  variant,
+}) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
   const [titleString, errorString] =
@@ -41,7 +44,12 @@ export const UnsupportedRequiredInputsError: React.FC<UnsupportedRequiredInputsE
       ? [cannotLaunchWorkflowString, workflowUnsupportedRequiredInputsString]
       : [cannotLaunchTaskString, taskUnsupportedRequiredInputsString];
   return (
-    <NonIdealState className={styles.errorContainer} icon={ErrorOutline} size="medium" title={titleString}>
+    <NonIdealState
+      className={styles.errorContainer}
+      icon={ErrorOutline}
+      size="medium"
+      title={titleString}
+    >
       <div className={styles.contentContainer}>
         <p>{errorString}</p>
         <ul className={commonStyles.listUnstyled}>

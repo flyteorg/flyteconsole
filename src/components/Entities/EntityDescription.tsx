@@ -37,7 +37,9 @@ export const EntityDescription: React.FC<{
               [commonStyles.hintText]: !hasDescription,
             })}
           >
-            {hasDescription ? metadata.description : t('noDescription', entityStrings[id.resourceType])}
+            {hasDescription
+              ? metadata.description
+              : t('noDescription', entityStrings[id.resourceType])}
           </span>
         </WaitForData>
       </Typography>

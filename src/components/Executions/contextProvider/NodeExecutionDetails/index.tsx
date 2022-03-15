@@ -38,7 +38,8 @@ export const useNodeExecutionDetails = (nodeExecution?: NodeExecution) =>
   useContext(NodeExecutionDetailsContext).getNodeExecutionDetails(nodeExecution);
 
 /** Could be used to access the whole NodeExecutionDetailsState */
-export const useNodeExecutionContext = (): NodeExecutionDetailsState => useContext(NodeExecutionDetailsContext);
+export const useNodeExecutionContext = (): NodeExecutionDetailsState =>
+  useContext(NodeExecutionDetailsContext);
 
 interface ProviderProps {
   workflowId: Identifier;
@@ -117,7 +118,8 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
       return UNKNOWN_DETAILS;
     }
 
-    const specId = nodeExecution.scopedId || nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
+    const specId =
+      nodeExecution.scopedId || nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId;
     const nodeDetail = executionTree.nodes.filter((n) => n.scopedId === specId);
     if (nodeDetail.length === 0) {
       let details = tasks.get(nodeExecution.id.nodeId);
@@ -136,7 +138,11 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
 
   return (
     <NodeExecutionDetailsContext.Provider
-      value={{ getNodeExecutionDetails: getDetails, workflowId: props.workflowId, compiledWorkflowClosure: closure }}
+      value={{
+        getNodeExecutionDetails: getDetails,
+        workflowId: props.workflowId,
+        compiledWorkflowClosure: closure,
+      }}
     >
       {props.children}
     </NodeExecutionDetailsContext.Provider>

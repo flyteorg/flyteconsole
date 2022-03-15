@@ -26,8 +26,13 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ abortMetadata, nodeExecutions }) => {
-  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(null);
+export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
+  abortMetadata,
+  nodeExecutions,
+}) => {
+  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(
+    null,
+  );
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
 
@@ -79,7 +84,10 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ abortM
       </NodeExecutionsTableContext.Provider>
       <DetailsPanel open={selectedExecution !== null} onClose={onCloseDetailsPanel}>
         {selectedExecution != null ? (
-          <NodeExecutionDetailsPanelContent onClose={onCloseDetailsPanel} nodeExecutionId={selectedExecution} />
+          <NodeExecutionDetailsPanelContent
+            onClose={onCloseDetailsPanel}
+            nodeExecutionId={selectedExecution}
+          />
         ) : null}
       </DetailsPanel>
     </div>

@@ -4,7 +4,12 @@ import { Admin, Core } from 'flyteidl';
 import { merge } from 'lodash';
 import { timeStampOffset } from 'mocks/utils';
 import { Identifier, ResourceType } from 'models/Common/types';
-import { ExecutionState, NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
+import {
+  ExecutionState,
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from 'models/Execution/enums';
 import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
@@ -68,7 +73,10 @@ export function generateTask(
 /** Generate a new `Workflow` object based on a set of defaults. The base object
  * returned when `overrides` is omitted will be a valid `Workflow`.
  */
-export function generateWorkflow(idOverrides: Partial<Identifier>, overrides: DeepPartial<Workflow>): Workflow {
+export function generateWorkflow(
+  idOverrides: Partial<Identifier>,
+  overrides: DeepPartial<Workflow>,
+): Workflow {
   const id = {
     resourceType: Core.ResourceType.WORKFLOW,
     project: testProject,

@@ -3,7 +3,11 @@ import { fade, makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import classnames from 'classnames';
-import { buttonHoverColor, interactiveTextBackgroundColor, interactiveTextColor } from 'components/Theme/constants';
+import {
+  buttonHoverColor,
+  interactiveTextBackgroundColor,
+  interactiveTextColor,
+} from 'components/Theme/constants';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -88,7 +92,11 @@ export const FilterPopoverButton: React.FC<FilterPopoverButtonProps> = ({
       onReset();
     };
     iconContent = (
-      <Close className={classnames(styles.buttonIcon, styles.resetIcon)} fontSize="inherit" onClick={onClickReset} />
+      <Close
+        className={classnames(styles.buttonIcon, styles.resetIcon)}
+        fontSize="inherit"
+        onClick={onClickReset}
+      />
     );
   } else {
     iconContent = <ExpandMore className={styles.buttonIcon} fontSize="inherit" />;

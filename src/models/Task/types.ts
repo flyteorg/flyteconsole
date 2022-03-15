@@ -1,5 +1,11 @@
 import { Admin, Core, Protobuf } from 'flyteidl';
-import { Container, Identifier, RetryStrategy, RuntimeMetadata, TypedInterface } from 'models/Common/types';
+import {
+  Container,
+  Identifier,
+  RetryStrategy,
+  RuntimeMetadata,
+  TypedInterface,
+} from 'models/Common/types';
 
 /** Additional, optional metadata pertaining to a task template */
 

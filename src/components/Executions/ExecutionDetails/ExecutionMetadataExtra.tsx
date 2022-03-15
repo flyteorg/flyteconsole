@@ -68,7 +68,11 @@ export const ExecutionMetadataExtra: React.FC<{
           <Typography className={commonStyles.truncateText} variant="subtitle1">
             {label}
           </Typography>
-          <Typography className={commonStyles.truncateText} variant="h6" data-testid={`metadata-${label}`}>
+          <Typography
+            className={commonStyles.truncateText}
+            variant="h6"
+            data-testid={`metadata-${label}`}
+          >
             {value}
           </Typography>
         </div>

@@ -81,7 +81,9 @@ describe('ExecutionNodeViews', () => {
 
     // Apply 'Failed' filter and wait for list to include only the failed item
     fireEvent.click(statusButton);
-    const failedFilter = await waitFor(() => screen.getByLabelText(nodeExecutionStatusFilters.failed.label));
+    const failedFilter = await waitFor(() =>
+      screen.getByLabelText(nodeExecutionStatusFilters.failed.label),
+    );
 
     // Wait for succeeded task to disappear and ensure failed task remains
     fireEvent.click(failedFilter);

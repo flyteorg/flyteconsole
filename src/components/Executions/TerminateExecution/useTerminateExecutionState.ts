@@ -20,7 +20,11 @@ export function useTerminateExecutionState(onClose: () => void) {
   } = useContext(ExecutionContext);
   const queryClient = useQueryClient();
 
-  const { mutate, ...terminationState } = useMutation<Execution, Error, TerminateExecutionVariables>(
+  const { mutate, ...terminationState } = useMutation<
+    Execution,
+    Error,
+    TerminateExecutionVariables
+  >(
     async ({ cause }: TerminateExecutionVariables) => {
       await terminateWorkflowExecution(id, cause);
       return await waitForQueryState<Execution>({

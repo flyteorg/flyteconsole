@@ -52,15 +52,19 @@ export function useWorkflowNamedEntity(input: Omit<UseNamedEntityInput, 'resourc
 /** A hook for fetching a paginated list of task names */
 export function useTaskNameList(scope: DomainIdentifierScope, config: RequestConfig) {
   const { listNamedEntities } = useAPIContext();
-  return usePagination<NamedEntity, DomainIdentifierScope>({ ...config, fetchArg: scope }, (scope, requestConfig) =>
-    listNamedEntities({ ...scope, resourceType: ResourceType.TASK }, requestConfig),
+  return usePagination<NamedEntity, DomainIdentifierScope>(
+    { ...config, fetchArg: scope },
+    (scope, requestConfig) =>
+      listNamedEntities({ ...scope, resourceType: ResourceType.TASK }, requestConfig),
   );
 }
 
 /** A hook for fetching a paginated list of workflow names */
 export function useWorkflowNameList(scope: DomainIdentifierScope, config: RequestConfig) {
   const { listNamedEntities } = useAPIContext();
-  return usePagination<NamedEntity, DomainIdentifierScope>({ ...config, fetchArg: scope }, (scope, requestConfig) =>
-    listNamedEntities({ ...scope, resourceType: ResourceType.WORKFLOW }, requestConfig),
+  return usePagination<NamedEntity, DomainIdentifierScope>(
+    { ...config, fetchArg: scope },
+    (scope, requestConfig) =>
+      listNamedEntities({ ...scope, resourceType: ResourceType.WORKFLOW }, requestConfig),
   );
 }

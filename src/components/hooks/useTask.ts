@@ -27,5 +27,8 @@ export function useTaskTemplate(id: Identifier): FetchableData<TaskTemplate> {
 /** A hook for fetching a paginated list of tasks */
 export function useTaskList(scope: IdentifierScope, config: RequestConfig) {
   const { listTasks } = useAPIContext();
-  return usePagination<Task, IdentifierScope>({ ...config, cacheItems: true, fetchArg: scope }, listTasks);
+  return usePagination<Task, IdentifierScope>(
+    { ...config, cacheItems: true, fetchArg: scope },
+    listTasks,
+  );
 }

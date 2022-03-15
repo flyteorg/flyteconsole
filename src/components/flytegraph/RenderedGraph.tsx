@@ -75,7 +75,11 @@ export class RenderedGraph<T> extends React.Component<RenderedGraphProps<T>, Ren
           {/* Links go first, so that Nodes draw over them */}
           <g fill="none">
             {links.map((link) => (
-              <NodeLink key={`${link.source.id}/${link.target.id}`} link={link} config={config.nodeLink} />
+              <NodeLink
+                key={`${link.source.id}/${link.target.id}`}
+                link={link}
+                config={config.nodeLink}
+              />
             ))}
           </g>
           {/* Node layer */}

@@ -37,7 +37,12 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
         <Typography variant="h6" component="h2" gutterBottom={true}>
           {project.name}
         </Typography>
-        <Typography className={commonStyles.textWrapped} variant="body2" color="textSecondary" component="p">
+        <Typography
+          className={commonStyles.textWrapped}
+          variant="body2"
+          color="textSecondary"
+          component="p"
+        >
           {description}
         </Typography>
       </CardContent>

@@ -113,7 +113,11 @@ export const ReactFlowCustomMaxNested = ({ data }: any) => {
     <div style={containerStyle} onClick={onClick}>
       {data.taskType ? renderTaskType() : null}
       <div style={styles}>{data.text}</div>
-      {renderDefaultHandles(data.scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+      {renderDefaultHandles(
+        data.scopedId,
+        getGraphHandleStyle('source'),
+        getGraphHandleStyle('target'),
+      )}
     </div>
   );
 };
@@ -146,7 +150,11 @@ export const ReactFlowStaticNested = ({ data }: any) => {
     <div style={containerStyle}>
       {data.taskType ? renderTaskType() : null}
       <div style={styles}>{data.text}</div>
-      {renderDefaultHandles(data.scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+      {renderDefaultHandles(
+        data.scopedId,
+        getGraphHandleStyle('source'),
+        getGraphHandleStyle('target'),
+      )}
     </div>
   );
 };
@@ -179,7 +187,11 @@ export const ReactFlowStaticNode = ({ data }: any) => {
     <div style={containerStyle}>
       {data.taskType ? renderTaskType() : null}
       <div style={styles}>{data.text}</div>
-      {renderDefaultHandles(data.scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+      {renderDefaultHandles(
+        data.scopedId,
+        getGraphHandleStyle('source'),
+        getGraphHandleStyle('target'),
+      )}
     </div>
   );
 };
@@ -230,7 +242,11 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     <div onClick={handleClick}>
       {data.taskType ? renderTaskType() : null}
       <div style={styles}>{data.text}</div>
-      {renderDefaultHandles(data.scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+      {renderDefaultHandles(
+        data.scopedId,
+        getGraphHandleStyle('source'),
+        getGraphHandleStyle('target'),
+      )}
     </div>
   );
 };
@@ -340,7 +356,11 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
     <>
       {renderBreadCrumb()}
       <BorderContainer>
-        {renderDefaultHandles(data.scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+        {renderDefaultHandles(
+          data.scopedId,
+          getGraphHandleStyle('source'),
+          getGraphHandleStyle('target'),
+        )}
       </BorderContainer>
     </>
   );

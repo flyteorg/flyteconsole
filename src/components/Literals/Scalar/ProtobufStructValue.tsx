@@ -51,7 +51,13 @@ export const ProtobufStructValue: React.FC<{
   const literalStyles = useLiteralStyles();
   const { fields } = struct;
   const mapContent = Object.keys(fields).length ? (
-    <ul className={classnames(literalStyles.nestedContainer, commonStyles.textMonospace, commonStyles.listUnstyled)}>
+    <ul
+      className={classnames(
+        literalStyles.nestedContainer,
+        commonStyles.textMonospace,
+        commonStyles.listUnstyled,
+      )}
+    >
       {sortedObjectEntries(fields).map(([key, value]) => (
         <li key={key}>
           <RenderedProtobufValue label={key} value={value} />

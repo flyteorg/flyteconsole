@@ -37,7 +37,12 @@ export const DataError: React.FC<DataErrorProps> = ({ error, errorTitle, retry }
     </Button>
   ) : undefined;
   return (
-    <NonIdealState className={styles.container} description={description} title={errorTitle} icon={ErrorOutline}>
+    <NonIdealState
+      className={styles.container}
+      description={description}
+      title={errorTitle}
+      icon={ErrorOutline}
+    >
       {action}
     </NonIdealState>
   );

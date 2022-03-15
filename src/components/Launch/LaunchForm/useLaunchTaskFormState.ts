@@ -28,7 +28,10 @@ import {
 import { useTaskSourceSelectorState } from './useTaskSourceSelectorState';
 import { getUnsupportedRequiredInputs } from './utils';
 
-async function loadTaskVersions({ listTasks }: APIContextValue, { preferredTaskId, sourceId }: TaskLaunchContext) {
+async function loadTaskVersions(
+  { listTasks }: APIContextValue,
+  { preferredTaskId, sourceId }: TaskLaunchContext,
+) {
   if (!sourceId) {
     throw new Error('Cannot load tasks, missing sourceId');
   }
@@ -61,12 +64,18 @@ async function loadTaskVersions({ listTasks }: APIContextValue, { preferredTaskI
     });
   }
 
-  const [tasksResult, preferredTaskResult] = await Promise.all([tasksPromise, preferredTaskPromise]);
+  const [tasksResult, preferredTaskResult] = await Promise.all([
+    tasksPromise,
+    preferredTaskPromise,
+  ]);
   const merged = [...tasksResult.entities, ...preferredTaskResult.entities];
   return uniqBy(merged, ({ id: { version } }) => version);
 }
 
-async function loadInputs({ getTask }: APIContextValue, { defaultInputValues, taskVersion }: TaskLaunchContext) {
+async function loadInputs(
+  { getTask }: APIContextValue,
+  { defaultInputValues, taskVersion }: TaskLaunchContext,
+) {
   if (!taskVersion) {
     throw new Error('Failed to load inputs: missing taskVersion');
   }
@@ -80,7 +89,10 @@ async function loadInputs({ getTask }: APIContextValue, { defaultInputValues, ta
   };
 }
 
-async function validate(formInputsRef: RefObject<LaunchFormInputsRef>, roleInputRef: RefObject<LaunchRoleInputRef>) {
+async function validate(
+  formInputsRef: RefObject<LaunchFormInputsRef>,
+  roleInputRef: RefObject<LaunchRoleInputRef>,
+) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
   }
@@ -152,7 +164,11 @@ export function useLaunchTaskFormState({
 }: LaunchTaskFormProps): LaunchTaskFormState {
   // These values will be used to auto-select items from the task
   // version/launch plan drop downs.
-  const { authRole: defaultAuthRole, taskId: preferredTaskId, values: defaultInputValues } = initialParameters;
+  const {
+    authRole: defaultAuthRole,
+    taskId: preferredTaskId,
+    values: defaultInputValues,
+  } = initialParameters;
 
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
@@ -163,20 +179,21 @@ export function useLaunchTaskFormState({
     [apiContext, formInputsRef, roleInputRef],
   );
 
-  const [state, sendEvent, service] = useMachine<TaskLaunchContext, TaskLaunchEvent, TaskLaunchTypestate>(
-    taskLaunchMachine,
-    {
-      ...defaultStateMachineConfig,
-      services,
-      context: {
-        defaultAuthRole,
-        defaultInputValues,
-        preferredTaskId,
-        referenceExecutionId,
-        sourceId,
-      },
+  const [state, sendEvent, service] = useMachine<
+    TaskLaunchContext,
+    TaskLaunchEvent,
+    TaskLaunchTypestate
+  >(taskLaunchMachine, {
+    ...defaultStateMachineConfig,
+    services,
+    context: {
+      defaultAuthRole,
+      defaultInputValues,
+      preferredTaskId,
+      referenceExecutionId,
+      sourceId,
     },
-  );
+  });
 
   const { taskVersionOptions = [], taskVersion } = state.context;
 

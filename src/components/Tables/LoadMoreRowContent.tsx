@@ -42,7 +42,9 @@ export const LoadMoreRowContent: React.FC<LoadMoreRowContentProps> = (props) => 
       {isFetching ? <ButtonCircularProgress /> : null}
     </Button>
   );
-  const errorContent = lastError ? <div className={commonStyles.errorText}>Failed to load additional items</div> : null;
+  const errorContent = lastError ? (
+    <div className={commonStyles.errorText}>Failed to load additional items</div>
+  ) : null;
 
   return (
     <div className={styles.loadMoreRowContainer} style={style}>

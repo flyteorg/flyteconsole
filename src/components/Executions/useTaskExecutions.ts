@@ -20,7 +20,10 @@ import { nodeExecutionIsTerminal, taskExecutionIsTerminal } from './utils';
  * This function is meant to be consumed by hooks which are composing data.
  * If you're calling it from a component, consider using `useTaskExecutions` instead.
  */
-export const fetchTaskExecutions = async (id: NodeExecutionIdentifier, apiContext: APIContextValue) => {
+export const fetchTaskExecutions = async (
+  id: NodeExecutionIdentifier,
+  apiContext: APIContextValue,
+) => {
   const { listTaskExecutions } = apiContext;
   const { entities } = await listTaskExecutions(id, {
     limit: limits.NONE,

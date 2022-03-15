@@ -14,7 +14,11 @@ export interface LaunchFormActionsProps {
   onClose(): void;
 }
 /** Renders the Submit/Cancel buttons for a LaunchForm */
-export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({ state, service, onClose }) => {
+export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
+  state,
+  service,
+  onClose,
+}) => {
   const styles = useStyles();
   const submissionInFlight = state.matches(LaunchState.SUBMITTING);
   const canSubmit = [

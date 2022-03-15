@@ -121,12 +121,16 @@ export function makeTaskExecutionChildListQuery(
   return {
     queryKey: [QueryType.TaskExecutionChildList, id, config],
     queryFn: async () => {
-      const nodeExecutions = removeSystemNodes((await listTaskExecutionChildren(id, config)).entities);
+      const nodeExecutions = removeSystemNodes(
+        (await listTaskExecutionChildren(id, config)).entities,
+      );
       cacheNodeExecutions(queryClient, nodeExecutions);
       return nodeExecutions;
     },
     onSuccess: (nodeExecutions) => {
-      nodeExecutions.forEach((ne) => queryClient.setQueryData([QueryType.NodeExecution, ne.id], ne));
+      nodeExecutions.forEach((ne) =>
+        queryClient.setQueryData([QueryType.NodeExecution, ne.id], ne),
+      );
     },
   };
 }
@@ -179,12 +183,16 @@ async function fetchGroupsForTaskExecutionNode(
   // Otherwise, return null and we will filter it out later.
   const groups = await Promise.all(
     taskExecutions.map((execution) =>
-      execution.isParent ? fetchGroupForTaskExecution(queryClient, execution.id, config) : Promise.resolve(null),
+      execution.isParent
+        ? fetchGroupForTaskExecution(queryClient, execution.id, config)
+        : Promise.resolve(null),
     ),
   );
 
   // Remove any empty groups
-  return groups.filter((group) => group !== null && group.nodeExecutions.length > 0) as NodeExecutionGroup[];
+  return groups.filter(
+    (group) => group !== null && group.nodeExecutions.length > 0,
+  ) as NodeExecutionGroup[];
 }
 
 async function fetchGroupsForWorkflowExecutionNode(
@@ -218,7 +226,11 @@ async function fetchGroupsForParentNodeExecution(
   const parentScopeId = nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
   nodeExecution.scopedId = parentScopeId;
 
-  const children = await fetchNodeExecutionList(queryClient, nodeExecution.id.executionId, finalConfig);
+  const children = await fetchNodeExecutionList(
+    queryClient,
+    nodeExecution.id.executionId,
+    finalConfig,
+  );
 
   const groupsByName = children.reduce<Map<string, NodeExecutionGroup>>((out, child) => {
     const retryAttempt = formatRetryAttempt(child.metadata?.retryGroup);
@@ -245,7 +257,11 @@ async function fetchGroupsForParentNodeExecution(
   return Array.from(groupsByName.values());
 }
 
-function fetchChildNodeExecutionGroups(queryClient: QueryClient, nodeExecution: NodeExecution, config: RequestConfig) {
+function fetchChildNodeExecutionGroups(
+  queryClient: QueryClient,
+  nodeExecution: NodeExecution,
+  config: RequestConfig,
+) {
   const { workflowNodeMetadata } = nodeExecution.closure;
   // Newer NodeExecution structures can directly indicate their parent
   // status and have their children fetched in bulk.
@@ -255,7 +271,10 @@ function fetchChildNodeExecutionGroups(queryClient: QueryClient, nodeExecution: 
   // Otherwise, we need to determine the type of the node and
   // recursively fetch NodeExecutions for the corresponding Workflow
   // or Task executions.
-  if (workflowNodeMetadata && !isEqual(workflowNodeMetadata.executionId, nodeExecution.id.executionId)) {
+  if (
+    workflowNodeMetadata &&
+    !isEqual(workflowNodeMetadata.executionId, nodeExecution.id.executionId)
+  ) {
     return fetchGroupsForWorkflowExecutionNode(queryClient, nodeExecution, config);
   }
   return fetchGroupsForTaskExecutionNode(queryClient, nodeExecution, config);
@@ -288,7 +307,11 @@ async function fetchAllChildNodeExecutions(
 
   /** Request and concact data from children */
   if (childrenFromChildrenNodes.length > 0) {
-    const childGroups = await fetchAllChildNodeExecutions(queryClient, childrenFromChildrenNodes, config);
+    const childGroups = await fetchAllChildNodeExecutions(
+      queryClient,
+      childrenFromChildrenNodes,
+      config,
+    );
     for (const group in childGroups) {
       executionGroups.push(childGroups[group]);
     }
@@ -373,7 +396,11 @@ async function fetchAllTreeNodeExecutions(
 
   while (left < right) {
     const top: NodeExecution = queue[left++];
-    const executionGroups: NodeExecutionGroup[] = await fetchChildNodeExecutionGroups(queryClient, top, config);
+    const executionGroups: NodeExecutionGroup[] = await fetchChildNodeExecutionGroups(
+      queryClient,
+      top,
+      config,
+    );
     for (let i = 0; i < executionGroups.length; i++) {
       for (let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
         queue.push(executionGroups[i].nodeExecutions[j]);

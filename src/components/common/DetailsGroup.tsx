@@ -31,7 +31,11 @@ interface DetailsGroupProps {
 /** Renders a list of detail items in a consistent style. Each item is shown in its own row with a label
  * to the left and the provided content to the right.
  */
-export const DetailsGroup: React.FC<DetailsGroupProps> = ({ className, items, labelWidthGridUnits = 14 }) => {
+export const DetailsGroup: React.FC<DetailsGroupProps> = ({
+  className,
+  items,
+  labelWidthGridUnits = 14,
+}) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const theme = useTheme<Theme>();

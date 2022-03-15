@@ -16,7 +16,11 @@ import { LaunchAdvancedOptionsRef } from './types';
 import { flyteidl } from '@flyteorg/flyteidl/gen/pb-js/flyteidl';
 import IExecutionSpec = flyteidl.admin.IExecutionSpec;
 import { State } from 'xstate';
-import { WorkflowLaunchContext, WorkflowLaunchEvent, WorkflowLaunchTypestate } from './launchMachine';
+import {
+  WorkflowLaunchContext,
+  WorkflowLaunchEvent,
+  WorkflowLaunchTypestate,
+} from './launchMachine';
 import { useStyles } from './styles';
 
 const muiTheme = createMuiTheme({
@@ -54,7 +58,10 @@ const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
 };
 
-export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRef, LaunchAdvancedOptionsProps>(
+export const LaunchFormAdvancedInputs = React.forwardRef<
+  LaunchAdvancedOptionsRef,
+  LaunchAdvancedOptionsProps
+>(
   (
     {
       state: {
@@ -141,7 +148,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
       <>
         <section title="Labels" className={styles.collapsibleSection}>
           <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="Labels" id="labels-form">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="Labels"
+              id="labels-form"
+            >
               <header className={styles.sectionHeader}>
                 <Typography variant="h6">Labels</Typography>
               </header>
@@ -169,7 +180,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
         </section>
         <section title="Annotations" className={styles.collapsibleSection}>
           <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="Annotations" id="annotations-form">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="Annotations"
+              id="annotations-form"
+            >
               <header className={styles.sectionHeader}>
                 <Typography variant="h6">Annotations</Typography>
               </header>

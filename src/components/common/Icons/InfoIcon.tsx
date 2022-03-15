@@ -3,7 +3,14 @@ import { IconProps } from './interface';
 
 export const InfoIcon: React.FC<IconProps> = ({ size = 14, className, onClick }) => {
   return (
-    <svg className={className} width={size} height={size} viewBox="0 0 14 14" fill="none" onClick={onClick}>
+    <svg
+      className={className}
+      width={size}
+      height={size}
+      viewBox="0 0 14 14"
+      fill="none"
+      onClick={onClick}
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

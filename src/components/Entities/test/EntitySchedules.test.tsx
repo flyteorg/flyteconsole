@@ -27,7 +27,10 @@ describe('EntitySchedules', () => {
   };
 
   beforeEach(() => {
-    launchPlans = [createMockLaunchPlan('EveryTenMinutes', 'abcdefg'), createMockLaunchPlan('Daily6AM', 'abcdefg')];
+    launchPlans = [
+      createMockLaunchPlan('EveryTenMinutes', 'abcdefg'),
+      createMockLaunchPlan('Daily6AM', 'abcdefg'),
+    ];
     launchPlans[0].spec.entityMetadata.schedule = mockLaunchPlanSchedules.everyTenMinutes;
     launchPlans[1].spec.entityMetadata.schedule = mockLaunchPlanSchedules.everyDay6AM;
     mockListLaunchPlans.mockResolvedValue({ entities: launchPlans });

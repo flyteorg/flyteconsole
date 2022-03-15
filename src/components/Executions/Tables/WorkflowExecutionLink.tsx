@@ -22,7 +22,9 @@ export const WorkflowExecutionLink: React.FC<{
   return (
     <RouterLink
       className={classnames(linkColor, className)}
-      to={`${Routes.ExecutionDetails.makeUrl(id)}${fromExecutionNav ? '?fromExecutionNav=true' : ''}`}
+      to={`${Routes.ExecutionDetails.makeUrl(id)}${
+        fromExecutionNav ? '?fromExecutionNav=true' : ''
+      }`}
     >
       {id.name}
     </RouterLink>

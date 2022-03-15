@@ -35,7 +35,8 @@ const FeatureFlagContext = createContext<FeatureFlagState>({
 });
 
 /** useFeatureFlag - should be used to get flag value */
-export const useFeatureFlag = (flag: FeatureFlag) => useContext(FeatureFlagContext).getFeatureFlag(flag);
+export const useFeatureFlag = (flag: FeatureFlag) =>
+  useContext(FeatureFlagContext).getFeatureFlag(flag);
 
 /** useFatureFlagContext - could be used to set flags from code */
 export const useFatureFlagContext = () => useContext(FeatureFlagContext);

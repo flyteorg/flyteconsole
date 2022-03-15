@@ -23,7 +23,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const renderProjectList = (results: SearchResult<Project>[]) => <ProjectList projects={results.map((r) => r.value)} />;
+const renderProjectList = (results: SearchResult<Project>[]) => (
+  <ProjectList projects={results.map((r) => r.value)} />
+);
 
 /** The view component for the landing page of the application. */
 export const SelectProject: React.FC = () => {

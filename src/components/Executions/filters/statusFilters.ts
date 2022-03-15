@@ -1,7 +1,13 @@
 import { NodeExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
 import { FilterMap } from './types';
 
-export type WorkflowExecutionStatusFilterKey = 'queued' | 'running' | 'succeeded' | 'failed' | 'aborted' | 'unknown';
+export type WorkflowExecutionStatusFilterKey =
+  | 'queued'
+  | 'running'
+  | 'succeeded'
+  | 'failed'
+  | 'aborted'
+  | 'unknown';
 
 /** A set of WorkflowExecution status/phase filters to be consumed by a MultiFilterState.
  */

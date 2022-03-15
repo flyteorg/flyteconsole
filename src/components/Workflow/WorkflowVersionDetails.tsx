@@ -70,7 +70,12 @@ const WorkflowVersionDetailsContainer: React.FC<WorkflowVersionDetailsRouteParam
 
   return (
     <WaitForData {...project}>
-      <EntityDetailsHeader project={project.value} id={id} launchable={sections.launch} backToWorkflow />
+      <EntityDetailsHeader
+        project={project.value}
+        id={id}
+        launchable={sections.launch}
+        backToWorkflow
+      />
       <div className={styles.verionDetailsContatiner}>
         <div className={styles.staticGraphContainer}>
           <StaticGraphContainer workflowId={workflowId} />

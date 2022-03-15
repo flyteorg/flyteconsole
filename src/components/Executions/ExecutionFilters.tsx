@@ -76,7 +76,8 @@ export const ExecutionFilters: React.FC<{
           return null;
         }
         if (filter.type === 'boolean') {
-          const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => filter.setActive(event.target.checked);
+          const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+            filter.setActive(event.target.checked);
 
           return (
             <FormControlLabel
@@ -115,7 +116,12 @@ export const ExecutionFilters: React.FC<{
       {!!onArchiveFilterChange && (
         <FormGroup>
           <FormControlLabel
-            control={<Checkbox value={showArchived} onChange={(_, checked) => onArchiveFilterChange(checked)} />}
+            control={
+              <Checkbox
+                value={showArchived}
+                onChange={(_, checked) => onArchiveFilterChange(checked)}
+              />
+            }
             className={styles.checkbox}
             label="Show archived executions"
           />

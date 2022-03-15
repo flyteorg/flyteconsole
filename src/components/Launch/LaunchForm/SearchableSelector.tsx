@@ -76,7 +76,8 @@ interface SearchableSelectorState<DataType> {
 function generateDefaultFetch<DataType>(
   options: SearchableSelectorOption<DataType>[],
 ): FetchFn<SearchableSelectorOption<DataType>[], string> {
-  return (query: string) => Promise.resolve(options.filter((option) => option.name.includes(query)));
+  return (query: string) =>
+    Promise.resolve(options.filter((option) => option.name.includes(query)));
 }
 
 function useSearchableSelectorState<DataType>({
@@ -209,7 +210,9 @@ const SearchableSelectorItems = <DataType extends {}>({
 /** Combines a dropdown selector of default options with a searchable text input
  * that will fetch results using a provided function.
  */
-export const SearchableSelector = <DataType extends {}>(props: SearchableSelectorProps<DataType>) => {
+export const SearchableSelector = <DataType extends {}>(
+  props: SearchableSelectorProps<DataType>,
+) => {
   const styles = useStyles();
   const state = useSearchableSelectorState(props);
   const { inputValue, isExpanded, onBlur, onChange, setIsExpanded, showList } = state;

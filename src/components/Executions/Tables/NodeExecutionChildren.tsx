@@ -28,7 +28,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 /** Renders a nested list of row items for children of a NodeExecution */
-export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({ abortMetadata, childGroups, level }) => {
+export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
+  abortMetadata,
+  childGroups,
+  level,
+}) => {
   const styles = useStyles();
   const showNames = childGroups.length > 1;
   const tableStyles = useExecutionTableStyles();
@@ -37,7 +41,9 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({ ab
     // The label is aligned with the parent above, so remove one level of spacing
     marginLeft: `${calculateNodeExecutionRowLeftSpacing(level - 1, theme.spacing)}px`,
   };
-  const [loadedNodes, setLoadedNodes] = React.useState(new Array(childGroups.length).fill(PAGE_SIZE));
+  const [loadedNodes, setLoadedNodes] = React.useState(
+    new Array(childGroups.length).fill(PAGE_SIZE),
+  );
 
   const loadMoreRows = React.useCallback(
     (which: number) => () => {

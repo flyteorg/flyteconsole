@@ -150,7 +150,10 @@ const NodeExecutionLinkContent: React.FC<{
     },
   };
   return (
-    <RouterLink className={classnames(commonStyles.primaryLink, styles.nodeTypeLink)} to={linkTarget}>
+    <RouterLink
+      className={classnames(commonStyles.primaryLink, styles.nodeTypeLink)}
+      to={linkTarget}
+    >
       View Sub-Workflow
     </RouterLink>
   );
@@ -260,7 +263,10 @@ const WorkflowTabs: React.FC<{
 
 /** DetailsPanel content which renders execution information about a given NodeExecution
  */
-export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProps> = ({ nodeExecutionId, onClose }) => {
+export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProps> = ({
+  nodeExecutionId,
+  onClose,
+}) => {
   const isMounted = useRef(false);
   useEffect(() => {
     isMounted.current = true;
@@ -303,8 +309,14 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const nodeExecution = nodeExecutionQuery.data;
 
   const getWorkflowDag = async () => {
-    const workflowExecution = await fetchWorkflowExecution(queryClient, nodeExecutionId.executionId);
-    const workflowData: Workflow = await fetchWorkflow(queryClient, workflowExecution.closure.workflowId);
+    const workflowExecution = await fetchWorkflowExecution(
+      queryClient,
+      nodeExecutionId.executionId,
+    );
+    const workflowData: Workflow = await fetchWorkflow(
+      queryClient,
+      workflowExecution.closure.workflowId,
+    );
     if (workflowData) {
       const keyedDag = transformWorkflowToKeyedDag(workflowData);
       if (isMounted.current) setDag(keyedDag);
@@ -339,7 +351,9 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     <div className={styles.statusContainer}>
       <div className={styles.statusHeaderContainer}>
         <ExecutionStatusBadge phase={nodeExecution.closure.phase} type="node" />
-        {isRunningPhase && <InfoIcon className={styles.reasonsIcon} onClick={handleReasonsVisibility} />}
+        {isRunningPhase && (
+          <InfoIcon className={styles.reasonsIcon} onClick={handleReasonsVisibility} />
+        )}
       </div>
       {isRunningPhase && isReasonsVisible && (
         <div className={styles.statusBody}>

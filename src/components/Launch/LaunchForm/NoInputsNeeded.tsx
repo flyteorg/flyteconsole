@@ -21,7 +21,11 @@ export interface NoInputsProps {
 export const NoInputsNeeded: React.FC<NoInputsProps> = ({ variant }) => {
   const commonStyles = useCommonStyles();
   return (
-    <Typography align="center" className={classnames(commonStyles.hintText, useStyles().root)} variant="body2">
+    <Typography
+      align="center"
+      className={classnames(commonStyles.hintText, useStyles().root)}
+      variant="body2"
+    >
       {variant === 'workflow' ? workflowNoInputsString : taskNoInputsString}
     </Typography>
   );

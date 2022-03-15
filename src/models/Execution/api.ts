@@ -1,6 +1,9 @@
 import { Admin, Core } from 'flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultListExecutionChildrenConfig, defaultPaginationConfig } from 'models/AdminEntity/constants';
+import {
+  defaultListExecutionChildrenConfig,
+  defaultPaginationConfig,
+} from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { endpointPrefixes } from 'models/Common/constants';
 import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
@@ -149,7 +152,11 @@ export const createWorkflowExecution = (
 };
 
 /** Submits a request to terminate a WorkflowExecution by id */
-export const terminateWorkflowExecution = (id: WorkflowExecutionIdentifier, cause: string, config?: RequestConfig) =>
+export const terminateWorkflowExecution = (
+  id: WorkflowExecutionIdentifier,
+  cause: string,
+  config?: RequestConfig,
+) =>
   postAdminEntity<Admin.IExecutionTerminateRequest, Admin.ExecutionTerminateResponse>(
     {
       data: { cause },
@@ -187,7 +194,10 @@ interface RecoverParams {
 /**
  * Submits a request to recover a WorkflowExecution
  */
-export const recoverWorkflowExecution = ({ id, name, metadata }: RecoverParams, config?: RequestConfig) =>
+export const recoverWorkflowExecution = (
+  { id, name, metadata }: RecoverParams,
+  config?: RequestConfig,
+) =>
   postAdminEntity<Admin.IExecutionRecoverRequest, Admin.ExecutionCreateResponse>(
     {
       data: { id, name, metadata },
@@ -237,7 +247,10 @@ export const listNodeExecutions = (scope: NameIdentifierScope, config?: RequestC
 /** Fetches a list of `NodeExecution` records which are children of a given
  * `TaskExecution`.
  */
-export const listTaskExecutionChildren = (taskExecutionId: TaskExecutionIdentifier, config?: RequestConfig) =>
+export const listTaskExecutionChildren = (
+  taskExecutionId: TaskExecutionIdentifier,
+  config?: RequestConfig,
+) =>
   getAdminEntity(
     {
       path: makeTaskExecutionChildrenPath(taskExecutionId),

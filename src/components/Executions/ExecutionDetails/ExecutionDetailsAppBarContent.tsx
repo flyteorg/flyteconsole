@@ -117,7 +117,11 @@ export const ExecutionDetailsAppBarContent: React.FC<{
 
   const isRecoverVisible = React.useMemo(
     () =>
-      [WorkflowExecutionPhase.FAILED, WorkflowExecutionPhase.ABORTED, WorkflowExecutionPhase.TIMED_OUT].includes(phase),
+      [
+        WorkflowExecutionPhase.FAILED,
+        WorkflowExecutionPhase.ABORTED,
+        WorkflowExecutionPhase.TIMED_OUT,
+      ].includes(phase),
     [phase],
   );
 
@@ -172,7 +176,10 @@ export const ExecutionDetailsAppBarContent: React.FC<{
           </RouterLink>
           <ExecutionStatusBadge phase={phase} type="workflow" />
           <div className={styles.titleContainer}>
-            <Typography variant="body1" className={classnames(styles.title, commonStyles.textWrapped)}>
+            <Typography
+              variant="body1"
+              className={classnames(styles.title, commonStyles.textWrapped)}
+            >
               <span>
                 {`${project}/${domain}/${sourceId.name}/`}
                 <strong>{`${name}`}</strong>

@@ -17,7 +17,10 @@ export const makeExecutionPath = ({ project, domain, name }: WorkflowExecutionId
   [endpointPrefixes.execution, project, domain, name].join('/');
 
 /** Generates the API endpoint for a given `NodeExecutionIdentifier` */
-export const makeNodeExecutionPath = ({ executionId: { project, domain, name }, nodeId }: NodeExecutionIdentifier) =>
+export const makeNodeExecutionPath = ({
+  executionId: { project, domain, name },
+  nodeId,
+}: NodeExecutionIdentifier) =>
   [endpointPrefixes.nodeExecution, project, domain, name, nodeId].join('/');
 
 export const makeNodeExecutionListPath = (scope: NameIdentifierScope) =>
@@ -51,7 +54,8 @@ export const makeTaskExecutionChildrenPath = ({
 export const makeTaskExecutionListPath = ({
   executionId: { project, domain, name },
   nodeId,
-}: NodeExecutionIdentifier) => [endpointPrefixes.taskExecution, project, domain, name, nodeId].join('/');
+}: NodeExecutionIdentifier) =>
+  [endpointPrefixes.taskExecution, project, domain, name, nodeId].join('/');
 
 /** Generates the API endpoint for a given `TaskExecutionIdentifier` */
 export const makeTaskExecutionPath = ({
@@ -76,14 +80,18 @@ export const makeTaskExecutionPath = ({
   ].join('/');
 
 /** Transformer to coerce an `Admin.ExecutionList` into a standard shape */
-export const executionListTransformer = createPaginationTransformer<Execution, Admin.ExecutionList>('executions');
+export const executionListTransformer = createPaginationTransformer<Execution, Admin.ExecutionList>(
+  'executions',
+);
 
 /** Transformer to coerce an `Admin.NodeExecutionList` into a standard shape */
-export const nodeExecutionListTransformer = createPaginationTransformer<NodeExecution, Admin.NodeExecutionList>(
-  'nodeExecutions',
-);
+export const nodeExecutionListTransformer = createPaginationTransformer<
+  NodeExecution,
+  Admin.NodeExecutionList
+>('nodeExecutions');
 
 /** Transformer to coerce an `Admin.TaskExecutionList` into a standard shape */
-export const taskExecutionListTransformer = createPaginationTransformer<TaskExecution, Admin.TaskExecutionList>(
-  'taskExecutions',
-);
+export const taskExecutionListTransformer = createPaginationTransformer<
+  TaskExecution,
+  Admin.TaskExecutionList
+>('taskExecutions');

@@ -10,4 +10,6 @@ export function makeWorkflowPath(scope: IdentifierScope) {
 }
 
 /** Transformer to coerce an `Admin.WorkflowList` into a standard shape */
-export const workflowListTransformer = createPaginationTransformer<Workflow, Admin.WorkflowList>('workflows');
+export const workflowListTransformer = createPaginationTransformer<Workflow, Admin.WorkflowList>(
+  'workflows',
+);

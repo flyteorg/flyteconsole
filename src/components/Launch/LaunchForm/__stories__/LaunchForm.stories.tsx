@@ -40,7 +40,8 @@ const submitAction = action('createWorkflowExecution');
 const generateMocks = (variables: Record<string, Variable>) => {
   const mockWorkflow = createMockWorkflow('MyWorkflow');
   mockWorkflow.closure = createMockWorkflowClosure();
-  mockWorkflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(variables);
+  mockWorkflow.closure!.compiledWorkflow!.primary.template.interface =
+    createMockInputsInterface(variables);
 
   const mockLaunchPlan = createMockLaunchPlan(mockWorkflow.id.name, mockWorkflow.id.version);
 
@@ -82,7 +83,8 @@ const generateMocks = (variables: Record<string, Variable>) => {
         id,
       };
       workflow.closure = createMockWorkflowClosure();
-      workflow.closure!.compiledWorkflow!.primary.template.interface = createMockInputsInterface(variables);
+      workflow.closure!.compiledWorkflow!.primary.template.interface =
+        createMockInputsInterface(variables);
 
       return resolveAfter(500, workflow);
     },
@@ -119,7 +121,11 @@ const LaunchFormWithExecution: React.FC<
   const onClose = () => console.log('Close');
   return (
     <WaitForData {...executionInputs}>
-      <LaunchForm onClose={onClose} workflowId={mockWorkflow.id} initialParameters={initialParameters} />
+      <LaunchForm
+        onClose={onClose}
+        workflowId={mockWorkflow.id}
+        initialParameters={initialParameters}
+      />
     </WaitForData>
   );
 };
@@ -165,7 +171,9 @@ stories.add('Default Values', () => {
   return renderForm({ mocks });
 });
 stories.add('Collections', () => renderForm({ mocks: generateMocks(mockCollectionVariables) }));
-stories.add('Nested Collections', () => renderForm({ mocks: generateMocks(mockNestedCollectionVariables) }));
+stories.add('Nested Collections', () =>
+  renderForm({ mocks: generateMocks(mockNestedCollectionVariables) }),
+);
 stories.add('Launched from Execution', () => {
   const mocks = generateMocks(mockSimpleVariables);
   // Only providing values for the properties in the execution which
