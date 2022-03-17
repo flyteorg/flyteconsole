@@ -41,7 +41,7 @@ export interface TaskLog extends Core.ITaskLog {
   uri: string;
 }
 
-/*** Literals ****/
+/** Literals */
 export type Binary = RequiredNonNullable<Core.IBinary>;
 
 export interface Blob extends Core.IBlob {
@@ -178,7 +178,11 @@ export interface NameIdentifierScope extends DomainIdentifierScope {
   name: string;
 }
 
-export type IdentifierScope = ProjectIdentifierScope | DomainIdentifierScope | NameIdentifierScope | Identifier;
+export type IdentifierScope =
+  | ProjectIdentifierScope
+  | DomainIdentifierScope
+  | NameIdentifierScope
+  | Identifier;
 
 export interface UserProfile {
   sub: string;

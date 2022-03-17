@@ -9,6 +9,7 @@ import { DataError } from 'components/Errors/DataError';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { Execution, NodeExecution } from 'models/Execution/types';
+import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 import { NodeExecutionDetailsContextProvider } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
@@ -18,23 +19,22 @@ import { tabs } from './constants';
 import { ExecutionChildrenLoader } from './ExecutionChildrenLoader';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 import { ExecutionNodesTimeline } from './Timeline';
-import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filters: {
-    paddingLeft: theme.spacing(3)
+    paddingLeft: theme.spacing(3),
   },
   nodesContainer: {
     borderTop: `1px solid ${theme.palette.divider}`,
     display: 'flex',
     flex: '1 1 100%',
     flexDirection: 'column',
-    minHeight: 0
+    minHeight: 0,
   },
   tabs: {
     background: secondaryBackgroundColor,
-    paddingLeft: theme.spacing(3.5)
-  }
+    paddingLeft: theme.spacing(3.5),
+  },
 }));
 
 export interface ExecutionNodeViewsProps {
@@ -48,33 +48,36 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
 
-  const timelineFlag = useFeatureFlag(FeatureFlag.TimelineView);
-  const [useTimelineFromCache] = useLocalCache(LocalCacheItem.ffTimelineView);
-  const isTimelineEnabled = useTimelineFromCache || timelineFlag;
-
   const {
-    closure: { abortMetadata }
+    closure: { abortMetadata },
   } = execution;
-
-  if (!isTimelineEnabled && tabState.value === tabs.timeline.id) {
-    tabState.onChange(noop, defaultTab);
-  }
 
   /* We want to maintain the filter selection when switching away from the Nodes
     tab and back, but do not want to filter the nodes when viewing the graph. So,
     we will only pass filters to the execution state when on the nodes tab. */
   const appliedFilters = tabState.value === tabs.nodes.id ? filterState.appliedFilters : [];
 
-  const { nodeExecutionsQuery, nodeExecutionsRequestConfig } = useExecutionNodeViewsState(execution, appliedFilters);
+  const { nodeExecutionsQuery, nodeExecutionsRequestConfig } = useExecutionNodeViewsState(
+    execution,
+    appliedFilters,
+  );
 
   const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
     <NodeExecutionsRequestConfigContext.Provider value={nodeExecutionsRequestConfig}>
-      <NodeExecutionsTable abortMetadata={abortMetadata ?? undefined} nodeExecutions={nodeExecutions} />
+      <NodeExecutionsTable
+        abortMetadata={abortMetadata ?? undefined}
+        nodeExecutions={nodeExecutions}
+      />
     </NodeExecutionsRequestConfigContext.Provider>
   );
 
   const renderExecutionLoader = (nodeExecutions: NodeExecution[]) => {
-    return <ExecutionChildrenLoader nodeExecutions={nodeExecutions} workflowId={execution.closure.workflowId} />;
+    return (
+      <ExecutionChildrenLoader
+        nodeExecutions={nodeExecutions}
+        workflowId={execution.closure.workflowId}
+      />
+    );
   };
 
   const renderExecutionsTimeline = (nodeExecutions: NodeExecution[]) => (
@@ -86,7 +89,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
       <Tabs className={styles.tabs} {...tabState}>
         <Tab value={tabs.nodes.id} label={tabs.nodes.label} />
         <Tab value={tabs.graph.id} label={tabs.graph.label} />
-        {isTimelineEnabled && <Tab value={tabs.timeline.id} label={tabs.timeline.label} />}
+        <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
       <NodeExecutionDetailsContextProvider workflowId={execution.closure.workflowId}>
         <div className={styles.nodesContainer}>
@@ -105,7 +108,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
               {renderExecutionLoader}
             </WaitForQuery>
           )}
-          {isTimelineEnabled && tabState.value === tabs.timeline.id && (
+          {tabState.value === tabs.timeline.id && (
             <WaitForQuery errorComponent={DataError} query={nodeExecutionsQuery}>
               {renderExecutionsTimeline}
             </WaitForQuery>

@@ -178,7 +178,7 @@ async function submit(
     launchPlanId,
     project,
     referenceExecutionId,
-    inputs: { literals }
+    inputs: { literals },
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {

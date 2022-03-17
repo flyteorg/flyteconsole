@@ -9,7 +9,6 @@ export enum FeatureFlag {
 
   // Production flags
   LaunchPlan = 'launch-plan',
-  TimelineView = 'timeline-view'
 }
 
 export type FeatureFlagConfig = { [k: string]: boolean };
@@ -21,5 +20,4 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   // Production - new code should be turned off by default
   // If you need to turn it on locally -> update runtimeConfig in ./index.tsx file
   'launch-plan': false,
-  'timeline-view': false
 };

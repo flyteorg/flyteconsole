@@ -4,7 +4,14 @@ import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
-import { assign, DoneInvokeEvent, Machine, MachineConfig, MachineOptions, StatesConfig } from 'xstate';
+import {
+  assign,
+  DoneInvokeEvent,
+  Machine,
+  MachineConfig,
+  MachineOptions,
+  StatesConfig,
+} from 'xstate';
 import { LiteralValueMap, ParsedInput } from './types';
 
 export type SelectWorkflowVersionEvent = {
@@ -39,7 +46,10 @@ export type BaseLaunchEvent =
   | ExecutionCreatedEvent
   | ErrorEvent;
 
-export type TaskLaunchEvent = BaseLaunchEvent | TaskVersionOptionsLoadedEvent | SelectTaskVersionEvent;
+export type TaskLaunchEvent =
+  | BaseLaunchEvent
+  | TaskVersionOptionsLoadedEvent
+  | SelectTaskVersionEvent;
 
 export type WorkflowLaunchEvent =
   | BaseLaunchEvent
@@ -102,7 +112,7 @@ export enum LaunchState {
   SUBMIT_VALIDATING = 'SUBMIT_VALIDATING',
   SUBMITTING = 'SUBMITTING',
   SUBMIT_FAILED = 'SUBMIT_FAILED',
-  SUBMIT_SUCCEEDED = 'SUBMIT_SUCCEEDED'
+  SUBMIT_SUCCEEDED = 'SUBMIT_SUCCEEDED',
 }
 
 interface BaseLaunchSchema {
@@ -221,16 +231,16 @@ export type TaskLaunchTypestate =
 const defaultBaseContext: BaseLaunchContext = {
   parsedInputs: [],
   showErrors: false,
-  unsupportedRequiredInputs: []
+  unsupportedRequiredInputs: [],
 };
 
 const defaultHandlers = {
-  CANCEL: LaunchState.CANCELLED
+  CANCEL: LaunchState.CANCELLED,
 };
 
 const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLaunchEvent> = {
   [LaunchState.CANCELLED]: {
-    type: 'final'
+    type: 'final',
   },
   [LaunchState.LOADING_INPUTS]: {
     entry: ['hideErrors'],
@@ -238,18 +248,18 @@ const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLau
       src: 'loadInputs',
       onDone: {
         target: LaunchState.ENTER_INPUTS,
-        actions: ['setInputs']
+        actions: ['setInputs'],
       },
       onError: {
         target: LaunchState.FAILED_LOADING_INPUTS,
-        actions: ['setError']
-      }
-    }
+        actions: ['setError'],
+      },
+    },
   },
   [LaunchState.FAILED_LOADING_INPUTS]: {
     on: {
-      RETRY: LaunchState.LOADING_INPUTS
-    }
+      RETRY: LaunchState.LOADING_INPUTS,
+    },
   },
   [LaunchState.UNSUPPORTED_INPUTS]: {
     // events handled at top level
@@ -257,38 +267,38 @@ const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLau
   [LaunchState.ENTER_INPUTS]: {
     always: {
       target: LaunchState.UNSUPPORTED_INPUTS,
-      cond: ({ unsupportedRequiredInputs }) => unsupportedRequiredInputs.length > 0
+      cond: ({ unsupportedRequiredInputs }) => unsupportedRequiredInputs.length > 0,
     },
     on: {
       SUBMIT: LaunchState.SUBMIT_VALIDATING,
-      VALIDATE: LaunchState.VALIDATING_INPUTS
-    }
+      VALIDATE: LaunchState.VALIDATING_INPUTS,
+    },
   },
   [LaunchState.VALIDATING_INPUTS]: {
     invoke: {
       src: 'validate',
       onDone: LaunchState.ENTER_INPUTS,
-      onError: LaunchState.INVALID_INPUTS
-    }
+      onError: LaunchState.INVALID_INPUTS,
+    },
   },
   [LaunchState.INVALID_INPUTS]: {
     on: {
       VALIDATE: LaunchState.VALIDATING_INPUTS,
-      SUBMIT: LaunchState.SUBMIT_VALIDATING
-    }
+      SUBMIT: LaunchState.SUBMIT_VALIDATING,
+    },
   },
   [LaunchState.SUBMIT_VALIDATING]: {
     entry: ['showErrors'],
     invoke: {
       src: 'validate',
       onDone: {
-        target: LaunchState.SUBMITTING
+        target: LaunchState.SUBMITTING,
       },
       onError: {
         target: LaunchState.INVALID_INPUTS,
-        actions: ['setError']
-      }
-    }
+        actions: ['setError'],
+      },
+    },
   },
   [LaunchState.SUBMITTING]: {
     invoke: {

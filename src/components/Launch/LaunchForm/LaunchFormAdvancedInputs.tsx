@@ -11,39 +11,39 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Form from '@rjsf/material-ui';
-
-import { LaunchAdvancedOptionsRef } from './types';
 import { flyteidl } from '@flyteorg/flyteidl/gen/pb-js/flyteidl';
-import IExecutionSpec = flyteidl.admin.IExecutionSpec;
 import { State } from 'xstate';
 import { WorkflowLaunchContext, WorkflowLaunchEvent, WorkflowLaunchTypestate } from './launchMachine';
 import { useStyles } from './styles';
 
+import IExecutionSpec = flyteidl.admin.IExecutionSpec;
+import {LaunchAdvancedOptionsRef} from "./types";
+
 const muiTheme = createMuiTheme({
   props: {
     MuiTextField: {
-      variant: 'outlined'
-    }
+      variant: 'outlined',
+    },
   },
   overrides: {
     MuiButton: {
       label: {
-        color: 'gray'
-      }
+        color: 'gray',
+      },
     },
     MuiCard: {
       root: {
         marginBottom: 16,
-        width: '100%'
-      }
-    }
+        width: '100%',
+      },
+    },
   },
   typography: {
     h5: {
       fontSize: '.875rem',
-      fontWeight: 500
-    }
-  }
+      fontWeight: 500,
+    },
+  },
 });
 
 interface LaunchAdvancedOptionsProps {
@@ -54,14 +54,17 @@ const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
 };
 
-export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRef, LaunchAdvancedOptionsProps>(
+export const LaunchFormAdvancedInputs = React.forwardRef<
+  LaunchAdvancedOptionsRef,
+  LaunchAdvancedOptionsProps
+>(
   (
     {
       state: {
-        context: { launchPlan, ...other }
-      }
+        context: { launchPlan, ...other },
+      },
     },
-    ref
+    ref,
   ) => {
     const styles = useStyles();
     const [labelsParamData, setLabelsParamData] = React.useState({});
@@ -79,28 +82,21 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
       }
       if (
         other?.rawOutputDataConfig?.outputLocationPrefix !== undefined &&
-        other.rawOutputDataConfig.outputLocationPrefix !== null
+          other.rawOutputDataConfig.outputLocationPrefix !== null
       ) {
         setRawOutputDataConfig(other.rawOutputDataConfig.outputLocationPrefix);
       }
       const newLabels = {
         ...(other.labels?.values || {}),
-        ...(launchPlan?.spec?.labels?.values || {})
+        ...(launchPlan?.spec?.labels?.values || {}),
       };
       const newAnnotations = {
         ...(other.annotations?.values || {}),
-        ...(launchPlan?.spec?.annotations?.values || {})
+        ...(launchPlan?.spec?.annotations?.values || {}),
       };
       setLabelsParamData(newLabels);
       setAnnotationsParamData(newAnnotations);
-    }, [
-      other.disableAll,
-      other.maxParallelism,
-      other.rawOutputDataConfig,
-      other.labels,
-      other.annotations,
-      launchPlan?.spec
-    ]);
+    }, [other.disableAll, other.maxParallelism, other.rawOutputDataConfig, other.labels, other.annotations, launchPlan?.spec]);
 
     React.useImperativeHandle(
       ref,
@@ -113,22 +109,22 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
             },
             maxParallelism: parseInt(maxParallelism || '', 10),
             labels: {
-              values: labelsParamData
+              values: labelsParamData,
             },
             annotations: {
-              values: annotationsParamData
-            }
+              values: annotationsParamData,
+            },
           } as IExecutionSpec;
         },
         validate: () => {
           return true;
-        }
+        },
       }),
-      [disableAll, maxParallelism, rawOutputDataConfig, labelsParamData, annotationsParamData]
+      [disableAll, maxParallelism, rawOutputDataConfig, labelsParamData, annotationsParamData],
     );
 
     const handleDisableAllChange = React.useCallback(() => {
-      setDisableAll(prevState => !prevState);
+      setDisableAll((prevState) => !prevState);
     }, []);
 
     const handleMaxParallelismChange = React.useCallback(({ target: { value } }) => {
@@ -151,7 +147,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
       <>
         <section title="Labels" className={styles.collapsibleSection}>
           <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="Labels" id="labels-form">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="Labels"
+              id="labels-form"
+            >
               <header className={styles.sectionHeader}>
                 <Typography variant="h6">Labels</Typography>
               </header>
@@ -164,7 +164,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
                     <Form
                       schema={{
                         type: 'object',
-                        additionalProperties: true
+                        additionalProperties: true,
                       }}
                       formData={labelsParamData}
                       onChange={handleLabelsChange}
@@ -179,7 +179,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
         </section>
         <section title="Annotations" className={styles.collapsibleSection}>
           <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="Annotations" id="annotations-form">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="Annotations"
+              id="annotations-form"
+            >
               <header className={styles.sectionHeader}>
                 <Typography variant="h6">Annotations</Typography>
               </header>
@@ -192,7 +196,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
                     <Form
                       schema={{
                         type: 'object',
-                        additionalProperties: true
+                        additionalProperties: true,
                       }}
                       formData={annotationsParamData}
                       onChange={handleAnnotationsParamData}
@@ -233,5 +237,5 @@ export const LaunchFormAdvancedInputs = React.forwardRef<LaunchAdvancedOptionsRe
         </section>
       </>
     );
-  }
+  },
 );

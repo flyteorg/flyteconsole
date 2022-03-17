@@ -4,9 +4,9 @@ import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
-import { ExecutionMetadataLabels } from './constants';
 import { getLaunchPlan } from 'models/Launch/api';
 import { LaunchPlanSpec } from 'models/Launch/types';
+import { ExecutionMetadataLabels } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
