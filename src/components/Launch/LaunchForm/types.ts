@@ -79,11 +79,6 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
-export interface LaunchWorkflowFormProps {
-  workflowId: NamedEntityIdentifier;
-  initialParameters?: WorkflowInitialLaunchParameters;
-}
-
 export interface LaunchFormInputsRef {
   getValues(): Record<string, Core.ILiteral>;
   validate(): boolean;

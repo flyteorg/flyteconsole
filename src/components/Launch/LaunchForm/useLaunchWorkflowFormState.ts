@@ -254,8 +254,8 @@ export function useLaunchWorkflowFormState({
   const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
 
   const services = useMemo(
-      () => getServices(apiContext, formInputsRef, roleInputRef, advancedOptionsRef),
-      [apiContext, formInputsRef, roleInputRef, advancedOptionsRef],
+    () => getServices(apiContext, formInputsRef, roleInputRef, advancedOptionsRef),
+    [apiContext, formInputsRef, roleInputRef, advancedOptionsRef],
   );
 
   const [state, sendEvent, service] = useMachine<
