@@ -175,8 +175,8 @@ export function useLaunchTaskFormState({
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
 
   const services = useMemo(
-    () => getServices(apiContext, formInputsRef, roleInputRef),
-    [apiContext, formInputsRef, roleInputRef],
+   () => getServices(apiContext, formInputsRef, roleInputRef),
+   [apiContext, formInputsRef, roleInputRef],
   );
 
   const [state, sendEvent, service] = useMachine<

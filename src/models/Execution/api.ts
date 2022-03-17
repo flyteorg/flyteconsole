@@ -201,10 +201,10 @@ interface RecoverParams {
  * Submits a request to recover a WorkflowExecution
  */
 export const recoverWorkflowExecution = (
-    { id, name, metadata }: RecoverParams,
-    config?: RequestConfig,
+  { id, name, metadata }: RecoverParams,
+  config?: RequestConfig,
 ) =>
-    postAdminEntity<Admin.IExecutionRecoverRequest, Admin.ExecutionCreateResponse>(
+  postAdminEntity<Admin.IExecutionRecoverRequest, Admin.ExecutionCreateResponse>(
     {
       data: { id, name, metadata },
       path: endpointPrefixes.recoverExecution,
