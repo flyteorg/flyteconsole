@@ -9,7 +9,7 @@ import {
   errorLiterals,
   noneTypeLiteral,
   primitiveLiterals,
-  schemaLiterals
+  schemaLiterals,
 } from './literalValues';
 
 const stories = storiesOf('Literals/Map', module);
@@ -21,33 +21,33 @@ function renderMap(label: string, map: LiteralMap) {
 
 stories.add('Binary', () =>
   renderMap('binary_map', {
-    literals: binaryLiterals
-  })
+    literals: binaryLiterals,
+  }),
 );
 stories.add('Blob', () =>
   renderMap('blob_map', {
-    literals: blobLiterals
-  })
+    literals: blobLiterals,
+  }),
 );
 stories.add('Error', () =>
   renderMap('error_map', {
-    literals: errorLiterals
-  })
+    literals: errorLiterals,
+  }),
 );
 stories.add('NoneType', () =>
   renderMap('noneType_map', {
-    literals: { empty_value: noneTypeLiteral }
-  })
+    literals: { empty_value: noneTypeLiteral },
+  }),
 );
 stories.add('Primitive', () =>
   renderMap('primitive_map', {
-    literals: primitiveLiterals
-  })
+    literals: primitiveLiterals,
+  }),
 );
 stories.add('Schema', () =>
   renderMap('schema_map', {
-    literals: schemaLiterals
-  })
+    literals: schemaLiterals,
+  }),
 );
 stories.add('Mixed', () =>
   renderMap('mixed_map', {
@@ -57,8 +57,8 @@ stories.add('Mixed', () =>
       ...errorLiterals,
       noneTypeLiteral,
       ...primitiveLiterals,
-      ...schemaLiterals
-    }
-  })
+      ...schemaLiterals,
+    },
+  }),
 );
 stories.add('Empty', () => renderMap('empty_map', { literals: {} }));

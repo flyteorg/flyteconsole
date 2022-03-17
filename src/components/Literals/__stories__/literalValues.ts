@@ -7,7 +7,7 @@ import {
   errorScalars,
   noneTypeScalar,
   primitiveScalars,
-  schemaScalars
+  schemaScalars,
 } from './scalarValues';
 
 /** Maps a dictionary of `Scalar`s to a dictionary of `Literals` by wrapping

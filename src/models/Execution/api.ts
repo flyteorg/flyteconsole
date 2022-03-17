@@ -1,6 +1,9 @@
 import { Admin, Core } from 'flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultListExecutionChildrenConfig, defaultPaginationConfig } from 'models/AdminEntity/constants';
+import {
+    defaultListExecutionChildrenConfig,
+    defaultPaginationConfig,
+} from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { endpointPrefixes } from 'models/Common/constants';
 import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
@@ -15,7 +18,7 @@ import {
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
-  WorkflowExecutionIdentifier
+  WorkflowExecutionIdentifier,
 } from './types';
 import {
   executionListTransformer,
@@ -26,7 +29,7 @@ import {
   makeTaskExecutionListPath,
   makeTaskExecutionPath,
   nodeExecutionListTransformer,
-  taskExecutionListTransformer
+  taskExecutionListTransformer,
 } from './utils';
 
 /** Fetches a list of `Execution` records matching the provided `scope` */
@@ -35,12 +38,12 @@ export const listExecutions = (scope: IdentifierScope, config?: RequestConfig) =
     {
       path: makeIdentifierPath(endpointPrefixes.execution, scope),
       messageType: Admin.ExecutionList,
-      transform: executionListTransformer
+      transform: executionListTransformer,
     },
     {
       ...defaultPaginationConfig,
-      ...config
-    }
+      ...config,
+    },
   );
 
 /** Fetches a single `Execution` record */
@@ -48,16 +51,16 @@ export const getExecution = (id: WorkflowExecutionIdentifier, config?: RequestCo
   getAdminEntity<Admin.Execution, Execution>(
     {
       path: makeExecutionPath(id),
-      messageType: Admin.Execution
+      messageType: Admin.Execution,
     },
-    config
+    config,
   );
 
 const emptyExecutionData: ExecutionData = {
   inputs: {},
   outputs: {},
   fullInputs: null,
-  fullOutputs: null
+  fullOutputs: null,
 };
 
 /** Fetches data URLs for an `Execution` record */
@@ -68,9 +71,9 @@ export const getExecutionData = (id: WorkflowExecutionIdentifier, config?: Reque
       messageType: Admin.WorkflowExecutionGetDataResponse,
       // Admin isn't guaranteed to populate both inputs and outputs,
       // so ensure that a safe access is possible for each
-      transform: result => ({ ...emptyExecutionData, ...result } as ExecutionData)
+      transform: (result) => ({ ...emptyExecutionData, ...result } as ExecutionData),
     },
-    config
+    config,
   );
 
 export interface CreateWorkflowExecutionArguments {
@@ -104,19 +107,19 @@ export const createWorkflowExecution = (
     inputs,
     launchPlanId: launchPlan,
     project,
-    referenceExecutionId: referenceExecution
+    referenceExecutionId: referenceExecution,
   }: CreateWorkflowExecutionArguments,
-  config?: RequestConfig
+  config?: RequestConfig,
 ) => {
   const spec: Admin.IExecutionSpec = {
     inputs,
     launchPlan,
     metadata: {
       referenceExecution,
-      principal: defaultExecutionPrincipal
+      principal: defaultExecutionPrincipal,
     },
     labels,
-    annotations
+    annotations,
   };
 
   if (authRole?.assumableIamRole || authRole?.kubernetesServiceAccount) {
@@ -144,27 +147,31 @@ export const createWorkflowExecution = (
       data: {
         project,
         domain,
-        spec
+        spec,
       },
       path: endpointPrefixes.execution,
       requestMessageType: Admin.ExecutionCreateRequest,
-      responseMessageType: Admin.ExecutionCreateResponse
+      responseMessageType: Admin.ExecutionCreateResponse,
     },
-    config
+    config,
   );
 };
 
 /** Submits a request to terminate a WorkflowExecution by id */
-export const terminateWorkflowExecution = (id: WorkflowExecutionIdentifier, cause: string, config?: RequestConfig) =>
-  postAdminEntity<Admin.IExecutionTerminateRequest, Admin.ExecutionTerminateResponse>(
+export const terminateWorkflowExecution = (
+    id: WorkflowExecutionIdentifier,
+    cause: string,
+    config?: RequestConfig,
+) =>
+    postAdminEntity<Admin.IExecutionTerminateRequest, Admin.ExecutionTerminateResponse>(
     {
       data: { cause },
       path: makeExecutionPath(id),
       requestMessageType: Admin.ExecutionTerminateRequest,
       responseMessageType: Admin.ExecutionTerminateResponse,
-      method: 'delete'
+      method: 'delete',
     },
-    config
+    config,
   );
 
 interface RelaunchParams {
@@ -179,9 +186,9 @@ export const relaunchWorkflowExecution = ({ id, name }: RelaunchParams, config?:
       data: { id, name },
       path: endpointPrefixes.relaunchExecution,
       requestMessageType: Admin.ExecutionRelaunchRequest,
-      responseMessageType: Admin.ExecutionCreateResponse
+      responseMessageType: Admin.ExecutionCreateResponse,
     },
-    config
+    config,
   );
 
 interface RecoverParams {
@@ -193,15 +200,18 @@ interface RecoverParams {
 /**
  * Submits a request to recover a WorkflowExecution
  */
-export const recoverWorkflowExecution = ({ id, name, metadata }: RecoverParams, config?: RequestConfig) =>
-  postAdminEntity<Admin.IExecutionRecoverRequest, Admin.ExecutionCreateResponse>(
+export const recoverWorkflowExecution = (
+    { id, name, metadata }: RecoverParams,
+    config?: RequestConfig,
+) =>
+    postAdminEntity<Admin.IExecutionRecoverRequest, Admin.ExecutionCreateResponse>(
     {
       data: { id, name, metadata },
       path: endpointPrefixes.recoverExecution,
       requestMessageType: Admin.ExecutionRecoverRequest,
-      responseMessageType: Admin.ExecutionCreateResponse
+      responseMessageType: Admin.ExecutionCreateResponse,
     },
-    config
+    config,
   );
 
 /** Retrieves a single `NodeExecution` record */
@@ -209,9 +219,9 @@ export const getNodeExecution = (id: NodeExecutionIdentifier, config?: RequestCo
   getAdminEntity<Admin.NodeExecution, NodeExecution>(
     {
       path: makeNodeExecutionPath(id),
-      messageType: Admin.NodeExecution
+      messageType: Admin.NodeExecution,
     },
-    config
+    config,
   );
 
 /** Fetches data URLs for a NodeExecution (used when fetching Dynamicworkflows
@@ -220,9 +230,9 @@ export const getNodeExecutionData = (id: NodeExecutionIdentifier, config?: Reque
   getAdminEntity<Admin.NodeExecutionGetDataResponse, ExecutionData>(
     {
       path: `/data${makeNodeExecutionPath(id)}`,
-      messageType: Admin.NodeExecutionGetDataResponse
+      messageType: Admin.NodeExecutionGetDataResponse,
     },
-    config
+    config,
   );
 
 /** Fetches a list of `NodeExecution` records matching the provided `scope` */
@@ -231,30 +241,33 @@ export const listNodeExecutions = (scope: NameIdentifierScope, config?: RequestC
     {
       path: makeNodeExecutionListPath(scope),
       messageType: Admin.NodeExecutionList,
-      transform: nodeExecutionListTransformer
+      transform: nodeExecutionListTransformer,
     },
     {
       ...defaultPaginationConfig,
       ...defaultListExecutionChildrenConfig,
-      ...config
-    }
+      ...config,
+    },
   );
 
 /** Fetches a list of `NodeExecution` records which are children of a given
  * `TaskExecution`.
  */
-export const listTaskExecutionChildren = (taskExecutionId: TaskExecutionIdentifier, config?: RequestConfig) =>
-  getAdminEntity(
+export const listTaskExecutionChildren = (
+    taskExecutionId: TaskExecutionIdentifier,
+    config?: RequestConfig,
+) =>
+    getAdminEntity(
     {
       path: makeTaskExecutionChildrenPath(taskExecutionId),
       messageType: Admin.NodeExecutionList,
-      transform: nodeExecutionListTransformer
+      transform: nodeExecutionListTransformer,
     },
     {
       ...defaultPaginationConfig,
       ...defaultListExecutionChildrenConfig,
-      ...config
-    }
+      ...config,
+    },
   );
 
 /** Fetches a single `TaskExecution` record */
@@ -262,9 +275,9 @@ export const getTaskExecution = (id: TaskExecutionIdentifier, config?: RequestCo
   getAdminEntity<Admin.TaskExecution, TaskExecution>(
     {
       path: makeTaskExecutionPath(id),
-      messageType: Admin.TaskExecution
+      messageType: Admin.TaskExecution,
     },
-    config
+    config,
   );
 
 /** Fetches the data URLs for a TaskExecution */
@@ -272,9 +285,9 @@ export const getTaskExecutionData = (id: TaskExecutionIdentifier, config?: Reque
   getAdminEntity<Admin.TaskExecutionGetDataResponse, ExecutionData>(
     {
       path: `/data${makeTaskExecutionPath(id)}`,
-      messageType: Admin.TaskExecutionGetDataResponse
+      messageType: Admin.TaskExecutionGetDataResponse,
     },
-    config
+    config,
   );
 
 /** Fetches a list of TaskExecutions for a given NodeExecution */
@@ -283,20 +296,20 @@ export const listTaskExecutions = (id: NodeExecutionIdentifier, config?: Request
     {
       path: makeTaskExecutionListPath(id),
       messageType: Admin.TaskExecutionList,
-      transform: taskExecutionListTransformer
+      transform: taskExecutionListTransformer,
     },
     {
       ...defaultPaginationConfig,
       ...defaultListExecutionChildrenConfig,
-      ...config
-    }
+      ...config,
+    },
   );
 
 /** Updates Execution archive state */
 export const updateExecution = (
   id: WorkflowExecutionIdentifier,
   newState: ExecutionState,
-  config?: RequestConfig
+  config?: RequestConfig,
 ): Promise<Admin.ExecutionUpdateResponse> => {
   return postAdminEntity<Admin.IExecutionUpdateRequest, Admin.ExecutionUpdateResponse>(
     {
@@ -304,8 +317,8 @@ export const updateExecution = (
       path: makeExecutionPath(id),
       requestMessageType: Admin.ExecutionUpdateRequest,
       responseMessageType: Admin.ExecutionUpdateResponse,
-      method: 'put'
+      method: 'put',
     },
-    config
+    config,
   );
 };

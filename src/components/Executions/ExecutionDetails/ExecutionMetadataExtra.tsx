@@ -12,8 +12,8 @@ const useStyles = makeStyles((theme: Theme) => {
   return {
     detailItem: {
       flexShrink: 0,
-      marginLeft: theme.spacing(4)
-    }
+      marginLeft: theme.spacing(4),
+    },
   };
 });
 
@@ -45,19 +45,19 @@ export const ExecutionMetadataExtra: React.FC<{
   const details: DetailItem[] = [
     {
       label: ExecutionMetadataLabels.iam,
-      value: authRole?.assumableIamRole || ExecutionMetadataLabels.securityContextDefault
+      value: authRole?.assumableIamRole || ExecutionMetadataLabels.securityContextDefault,
     },
     {
       label: ExecutionMetadataLabels.serviceAccount,
-      value: authRole?.kubernetesServiceAccount || ExecutionMetadataLabels.securityContextDefault
+      value: authRole?.kubernetesServiceAccount || ExecutionMetadataLabels.securityContextDefault,
     },
     {
       label: ExecutionMetadataLabels.rawOutputPrefix,
-      value: rawOutputDataConfig?.outputLocationPrefix || launchPlanSpec?.rawOutputDataConfig?.outputLocationPrefix
+      value: rawOutputDataConfig?.outputLocationPrefix || launchPlanSpec?.rawOutputDataConfig?.outputLocationPrefix,
     },
     {
       label: ExecutionMetadataLabels.parallelism,
-      value: maxParallelism
+      value: maxParallelism,
     }
   ];
 
@@ -68,7 +68,11 @@ export const ExecutionMetadataExtra: React.FC<{
           <Typography className={commonStyles.truncateText} variant="subtitle1">
             {label}
           </Typography>
-          <Typography className={commonStyles.truncateText} variant="h6" data-testid={`metadata-${label}`}>
+          <Typography
+              className={commonStyles.truncateText}
+              variant="h6"
+              data-testid={`metadata-${label}`}
+          >
             {value}
           </Typography>
         </div>

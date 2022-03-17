@@ -1,6 +1,10 @@
 import { Admin, Core } from 'flyteidl';
-import { BlobDimensionality, Identifier, LiteralType, NamedEntityIdentifier } from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import {
+  BlobDimensionality,
+  Identifier,
+  LiteralType,
+  NamedEntityIdentifier,
+} from 'models/Common/types';import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
@@ -14,7 +18,7 @@ import {
   TaskLaunchTypestate,
   WorkflowLaunchContext,
   WorkflowLaunchEvent,
-  WorkflowLaunchTypestate
+  WorkflowLaunchTypestate,
 } from './launchMachine';
 import { SearchableSelectorOption } from './SearchableSelector';
 
@@ -22,9 +26,19 @@ export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
 export type SearchableVersion = Workflow | Task;
 
-export type BaseInterpretedLaunchState = State<BaseLaunchContext, BaseLaunchEvent, any, BaseLaunchTypestate>;
+export type BaseInterpretedLaunchState = State<
+    BaseLaunchContext,
+    BaseLaunchEvent,
+    any,
+    BaseLaunchTypestate
+    >;
 
-export type BaseLaunchService = Interpreter<BaseLaunchContext, any, BaseLaunchEvent, BaseLaunchTypestate>;
+export type BaseLaunchService = Interpreter<
+    BaseLaunchContext,
+    any,
+    BaseLaunchEvent,
+    BaseLaunchTypestate
+    >;
 
 export interface BaseLaunchFormProps {
   onClose(): void;
@@ -138,7 +152,7 @@ export enum InputType {
   Schema = 'SCHEMA',
   String = 'STRING',
   Struct = 'STRUCT',
-  Unknown = 'UNKNOWN'
+  Unknown = 'UNKNOWN',
 }
 
 export interface InputTypeDefinition {
@@ -177,7 +191,7 @@ export interface ParsedInput
 
 export enum AuthRoleTypes {
   k8 = 'k8',
-  IAM = 'IAM'
+  IAM = 'IAM',
 }
 
 export interface AuthRoleMeta {

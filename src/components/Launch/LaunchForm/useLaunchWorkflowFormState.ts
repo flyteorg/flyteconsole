@@ -24,21 +24,21 @@ import {
   LaunchWorkflowFormProps,
   LaunchWorkflowFormState,
   ParsedInput,
-  LaunchRoles
+  LaunchRoles,
 } from './types';
 import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
 import { getUnsupportedRequiredInputs } from './utils';
 
 async function loadLaunchPlans(
   { listLaunchPlans }: APIContextValue,
-  { preferredLaunchPlanId, workflowVersion }: WorkflowLaunchContext
+  { preferredLaunchPlanId, workflowVersion }: WorkflowLaunchContext,
 ) {
   if (workflowVersion == null) {
     return Promise.reject('No workflowVersion specified');
   }
 
   let preferredLaunchPlanPromise = Promise.resolve({
-    entities: [] as LaunchPlan[]
+    entities: [] as LaunchPlan[],
   });
   if (preferredLaunchPlanId) {
     const { version, ...scope } = preferredLaunchPlanId;
@@ -48,9 +48,9 @@ async function loadLaunchPlans(
         {
           key: 'version',
           operation: FilterOperationName.EQ,
-          value: version
-        }
-      ]
+          value: version,
+        },
+      ],
     });
   }
 
@@ -62,21 +62,21 @@ async function loadLaunchPlans(
         {
           key: 'workflow.name',
           operation: FilterOperationName.EQ,
-          value: name
+          value: name,
         },
         {
           key: 'workflow.version',
           operation: FilterOperationName.EQ,
-          value: version
-        }
+          value: version,
+        },
       ],
-      limit: 10
-    }
+      limit: 10,
+    },
   );
 
   const [launchPlansResult, preferredLaunchPlanResult] = await Promise.all([
     launchPlansPromise,
-    preferredLaunchPlanPromise
+    preferredLaunchPlanPromise,
   ]);
   const merged = [...launchPlansResult.entities, ...preferredLaunchPlanResult.entities];
   return uniqBy(merged, ({ id }) => id.name);
@@ -84,7 +84,7 @@ async function loadLaunchPlans(
 
 async function loadWorkflowVersions(
   { listWorkflows }: APIContextValue,
-  { preferredWorkflowId, sourceId: sourceWorkflowName }: WorkflowLaunchContext
+  { preferredWorkflowId, sourceId: sourceWorkflowName }: WorkflowLaunchContext,
 ) {
   if (!sourceWorkflowName) {
     throw new Error('Cannot load workflows, missing workflowName');
@@ -96,13 +96,13 @@ async function loadWorkflowVersions(
       limit: 10,
       sort: {
         key: workflowSortFields.createdAt,
-        direction: SortDirection.DESCENDING
-      }
-    }
+        direction: SortDirection.DESCENDING,
+      },
+    },
   );
 
   let preferredWorkflowPromise = Promise.resolve({
-    entities: [] as Workflow[]
+    entities: [] as Workflow[],
   });
   if (preferredWorkflowId) {
     const { version, ...scope } = preferredWorkflowId;
@@ -112,20 +112,22 @@ async function loadWorkflowVersions(
         {
           key: 'version',
           operation: FilterOperationName.EQ,
-          value: version
-        }
-      ]
+          value: version,
+        },
+      ],
     });
   }
 
-  const [workflowsResult, preferredWorkflowResult] = await Promise.all([workflowsPromise, preferredWorkflowPromise]);
-  const merged = [...workflowsResult.entities, ...preferredWorkflowResult.entities];
+  const [workflowsResult, preferredWorkflowResult] = await Promise.all([
+    workflowsPromise,
+    preferredWorkflowPromise,
+  ]);  const merged = [...workflowsResult.entities, ...preferredWorkflowResult.entities];
   return uniqBy(merged, ({ id: { version } }) => version);
 }
 
 async function loadInputs(
   { getWorkflow }: APIContextValue,
-  { defaultInputValues, workflowVersion, launchPlan }: WorkflowLaunchContext
+  { defaultInputValues, workflowVersion, launchPlan }: WorkflowLaunchContext,
 ) {
   if (!workflowVersion) {
     throw new Error('Failed to load inputs: missing workflowVersion');
@@ -134,11 +136,15 @@ async function loadInputs(
     throw new Error('Failed to load inputs: missing launchPlan');
   }
   const workflow = await getWorkflow(workflowVersion);
-  const parsedInputs: ParsedInput[] = getInputsForWorkflow(workflow, launchPlan, defaultInputValues);
+  const parsedInputs: ParsedInput[] = getInputsForWorkflow(
+      workflow,
+      launchPlan,
+      defaultInputValues,
+  );
 
   return {
     parsedInputs,
-    unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs)
+    unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs),
   };
 }
 
@@ -147,7 +153,7 @@ async function submit(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
-  { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext
+  { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext,
 ) {
   if (!launchPlan) {
     throw new Error('Attempting to launch with no LaunchPlan');
@@ -191,7 +197,7 @@ async function submit(
 async function validate(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
-  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>
+  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
 ) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
@@ -207,14 +213,14 @@ function getServices(
   apiContext: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
-  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>
+  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
 ) {
   return {
     loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
     loadLaunchPlans: partial(loadLaunchPlans, apiContext),
     loadInputs: partial(loadInputs, apiContext),
     submit: partial(submit, apiContext, formInputsRef, roleInputRef, advancedOptionsRef),
-    validate: partial(validate, formInputsRef, roleInputRef, advancedOptionsRef)
+    validate: partial(validate, formInputsRef, roleInputRef, advancedOptionsRef),
   };
 }
 
@@ -224,7 +230,7 @@ function getServices(
 export function useLaunchWorkflowFormState({
   initialParameters = {},
   workflowId: sourceId,
-  referenceExecutionId
+  referenceExecutionId,
 }: LaunchWorkflowFormProps): LaunchWorkflowFormState {
   // These values will be used to auto-select items from the workflow
   // version/launch plan drop downs.
@@ -238,7 +244,7 @@ export function useLaunchWorkflowFormState({
     rawOutputDataConfig,
     labels,
     annotations,
-    securityContext
+    securityContext,
   } = initialParameters;
 
   const apiContext = useAPIContext();
@@ -246,36 +252,40 @@ export function useLaunchWorkflowFormState({
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
 
-  const services = useMemo(() => getServices(apiContext, formInputsRef, roleInputRef, advancedOptionsRef), [
-    apiContext,
-    formInputsRef,
-    roleInputRef,
-    advancedOptionsRef
-  ]);
-
-  const [state, sendEvent, service] = useMachine<WorkflowLaunchContext, WorkflowLaunchEvent, WorkflowLaunchTypestate>(
-    workflowLaunchMachine,
-    {
-      ...defaultStateMachineConfig,
-      services,
-      context: {
-        defaultAuthRole,
-        securityContext,
-        defaultInputValues,
-        preferredLaunchPlanId,
-        preferredWorkflowId,
-        referenceExecutionId,
-        sourceId,
-        disableAll,
-        maxParallelism,
-        rawOutputDataConfig,
-        labels,
-        annotations
-      }
-    }
+  const services = useMemo(
+      () => getServices(apiContext, formInputsRef, roleInputRef, advancedOptionsRef),
+      [apiContext, formInputsRef, roleInputRef, advancedOptionsRef],
   );
 
-  const { launchPlanOptions = [], launchPlan, workflowVersionOptions = [], workflowVersion } = state.context;
+  const [state, sendEvent, service] = useMachine<
+      WorkflowLaunchContext,
+      WorkflowLaunchEvent,
+      WorkflowLaunchTypestate
+      >(workflowLaunchMachine, {
+    ...defaultStateMachineConfig,
+    services,
+    context: {
+      defaultAuthRole,
+      securityContext,
+      defaultInputValues,
+      preferredLaunchPlanId,
+      preferredWorkflowId,
+      referenceExecutionId,
+      sourceId,
+      disableAll,
+      maxParallelism,
+      rawOutputDataConfig,
+      labels,
+      annotations,
+    },
+  });
+
+  const {
+    launchPlanOptions = [],
+    launchPlan,
+    workflowVersionOptions = [],
+    workflowVersion,
+  } = state.context;
 
   const selectWorkflowVersion = (newWorkflow: WorkflowId) => {
     if (newWorkflow === workflowVersion) {
@@ -283,7 +293,7 @@ export function useLaunchWorkflowFormState({
     }
     sendEvent({
       type: 'SELECT_WORKFLOW_VERSION',
-      workflowId: newWorkflow
+      workflowId: newWorkflow,
     });
   };
 
@@ -293,7 +303,7 @@ export function useLaunchWorkflowFormState({
     }
     sendEvent({
       type: 'SELECT_LAUNCH_PLAN',
-      launchPlan: newLaunchPlan
+      launchPlan: newLaunchPlan,
     });
   };
 
@@ -304,24 +314,26 @@ export function useLaunchWorkflowFormState({
     selectLaunchPlan,
     selectWorkflowVersion,
     workflowVersion,
-    workflowVersionOptions
+    workflowVersionOptions,
   });
 
   useEffect(() => {
-    const subscription = service.subscribe(newState => {
+    const subscription = service.subscribe((newState) => {
       if (newState.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
         const { workflowVersionOptions, preferredWorkflowId } = newState.context;
         if (workflowVersionOptions.length > 0) {
           let workflowToSelect = workflowVersionOptions[0];
           if (preferredWorkflowId) {
-            const preferred = workflowVersionOptions.find(({ id }) => isEqual(id, preferredWorkflowId));
+            const preferred = workflowVersionOptions.find(({ id }) =>
+                isEqual(id, preferredWorkflowId),
+            );
             if (preferred) {
               workflowToSelect = preferred;
             }
           }
           sendEvent({
             type: 'SELECT_WORKFLOW_VERSION',
-            workflowId: workflowToSelect.id
+            workflowId: workflowToSelect.id,
           });
         }
       }
@@ -341,7 +353,9 @@ export function useLaunchWorkflowFormState({
          * 4. The first launch plan in the list
          */
         if (launchPlan) {
-          const lastSelected = launchPlanOptions.find(({ id: { name } }) => name === launchPlan.id.name);
+          const lastSelected = launchPlanOptions.find(
+              ({ id: { name } }) => name === launchPlan.id.name,
+          );
           if (lastSelected) {
             launchPlanToSelect = lastSelected;
           }
@@ -351,7 +365,9 @@ export function useLaunchWorkflowFormState({
             launchPlanToSelect = preferred;
           }
         } else {
-          const defaultLaunchPlan = launchPlanOptions.find(({ id: { name } }) => name === sourceId.name);
+          const defaultLaunchPlan = launchPlanOptions.find(
+              ({ id: { name } }) => name === sourceId.name,
+          );
           if (defaultLaunchPlan) {
             launchPlanToSelect = defaultLaunchPlan;
           }
@@ -359,7 +375,7 @@ export function useLaunchWorkflowFormState({
 
         sendEvent({
           type: 'SELECT_LAUNCH_PLAN',
-          launchPlan: launchPlanToSelect
+          launchPlan: launchPlanToSelect,
         });
       }
     });
@@ -373,6 +389,6 @@ export function useLaunchWorkflowFormState({
     roleInputRef,
     state,
     service,
-    workflowSourceSelectorState
+    workflowSourceSelectorState,
   };
 }

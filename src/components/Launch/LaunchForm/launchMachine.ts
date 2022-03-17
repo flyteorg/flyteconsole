@@ -305,25 +305,29 @@ const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLau
       src: 'submit',
       onDone: {
         target: LaunchState.SUBMIT_SUCCEEDED,
-        actions: ['setExecutionId']
+        actions: ['setExecutionId'],
       },
       onError: {
         target: LaunchState.SUBMIT_FAILED,
-        actions: ['setError']
-      }
-    }
+        actions: ['setError'],
+      },
+    },
   },
   [LaunchState.SUBMIT_FAILED]: {
     on: {
-      SUBMIT: LaunchState.SUBMITTING
-    }
+      SUBMIT: LaunchState.SUBMITTING,
+    },
   },
   [LaunchState.SUBMIT_SUCCEEDED]: {
-    type: 'final'
-  }
+    type: 'final',
+  },
 };
 
-export const taskLaunchMachineConfig: MachineConfig<TaskLaunchContext, TaskLaunchSchema, TaskLaunchEvent> = {
+export const taskLaunchMachineConfig: MachineConfig<
+    TaskLaunchContext,
+    TaskLaunchSchema,
+    TaskLaunchEvent
+    > = {
   id: 'launchTask',
   context: { ...defaultBaseContext },
   initial: LaunchState.LOADING_TASK_VERSIONS,
@@ -331,8 +335,8 @@ export const taskLaunchMachineConfig: MachineConfig<TaskLaunchContext, TaskLaunc
     ...defaultHandlers,
     SELECT_TASK_VERSION: {
       target: LaunchState.LOADING_INPUTS,
-      actions: ['setTaskVersion']
-    }
+      actions: ['setTaskVersion'],
+    },
   },
   states: {
     ...(baseStateConfig as StatesConfig<TaskLaunchContext, TaskLaunchSchema, TaskLaunchEvent>),
@@ -341,23 +345,23 @@ export const taskLaunchMachineConfig: MachineConfig<TaskLaunchContext, TaskLaunc
         src: 'loadTaskVersions',
         onDone: {
           target: LaunchState.SELECT_TASK_VERSION,
-          actions: ['setTaskVersionOptions']
+          actions: ['setTaskVersionOptions'],
         },
         onError: {
           target: LaunchState.FAILED_LOADING_TASK_VERSIONS,
-          actions: ['setError']
-        }
-      }
+          actions: ['setError'],
+        },
+      },
     },
     [LaunchState.FAILED_LOADING_TASK_VERSIONS]: {
       on: {
-        RETRY: LaunchState.LOADING_TASK_VERSIONS
-      }
+        RETRY: LaunchState.LOADING_TASK_VERSIONS,
+      },
     },
     [LaunchState.SELECT_TASK_VERSION]: {
       // events handled at top level
-    }
-  }
+    },
+  },
 };
 
 export const workflowLaunchMachineConfig: MachineConfig<
@@ -372,32 +376,36 @@ export const workflowLaunchMachineConfig: MachineConfig<
     ...defaultHandlers,
     SELECT_WORKFLOW_VERSION: {
       target: LaunchState.LOADING_LAUNCH_PLANS,
-      actions: ['setWorkflowVersion']
+      actions: ['setWorkflowVersion'],
     },
     SELECT_LAUNCH_PLAN: {
       target: LaunchState.LOADING_INPUTS,
-      actions: ['setLaunchPlan']
-    }
+      actions: ['setLaunchPlan'],
+    },
   },
   states: {
-    ...(baseStateConfig as StatesConfig<WorkflowLaunchContext, WorkflowLaunchSchema, WorkflowLaunchEvent>),
+    ...(baseStateConfig as StatesConfig<
+        WorkflowLaunchContext,
+        WorkflowLaunchSchema,
+        WorkflowLaunchEvent
+        >),
     [LaunchState.LOADING_WORKFLOW_VERSIONS]: {
       invoke: {
         src: 'loadWorkflowVersions',
         onDone: {
           target: LaunchState.SELECT_WORKFLOW_VERSION,
-          actions: ['setWorkflowVersionOptions']
+          actions: ['setWorkflowVersionOptions'],
         },
         onError: {
           target: LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS,
-          actions: ['setError']
-        }
-      }
+          actions: ['setError'],
+        },
+      },
     },
     [LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS]: {
       on: {
-        RETRY: LaunchState.LOADING_WORKFLOW_VERSIONS
-      }
+        RETRY: LaunchState.LOADING_WORKFLOW_VERSIONS,
+      },
     },
     [LaunchState.SELECT_WORKFLOW_VERSION]: {
       // Events handled at top level
@@ -407,65 +415,65 @@ export const workflowLaunchMachineConfig: MachineConfig<
         src: 'loadLaunchPlans',
         onDone: {
           target: LaunchState.SELECT_LAUNCH_PLAN,
-          actions: ['setLaunchPlanOptions']
+          actions: ['setLaunchPlanOptions'],
         },
         onError: {
           target: LaunchState.FAILED_LOADING_LAUNCH_PLANS,
-          actions: ['setError']
-        }
-      }
+          actions: ['setError'],
+        },
+      },
     },
     [LaunchState.FAILED_LOADING_LAUNCH_PLANS]: {
       on: {
-        RETRY: LaunchState.LOADING_LAUNCH_PLANS
-      }
+        RETRY: LaunchState.LOADING_LAUNCH_PLANS,
+      },
     },
     [LaunchState.SELECT_LAUNCH_PLAN]: {
       // events handled at top level
-    }
-  }
+    },
+  },
 };
 
 type BaseMachineOptions = MachineOptions<BaseLaunchContext, BaseLaunchEvent>;
 
 const baseActions: BaseMachineOptions['actions'] = {
-  hideErrors: assign(_ => ({ showErrors: false })),
+  hideErrors: assign((_) => ({ showErrors: false })),
   setExecutionId: assign((_, event) => ({
-    resultExecutionId: (event as ExecutionCreatedEvent).data
+    resultExecutionId: (event as ExecutionCreatedEvent).data,
   })),
   setInputs: assign((_, event) => {
     const { parsedInputs, unsupportedRequiredInputs } = (event as InputsParsedEvent).data;
     return {
       parsedInputs,
-      unsupportedRequiredInputs
+      unsupportedRequiredInputs,
     };
   }),
   setError: assign((_, event) => ({
-    error: (event as ErrorEvent).data
+    error: (event as ErrorEvent).data,
   })),
-  showErrors: assign(_ => ({ showErrors: true }))
+  showErrors: assign((_) => ({ showErrors: true })),
 };
 
 const baseServices: BaseMachineOptions['services'] = {
   loadInputs: () => Promise.reject('No `loadInputs` service has been provided'),
   submit: () => Promise.reject('No `submit` service has been provided'),
-  validate: () => Promise.reject('No `validate` service has been provided')
+  validate: () => Promise.reject('No `validate` service has been provided'),
 };
 
 export const taskLaunchMachine = Machine(taskLaunchMachineConfig, {
   actions: {
     ...baseActions,
     setTaskVersion: assign((_, event) => ({
-      taskVersion: (event as SelectTaskVersionEvent).taskId
+      taskVersion: (event as SelectTaskVersionEvent).taskId,
     })),
     setTaskVersionOptions: assign((_, event) => ({
-      taskVersionOptions: (event as TaskVersionOptionsLoadedEvent).data
-    }))
+      taskVersionOptions: (event as TaskVersionOptionsLoadedEvent).data,
+    })),
   },
   services: {
     ...baseServices,
-    loadTaskVersions: () => Promise.reject('No `loadTaskVersions` service has been provided')
-  }
+    loadTaskVersions: () => Promise.reject('No `loadTaskVersions` service has been provided'),
+  },
 });
 
 /** A full machine for representing the Launch flow, combining the state definitions
@@ -475,21 +483,21 @@ export const workflowLaunchMachine = Machine(workflowLaunchMachineConfig, {
   actions: {
     ...baseActions,
     setWorkflowVersion: assign((_, event) => ({
-      workflowVersion: (event as SelectWorkflowVersionEvent).workflowId
+      workflowVersion: (event as SelectWorkflowVersionEvent).workflowId,
     })),
     setWorkflowVersionOptions: assign((_, event) => ({
-      workflowVersionOptions: (event as DoneInvokeEvent<Workflow[]>).data
+      workflowVersionOptions: (event as DoneInvokeEvent<Workflow[]>).data,
     })),
     setLaunchPlanOptions: assign((_, event) => ({
-      launchPlanOptions: (event as LaunchPlanOptionsLoadedEvent).data
+      launchPlanOptions: (event as LaunchPlanOptionsLoadedEvent).data,
     })),
     setLaunchPlan: assign((_, event) => ({
-      launchPlan: (event as SelectLaunchPlanEvent).launchPlan
+      launchPlan: (event as SelectLaunchPlanEvent).launchPlan,
     }))
   },
   services: {
     ...baseServices,
-    loadWorkflowVersions: () => Promise.reject('No `loadWorkflowVersions` service has been provided'),
-    loadLaunchPlans: () => Promise.reject('No `loadLaunchPlans` service has been provided')
-  }
+    loadWorkflowVersions: () =>
+        Promise.reject('No `loadWorkflowVersions` service has been provided'),
+    loadLaunchPlans: () => Promise.reject('No `loadLaunchPlans` service has been provided'),  }
 });

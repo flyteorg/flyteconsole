@@ -33,13 +33,13 @@ stories.add('list', () =>
             ...Object.values(protobufValues),
             {
               kind: 'structValue',
-              structValue: { fields: protobufValues }
-            }
-          ]
-        } as ProtobufListValue
-      }
-    }
-  })
+              structValue: { fields: protobufValues },
+            },
+          ],
+        } as ProtobufListValue,
+      },
+    },
+  }),
 );
 
 stories.add('nested', () =>
@@ -47,8 +47,8 @@ stories.add('nested', () =>
     fields: {
       struct_value: {
         kind: 'structValue',
-        structValue: { fields: protobufValues }
-      }
-    }
-  })
+        structValue: { fields: protobufValues },
+      },
+    },
+  }),
 );

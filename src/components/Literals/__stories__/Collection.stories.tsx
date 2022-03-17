@@ -9,7 +9,7 @@ import {
   errorLiterals,
   noneTypeLiteral,
   primitiveLiterals,
-  schemaLiterals
+  schemaLiterals,
 } from './literalValues';
 
 const stories = storiesOf('Literals/Collection', module);
@@ -21,33 +21,33 @@ function renderCollection(label: string, collection: LiteralCollection) {
 
 stories.add('Binary', () =>
   renderCollection('binary_collection', {
-    literals: Object.values(binaryLiterals)
-  })
+    literals: Object.values(binaryLiterals),
+  }),
 );
 stories.add('Blob', () =>
   renderCollection('blob_collection', {
-    literals: Object.values(blobLiterals)
-  })
+    literals: Object.values(blobLiterals),
+  }),
 );
 stories.add('Error', () =>
   renderCollection('error_collection', {
-    literals: Object.values(errorLiterals)
-  })
+    literals: Object.values(errorLiterals),
+  }),
 );
 stories.add('NoneType', () =>
   renderCollection('noneType_collection', {
-    literals: [noneTypeLiteral]
-  })
+    literals: [noneTypeLiteral],
+  }),
 );
 stories.add('Primitive', () =>
   renderCollection('primitive_collection', {
-    literals: Object.values(primitiveLiterals)
-  })
+    literals: Object.values(primitiveLiterals),
+  }),
 );
 stories.add('Schema', () =>
   renderCollection('schema_collection', {
-    literals: Object.values(schemaLiterals)
-  })
+    literals: Object.values(schemaLiterals),
+  }),
 );
 stories.add('Mixed', () =>
   renderCollection('mixed_collection', {
@@ -57,8 +57,8 @@ stories.add('Mixed', () =>
       ...Object.values(errorLiterals),
       noneTypeLiteral,
       ...Object.values(primitiveLiterals),
-      ...Object.values(schemaLiterals)
-    ]
-  })
+      ...Object.values(schemaLiterals),
+    ],
+  }),
 );
 stories.add('Empty', () => renderCollection('empty_collection', { literals: [] }));
