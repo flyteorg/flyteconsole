@@ -14,7 +14,7 @@ import {
   WorkflowLaunchContext,
   WorkflowLaunchEvent,
   workflowLaunchMachine,
-  WorkflowLaunchTypestate
+  WorkflowLaunchTypestate,
 } from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
@@ -121,7 +121,8 @@ async function loadWorkflowVersions(
   const [workflowsResult, preferredWorkflowResult] = await Promise.all([
     workflowsPromise,
     preferredWorkflowPromise,
-  ]);  const merged = [...workflowsResult.entities, ...preferredWorkflowResult.entities];
+  ]);
+  const merged = [...workflowsResult.entities, ...preferredWorkflowResult.entities];
   return uniqBy(merged, ({ id: { version } }) => version);
 }
 
@@ -137,9 +138,9 @@ async function loadInputs(
   }
   const workflow = await getWorkflow(workflowVersion);
   const parsedInputs: ParsedInput[] = getInputsForWorkflow(
-      workflow,
-      launchPlan,
-      defaultInputValues,
+    workflow,
+    launchPlan,
+    defaultInputValues,
   );
 
   return {
@@ -258,10 +259,10 @@ export function useLaunchWorkflowFormState({
   );
 
   const [state, sendEvent, service] = useMachine<
-      WorkflowLaunchContext,
-      WorkflowLaunchEvent,
-      WorkflowLaunchTypestate
-      >(workflowLaunchMachine, {
+    WorkflowLaunchContext,
+    WorkflowLaunchEvent,
+    WorkflowLaunchTypestate
+  >(workflowLaunchMachine, {
     ...defaultStateMachineConfig,
     services,
     context: {
@@ -325,7 +326,7 @@ export function useLaunchWorkflowFormState({
           let workflowToSelect = workflowVersionOptions[0];
           if (preferredWorkflowId) {
             const preferred = workflowVersionOptions.find(({ id }) =>
-                isEqual(id, preferredWorkflowId),
+              isEqual(id, preferredWorkflowId),
             );
             if (preferred) {
               workflowToSelect = preferred;
@@ -354,7 +355,7 @@ export function useLaunchWorkflowFormState({
          */
         if (launchPlan) {
           const lastSelected = launchPlanOptions.find(
-              ({ id: { name } }) => name === launchPlan.id.name,
+            ({ id: { name } }) => name === launchPlan.id.name,
           );
           if (lastSelected) {
             launchPlanToSelect = lastSelected;
@@ -366,7 +367,7 @@ export function useLaunchWorkflowFormState({
           }
         } else {
           const defaultLaunchPlan = launchPlanOptions.find(
-              ({ id: { name } }) => name === sourceId.name,
+            ({ id: { name } }) => name === sourceId.name,
           );
           if (defaultLaunchPlan) {
             launchPlanToSelect = defaultLaunchPlan;

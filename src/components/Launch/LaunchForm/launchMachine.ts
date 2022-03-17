@@ -324,10 +324,10 @@ const baseStateConfig: StatesConfig<BaseLaunchContext, BaseLaunchSchema, BaseLau
 };
 
 export const taskLaunchMachineConfig: MachineConfig<
-    TaskLaunchContext,
-    TaskLaunchSchema,
-    TaskLaunchEvent
-    > = {
+  TaskLaunchContext,
+  TaskLaunchSchema,
+  TaskLaunchEvent
+> = {
   id: 'launchTask',
   context: { ...defaultBaseContext },
   initial: LaunchState.LOADING_TASK_VERSIONS,
@@ -385,10 +385,10 @@ export const workflowLaunchMachineConfig: MachineConfig<
   },
   states: {
     ...(baseStateConfig as StatesConfig<
-        WorkflowLaunchContext,
-        WorkflowLaunchSchema,
-        WorkflowLaunchEvent
-        >),
+      WorkflowLaunchContext,
+      WorkflowLaunchSchema,
+      WorkflowLaunchEvent
+    >),
     [LaunchState.LOADING_WORKFLOW_VERSIONS]: {
       invoke: {
         src: 'loadWorkflowVersions',
@@ -493,11 +493,12 @@ export const workflowLaunchMachine = Machine(workflowLaunchMachineConfig, {
     })),
     setLaunchPlan: assign((_, event) => ({
       launchPlan: (event as SelectLaunchPlanEvent).launchPlan,
-    }))
+    })),
   },
   services: {
     ...baseServices,
     loadWorkflowVersions: () =>
-        Promise.reject('No `loadWorkflowVersions` service has been provided'),
-    loadLaunchPlans: () => Promise.reject('No `loadLaunchPlans` service has been provided'),  }
+      Promise.reject('No `loadWorkflowVersions` service has been provided'),
+    loadLaunchPlans: () => Promise.reject('No `loadLaunchPlans` service has been provided'),
+  },
 });

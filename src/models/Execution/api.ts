@@ -1,8 +1,8 @@
 import { Admin, Core } from 'flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
-    defaultListExecutionChildrenConfig,
-    defaultPaginationConfig,
+  defaultListExecutionChildrenConfig,
+  defaultPaginationConfig,
 } from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { endpointPrefixes } from 'models/Common/constants';
@@ -159,11 +159,11 @@ export const createWorkflowExecution = (
 
 /** Submits a request to terminate a WorkflowExecution by id */
 export const terminateWorkflowExecution = (
-    id: WorkflowExecutionIdentifier,
-    cause: string,
-    config?: RequestConfig,
+  id: WorkflowExecutionIdentifier,
+  cause: string,
+  config?: RequestConfig,
 ) =>
-    postAdminEntity<Admin.IExecutionTerminateRequest, Admin.ExecutionTerminateResponse>(
+  postAdminEntity<Admin.IExecutionTerminateRequest, Admin.ExecutionTerminateResponse>(
     {
       data: { cause },
       path: makeExecutionPath(id),
@@ -254,10 +254,10 @@ export const listNodeExecutions = (scope: NameIdentifierScope, config?: RequestC
  * `TaskExecution`.
  */
 export const listTaskExecutionChildren = (
-    taskExecutionId: TaskExecutionIdentifier,
-    config?: RequestConfig,
+  taskExecutionId: TaskExecutionIdentifier,
+  config?: RequestConfig,
 ) =>
-    getAdminEntity(
+  getAdminEntity(
     {
       path: makeTaskExecutionChildrenPath(taskExecutionId),
       messageType: Admin.NodeExecutionList,

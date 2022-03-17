@@ -18,7 +18,7 @@ function toLiterals<T>(type: 'scalar' | 'collection' | 'map', values: Dictionary
   return mapValues(values, (value: T) => ({
     value: type,
     [type]: value,
-    hash: ''
+    hash: '',
   }));
 }
 

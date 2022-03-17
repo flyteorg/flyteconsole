@@ -58,7 +58,7 @@ export const ExecutionMetadataExtra: React.FC<{
     {
       label: ExecutionMetadataLabels.parallelism,
       value: maxParallelism,
-    }
+    },
   ];
 
   return (
@@ -69,9 +69,9 @@ export const ExecutionMetadataExtra: React.FC<{
             {label}
           </Typography>
           <Typography
-              className={commonStyles.truncateText}
-              variant="h6"
-              data-testid={`metadata-${label}`}
+            className={commonStyles.truncateText}
+            variant="h6"
+            data-testid={`metadata-${label}`}
           >
             {value}
           </Typography>

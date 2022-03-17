@@ -5,7 +5,7 @@ import { useFetchableData } from 'components/hooks/useFetchableData';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import {
   TaskInitialLaunchParameters,
-  WorkflowInitialLaunchParameters
+  WorkflowInitialLaunchParameters,
 } from 'components/Launch/LaunchForm/types';
 import { fetchAndMapExecutionInputValues } from 'components/Launch/LaunchForm/useMappedExecutionInputValues';
 import { getTaskInputs, getWorkflowInputs } from 'components/Launch/LaunchForm/utils';
@@ -43,9 +43,9 @@ function useRelaunchWorkflowFormState({ execution }: RelaunchExecutionFormProps)
         const values = await fetchAndMapExecutionInputValues(
           {
             execution,
-            inputDefinitions
+            inputDefinitions,
           },
-          apiContext
+          apiContext,
         );
 
         return {
@@ -74,7 +74,7 @@ function useRelaunchTaskFormState({ execution }: RelaunchExecutionFormProps) {
       defaultValue: {} as TaskInitialLaunchParameters,
       doFetch: async (execution) => {
         const {
-          spec: { authRole, launchPlan: taskId }
+          spec: { authRole, launchPlan: taskId },
         } = execution;
         const task = await apiContext.getTask(taskId);
         const inputDefinitions = getTaskInputs(task);
@@ -135,8 +135,8 @@ const RelaunchWorkflowForm: React.FC<RelaunchExecutionFormProps> = (props) => {
  * `LaunchForm` based on the same source with input values taken from the execution. */
 export const RelaunchExecutionForm: React.FC<RelaunchExecutionFormProps> = (props) => {
   return isSingleTaskExecution(props.execution) ? (
-      <RelaunchTaskForm {...props} />
+    <RelaunchTaskForm {...props} />
   ) : (
-      <RelaunchWorkflowForm {...props} />
+    <RelaunchWorkflowForm {...props} />
   );
 };
