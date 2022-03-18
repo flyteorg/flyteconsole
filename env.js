@@ -7,7 +7,7 @@
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // If this is unset, API calls will default to the same host used to serve this app
-const ADMIN_API_URL = 'http://localhost:8088'
+const ADMIN_API_URL = 'http://localhost:8088';
 // Use this to create SSL server
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
@@ -24,6 +24,7 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 const STATUS_URL = process.env.STATUS_URL;
 
 // Configure Google Analytics
+const ENABLE_GA = process.env.ENABLE_GA || false;
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
 
 module.exports = {
@@ -40,24 +41,9 @@ module.exports = {
     ADMIN_API_URL,
     BASE_URL,
     CORS_PROXY_PREFIX,
-<<<<<<< HEAD
-    NODE_ENV,
-    PLUGINS_MODULE,
-    STATUS_URL,
-    GA_TRACKING_ID,
-    processEnv: {
-        ADMIN_API_URL,
-        BASE_URL,
-        CORS_PROXY_PREFIX,
-        GA_TRACKING_ID,
-        NODE_ENV,
-        STATUS_URL
-    }
-=======
     ENABLE_GA,
     GA_TRACKING_ID,
     NODE_ENV,
     STATUS_URL,
   },
->>>>>>> master
 };
