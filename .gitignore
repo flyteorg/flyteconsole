@@ -41,7 +41,6 @@ app/public/styles/*.css
 venv/
 
 # Frontend
-.vscode/
 .awcache/
 .dist/
 npm-debug.log

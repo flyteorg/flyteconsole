@@ -27,10 +27,20 @@ const STATUS_URL = process.env.STATUS_URL;
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
 
 module.exports = {
+  ADMIN_API_URL,
+  ADMIN_API_USE_SSL,
+  BASE_URL,
+  CORS_PROXY_PREFIX,
+  NODE_ENV,
+  PLUGINS_MODULE,
+  STATUS_URL,
+  ENABLE_GA,
+  GA_TRACKING_ID,
+  processEnv: {
     ADMIN_API_URL,
-    ADMIN_API_USE_SSL,
     BASE_URL,
     CORS_PROXY_PREFIX,
+<<<<<<< HEAD
     NODE_ENV,
     PLUGINS_MODULE,
     STATUS_URL,
@@ -43,4 +53,11 @@ module.exports = {
         NODE_ENV,
         STATUS_URL
     }
+=======
+    ENABLE_GA,
+    GA_TRACKING_ID,
+    NODE_ENV,
+    STATUS_URL,
+  },
+>>>>>>> master
 };

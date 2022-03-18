@@ -1,61 +1,50 @@
 import * as React from 'react';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { useQuery, useQueryClient } from 'react-query';
-import { makeWorkflowQuery } from './workflowQueries';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { ReactFlowWrapper } from 'components/flytegraph/ReactFlow/ReactFlowWrapper';
-import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformerDAGToReactFlow';
-import { dNode } from 'models/Graph/types';
+import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { getRFBackground } from 'components/flytegraph/ReactFlow/utils';
-import {
-    ConvertDagProps,
-    RFGraphTypes,
-    RFWrapperProps
-} from 'components/flytegraph/ReactFlow/types';
+import { ConvertDagProps, RFWrapperProps } from 'components/flytegraph/ReactFlow/types';
+import { makeWorkflowQuery } from './workflowQueries';
 
-export const renderStaticGraph = props => {
-    const workflow = props.closure.compiledWorkflow;
-    const version = props.id.version;
+export const renderStaticGraph = (props) => {
+  const workflow = props.closure.compiledWorkflow;
+  const { dag } = transformerWorkflowToDag(workflow);
+  const rfGraphJson = ConvertFlyteDagToReactFlows({
+    root: dag,
+    maxRenderDepth: 0,
+    currentNestedView: [],
+    isStaticGraph: true,
+  } as ConvertDagProps);
 
-    const dag: dNode = transformerWorkflowToDag(workflow);
-    const rfGraphJson = ConvertFlyteDagToReactFlows({
-        root: dag,
-        maxRenderDepth: 0,
-        isStaticGraph: true
-    } as ConvertDagProps);
-    const backgroundStyle = getRFBackground().static;
-    const ReactFlowProps: RFWrapperProps = {
-        backgroundStyle,
-        rfGraphJson: rfGraphJson,
-        type: RFGraphTypes.static,
-        version: version
-    };
-    return <ReactFlowWrapper {...ReactFlowProps} />;
+  const backgroundStyle = getRFBackground().static;
+  const ReactFlowProps: RFWrapperProps = {
+    backgroundStyle,
+    rfGraphJson: rfGraphJson,
+    currentNestedView: [],
+  };
+  return <ReactFlowWrapper {...ReactFlowProps} />;
 };
 
 export interface StaticGraphContainerProps {
-    workflowId: WorkflowId;
+  workflowId: WorkflowId;
 }
 
-export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({
-    workflowId
-}) => {
-    const containerStyle: React.CSSProperties = {
-        height: 300,
-        minHeight: 300,
-        padding: '1rem 0'
-    };
-    const workflowQuery = useQuery<Workflow, Error>(
-        makeWorkflowQuery(useQueryClient(), workflowId)
-    );
+export const StaticGraphContainer: React.FC<StaticGraphContainerProps> = ({ workflowId }) => {
+  const containerStyle: React.CSSProperties = {
+    display: 'flex',
+    width: '100%',
+  };
+  const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(useQueryClient(), workflowId));
 
-    return (
-        <div style={containerStyle}>
-            <WaitForQuery query={workflowQuery} errorComponent={DataError}>
-                {renderStaticGraph}
-            </WaitForQuery>
-        </div>
-    );
+  return (
+    <div style={containerStyle}>
+      <WaitForQuery query={workflowQuery} errorComponent={DataError}>
+        {renderStaticGraph}
+      </WaitForQuery>
+    </div>
+  );
 };

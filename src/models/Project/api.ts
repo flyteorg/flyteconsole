@@ -6,17 +6,12 @@ import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { Project } from './types';
 
 /** Fetches the list of available `Project`s */
-export const listProjects = () => {
-    console.log('models/Project/api/listProjects:1');
-    console.log('endpointPrefixes.project:', endpointPrefixes.project);
-    return getAdminEntity<Admin.Projects, Project[]>({
-        path: endpointPrefixes.project,
-        messageType: Admin.Projects,
-        // We want the returned list to be sorted ascending by name, but the
-        // admin endpoint doesn't support sorting for projects.
-        transform: ({ projects }: Admin.Projects) =>
-            sortBy(projects, project =>
-                `${project.name}`.toLowerCase()
-            ) as Project[]
-    });
-};
+export const listProjects = () =>
+  getAdminEntity<Admin.Projects, Project[]>({
+    path: endpointPrefixes.project,
+    messageType: Admin.Projects,
+    // We want the returned list to be sorted ascending by name, but the
+    // admin endpoint doesn't support sorting for projects.
+    transform: ({ projects }: Admin.Projects) =>
+      sortBy(projects, project => `${project.name}`.toLowerCase()) as Project[],
+  });
