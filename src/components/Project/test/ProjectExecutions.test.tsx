@@ -35,7 +35,7 @@ describe('ProjectExecutions', () => {
   let mockGetUserProfile: jest.Mock<ReturnType<typeof getUserProfile>>;
 
   const sampleUserProfile: UserProfile = {
-    sub: 'sub',
+    subject: 'subject',
   } as UserProfile;
 
   const defaultQueryParams1 = {
@@ -44,7 +44,7 @@ describe('ProjectExecutions', () => {
   };
 
   const defaultQueryParams2 = {
-    filters: 'eq(user,sub)',
+    filters: 'eq(user,subject)',
     [sortQueryKeys.direction]: SortDirection[SortDirection.DESCENDING],
     [sortQueryKeys.key]: executionSortFields.createdAt,
   };

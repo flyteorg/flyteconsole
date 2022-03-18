@@ -57,7 +57,19 @@ export const ExecutionFilters: React.FC<{
   clearCharts?: () => void;
   showArchived?: boolean;
   onArchiveFilterChange?: (showArchievedItems: boolean) => void;
-}> = ({ filters, chartIds, clearCharts, showArchived, onArchiveFilterChange }) => {
+  onlyMyExecutionsFilterState?: {
+    onlyMyExecutionsValue: boolean;
+    isFilterDisabled: boolean;
+    onOnlyMyExecutionsFilterChange: (filterOnlyMyExecutions: boolean) => void;
+  };
+}> = ({
+  filters,
+  chartIds,
+  clearCharts,
+  showArchived,
+  onArchiveFilterChange,
+  onlyMyExecutionsFilterState,
+}) => {
   const styles = useStyles();
 
   filters = filters.map((filter) => {
@@ -113,12 +125,29 @@ export const ExecutionFilters: React.FC<{
           key="charts"
         />
       )}
+      {!!onlyMyExecutionsFilterState && (
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={onlyMyExecutionsFilterState.onlyMyExecutionsValue}
+                disabled={onlyMyExecutionsFilterState.isFilterDisabled}
+                onChange={(_, checked) =>
+                  onlyMyExecutionsFilterState.onOnlyMyExecutionsFilterChange(checked)
+                }
+              />
+            }
+            className={styles.checkbox}
+            label="Only my executions"
+          />
+        </FormGroup>
+      )}
       {!!onArchiveFilterChange && (
         <FormGroup>
           <FormControlLabel
             control={
               <Checkbox
-                value={showArchived}
+                checked={showArchived}
                 onChange={(_, checked) => onArchiveFilterChange(checked)}
               />
             }
