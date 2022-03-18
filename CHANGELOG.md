@@ -3,6 +3,53 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.46.0](http://github.com/lyft/flyteconsole/compare/v0.45.0...v0.46.0) (2022-03-18)
+
+
+### Features
+
+* added RawOutputDataConfig in ExecutionSpec #patch ([#329](http://github.com/lyft/flyteconsole/issues/329)) ([24bdaee](http://github.com/lyft/flyteconsole/commit/24bdaeefcf32c079d1aaeb54b28cc6bf7395b42f))
+
+# [0.45.0](http://github.com/lyft/flyteconsole/compare/v0.44.0...v0.45.0) (2022-03-15)
+
+
+### Features
+
+* enable timeline view ([#327](http://github.com/lyft/flyteconsole/issues/327)) ([5bd77c6](http://github.com/lyft/flyteconsole/commit/5bd77c600289954e487c3451b5e54fd3d8cb8e49))
+
+# [0.44.0](http://github.com/lyft/flyteconsole/compare/v0.43.0...v0.44.0) (2022-03-14)
+
+
+### Bug Fixes
+
+* long node-id obscures task type ([#308](http://github.com/lyft/flyteconsole/issues/308)) ([50b5ef5](http://github.com/lyft/flyteconsole/commit/50b5ef51951301fb828ee0cf6f5bfc6cb1546920))
+
+
+### Features
+
+* Support for dynamic and nested workflows. ([#326](http://github.com/lyft/flyteconsole/issues/326)) ([5cd1ca5](http://github.com/lyft/flyteconsole/commit/5cd1ca57e9f5d64db96a1ebe9f8a19c1c14743fc))
+
+# [0.43.0](http://github.com/lyft/flyteconsole/compare/v0.42.1...v0.43.0) (2022-02-15)
+
+
+### Features
+
+* timeline view ([#265](http://github.com/lyft/flyteconsole/issues/265)) ([f499895](http://github.com/lyft/flyteconsole/commit/f499895fb99878766118634e2fe256a4dfa98a7e))
+
+## [0.42.1](http://github.com/lyft/flyteconsole/compare/v0.42.0...v0.42.1) (2022-02-11)
+
+
+### Bug Fixes
+
+* **#278:** wrong nodeExecutions details are showed in node executions list ([#277](http://github.com/lyft/flyteconsole/issues/277)) ([15878ab](http://github.com/lyft/flyteconsole/commit/15878abe4e31f79ae3afbf29ab41b66e941e6ee1)), closes [#278](http://github.com/lyft/flyteconsole/issues/278)
+
+# [0.42.0](http://github.com/lyft/flyteconsole/compare/v0.41.0...v0.42.0) (2022-02-10)
+
+
+### Features
+
+* **#281:** allow to collapse/expand workflow version section ([#282](http://github.com/lyft/flyteconsole/issues/282)) ([a4ac862](http://github.com/lyft/flyteconsole/commit/a4ac8627280f6793113d7538023a6644cf43f429)), closes [#281](http://github.com/lyft/flyteconsole/issues/281)
+
 # [0.41.0](http://github.com/lyft/flyteconsole/compare/v0.40.0...v0.41.0) (2022-02-03)
 
 
