@@ -21,9 +21,11 @@ describe('useOnlyMyExecutionsFilterState', () => {
     ${false}         | ${false}     | ${{ isFilterDisabled: false, onlyMyExecutionsValue: false }}
     ${false}         | ${true}      | ${{ isFilterDisabled: false, onlyMyExecutionsValue: true }}
     ${true}          | ${false}     | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
-    ${true}          | ${true}      | ${{ isFilterDisabled: true, onlyMyExecutionsValue: true }}
+    ${true}          | ${true}      | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
   `('for each case', ({ isFilterDisabled, initialValue, expected }) => {
-    it(`should return ${expected} when called with isFilterDisabled = ${isFilterDisabled} and initialValue = ${initialValue}`, () => {
+    it(`should return ${JSON.stringify(
+      expected,
+    )} when called with isFilterDisabled = ${isFilterDisabled} and initialValue = ${initialValue}`, () => {
       const { result } = renderHook(() =>
         useOnlyMyExecutionsFilterState({ isFilterDisabled, initialValue }),
       );
