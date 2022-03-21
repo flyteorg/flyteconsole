@@ -4,10 +4,11 @@
  */
 
 /** Current environment environment. "development", "test" or "production" */
-const NODE_ENV = process.env.NODE_ENV || 'development';
+// const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = 'production';
 
 // If this is unset, API calls will default to the same host used to serve this app
-const ADMIN_API_URL = 'http://localhost:8088';
+const ADMIN_API_URL = '';
 // Use this to create SSL server
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
