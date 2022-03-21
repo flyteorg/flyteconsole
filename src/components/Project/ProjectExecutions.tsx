@@ -67,7 +67,7 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
   const styles = useStyles();
   const archivedFilter = useExecutionShowArchivedState();
   const filtersState = useWorkflowExecutionFiltersState();
-  const onlyMyExecutionsFilterState = useOnlyMyExecutionsFilterState();
+  const onlyMyExecutionsFilterState = useOnlyMyExecutionsFilterState({});
 
   const allFilters = compact([
     ...filtersState.appliedFilters,

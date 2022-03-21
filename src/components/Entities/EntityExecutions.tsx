@@ -42,7 +42,7 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
   const styles = useStyles();
   const filtersState = useWorkflowExecutionFiltersState();
   const archivedFilter = useExecutionShowArchivedState();
-  const onlyMyExecutionsFilterState = useOnlyMyExecutionsFilterState();
+  const onlyMyExecutionsFilterState = useOnlyMyExecutionsFilterState({});
 
   const sort = {
     key: executionSortFields.createdAt,
