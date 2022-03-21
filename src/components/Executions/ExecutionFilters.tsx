@@ -31,6 +31,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+interface OnlyMyExecutionsFilterState {
+  onlyMyExecutionsValue: boolean;
+  isFilterDisabled: boolean;
+  onOnlyMyExecutionsFilterChange: (filterOnlyMyExecutions: boolean) => void;
+}
+
 const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
   const searchFilterState = filter as SearchFilterState;
   switch (filter.type) {
@@ -57,11 +63,7 @@ export const ExecutionFilters: React.FC<{
   clearCharts?: () => void;
   showArchived?: boolean;
   onArchiveFilterChange?: (showArchievedItems: boolean) => void;
-  onlyMyExecutionsFilterState?: {
-    onlyMyExecutionsValue: boolean;
-    isFilterDisabled: boolean;
-    onOnlyMyExecutionsFilterChange: (filterOnlyMyExecutions: boolean) => void;
-  };
+  onlyMyExecutionsFilterState?: OnlyMyExecutionsFilterState;
 }> = ({
   filters,
   chartIds,

@@ -9,17 +9,22 @@ interface OnlyMyExecutionsFilterState {
   getFilter: () => FilterOperation | null;
 }
 
+interface OnlyMyExecutionsFilterStateProps {
+  isFilterDisabled?: boolean;
+  initialValue?: boolean;
+}
+
 /**
  *  Allows to filter executions by Current User Id
  */
-export function useOnlyMyExecutionsFilterState(
-  isFilterDisabled?: boolean,
-  initialState?: boolean,
-): OnlyMyExecutionsFilterState {
+export function useOnlyMyExecutionsFilterState({
+  isFilterDisabled,
+  initialValue,
+}: OnlyMyExecutionsFilterStateProps): OnlyMyExecutionsFilterState {
   const profile = useUserProfile();
   const userId = profile.value?.subject ? profile.value.subject : '';
   const [onlyMyExecutionsValue, setOnlyMyExecutionsValue] = useState<boolean>(
-    initialState ?? false,
+    initialValue ?? false,
   );
 
   const getFilter = (): FilterOperation | null => {
