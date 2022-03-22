@@ -134,6 +134,7 @@ export const ProjectExecutions: React.FC<ProjectExecutionsProps> = ({
       moreItemsAvailable={!!query.hasNextPage}
       showWorkflowName={true}
       isFetching={query.isFetching}
+      data-testid={'workflow-table'}
     />
   );
 

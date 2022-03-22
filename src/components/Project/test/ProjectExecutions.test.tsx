@@ -1,4 +1,4 @@
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import { render, waitFor, fireEvent, within, getByText } from '@testing-library/react';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
@@ -21,6 +21,7 @@ import { ProjectExecutions } from '../ProjectExecutions';
 import { failedToLoadExecutionsString } from '../constants';
 
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
+// jest.mock('components/common/LoadingSpinner');
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),
 }));
@@ -80,6 +81,20 @@ describe('ProjectExecutions', () => {
       </QueryClientProvider>,
       { wrapper: MemoryRouter },
     );
+
+  it('should show loading spinner', async () => {
+    mockGetUserProfile.mockResolvedValue(sampleUserProfile);
+    const { queryByTestId } = renderView();
+    await waitFor(() => {});
+    expect(queryByTestId(/loading-spinner/i)).toBeDefined();
+  });
+
+  it('should display WorkflowExecutionsTable and BarChart ', async () => {
+    mockGetUserProfile.mockResolvedValue(sampleUserProfile);
+    const { queryByTestId } = renderView();
+    await waitFor(() => {});
+    expect(queryByTestId('workflow-table')).toBeDefined();
+  });
 
   it('should not display checkbox if user does not login', async () => {
     const { queryByTestId } = renderView();
