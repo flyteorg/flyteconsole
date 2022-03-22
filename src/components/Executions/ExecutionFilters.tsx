@@ -37,6 +37,15 @@ interface OnlyMyExecutionsFilterState {
   onOnlyMyExecutionsFilterChange: (filterOnlyMyExecutions: boolean) => void;
 }
 
+export interface ExecutionFiltersProps {
+  filters: (FilterState | BooleanFilterState)[];
+  chartIds?: string[];
+  clearCharts?: () => void;
+  showArchived?: boolean;
+  onArchiveFilterChange?: (showArchievedItems: boolean) => void;
+  onlyMyExecutionsFilterState?: OnlyMyExecutionsFilterState;
+}
+
 const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
   const searchFilterState = filter as SearchFilterState;
   switch (filter.type) {
@@ -57,14 +66,7 @@ const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
  * This allows for the consuming code to have direct access to the
  * current filters without relying on complicated callback arrangements
  */
-export const ExecutionFilters: React.FC<{
-  filters: (FilterState | BooleanFilterState)[];
-  chartIds?: string[];
-  clearCharts?: () => void;
-  showArchived?: boolean;
-  onArchiveFilterChange?: (showArchievedItems: boolean) => void;
-  onlyMyExecutionsFilterState?: OnlyMyExecutionsFilterState;
-}> = ({
+export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
   filters,
   chartIds,
   clearCharts,
