@@ -179,10 +179,10 @@ export const taskExecutionPhaseConstants: {
   },
 };
 
-export const taskTypeToNodeExecutionDisplayType: {
+const taskTypeToNodeExecutionDisplayType: {
   [k in TaskType]: NodeExecutionDisplayType;
 } = {
-  [TaskType.ARRAY]: NodeExecutionDisplayType.ArrayTask,
+  [TaskType.ARRAY]: NodeExecutionDisplayType.MapTask,
   [TaskType.BATCH_HIVE]: NodeExecutionDisplayType.BatchHiveTask,
   [TaskType.DYNAMIC]: NodeExecutionDisplayType.DynamicTask,
   [TaskType.HIVE]: NodeExecutionDisplayType.HiveTask,
@@ -192,7 +192,17 @@ export const taskTypeToNodeExecutionDisplayType: {
   [TaskType.UNKNOWN]: NodeExecutionDisplayType.UnknownTask,
   [TaskType.WAITABLE]: NodeExecutionDisplayType.WaitableTask,
   [TaskType.MPI]: NodeExecutionDisplayType.MpiTask,
+  [TaskType.ARRAY_AWS]: NodeExecutionDisplayType.ARRAY_AWS,
+  [TaskType.ARRAY_K8S]: NodeExecutionDisplayType.ARRAY_K8S,
 };
+
+export function getTaskDisplayType(taskType?: string): string {
+  if (taskType) {
+    return taskTypeToNodeExecutionDisplayType[taskType] ?? taskType;
+  }
+
+  return NodeExecutionDisplayType.Unknown;
+}
 
 export const cacheStatusMessages: { [k in Core.CatalogCacheStatus]: string } = {
   [Core.CatalogCacheStatus.CACHE_DISABLED]: 'Caching was disabled for this execution.',
