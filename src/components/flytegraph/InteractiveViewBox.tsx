@@ -203,5 +203,3 @@ export const InteractiveViewBox: React.FC<InteractiveViewBoxProps> = (props) => 
   // changed.
   <InteractiveViewBoxImpl {...props} key={`${props.width}_${props.height}`} />
 );
-
-// narusina - is it in use?
