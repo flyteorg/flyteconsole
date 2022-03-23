@@ -127,6 +127,7 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
           buttonText="Clear Manually Selected Executions"
           onReset={clearCharts}
           key="charts"
+          data-testId="clear-charts"
         />
       )}
       {!!onlyMyExecutionsFilterState && (
