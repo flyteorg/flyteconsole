@@ -24,7 +24,7 @@ build_oc:
 	yarn install --production
 	yarn install
 	yarn run clean
-	yarn run build:prod
+	BASE_URL=/console yarn run build:prod
 
 # test_unit runs all unit tests
 .PHONY: test_unit

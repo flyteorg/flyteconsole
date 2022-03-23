@@ -23,14 +23,13 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
   workflowId,
 }) => {
   const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(useQueryClient(), workflowId));
-  const nodeExecutionsById = React.useMemo(
-    () => keyBy(nodeExecutions, 'id.nodeId'),
-    [nodeExecutions],
-  );
+  const nodeExecutionsById = React.useMemo(() => keyBy(nodeExecutions, 'scopedId'), [
+    nodeExecutions,
+  ]);
 
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
   const onNodeSelectionChanged = (newSelection: string[]) => {
-    const validSelection = newSelection.filter((nodeId) => {
+    const validSelection = newSelection.filter(nodeId => {
       if (nodeId === startNodeId || nodeId === endNodeId) {
         return false;
       }
