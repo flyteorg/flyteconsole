@@ -18,26 +18,11 @@ export const Default = Template.bind({});
 Default.decorators = [(Story) => PanelViewDecorator(Story)];
 Default.args = {
   taskLogs: [
-    {
-      uri: '#',
-      name: 'Kubernetes Logs #0-0',
-    },
-    {
-      uri: '#',
-      name: 'Kubernetes Logs #0-1',
-    },
-    {
-      uri: '#',
-      name: 'Kubernetes Logs #0-2',
-    },
-    {
-      uri: '#',
-      name: 'Kubernetes Logs #0-3',
-    },
-    {
-      uri: '#',
-      name: 'Kubernetes Logs #0-4',
-    },
+    { uri: '#', name: 'Kubernetes Logs #0-0' },
+    { uri: '#', name: 'Kubernetes Logs #0-1' },
+    { uri: '#', name: 'Kubernetes Logs #0-2' },
+    { uri: '#', name: 'Kubernetes Logs #0-3' },
+    { uri: '#', name: 'Kubernetes Logs #0-4' },
   ],
   status: NodeExecutionPhase.QUEUED,
   expanded: true,
