@@ -1,4 +1,4 @@
-import { getTaskDisplayType } from 'components/Executions/constants';
+import { getTaskDisplayType } from 'components/Executions/utils';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
 import { NodeExecutionDetails } from 'components/Executions/types';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';

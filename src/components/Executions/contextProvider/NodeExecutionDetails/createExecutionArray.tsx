@@ -1,5 +1,5 @@
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { getTaskDisplayType } from 'components/Executions/constants';
+import { getTaskDisplayType } from 'components/Executions/utils';
 import { NodeExecutionDetails, NodeExecutionDisplayType } from 'components/Executions/types';
 import { Workflow } from 'models/Workflow/types';
 import { Identifier } from 'models/Common/types';

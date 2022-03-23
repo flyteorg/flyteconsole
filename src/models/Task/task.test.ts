@@ -1,4 +1,5 @@
-import { isMapTaskType, TaskType } from './constants';
+import { TaskType } from './constants';
+import { isMapTaskType } from './utils';
 
 describe('models/Task', () => {
   it('isMapTaskType propely identifies mapped tasks', async () => {

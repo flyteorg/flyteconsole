@@ -22,11 +22,3 @@ export const taskSortFields = {
   createdAt: 'created_at',
   name: 'name',
 };
-
-export function isMapTaskType(taskType?: string): boolean {
-  return (
-    taskType === TaskType.ARRAY ||
-    taskType === TaskType.ARRAY_AWS ||
-    taskType === TaskType.ARRAY_K8S
-  );
-}
