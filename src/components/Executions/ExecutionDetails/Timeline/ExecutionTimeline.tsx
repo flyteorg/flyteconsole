@@ -1,8 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment-timezone';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { makeStyles, Typography } from '@material-ui/core';
 
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
@@ -14,13 +12,11 @@ import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { generateChartData, getChartData } from './BarChart/utils';
 import { getChartDurationData } from './BarChart/chartData';
-import { convertToPlainNodes, getBarOptions, TimeZone } from './helpers';
+import { convertToPlainNodes, TimeZone } from './helpers';
 import { ChartHeader } from './chartHeader';
 import { useScaleContext } from './scaleContext';
 import { TaskNames } from './taskNames';
-
-// Register components to be usable by chart.js
-ChartJS.register(...registerables, ChartDataLabels);
+import { getBarOptions } from './BarChart/barOptions';
 
 interface StyleProps {
   chartWidth: number;
@@ -214,7 +210,10 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
         </div>
         <div className={styles.taskDurationsView} ref={durationsRef} onScroll={onGraphScroll}>
           <div className={styles.chartHeader}>
-            <Bar options={getBarOptions(chartTimeInterval)} data={getChartData(chartDataInput)} />
+            <Bar
+              options={getBarOptions(chartTimeInterval, chartDataInput.tooltipLabel) as any}
+              data={getChartData(chartDataInput)}
+            />
           </div>
         </div>
       </div>

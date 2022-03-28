@@ -5,6 +5,12 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
+export enum RelationToCache {
+  None = 'none',
+  ReadFromCaceh = 'Read from Cache',
+  WroteToCache = 'Wrote to cache',
+}
+
 export interface BarItemData {
   phase: NodeExecutionPhase;
   startOffsetSec: number;
@@ -18,9 +24,27 @@ interface ChartDataInput {
   durations: number[];
   startOffset: number[];
   offsetColor: string[];
+  tooltipLabel: string[][];
   barLabel: string[];
   barColor: string[];
 }
+
+/**
+ * Depending on amounf of second provided shows data in
+ * XhXmXs or XmXs or Xs format
+ */
+export const formatSecondsToHmsFormat = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  const minutes = Math.floor(seconds / 60);
+  seconds = seconds % 60;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+  return `${seconds}s`;
+};
 
 // narusina - check if exports are still needed
 export const getOffsetColor = (isCachedValue: boolean[]) => {
@@ -35,28 +59,38 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
   const durations: number[] = [];
   const startOffset: number[] = [];
   const offsetColor: string[] = [];
+  const tooltipLabel: string[][] = [];
   const barLabel: string[] = [];
   const barColor: string[] = [];
 
   let totalDurationSec = 0;
   data.forEach((element) => {
+    const phaseConstant = getNodeExecutionPhaseConstants(
+      element.phase ?? NodeExecutionPhase.UNDEFINED,
+    );
+
+    const durationString = formatSecondsToHmsFormat(element.durationSec);
+    const tooltipString = `${phaseConstant.text}: ${durationString}`;
+    // don't show Label if there is now duration yet.
+    const labelString = element.durationSec > 0 ? durationString : '';
+
     durations.push(element.durationSec);
     startOffset.push(element.startOffsetSec);
     offsetColor.push(element.isFromCache ? CASHED_GREEN : TRANSPARENT);
-    barLabel.push(element.isFromCache ? 'From cache' : `${Math.round(element.durationSec)}s`);
-    barColor.push(
-      getNodeExecutionPhaseConstants(element.phase ?? NodeExecutionPhase.UNDEFINED).badgeColor,
-    );
+    tooltipLabel.push(element.isFromCache ? [tooltipString, 'Read from cache'] : [tooltipString]);
+    barLabel.push(element.isFromCache ? '\u229A From cache' : labelString);
+    barColor.push(phaseConstant.badgeColor);
 
     totalDurationSec = Math.max(totalDurationSec, element.startOffsetSec + element.durationSec);
   });
-  const elementsNumber = data.length;
+
   return {
-    elementsNumber,
+    elementsNumber: data.length,
     totalDurationSec,
     durations,
     startOffset,
     offsetColor,
+    tooltipLabel,
     barLabel,
     barColor,
   };
@@ -101,9 +135,7 @@ export const getChartData = (data: ChartDataInput) => {
           align: 'end' as const, // related to text
           anchor: 'start' as const, // related to bar
           formatter: function (value, context) {
-            return data.offsetColor[context.dataIndex] === CASHED_GREEN
-              ? '\u229A From Cache'
-              : `${Math.round(value)}s`;
+            return data.barLabel[context.dataIndex] ?? '';
           },
         },
       },
