@@ -9,20 +9,22 @@ import { useNodeExecutionContext } from 'components/Executions/contextProvider/N
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { isEndNode, isStartNode, isExpanded } from 'components/WorkflowGraph/utils';
 import { tableHeaderColor } from 'components/Theme/constants';
+import { timestampToDate } from 'common/utils';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
-import { TaskNames } from './taskNames';
+import { generateChartData, getChartData } from './BarChart/utils';
+import { getChartDurationData } from './BarChart/chartData';
 import { convertToPlainNodes, getBarOptions, TimeZone } from './helpers';
 import { ChartHeader } from './chartHeader';
-import { useChartDurationData } from './chartData';
 import { useScaleContext } from './scaleContext';
+import { TaskNames } from './taskNames';
 
 // Register components to be usable by chart.js
 ChartJS.register(...registerables, ChartDataLabels);
 
 interface StyleProps {
   chartWidth: number;
-  durationLength: number;
+  itemsShown: number;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -30,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: -10,
     marginLeft: -15,
     width: `${props.chartWidth + 20}px`,
-    height: `${56 * props.durationLength + 20}px`,
+    height: `${56 * props.itemsShown + 20}px`,
   }),
   taskNames: {
     display: 'flex',
@@ -85,6 +87,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
 
   const [originalNodes, setOriginalNodes] = React.useState<dNode[]>([]);
   const [showNodes, setShowNodes] = React.useState<dNode[]>([]);
+  const [startedAt, setStartedAt] = React.useState<Date>(new Date());
 
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
@@ -99,39 +102,45 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
 
   React.useEffect(() => {
     const initializeNodes = convertToPlainNodes(originalNodes);
-    setShowNodes(
-      initializeNodes.map((node) => {
-        const index = nodeExecutions.findIndex((exe) => exe.scopedId === node.scopedId);
-        return {
-          ...node,
-          execution: index >= 0 ? nodeExecutions[index] : undefined,
-        };
-      }),
-    );
+    const updatedShownNodesMap = initializeNodes.map((node) => {
+      const index = nodeExecutions.findIndex((exe) => exe.scopedId === node.scopedId);
+      return {
+        ...node,
+        execution: index >= 0 ? nodeExecutions[index] : undefined,
+      };
+    });
+    setShowNodes(updatedShownNodesMap);
+
+    // set startTime for all timeline offset and duration calculations.
+    const firstStartedAt = updatedShownNodesMap[0]?.execution?.closure.startedAt;
+    if (firstStartedAt) {
+      setStartedAt(timestampToDate(firstStartedAt));
+    }
   }, [originalNodes, nodeExecutions]);
 
-  const { startedAt, totalDuration, durationLength, chartData } = useChartDurationData({
-    nodes: showNodes,
-  });
+  const barItemsData = getChartDurationData(showNodes, startedAt);
+  const chartDataInput = generateChartData(barItemsData);
   const { chartInterval: chartTimeInterval, setMaxValue } = useScaleContext();
-  const styles = useStyles({ chartWidth: chartWidth, durationLength: durationLength });
+  const styles = useStyles({ chartWidth: chartWidth, itemsShown: chartDataInput.elementsNumber });
 
   React.useEffect(() => {
-    setMaxValue(totalDuration);
-  }, [totalDuration, setMaxValue]);
+    setMaxValue(chartDataInput.totalDurationSec);
+  }, [chartDataInput.totalDurationSec, setMaxValue]);
 
   React.useEffect(() => {
-    const calcWidth = Math.ceil(totalDuration / chartTimeInterval) * INTERVAL_LENGTH;
+    const calcWidth =
+      Math.ceil(chartDataInput.totalDurationSec / chartTimeInterval) * INTERVAL_LENGTH;
     if (durationsRef.current && calcWidth < durationsRef.current.clientWidth) {
       setLabelInterval(
-        durationsRef.current.clientWidth / Math.ceil(totalDuration / chartTimeInterval),
+        durationsRef.current.clientWidth /
+          Math.ceil(chartDataInput.totalDurationSec / chartTimeInterval),
       );
       setChartWidth(durationsRef.current.clientWidth);
     } else {
       setChartWidth(calcWidth);
       setLabelInterval(INTERVAL_LENGTH);
     }
-  }, [totalDuration, chartTimeInterval, durationsRef]);
+  }, [chartDataInput.totalDurationSec, chartTimeInterval, durationsRef]);
 
   const onGraphScroll = () => {
     // cover horizontal scroll only
@@ -178,15 +187,15 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
   };
 
   const labels = React.useMemo(() => {
-    const len = Math.ceil(totalDuration / chartTimeInterval);
-    const lbs = len > 0 ? new Array(len).fill(0) : [];
+    const len = Math.ceil(chartDataInput.totalDurationSec / chartTimeInterval);
+    const lbs = len > 0 ? new Array(len).fill('') : [];
     return lbs.map((_, idx) => {
       const time = moment.utc(new Date(startedAt.getTime() + idx * chartTimeInterval * 1000));
       return chartTimezone === TimeZone.UTC
         ? time.format('hh:mm:ss A')
         : time.local().format('hh:mm:ss A');
     });
-  }, [chartTimezone, startedAt, chartTimeInterval, totalDuration]);
+  }, [chartTimezone, startedAt, chartTimeInterval, chartDataInput.totalDurationSec]);
 
   return (
     <>
@@ -205,7 +214,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ nodeExecutions, chartTime
         </div>
         <div className={styles.taskDurationsView} ref={durationsRef} onScroll={onGraphScroll}>
           <div className={styles.chartHeader}>
-            <Bar options={getBarOptions(chartTimeInterval)} data={chartData} />
+            <Bar options={getBarOptions(chartTimeInterval)} data={getChartData(chartDataInput)} />
           </div>
         </div>
       </div>
