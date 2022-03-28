@@ -8,7 +8,7 @@ Tooltip.positioners.cursor = function (_chartElements, coordinates) {
   return coordinates;
 };
 
-export const getBarOptions = (chartTimeInterval: number, tooltipLabels: string[][]) => {
+export const getBarOptions = (chartTimeIntervalSec: number, tooltipLabels: string[][]) => {
   return {
     animation: false as const,
     indexAxis: 'y' as const,
@@ -48,7 +48,7 @@ export const getBarOptions = (chartTimeInterval: number, tooltipLabels: string[]
         ticks: {
           display: false,
           autoSkip: false,
-          stepSize: chartTimeInterval,
+          stepSize: chartTimeIntervalSec,
         },
         stacked: true,
       },

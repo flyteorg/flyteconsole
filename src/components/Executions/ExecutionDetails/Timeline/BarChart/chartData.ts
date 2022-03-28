@@ -10,9 +10,13 @@ const EMPTY_BAR_ITEM: BarItemData = {
   isFromCache: false,
 };
 
-export const getChartDurationData = (nodes: dNode[], startedAt: Date): BarItemData[] => {
-  if (nodes.length === 0) return [];
+export const getChartDurationData = (
+  nodes: dNode[],
+  startedAt: Date,
+): { items: BarItemData[]; totalDurationSec: number } => {
+  if (nodes.length === 0) return { items: [], totalDurationSec: 0 };
 
+  let totalDurationSec = 0;
   const initialStartTime = startedAt.getTime();
   const result: BarItemData[] = nodes.map(({ execution }) => {
     if (!execution) {
@@ -51,9 +55,11 @@ export const getChartDurationData = (nodes: dNode[], startedAt: Date): BarItemDa
       durationSec = execution.closure.duration?.seconds?.toNumber() ?? 0;
     }
 
-    return { phase, startOffsetSec: startOffset / 1000, durationSec, isFromCache };
+    const startOffsetSec = startOffset / 1000;
+    totalDurationSec = Math.max(totalDurationSec, startOffsetSec + durationSec);
+    return { phase, startOffsetSec, durationSec, isFromCache };
   });
 
   // Do we want to get initialStartTime from different place, to avoid recalculating it.
-  return result;
+  return { items: result, totalDurationSec };
 };

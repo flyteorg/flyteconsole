@@ -20,7 +20,6 @@ export interface BarItemData {
 
 interface ChartDataInput {
   elementsNumber: number;
-  totalDurationSec: number;
   durations: number[];
   startOffset: number[];
   offsetColor: string[];
@@ -63,7 +62,6 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
   const barLabel: string[] = [];
   const barColor: string[] = [];
 
-  let totalDurationSec = 0;
   data.forEach((element) => {
     const phaseConstant = getNodeExecutionPhaseConstants(
       element.phase ?? NodeExecutionPhase.UNDEFINED,
@@ -80,13 +78,10 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
     tooltipLabel.push(element.isFromCache ? [tooltipString, 'Read from cache'] : [tooltipString]);
     barLabel.push(element.isFromCache ? '\u229A From cache' : labelString);
     barColor.push(phaseConstant.badgeColor);
-
-    totalDurationSec = Math.max(totalDurationSec, element.startOffsetSec + element.durationSec);
   });
 
   return {
     elementsNumber: data.length,
-    totalDurationSec,
     durations,
     startOffset,
     offsetColor,
