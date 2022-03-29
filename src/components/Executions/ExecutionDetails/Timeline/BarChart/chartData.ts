@@ -3,6 +3,8 @@ import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
 import { dNode } from 'models/Graph/types';
 import { BarItemData } from './utils';
 
+const WEEK_DURATION_SEC = 7 * 24 * 3600;
+
 const EMPTY_BAR_ITEM: BarItemData = {
   phase: NodeExecutionPhase.UNDEFINED,
   startOffsetSec: 0,
@@ -23,7 +25,7 @@ export const getChartDurationData = (
       return EMPTY_BAR_ITEM;
     }
 
-    const phase = execution.closure.phase;
+    let phase = execution.closure.phase;
     const isFromCache =
       execution.closure.taskNodeMetadata?.cacheStatus === CatalogCacheStatus.CACHE_HIT;
 
@@ -46,16 +48,24 @@ export const getChartDurationData = (
       durationSec = updatedAt - createdAt;
       durationSec = durationSec === 0 ? 2 : durationSec;
     } else if (phase === NodeExecutionPhase.RUNNING) {
-      // we need to add check if parents are failed - workflow status - ?
       if (startedAt) {
         const duration = Date.now() - timestampToDate(startedAt).getTime();
         durationSec = duration / 1000;
+        if (durationSec > WEEK_DURATION_SEC) {
+          // TODO: https://github.com/flyteorg/flyteconsole/issues/332
+          // In some cases tasks which were needed to be ABORTED are stuck in running state,
+          // In case if task is still running after a week - we assume it should have been aborted.
+          // The proper fix should be covered by isue: flyteconsole#332
+          phase = NodeExecutionPhase.ABORTED;
+          const allegedDurationSec = Math.trunc(totalDurationSec - startOffset / 1000);
+          durationSec = allegedDurationSec > 0 ? allegedDurationSec : 10;
+        }
       }
     } else {
       durationSec = execution.closure.duration?.seconds?.toNumber() ?? 0;
     }
 
-    const startOffsetSec = startOffset / 1000;
+    const startOffsetSec = Math.trunc(startOffset / 1000);
     totalDurationSec = Math.max(totalDurationSec, startOffsetSec + durationSec);
     return { phase, startOffsetSec, durationSec, isFromCache };
   });
