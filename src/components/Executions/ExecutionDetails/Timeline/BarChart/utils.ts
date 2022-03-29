@@ -2,8 +2,8 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 
-const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
-const TRANSPARENT = 'rgba(0, 0, 0, 0)';
+export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
+export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 
 export enum RelationToCache {
   None = 'none',
