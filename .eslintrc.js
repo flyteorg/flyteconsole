@@ -49,8 +49,8 @@ module.exports = {
      * temporarily off or warn
      * */
     // some setup of eslint or prettier needed
-    'no-undef': 'off', // 1066
-    'import/no-unresolved': 'off', // 1275
+    'no-undef': 'off', // 1k+, mainly tests and globals
+    'import/no-unresolved': 'off', // 1k+
     'import/no-extraneous-dependencies': 'off', // 715 - !important
     'react/jsx-props-no-spreading': 'off', // 119
 
@@ -58,11 +58,10 @@ module.exports = {
     'no-use-before-define': 'off', // 49
     'no-shadow': 'off', // 104
     'no-param-reassign': 'off', // 28
-    'no-unused-expressions': 'warn', // 6
+    'no-unused-expressions': 'warn', // 5
     'prefer-destructuring': 'off', // 34
-    'max-classes-per-file': 'warn', // 2
     'no-empty-function': 'off',
-    'no-useless-constructor': 'warn',
+    'no-useless-constructor': 'warn', // 1
     'no-useless-computed-key': 'off',
     'no-restricted-syntax': 'off',
     'no-else-return': 'off',
@@ -96,7 +95,7 @@ module.exports = {
     'prefer-promise-reject-errors': 'off',
     'prefer-arrow-callback': 'off',
     'func-names': 'off',
-    eqeqeq: 'warn',
+    eqeqeq: 'warn', // 12
 
     // import
     'import/no-dynamic-require': 'warn', // 1
@@ -113,10 +112,10 @@ module.exports = {
     'react/no-unescaped-entities': 'off',
     'react/require-default-props': 'off',
     'react/no-unused-prop-types': 'off', // 15
-    'react/no-array-index-key': 'warn', // 5
-    'react/static-property-placement': 'off', // 1
-    'react/state-in-constructor': 'off', // 2
-    'react/no-children-prop': 'off', // 1
+    'react/no-array-index-key': 'warn', // 2
+    'react/static-property-placement': 'warn', // 1
+    'react/state-in-constructor': 'warn', // 2
+    'react/no-children-prop': 'warn', // 1
 
     // jsx-a11y
     'jsx-a11y/anchor-is-valid': 'off', // 4
@@ -127,11 +126,12 @@ module.exports = {
   overrides: [
     {
       // overrides for test files
-      files: ['*.spec.*', '*.test.*', 'src/**/test/*'],
+      files: ['*.spec.*', '*.test.*', '*.stories.*', 'src/**/test/*', 'src/**/mocks/*'],
       rules: {
         camelcase: 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         'import/no-extraneous-dependencies': 'off',
+        'no-console': 'off',
 
         'jsx-a11y/aria-role': 'off',
         'jsx-a11y/control-has-associated-label': 'off',

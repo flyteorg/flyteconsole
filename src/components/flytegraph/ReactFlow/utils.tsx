@@ -41,13 +41,13 @@ export const getGraphHandleStyle = (handleType: string, type?: dTypes): CSSPrope
   let marginLeft,
     marginRight = 0;
 
-  if (handleType == 'target') {
+  if (handleType === 'target') {
     marginLeft = 0;
     marginRight = -offset;
-  } else if (handleType == 'source') {
+  } else if (handleType === 'source') {
     marginRight = 0;
     marginLeft = -offset;
-  } else if (handleType == 'nestedPoint') {
+  } else if (handleType === 'nestedPoint') {
     backgroundColor = 'none';
     size = 1;
   }
