@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dTypes } from 'models/Graph/types';
 import { CSSProperties } from 'react';

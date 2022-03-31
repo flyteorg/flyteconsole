@@ -3,6 +3,13 @@ module.exports = {
   env: {
     browser: true,
     es2021: true,
+    jest: true,
+  },
+  globals: {
+    // global variables, that should be assumed by eslint as defined
+    JSX: true,
+    RequiredNonNullable: true,
+    Dictionary: true,
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -28,6 +35,7 @@ module.exports = {
      */
     'arrow-body-style': 'off',
     'import/extensions': 'off',
+    'import/no-unresolved': 'off',
     'import/prefer-default-export': 'off',
     'react/jsx-boolean-value': 'off',
     'react/jsx-filename-extension': [2, { extensions: ['.jsx', '.tsx'] }],
@@ -49,8 +57,6 @@ module.exports = {
      * temporarily off or warn
      * */
     // some setup of eslint or prettier needed
-    'no-undef': 'off', // 1k+, mainly tests and globals
-    'import/no-unresolved': 'off', // 1k+
     'import/no-extraneous-dependencies': 'off', // 715 - !important
     'react/jsx-props-no-spreading': 'off', // 119
 
@@ -135,6 +141,13 @@ module.exports = {
 
         'jsx-a11y/aria-role': 'off',
         'jsx-a11y/control-has-associated-label': 'off',
+      },
+    },
+    {
+      // rules which not make sense for TS files
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        'no-undef': 'off',
       },
     },
   ],
