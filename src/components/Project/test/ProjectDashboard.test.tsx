@@ -17,16 +17,15 @@ import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'te
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { getUserProfile } from 'models/Common/api';
-import { ProjectExecutions } from '../ProjectExecutions';
+import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
-// jest.mock('components/common/LoadingSpinner');
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),
 }));
 
-describe('ProjectExecutions', () => {
+describe('ProjectDashboard', () => {
   let basicPythonFixture: ReturnType<typeof basicPythonWorkflow.generate>;
   let failedTaskFixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
   let executions1: Execution[];
@@ -76,7 +75,7 @@ describe('ProjectExecutions', () => {
             getUserProfile: mockGetUserProfile,
           })}
         >
-          <ProjectExecutions projectId={scope.project} domainId={scope.domain} />
+          <ProjectDashboard projectId={scope.project} domainId={scope.domain} />
         </APIContext.Provider>
       </QueryClientProvider>,
       { wrapper: MemoryRouter },
