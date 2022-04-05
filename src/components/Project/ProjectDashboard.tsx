@@ -178,18 +178,14 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
     projectDomainAttributesQuery.data?.attributes?.matchingAttributes?.workflowExecutionConfig ??
     undefined;
 
-  const renderDomainSettingsSection = () => (
-    <div>
+  const renderDomainSettingsSection = () => <DomainSettingsSection configData={configData} />;
+
+  return (
+    <div className={styles.container}>
       <div className={styles.projectStats}>
         <Typography variant="h5">{t('workflowsTotal', numberOfWorkflows)}</Typography>
         <Typography variant="h5">{t('tasksTotal', numberOfTasks)}</Typography>
       </div>
-      <DomainSettingsSection configData={configData} />{' '}
-    </div>
-  );
-
-  return (
-    <div className={styles.container}>
       <WaitForQuery query={projectDomainAttributesQuery}>
         {renderDomainSettingsSection}
       </WaitForQuery>
