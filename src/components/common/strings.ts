@@ -6,7 +6,7 @@ const str = {
   iamRoleHeader: 'IAM Role',
   inherited: 'Inherits from project level values',
   labelsHeader: 'Labels',
-  maxParallelismHeader: 'Max_parallelism',
+  maxParallelismHeader: 'Max parallelism',
   rawDataHeader: 'Raw output data config',
   securityContextHeader: 'Security Context',
   serviceAccountHeader: 'Service Account',

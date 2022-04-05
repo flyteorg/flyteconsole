@@ -17,12 +17,32 @@ import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'te
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { getUserProfile } from 'models/Common/api';
+import { getProjectDomainAttributes } from 'models/Project/api';
+import { Admin } from 'flyteidl';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),
+}));
+
+const projectDomainAttributesMock: Admin.ProjectDomainAttributesDeleteResponse = {
+  attributes: {
+    matchingAttributes: {
+      workflowExecutionConfig: {
+        maxParallelism: 5,
+        securityContext: { runAs: { k8sServiceAccount: 'default' } },
+        rawOutputDataConfig: { outputLocationPrefix: 'cliOutputLocationPrefix' },
+        annotations: { values: { cliAnnotationKey: 'cliAnnotationValue' } },
+        labels: { values: { cliLabelKey: 'cliLabelValue' } },
+      },
+    },
+  },
+};
+
+jest.mock('models/Project/api', () => ({
+  getProjectDomainAttributes: jest.fn().mockResolvedValue(projectDomainAttributesMock),
 }));
 
 describe('ProjectDashboard', () => {
@@ -80,6 +100,14 @@ describe('ProjectDashboard', () => {
       </QueryClientProvider>,
       { wrapper: MemoryRouter },
     );
+
+  it('should display domain attributes section when config was provided', async () => {
+    const { getByText } = renderView();
+    expect(getProjectDomainAttributes).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(getByText('Domain Settings')).toBeInTheDocument();
+    });
+  });
 
   it('should show loading spinner', async () => {
     mockGetUserProfile.mockResolvedValue(sampleUserProfile);

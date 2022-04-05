@@ -1,13 +1,11 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
-import { useTaskNameList } from 'components/hooks/useNamedEntity';
+import { useTaskNameList, useWorkflowNameList } from 'components/hooks/useNamedEntity';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
-import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { Admin } from 'flyteidl';
-import { endpointPrefixes } from 'models/Common/constants';
 import { DomainSettingsSection } from 'components/common/DomainSettingsSection';
 import { getCacheKey } from 'components/Cache/utils';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
@@ -32,6 +30,7 @@ import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { compact } from 'lodash';
+import { getProjectDomainAttributes } from 'models/Project/api';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 
@@ -72,9 +71,6 @@ const defaultSort = {
   key: executionSortFields.createdAt,
   direction: SortDirection.DESCENDING,
 };
-
-const makeProjectDomainAttributesPath = ({ project, domain }) =>
-  [endpointPrefixes.projectDomainAtributes, project, domain].join('/');
 
 export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   domainId: domain,
@@ -137,7 +133,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
 
   const fetch = React.useCallback(() => executionsQuery.fetchNextPage(), [executionsQuery]);
 
-  const numberOfExecutions = executions.length;
+  const { value: workflows } = useWorkflowNameList({ domain, project }, {});
+  const numberOfWorkflows = workflows.length;
   const { value: tasks } = useTaskNameList({ domain, project }, {});
   const numberOfTasks = tasks.length;
 
@@ -146,20 +143,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   const projectDomainAttributesQuery = useQuery<Admin.ProjectDomainAttributesGetResponse, Error>({
     queryKey: ['projectDomainAttributes', project, domain],
     queryFn: async () => {
-      const projectDomainAtributes = await getAdminEntity<
-        Admin.ProjectDomainAttributesGetResponse,
-        Admin.ProjectDomainAttributesGetResponse
-      >(
-        {
-          path: makeProjectDomainAttributesPath({ project, domain }),
-          messageType: Admin.ProjectDomainAttributesGetResponse,
-        },
-        {
-          params: {
-            resource_type: 'WORKFLOW_EXECUTION_CONFIG',
-          },
-        },
-      );
+      const projectDomainAtributes = await getProjectDomainAttributes({ domain, project });
       queryClient.setQueryData(
         ['projectDomainAttributes', project, domain],
         projectDomainAtributes,
@@ -193,20 +177,25 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   const configData =
     projectDomainAttributesQuery.data?.attributes?.matchingAttributes?.workflowExecutionConfig ??
     undefined;
-  const renderDomainSettingsSection = () => <DomainSettingsSection configData={configData} />;
 
-  return (
+  const renderDomainSettingsSection = () => (
     <div>
       <div className={styles.projectStats}>
-        <Typography variant="h5">{t('executionsTotal', numberOfExecutions)}</Typography>
+        <Typography variant="h5">{t('workflowsTotal', numberOfWorkflows)}</Typography>
         <Typography variant="h5">{t('tasksTotal', numberOfTasks)}</Typography>
       </div>
+      <DomainSettingsSection configData={configData} />{' '}
+    </div>
+  );
+
+  return (
+    <div className={styles.container}>
       <WaitForQuery query={projectDomainAttributesQuery}>
         {renderDomainSettingsSection}
       </WaitForQuery>
       <div className={styles.container}>
         <Typography className={classNames(styles.header, styles.marginTop)} variant="h6">
-          Last 100 Executions in the Project
+          {t('last100ExecutionsTitle')}
         </Typography>
         <div className={styles.chartContainer}>
           <WaitForData {...last100Executions}>
@@ -219,7 +208,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
           </WaitForData>
         </div>
         <Typography className={styles.header} variant="h6">
-          All Executions in the Project
+          {t('allExecutionsTitle')}
         </Typography>
         <ExecutionFilters
           {...filtersState}
