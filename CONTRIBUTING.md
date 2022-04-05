@@ -33,7 +33,11 @@ You can run storybook with `yarn run storybook`, and view the stories at http://
 ## Feature flags
 
 We are using our internal feature flag solution to allow continuos integration,
-while features are in development.
+while features are in development. There are two types of flags:
+
+-   **FeatureFlag**: boolean flags which indicate if feature is enabled.
+-   **AdminFlag**: the minimal version of flyteadmin in which feature supported.
+
 All flags currently available could be found in [/FeatureFlags/defaultConfig.ts](./src/basics/FeatureFlags/defaultConfig.ts)
 file. Most of them under active development, which means we don't guarantee it will work as you expect.
 
@@ -54,43 +58,39 @@ export function MyComponent(props: Props): React.ReactNode {
 }
 ```
 
-During your local development you can either:
+More info in [FEATURE_FLAGS.md](src/basics/FeatureFlags/FEATURE_FLAGS.md)
 
--   temporarily switch flags value in runtimeConfig as:
-    ```javascript
-    let runtimeConfig = {
-        ...defaultFlagConfig,
-        'add-new-page': true,
-    };
-    ```
--   turn flag on/off from the devTools console in Chrome
-    ![SetFeatureFlagFromConsole](https://user-images.githubusercontent.com/55718143/150002962-f12bbe57-f221-4bbd-85e3-717aa0221e89.gif)
+## Local storage
 
-#### Unit tests
+We allow to save user "settings" choice to the browser Local Storage, to persist specific values between sessions. The local storage entry is stored as a JSON string, so can represent any object. However, it is a good practise to minimize your object fields prior to storing.
 
-If you plan to test non-default flag value in your unit tests, make sure to wrap your component with `FeatureFlagsProvider`.
-Use `window.setFeatureFlag(flag, newValue)` function to set needed value and `window.clearRuntimeConfig()`
-to return to defaults. Beware to comment out/remove any changes in `runtimeConfig` during testing;
+All available LocalCacheItems could be found in [/LocalCache/defaultConfig.ts](./src/basics/LocalCache/defaultConfig.ts). We are using `flyte.` prefix in items which are storing user settings.
+
+**Example - flag usage**:
 
 ```javascript
-function TestWrapper() {
-    return <FeatureFlagsProvider> <TestContent /> </FeatureFlagsProvider>
+import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
+
+export function MyComponent(props: Props): React.ReactNode {
+    ...
+    const [showTable, setShowTable] = useLocalCache(LocalCacheItem.ShowWorkflowVersions);
+
+    return showTable ? <SomeComponent ...props onClick={() => setShowTable(!showTable)}/> : null;
 }
-
-describe('FeatureFlags', () => {
-    afterEach(() => {
-        window.clearRuntimeConfig(); // clean up flags
-    });
-
-   it('Test', async () => {
-        render(<TestWrapper />);
-
-        window.setFeatureFlag(FeatureFlag.FlagInQuestion, true);
-        await waitFor(() => {
-            // check after flag changed value
-        });
-    });
 ```
+
+## Unit tests
+
+You can run unit tests locally, for both of the command listed below `NODE_ENV=test` is set-up, so if you need a specific error/log/mock treatment for these cases feel free to use isTestEnv() check
+
+```
+import { isTestEnv } from 'common/env';
+...
+if (isTestEnv()) {...}
+```
+
+To run unit tests locally: `yarn test`
+To check coverage `yarn test-coverage`
 
 ## Google Analytics
 
