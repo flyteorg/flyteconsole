@@ -1,6 +1,6 @@
 # Flyte Console Contribution Guide
 
-First off, thank you for thinking about contributing! 
+First off, thank you for thinking about contributing!
 Below you’ll find instructions that will hopefully guide you through how to contribute to, fix, and improve Flyte Console.
 
 ## Protobuf and Debug Output
@@ -19,7 +19,7 @@ output must be enabled manually. You can do this by setting a flag in
 localStorage using the console: `localStorage.debug = 'flyte:*'`. Each module in
 the application sets its own namespace. So if you'd like to only view output for
 a single module, you can specify that one specifically
-(ex. ``localStorage.debug = 'flyte:adminEntity'`` to only see decoded Flyte
+(ex. `localStorage.debug = 'flyte:adminEntity'` to only see decoded Flyte
 Admin API requests).
 
 ## Storybook
@@ -41,27 +41,6 @@ If you want to add your own flag, you need to add it to both `enum FeatureFlag` 
 under production section.
 Initally all flags must be disabled, meaning you code path should not be executed by default.
 
-**Example - adding flags:**
-
-```javascript
-enum FeatureFlags {
-    ...
-    AddNewPage: 'add-new-page'
-    UseCommonPath: 'use-common-path'
-}
-
-export const defaultFlagConfig: FeatureFlagConfig = {
-    ...
-    'add-new-page': false, // default/prior behavior doesn't include new page
-    'use-common-path': true, // default/prior behavior uses common path
-};
-```
-
-To use flags in code you need to ensure that the most top level component is wrapped by `FeatureFlagsProvider`.
-By default we are wrapping top component in Apps file, so if you do not plan to include
-feature flags checks in the `\*.tests.tsx` - you should be good to go.
-To check flag's value use `useFeatureFlag` hook.
-
 **Example - flag usage**:
 
 ```javascript
@@ -70,21 +49,22 @@ import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 export function MyComponent(props: Props): React.ReactNode {
     ...
     const isFlagEnabled = useFeatureFlag(FeatureFlag.AddNewPage);
-    
+
     return isFlagEnabled ? <NewPage ...props/> : null;
 }
 ```
 
 During your local development you can either:
-*   temporarily switch flags value in runtimeConfig as:
+
+-   temporarily switch flags value in runtimeConfig as:
     ```javascript
-    let runtimeConfig = { 
+    let runtimeConfig = {
         ...defaultFlagConfig,
         'add-new-page': true,
     };
     ```
-* turn flag on/off from the devTools console in Chrome 
-![SetFeatureFlagFromConsole](https://user-images.githubusercontent.com/55718143/150002962-f12bbe57-f221-4bbd-85e3-717aa0221e89.gif)
+-   turn flag on/off from the devTools console in Chrome
+    ![SetFeatureFlagFromConsole](https://user-images.githubusercontent.com/55718143/150002962-f12bbe57-f221-4bbd-85e3-717aa0221e89.gif)
 
 #### Unit tests
 
@@ -104,7 +84,7 @@ describe('FeatureFlags', () => {
 
    it('Test', async () => {
         render(<TestWrapper />);
-        
+
         window.setFeatureFlag(FeatureFlag.FlagInQuestion, true);
         await waitFor(() => {
             // check after flag changed value
@@ -114,9 +94,9 @@ describe('FeatureFlags', () => {
 
 ## Google Analytics
 
-This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>`_
+This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>`\_
 libary to include Google Analytics tracking code in a website or app. For all the environments, it is configured using ENABLE_GA environment variable.
-By default, it's enabled like this: ``ENABLE_GA=true``. If you want to disable it, just set it false. (ex. ``ENABLE_GA=false``).
+By default, it's enabled like this: `ENABLE_GA=true`. If you want to disable it, just set it false. (ex. `ENABLE_GA=false`).
 
 ## 📦 Install Dependencies
 
@@ -124,32 +104,36 @@ Running flyteconsole locally requires [NodeJS](https://nodejs.org) and
 [yarn](https://yarnpkg.com). We recommend for you to use **asdf** to manage NodeJS version.
 You can find currently used versions in `.tool-versions` file.
 
-* Install asdf through homebrew
-``` bash
+-   Install asdf through homebrew
+
+```bash
 brew install asdf
 ```
 
-* (Optional) If you are using **M1 MacBook**, you will need to install `vips` for proper build experience
-``` bash
+-   (Optional) If you are using **M1 MacBook**, you will need to install `vips` for proper build experience
+
+```bash
 brew install vips
 ```
 
-* Add Yarn plugin to asdf, to manage yarn versions
-``` bash
+-   Add Yarn plugin to asdf, to manage yarn versions
+
+```bash
 asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
 brew install gpg
 ```
 
-* From flyteconsole directory - install proper NodeJS and yarn versions:
-``` bash
+-   From flyteconsole directory - install proper NodeJS and yarn versions:
+
+```bash
 asdf install
 ```
 
-* Install nodepackages
-``` bash
+-   Install nodepackages
+
+```bash
 yarn install
 ```
-
 
 ## CORS Proxying: Recommended Setup
 
@@ -160,29 +144,28 @@ domain you will need to configure your enviornment to support CORS. One example 
 hosting the Admin API on a different domain than the console. Another example is
 when fetching execution data from external storage such as S3.
 
-The fastest (recommended) way to setup a CORS solution is to do so within the browser. 
+The fastest (recommended) way to setup a CORS solution is to do so within the browser.
 If you would like to handle this at the Node level you will need to disable authentication
 (see below).
 
-*NOTE:* Do not configure for both browser and Node solutions. 
+_NOTE:_ Do not configure for both browser and Node solutions.
 
-These instructions require using Google Chrome. You will also need to identify the 
+These instructions require using Google Chrome. You will also need to identify the
 URL of your target FlyteAdmin API instance. These instructions will use
 `https://different.admin.service.com` as an example.
 
-
 1. Set `ADMIN_API_URL` and `ADMIN_API_USE_SSL`
-   
+
     ```
       export ADMIN_API_URL=https://different.admin.service.com
       export ADMIN_API_USE_SSL="https"
     ```
 
-    *NOTE:* Add these to your local profile (e.g., `./profile`) to prevent having to do this step each time
+    _NOTE:_ Add these to your local profile (e.g., `./profile`) to prevent having to do this step each time
 
 2. Generate SSL certificate
 
-   Run the following command from your `flyteconsole` directory
+    Run the following command from your `flyteconsole` directory
 
     ```bash
       make generate_ssl
@@ -190,19 +173,19 @@ URL of your target FlyteAdmin API instance. These instructions will use
 
 3. Add new record to hosts file
 
-    ```bash      
+    ```bash
       sudo vim /etc/hosts
     ```
 
-   Add the following record
-   
+    Add the following record
+
     ```
       127.0.0.1 localhost.different.admin.service.com
     ```
 
 4. Install Chrome plugin: [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf)
 
-    >*NOTE:* Activate plugin (toggle to "on")
+    > _NOTE:_ Activate plugin (toggle to "on")
 
 5. Start `flyteconsole`
 
@@ -210,6 +193,6 @@ URL of your target FlyteAdmin API instance. These instructions will use
       yarn start
     ```
 
-   Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
+    Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
 
 > Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (e.g., in your `/.profile`.)
