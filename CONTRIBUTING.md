@@ -1,6 +1,6 @@
 # Flyte Console Contribution Guide
 
-First off, thank you for thinking about contributing!
+First off all, thank you for thinking about contributing!
 Below you’ll find instructions that will hopefully guide you through how to contribute to, fix, and improve Flyte Console.
 
 ## Protobuf and Debug Output
@@ -94,8 +94,7 @@ To check coverage `yarn test-coverage`
 
 ## Google Analytics
 
-This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>`\_
-libary to include Google Analytics tracking code in a website or app. For all the environments, it is configured using ENABLE_GA environment variable.
+This application makes use of the `react-ga4 <https://github.com/PriceRunner/react-ga4>` libary to include Google Analytics tracking code in a website or app. For all the environments, it is configured using ENABLE_GA environment variable.
 By default, it's enabled like this: `ENABLE_GA=true`. If you want to disable it, just set it false. (ex. `ENABLE_GA=false`).
 
 ## 📦 Install Dependencies
