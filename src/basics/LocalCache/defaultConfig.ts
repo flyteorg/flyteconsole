@@ -23,7 +23,4 @@ export const defaultLocalCacheConfig: LocalCacheConfig = {
   // Production
   'flyte.show-workflow-versions': 'true',
   'flyte.show-domain-settings': 'true',
-
-  // Feature flags - for prod testing
-  'ff.timeline-view': 'false',
 };
