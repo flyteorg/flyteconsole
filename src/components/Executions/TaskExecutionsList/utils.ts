@@ -1,4 +1,6 @@
 import { leftPaddedNumber } from 'common/formatters';
+import { Core, Event } from 'flyteidl';
+import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
 
 /** Generates a unique name for a task execution, suitable for display in a
@@ -22,3 +24,24 @@ export function formatRetryAttempt(attempt: number | string | undefined): string
   // Retry attempts are zero-based, so incrementing before formatting
   return `Attempt ${leftPaddedNumber(parsed + 1, 2)}`;
 }
+
+export const getGroupedLogs = (
+  resources: Event.IExternalResourceInfo[],
+): Map<TaskExecutionPhase, Core.ITaskLog[]> => {
+  const logsInfo = new Map<TaskExecutionPhase, Core.ITaskLog[]>();
+
+  resources?.forEach((item) => {
+    const phase = item.phase ?? TaskExecutionPhase.UNDEFINED;
+    const currentValue = logsInfo.get(phase);
+    if (item.logs) {
+      // if there is no log with active url, just create an item with externalId,
+      // for user to understand which array items are in this state
+      const newLogs = item.logs.length > 0 ? item.logs : [{ name: item.externalId }];
+      logsInfo.set(phase, currentValue ? [...currentValue, ...newLogs] : [...newLogs]);
+    }
+  });
+
+  // narusina: filter out previous attempts
+
+  return logsInfo;
+};
