@@ -29,7 +29,7 @@ describe('MapTaskStatusInfo', () => {
     const buttonEl = getByTitle('Expand row');
     fireEvent.click(buttonEl);
     await waitFor(() => {
-      expect(queryByText('Logs')).toBeInTheDocument();
+      expect(queryByText(taskLogs[0].name)).toBeInTheDocument();
     });
   });
 

@@ -1,4 +1,4 @@
-import { Protobuf } from 'flyteidl';
+import { Protobuf, Event } from 'flyteidl';
 import { MessageFormat, ResourceType, TaskLog } from 'models/Common/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
@@ -65,7 +65,7 @@ export const getMockMapTaskLogItem = (
   hasLogs: boolean,
   index?: number,
   retryAttempt?: number,
-) => {
+): Event.IExternalResourceInfo => {
   const retryString = retryAttempt && retryAttempt > 0 ? `-${retryAttempt}` : '';
   return {
     externalId: `y286hpfvwh-n0-0-${index ?? 0}`,
@@ -122,6 +122,7 @@ export const MockMapTaskExecution: TaskExecution = {
         getMockMapTaskLogItem(TaskExecutionPhase.FAILED, true, 3),
         getMockMapTaskLogItem(TaskExecutionPhase.SUCCEEDED, true, 3, 1),
         getMockMapTaskLogItem(TaskExecutionPhase.SUCCEEDED, true, 4),
+        getMockMapTaskLogItem(TaskExecutionPhase.FAILED, false, 5),
       ],
       pluginIdentifier: 'k8s-array',
     },
