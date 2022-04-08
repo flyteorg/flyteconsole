@@ -36,7 +36,7 @@ import { failedToLoadExecutionsString } from './constants';
 const useStyles = makeStyles((theme: Theme) => ({
   projectStats: {
     paddingTop: theme.spacing(7),
-    paddingBottom: theme.spacing(7),
+    paddingBottom: theme.spacing(5),
     display: 'flex',
     justifyContent: 'space-evenly',
     alignItems: 'center',

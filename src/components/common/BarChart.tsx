@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(3),
     paddingTop: theme.spacing(1),
+    minHeight: '135px',
   },
   title: {
     marginTop: theme.spacing(2),
