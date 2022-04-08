@@ -35,7 +35,7 @@ interface MapTaskExecutionsListItemProps {
   showAttempts: boolean;
 }
 
-const RenderOrder: TaskExecutionPhase[] = [
+const RENDER_ORDER: TaskExecutionPhase[] = [
   TaskExecutionPhase.UNDEFINED,
   TaskExecutionPhase.INITIALIZING,
   TaskExecutionPhase.WAITING_FOR_RESOURCES,
@@ -61,7 +61,7 @@ export const MapTaskExecutionsListItem: React.FC<MapTaskExecutionsListItemProps>
 
   // Set UI elements in a proper rendering order
   const logsSections: JSX.Element[] = [];
-  for (const key of RenderOrder) {
+  for (const key of RENDER_ORDER) {
     const values = logsInfo.get(key);
     if (values) {
       logsSections.push(<MapTaskStatusInfo status={key} taskLogs={values} expanded={false} />);

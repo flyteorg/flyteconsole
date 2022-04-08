@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => {
       },
     },
     tabItem: {
-      margin: `0 ${theme.spacing(1)}px`,
+      margin: theme.spacing(0, 1),
     },
   };
 });
