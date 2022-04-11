@@ -71,6 +71,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: '50%',
     marginTop: -24,
     marginRight: 24,
+    height: 'fit-content',
   },
   confirmationBox: {
     height: '100%',
@@ -227,13 +228,13 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
       setShowConfirmation(false);
     };
 
-    return isUpdating ? (
-      <div className={classNames(styles.actionContainer, styles.centeredChild)}>
-        <CircularProgress size={24} />
-      </div>
-    ) : (
+    return (
       <div className={classNames(styles.actionContainer, showOnHoverClass)}>
-        {showConfirmation ? (
+        {isUpdating ? (
+          <IconButton className={styles.centeredChild} size="small">
+            <CircularProgress size={24} />
+          </IconButton>
+        ) : showConfirmation ? (
           <div className={styles.confirmationBox}>
             <Button
               size="medium"
@@ -257,16 +258,14 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
             </Button>
           </div>
         ) : (
-          <div>
-            <IconButton
-              className={styles.centeredChild}
-              size="small"
-              title={t('archiveAction', isArchived)}
-              onClick={onArchiveClick}
-            >
-              {getArchiveIcon(isArchived)}
-            </IconButton>
-          </div>
+          <IconButton
+            className={styles.centeredChild}
+            size="small"
+            title={t('archiveAction', isArchived)}
+            onClick={onArchiveClick}
+          >
+            {getArchiveIcon(isArchived)}
+          </IconButton>
         )}
       </div>
     );
