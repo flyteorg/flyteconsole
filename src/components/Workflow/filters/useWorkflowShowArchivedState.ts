@@ -5,7 +5,7 @@ import { WorkflowExecutionState } from 'models/Workflow/enums';
 interface ArchiveFilterState {
   showArchived: boolean;
   setShowArchived: (newValue: boolean) => void;
-  getFilter: () => FilterOperation | null;
+  getFilter: () => FilterOperation;
 }
 
 /**
@@ -16,7 +16,7 @@ export function useWorkflowShowArchivedState(): ArchiveFilterState {
 
   // By default all values are returned with NAMED_ENTITY_ACTIVE state,
   // so filter need to be applied only for ARCHIVED executions
-  const getFilter = (): FilterOperation | null => {
+  const getFilter = (): FilterOperation => {
     return {
       key: 'state',
       operation: FilterOperationName.EQ,

@@ -12,7 +12,7 @@ export interface ProjectWorkflowsProps {
   domainId: string;
 }
 
-const defaultSort = {
+const DEFAULT_SORT = {
   direction: SortDirection.ASCENDING,
   key: workflowSortFields.name,
 };
@@ -27,8 +27,8 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     { domain, project },
     {
       limit: limits.NONE,
-      sort: defaultSort,
-      filter: [archivedFilter.getFilter()!],
+      sort: DEFAULT_SORT,
+      filter: [archivedFilter.getFilter()],
     },
   );
 
