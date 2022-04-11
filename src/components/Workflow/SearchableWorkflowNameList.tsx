@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   centeredChild: {
     alignItems: 'center',
     padding: theme.spacing(2),
+    borderRadius: '0px 16px 16px 0px',
   },
   confirmationBox: {
     height: '100%',
