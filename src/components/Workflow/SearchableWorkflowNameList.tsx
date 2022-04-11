@@ -68,12 +68,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     marginRight: 24,
   },
-  confirmationBox: {
-    height: '100%',
-    [`& > button`]: {
-      height: '100%',
-    },
-  },
   confirmationButton: {
     borderRadius: 0,
     minWidth: '100px',
@@ -170,97 +164,99 @@ const padExecutionPaths = (items: WorkflowExecutionIdentifier[]) => {
 const getArchiveIcon = (isArchived: boolean) =>
   isArchived ? <UnarchiveOutline /> : <ArchiveOutlined />;
 
-const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActionsProps> =
-  React.memo(({ item, setHideItem }) => {
-    const styles = useStyles();
-    const { enqueueSnackbar } = useSnackbar();
-    const { id } = item;
-    const isArchived = isWorkflowArchived(item);
-    const [isUpdating, setIsUpdating] = useState<boolean>(false);
-    const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActionsProps> = ({
+  item,
+  setHideItem,
+}) => {
+  const styles = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+  const { id } = item;
+  const isArchived = isWorkflowArchived(item);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-    const mutation = useMutation(
-      (newState: WorkflowExecutionState) => updateWorkflowState(id, newState),
-      {
-        onMutate: () => setIsUpdating(true),
-        onSuccess: () => {
-          enqueueSnackbar(t('archiveSuccess', !isArchived), {
-            variant: 'success',
-          });
-          setHideItem(true);
-        },
-        onError: () => {
-          enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, {
-            variant: 'error',
-          });
-        },
-        onSettled: () => {
-          setShowConfirmation(false);
-          setIsUpdating(false);
-        },
+  const mutation = useMutation(
+    (newState: WorkflowExecutionState) => updateWorkflowState(id, newState),
+    {
+      onMutate: () => setIsUpdating(true),
+      onSuccess: () => {
+        enqueueSnackbar(t('archiveSuccess', !isArchived), {
+          variant: 'success',
+        });
+        setHideItem(true);
       },
+      onError: () => {
+        enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, {
+          variant: 'error',
+        });
+      },
+      onSettled: () => {
+        setShowConfirmation(false);
+        setIsUpdating(false);
+      },
+    },
+  );
+
+  const onArchiveClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setShowConfirmation(true);
+  };
+
+  const onConfirmArchiveClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    mutation.mutate(
+      isWorkflowArchived(item)
+        ? WorkflowExecutionState.NAMED_ENTITY_ACTIVE
+        : WorkflowExecutionState.NAMED_ENTITY_ARCHIVED,
     );
+  };
 
-    const onArchiveClick = (event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
-      setShowConfirmation(true);
-    };
+  const onCancelClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setShowConfirmation(false);
+  };
 
-    const onConfirmArchiveClick = (event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
-      mutation.mutate(
-        isWorkflowArchived(item)
-          ? WorkflowExecutionState.NAMED_ENTITY_ACTIVE
-          : WorkflowExecutionState.NAMED_ENTITY_ARCHIVED,
-      );
-    };
-
-    const onCancelClick = (event: React.MouseEvent) => {
-      event.stopPropagation();
-      event.preventDefault();
-      setShowConfirmation(false);
-    };
-
-    const singleItemStyle = isUpdating || !showConfirmation ? styles.centeredChild : '';
-    return (
-      <div className={classNames(styles.actionContainer, showOnHoverClass, singleItemStyle)}>
-        {isUpdating ? (
-          <IconButton size="small">
-            <CircularProgress size={24} />
-          </IconButton>
-        ) : showConfirmation ? (
-          <div className={styles.confirmationBox}>
-            <Button
-              size="medium"
-              variant="contained"
-              color="primary"
-              className={styles.confirmationButton}
-              disableElevation
-              onClick={onConfirmArchiveClick}
-            >
-              {t('archiveAction', isArchived)}
-            </Button>
-            <Button
-              size="medium"
-              variant="contained"
-              color="inherit"
-              className={styles.confirmationButton}
-              disableElevation
-              onClick={onCancelClick}
-            >
-              {t('cancelAction')}
-            </Button>
-          </div>
-        ) : (
-          <IconButton size="small" title={t('archiveAction', isArchived)} onClick={onArchiveClick}>
-            {getArchiveIcon(isArchived)}
-          </IconButton>
-        )}
-      </div>
-    );
-  });
+  const singleItemStyle = isUpdating || !showConfirmation ? styles.centeredChild : '';
+  return (
+    <div className={classNames(styles.actionContainer, showOnHoverClass, singleItemStyle)}>
+      {isUpdating ? (
+        <IconButton size="small">
+          <CircularProgress size={24} />
+        </IconButton>
+      ) : showConfirmation ? (
+        <>
+          <Button
+            size="medium"
+            variant="contained"
+            color="primary"
+            className={styles.confirmationButton}
+            disableElevation
+            onClick={onConfirmArchiveClick}
+          >
+            {t('archiveAction', isArchived)}
+          </Button>
+          <Button
+            size="medium"
+            variant="contained"
+            color="inherit"
+            className={styles.confirmationButton}
+            disableElevation
+            onClick={onCancelClick}
+          >
+            {t('cancelAction')}
+          </Button>
+        </>
+      ) : (
+        <IconButton size="small" title={t('archiveAction', isArchived)} onClick={onArchiveClick}>
+          {getArchiveIcon(isArchived)}
+        </IconButton>
+      )}
+    </div>
+  );
+};
 
 /**
  * Renders individual searchable workflow item

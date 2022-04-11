@@ -91,6 +91,6 @@ describe('ProjectWorkflows', () => {
     await waitFor(() => expect(getByText('MyWorkflow')));
     fireEvent.click(checkboxes[0]);
     // when user selects checkbox, table should have no workflows to display
-    await waitFor(() => expect(queryByText('MyWorkflow')).toBeNull());
+    await waitFor(() => expect(queryByText('MyWorkflow')).not.toBeInTheDocument());
   });
 });

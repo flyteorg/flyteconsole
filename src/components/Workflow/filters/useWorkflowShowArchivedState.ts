@@ -14,8 +14,7 @@ interface ArchiveFilterState {
 export function useWorkflowShowArchivedState(): ArchiveFilterState {
   const [showArchived, setShowArchived] = useState(false);
 
-  // By default all values are returned with NAMED_ENTITY_ACTIVE state,
-  // so filter need to be applied only for ARCHIVED executions
+  // By default all values are returned with NAMED_ENTITY_ACTIVE state
   const getFilter = (): FilterOperation => {
     return {
       key: 'state',
