@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import DeviceHub from '@material-ui/icons/DeviceHub';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
@@ -53,7 +53,7 @@ interface SearchableWorkflowNameListProps {
 
 export const showOnHoverClass = 'showOnHover';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   actionContainer: {
     display: 'block',
     position: 'absolute',
@@ -90,14 +90,16 @@ const useStyles = makeStyles(() => ({
     minHeight: '53px',
   },
   container: {
-    padding: 13,
-    paddingRight: 71,
+    padding: theme.spacing(2),
+    paddingRight: theme.spacing(5),
   },
   filterGroup: {
     display: 'flex',
     flexWrap: 'nowrap',
     flexDirection: 'row',
+    margin: theme.spacing(4, 5, 2, 2),
   },
+
   itemContainer: {
     marginBottom: 15,
     borderRadius: 16,
@@ -146,8 +148,7 @@ const useStyles = makeStyles(() => ({
     color: workflowLabelColor,
   },
   searchInputContainer: {
-    padding: '0 13px',
-    margin: '32px 0 23px',
+    paddingLeft: 0,
   },
   w100: {
     flex: 1,
