@@ -60,8 +60,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: 0,
     position: 'absolute',
     height: '100%',
-    overflow: 'hidden',
-    borderRadius: '0px 16px 16px 0px', // to ensure that cancel button will have rounded corners on the right side
   },
   archiveCheckbox: {
     whiteSpace: 'nowrap',
@@ -69,7 +67,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   centeredChild: {
     alignItems: 'center',
     padding: theme.spacing(2),
-    borderRadius: '0px 16px 16px 0px',
+    borderRadius: '50%',
+    top: '50%',
+    marginTop: -24,
+    marginRight: 24,
   },
   confirmationBox: {
     height: '100%',
@@ -81,6 +82,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: 0,
     minWidth: '100px',
     minHeight: '53px',
+    '&:last-child': {
+      borderRadius: '0px 16px 16px 0px', // to ensure that cancel button will have rounded corners on the right side
+    },
   },
   container: {
     padding: theme.spacing(2),
@@ -253,14 +257,16 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
             </Button>
           </div>
         ) : (
-          <IconButton
-            className={styles.centeredChild}
-            size="small"
-            title={t('archiveAction', isArchived)}
-            onClick={onArchiveClick}
-          >
-            {getArchiveIcon(isArchived)}
-          </IconButton>
+          <div>
+            <IconButton
+              className={styles.centeredChild}
+              size="small"
+              title={t('archiveAction', isArchived)}
+              onClick={onArchiveClick}
+            >
+              {getArchiveIcon(isArchived)}
+            </IconButton>
+          </div>
         )}
       </div>
     );
