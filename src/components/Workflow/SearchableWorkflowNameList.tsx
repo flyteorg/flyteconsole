@@ -256,7 +256,7 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
           <IconButton
             className={styles.centeredChild}
             size="small"
-            title={t('archiveActionString', isArchived)}
+            title={t('archiveAction', isArchived)}
             onClick={onArchiveClick}
           >
             {getArchiveIcon(isArchived)}
