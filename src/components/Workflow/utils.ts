@@ -8,7 +8,3 @@ function isWorkflowStateArchive(workflow: WorkflowListStructureItem): boolean {
 export function isWorkflowArchived(workflow: WorkflowListStructureItem): boolean {
   return isWorkflowStateArchive(workflow);
 }
-
-export function getArchiveStateString(workflow: WorkflowListStructureItem) {
-  return isWorkflowStateArchive(workflow) ? 'Unarchive' : 'Archive';
-}

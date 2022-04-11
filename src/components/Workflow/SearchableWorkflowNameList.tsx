@@ -34,7 +34,7 @@ import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
 import { useWorkflowInfoItem } from './useWorkflowInfoItem';
 import t from '../Executions/Tables/WorkflowExecutionTable/strings';
-import { getArchiveStateString, isWorkflowArchived } from './utils';
+import { isWorkflowArchived } from './utils';
 
 interface SearchableWorkflowNameItemProps {
   item: WorkflowListStructureItem;
@@ -255,7 +255,7 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
           <IconButton
             className={styles.centeredChild}
             size="small"
-            title={getArchiveStateString(item)}
+            title={t('archiveActionString', isArchived)}
             onClick={onArchiveClick}
           >
             {getArchiveIcon(isArchived)}
