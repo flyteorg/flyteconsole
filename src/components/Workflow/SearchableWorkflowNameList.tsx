@@ -223,11 +223,11 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
     };
 
     return isUpdating ? (
-      <div className={styles.actionProgress}>
+      <div className={classNames(styles.actionContainer, styles.centeredChild)}>
         <CircularProgress size={24} />
       </div>
     ) : (
-      <div className={classNames(styles.actionContainer, styles.centeredChild, showOnHoverClass)}>
+      <div className={classNames(styles.actionContainer, showOnHoverClass)}>
         {showConfirmation ? (
           <div className={styles.confirmationBox}>
             <Button
@@ -253,7 +253,7 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
           </div>
         ) : (
           <IconButton
-            className={styles.archiveButton}
+            className={styles.centeredChild}
             size="small"
             title={getArchiveStateString(item)}
             onClick={onArchiveClick}
