@@ -55,28 +55,20 @@ export const showOnHoverClass = 'showOnHover';
 
 const useStyles = makeStyles((theme: Theme) => ({
   actionContainer: {
-    display: 'block',
-    position: 'absolute',
+    display: 'flex',
+    right: 0,
     top: 0,
-    right: 0,
-    height: '100%',
-  },
-  actionProgress: {
-    width: '100px',
-    textAlign: 'center',
-    top: '42%',
-    display: 'block',
     position: 'absolute',
-    right: 0,
-  },
-  archiveButton: {
-    right: '30px',
-    position: 'relative',
-    top: '42%',
-    height: 'auto',
+    height: '100%',
+    overflow: 'hidden',
+    borderRadius: '0px 16px 16px 0px', // to ensure that cancel button will have rounded corners on the right side
   },
   archiveCheckbox: {
     whiteSpace: 'nowrap',
+  },
+  centeredChild: {
+    alignItems: 'center',
+    padding: theme.spacing(2),
   },
   confirmationBox: {
     height: '100%',
@@ -235,7 +227,7 @@ const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActi
         <CircularProgress size={24} />
       </div>
     ) : (
-      <div className={classNames(styles.actionContainer, showOnHoverClass)}>
+      <div className={classNames(styles.actionContainer, styles.centeredChild, showOnHoverClass)}>
         {showConfirmation ? (
           <div className={styles.confirmationBox}>
             <Button
