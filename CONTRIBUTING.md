@@ -188,7 +188,7 @@ URL of your target FlyteAdmin API instance. These instructions will use
     > 1. Activate plugin (toggle to "on")
     > 1. Open 'Advanced Settings':
     > - set `Access-Control-Allow-Credentials`: `true`
-    > - set `Domain List`: `localhost.demo.nuclyde.io, demo.nuclyde.io`
+    > - set `Domain List`: `your.localhost.com`
 
 5. Start `flyteconsole`
 
