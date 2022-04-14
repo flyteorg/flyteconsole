@@ -14,9 +14,9 @@ export function makeWorkflowQuery(queryClient: QueryClient, id: WorkflowId): Que
       // On successful workflow fetch, extract and cache all task templates
       // stored on the workflow so that we don't need to fetch them separately
       // if future queries reference them.
-      extractTaskTemplates(workflow).forEach((task) => {
-        return queryClient.setQueryData([QueryType.TaskTemplate, task.id], task);
-      });
+      extractTaskTemplates(workflow).forEach((task) =>
+        queryClient.setQueryData([QueryType.TaskTemplate, task.id], task),
+      );
 
       return workflow;
     },
