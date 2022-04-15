@@ -1,27 +1,19 @@
 {
-    "name": "flyteconsole",
+    "name": "@flyteconsole/client-app",
     "version": "0.52.1",
-    "private": true,
     "description": "The web UI for the Flyte platform",
     "repository": {
         "type": "git",
         "url": "http://github.com/lyft/flyteconsole.git"
     },
     "main": "index.js",
-    "workspaces": [
-        "packages/basics/**",
-        "packages/components/**",
-        "packages/microapps/**",
-        "packages/zapp/**"
-    ],
     "scripts": {
-        "start": "yarn workspace @flyteconsole/client-app start",
         "clean": "rm -rf dist",
         "prebuild": "yarn run clean",
         "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack --config webpack.config.ts --mode=development",
         "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production webpack --config webpack.config.ts --mode=production",
         "build:storybook": "build-storybook",
-        "start:old": "node -r dotenv/config index.js",
+        "start": "node -r dotenv/config index.js",
         "storybook": "start-storybook -p 6006",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --ignore-path .eslintignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
