@@ -171,7 +171,7 @@ const ExecutionTypeDetails: React.FC<{
   );
 };
 
-// TODO: Check if it could be replaced with tabsContent or simplified further.
+// TODO FC#393: Check if it could be replaced with tabsContent or simplified further.
 // Check if we need to request task info instead of relying on dag
 // Also check strange setDag pattern
 const WorkflowTabs: React.FC<{

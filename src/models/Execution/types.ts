@@ -128,8 +128,8 @@ export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
 
 /** Execution data */
 export interface ExecutionData {
-  inputs?: UrlBlob; // TODO: this field was deprecated use fullInputs instead - check for usage and remove
-  outputs?: UrlBlob; // TODO: this field  was deprecated use fullOutputs instead - check for usage and remove
+  inputs?: UrlBlob; // TODO FC#393: this field was deprecated use fullInputs instead - check for usage and remove
+  outputs?: UrlBlob; // TODO FC#393: this field  was deprecated use fullOutputs instead - check for usage and remove
   fullInputs: LiteralMap | null;
   fullOutputs: LiteralMap | null;
   dynamicWorkflow?: CompiledWorkflow;
