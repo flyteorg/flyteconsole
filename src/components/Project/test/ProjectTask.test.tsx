@@ -108,11 +108,11 @@ describe('ProjectTasks', () => {
 
     const cancelButton = await findAllByText('Cancel');
     await waitFor(() => expect(cancelButton.length).toEqual(1));
-    const confirmarchiveButton = cancelButton?.[0]?.parentElement?.parentElement?.children[0]!;
+    const confirmArchiveButton = cancelButton?.[0]?.parentElement?.parentElement?.children[0]!;
 
-    expect(confirmarchiveButton).toBeTruthy();
+    expect(confirmArchiveButton).toBeTruthy();
 
-    fireEvent.click(confirmarchiveButton!);
+    fireEvent.click(confirmArchiveButton!);
 
     await waitFor(() => {
       expect(updateTaskState).toHaveBeenCalledTimes(1);
