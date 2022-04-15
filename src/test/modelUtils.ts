@@ -41,3 +41,7 @@ export function createWorkflowName(
 ) {
   return createNamedEntity(ResourceType.WORKFLOW, id, metadata);
 }
+
+export function createTask(id: NamedEntityIdentifier, metadata?: Partial<NamedEntityMetadata>) {
+  return createNamedEntity(ResourceType.TASK, id, metadata);
+}

@@ -29,6 +29,7 @@ export const useNamedEntityListStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     borderBottom: `1px solid ${separatorColor}`,
     display: 'flex',
+    position: 'relative',
     flexDirection: 'row',
     padding: `0 ${theme.spacing(3)}px`,
     '&:first-of-type': {
