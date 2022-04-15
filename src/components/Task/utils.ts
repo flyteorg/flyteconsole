@@ -1,8 +1,5 @@
-// import { Task } from 'models/Task/types';
-
 import { NamedEntity } from 'models/Common/types';
 import { TaskExecutionState } from 'models/Task/enums';
-import { Task } from 'models/Task/types';
 
 function isTaskStateArchive(task: NamedEntity): boolean {
   const state = task?.metadata?.state ?? null;
