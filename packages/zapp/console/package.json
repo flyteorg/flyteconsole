@@ -13,7 +13,7 @@
         "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack --config webpack.config.ts --mode=development",
         "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production webpack --config webpack.config.ts --mode=production",
         "build:storybook": "build-storybook",
-        "start": "node -r dotenv/config index.js",
+        "start": "node -r dotenv/config index.js --open",
         "storybook": "start-storybook -p 6006",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --ignore-path .eslintignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
