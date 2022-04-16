@@ -12,7 +12,7 @@ const defaultMetadata = {
   state: Admin.NamedEntityState.NAMED_ENTITY_ACTIVE,
 };
 
-function createNamedEntity(
+export function createNamedEntity(
   resourceType: ResourceType,
   id: NamedEntityIdentifier,
   metadataOverrides?: Partial<NamedEntityMetadata>,
@@ -40,8 +40,4 @@ export function createWorkflowName(
   metadata?: Partial<NamedEntityMetadata>,
 ) {
   return createNamedEntity(ResourceType.WORKFLOW, id, metadata);
-}
-
-export function createTask(id: NamedEntityIdentifier, metadata?: Partial<NamedEntityMetadata>) {
-  return createNamedEntity(ResourceType.TASK, id, metadata);
 }

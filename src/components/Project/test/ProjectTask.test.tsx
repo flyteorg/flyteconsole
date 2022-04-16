@@ -4,14 +4,24 @@ import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { Admin } from 'flyteidl';
 import { FilterOperationName } from 'models/AdminEntity/types';
 import { getUserProfile, listNamedEntities } from 'models/Common/api';
-import { NamedEntity, UserProfile } from 'models/Common/types';
+import {
+  NamedEntity,
+  NamedEntityIdentifier,
+  NamedEntityMetadata,
+  ResourceType,
+  UserProfile,
+} from 'models/Common/types';
 import { updateTaskState } from 'models/Task/api';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
-import { createTask } from 'test/modelUtils';
+import { createNamedEntity } from 'test/modelUtils';
 import { createTestQueryClient } from 'test/utils';
 import { ProjectTasks } from '../ProjectTasks';
+
+export function createTask(id: NamedEntityIdentifier, metadata?: Partial<NamedEntityMetadata>) {
+  return createNamedEntity(ResourceType.TASK, id, metadata);
+}
 
 const sampleUserProfile: UserProfile = {
   subject: 'subject',

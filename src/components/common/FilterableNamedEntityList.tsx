@@ -84,6 +84,7 @@ export const FilterableNamedEntityList: React.FC<FilterableNamedEntityListProps>
     const debouncedSearch = debounce(() => setSearchString(searchString), 1000);
     debouncedSearch();
   };
+
   const onClear = () => setSearch('');
 
   const renderItems = (results: SearchResult<NamedEntity>[]) => (
