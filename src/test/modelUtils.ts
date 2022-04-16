@@ -1,4 +1,4 @@
-import { Admin, Core } from 'flyteidl';
+import { Core } from 'flyteidl';
 import {
   Identifier,
   NamedEntity,
@@ -6,10 +6,11 @@ import {
   NamedEntityMetadata,
   ResourceType,
 } from 'models/Common/types';
+import { NamedEntityState } from 'models/enums';
 
 const defaultMetadata = {
   description: '',
-  state: Admin.NamedEntityState.NAMED_ENTITY_ACTIVE,
+  state: NamedEntityState.NAMED_ENTITY_ACTIVE,
 };
 
 export function createNamedEntity(

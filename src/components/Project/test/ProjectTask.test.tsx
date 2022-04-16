@@ -1,7 +1,6 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { Admin } from 'flyteidl';
 import { FilterOperationName } from 'models/AdminEntity/types';
 import { getUserProfile, listNamedEntities } from 'models/Common/api';
 import {
@@ -11,6 +10,7 @@ import {
   ResourceType,
   UserProfile,
 } from 'models/Common/types';
+import { NamedEntityState } from 'models/enums';
 import { updateTaskState } from 'models/Task/api';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -82,7 +82,7 @@ describe('ProjectTasks', () => {
           {
             key: 'state',
             operation: FilterOperationName.EQ,
-            value: Admin.NamedEntityState.NAMED_ENTITY_ACTIVE,
+            value: NamedEntityState.NAMED_ENTITY_ACTIVE,
           },
         ],
       }),

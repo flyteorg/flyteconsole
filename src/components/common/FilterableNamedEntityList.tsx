@@ -2,6 +2,7 @@ import { Checkbox, debounce, FormControlLabel, FormGroup, Typography } from '@ma
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { NamedEntity } from 'models/Common/types';
 import * as React from 'react';
+import { NoResults } from './NoResults';
 import { SearchableInput, SearchResult } from './SearchableList';
 import { useCommonStyles } from './styles';
 import { useSearchableListState } from './useSearchableListState';
@@ -14,12 +15,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(2),
     width: '100%',
   },
-  noResults: {
-    color: theme.palette.text.disabled,
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(6),
-  },
   filterGroup: {
     display: 'flex',
     flexWrap: 'nowrap',
@@ -27,12 +22,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(4, 5, 2, 2),
   },
 }));
-
-const NoResults: React.FC = () => (
-  <Typography className={useStyles().noResults} variant="h6" component="div">
-    No matching results
-  </Typography>
-);
 
 type ItemRenderer = (item: SearchResult<NamedEntity>) => React.ReactNode;
 

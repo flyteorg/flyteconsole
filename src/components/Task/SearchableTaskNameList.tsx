@@ -21,8 +21,8 @@ import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
 import { useSnackbar } from 'notistack';
 import { updateTaskState } from 'models/Task/api';
 import { useMutation } from 'react-query';
-import { TaskExecutionState } from 'models/Task/enums';
 import { FilterableNamedEntityList } from 'components/common/FilterableNamedEntityList';
+import { NamedEntityState } from 'models/enums';
 import { useLatestTaskVersion } from './useLatestTask';
 import t from '../Executions/Tables/WorkflowExecutionTable/strings';
 import { SimpleTaskInterface } from './SimpleTaskInterface';
@@ -137,7 +137,7 @@ const SimpleTaskActions: React.FC<SimpleTaskActionsProps> = ({ item, setShowItem
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const mutation = useMutation((newState: TaskExecutionState) => updateTaskState(id, newState), {
+  const mutation = useMutation((newState: NamedEntityState) => updateTaskState(id, newState), {
     onMutate: () => setIsUpdating(true),
     onSuccess: () => {
       enqueueSnackbar(t('archiveSuccess', !isArchived), {
@@ -167,8 +167,8 @@ const SimpleTaskActions: React.FC<SimpleTaskActionsProps> = ({ item, setShowItem
     event.preventDefault();
     mutation.mutate(
       isTaskArchived(item)
-        ? TaskExecutionState.NAMED_ENTITY_ACTIVE
-        : TaskExecutionState.NAMED_ENTITY_ARCHIVED,
+        ? NamedEntityState.NAMED_ENTITY_ACTIVE
+        : NamedEntityState.NAMED_ENTITY_ARCHIVED,
     );
   };
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
-import { TaskExecutionState } from 'models/Task/enums';
+import { NamedEntityState } from 'models/enums';
 
 interface ArchiveFilterState {
   showArchived: boolean;
@@ -20,8 +20,8 @@ export function useTaskShowArchivedState(): ArchiveFilterState {
       key: 'state',
       operation: FilterOperationName.EQ,
       value: showArchived
-        ? TaskExecutionState.NAMED_ENTITY_ARCHIVED
-        : TaskExecutionState.NAMED_ENTITY_ACTIVE,
+        ? NamedEntityState.NAMED_ENTITY_ARCHIVED
+        : NamedEntityState.NAMED_ENTITY_ACTIVE,
     };
   };
 

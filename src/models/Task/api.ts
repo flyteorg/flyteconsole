@@ -4,7 +4,7 @@ import { defaultPaginationConfig } from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { Identifier, IdentifierScope } from 'models/Common/types';
 import { makeNamedEntityPath } from 'models/Common/utils';
-import { TaskExecutionState } from './enums';
+import { NamedEntityState } from 'models/enums';
 import { Task } from './types';
 import { makeTaskPath, taskListTransformer } from './utils';
 
@@ -32,7 +32,7 @@ export const getTask = (id: Identifier, config?: RequestConfig) =>
 /** Updates `Task` archive state */
 export const updateTaskState = (
   id: Admin.NamedEntityIdentifier,
-  newState: TaskExecutionState,
+  newState: NamedEntityState,
   config?: RequestConfig,
 ) => {
   const path = makeNamedEntityPath({ resourceType: Core.ResourceType.TASK, ...id });
