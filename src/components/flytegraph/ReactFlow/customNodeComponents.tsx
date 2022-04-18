@@ -233,6 +233,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     width: '8px',
     height: '8px',
     marginLeft: '4px',
+    marginTop: '1px',
     color: COLOR_GRAPH_BACKGROUND,
   };
 
@@ -249,13 +250,14 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
   };
 
   const renderCacheIcon = (cacheStatus) => {
-    if (cacheStatus === CatalogCacheStatus.CACHE_HIT) {
-      return <CachedOutlined style={cacheIconStyles} />;
+    switch (cacheStatus) {
+      case CatalogCacheStatus.CACHE_HIT:
+        return <CachedOutlined style={cacheIconStyles} />;
+      case CatalogCacheStatus.CACHE_POPULATED:
+        return <PublishedWithChangesOutlined style={cacheIconStyles} />;
+      default:
+        return null;
     }
-    if (cacheStatus === CatalogCacheStatus.CACHE_POPULATED) {
-      return <PublishedWithChangesOutlined style={cacheIconStyles} />;
-    }
-    return null;
   };
 
   return (
