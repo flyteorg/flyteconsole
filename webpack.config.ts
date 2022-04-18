@@ -26,7 +26,7 @@ export const serviceName = process.env.SERVICE_NAME || 'not set';
 export const dist = path.join(__dirname, 'dist');
 
 /** Webpack public path. All emitted assets will have relative path to this path */
-export const publicPath = `${env.BASE_URL}/`;
+export const publicPath = `${env.BASE_URL}/assets/`;
 
 /** True if we are in development mode */
 export const isDev = env.NODE_ENV === 'development';
