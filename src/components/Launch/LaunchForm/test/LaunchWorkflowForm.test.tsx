@@ -754,5 +754,33 @@ describe('LaunchForm: Workflow', () => {
         expect(queryByText(cannotLaunchWorkflowString)).toBeNull();
       });
     });
+
+    describe('Interruptible', () => {
+      it('should render checkbox', async () => {
+        const { getByLabelText } = renderForm();
+        const inputElement = await waitFor(() =>
+          getByLabelText(formStrings.interruptible, { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).not.toBeChecked();
+      });
+
+      it('should use initial values when provided', async () => {
+        const initialParameters: WorkflowInitialLaunchParameters = {
+          workflowId: mockWorkflowVersions[2].id,
+          interruptible: true,
+        };
+
+        const { getByLabelText } = renderForm({
+          initialParameters,
+        });
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(formStrings.interruptible, { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).toBeChecked();
+      });
+    });
   });
 });

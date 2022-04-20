@@ -594,5 +594,33 @@ describe('LaunchForm: Task', () => {
         expect(queryByText(cannotLaunchTaskString)).toBeNull();
       });
     });
+
+    describe('Interruptible', () => {
+      it('should render checkbox', async () => {
+        const { getByLabelText } = renderForm();
+        const inputElement = await waitFor(() =>
+          getByLabelText(formStrings.interruptible, { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).not.toBeChecked();
+      });
+
+      it('should use initial values when provided', async () => {
+        const initialParameters: TaskInitialLaunchParameters = {
+          taskId: mockTask.id,
+          interruptible: true,
+        };
+
+        const { getByLabelText } = renderForm({
+          initialParameters,
+        });
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(formStrings.interruptible, { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).toBeChecked();
+      });
+    });
   });
 });

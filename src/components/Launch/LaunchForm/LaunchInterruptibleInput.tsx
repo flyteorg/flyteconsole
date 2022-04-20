@@ -4,6 +4,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import * as React from 'react';
 import { useStyles } from './styles';
 import { LaunchInterruptibleInputRef } from './types';
+import { formStrings } from './constants';
 
 export interface LaunchInterruptibleInputProps {
   initialValue?: boolean | null;
@@ -45,10 +46,10 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
           execution.
         </Typography>
       </header>
-      <section title="Mark as interruptible">
+      <section title={formStrings.interruptible}>
         <FormControlLabel
           control={<Checkbox checked={interruptible} onChange={handleInputChange} />}
-          label="Interruptible"
+          label={formStrings.interruptible}
         />
       </section>
     </section>

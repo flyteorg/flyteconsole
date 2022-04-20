@@ -11,6 +11,7 @@ import { ExecutionMetadata } from '../ExecutionMetadata';
 const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
 const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
+const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
 
 jest.mock('models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -74,5 +75,25 @@ describe('ExecutionMetadata', () => {
       'href',
       Routes.ExecutionDetails.makeUrl(referenceExecution),
     );
+  });
+
+  it('shows true if execution was marked as interruptible', () => {
+    execution.spec.interruptible = true;
+    const { getByTestId } = renderMetadata();
+
+    expect(execution.spec.metadata.systemMetadata?.executionCluster).toBeDefined();
+    expect(getByTestId(interruptibleTestId)).toHaveTextContent('true');
+  });
+
+  it('shows false if execution was not marked as interruptible', () => {
+    execution.spec.interruptible = false;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(interruptibleTestId)).toHaveTextContent('false');
+  });
+
+  it('shows false if no interruptible value is found in execution spec', () => {
+    delete execution.spec.interruptible;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(interruptibleTestId)).toHaveTextContent('false');
   });
 });
