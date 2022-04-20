@@ -111,7 +111,7 @@ export const favIconPlugin = new FavIconWebpackPlugin({
   logo: path.resolve(__dirname, 'src/assets/favicon.png'),
   // we can add '[fullhash:8]/' to the end of the file in future
   // if this one will be changed - ensure that OneClick will still be working
-  prefix: 'items/',
+  prefix: './',
 });
 
 /** Write client stats to a JSON file for production */
