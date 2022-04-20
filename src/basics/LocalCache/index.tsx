@@ -1,7 +1,9 @@
 // More info on Local storage: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 import { log } from 'common/log';
-import { useState } from 'react';
+import * as React from 'react';
+import { useState, createContext, useContext, useCallback } from 'react';
 import { defaultLocalCacheConfig, LocalCacheItem } from './defaultConfig';
+import { LocalCacheContext } from './ContextProvider';
 
 export { LocalCacheItem } from './defaultConfig';
 
@@ -21,25 +23,18 @@ const getDefault = (setting: LocalCacheItem) => {
 };
 
 export function useLocalCache<T>(setting: LocalCacheItem) {
-  const defaultValue = getDefault(setting);
-  const [value, setValue] = useState<T>(() => {
-    const data = localStorage.getItem(setting);
-    const value = data ? JSON.parse(data) : defaultValue;
-    if (typeof value === typeof defaultValue) {
-      return value;
-    }
-
-    return defaultValue;
-  });
+  const localCache = useContext(LocalCacheContext);
+  /** useFeatureFlag - should be used to get flag value */
+  const value = localCache.getLocalCache(setting);
 
   const setLocalCache = (newValue: T) => {
+    localCache.setLocalCache(setting, newValue);
     localStorage.setItem(setting, JSON.stringify(newValue));
-    setValue(newValue);
   };
 
   const clearState = () => {
     localStorage.removeItem(setting);
-    setValue(defaultValue);
+    localCache.setLocalCache(setting, defaultLocalCacheConfig[setting]);
   };
 
   return [value, setLocalCache, clearState];

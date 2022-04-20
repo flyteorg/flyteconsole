@@ -176,5 +176,27 @@ export const muiTheme = {
         height: 4,
       },
     },
+    MuiSwitch: {
+      switchBase: {
+        // Controls default (unchecked) color for the thumb
+        color: '#fff',
+      },
+      colorSecondary: {
+        '&$checked': {
+          // Controls checked color for the thumb
+          color: '#fff',
+        },
+      },
+      track: {
+        // Controls default (unchecked) color for the track
+        opacity: 1,
+        backgroundColor: '#E6E7E8',
+        '$checked$checked + &': {
+          // Controls checked color for the track
+          opacity: 1,
+          backgroundColor: '#73BE6D',
+        },
+      },
+    },
   },
 };
