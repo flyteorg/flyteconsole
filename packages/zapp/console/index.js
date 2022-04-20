@@ -6,7 +6,7 @@
 /* eslint-disable no-console */
 const morgan = require('morgan');
 const express = require('express');
-const env = require('./env');
+const env = require('./src/env');
 const { applyMiddleware } = require('./plugins');
 
 const app = express();

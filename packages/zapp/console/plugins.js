@@ -1,5 +1,5 @@
 /* eslint import/no-dynamic-require: 'off', no-console: 'off' */
-const env = require('./env');
+const env = require('./src/env');
 
 const { middleware } = env.PLUGINS_MODULE ? require(env.PLUGINS_MODULE) : {};
 

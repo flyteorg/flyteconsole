@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import MemoryFileSystem from 'memory-fs';
 import * as path from 'path';
 import { Helmet } from 'react-helmet';
-import { processEnv } from '../env';
+import { processEnv } from './env';
 
 interface Stats {
   publicPath: string;

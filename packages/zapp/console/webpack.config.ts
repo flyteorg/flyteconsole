@@ -12,7 +12,7 @@ const FavIconWebpackPlugin = require('favicons-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
-import { processEnv as env } from './env';
+import { processEnv as env } from './src/env';
 
 const packageJson: {
   dependencies: { [libName: string]: string };
@@ -54,6 +54,9 @@ export const resolve: webpack.ResolveOptions = {
   extensions: ['.ts', '.tsx', '.js', '.jsx'],
   /** "main" fields in package.json files to resolve a CommonJS module for */
   mainFields: ['browser', 'module', 'main'],
+  alias: {
+    '@flyteconsole/components': path.resolve(__dirname, '../../microapps/components/src'),
+  },
 };
 
 /** Get clean version of a version string of package.json entry for a package by
@@ -245,7 +248,11 @@ export const serverConfig: webpack.Configuration = {
     libraryTarget: 'commonjs2',
     // assetModuleFilename: `${publicPath}/[fullhash:8].[ext]`
   },
-  plugins: [limitChunksPlugin, new ForkTsCheckerWebpackPlugin(), getDefinePlugin(true)],
+  plugins: [
+    limitChunksPlugin,
+    //new ForkTsCheckerWebpackPlugin(),
+    getDefinePlugin(true),
+  ],
 };
 
 export default [clientConfig, serverConfig];

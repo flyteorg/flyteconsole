@@ -24,6 +24,31 @@
         "sourceMap": true,
         "strict": true,
         "target": "es6",
-        "types": ["node", "webpack-env", "jest"]
-    }
+        "types": ["node", "webpack-env", "jest"],
+
+        "composite": true,
+        "paths": {
+            "@flyteconsole/*": ["../../microapps/*/src", "../../zapp/*/src"]
+        }
+    },
+    "references": [{ "path": "../../microapps/components" }],
+    // "extends": "../../../tsconfig.base.json",
+    // "compilerOptions": {
+    //     "rootDir": "./src",
+    //     "outDir": "./dist"
+    // },
+    // "references": [{ "path": "../../microapps/components" }],
+    "include": ["src/**/*"],
+    "exclude": [
+        "**/__mocks__",
+        "**/test",
+        "**/mocks",
+        // baseline
+        "**/node_modules",
+        "**/dist",
+        "**/lib",
+        "**/src/**/*.spec.*",
+        "**/src/**/*.test.*",
+        "**/src/**/*.stories.*"
+    ]
 }
