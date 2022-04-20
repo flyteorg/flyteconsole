@@ -39,6 +39,7 @@ export const ExecutionMetadataExtra: React.FC<{
     maxParallelism,
     rawOutputDataConfig,
     securityContext,
+    interruptible,
   } = execution.spec;
 
   const [launchPlanSpec, setLaunchPlanSpec] = React.useState<Partial<LaunchPlanSpec>>({});
@@ -66,6 +67,10 @@ export const ExecutionMetadataExtra: React.FC<{
     {
       label: ExecutionMetadataLabels.parallelism,
       value: maxParallelism,
+    },
+    {
+      label: ExecutionMetadataLabels.interruptible,
+      value: interruptible ? 'true' : 'false',
     },
   ];
 

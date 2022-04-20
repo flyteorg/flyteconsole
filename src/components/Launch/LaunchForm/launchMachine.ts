@@ -82,6 +82,7 @@ export interface WorkflowLaunchContext extends BaseLaunchContext {
   labels?: Admin.ILabels | null;
   annotations?: Admin.IAnnotations | null;
   securityContext?: Core.ISecurityContext | null;
+  interruptible?: boolean | null;
 }
 
 export interface TaskLaunchContext extends BaseLaunchContext {
@@ -89,6 +90,7 @@ export interface TaskLaunchContext extends BaseLaunchContext {
   preferredTaskId?: Identifier;
   taskVersion?: Identifier;
   taskVersionOptions?: Task[];
+  interruptible?: boolean | null;
 }
 
 export enum LaunchState {

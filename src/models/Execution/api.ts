@@ -89,6 +89,7 @@ export interface CreateWorkflowExecutionArguments {
   launchPlanId: Identifier;
   project: string;
   referenceExecutionId?: WorkflowExecutionIdentifier;
+  interruptible?: boolean | null;
 }
 
 /** Submits a request to create a new `WorkflowExecution` using the provided
@@ -108,6 +109,7 @@ export const createWorkflowExecution = (
     launchPlanId: launchPlan,
     project,
     referenceExecutionId: referenceExecution,
+    interruptible,
   }: CreateWorkflowExecutionArguments,
   config?: RequestConfig,
 ) => {
@@ -136,6 +138,10 @@ export const createWorkflowExecution = (
 
   if (rawOutputDataConfig?.outputLocationPrefix) {
     spec.rawOutputDataConfig = rawOutputDataConfig;
+  }
+
+  if (interruptible) {
+    spec.interruptible = interruptible;
   }
 
   return postAdminEntity<Admin.IExecutionCreateRequest, Admin.ExecutionCreateResponse>(
