@@ -25,7 +25,9 @@ export const serviceName = process.env.SERVICE_NAME || 'not set';
 /** Absolute path to webpack output folder */
 export const dist = path.join(__dirname, 'dist');
 
-/** Webpack public path. All emitted assets will have relative path to this path */
+/** Webpack public path. All emitted assets will have relative path to this path
+ * every time it is changed - the index.js app.use should also be updated.
+ */
 export const publicPath = `${env.BASE_URL}/assets/`;
 
 /** True if we are in development mode */
@@ -107,7 +109,9 @@ export const htmlPlugin = new HTMLWebpackPlugin({
 
 export const favIconPlugin = new FavIconWebpackPlugin({
   logo: path.resolve(__dirname, 'src/assets/favicon.png'),
-  prefix: 'assets/', // we can add '[fullhash:8]/' to the end of the file in future
+  // we can add '[fullhash:8]/' to the end of the file in future
+  // if this one will be changed - ensure that OneClick will still be working
+  prefix: 'items/',
 });
 
 /** Write client stats to a JSON file for production */

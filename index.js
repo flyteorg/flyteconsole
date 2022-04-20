@@ -28,6 +28,7 @@ if (process.env.NODE_ENV === 'production') {
   const clientStats = require('./dist/client-stats.json');
   const distPath = path.join(__dirname, 'dist');
   app.use(
+    // This path should be in sync with the `publicPath` from webpack config.
     `${env.BASE_URL}/assets`,
     expressStaticGzip(distPath, {
       maxAge: '1d',
