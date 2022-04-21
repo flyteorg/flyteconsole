@@ -150,8 +150,9 @@ export const clientConfig: webpack.Configuration = {
     path: dist,
     filename: '[name]-[fullhash:8].js',
     chunkFilename: '[name]-[chunkhash].chunk.js',
-    // crossOriginLoading: 'anonymous',
-    clean: true,
+    clean: {
+      keep: 'server.js',
+    },
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
@@ -167,8 +168,6 @@ export const clientConfig: webpack.Configuration = {
  * Server bundle is compiled as a CommonJS package that exports an Express middleware
  */
 export const serverConfig: webpack.Configuration = {
-  name: 'server',
-  target: 'node',
   resolve: {
     /** Base directories that Webpack will look to resolve absolutely imported modules */
     modules: ['src', 'node_modules'],
@@ -177,6 +176,8 @@ export const serverConfig: webpack.Configuration = {
     /** "main" fields in package.json files to resolve a CommonJS module for */
     mainFields: ['browser', 'module', 'main'],
   },
+  name: 'server',
+  target: 'node',
   entry: ['babel-polyfill', './src/server'],
   module: {
     rules: [sourceMapRule, typescriptRule, imageAndFontsRule],
@@ -185,9 +186,9 @@ export const serverConfig: webpack.Configuration = {
   externals: [nodeExternals({ allowlist: /lyft/ })],
   output: {
     path: dist,
-    publicPath: '/',
     filename: 'server.js',
     libraryTarget: 'commonjs2',
+    clean: true,
   },
   plugins: [limitChunksPlugin, new ForkTsCheckerWebpackPlugin(), getDefinePlugin(true)],
 };
