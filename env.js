@@ -11,6 +11,8 @@ const ADMIN_API_URL = process.env.ADMIN_API_URL;
 // Use this to create SSL server
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
+const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST;
+
 const BASE_URL = process.env.BASE_URL || '';
 
 // Defines a file to be required which will provide implementations for
@@ -42,5 +44,6 @@ module.exports = {
     GA_TRACKING_ID,
     NODE_ENV,
     STATUS_URL,
+    LOCAL_DEV_HOST,
   },
 };

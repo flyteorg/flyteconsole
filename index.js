@@ -35,46 +35,6 @@ if (process.env.NODE_ENV === 'production') {
     }),
   );
   app.use(serverRenderer({ clientStats, currentDirectory: __dirname }));
-} else {
-  process.env.NODE_ENV = 'development';
-  console.log('Server is running in development mode');
-  const webpack = require('webpack');
-  const webpackDevMiddleware = require('webpack-dev-middleware');
-  const webpackHotMiddleWare = require('webpack-hot-middleware');
-  const webpackHotServerMiddleware = require('webpack-hot-server-middleware');
-
-  require('ts-node').register({
-    compilerOptions: { module: 'commonjs' },
-    cacheDirectory: '/tmp',
-  });
-  const { default: configs, clientConfig } = require('./webpack.config');
-
-  const compiler = webpack(
-    configs.map((c) =>
-      Object.assign({}, c, {
-        mode: 'development',
-      }),
-    ),
-  );
-  const clientCompiler = compiler.compilers.find(({ name }) => name === 'client');
-
-  const devMiddleware = webpackDevMiddleware(compiler, {
-    serverSideRender: true,
-    publicPath: clientConfig.output.publicPath,
-  });
-
-  app.use(devMiddleware);
-  app.use(webpackHotMiddleWare(clientCompiler));
-  app.use(
-    webpackHotServerMiddleware(compiler, {
-      serverRendererOptions: {
-        // Send client compiler FS for reading index.html for emitted assets
-        fileSystem: clientCompiler.outputFileSystem,
-        // Helps with finding the output folder in memory-fs
-        currentDirectory: __dirname,
-      },
-    }),
-  );
 }
 
 /* Set ADMIN_API_USE_SSL to https for CORS support */
