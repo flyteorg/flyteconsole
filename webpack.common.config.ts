@@ -150,9 +150,6 @@ export const clientConfig: webpack.Configuration = {
     path: dist,
     filename: '[name]-[fullhash:8].js',
     chunkFilename: '[name]-[chunkhash].chunk.js',
-    clean: {
-      keep: 'server.js',
-    },
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin(),
