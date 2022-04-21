@@ -78,7 +78,6 @@ export const getExecutionData = (id: WorkflowExecutionIdentifier, config?: Reque
 
 export interface CreateWorkflowExecutionArguments {
   annotations?: Admin.IAnnotations | null;
-  authRole?: Admin.IAuthRole;
   securityContext?: Core.ISecurityContext;
   domain: string;
   disableAll?: boolean | null;
@@ -98,7 +97,6 @@ export interface CreateWorkflowExecutionArguments {
 export const createWorkflowExecution = (
   {
     annotations,
-    authRole,
     securityContext,
     domain,
     disableAll,
