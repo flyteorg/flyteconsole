@@ -55,7 +55,7 @@ export const resolve: webpack.ResolveOptions = {
   /** "main" fields in package.json files to resolve a CommonJS module for */
   mainFields: ['browser', 'module', 'main'],
   alias: {
-    '@flyteconsole/components': path.resolve(__dirname, '../../microapps/components/src'),
+    '@flyteconsole/components': path.resolve(__dirname, '../../plugins/components/src'),
   },
 };
 

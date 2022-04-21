@@ -11,7 +11,7 @@
     "workspaces": [
         "packages/basics/**",
         "packages/components/**",
-        "packages/microapps/**",
+        "packages/plugins/**",
         "packages/zapp/**"
     ],
     "scripts": {

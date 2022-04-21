@@ -28,16 +28,16 @@
 
         "composite": true,
         "paths": {
-            "@flyteconsole/*": ["../../microapps/*/src", "../../zapp/*/src"]
+            "@flyteconsole/*": ["../../plugins/*/src", "../../zapp/*/src"]
         }
     },
-    "references": [{ "path": "../../microapps/components" }],
+    "references": [{ "path": "../../plugins/components" }],
     // "extends": "../../../tsconfig.base.json",
     // "compilerOptions": {
     //     "rootDir": "./src",
     //     "outDir": "./dist"
     // },
-    // "references": [{ "path": "../../microapps/components" }],
+    // "references": [{ "path": "../../plugins/components" }],
     "include": ["src/**/*"],
     "exclude": [
         "**/__mocks__",

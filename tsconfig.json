@@ -13,13 +13,13 @@
         "paths": {
             "@flyteconsole/*": [
                 "./packages/components/*/src",
-                "./packages/microapps/*/src",
+                "./packages/plugins/*/src",
                 "./packages/zapp/*/src"
             ]
         }
     },
     "references": [
-        { "path": "./packages/microapps/components" },
+        { "path": "./packages/plugins/components" },
         { "path": "./packages/zapp/console" }
     ]
 }
