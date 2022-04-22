@@ -5,7 +5,7 @@ import { processEnv as env } from './env';
 
 const { merge } = require('webpack-merge');
 const fs = require('fs');
-const common = require('./webpack.common.config').default;
+const common = require('./webpack.common.config');
 
 const devtool = 'eval-cheap-module-source-map';
 
@@ -14,7 +14,7 @@ const devtool = 'eval-cheap-module-source-map';
  *
  * Client is compiled into multiple chunks that are result to dynamic imports.
  */
-export const clientConfig: webpack.Configuration = merge(common.clientConfig, {
+export const clientConfig: webpack.Configuration = merge(common.default.clientConfig, {
   mode: 'development',
   devtool,
   devServer: {
@@ -60,7 +60,7 @@ export const clientConfig: webpack.Configuration = merge(common.clientConfig, {
  *
  * Server bundle is compiled as a CommonJS package that exports an Express middleware
  */
-export const serverConfig: webpack.Configuration = merge(common.serverConfig, {
+export const serverConfig: webpack.Configuration = merge(common.default.serverConfig, {
   mode: 'development',
   devtool: devtool,
 });

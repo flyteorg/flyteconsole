@@ -10,11 +10,6 @@ const FavIconWebpackPlugin = require('favicons-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
-const packageJson: {
-  dependencies: { [libName: string]: string };
-  devDependencies: { [libName: string]: string };
-} = require(require.resolve('./package.json'));
-
 /** Current service name */
 export const serviceName = process.env.SERVICE_NAME || 'not set';
 
@@ -40,24 +35,6 @@ console.log(chalk.cyan('Exporting Webpack config with following configurations:'
 console.log(chalk.blue('Environment:'), chalk.green(env.NODE_ENV));
 console.log(chalk.blue('Output directory:'), chalk.green(path.resolve(dist)));
 console.log(chalk.blue('Public path:'), chalk.green(publicPath));
-
-/** Get clean version of a version string of package.json entry for a package by
- * extracting only alphanumerics, hyphen, and period. Note that this won't
- * produce a valid URL for all possible NPM version strings, but should be fine
- * on those that are absolute version references.
- * Examples: '1', '1.0', '1.2.3', '1.2.3-alpha.0'
- */
-export function absoluteVersion(version: string) {
-  return version.replace(/[^\d.\-a-z]/g, '');
-}
-
-/** CDN path in case we would use minified react and react-DOM */
-const cdnReact = `https://unpkg.com/react@${absoluteVersion(
-  packageJson.devDependencies.react,
-)}/umd/react.production.min.js`;
-const cdnReactDOM = `https://unpkg.com/react-dom@${absoluteVersion(
-  packageJson.devDependencies['react-dom'],
-)}/umd/react-dom.production.min.js`;
 
 /** Adds sourcemap support */
 export const sourceMapRule: webpack.RuleSetRule = {
