@@ -26,32 +26,15 @@ if (typeof applyMiddleware === 'function') {
   applyMiddleware(app);
 }
 
-<<<<<<< HEAD
-if (process.env.NODE_ENV === 'production') {
-  const path = require('path');
-  const expressStaticGzip = require('express-static-gzip');
-  const serverRenderer = require('./dist/server.js').default;
-  const clientStats = require('./dist/client-stats.json');
-  const distPath = path.join(__dirname, 'dist');
-  app.use(
-    // This path should be in sync with the `publicPath` from webpack config.
-    `${env.BASE_URL}/assets`,
-    expressStaticGzip(distPath, {
-      maxAge: '1d',
-    }),
-  );
-  app.use(serverRenderer({ clientStats, currentDirectory: __dirname }));
-}
-=======
 const distPath = path.join(__dirname, 'dist');
 app.use(
+  // This path should be in sync with the `publicPath` from webpack config.
   `${env.BASE_URL}/assets`,
   expressStaticGzip(distPath, {
     maxAge: '1d',
   }),
 );
 app.use(serverRenderer({ clientStats, currentDirectory: __dirname }));
->>>>>>> 2162608 (chore: cleanup)
 
 /* Set ADMIN_API_USE_SSL to https for CORS support */
 let server;
