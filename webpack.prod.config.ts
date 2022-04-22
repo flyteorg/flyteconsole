@@ -21,7 +21,7 @@ function absoluteVersion(version: string) {
   return version.replace(/[^\d.\-a-z]/g, '');
 }
 
-/** CDN path in case we would use minified react and react-DOM */
+/** CDN path to use minified react and react-DOM instead of prebuild version */
 const cdnReact = `https://unpkg.com/react@${absoluteVersion(
   packageJson.devDependencies.react,
 )}/umd/react.production.min.js`;
@@ -60,6 +60,7 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
       showErrors: false,
       cdnReact,
       cdnReactDOM,
+      clientEnv: common.clientEnv,
     }),
   ],
   externals: {

@@ -1,7 +1,7 @@
 import * as webpack from 'webpack';
 import * as HTMLWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
-import { processEnv as env } from './env';
+import { processEnv as env, LOCAL_DEV_HOST } from './env';
 
 const { merge } = require('webpack-merge');
 const fs = require('fs');
@@ -22,7 +22,7 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
     static: path.join(__dirname, 'dist'),
     compress: true,
     port: 3000,
-    host: env.LOCAL_DEV_HOST,
+    host: LOCAL_DEV_HOST,
     historyApiFallback: true,
     server: {
       type: 'https',
@@ -51,6 +51,7 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
       minify: false,
       hash: false,
       showErrors: true,
+      clientEnv: common.clientEnv,
     }),
   ],
 });

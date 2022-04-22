@@ -15,6 +15,11 @@ const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST;
 
 const BASE_URL = process.env.BASE_URL || '';
 
+/** All emitted assets will have relative path to this path
+ * every time it is changed - the index.js app.use should also be updated.
+ */
+const ASSETS_PATH = `${BASE_URL}/assets/`;
+
 // Defines a file to be required which will provide implementations for
 // any user-definable code.
 const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
@@ -37,6 +42,8 @@ module.exports = {
   STATUS_URL,
   ENABLE_GA,
   GA_TRACKING_ID,
+  ASSETS_PATH,
+  LOCAL_DEV_HOST,
   processEnv: {
     ADMIN_API_URL,
     BASE_URL,
@@ -44,6 +51,5 @@ module.exports = {
     GA_TRACKING_ID,
     NODE_ENV,
     STATUS_URL,
-    LOCAL_DEV_HOST,
   },
 };

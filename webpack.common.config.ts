@@ -3,7 +3,7 @@
 import chalk from 'chalk';
 import * as path from 'path';
 import * as webpack from 'webpack';
-import { processEnv as env } from './env';
+import { processEnv as env, ASSETS_PATH as publicPath, processEnv } from './env';
 
 const { StatsWriterPlugin } = require('webpack-stats-plugin');
 const FavIconWebpackPlugin = require('favicons-webpack-plugin');
@@ -15,20 +15,6 @@ export const serviceName = process.env.SERVICE_NAME || 'not set';
 
 /** Absolute path to webpack output folder */
 export const dist = path.join(__dirname, 'dist');
-
-/** Webpack public path. All emitted assets will have relative path to this path
- * every time it is changed - the index.js app.use should also be updated.
- */
-export const publicPath = `${env.BASE_URL}/assets/`;
-
-// /** True if we are in development mode */
-// export const isDev = env.NODE_ENV === 'development';
-
-// /** True if we are in production mode */
-// export const isProd = env.NODE_ENV === 'production';
-
-/** CSS module class name pattern */
-// export const localIdentName = isDev ? '[local]_[fullhash:base64:3]' : '[fullhash:base64:6]';
 
 // Report current configuration
 console.log(chalk.cyan('Exporting Webpack config with following configurations:'));
@@ -89,6 +75,15 @@ const typescriptRule = {
   use: [{ loader: 'ts-loader', options: { transpileOnly: true } }],
 };
 
+const resolve = {
+  /** Base directories that Webpack will look into resolve absolutely imported modules */
+  modules: ['src', 'node_modules'],
+  /** Extension that are allowed to be omitted from import statements */
+  extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  /** "main" fields in package.json files to resolve a CommonJS module for */
+  mainFields: ['browser', 'module', 'main'],
+};
+
 /**
  * Client configuration
  *
@@ -97,14 +92,7 @@ const typescriptRule = {
 export const clientConfig: webpack.Configuration = {
   name: 'client',
   target: 'web',
-  resolve: {
-    /** Base directories that Webpack will look to resolve absolutely imported modules */
-    modules: ['src', 'node_modules'],
-    /** Extension that are allowed to be omitted from import statements */
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    /** "main" fields in package.json files to resolve a CommonJS module for */
-    mainFields: ['browser', 'module', 'main'],
-  },
+  resolve,
   entry: ['babel-polyfill', './src/client'],
   module: {
     rules: [sourceMapRule, typescriptRule, imageAndFontsRule],
@@ -142,14 +130,7 @@ export const clientConfig: webpack.Configuration = {
  * Server bundle is compiled as a CommonJS package that exports an Express middleware
  */
 export const serverConfig: webpack.Configuration = {
-  resolve: {
-    /** Base directories that Webpack will look to resolve absolutely imported modules */
-    modules: ['src', 'node_modules'],
-    /** Extension that are allowed to be omitted from import statements */
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    /** "main" fields in package.json files to resolve a CommonJS module for */
-    mainFields: ['browser', 'module', 'main'],
-  },
+  resolve,
   name: 'server',
   target: 'node',
   entry: ['babel-polyfill', './src/server'],
@@ -166,5 +147,7 @@ export const serverConfig: webpack.Configuration = {
   },
   plugins: [limitChunksPlugin, new ForkTsCheckerWebpackPlugin(), getDefinePlugin(true)],
 };
+
+export const clientEnv = JSON.stringify(processEnv);
 
 export default { clientConfig, serverConfig };

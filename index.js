@@ -29,7 +29,7 @@ if (typeof applyMiddleware === 'function') {
 const distPath = path.join(__dirname, 'dist');
 app.use(
   // This path should be in sync with the `publicPath` from webpack config.
-  `${env.BASE_URL}/assets`,
+  env.ASSETS_PATH,
   expressStaticGzip(distPath, {
     maxAge: '1d',
   }),
