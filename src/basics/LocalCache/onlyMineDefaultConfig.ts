@@ -41,7 +41,7 @@ export const filterByDefault = [
   },
 ];
 
-export const defaultFilterState = Object.assign(
+export const defaultSelectedValues = Object.assign(
   {},
   ...filterByDefault.map((x) => ({ [x.value]: x.data })),
 );

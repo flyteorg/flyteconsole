@@ -3,6 +3,7 @@ import {
   bodyFontFamily,
   headerFontFamily,
   inputFocusBorderColor,
+  mutedButtonColor,
   primaryColor,
   primaryDarkColor,
   primaryLightColor,
@@ -12,6 +13,7 @@ import {
   selectedActionColor,
   whiteColor,
 } from './constants';
+import { COLOR_SPECTRUM } from './colorSpectrum';
 
 const theme = createMuiTheme({
   palette: {
@@ -179,22 +181,22 @@ export const muiTheme = {
     MuiSwitch: {
       switchBase: {
         // Controls default (unchecked) color for the thumb
-        color: '#fff',
+        color: whiteColor,
       },
       colorSecondary: {
         '&$checked': {
           // Controls checked color for the thumb
-          color: '#fff',
+          color: whiteColor,
         },
       },
       track: {
         // Controls default (unchecked) color for the track
         opacity: 1,
-        backgroundColor: '#E6E7E8',
+        backgroundColor: mutedButtonColor,
         '$checked$checked + &': {
           // Controls checked color for the track
           opacity: 1,
-          backgroundColor: '#73BE6D',
+          backgroundColor: COLOR_SPECTRUM.mint20.color,
         },
       },
     },

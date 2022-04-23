@@ -13,10 +13,6 @@ import * as React from 'react';
 const useStyles = makeStyles((theme: Theme) => {
   const horizontalButtonPadding = theme.spacing(1.5);
   return {
-    container: {
-      display: 'flex',
-      flex: '1 1 auto',
-    },
     buttonIcon: {
       marginLeft: theme.spacing(1),
       marginRight: -horizontalButtonPadding / 2,
@@ -40,6 +36,7 @@ export interface FilterPopoverButtonProps {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   open: boolean;
+  refObject: React.RefObject<any>;
   renderContent: () => JSX.Element;
   children: JSX.Element[] | JSX.Element;
 }
@@ -54,17 +51,15 @@ export const FilterPopoverIcon: React.FC<FilterPopoverButtonProps> = ({
   className,
   onClick,
   open,
+  refObject,
   renderContent,
   children,
 }) => {
-  const divRef = React.useRef<HTMLDivElement>(null);
   const styles = useStyles();
 
   return (
     <div className={className}>
-      <div className={styles.container} ref={divRef}>
-        {children}
-      </div>
+      {children}
       <Popover
         anchorOrigin={{
           vertical: 'bottom',
@@ -74,7 +69,7 @@ export const FilterPopoverIcon: React.FC<FilterPopoverButtonProps> = ({
           vertical: 'top',
           horizontal: 'left',
         }}
-        anchorEl={divRef.current}
+        anchorEl={refObject?.current}
         elevation={1}
         onClose={onClick}
         open={open}

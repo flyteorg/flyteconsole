@@ -4,61 +4,97 @@ import classnames from 'classnames';
 import { FlyteLogo } from 'components/common/FlyteLogo';
 import { useCommonStyles } from 'components/common/styles';
 import * as React from 'react';
-import { DropdownIcon } from 'components/common/Icons/DropdownIcon';
+import MenuIcon from '@material-ui/icons/Menu';
 import { MultiSelectForm } from 'components/common/MultiSelectForm';
 import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
+import {
+  filterByDefault,
+  defaultSelectedValues,
+  OnlyMyFilter,
+} from 'basics/LocalCache/onlyMineDefaultConfig';
+import * as _ from 'lodash';
 import { FilterPopoverIcon } from './FilterPopoverIcon';
-import { filterByDefault, defaultFilterState } from './defaultConfig';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    display: 'flex',
+    flexDirection: 'row',
+    cursor: 'pointer',
+  },
   margin: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
   },
 }));
 
+const checkIsSelectedAll = (mapObject: Record<string, boolean>) => {
+  return Object.keys(mapObject).every((key) => {
+    if (key !== OnlyMyFilter.SelectAll) {
+      return mapObject[key];
+    }
+    return true;
+  });
+};
+
+const checkIsUnSelectedAll = (mapObject: Record<string, boolean>) => {
+  return Object.keys(mapObject).every((key) => {
+    return !mapObject[key];
+  });
+};
+
 export const OnlyMine: React.FC = () => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [selectedValueState, setSelectedValue] = useLocalCache(LocalCacheItem.OnlyMineSetting);
-  const [toogleValue, setToggleValue] = useLocalCache(LocalCacheItem.OnlyMineToggle);
+  const [selectedValues, setSelectedValue] = useLocalCache(LocalCacheItem.OnlyMineSetting);
+  const [toggleValue, setToggleValue] = useLocalCache(LocalCacheItem.OnlyMineToggle);
+
+  const togglePopup = () => setOpen((prevOpen) => !prevOpen);
+  const toggleSwitch = () => setToggleValue(!toggleValue);
+
+  const formOnChange = (newSelectedValues: Record<string, boolean>) => {
+    setToggleValue(true);
+    // if user clicks the select all, marked all check boxes
+    if (newSelectedValues[OnlyMyFilter.SelectAll] && !selectedValues[OnlyMyFilter.SelectAll]) {
+      setSelectedValue({ ...defaultSelectedValues });
+    }
+    // after user clicking, if all the value is selected, makred all check boxes
+    else if (checkIsSelectedAll(newSelectedValues)) {
+      setSelectedValue({ ...defaultSelectedValues });
+    }
+    // else we should unmarked select all
+    else {
+      setSelectedValue({ ...newSelectedValues, [OnlyMyFilter.SelectAll]: false });
+    }
+  };
+
+  const divRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <>
       <FilterPopoverIcon
-        onClick={() => setOpen((prevOpen) => !prevOpen)}
+        onClick={togglePopup}
         open={open}
+        refObject={divRef}
         renderContent={() => (
           <MultiSelectForm
+            active={!checkIsUnSelectedAll(selectedValues)}
             label="onlyMine"
             listHeader="Filter By"
-            onChange={(values) => {
-              setToggleValue(true);
-              if (values.selectAll && !selectedValueState.selectAll) {
-                setSelectedValue({ ...defaultFilterState });
-              } else {
-                setSelectedValue(values);
-              }
-            }}
+            onChange={formOnChange}
+            onReset={() => {}}
             values={filterByDefault}
-            selectedStates={selectedValueState}
+            selectedStates={selectedValues}
           />
         )}
       >
-        <DropdownIcon onClick={() => setOpen((prevOpen) => !prevOpen)} />
+        <div className={styles.container} ref={divRef} onClick={togglePopup}>
+          <MenuIcon />
+          <Typography>Personal Mode</Typography>
+        </div>
       </FilterPopoverIcon>
-      <Typography>Personal Mode</Typography>
 
-      <Switch
-        id="onlyMineToggle"
-        className={styles.margin}
-        checked={!!toogleValue}
-        onChange={() => setToggleValue(!toogleValue)}
-        style={{
-          paddingLeft: 10,
-        }}
-      />
+      <Switch className={styles.margin} checked={!!toggleValue} onChange={toggleSwitch} />
     </>
   );
 };

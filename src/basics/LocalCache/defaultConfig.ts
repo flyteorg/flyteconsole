@@ -1,4 +1,4 @@
-import { defaultFilterState } from 'components/Navigation/OnlyMine/defaultConfig';
+import { defaultSelectedValues } from './onlyMineDefaultConfig';
 
 export enum LocalCacheItem {
   // Test flag is created only for unit-tests
@@ -32,5 +32,5 @@ export const defaultLocalCacheConfig: LocalCacheConfig = {
 
   // Test Only Mine
   'flyte.only-mine-toggle': 'true',
-  'flyte.only-mine-setting': JSON.stringify(defaultFilterState),
+  'flyte.only-mine-setting': JSON.stringify(defaultSelectedValues),
 };

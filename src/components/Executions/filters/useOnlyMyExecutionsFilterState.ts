@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { useOnlyMineSelectedValue } from 'components/hooks/useOnlyMineSelectedValue';
+import { OnlyMyFilter } from 'basics/LocalCache/onlyMineDefaultConfig';
 
 interface OnlyMyExecutionsFilterState {
   onlyMyExecutionsValue: boolean;
@@ -24,7 +25,7 @@ export function useOnlyMyExecutionsFilterState({
 }: OnlyMyExecutionsFilterStateProps): OnlyMyExecutionsFilterState {
   const profile = useUserProfile();
   const userId = profile.value?.subject ? profile.value.subject : '';
-  const onlyMineExecutionsSelectedValue = useOnlyMineSelectedValue('onlyMyExecutions');
+  const onlyMineExecutionsSelectedValue = useOnlyMineSelectedValue(OnlyMyFilter.OnlyMyExecutions);
   const [onlyMyExecutionsValue, setOnlyMyExecutionsValue] = useState<boolean>(
     onlyMineExecutionsSelectedValue,
   );
