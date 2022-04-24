@@ -6,9 +6,9 @@ import { QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 
-import { ErrorBoundary } from '../src/components/common/ErrorBoundary';
-import { createQueryClient } from '../src/components/data/queryCache';
-import { muiTheme } from '../src/components/Theme/muiTheme';
+import { ErrorBoundary } from '../packages/zapp/console/src/components/common/ErrorBoundary';
+import { createQueryClient } from '../packages/zapp/console/src/components/data/queryCache';
+import { muiTheme } from '../packages/zapp/console/src/components/Theme/muiTheme';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
