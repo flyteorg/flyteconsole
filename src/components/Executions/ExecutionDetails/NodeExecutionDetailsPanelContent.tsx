@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { IconButton, Typography, Tab, Tabs } from '@material-ui/core';
+import {IconButton, Typography, Tab, Tabs, Button, Dialog, DialogContent} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
 import classnames from 'classnames';
@@ -33,6 +33,8 @@ import { getTaskExecutionDetailReasons } from './utils';
 import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
+import {VersionDisplayModal} from "../../Navigation/VersionDisplayModal";
+import {ExecutionNodeDeck} from "./ExecutionNodeDeck";
 
 const useStyles = makeStyles((theme: Theme) => {
   const paddingVertical = `${theme.spacing(2)}px`;
@@ -52,6 +54,15 @@ const useStyles = makeStyles((theme: Theme) => {
       width: theme.spacing(11),
       fontFamily: bodyFontFamily,
       fontWeight: 'bold',
+    },
+    dialog: {
+      maxWidth: `calc(100% - ${theme.spacing(12)}px)`,
+      maxHeight: `calc(100% - ${theme.spacing(12)}px)`,
+      height: theme.spacing(90),
+      width: theme.spacing(100),
+    },
+    actionButton: {
+      marginLeft: theme.spacing(2),
     },
     closeButton: {
       marginLeft: theme.spacing(1),
@@ -299,6 +310,21 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     );
   }, [nodeExecution]);
 
+  const isSucceededPhase = React.useMemo(() => {
+    return nodeExecution?.closure.phase === NodeExecutionPhase.SUCCEEDED;
+  }, [nodeExecution]);
+
+  const [showDeck, setShowDeck] = React.useState(false);
+  const onCloseDeck = () => setShowDeck(false);
+  const deckContent = nodeExecution ? (<Dialog
+      PaperProps={{ className: styles.dialog }}
+      maxWidth={false}
+      open={showDeck}
+      onClose={onCloseDeck}
+  >
+    <ExecutionNodeDeck execution={nodeExecution}/>
+  </Dialog>) : null;
+
   const handleReasonsVisibility = React.useCallback(() => {
     setReasonsVisible((prevVisibility) => !prevVisibility);
   }, []);
@@ -307,6 +333,18 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     <div className={styles.statusContainer}>
       <div className={styles.statusHeaderContainer}>
         <ExecutionStatusBadge phase={nodeExecution.closure.phase} type="node" />
+        {isSucceededPhase && (
+            <Button
+            variant="outlined"
+            color="primary"
+            className={classnames(styles.actionButton, commonStyles.buttonWhiteOutlined)}
+            onClick={() => setShowDeck(true)}
+            size="small"
+          >
+            Deck
+          </Button>
+        )}
+        {deckContent}
         {isRunningPhase && (
           <InfoIcon className={styles.reasonsIcon} onClick={handleReasonsVisibility} />
         )}

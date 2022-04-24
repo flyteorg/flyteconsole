@@ -132,5 +132,6 @@ export interface ExecutionData {
   outputs?: UrlBlob; // TODO FC#393: this field  was deprecated use fullOutputs instead - check for usage and remove
   fullInputs: LiteralMap | null;
   fullOutputs: LiteralMap | null;
+  deckUri?: string;
   dynamicWorkflow?: CompiledWorkflow;
 }
