@@ -21,6 +21,15 @@ export type SchemaColumnType = Core.SchemaType.SchemaColumn.SchemaColumnType;
 export const SchemaColumnType = Core.SchemaType.SchemaColumn.SchemaColumnType;
 export type MessageFormat = Core.TaskLog.MessageFormat;
 export const MessageFormat = Core.TaskLog.MessageFormat;
+// structured dataset
+export type StructuredDataset = Core.StructuredDataset;
+export const StructuredDataset = Core.StructuredDataset;
+export type StructuredDatasetType = Core.StructuredDatasetType;
+export const StructuredDatasetType = Core.StructuredDatasetType;
+export type StructuredDatasetColumn = Core.StructuredDatasetType.DatasetColumn;
+export const StructuredDatasetColumn = Core.StructuredDatasetType.DatasetColumn;
+export type StructuredDatasetColumnType = Core.LiteralType;
+export const StructuredDatasetColumnType = Core.LiteralType;
 /* eslint-enable @typescript-eslint/no-redeclare */
 
 export type Alias = Core.IAlias;

@@ -1,3 +1,4 @@
+import { Core } from 'flyteidl';
 import {
   Binary,
   Blob,
@@ -18,6 +19,7 @@ import { NoneTypeValue } from './NoneTypeValue';
 import { PrimitiveValue } from './PrimitiveValue';
 import { ProtobufStructValue } from './ProtobufStructValue';
 import { SchemaValue } from './SchemaValue';
+import { StructuredDatasetValue } from './StructuredDatasetValue';
 
 /** Renders a `Scalar` using appropriate sub-components for each possible type */
 export const ScalarValue: React.FC<{
@@ -25,6 +27,15 @@ export const ScalarValue: React.FC<{
   scalar: Scalar;
 }> = ({ label, scalar }) => {
   switch (scalar.value) {
+    case 'structuredDataset':
+      return (
+        <>
+          <ValueLabel label={label} />
+          <StructuredDatasetValue
+            structuredDataset={scalar.structuredDataset as Core.StructuredDataset}
+          />
+        </>
+      );
     case 'primitive':
       return (
         <PrintValue
