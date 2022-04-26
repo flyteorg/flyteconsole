@@ -3,6 +3,7 @@ import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { useOnlyMineSelectedValue } from 'components/hooks/useOnlyMineSelectedValue';
 import { OnlyMyFilter } from 'basics/LocalCache/onlyMineDefaultConfig';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 
 interface OnlyMyExecutionsFilterState {
   onlyMyExecutionsValue: boolean;
@@ -25,9 +26,10 @@ export function useOnlyMyExecutionsFilterState({
 }: OnlyMyExecutionsFilterStateProps): OnlyMyExecutionsFilterState {
   const profile = useUserProfile();
   const userId = profile.value?.subject ? profile.value.subject : '';
+  const isFlagEnabled = useFeatureFlag(FeatureFlag.OnlyMine);
   const onlyMineExecutionsSelectedValue = useOnlyMineSelectedValue(OnlyMyFilter.OnlyMyExecutions);
   const [onlyMyExecutionsValue, setOnlyMyExecutionsValue] = useState<boolean>(
-    onlyMineExecutionsSelectedValue,
+    isFlagEnabled ? onlyMineExecutionsSelectedValue : initialValue ?? false, // if flag is enable let's use the value from only mine
   );
 
   const getFilter = (): FilterOperation | null => {
@@ -42,8 +44,11 @@ export function useOnlyMyExecutionsFilterState({
     };
   };
 
+  // update the state value when state value in olny mine change
   useEffect(() => {
-    setOnlyMyExecutionsValue(onlyMineExecutionsSelectedValue);
+    if (isFlagEnabled) {
+      setOnlyMyExecutionsValue(onlyMineExecutionsSelectedValue);
+    }
   }, [onlyMineExecutionsSelectedValue]);
 
   return {

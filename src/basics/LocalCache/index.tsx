@@ -23,7 +23,7 @@ const getDefault = (setting: LocalCacheItem) => {
 
 export function useLocalCache<T>(setting: LocalCacheItem) {
   const localCache = useContext(LocalCacheContext);
-  /** useFeatureFlag - should be used to get flag value */
+
   const value = localCache.getLocalCache(setting);
 
   const setLocalCache = (newValue: T) => {
@@ -32,8 +32,8 @@ export function useLocalCache<T>(setting: LocalCacheItem) {
   };
 
   const clearState = () => {
+    localCache.setLocalCache(setting, JSON.parse(defaultLocalCacheConfig[setting]));
     localStorage.removeItem(setting);
-    localCache.setLocalCache(setting, defaultLocalCacheConfig[setting]);
   };
 
   return [value, setLocalCache, clearState];
