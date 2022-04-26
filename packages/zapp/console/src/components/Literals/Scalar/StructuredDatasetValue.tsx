@@ -35,18 +35,8 @@ function simpleColumnTypeToString(type: SimpleType) {
   }
 }
 
-function columnTypeToString(literalType?: any, level = 0) {
-  if (level === 2) {
-    return literalType?.type;
-  }
-
+function getLiteralTypeDisplayValues(literalType: any) {
   switch (literalType?.type) {
-    case 'collectionType': {
-      return `collection of ${columnTypeToString(literalType.collectionType, ++level)}`;
-    }
-    case 'simple': {
-      return simpleColumnTypeToString(literalType.simple);
-    }
     case 'schema':
       return 'schema';
     case 'mapValueType':
@@ -61,9 +51,27 @@ function columnTypeToString(literalType?: any, level = 0) {
     case 'metadata':
     case 'annotation':
     case 'structure':
-      return literalType.type;
+      return literalType?.type;
     default: {
       return 'unknown';
+    }
+  }
+}
+
+function columnTypeToString(literalType?: any, level = 0) {
+  if (level === 2) {
+    return getLiteralTypeDisplayValues(literalType);
+  }
+
+  switch (literalType?.type) {
+    case 'collectionType': {
+      return `collection of ${columnTypeToString(literalType.collectionType, ++level)}`;
+    }
+    case 'simple': {
+      return simpleColumnTypeToString(literalType.simple);
+    }
+    default: {
+      return getLiteralTypeDisplayValues(literalType);
     }
   }
 }
