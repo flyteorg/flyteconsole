@@ -10,7 +10,7 @@ import { PrintValue } from '../PrintValue';
 import { useLiteralStyles } from '../styles';
 import { ValueLabel } from '../ValueLabel';
 
-function simpleColumnTypeToString(type: SimpleType) {
+function getSimpleTypeDisplayValue(type: SimpleType) {
   switch (type) {
     case SimpleType.NONE:
       return 'none';
@@ -35,7 +35,7 @@ function simpleColumnTypeToString(type: SimpleType) {
   }
 }
 
-function getLiteralTypeDisplayValues(literalType: any) {
+function getLiteralTypeDisplayValue(literalType: any) {
   switch (literalType?.type) {
     case 'schema':
       return 'schema';
@@ -60,7 +60,7 @@ function getLiteralTypeDisplayValues(literalType: any) {
 
 function columnTypeToString(literalType?: any, level = 0) {
   if (level === 2) {
-    return getLiteralTypeDisplayValues(literalType);
+    return getLiteralTypeDisplayValue(literalType);
   }
 
   switch (literalType?.type) {
@@ -68,10 +68,10 @@ function columnTypeToString(literalType?: any, level = 0) {
       return `collection of ${columnTypeToString(literalType.collectionType, ++level)}`;
     }
     case 'simple': {
-      return simpleColumnTypeToString(literalType.simple);
+      return getSimpleTypeDisplayValue(literalType.simple);
     }
     default: {
-      return getLiteralTypeDisplayValues(literalType);
+      return getLiteralTypeDisplayValue(literalType);
     }
   }
 }
