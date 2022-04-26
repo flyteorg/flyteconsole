@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.54.1](http://github.com/lyft/flyteconsole/compare/v0.54.0...v0.54.1) (2022-04-21)
+
+
+### Bug Fixes
+
+* empty commit to generate release ([#415](http://github.com/lyft/flyteconsole/issues/415)) ([ddcda48](http://github.com/lyft/flyteconsole/commit/ddcda48b3cc7d5721e35fc689c2517deb231d67a))
+
+# [0.54.0](http://github.com/lyft/flyteconsole/compare/v0.53.0...v0.54.0) (2022-04-18)
+
+
+### Features
+
+* add cache icons for cached tasks in graph view ([#400](http://github.com/lyft/flyteconsole/issues/400)) ([0c0cd4b](http://github.com/lyft/flyteconsole/commit/0c0cd4b21d621afd1465be9efbb9b21a807d5e00))
+
+# [0.53.0](http://github.com/lyft/flyteconsole/compare/v0.52.1...v0.53.0) (2022-04-16)
+
+
+### Features
+
+* archive tasks ([#395](http://github.com/lyft/flyteconsole/issues/395)) ([9ce77a7](http://github.com/lyft/flyteconsole/commit/9ce77a70e75642fe5413dbee7d59e17285d12e36))
+
+## [0.52.1](http://github.com/lyft/flyteconsole/compare/v0.52.0...v0.52.1) (2022-04-15)
+
+
+### Reverts
+
+* Revert "chore: remove redundant docker build on merge to master (#390)" (#392) ([fb564f3](http://github.com/lyft/flyteconsole/commit/fb564f33c490859ecb7b2cfb4c3a6a6294de3530)), closes [#390](http://github.com/lyft/flyteconsole/issues/390) [#392](http://github.com/lyft/flyteconsole/issues/392)
+
+# [0.52.0](http://github.com/lyft/flyteconsole/compare/v0.51.3...v0.52.0) (2022-04-14)
+
+
+### Bug Fixes
+
+* **378:** ensure that undefined executions ids won't get into graph ([#388](http://github.com/lyft/flyteconsole/issues/388)) ([ea9d2b3](http://github.com/lyft/flyteconsole/commit/ea9d2b31e1e6f51872eb7d10283b645de3b17bec))
+
+
+### Features
+
+* cleanup ([#389](http://github.com/lyft/flyteconsole/issues/389)) ([05b88ed](http://github.com/lyft/flyteconsole/commit/05b88ed2d2ecdb5d8a8404efea25414e57189709))
+
 ## [0.51.3](http://github.com/lyft/flyteconsole/compare/v0.51.2...v0.51.3) (2022-04-13)
 
 
