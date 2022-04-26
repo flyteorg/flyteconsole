@@ -24,7 +24,7 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   // If you need to turn it on locally -> update runtimeConfig in ./index.tsx file
   'launch-plan': false,
 
-  'only-mine': true,
+  'only-mine': false,
 };
 
 export interface AdminVersion {

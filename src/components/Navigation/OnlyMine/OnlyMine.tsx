@@ -1,8 +1,5 @@
-import { Switch, Typography, FormControl, FormControlLabel } from '@material-ui/core';
+import { Switch, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import classnames from 'classnames';
-import { FlyteLogo } from 'components/common/FlyteLogo';
-import { useCommonStyles } from 'components/common/styles';
 import * as React from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
 import { MultiSelectForm } from 'components/common/MultiSelectForm';
@@ -12,18 +9,23 @@ import {
   defaultSelectedValues,
   OnlyMyFilter,
 } from 'basics/LocalCache/onlyMineDefaultConfig';
-import * as _ from 'lodash';
+import { smallIconSize } from 'components/Theme/constants';
 import { FilterPopoverIcon } from './FilterPopoverIcon';
+import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: 'flex',
     flexDirection: 'row',
     cursor: 'pointer',
+    alignItems: 'center',
   },
   margin: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
+  },
+  menuIcon: {
+    fontSize: smallIconSize,
   },
 }));
 
@@ -43,7 +45,6 @@ const checkIsUnSelectedAll = (mapObject: Record<string, boolean>) => {
 };
 
 export const OnlyMine: React.FC = () => {
-  const commonStyles = useCommonStyles();
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
   const [selectedValues, setSelectedValue] = useLocalCache(LocalCacheItem.OnlyMineSetting);
@@ -79,8 +80,8 @@ export const OnlyMine: React.FC = () => {
         renderContent={() => (
           <MultiSelectForm
             active={!checkIsUnSelectedAll(selectedValues)}
-            label="onlyMine"
-            listHeader="Filter By"
+            label={t('onlyMine_popup_label')}
+            listHeader={t('onlyMine_popup_header')}
             onChange={formOnChange}
             onReset={() => {}}
             values={filterByDefault}
@@ -89,8 +90,8 @@ export const OnlyMine: React.FC = () => {
         )}
       >
         <div className={styles.container} ref={divRef} onClick={togglePopup}>
-          <MenuIcon />
-          <Typography>Personal Mode</Typography>
+          <MenuIcon className={styles.menuIcon} />
+          <Typography>{t('onlyMine_text')}</Typography>
         </div>
       </FilterPopoverIcon>
 
