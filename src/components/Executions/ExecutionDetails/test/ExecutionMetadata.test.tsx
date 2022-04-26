@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { dashedValueString } from 'common/constants';
+import { Protobuf } from 'flyteidl';
 import { Execution, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
@@ -78,7 +79,7 @@ describe('ExecutionMetadata', () => {
   });
 
   it('shows true if execution was marked as interruptible', () => {
-    execution.spec.interruptible = true;
+    execution.spec.interruptible = Protobuf.BoolValue.create({ value: true });
     const { getByTestId } = renderMetadata();
 
     expect(execution.spec.metadata.systemMetadata?.executionCluster).toBeDefined();
@@ -86,14 +87,14 @@ describe('ExecutionMetadata', () => {
   });
 
   it('shows false if execution was not marked as interruptible', () => {
-    execution.spec.interruptible = false;
+    execution.spec.interruptible = Protobuf.BoolValue.create({ value: false });
     const { getByTestId } = renderMetadata();
     expect(getByTestId(interruptibleTestId)).toHaveTextContent('false');
   });
 
-  it('shows false if no interruptible value is found in execution spec', () => {
+  it('shows dashes if no interruptible value is found in execution spec', () => {
     delete execution.spec.interruptible;
     const { getByTestId } = renderMetadata();
-    expect(getByTestId(interruptibleTestId)).toHaveTextContent('false');
+    expect(getByTestId(interruptibleTestId)).toHaveTextContent(dashedValueString);
   });
 });

@@ -11,7 +11,7 @@ import {
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from 'components/Theme/muiTheme';
-import { Core } from 'flyteidl';
+import { Core, Protobuf } from 'flyteidl';
 import { cloneDeep } from 'lodash';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { Identifier, NamedEntityIdentifier, Variable } from 'models/Common/types';
@@ -608,7 +608,7 @@ describe('LaunchForm: Task', () => {
       it('should use initial values when provided', async () => {
         const initialParameters: TaskInitialLaunchParameters = {
           taskId: mockTask.id,
-          interruptible: true,
+          interruptible: Protobuf.BoolValue.create({ value: true }),
         };
 
         const { getByLabelText } = renderForm({

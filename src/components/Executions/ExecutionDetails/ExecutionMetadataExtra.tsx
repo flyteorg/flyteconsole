@@ -6,6 +6,7 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { getLaunchPlan } from 'models/Launch/api';
 import { LaunchPlanSpec } from 'models/Launch/types';
+import { dashedValueString } from 'common/constants';
 import { ExecutionMetadataLabels } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -70,7 +71,7 @@ export const ExecutionMetadataExtra: React.FC<{
     },
     {
       label: ExecutionMetadataLabels.interruptible,
-      value: interruptible ? 'true' : 'false',
+      value: interruptible ? (interruptible.value ? 'true' : 'false') : dashedValueString,
     },
   ];
 

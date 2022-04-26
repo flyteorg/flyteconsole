@@ -1,4 +1,4 @@
-import { Admin, Core } from 'flyteidl';
+import { Admin, Core, Protobuf } from 'flyteidl';
 import {
   BlobDimensionality,
   Identifier,
@@ -60,7 +60,7 @@ export interface WorkflowInitialLaunchParameters extends BaseInitialLaunchParame
   rawOutputDataConfig?: Admin.IRawOutputDataConfig | null;
   labels?: Admin.ILabels | null;
   annotations?: Admin.IAnnotations | null;
-  interruptible?: boolean | null;
+  interruptible?: Protobuf.IBoolValue | null;
 }
 
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
@@ -72,7 +72,7 @@ export interface TaskInitialLaunchParameters extends BaseInitialLaunchParameters
   taskId?: Identifier;
   authRole?: Admin.IAuthRole;
   securityContext?: Core.ISecurityContext;
-  interruptible?: boolean | null;
+  interruptible?: Protobuf.IBoolValue | null;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   taskId: NamedEntityIdentifier;
@@ -97,7 +97,7 @@ export interface LaunchRoleInputRef {
 }
 
 export interface LaunchInterruptibleInputRef {
-  getValue(): boolean | null | undefined;
+  getValue(): Protobuf.IBoolValue | null | undefined;
   validate(): boolean;
 }
 

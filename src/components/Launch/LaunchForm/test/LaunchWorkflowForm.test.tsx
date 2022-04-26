@@ -11,7 +11,7 @@ import {
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from 'components/Theme/muiTheme';
-import { Core } from 'flyteidl';
+import { Core, Protobuf } from 'flyteidl';
 import { cloneDeep, get } from 'lodash';
 import * as Long from 'long';
 import { RequestConfig } from 'models/AdminEntity/types';
@@ -768,7 +768,7 @@ describe('LaunchForm: Workflow', () => {
       it('should use initial values when provided', async () => {
         const initialParameters: WorkflowInitialLaunchParameters = {
           workflowId: mockWorkflowVersions[2].id,
-          interruptible: true,
+          interruptible: Protobuf.BoolValue.create({ value: true }),
         };
 
         const { getByLabelText } = renderForm({

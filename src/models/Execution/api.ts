@@ -1,4 +1,4 @@
-import { Admin, Core } from 'flyteidl';
+import { Admin, Core, Protobuf } from 'flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
   defaultListExecutionChildrenConfig,
@@ -89,7 +89,7 @@ export interface CreateWorkflowExecutionArguments {
   launchPlanId: Identifier;
   project: string;
   referenceExecutionId?: WorkflowExecutionIdentifier;
-  interruptible?: boolean | null;
+  interruptible?: Protobuf.IBoolValue | null;
 }
 
 /** Submits a request to create a new `WorkflowExecution` using the provided
@@ -140,7 +140,7 @@ export const createWorkflowExecution = (
     spec.rawOutputDataConfig = rawOutputDataConfig;
   }
 
-  if (interruptible) {
+  if (interruptible !== undefined && interruptible !== null) {
     spec.interruptible = interruptible;
   }
 

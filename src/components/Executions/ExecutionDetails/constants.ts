@@ -10,7 +10,7 @@ export enum ExecutionMetadataLabels {
   rawOutputPrefix = 'Raw Output Prefix',
   parallelism = 'Parallelism',
   securityContextDefault = 'default',
-  interruptible = 'Marked as interruptible',
+  interruptible = 'Interruptible override',
 }
 
 export const tabs = {
