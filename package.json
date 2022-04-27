@@ -22,7 +22,7 @@
         "build:storybook": "build-storybook",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "storybook": "start-storybook -p 6006",
-        "test": "yarn use:bash && pushd packages/zapp/console && yarn test && popd",
+        "test": "yarn workspace @flyteconsole/client-app test",
         "test-coverage": "pushd packages/zapp/console && yarn test-coverage && popd"
     },
     "husky": {
