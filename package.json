@@ -15,13 +15,14 @@
         "packages/zapp/**"
     ],
     "scripts": {
+        "use:bash": "yarn config set script-shell /bin/bash",
         "start": "yarn workspace @flyteconsole/client-app start",
         "start:prod": "yarn workspace @flyteconsole/client-app start:prod",
         "build:prod": "yarn workspace @flyteconsole/client-app build:prod",
         "build:storybook": "build-storybook",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "storybook": "start-storybook -p 6006",
-        "test": "bash -c 'pushd packages/zapp/console && yarn test && popd'",
+        "test": "yarn use:bash && pushd packages/zapp/console && yarn test && popd",
         "test-coverage": "pushd packages/zapp/console && yarn test-coverage && popd"
     },
     "husky": {
