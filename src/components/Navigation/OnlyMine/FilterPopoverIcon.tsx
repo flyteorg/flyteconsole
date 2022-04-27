@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => {
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: 4,
       marginTop: theme.spacing(0.25),
-      padding: `${theme.spacing(2)}px ${theme.spacing(1.5)}px`,
+      padding: theme.spacing(2, 1.5),
     },
   };
 });

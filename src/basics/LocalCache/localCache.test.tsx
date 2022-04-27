@@ -11,7 +11,6 @@ const TestFrame = () => {
 
   const toShow = () => setShow(true);
   const toClear = () => clearShow();
-  console.log('show', show);
   return (
     <div>
       <div>{show ? SHOW_TEXT : HIDDEN_TEXT}</div>

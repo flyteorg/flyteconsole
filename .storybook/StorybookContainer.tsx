@@ -11,6 +11,7 @@ import { createQueryClient } from '../src/components/data/queryCache';
 import { muiTheme } from '../src/components/Theme/muiTheme';
 import { LocalCacheProvider } from '../src/basics/LocalCache/ContextProvider';
 import { FeatureFlagsProvider } from '../src/basics/FeatureFlags';
+
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: 'flex',

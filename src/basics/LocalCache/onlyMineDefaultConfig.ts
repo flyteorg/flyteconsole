@@ -1,5 +1,4 @@
 export enum OnlyMyFilter {
-  // Test flag is created only for unit-tests
   SelectAll = 'selectAll',
   OnlyMyWorkflow = 'onlyMyWorkflow',
   OnlyMyExecutions = 'onlyMyExecutions',

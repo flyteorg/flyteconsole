@@ -1,7 +1,7 @@
 // More info on Local storage: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 import { log } from 'common/log';
 import * as React from 'react';
-import { useState, createContext, useContext, useCallback } from 'react';
+import { useState, createContext, useCallback } from 'react';
 import { defaultLocalCacheConfig, LocalCacheItem } from './defaultConfig';
 
 export { LocalCacheItem } from './defaultConfig';
@@ -20,8 +20,8 @@ interface LocalCacheProviderProps {
 function allStorage() {
   const defaultKeys = Object.keys(defaultLocalCacheConfig);
 
-  var localCacheMap: Record<string, any> = {},
-    i = defaultKeys.length;
+  const localCacheMap: Record<string, any> = {};
+  let i = defaultKeys.length;
   while (i--) {
     const key = defaultKeys[i];
     const value = localStorage.getItem(key) || defaultLocalCacheConfig[key];
