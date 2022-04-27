@@ -22,7 +22,7 @@
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "storybook": "start-storybook -p 6006",
         "test": "cd packages/zapp/console && yarn test && cd ../../../",
-        "test-coverage": "pushd packages/zapp/console && yarn test-coverage && popd"
+        "test-coverage": "bash -c 'pushd packages/zapp/console && yarn test-coverage && popd'"
     },
     "husky": {
         "hooks": {
