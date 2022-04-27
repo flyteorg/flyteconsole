@@ -21,7 +21,7 @@
         "build:storybook": "build-storybook",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "storybook": "start-storybook -p 6006",
-        "test": "pushd packages/zapp/console && yarn test && popd",
+        "test": "bash -c 'pushd packages/zapp/console && yarn test && popd'",
         "test-coverage": "pushd packages/zapp/console && yarn test-coverage && popd"
     },
     "husky": {
