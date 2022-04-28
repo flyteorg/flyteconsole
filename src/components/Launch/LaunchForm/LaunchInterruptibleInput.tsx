@@ -11,7 +11,7 @@ const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
 };
 
-export interface LaunchInterruptibleInputProps {
+interface LaunchInterruptibleInputProps {
   initialValue?: Protobuf.IBoolValue | null;
 }
 
@@ -19,7 +19,9 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
   LaunchInterruptibleInputRef,
   LaunchInterruptibleInputProps
 > = (props, ref) => {
+  // interruptible stores the override to enable/disable the setting for an execution
   const [interruptible, setInterruptible] = React.useState(false);
+  // indeterminate tracks whether the interruptible flag is unspecified/indeterminate (true) or an override has been selected (false)
   const [indeterminate, setIndeterminate] = React.useState(true);
 
   React.useEffect(() => {
