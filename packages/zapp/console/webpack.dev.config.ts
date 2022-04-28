@@ -1,7 +1,7 @@
 import * as webpack from 'webpack';
 import * as HTMLWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
-import { processEnv as env, LOCAL_DEV_HOST } from './env';
+import { LOCAL_DEV_HOST } from './env';
 
 const { merge } = require('webpack-merge');
 const fs = require('fs');
