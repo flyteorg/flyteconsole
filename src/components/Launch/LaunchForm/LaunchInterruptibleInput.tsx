@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { makeStyles, Theme, Typography } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import * as React from 'react';
@@ -6,6 +6,12 @@ import { Protobuf } from 'flyteidl';
 import { useStyles } from './styles';
 import { LaunchInterruptibleInputRef } from './types';
 import { formStrings } from './constants';
+
+export const useInterruptibleStyles = makeStyles((theme: Theme) => ({
+  labelIndeterminate: {
+    color: theme.palette.grey[500],
+  },
+}));
 
 const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
@@ -63,14 +69,19 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
   );
 
   const styles = useStyles();
+  const interruptibleStyles = useInterruptibleStyles();
 
-  const getInterruptibleLabel = (): string => {
+  const getInterruptibleLabel = () => {
     if (indeterminate) {
-      return `${formStrings.interruptible} (no override)`;
+      return (
+        <Typography
+          className={interruptibleStyles.labelIndeterminate}
+        >{`${formStrings.interruptible} (no override)`}</Typography>
+      );
     } else if (interruptible) {
-      return `${formStrings.interruptible} (enabled)`;
+      return <Typography>{`${formStrings.interruptible} (enabled)`}</Typography>;
     }
-    return `${formStrings.interruptible} (disabled)`;
+    return <Typography>{`${formStrings.interruptible} (disabled)`}</Typography>;
   };
 
   return (
