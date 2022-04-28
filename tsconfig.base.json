@@ -13,7 +13,7 @@
 
         "jsx": "react",
         "lib": ["es6", "es2021", "dom", "dom.iterable"],
-        "target": "esnext",
+        "target": "es6", // "esnext"
         "module": "commonjs",
         "moduleResolution": "node",
         "types": ["node", "webpack-env", "jest", "@testing-library/jest-dom"],
