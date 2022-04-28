@@ -13,7 +13,8 @@
 
         "jsx": "react",
         "lib": ["es6", "es2021", "dom", "dom.iterable"],
-        "target": "es6", // "esnext"
+        // TODO: switch target to "esnext" when babel would be removed.
+        "target": "es6",
         "module": "commonjs",
         "moduleResolution": "node",
         "types": ["node", "webpack-env", "jest", "@testing-library/jest-dom"],
