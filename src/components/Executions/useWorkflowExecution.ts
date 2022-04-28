@@ -1,7 +1,6 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { maxBlobDownloadSizeBytes } from 'components/Literals/constants';
 import { LiteralMap } from 'models/Common/types';
 import { getExecution } from 'models/Execution/api';
 import {
@@ -69,19 +68,15 @@ export const fetchWorkflowExecutionInputs = async (
     execution: Execution,
     apiContext: APIContextValue
 ) => {
-    const { getExecutionData, getRemoteLiteralMap } = apiContext;
+    const { getExecutionData } = apiContext;
     if (execution.closure.computedInputs) {
         return execution.closure.computedInputs;
     }
-    const { inputs } = await getExecutionData(execution.id);
-    if (
-        !inputs.url ||
-        !inputs.bytes ||
-        inputs.bytes.gt(maxBlobDownloadSizeBytes)
-    ) {
-        return { literals: {} };
-    }
-    return getRemoteLiteralMap(inputs.url);
+    const { fullInputs } = await getExecutionData(execution.id);
+    if (fullInputs) {
+        return LiteralMap.create(fullInputs);
+    }   
+    return { literals: {} };
 };
 
 /** A hook for fetching the inputs object associated with an Execution. Will
