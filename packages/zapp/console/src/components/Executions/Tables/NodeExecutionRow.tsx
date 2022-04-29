@@ -14,7 +14,7 @@ import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
 import { RowExpander } from './RowExpander';
 import { selectedClassName, useExecutionTableStyles } from './styles';
-import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { calculateNodeExecutionRowLeftSpacing, selectExecution } from './utils';
 
 interface NodeExecutionRowProps {
   abortMetadata?: Admin.IAbortMetadata;
@@ -102,13 +102,16 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     </div>
   ) : null;
 
+  const onClick = () => selectExecution(state, nodeExecution);
+
   return (
     <div
       role="listitem"
-      className={classnames(tableStyles.row, {
+      className={classnames(tableStyles.row, tableStyles.clickableRow, {
         [selectedClassName]: selected,
       })}
       style={style}
+      onClick={onClick}
     >
       <div
         className={classnames(tableStyles.rowContent, {
