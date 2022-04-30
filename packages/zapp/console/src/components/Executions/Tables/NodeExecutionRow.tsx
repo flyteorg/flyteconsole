@@ -14,7 +14,7 @@ import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
 import { RowExpander } from './RowExpander';
 import { selectedClassName, useExecutionTableStyles } from './styles';
-import { calculateNodeExecutionRowLeftSpacing, selectExecution } from './utils';
+import { calculateNodeExecutionRowLeftSpacing } from './utils';
 
 interface NodeExecutionRowProps {
   abortMetadata?: Admin.IAbortMetadata;
@@ -35,7 +35,11 @@ const ChildFetchErrorIcon: React.FC<{
       disableTouchRipple={true}
       size="small"
       title={titleStrings.childGroupFetchFailed}
-      onClick={() => query.refetch()}
+      onClick={(e: React.MouseEvent<HTMLElement>) => {
+        // prevent the parent row body onClick event trigger
+        e.stopPropagation();
+        query.refetch();
+      }}
     >
       <ErrorOutline />
     </IconButton>
@@ -102,7 +106,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     </div>
   ) : null;
 
-  const onClick = () => selectExecution(state, nodeExecution);
+  // open the side panel for selected execution's detail
+  // use null in case if there is no execution provided - when it is null, will close side panel
+  const onClickRow = () => state.setSelectedExecution(nodeExecution?.id ?? null);
 
   return (
     <div
@@ -111,7 +117,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         [selectedClassName]: selected,
       })}
       style={style}
-      onClick={onClick}
+      onClick={onClickRow}
     >
       <div
         className={classnames(tableStyles.rowContent, {
