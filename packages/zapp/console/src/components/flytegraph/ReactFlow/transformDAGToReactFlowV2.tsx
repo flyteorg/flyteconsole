@@ -61,13 +61,13 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
     currentNestedView,
   } = props;
 
-  const taskType = node.value?.template ? node.value.template.type : null;
-  const displayName = node.name;
+  const { value: nodeValue, name: displayName, scopedId, type: nodeType } = node || {};
+  const taskType = nodeValue?.template?.type ?? null;
 
   const mapNodeExecutionStatus = () => {
     if (nodeExecutionsById) {
-      if (nodeExecutionsById[node.scopedId]) {
-        return nodeExecutionsById[node.scopedId].closure.phase as NodeExecutionPhase;
+      if (nodeExecutionsById?.[scopedId]) {
+        return nodeExecutionsById[scopedId].closure.phase as NodeExecutionPhase;
       } else {
         return NodeExecutionPhase.SKIPPED;
       }
@@ -78,33 +78,33 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
   const nodeExecutionStatus = mapNodeExecutionStatus();
 
   const cacheStatus: CatalogCacheStatus =
-    nodeExecutionsById[node.scopedId]?.closure.taskNodeMetadata?.cacheStatus ??
+    nodeExecutionsById?.[scopedId]?.closure?.taskNodeMetadata?.cacheStatus ??
     CatalogCacheStatus.CACHE_DISABLED;
 
   const dataProps = {
     nodeExecutionStatus,
     text: displayName,
     handles: [],
-    nodeType: node.type,
-    scopedId: node.scopedId,
+    nodeType,
+    scopedId,
     taskType,
     cacheStatus,
     onNodeSelectionChanged: () => {
       if (onNodeSelectionChanged) {
-        onNodeSelectionChanged([node.scopedId]);
+        onNodeSelectionChanged([scopedId]);
       }
     },
     onAddNestedView: () => {
       onAddNestedView({
-        parent: rootParentNode.scopedId,
-        view: node.scopedId,
+        parent: rootParentNode?.scopedId,
+        view: scopedId,
       });
     },
     onRemoveNestedView,
   };
 
   for (const rootParentId in currentNestedView) {
-    if (node.scopedId === rootParentId) {
+    if (scopedId === rootParentId) {
       dataProps['currentNestedView'] = currentNestedView[rootParentId];
     }
   }
