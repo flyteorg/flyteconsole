@@ -11,12 +11,20 @@ import {
   primitiveLiterals,
   schemaLiterals,
 } from './literalValues';
+import { LiteralMapViewer } from '../LiteralMapViewer';
 
 const stories = storiesOf('Literals/Map', module);
 stories.addDecorator(CardDecorator);
 
 function renderMap(label: string, map: LiteralMap) {
-  return <LiteralValue label={label} literal={{ map, value: 'map', hash: '' }} />;
+  return (
+    <>
+      <LiteralValue label={label} literal={{ map, value: 'map', hash: '' }} />
+      <br/> NEW:
+
+      <LiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+    </>
+  );
 }
 
 stories.add('Binary', () =>

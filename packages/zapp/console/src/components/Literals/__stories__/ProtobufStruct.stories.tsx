@@ -4,20 +4,30 @@ import * as React from 'react';
 import { LiteralValue } from '../LiteralValue';
 import { CardDecorator } from './CardDecorator';
 import { protobufValues } from './protobufValues';
+import { LiteralMapViewer } from '../LiteralMapViewer';
 
 const stories = storiesOf('Literals/ProtobufStruct', module);
 stories.addDecorator(CardDecorator);
 
 function renderStruct(label: string, struct: ProtobufStruct) {
   return (
-    <LiteralValue
-      label={label}
-      literal={{
-        scalar: { value: 'generic', generic: struct },
-        value: 'scalar',
-        hash: '',
-      }}
-    />
+    <>
+      <LiteralValue
+        label={label}
+        literal={{
+          scalar: { value: 'generic', generic: struct },
+          value: 'scalar',
+          hash: '',
+        }}
+      />
+        <br/> NEW:
+
+      <LiteralMapViewer
+        map={{
+          literals: { [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' } },
+        }}
+      />
+    </>
   );
 }
 
@@ -30,7 +40,7 @@ stories.add('list', () =>
         kind: 'listValue',
         listValue: {
           values: [
-            ...Object.values(protobufValues),
+            // ...Object.values(protobufValues),
             {
               kind: 'structValue',
               structValue: { fields: protobufValues },

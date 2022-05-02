@@ -31,6 +31,7 @@ export const LiteralValue: React.FC<{
             className={literalStyles.nestedContainer}
             map={literal.map as LiteralMap}
             showBrackets={true}
+            showJson={false} // todo: remove
           />
         </>
       );
