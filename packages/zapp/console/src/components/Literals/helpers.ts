@@ -1,6 +1,7 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { sortedObjectEntries, timestampToDate } from 'common/utils';
 import { Core } from 'flyteidl';
+import * as Long from 'long';
 import {
   BlobDimensionality,
   ProtobufListValue,
@@ -17,11 +18,12 @@ function processPrimitive(primitive: Core.IPrimitive) {
       return formatDateUTC(timestampToDate(primitive.datetime!));
     case 'duration':
       return protobufDurationToHMS(primitive.duration!);
+    case 'integer': {
+      return Long.fromValue(primitive[type] as any as Long).toNumber();
+    }
     case 'boolean':
     case 'floatValue':
       return primitive[type];
-    case 'integer':
-      return +`${primitive[type]}`;
     case 'stringValue':
     default:
       return `${primitive[type]}`;
@@ -58,7 +60,7 @@ function processBinary(binary: Core.IBinary) {
 }
 
 // SCHEMA
-function columnTypeToString(type: SchemaColumnType) {
+export function columnTypeToString(type: SchemaColumnType) {
   switch (type) {
     case SchemaColumnType.BOOLEAN:
       return 'boolean';
@@ -77,11 +79,13 @@ function columnTypeToString(type: SchemaColumnType) {
   }
 }
 
-function processSchemaType(schemaType: Core.ISchemaType) {
+function processSchemaType(schemaType: Core.ISchemaType, shortString = false) {
   let columns;
   if (schemaType?.columns?.length) {
-    columns = schemaType?.columns.map(
-      (column) => `${column.name!} (${columnTypeToString(column.type!)})`,
+    columns = schemaType?.columns.map((column) =>
+      shortString
+        ? `${columnTypeToString(column.type!)}`
+        : `${column.name!} (${columnTypeToString(column.type!)})`,
     );
   }
 
@@ -103,7 +107,7 @@ function processNone(none?: Core.IVoid) {
   return '(empty)';
 }
 
-function processUnionType(union: Core.IUnionType) {
+function processUnionType(union: Core.IUnionType, shortString = false) {
   return 'This type is not yet supported';
 }
 
@@ -131,6 +135,7 @@ function processProtobufStructValue(struct: ProtobufStruct) {
 
   return res;
 }
+
 function processProtobufValue(value: ProtobufValue) {
   switch (value.kind) {
     case 'nullValue':
@@ -141,12 +146,11 @@ function processProtobufValue(value: ProtobufValue) {
     }
     case 'structValue':
       return processProtobufStructValue(value?.structValue as ProtobufStruct);
-    case 'stringValue':
-      return `${value[value.kind]}`;
     default:
       return value[value.kind];
   }
 }
+
 function processGeneric(struct: ProtobufStruct) {
   const { fields } = struct;
   const mapContent = Object.keys(fields)
@@ -162,67 +166,55 @@ function processGeneric(struct: ProtobufStruct) {
 }
 
 // SIMPLE
-function processSimpleType(simpleType: Core.SimpleType, typePrefix: string = '') {
-  let returnString = '';
+export function processSimpleType(simpleType: Core.SimpleType) {
   switch (simpleType) {
     case Core.SimpleType.NONE:
-      returnString = 'none';
-      break;
+      return 'none';
     case Core.SimpleType.INTEGER:
-      returnString = 'integer';
-      break;
+      return 'integer';
     case Core.SimpleType.FLOAT:
-      returnString = 'float';
-      break;
+      return 'float';
     case Core.SimpleType.STRING:
-      returnString = 'string';
-      break;
+      return 'string';
     case Core.SimpleType.BOOLEAN:
-      returnString = 'booleam';
-      break;
+      return 'booleam';
     case Core.SimpleType.DATETIME:
-      returnString = 'datetime';
-      break;
+      return 'datetime';
     case Core.SimpleType.DURATION:
-      returnString = 'duration';
-      break;
+      return 'duration';
     case Core.SimpleType.BINARY:
-      returnString = 'binary';
-      break;
+      return 'binary';
     case Core.SimpleType.ERROR:
-      returnString = 'error';
-      break;
+      return 'error';
     case Core.SimpleType.STRUCT:
-      returnString = 'struct';
-      break;
+      return 'struct';
   }
-  return `${typePrefix}${returnString}`;
 }
 
 function processEnumType(enumType: Core.IEnumType) {
   return enumType?.values || [];
 }
 
-function processLiteralType(literalType: Core.ILiteralType, typePrefix: string = '') {
+function processLiteralType(literalType: Core.ILiteralType) {
   const type = (literalType as Core.LiteralType)?.type;
 
   switch (type) {
     case 'simple':
-      return processSimpleType(literalType?.simple!, typePrefix);
+      return processSimpleType(literalType?.simple!);
     case 'schema':
-      return processSchemaType(literalType?.schema!);
+      return `schema (${processSchemaType(literalType?.schema!, true)})`;
     case 'collectionType':
-      return processLiteralType(literalType?.collectionType!, (typePrefix = 'collection of '));
+      return `collection of ${processLiteralType(literalType?.collectionType!)}`;
     case 'mapValueType':
-      return processLiteralType(literalType?.mapValueType!, typePrefix);
+      return `map value of ${processLiteralType(literalType?.mapValueType!)}`;
     case 'blob':
-      return processBlobType(literalType?.blob!, typePrefix);
+      return processBlobType(literalType?.blob!);
     case 'enumType':
-      return processEnumType(literalType?.enumType!);
+      return `enum (${processEnumType(literalType?.enumType!)})`;
     case 'structuredDatasetType':
       return processStructuredDatasetType(literalType?.structuredDatasetType!);
     case 'unionType':
-      return processUnionType(literalType?.unionType!);
+      return processUnionType(literalType?.unionType!, true);
     default:
       return 'This type is not yet supported';
   }
@@ -265,7 +257,6 @@ function processStructuredDataset(structuredDataSet: Core.IStructuredDataset) {
   };
 }
 
-
 function processScalar(scalar: Core.Scalar | Core.IScalar) {
   const type = (scalar as Core.Scalar).value;
   const value = scalar[type!];
@@ -302,7 +293,7 @@ function processMap(map: Core.ILiteralMap) {
   return transformLiteralMap(map.literals as Core.ILiteralMap);
 }
 
-export function processLiteralValue(literal: Core.ILiteral) {
+function processLiteralValue(literal: Core.ILiteral) {
   const type = (literal as Core.Literal).value;
   switch (type) {
     case 'scalar':
