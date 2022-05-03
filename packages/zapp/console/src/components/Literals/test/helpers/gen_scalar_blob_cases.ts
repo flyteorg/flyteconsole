@@ -1,6 +1,6 @@
-import { Core, Protobuf } from 'flyteidl';
+import { Core } from 'flyteidl';
 import { generateBlobType } from './literalHelpers';
-import { TestCaseList, TestCase } from '../types';
+import { TestCaseList } from '../types';
 
 export default {
   single_CSV_BLOB: {
