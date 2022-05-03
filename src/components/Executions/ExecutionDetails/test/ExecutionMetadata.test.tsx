@@ -81,8 +81,6 @@ describe('ExecutionMetadata', () => {
   it('shows true if execution was marked as interruptible', () => {
     execution.spec.interruptible = Protobuf.BoolValue.create({ value: true });
     const { getByTestId } = renderMetadata();
-
-    expect(execution.spec.metadata.systemMetadata?.executionCluster).toBeDefined();
     expect(getByTestId(interruptibleTestId)).toHaveTextContent('true');
   });
 
