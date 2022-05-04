@@ -2,7 +2,7 @@ import { Dialog, DialogContent, Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ClosableDialogTitle } from 'components/common/ClosableDialogTitle';
 import { WaitForData } from 'components/common/WaitForData';
-import { DeprecatedLiteralMapViewer } from 'components/Literals/DeprecatedLiteralMapViewer';
+import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { emptyLiteralMapBlob } from 'models/Common/constants';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
@@ -41,7 +41,7 @@ const RemoteExecutionInputs: React.FC<{ execution: Execution }> = ({ execution }
   const executionData = useWorkflowExecutionData(execution.id);
   return (
     <WaitForData {...executionData} spinnerVariant="none">
-      <DeprecatedLiteralMapViewer map={executionData.value.fullInputs} />
+      <LiteralMapViewer map={executionData.value.fullInputs} />
     </WaitForData>
   );
 };
@@ -50,7 +50,7 @@ const RemoteExecutionOutputs: React.FC<{ execution: Execution }> = ({ execution 
   const executionData = useWorkflowExecutionData(execution.id);
   return (
     <WaitForData {...executionData} spinnerVariant="none">
-      <DeprecatedLiteralMapViewer map={executionData.value.fullOutputs} />
+      <LiteralMapViewer map={executionData.value.fullOutputs} />
     </WaitForData>
   );
 };
@@ -59,7 +59,7 @@ const RenderInputs: React.FC<{ execution: Execution }> = ({ execution }) => {
   // computedInputs is deprecated, but older data may still use that field.
   // For new records, the inputs will always need to be fetched separately
   return execution.closure.computedInputs ? (
-    <DeprecatedLiteralMapViewer map={execution.closure.computedInputs} />
+    <LiteralMapViewer map={execution.closure.computedInputs} />
   ) : (
     <RemoteExecutionInputs execution={execution} />
   );
@@ -73,7 +73,7 @@ const RenderOutputs: React.FC<{ execution: Execution }> = ({ execution }) => {
   return outputs.uri ? (
     <RemoteExecutionOutputs execution={execution} />
   ) : (
-    <DeprecatedLiteralMapViewer map={outputs.values} />
+    <LiteralMapViewer map={outputs.values} />
   );
 };
 
