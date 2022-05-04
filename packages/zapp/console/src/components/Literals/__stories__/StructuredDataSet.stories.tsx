@@ -4,9 +4,7 @@ import * as React from 'react';
 import { Core } from 'flyteidl';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 import { CardDecorator } from './CardDecorator';
-import {
-  blobScalars,
-} from './scalarValues';
+import { blobScalars } from './scalarValues';
 import { extractSimpleTypes, extractSchemaTypes, extractBlobTypes } from './helpers/typeGenerators';
 
 const stories = storiesOf('Literals/StructuredDataSet', module);
@@ -161,8 +159,6 @@ const renderScalars = (scalars: Dictionary<Scalar>) => {
   return Object.entries(scalars).map(([label, value]) => {
     return (
       <>
-        {/* <ScalarValue key={label} label={label} scalar={value as Scalar} /> */}
-        <br /> NEW:
         <LiteralMapViewer map={value} />
       </>
     );

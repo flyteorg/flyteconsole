@@ -1,10 +1,12 @@
 import { storiesOf } from '@storybook/react';
 import { ProtobufListValue, ProtobufStruct } from 'models/Common/types';
 import * as React from 'react';
-import { LiteralValue } from '../LiteralValue';
+import { Card, CardContent } from '@material-ui/core';
 import { CardDecorator } from './CardDecorator';
 import { protobufValues } from './protobufValues';
 import { LiteralMapViewer } from '../LiteralMapViewer';
+
+import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
 
 const stories = storiesOf('Literals/ProtobufStruct', module);
 stories.addDecorator(CardDecorator);
@@ -12,21 +14,36 @@ stories.addDecorator(CardDecorator);
 function renderStruct(label: string, struct: ProtobufStruct) {
   return (
     <>
-      <LiteralValue
-        label={label}
-        literal={{
-          scalar: { value: 'generic', generic: struct },
-          value: 'scalar',
-          hash: '',
-        }}
-      />
-        <br/> NEW:
-
-      <LiteralMapViewer
-        map={{
-          literals: { [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' } },
-        }}
-      />
+      <div style={{ display: 'flex' }}>
+        <div style={{ marginRight: '16px' }}>
+          OLD
+          <Card>
+            <CardContent>
+              <DeprecatedLiteralMapViewer
+                map={{
+                  literals: {
+                    [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' },
+                  },
+                }}
+              />
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          NEW
+          <Card>
+            <CardContent>
+              <LiteralMapViewer
+                map={{
+                  literals: {
+                    [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' },
+                  },
+                }}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </>
   );
 }

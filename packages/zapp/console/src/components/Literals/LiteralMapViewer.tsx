@@ -1,12 +1,7 @@
-import classnames from 'classnames';
-import { sortedObjectEntries } from 'common/utils';
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
-import { useCommonStyles } from 'components/common/styles';
-import { Literal, LiteralMap } from 'models/Common/types';
+import { LiteralMap } from 'models/Common/types';
 import * as React from 'react';
-import { htmlEntities } from './constants';
 import { transformLiteralMap } from './helpers';
-import { LiteralValue } from './LiteralValue';
 import { NoneTypeValue } from './Scalar/NoneTypeValue';
 
 export const NoDataIsAvailable = () => {
@@ -22,13 +17,11 @@ export const LiteralMapViewer: React.FC<{
   className?: string;
   map: LiteralMap | null;
   showBrackets?: boolean;
-  showJson?: boolean;
-}> = ({ className, map, showBrackets = false, showJson }) => {
+}> = ({ map }) => {
   if (!map) {
     return <NoDataIsAvailable />;
   }
 
-  const commonStyles = useCommonStyles();
   const { literals } = map;
 
   if (!Object.keys(literals).length) {
@@ -36,20 +29,6 @@ export const LiteralMapViewer: React.FC<{
   }
 
   let transformedLiterals = transformLiteralMap(literals);
-
-  const mapContent = Object.keys(literals).length ? (
-    <ul className={classnames(className, commonStyles.textMonospace, commonStyles.listUnstyled)}>
-      {sortedObjectEntries(literals).map(([key, value]) => (
-        <li key={key}>
-          <LiteralValue label={key} literal={value as Literal} />
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <div className={commonStyles.flexCenter}>
-      <NoneTypeValue />
-    </div>
-  );
 
   let rootNode: string | null = null;
 
@@ -64,11 +43,7 @@ export const LiteralMapViewer: React.FC<{
 
   return (
     <>
-      {showBrackets && <span>{htmlEntities.leftCurlyBrace}</span>}
-      {mapContent}
-      {showBrackets && <span>{htmlEntities.rightCurlyBrace}</span>}
-
-      {showJson !== false && <ReactJsonViewWrapper name={rootNode} src={transformedLiterals} />}
+      <ReactJsonViewWrapper name={rootNode} src={transformedLiterals} />
     </>
   );
 };

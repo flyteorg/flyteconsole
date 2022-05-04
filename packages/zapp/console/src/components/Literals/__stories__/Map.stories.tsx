@@ -1,6 +1,7 @@
 import { storiesOf } from '@storybook/react';
 import { LiteralMap } from 'models/Common/types';
 import * as React from 'react';
+import { Card, CardContent } from '@material-ui/core';
 import { LiteralValue } from '../LiteralValue';
 import { CardDecorator } from './CardDecorator';
 import {
@@ -12,6 +13,7 @@ import {
   schemaLiterals,
 } from './literalValues';
 import { LiteralMapViewer } from '../LiteralMapViewer';
+import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
 
 const stories = storiesOf('Literals/Map', module);
 stories.addDecorator(CardDecorator);
@@ -19,10 +21,24 @@ stories.addDecorator(CardDecorator);
 function renderMap(label: string, map: LiteralMap) {
   return (
     <>
-      <LiteralValue label={label} literal={{ map, value: 'map', hash: '' }} />
-      <br/> NEW:
-
-      <LiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+      <div style={{ display: 'flex' }}>
+        <div style={{ marginRight: '16px' }}>
+          OLD
+          <Card>
+            <CardContent>
+              <DeprecatedLiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+            </CardContent>
+          </Card>
+        </div>
+        <div>
+          NEW
+          <Card>
+            <CardContent>
+              <LiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </>
   );
 }
