@@ -50,7 +50,7 @@ interface BuildDataProps {
   rootParentNode: dNode;
   currentNestedView: string[];
 }
-export const buildReactFlowDataProps = (props: BuildDataProps) => {
+const buildReactFlowDataProps = (props: BuildDataProps) => {
   const {
     node,
     nodeExecutionsById,
@@ -61,12 +61,12 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
     currentNestedView,
   } = props;
 
-  const { value: nodeValue, name: displayName, scopedId, type: nodeType } = node || {};
+  const { value: nodeValue, name: displayName, scopedId, type: nodeType } = node;
   const taskType = nodeValue?.template?.type ?? null;
 
   const mapNodeExecutionStatus = () => {
     if (nodeExecutionsById) {
-      if (nodeExecutionsById?.[scopedId]) {
+      if (nodeExecutionsById[scopedId]) {
         return nodeExecutionsById[scopedId].closure.phase as NodeExecutionPhase;
       } else {
         return NodeExecutionPhase.SKIPPED;
@@ -77,8 +77,9 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
   };
   const nodeExecutionStatus = mapNodeExecutionStatus();
 
+  // nodeExecutionsById null check is required as on first render it can be undefined
   const cacheStatus: CatalogCacheStatus =
-    nodeExecutionsById?.[scopedId]?.closure?.taskNodeMetadata?.cacheStatus ??
+  nodeExecutionsById?.[scopedId]?.closure.taskNodeMetadata?.cacheStatus ??
     CatalogCacheStatus.CACHE_DISABLED;
 
   const dataProps = {
@@ -96,7 +97,7 @@ export const buildReactFlowDataProps = (props: BuildDataProps) => {
     },
     onAddNestedView: () => {
       onAddNestedView({
-        parent: rootParentNode?.scopedId,
+        parent: rootParentNode.scopedId,
         view: scopedId,
       });
     },
@@ -119,7 +120,7 @@ interface BuildNodeProps {
   parentNode?: dNode;
   typeOverride?: dTypes;
 }
-export const buildReactFlowNode = ({
+const buildReactFlowNode = ({
   node,
   dataProps,
   rootParentNode,
@@ -214,7 +215,7 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
   const parse = (props: ParseProps) => {
     const { contextNode, contextParent, rootParentNode, nodeDataProps } = props;
     let context: ReactFlowGraph | null = null;
-    contextNode.nodes.map((node: dNode) => {
+    contextNode.nodes.filter(n => !!n).map((node: dNode) => {
       /* Case: node has children => recurse */
       if (nodeHasChildren(node)) {
         if (rootParentNode) {
