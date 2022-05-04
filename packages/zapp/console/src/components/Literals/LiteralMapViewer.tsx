@@ -28,22 +28,11 @@ export const LiteralMapViewer: React.FC<{
     return <NoneTypeValue />;
   }
 
-  let transformedLiterals = transformLiteralMap(literals);
-
-  let rootNode: string | null = null;
-
-  const transformedLiteralsKeys = Object.keys(transformedLiterals);
-  if (
-    transformedLiteralsKeys.length === 1 &&
-    typeof transformedLiterals[transformedLiteralsKeys[0]] === 'object'
-  ) {
-    rootNode = transformedLiteralsKeys[0];
-    transformedLiterals = transformedLiterals[rootNode!];
-  }
+  const transformedLiterals = transformLiteralMap(literals);
 
   return (
     <>
-      <ReactJsonViewWrapper name={rootNode} src={transformedLiterals} />
+      <ReactJsonViewWrapper src={transformedLiterals} />
     </>
   );
 };
