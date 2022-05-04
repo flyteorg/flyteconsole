@@ -107,6 +107,7 @@ function processNone(none?: Core.IVoid) {
   return '(empty)';
 }
 
+// TODO: FC#450 ass support for union types
 function processUnionType(union: Core.IUnionType, shortString = false) {
   return 'This type is not yet supported';
 }

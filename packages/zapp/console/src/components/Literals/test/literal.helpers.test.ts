@@ -25,7 +25,7 @@ const literalTestCases = {
     error: errorType,
     generic,
     structuredDataset,
-    union: {} as Core.IPrimitive, // todo
+    union: {} as Core.IPrimitive, // TODO: FC#450 ass support for union types
   },
   collection,
   map,

@@ -146,7 +146,7 @@ function generateEnumTypes() {
       type: 'enumType',
       enumType: { values: [] },
     }),
-    generateStructuredDataset(`With_null_ values`, {
+    generateStructuredDataset(`With_null_values`, {
       type: 'enumType',
       enumType: { values: null },
     }),

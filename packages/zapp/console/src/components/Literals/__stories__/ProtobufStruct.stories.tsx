@@ -57,7 +57,6 @@ stories.add('list', () =>
         kind: 'listValue',
         listValue: {
           values: [
-            // ...Object.values(protobufValues),
             {
               kind: 'structValue',
               structValue: { fields: protobufValues },

@@ -23,7 +23,6 @@ const generateStructuredDataset = (columnName: string, uri: string, literalType)
   };
 };
 
-
 const sasWithMapValueTypeColumns: any = Object.keys(simple)
   .map((simpleTypeKey, index) => {
     const simpleType = simple[simpleTypeKey];
@@ -126,5 +125,5 @@ export default {
   ...sdsWithSimpleTypeColumns,
   ...sasWithSchemaColumns,
   ...sasWithCollectionTypeColumns,
-  ...sasWithMapValueTypeColumns
+  ...sasWithMapValueTypeColumns,
 } as any as TestCaseList<Core.IStructuredDataset>;

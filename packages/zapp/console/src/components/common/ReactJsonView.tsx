@@ -35,6 +35,44 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+/**
+ *
+ * Replacer functionality to pass to the JSON.stringify function that
+ * does proper serialization of arrays that contain non-numeric indexes
+ * @param _ parent element key
+ * @param value the element being serialized
+ * @returns Transformed version of input
+ */
+const replacer = (_, value) => {
+  // Check if associative array
+  if (value instanceof Array && Object.keys(value).some((v) => isNaN(+v))) {
+    // Serialize associative array
+    return Object.keys(value).reduce((acc, arrKey) => {
+      // if:
+      //     string key is encountered insert {[key]: value} into transformed array
+      // else:
+      //     insert original value
+      acc.push(isNaN(+arrKey) ? { [arrKey]: value[arrKey] } : value[arrKey]);
+
+      return acc;
+    }, [] as any[]);
+  }
+
+  // Non-associative array. return original value to allow default JSON.stringify behavior
+  return value;
+};
+
+/**
+ * Custom implementation for JSON.stringify to allow
+ * proper serialization of arrays that contain non-numeric indexes
+ *
+ * @param json Object to serialize
+ * @returns A string version of the input json
+ */
+const customStringify = (json) => {
+  return JSON.stringify(json, replacer);
+};
+
 export const ReactJsonViewWrapper: React.FC<ReactJsonViewProps> = (props) => {
   const styles = useStyles();
 
@@ -43,7 +81,7 @@ export const ReactJsonViewWrapper: React.FC<ReactJsonViewProps> = (props) => {
       <ReactJsonView
         enableClipboard={(options) => {
           const objToCopy = options.src;
-          const text = typeof objToCopy === 'object' ? JSON.stringify(objToCopy) : objToCopy;
+          const text = typeof objToCopy === 'object' ? customStringify(objToCopy) : objToCopy;
           copyToClipboard(text);
         }}
         displayDataTypes={false}

@@ -1,4 +1,4 @@
-import {  Protobuf } from 'flyteidl';
+import { Protobuf } from 'flyteidl';
 import { TestCaseList } from '../types';
 import { getIValue } from './literalHelpers';
 
@@ -10,7 +10,7 @@ const nullValueTestcases = {
           nullValue: Protobuf.NullValue.NULL_VALUE,
           kind: 'nullValue',
         },
-      } ,
+      },
     },
     expected: {
       result_var: { test_field_name1: '(empty)' },
@@ -136,7 +136,7 @@ const listValueTestCases = {
           },
           kind: 'listValue',
         },
-      } ,
+      },
     },
     expected: {
       result_var: {
