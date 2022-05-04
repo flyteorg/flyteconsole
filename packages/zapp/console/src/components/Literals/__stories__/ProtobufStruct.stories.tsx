@@ -12,6 +12,11 @@ const stories = storiesOf('Literals/ProtobufStruct', module);
 stories.addDecorator(CardDecorator);
 
 function renderStruct(label: string, struct: ProtobufStruct) {
+  const map = {
+    literals: {
+      [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' },
+    },
+  };
   return (
     <>
       <div style={{ display: 'flex' }}>
@@ -19,13 +24,7 @@ function renderStruct(label: string, struct: ProtobufStruct) {
           OLD
           <Card>
             <CardContent>
-              <DeprecatedLiteralMapViewer
-                map={{
-                  literals: {
-                    [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' },
-                  },
-                }}
-              />
+              <DeprecatedLiteralMapViewer map={map} />
             </CardContent>
           </Card>
         </div>
@@ -33,13 +32,7 @@ function renderStruct(label: string, struct: ProtobufStruct) {
           NEW
           <Card>
             <CardContent>
-              <LiteralMapViewer
-                map={{
-                  literals: {
-                    [label]: { scalar: { value: 'generic', generic: struct }, value: 'scalar' },
-                  },
-                }}
-              />
+              <LiteralMapViewer map={map} />
             </CardContent>
           </Card>
         </div>

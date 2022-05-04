@@ -19,7 +19,7 @@ function processPrimitive(primitive: Core.IPrimitive) {
     case 'duration':
       return protobufDurationToHMS(primitive.duration!);
     case 'integer': {
-      return Long.fromValue(primitive[type] as any as Long).toNumber();
+      return Long.fromValue(primitive[type] as Long).toNumber();
     }
     case 'boolean':
     case 'floatValue':
@@ -311,7 +311,7 @@ function processLiteralValue(literal: Core.ILiteral) {
 export function transformLiteralMap(json: Core.ILiteralMap) {
   const obj = sortedObjectEntries(json as any)
     .map(([key, literal]) => ({
-      [key]: processLiteralValue(literal as any as Core.Literal),
+      [key]: processLiteralValue(literal as Core.Literal),
     }))
     .reduce(
       (acc, cur) => ({

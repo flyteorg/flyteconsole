@@ -13,7 +13,7 @@ import {
   collection,
   map,
 } from './helpers/index';
-import { getCollection, getMap, getScalar } from './helpers/literalHelpers';
+import { getCollection, getMap, getScalarLiteral } from './helpers/literalHelpers';
 
 const literalTestCases = {
   scalar: {
@@ -40,7 +40,7 @@ describe('scalar literal', () => {
         const { value, expected } = cases?.[testKey]!;
 
         it(`${testKey}: should return ${expected} for ${value}`, () => {
-          const scalar = { result_var: { ...getScalar(value, scalarTestType) } };
+          const scalar = { result_var: { ...getScalarLiteral(value, scalarTestType) } };
           const result = transformLiteralMap(scalar as any);
           expect(result).toEqual(expected);
         });

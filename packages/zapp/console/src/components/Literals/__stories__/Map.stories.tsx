@@ -18,6 +18,7 @@ const stories = storiesOf('Literals/Map', module);
 stories.addDecorator(CardDecorator);
 
 function renderMap(label: string, map: LiteralMap) {
+  const fullMap = { literals: { [label]: { map, value: 'map' } } };
   return (
     <>
       <div style={{ display: 'flex' }}>
@@ -25,7 +26,7 @@ function renderMap(label: string, map: LiteralMap) {
           OLD
           <Card>
             <CardContent>
-              <DeprecatedLiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+              <DeprecatedLiteralMapViewer map={fullMap} />
             </CardContent>
           </Card>
         </div>
@@ -33,7 +34,7 @@ function renderMap(label: string, map: LiteralMap) {
           NEW
           <Card>
             <CardContent>
-              <LiteralMapViewer map={{ literals: { [label]: { map, value: 'map' } } }} />
+              <LiteralMapViewer map={fullMap} />
             </CardContent>
           </Card>
         </div>

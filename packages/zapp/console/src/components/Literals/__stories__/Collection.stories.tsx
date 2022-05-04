@@ -18,6 +18,7 @@ const stories = storiesOf('Literals/Collection', module);
 stories.addDecorator(CardDecorator);
 
 function renderCollection(label: string, collection: LiteralCollection) {
+  const map = { literals: { [label]: { collection, value: 'collection' } } };
   return (
     <>
       <div style={{ display: 'flex' }}>
@@ -25,9 +26,7 @@ function renderCollection(label: string, collection: LiteralCollection) {
           OLD
           <Card>
             <CardContent>
-              <DeprecatedLiteralMapViewer
-                map={{ literals: { [label]: { collection, value: 'collection' } } }}
-              />
+              <DeprecatedLiteralMapViewer map={map} />
             </CardContent>
           </Card>
         </div>
@@ -35,9 +34,7 @@ function renderCollection(label: string, collection: LiteralCollection) {
           NEW
           <Card>
             <CardContent>
-              <LiteralMapViewer
-                map={{ literals: { [label]: { collection, value: 'collection' } } }}
-              />
+              <LiteralMapViewer map={map} />
             </CardContent>
           </Card>
         </div>

@@ -27,4 +27,4 @@ const collection = {
 
 export default {
   ...collection,
-} as any as TestCaseList<Core.ILiteral>;
+} as TestCaseList<Core.ILiteral>;

@@ -10,21 +10,21 @@ export function getIValue(
     | Protobuf.IStruct
     | Protobuf.IListValue
     | null,
-): Core.Primitive | Core.IPrimitive {
+): Protobuf.IValue & Pick<Protobuf.Value, 'kind'> {
   return {
     kind,
     [kind]: value,
-  } as any as Protobuf.Value;
+  };
 }
 
 export function getPrimitive(
   key: 'integer' | 'floatValue' | 'stringValue' | 'boolean' | 'datetime' | 'duration',
   value?: Long | number | string | boolean | Protobuf.ITimestamp | Protobuf.IDuration | null,
-): Core.Primitive | Core.IPrimitive {
+): Core.IPrimitive & Pick<Core.Primitive, 'value'> {
   return {
     [key]: value,
     value: key,
-  } as any as Core.Primitive;
+  };
 }
 
 export function generateBlobType(
@@ -43,18 +43,43 @@ export function generateBlobType(
   };
 }
 
-// TOP LEVEL SCHEMA GENERATORS:
-export const getScalar = (
-  value: Core.IPrimitive | Core.IBlob | Core.IBinary,
-  scalarType: string,
-) => {
+const getScalar = (
+  value:
+    | Core.IPrimitive
+    | Core.IBlob
+    | Core.IBinary
+    | Core.ISchema
+    | Core.IVoid
+    | Core.IError
+    | Protobuf.IStruct
+    | Core.IStructuredDataset
+    | Core.IUnion,
+  scalarType: any,
+): Core.IScalar & Pick<Core.Scalar, 'value'> => {
   return {
-    scalar: {
-      [scalarType]: value,
-      value: scalarType,
-    },
+    [scalarType]: value,
+    value: scalarType,
+  };
+};
+
+// TOP LEVEL SCHEMA GENERATORS:
+export const getScalarLiteral = (
+  value:
+    | Core.IPrimitive
+    | Core.IBlob
+    | Core.IBinary
+    | Core.ISchema
+    | Core.IVoid
+    | Core.IError
+    | Protobuf.IStruct
+    | Core.IStructuredDataset
+    | Core.IUnion,
+  scalarType: any,
+): Core.ILiteral & Pick<Core.Literal, 'value' | 'scalar'> => {
+  return {
+    scalar: getScalar(value, scalarType),
     value: 'scalar',
-  } as Core.IScalar;
+  };
 };
 
 export const getCollection = (literals: Core.ILiteral[]) => {
