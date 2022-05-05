@@ -16,7 +16,7 @@ export const NoDataIsAvailable = () => {
 };
 
 /** Renders a LiteralMap as a formatted object */
-export const DeprecatedLiteralMapViewer: React.FC<{
+export const LiteralMapViewer: React.FC<{
   className?: string;
   map: LiteralMap | null;
   showBrackets?: boolean;
@@ -27,11 +27,6 @@ export const DeprecatedLiteralMapViewer: React.FC<{
 
   const commonStyles = useCommonStyles();
   const { literals } = map;
-
-  if (!Object.keys(literals).length) {
-    return <NoneTypeValue />;
-  }
-
   const mapContent = Object.keys(literals).length ? (
     <ul className={classnames(className, commonStyles.textMonospace, commonStyles.listUnstyled)}>
       {sortedObjectEntries(literals).map(([key, value]) => (
@@ -45,7 +40,6 @@ export const DeprecatedLiteralMapViewer: React.FC<{
       <NoneTypeValue />
     </div>
   );
-
   return (
     <>
       {showBrackets && <span>{htmlEntities.leftCurlyBrace}</span>}
