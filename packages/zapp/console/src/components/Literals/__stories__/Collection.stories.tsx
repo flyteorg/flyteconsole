@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
-import { CardDecorator } from './CardDecorator';
 import {
   binaryLiterals,
   blobLiterals,
@@ -15,7 +14,6 @@ import {
 } from './literalValues';
 
 const stories = storiesOf('Literals/Collection', module);
-stories.addDecorator(CardDecorator);
 
 function renderCollection(label: string, collection: LiteralCollection) {
   const map = { literals: { [label]: { collection, value: 'collection' } } };

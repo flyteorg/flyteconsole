@@ -16,7 +16,7 @@ export const NoDataIsAvailable = () => {
 };
 
 /** Renders a LiteralMap as a formatted object */
-export const LiteralMapViewer: React.FC<{
+export const DeprecatedLiteralMapViewer: React.FC<{
   className?: string;
   map: LiteralMap | null;
   showBrackets?: boolean;

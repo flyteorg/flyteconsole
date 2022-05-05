@@ -2,14 +2,12 @@ import { storiesOf } from '@storybook/react';
 import { ProtobufListValue, ProtobufStruct } from 'models/Common/types';
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
-import { CardDecorator } from './CardDecorator';
 import { protobufValues } from './protobufValues';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 
 import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
 
 const stories = storiesOf('Literals/ProtobufStruct', module);
-stories.addDecorator(CardDecorator);
 
 function renderStruct(label: string, struct: ProtobufStruct) {
   const map = {

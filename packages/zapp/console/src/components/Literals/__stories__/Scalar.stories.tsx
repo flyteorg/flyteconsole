@@ -2,9 +2,7 @@ import { storiesOf } from '@storybook/react';
 import { Scalar } from 'models/Common/types';
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
-import { ScalarValue } from '../Scalar/ScalarValue';
 import { LiteralMapViewer } from '../LiteralMapViewer';
-import { CardDecorator } from './CardDecorator';
 import {
   binaryScalars,
   blobScalars,
@@ -16,7 +14,6 @@ import {
 import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
 
 const stories = storiesOf('Literals/Scalar', module);
-stories.addDecorator(CardDecorator);
 
 var renderScalars = (scalars: Dictionary<Scalar>) => {
   const literals = {};

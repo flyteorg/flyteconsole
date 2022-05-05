@@ -2,7 +2,6 @@ import { storiesOf } from '@storybook/react';
 import { LiteralMap } from 'models/Common/types';
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
-import { CardDecorator } from './CardDecorator';
 import {
   binaryLiterals,
   blobLiterals,
@@ -15,7 +14,6 @@ import { LiteralMapViewer } from '../LiteralMapViewer';
 import { DeprecatedLiteralMapViewer } from '../DeprecatedLiteralMapViewer';
 
 const stories = storiesOf('Literals/Map', module);
-stories.addDecorator(CardDecorator);
 
 function renderMap(label: string, map: LiteralMap) {
   const fullMap = { literals: { [label]: { map, value: 'map' } } };

@@ -1,14 +1,13 @@
 import { storiesOf } from '@storybook/react';
 import { Scalar } from 'models/Common/types';
+import { Card, CardContent } from '@material-ui/core';
 import * as React from 'react';
 import { Core } from 'flyteidl';
 import { LiteralMapViewer } from '../LiteralMapViewer';
-import { CardDecorator } from './CardDecorator';
 import { blobScalars } from './scalarValues';
 import { extractSimpleTypes, extractSchemaTypes, extractBlobTypes } from './helpers/typeGenerators';
 
 const stories = storiesOf('Literals/StructuredDataSet', module);
-stories.addDecorator(CardDecorator);
 
 function generateStructuredDataset(label: string, literalType: Core.ILiteralType) {
   return {
@@ -156,13 +155,17 @@ function generateEnumTypes() {
 }
 
 const renderScalars = (scalars: Dictionary<Scalar>) => {
-  return Object.entries(scalars).map(([label, value]) => {
+  const items = Object.entries(scalars).map(([_label, value]) => {
     return (
-      <>
-        <LiteralMapViewer map={value} />
-      </>
+      <Card style={{ margin: '16px 0', width: '430px' }}>
+        <CardContent>
+          <LiteralMapViewer map={value} />
+        </CardContent>
+      </Card>
     );
   });
+
+  return <div style={{ display: 'flex', flexDirection: 'column' }}>{items}</div>;
 };
 
 stories.add('Simple types', () => <>{renderScalars(generateSimpleTypes())}</>);
