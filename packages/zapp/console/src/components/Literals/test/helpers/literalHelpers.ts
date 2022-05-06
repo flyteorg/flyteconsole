@@ -82,24 +82,24 @@ export const getScalarLiteral = (
   };
 };
 
-export const getCollection = (literals: Core.ILiteral[]) => {
+export const getCollection = (
+  literals: Core.ILiteral[],
+): Core.ILiteral & Pick<Core.Literal, 'value' | 'collection'> => {
   return {
-    result_var: {
-      collection: {
-        literals,
-      },
-      value: 'collection',
-    } as Core.ILiteralCollection,
+    collection: {
+      literals,
+    },
+    value: 'collection',
   };
 };
 
-export const getMap = (literals: { [k: string]: Core.ILiteral } | null) => {
+export const getMap = (
+  literals: { [k: string]: Core.ILiteral } | null,
+): Core.ILiteral & Pick<Core.Literal, 'value' | 'map'> => {
   return {
-    result_var: {
-      map: {
-        literals,
-      },
-      value: 'map',
-    } as Core.ILiteralMap,
+    map: {
+      literals,
+    },
+    value: 'map',
   };
 };

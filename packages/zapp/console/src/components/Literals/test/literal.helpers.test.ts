@@ -55,7 +55,7 @@ describe('collection literal', () => {
     const { value, expected } = cases?.[testKey]!;
 
     it(`${testKey}: should return ${expected} for ${value}`, () => {
-      const collection = getCollection([value]);
+      const collection = { result_var: { ...getCollection([value]) } };
 
       const result = transformLiterals(collection as any);
       expect(result).toEqual(expected);
@@ -69,7 +69,7 @@ describe('map literal', () => {
     const { value, expected } = cases?.[testKey]!;
 
     it(`${testKey}: should return ${expected} for ${value}`, () => {
-      const collection = getMap({ value });
+      const collection = { result_var: { ...getMap({ value }) } };
 
       const result = transformLiterals(collection as any);
       expect(result).toEqual(expected);
