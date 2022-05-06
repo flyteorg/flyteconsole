@@ -281,12 +281,10 @@ function processStructuredDatasetType(structuredDatasetType?: Core.IStructuredDa
         return acc;
       }, []);
 
-  const a = {
+  return {
     ...(format && { format }),
     ...(processedColumns && { columns: processedColumns }),
   };
-
-  return a;
 }
 
 function processStructuredDataset(structuredDataSet?: Core.IStructuredDataset | null) {
