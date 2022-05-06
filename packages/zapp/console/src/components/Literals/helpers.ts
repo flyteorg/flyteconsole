@@ -27,7 +27,7 @@ function processPrimitive(primitive?: (Core.IPrimitive & Pick<Core.Primitive, 'v
     case 'floatValue':
       return primitive.floatValue;
     case 'stringValue':
-      return `${primitive[type]}`;
+      return `${primitive.stringValue}`;
     default:
       return 'unknown';
   }
