@@ -1,13 +1,13 @@
-import primitive from './genScalarPrimitiveCases';
-import blob from './genScalarBlobCases';
-import binary from './genScalarBinaryTestCase';
-import schema from './genScalarSchemaCase';
-import noneType from './genScalarNoneCase';
-import errorType from './genScalarErrorCase';
-import generic from './genScalarGenericCase';
-import structuredDataset from './genScalarStructuredDsCase';
-import collection from './genCollectionTestcase';
-import map from './genMapTestCase';
+import primitive from './genScalarPrimitiveCases.mock';
+import blob from './genScalarBlobCases.mock';
+import binary from './genScalarBinaryTestCase.mock';
+import schema from './genScalarSchemaCase.mock';
+import noneType from './genScalarNoneCase.mock';
+import errorType from './genScalarErrorCase.mock';
+import generic from './genScalarGenericCase.mock';
+import structuredDataset from './genScalarStructuredDsCase.mock';
+import collection from './genCollectionTestcase.mock';
+import map from './genMapTestCase.mock';
 
 export {
   primitive,
