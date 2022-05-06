@@ -359,12 +359,10 @@ function processMap(map?: Core.ILiteralMap | null) {
 function processLiteral(literal?: Core.ILiteral & Pick<Core.Literal, 'value'>) {
   const type = literal?.value;
 
-  if (!literal || !type || !literal[type]) {
+  if (!literal) {
     return 'invalid literal';
   }
 
-  // ok to cast below since the two checks above ensure that
-  // we're not passing invalid values
   switch (type) {
     case 'scalar':
       return processScalar(literal.scalar);
