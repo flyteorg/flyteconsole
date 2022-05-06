@@ -4,12 +4,14 @@ import { DataError } from 'components/Errors/DataError';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { keyBy } from 'lodash';
-import { NodeExecution } from 'models/Execution/types';
+import { ExternalResource, NodeExecution } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import * as React from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { NodeExecutionsContext } from '../contexts';
+import { useTaskExecutions, useTaskExecutionsRefresher } from '../useTaskExecutions';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 
 export interface ExecutionWorkflowGraphProps {
@@ -23,12 +25,34 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
   workflowId,
 }) => {
   const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(useQueryClient(), workflowId));
-  const nodeExecutionsById = React.useMemo(
-    () => keyBy(nodeExecutions, 'scopedId'),
-    [nodeExecutions],
+
+  const nodeExecutionsWithResources = nodeExecutions.map((nodeExecution) => {
+    const taskExecutions = useTaskExecutions(nodeExecution.id);
+    useTaskExecutionsRefresher(nodeExecution, taskExecutions);
+
+    const externalResources = taskExecutions.value
+      .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
+      .filter((resources) => resources?.length);
+
+    const externalResourcesByPhase = new Map();
+    externalResources.forEach((resource) => {
+      if (resource) {
+        externalResourcesByPhase.set(resource[0].phase, resource);
+      }
+    });
+
+    return {
+      ...nodeExecution,
+      ...(externalResourcesByPhase.size > 0 && { externalResourcesByPhase }),
+    };
+  });
+
+  const nodeExecutionsById = useMemo(
+    () => keyBy(nodeExecutionsWithResources, 'scopedId'),
+    [nodeExecutionsWithResources],
   );
 
-  const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const onNodeSelectionChanged = (newSelection: string[]) => {
     const validSelection = newSelection.filter((nodeId) => {
       if (nodeId === startNodeId || nodeId === endNodeId) {
@@ -52,9 +76,15 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
 
   const onCloseDetailsPanel = () => setSelectedNodes([]);
 
+  const [selectedMapTask, setSelectedMapTask] = useState<ExternalResource[] | null>(null);
+  const onMapTaskSelectionChanged = (newSelection: ExternalResource[] | null) => {
+    setSelectedMapTask(newSelection);
+  };
+
   const renderGraph = (workflow: Workflow) => (
     <WorkflowGraph
       onNodeSelectionChanged={onNodeSelectionChanged}
+      onMapTaskSelectionChanged={onMapTaskSelectionChanged}
       nodeExecutionsById={nodeExecutionsById}
       workflow={workflow}
     />
@@ -71,6 +101,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
         {selectedExecution && (
           <NodeExecutionDetailsPanelContent
             onClose={onCloseDetailsPanel}
+            mapTask={selectedMapTask}
             nodeExecutionId={selectedExecution}
           />
         )}

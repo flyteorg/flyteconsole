@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tab, Tabs } from '@material-ui/core';
-import { NodeExecution } from 'models/Execution/types';
+import { ExternalResource, NodeExecution } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 import { useTabState } from 'components/hooks/useTabState';
 import { PanelSection } from 'components/common/PanelSection';
@@ -10,6 +10,7 @@ import { isMapTaskType } from 'models/Task/utils';
 import { TaskExecutionsList } from '../../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
+import { MapTaskExecutionsList } from './MapTaskExecutionsList';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -39,8 +40,10 @@ const defaultTab = tabIds.executions;
 
 export const NodeExecutionTabs: React.FC<{
   nodeExecution: NodeExecution;
+  shouldShowMapTaskInfo: boolean;
+  mapTask?: ExternalResource[] | null;
   taskTemplate?: TaskTemplate | null;
-}> = ({ nodeExecution, taskTemplate }) => {
+}> = ({ nodeExecution, shouldShowMapTaskInfo, mapTask, taskTemplate }) => {
   const styles = useStyles();
   const tabState = useTabState(tabIds, defaultTab);
 
@@ -55,7 +58,12 @@ export const NodeExecutionTabs: React.FC<{
   let tabContent: JSX.Element | null = null;
   switch (tabState.value) {
     case tabIds.executions: {
-      tabContent = <TaskExecutionsList nodeExecution={nodeExecution} />;
+      tabContent =
+        shouldShowMapTaskInfo && mapTask ? (
+          <MapTaskExecutionsList mapTask={mapTask} />
+        ) : (
+          <TaskExecutionsList nodeExecution={nodeExecution} />
+        );
       break;
     }
     case tabIds.inputs: {
@@ -76,7 +84,8 @@ export const NodeExecutionTabs: React.FC<{
     }
   }
 
-  const executionLabel = isMapTaskType(taskTemplate?.type) ? 'Map Execution' : 'Executions';
+  const executionLabel =
+    isMapTaskType(taskTemplate?.type) && !shouldShowMapTaskInfo ? 'Map Execution' : 'Executions';
   return (
     <>
       <Tabs {...tabState} className={styles.tabs}>

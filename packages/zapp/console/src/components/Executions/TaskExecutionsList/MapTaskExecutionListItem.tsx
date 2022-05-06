@@ -11,6 +11,7 @@ import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
 import { TaskExecutionLogs } from './TaskExecutionLogs';
 import { formatRetryAttempt, getGroupedLogs } from './utils';
+import { RENDER_ORDER } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
   detailsLink: {
@@ -34,17 +35,6 @@ interface MapTaskExecutionsListItemProps {
   taskExecution: TaskExecution;
   showAttempts: boolean;
 }
-
-const RENDER_ORDER: TaskExecutionPhase[] = [
-  TaskExecutionPhase.UNDEFINED,
-  TaskExecutionPhase.INITIALIZING,
-  TaskExecutionPhase.WAITING_FOR_RESOURCES,
-  TaskExecutionPhase.QUEUED,
-  TaskExecutionPhase.RUNNING,
-  TaskExecutionPhase.SUCCEEDED,
-  TaskExecutionPhase.ABORTED,
-  TaskExecutionPhase.FAILED,
-];
 
 /** Renders an individual `TaskExecution` record as part of a list */
 export const MapTaskExecutionsListItem: React.FC<MapTaskExecutionsListItemProps> = ({

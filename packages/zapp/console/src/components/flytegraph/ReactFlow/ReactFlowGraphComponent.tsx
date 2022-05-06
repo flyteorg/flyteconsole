@@ -17,6 +17,17 @@ const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
   return false;
 };
 
+const nodeExecutionResourcesChanged = (previous, nodeExecutionsById) => {
+  for (const exe in nodeExecutionsById) {
+    const oldStatus = previous[exe]?.externalResourcesByPhase;
+    const newStatus = nodeExecutionsById[exe]?.externalResourcesByPhase;
+    if (oldStatus !== newStatus) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const graphNodeCountChanged = (previous, data) => {
   if (previous.nodes.length !== data.nodes.length) {
     return true;
@@ -26,13 +37,20 @@ const graphNodeCountChanged = (previous, data) => {
 };
 
 const ReactFlowGraphComponent = (props) => {
-  const { data, onNodeSelectionChanged, nodeExecutionsById, dynamicWorkflows } = props;
+  const {
+    data,
+    onNodeSelectionChanged,
+    onMapTaskSelectionChanged,
+    nodeExecutionsById,
+    dynamicWorkflows,
+  } = props;
   const [state, setState] = useState({
-    data: data,
-    dynamicWorkflows: dynamicWorkflows,
+    data,
+    dynamicWorkflows,
     currentNestedView: {},
-    nodeExecutionsById: nodeExecutionsById,
-    onNodeSelectionChanged: onNodeSelectionChanged,
+    nodeExecutionsById,
+    onNodeSelectionChanged,
+    onMapTaskSelectionChanged,
     rfGraphJson: null,
   });
 
@@ -66,6 +84,7 @@ const ReactFlowGraphComponent = (props) => {
       root: state.data,
       nodeExecutionsById: state.nodeExecutionsById,
       onNodeSelectionChanged: state.onNodeSelectionChanged,
+      onMapTaskSelectionChanged: state.onMapTaskSelectionChanged,
       onAddNestedView: onAddNestedView,
       onRemoveNestedView: onRemoveNestedView,
       currentNestedView: state.currentNestedView,
@@ -79,7 +98,7 @@ const ReactFlowGraphComponent = (props) => {
       ...state,
       rfGraphJson: newRFGraphData,
     }));
-  }, [state.currentNestedView]);
+  }, [state.currentNestedView, state.nodeExecutionsById]);
 
   useEffect(() => {
     if (graphNodeCountChanged(state.data, data)) {
@@ -88,7 +107,10 @@ const ReactFlowGraphComponent = (props) => {
         data: data,
       }));
     }
-    if (nodeExecutionStatusChanged(state.nodeExecutionsById, nodeExecutionsById)) {
+    if (
+      nodeExecutionStatusChanged(state.nodeExecutionsById, nodeExecutionsById) ||
+      nodeExecutionResourcesChanged(state.nodeExecutionsById, nodeExecutionsById)
+    ) {
       setState((state) => ({
         ...state,
         nodeExecutionsById: nodeExecutionsById,
@@ -102,6 +124,13 @@ const ReactFlowGraphComponent = (props) => {
       onNodeSelectionChanged: onNodeSelectionChanged,
     }));
   }, [onNodeSelectionChanged]);
+
+  useEffect(() => {
+    setState((state) => ({
+      ...state,
+      onMapTaskSelectionChanged: onMapTaskSelectionChanged,
+    }));
+  }, [onMapTaskSelectionChanged]);
 
   const backgroundStyle = getRFBackground().nested;
 

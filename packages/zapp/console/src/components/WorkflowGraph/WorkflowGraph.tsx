@@ -5,17 +5,18 @@ import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGr
 import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { DataError } from 'components/Errors/DataError';
-import { NodeExecutionsContext } from 'components/Executions/contexts';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useQuery } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { createDebugLogger } from 'common/log';
 import { CompiledNode } from 'models/Node/types';
+import { ExternalResource } from 'models/Execution/types';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 
 export interface WorkflowGraphProps {
   onNodeSelectionChanged: (selectedNodes: string[]) => void;
   selectedNodes?: string[];
+  onMapTaskSelectionChanged: (selectedTask: ExternalResource[]) => void;
   workflow: Workflow;
   nodeExecutionsById?: any;
 }
@@ -56,7 +57,7 @@ export interface DynamicWorkflowMapping {
   dynamicExecutions: any[];
 }
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
-  const { onNodeSelectionChanged, nodeExecutionsById, workflow } = props;
+  const { onNodeSelectionChanged, onMapTaskSelectionChanged, nodeExecutionsById, workflow } = props;
   const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
   /**
    * Note:
@@ -112,6 +113,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
         nodeExecutionsById={nodeExecutionsById}
         data={merged}
         onNodeSelectionChanged={onNodeSelectionChanged}
+        onMapTaskSelectionChanged={onMapTaskSelectionChanged}
       />
     );
   };
@@ -120,11 +122,9 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
     return <NonIdealState title="Cannot render Workflow graph" description={error.message} />;
   } else {
     return (
-      <NodeExecutionsContext.Provider value={nodeExecutionsById}>
-        <WaitForQuery errorComponent={DataError} query={dynamicWorkflowQuery}>
-          {renderReactFlowGraph}
-        </WaitForQuery>
-      </NodeExecutionsContext.Provider>
+      <WaitForQuery errorComponent={DataError} query={dynamicWorkflowQuery}>
+        {renderReactFlowGraph}
+      </WaitForQuery>
     );
   }
 };

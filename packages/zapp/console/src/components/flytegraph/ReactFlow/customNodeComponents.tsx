@@ -3,14 +3,17 @@ import { useState, useEffect } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
-import { CatalogCacheStatus } from 'models/Execution/enums';
+import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
+import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
+import { whiteColor } from 'components/Theme/constants';
 import {
   COLOR_TASK_TYPE,
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
   getGraphNodeStyle,
   getNestedContainerStyle,
+  nodePhaseColorMapping,
 } from './utils';
 import { RFHandleProps } from './types';
 
@@ -200,6 +203,55 @@ export const ReactFlowStaticNode = ({ data }: any) => {
 };
 
 /**
+ * Component that renders a map task item within the mapped node.
+ * @param props.numberOfTasks number of tasks of certain completion phase
+ * @param props.color string value of color of the block
+ * @param props.phase phase of the current map task item
+ * @param props.onMapTaskSelectionChanged callback from the parent component
+ */
+
+interface MapTaskItemProps {
+  numberOfTasks: number;
+  color: string;
+  phase: TaskExecutionPhase;
+  setSelectedMapTask: (phase: TaskExecutionPhase) => void;
+  setSelectedNode: (val: boolean) => void;
+}
+
+const MapTaskItem = ({
+  numberOfTasks,
+  color,
+  phase,
+  setSelectedMapTask,
+  setSelectedNode,
+}: MapTaskItemProps) => {
+  const mapTaskStyles: React.CSSProperties = {
+    borderRadius: '2px',
+    backgroundColor: color,
+    color: whiteColor,
+    margin: '0 1px',
+    padding: '0 2px',
+    fontSize: '8px',
+    lineHeight: '14px',
+    minWidth: '14px',
+    textAlign: 'center',
+    cursor: 'pointer',
+  };
+
+  const handleMapTaskClick = (e) => {
+    e.stopPropagation();
+    setSelectedNode(true);
+    setSelectedMapTask(phase);
+  };
+
+  return (
+    <div style={mapTaskStyles} onClick={handleMapTaskClick}>
+      ×{numberOfTasks}
+    </div>
+  );
+};
+
+/**
  * Custom component used by ReactFlow.  Renders a label (text)
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
@@ -208,14 +260,18 @@ export const ReactFlowStaticNode = ({ data }: any) => {
 export const ReactFlowCustomTaskNode = ({ data }: any) => {
   const styles = getGraphNodeStyle(data.nodeType, data.nodeExecutionStatus);
   const onNodeSelectionChanged = data.onNodeSelectionChanged;
-  const [selectedNode, setSelectedNode] = useState(false);
+  const onMapTaskSelectionChanged = data.onMapTaskSelectionChanged;
+  const [selectedNode, setSelectedNode] = useState<boolean>(false);
+  const [selectedMapTask, setSelectedMapTask] = useState<TaskExecutionPhase | null>(null);
 
   useEffect(() => {
     if (selectedNode === true) {
       onNodeSelectionChanged(selectedNode);
       setSelectedNode(false);
+      onMapTaskSelectionChanged(selectedMapTask);
+      setSelectedMapTask(selectedMapTask);
     }
-  }, [selectedNode, onNodeSelectionChanged]);
+  }, [selectedNode, onNodeSelectionChanged, selectedMapTask, onMapTaskSelectionChanged]);
 
   const taskContainerStyle: React.CSSProperties = {
     position: 'absolute',
@@ -229,6 +285,19 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     padding: '.1rem .2rem',
     fontSize: '.3rem',
   };
+  const mapTaskContainerStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '-.82rem',
+    zIndex: 0,
+    right: '.15rem',
+  };
+  const taskNameStyle: React.CSSProperties = {
+    backgroundColor: nodePhaseColorMapping[data.nodeExecutionStatus].color,
+    color: 'white',
+    padding: '.1rem .2rem',
+    fontSize: '.4rem',
+    borderRadius: '.15rem',
+  };
   const cacheIconStyles: React.CSSProperties = {
     width: '8px',
     height: '8px',
@@ -236,15 +305,27 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     marginTop: '1px',
     color: COLOR_GRAPH_BACKGROUND,
   };
+  const mapTaskWrapper: React.CSSProperties = {
+    display: 'flex',
+  };
 
-  const handleClick = (_e) => {
+  const handleNodeClick = (_e) => {
     setSelectedNode(true);
+    setSelectedMapTask(null);
   };
 
   const renderTaskType = () => {
     return (
       <div style={taskContainerStyle}>
         <div style={taskTypeStyle}>{data.taskType}</div>
+      </div>
+    );
+  };
+
+  const renderTaskName = () => {
+    return (
+      <div style={mapTaskContainerStyle}>
+        <div style={taskNameStyle}>{data.text}</div>
       </div>
     );
   };
@@ -260,11 +341,45 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     }
   };
 
+  const renderMapTasks = (externalResourcesByPhase) => {
+    return (
+      <div style={mapTaskWrapper}>
+        {RENDER_ORDER.map((phase, id) => {
+          if (!externalResourcesByPhase.has(phase)) {
+            return null;
+          }
+          let color = nodePhaseColorMapping[phase].color;
+          if (selectedMapTask && selectedMapTask !== phase) {
+            color = 'gray';
+          }
+
+          const key = `${id}-${phase}`;
+          return (
+            <MapTaskItem
+              numberOfTasks={externalResourcesByPhase.get(phase).length}
+              color={color}
+              phase={phase}
+              setSelectedMapTask={setSelectedMapTask}
+              setSelectedNode={setSelectedNode}
+              key={key}
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
-    <div onClick={handleClick}>
-      {data.taskType ? renderTaskType() : null}
+    <div onClick={handleNodeClick}>
+      {data.nodeExternalResourcesByPhase
+        ? renderTaskName()
+        : data.taskType
+        ? renderTaskType()
+        : null}
       <div style={styles}>
-        {data.text}
+        {data.nodeExternalResourcesByPhase
+          ? renderMapTasks(data.nodeExternalResourcesByPhase)
+          : data.text}
         {renderCacheIcon(data.cacheStatus)}
       </div>
       {renderDefaultHandles(

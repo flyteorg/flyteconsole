@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconButton, Typography, Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
+import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { InfoIcon } from 'components/common/Icons/InfoIcon';
@@ -13,7 +14,12 @@ import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 import { Workflow } from 'models/Workflow/types';
-import { NodeExecution, NodeExecutionIdentifier, TaskExecution } from 'models/Execution/types';
+import {
+  ExternalResource,
+  NodeExecution,
+  NodeExecutionIdentifier,
+  TaskExecution,
+} from 'models/Execution/types';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
@@ -126,6 +132,7 @@ const tabIds = {
 
 interface NodeExecutionDetailsProps {
   nodeExecutionId: NodeExecutionIdentifier;
+  mapTask?: ExternalResource[] | null;
   onClose?: () => void;
 }
 
@@ -218,8 +225,21 @@ const WorkflowTabs: React.FC<{
  */
 export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProps> = ({
   nodeExecutionId,
+  mapTask,
   onClose,
 }) => {
+  const commonStyles = useCommonStyles();
+  const styles = useStyles();
+  const queryClient = useQueryClient();
+  const detailsContext = useNodeExecutionContext();
+
+  const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
+  const [dag, setDag] = useState<any>(null);
+  const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
+  const [shouldShowMapTaskInfo, setShouldShowMapTaskInfo] = useState<boolean>(
+    mapTask ? true : false,
+  );
+
   const isMounted = useRef(false);
   useEffect(() => {
     isMounted.current = true;
@@ -228,13 +248,6 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     };
   }, []);
 
-  const queryClient = useQueryClient();
-  const detailsContext = useNodeExecutionContext();
-
-  const [isReasonsVisible, setReasonsVisible] = React.useState(false);
-  const [dag, setDag] = React.useState<any>(null);
-  const [details, setDetails] = React.useState<NodeExecutionDetails | undefined>();
-
   const nodeExecutionQuery = useQuery<NodeExecution, Error>({
     ...makeNodeExecutionQuery(nodeExecutionId),
     // The selected NodeExecution has been fetched at this point, we don't want to
@@ -242,7 +255,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     staleTime: Infinity,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     let isCurrent = true;
     detailsContext.getNodeExecutionDetails(nodeExecution).then((res) => {
       if (isCurrent) {
@@ -255,9 +268,13 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     };
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     setReasonsVisible(false);
   }, [nodeExecutionId]);
+
+  useEffect(() => {
+    setShouldShowMapTaskInfo(mapTask ? true : false);
+  }, [mapTask, nodeExecutionId]);
 
   const nodeExecution = nodeExecutionQuery.data;
 
@@ -288,25 +305,51 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
   const reasons = getTaskExecutionDetailReasons(listTaskExecutionsQuery.data);
 
-  const commonStyles = useCommonStyles();
-  const styles = useStyles();
-  const displayName = details?.displayName ?? <Skeleton />;
+  const onBackClick = () => {
+    setShouldShowMapTaskInfo(false);
+  };
 
-  const isRunningPhase = React.useMemo(() => {
+  const headerTitle = useMemo(() => {
+    // eslint-disable-next-line no-useless-escape
+    const regex = /\-([\w\s-]+)\-/; // extract string between first and last dash
+
+    const mapTaskHeader = `${mapTask?.[0].externalId?.match(regex)?.[1]} of ${
+      nodeExecutionId.nodeId
+    }`;
+    const header = shouldShowMapTaskInfo ? mapTaskHeader : nodeExecutionId.nodeId;
+
+    return (
+      <Typography className={classnames(commonStyles.textWrapped, styles.title)} variant="h3">
+        <div>
+          {shouldShowMapTaskInfo && (
+            <IconButton onClick={onBackClick} size="small">
+              <ArrowBackIos />
+            </IconButton>
+          )}
+          {header}
+        </div>
+        <IconButton className={styles.closeButton} onClick={onClose} size="small">
+          <Close />
+        </IconButton>
+      </Typography>
+    );
+  }, [mapTask, nodeExecutionId, shouldShowMapTaskInfo]);
+
+  const isRunningPhase = useMemo(() => {
     return (
       nodeExecution?.closure.phase === NodeExecutionPhase.QUEUED ||
       nodeExecution?.closure.phase === NodeExecutionPhase.RUNNING
     );
   }, [nodeExecution]);
 
-  const handleReasonsVisibility = React.useCallback(() => {
-    setReasonsVisible((prevVisibility) => !prevVisibility);
-  }, []);
+  const handleReasonsVisibility = () => {
+    setReasonsVisible(!isReasonsVisible);
+  };
 
   const statusContent = nodeExecution ? (
     <div className={styles.statusContainer}>
       <div className={styles.statusHeaderContainer}>
-        <ExecutionStatusBadge phase={nodeExecution.closure.phase} type="node" />
+        <ExecutionStatusBadge phase={nodeExecution?.closure.phase} type="node" />
         {isRunningPhase && (
           <InfoIcon className={styles.reasonsIcon} onClick={handleReasonsVisibility} />
         )}
@@ -321,26 +364,32 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     <div className={styles.notRunStatus}>NOT RUN</div>
   );
 
-  const detailsContent = nodeExecution ? (
-    <>
-      <NodeExecutionCacheStatus taskNodeMetadata={nodeExecution.closure.taskNodeMetadata} />
-      <ExecutionTypeDetails details={details} execution={nodeExecution} />
-    </>
+  let detailsContent: JSX.Element | null = null;
+  if (nodeExecution) {
+    detailsContent = (
+      <>
+        <NodeExecutionCacheStatus taskNodeMetadata={nodeExecution.closure.taskNodeMetadata} />
+        <ExecutionTypeDetails details={details} execution={nodeExecution} />
+      </>
+    );
+  }
+
+  const tabsContent: JSX.Element | null = nodeExecution ? (
+    <NodeExecutionTabs
+      nodeExecution={nodeExecution}
+      shouldShowMapTaskInfo={shouldShowMapTaskInfo}
+      mapTask={mapTask}
+      taskTemplate={details?.taskTemplate}
+    />
   ) : null;
 
-  const tabsContent = nodeExecution ? (
-    <NodeExecutionTabs nodeExecution={nodeExecution} taskTemplate={details?.taskTemplate} />
-  ) : null;
+  const displayName = details?.displayName ?? <Skeleton />;
+
   return (
     <section className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <Typography className={classnames(commonStyles.textWrapped, styles.title)} variant="h3">
-            {nodeExecutionId.nodeId}
-            <IconButton className={styles.closeButton} onClick={onClose} size="small">
-              <Close />
-            </IconButton>
-          </Typography>
+          {headerTitle}
           <Typography
             className={classnames(commonStyles.textWrapped, styles.displayId)}
             variant="subtitle1"
