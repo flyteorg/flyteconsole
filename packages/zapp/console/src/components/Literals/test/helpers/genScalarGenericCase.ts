@@ -2,14 +2,11 @@ import { Protobuf } from 'flyteidl';
 import { TestCaseList } from '../types';
 import { getIValue } from './literalHelpers';
 
-const nullValueTestcases = {
+const nullValueTestcases: TestCaseList<Protobuf.IStruct> = {
   WITH_NULL_VAL: {
     value: {
       fields: {
-        test_field_name1: {
-          nullValue: Protobuf.NullValue.NULL_VALUE,
-          kind: 'nullValue',
-        },
+        test_field_name1: getIValue('nullValue', Protobuf.NullValue.NULL_VALUE),
       },
     },
     expected: {
@@ -17,14 +14,11 @@ const nullValueTestcases = {
     },
   },
 };
-const numberValueTestCases = {
+const numberValueTestCases: TestCaseList<Protobuf.IStruct> = {
   WITH_NUMBER_VAL: {
     value: {
       fields: {
-        test_field_name2: {
-          numberValue: 1,
-          kind: 'numberValue',
-        },
+        test_field_name2: getIValue('numberValue', 1),
       },
     },
     expected: {
@@ -34,10 +28,7 @@ const numberValueTestCases = {
   WITH_NUMBER_VAL_NULL: {
     value: {
       fields: {
-        test_field_name3: {
-          numberValue: null,
-          kind: 'numberValue',
-        },
+        test_field_name3: getIValue('numberValue', null),
       },
     },
     expected: {
@@ -45,7 +36,7 @@ const numberValueTestCases = {
     },
   },
 };
-const stringValueTestCases = {
+const stringValueTestCases: TestCaseList<Protobuf.IStruct> = {
   WITH_STRING_VAL: {
     value: {
       fields: {
@@ -68,7 +59,7 @@ const stringValueTestCases = {
   },
 };
 
-const boolValueTestCases = {
+const boolValueTestCases: TestCaseList<Protobuf.IStruct> = {
   WITH_BOOL_VAL: {
     value: {
       fields: {
@@ -101,21 +92,18 @@ const boolValueTestCases = {
   },
 };
 
-const structValueTestCases = {
+const structValueTestCases: TestCaseList<Protobuf.IStruct> = {
   WITH_STRUCT_VALUE: {
     value: {
       fields: {
-        test_struct_name: {
-          structValue: {
-            fields: {
-              struct_string_val_copy:
-                stringValueTestCases?.WITH_STRING_VAL?.value?.fields?.test_field_name4,
-              struct_bool_val_copy:
-                boolValueTestCases?.WITH_BOOL_VAL?.value?.fields?.test_field_name,
-            },
+        test_struct_name: getIValue('structValue', {
+          fields: {
+            struct_string_val_copy: stringValueTestCases.WITH_STRING_VAL.value?.fields
+              ?.test_field_name4 as Protobuf.IValue,
+            struct_bool_val_copy: boolValueTestCases.WITH_BOOL_VAL.value?.fields
+              ?.test_field_name as Protobuf.IValue,
           },
-          kind: 'structValue',
-        },
+        }),
       },
     },
     expected: {
@@ -126,16 +114,16 @@ const structValueTestCases = {
   },
 };
 
-const listValueTestCases = {
+const listValueTestCases: TestCaseList<Protobuf.IStruct> = {
   WITH_LIST_VALUE: {
     value: {
       fields: {
-        test_list_name: {
-          listValue: {
-            values: [structValueTestCases.WITH_STRUCT_VALUE.value.fields.test_struct_name],
-          },
-          kind: 'listValue',
-        },
+        test_list_name: getIValue('listValue', {
+          values: [
+            structValueTestCases.WITH_STRUCT_VALUE.value?.fields
+              ?.test_struct_name as Protobuf.IValue,
+          ],
+        }),
       },
     },
     expected: {
@@ -152,4 +140,4 @@ export default {
   ...boolValueTestCases,
   ...structValueTestCases,
   ...listValueTestCases,
-} as any as TestCaseList<Protobuf.Struct>;
+};

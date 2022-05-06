@@ -2,7 +2,7 @@ import { Core } from 'flyteidl';
 import { generateBlobType } from './literalHelpers';
 import { TestCaseList } from '../types';
 
-export default {
+const blobTestcases: TestCaseList<Core.IBlob> = {
   single_CSV_BLOB: {
     value: generateBlobType('csv', Core.BlobType.BlobDimensionality.SINGLE, '1'),
     expected: {
@@ -14,7 +14,6 @@ export default {
   },
   multi_part_CSV_BLOB: {
     value: generateBlobType('csv', Core.BlobType.BlobDimensionality.MULTIPART, '2'),
-    description: 'low1',
     expected: {
       result_var: {
         type: 'multi-part (csv) blob',
@@ -24,7 +23,6 @@ export default {
   },
   single_blob_BLOB: {
     value: generateBlobType(undefined, Core.BlobType.BlobDimensionality.SINGLE, '3'),
-    description: 'low1',
     expected: {
       result_var: {
         type: 'single blob',
@@ -34,7 +32,6 @@ export default {
   },
   single_multi_part_BLOB: {
     value: generateBlobType(undefined, Core.BlobType.BlobDimensionality.MULTIPART, '4'),
-    description: 'low1',
     expected: {
       result_var: {
         type: 'multi-part blob',
@@ -42,4 +39,6 @@ export default {
       },
     },
   },
-} as TestCaseList<Core.Blob>;
+};
+
+export default blobTestcases;

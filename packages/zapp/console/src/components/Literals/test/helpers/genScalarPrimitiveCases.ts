@@ -4,7 +4,7 @@ import { long } from 'test/utils';
 import { getPrimitive } from './literalHelpers';
 import { TestCaseList } from '../types';
 
-export default {
+const scalarPrimitiveTestCases: TestCaseList<Core.IPrimitive> = {
   INT_WITH_LARGE_LOW: {
     value: getPrimitive('integer', { low: 1642627611, high: 0, unsigned: false } as Long),
     expected: { result_var: 1642627611 },
@@ -85,4 +85,6 @@ export default {
     value: getPrimitive('duration', { seconds: long(10000), nanos: 0 }),
     expected: { result_var: '2h 46m 40s' },
   },
-} as TestCaseList<Core.IPrimitive>;
+};
+
+export default scalarPrimitiveTestCases;

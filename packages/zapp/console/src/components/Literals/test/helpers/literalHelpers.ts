@@ -54,7 +54,16 @@ const getScalar = (
     | Protobuf.IStruct
     | Core.IStructuredDataset
     | Core.IUnion,
-  scalarType: any,
+  scalarType:
+    | 'primitive'
+    | 'blob'
+    | 'binary'
+    | 'schema'
+    | 'noneType'
+    | 'error'
+    | 'generic'
+    | 'structuredDataset'
+    | 'union',
 ): Core.IScalar & Pick<Core.Scalar, 'value'> => {
   return {
     [scalarType]: value,
@@ -74,7 +83,16 @@ export const getScalarLiteral = (
     | Protobuf.IStruct
     | Core.IStructuredDataset
     | Core.IUnion,
-  scalarType: any,
+  scalarType:
+    | 'primitive'
+    | 'blob'
+    | 'binary'
+    | 'schema'
+    | 'noneType'
+    | 'error'
+    | 'generic'
+    | 'structuredDataset'
+    | 'union',
 ): Core.ILiteral & Pick<Core.Literal, 'value' | 'scalar'> => {
   return {
     scalar: getScalar(value, scalarType),

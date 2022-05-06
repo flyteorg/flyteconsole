@@ -23,7 +23,7 @@ const generateStructuredDataset = (columnName: string, uri: string, literalType)
   };
 };
 
-const sasWithMapValueTypeColumns: any = Object.keys(simple)
+const sasWithMapValueTypeColumns: TestCaseList<Core.IStructuredDataset> = Object.keys(simple)
   .map((simpleTypeKey, index) => {
     const simpleType = simple[simpleTypeKey];
 
@@ -49,7 +49,7 @@ const sasWithMapValueTypeColumns: any = Object.keys(simple)
   })
   .reduce((acc, v) => ({ ...acc, ...v }), {});
 
-const sasWithCollectionTypeColumns: any = Object.keys(simple)
+const sasWithCollectionTypeColumns: TestCaseList<Core.IStructuredDataset> = Object.keys(simple)
   .map((simpleTypeKey, index) => {
     const simpleType = simple[simpleTypeKey];
 
@@ -76,7 +76,7 @@ const sasWithCollectionTypeColumns: any = Object.keys(simple)
   .slice(0, 1)
   .reduce((acc, v) => ({ ...acc, ...v }), {});
 
-const sdsWithSimpleTypeColumns: any = Object.keys(simple)
+const sdsWithSimpleTypeColumns: TestCaseList<Core.IStructuredDataset> = Object.keys(simple)
   .map((simpleTypeKey, index) => {
     const literalType = simple[simpleTypeKey];
 
@@ -95,7 +95,9 @@ const sdsWithSimpleTypeColumns: any = Object.keys(simple)
   })
   .reduce((acc, v) => ({ ...acc, ...v }), {});
 
-const sasWithSchemaColumns = Object.keys(Core.SchemaType.SchemaColumn.SchemaColumnType)
+const sasWithSchemaColumns: TestCaseList<Core.IStructuredDataset> = Object.keys(
+  Core.SchemaType.SchemaColumn.SchemaColumnType,
+)
   .map((simpleTypeKey, index) => {
     const literalType = {
       schema: {
@@ -126,4 +128,4 @@ export default {
   ...sasWithSchemaColumns,
   ...sasWithCollectionTypeColumns,
   ...sasWithMapValueTypeColumns,
-} as any as TestCaseList<Core.IStructuredDataset>;
+};

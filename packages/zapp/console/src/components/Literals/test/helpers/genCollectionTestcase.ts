@@ -1,30 +1,23 @@
 import { Core } from 'flyteidl';
 import { TestCaseList } from '../types';
-import { generateBlobType, getPrimitive } from './literalHelpers';
+import { generateBlobType, getPrimitive, getScalarLiteral } from './literalHelpers';
 
-const collection = {
+const collection: TestCaseList<Core.ILiteral> = {
   COL_WITH_SCALARTYPE_PRIMITIVE: {
     value: {
-      scalar: {
-        primitive: getPrimitive('floatValue', 2.1),
-        value: 'primitive',
-      },
-      value: 'scalar',
-    } as Core.ILiteral,
+      ...getScalarLiteral(getPrimitive('floatValue', 2.1), 'primitive'),
+    },
     expected: { result_var: [2.1] },
   },
   COL_WITH_SCALARTYPE_BLOB: {
     value: {
-      scalar: {
-        blob: generateBlobType('csv', Core.BlobType.BlobDimensionality.SINGLE, '1'),
-        value: 'blob',
-      },
-      value: 'scalar',
-    } as Core.ILiteral,
+      ...getScalarLiteral(
+        generateBlobType('csv', Core.BlobType.BlobDimensionality.SINGLE, '1'),
+        'blob',
+      ),
+    },
     expected: { result_var: [{ type: 'single (csv) blob', uri: '1' }] },
   },
 };
 
-export default {
-  ...collection,
-} as any as TestCaseList<Core.ILiteral>;
+export default collection;

@@ -32,15 +32,18 @@ const literalTestCases = {
 };
 
 describe('scalar literal', () => {
-  const scalarTestTypes = Object.keys(literalTestCases?.scalar!);
-  scalarTestTypes.map((scalarTestType) => {
+  const scalarTestCases = literalTestCases.scalar;
+  const scalarType = Object.keys(scalarTestCases);
+
+  scalarType.map((scalarTestType) => {
     describe(scalarTestType, () => {
-      const cases = literalTestCases?.scalar?.[scalarTestType];
+      const cases = scalarTestCases[scalarTestType];
+
       Object.keys(cases || {}).map((testKey) => {
-        const { value, expected } = cases?.[testKey]!;
+        const { value, expected } = cases[testKey];
 
         it(`${testKey}: should return ${expected} for ${value}`, () => {
-          const scalar = { result_var: { ...getScalarLiteral(value, scalarTestType) } };
+          const scalar = { result_var: { ...getScalarLiteral(value, scalarTestType as any) } };
           const result = transformLiterals(scalar as any);
           expect(result).toEqual(expected);
         });
@@ -50,28 +53,30 @@ describe('scalar literal', () => {
 });
 
 describe('collection literal', () => {
-  const cases = literalTestCases?.collection;
-  Object.keys(cases || {}).map((testKey) => {
-    const { value, expected } = cases?.[testKey]!;
+  const cases = literalTestCases.collection;
+
+  Object.keys(cases).map((testKey) => {
+    const { value, expected } = cases[testKey];
 
     it(`${testKey}: should return ${expected} for ${value}`, () => {
       const collection = { result_var: { ...getCollection([value]) } };
 
-      const result = transformLiterals(collection as any);
+      const result = transformLiterals(collection);
       expect(result).toEqual(expected);
     });
   });
 });
 
 describe('map literal', () => {
-  const cases = literalTestCases?.map;
-  Object.keys(cases || {}).map((testKey) => {
-    const { value, expected } = cases?.[testKey]!;
+  const cases = literalTestCases.map;
+
+  Object.keys(cases).map((testKey) => {
+    const { value, expected } = cases[testKey];
 
     it(`${testKey}: should return ${expected} for ${value}`, () => {
       const collection = { result_var: { ...getMap({ value }) } };
 
-      const result = transformLiterals(collection as any);
+      const result = transformLiterals(collection);
       expect(result).toEqual(expected);
     });
   });

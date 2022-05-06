@@ -1,7 +1,9 @@
 import { Core } from 'flyteidl';
 import { TestCaseList } from '../types';
 
-const schemaColumnTypes = Object.keys(Core.SchemaType.SchemaColumn.SchemaColumnType)
+const schemaColumnTypes: TestCaseList<Core.ISchema> = Object.keys(
+  Core.SchemaType.SchemaColumn.SchemaColumnType,
+)
   .map((key, index) => ({
     [`SCHEMA_WITH_${key}`]: {
       value: {
@@ -22,10 +24,9 @@ const schemaColumnTypes = Object.keys(Core.SchemaType.SchemaColumn.SchemaColumnT
       ...acc,
       ...v,
     };
-  }, {}) as any;
+  }, {});
 
-export default {
-  ...schemaColumnTypes,
+const schemaTestCases: TestCaseList<Core.ISchema> = {
   SCHEMA_WITHOUT_TYPE: {
     value: {
       uri: 'test7',
@@ -37,4 +38,9 @@ export default {
       result_var: { uri: 'test7', columns: [`test7 (unknown)`] },
     },
   },
-} as TestCaseList<Core.ISchema>;
+};
+
+export default {
+  ...schemaColumnTypes,
+  ...schemaTestCases,
+};

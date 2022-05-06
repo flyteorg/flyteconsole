@@ -1,11 +1,13 @@
 import { Core } from 'flyteidl';
 import { TestCaseList } from '../types';
 
-export default {
+const scalarNoneTestCase: TestCaseList<Core.IVoid> = {
   VOID_TYPE: {
     value: {},
     expected: {
       result_var: '(empty)',
     },
   },
-} as TestCaseList<Core.IVoid>;
+};
+
+export default scalarNoneTestCase;

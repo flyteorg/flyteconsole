@@ -1,7 +1,7 @@
 import { Core } from 'flyteidl';
 import { TestCaseList } from '../types';
 
-export default {
+const scalarErrorTestCases: TestCaseList<Core.IError> = {
   ERROR_FULL: {
     value: {
       failedNodeId: '1',
@@ -33,4 +33,6 @@ export default {
       result_var: { error: undefined, nodeId: undefined },
     },
   },
-} as TestCaseList<Core.IError>;
+};
+
+export default scalarErrorTestCases;
