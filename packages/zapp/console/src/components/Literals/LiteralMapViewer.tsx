@@ -30,9 +30,5 @@ export const LiteralMapViewer: React.FC<{
 
   const transformedLiterals = transformLiterals(literals);
 
-  return (
-    <>
-      <ReactJsonViewWrapper src={transformedLiterals} />
-    </>
-  );
+  return <ReactJsonViewWrapper src={transformedLiterals} />;
 };
