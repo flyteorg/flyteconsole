@@ -85,4 +85,4 @@ export default {
     value: getPrimitive('duration', { seconds: long(10000), nanos: 0 }),
     expected: { result_var: '2h 46m 40s' },
   },
-} as any as TestCaseList<Core.IPrimitive>;
+} as TestCaseList<Core.IPrimitive>;

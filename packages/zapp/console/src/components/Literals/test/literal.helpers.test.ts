@@ -1,5 +1,5 @@
 import { Core } from 'flyteidl';
-import { transformLiteralMap } from '../helpers';
+import { transformLiterals } from '../helpers';
 
 import {
   primitive,
@@ -41,7 +41,7 @@ describe('scalar literal', () => {
 
         it(`${testKey}: should return ${expected} for ${value}`, () => {
           const scalar = { result_var: { ...getScalarLiteral(value, scalarTestType) } };
-          const result = transformLiteralMap(scalar as any);
+          const result = transformLiterals(scalar as any);
           expect(result).toEqual(expected);
         });
       });
@@ -57,7 +57,7 @@ describe('collection literal', () => {
     it(`${testKey}: should return ${expected} for ${value}`, () => {
       const collection = getCollection([value]);
 
-      const result = transformLiteralMap(collection as any);
+      const result = transformLiterals(collection as any);
       expect(result).toEqual(expected);
     });
   });
@@ -71,7 +71,7 @@ describe('map literal', () => {
     it(`${testKey}: should return ${expected} for ${value}`, () => {
       const collection = getMap({ value });
 
-      const result = transformLiteralMap(collection as any);
+      const result = transformLiterals(collection as any);
       expect(result).toEqual(expected);
     });
   });

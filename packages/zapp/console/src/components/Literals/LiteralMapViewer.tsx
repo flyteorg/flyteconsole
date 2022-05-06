@@ -1,7 +1,7 @@
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
 import { LiteralMap } from 'models/Common/types';
 import * as React from 'react';
-import { transformLiteralMap } from './helpers';
+import { transformLiterals } from './helpers';
 import { NoneTypeValue } from './Scalar/NoneTypeValue';
 
 export const NoDataIsAvailable = () => {
@@ -28,7 +28,7 @@ export const LiteralMapViewer: React.FC<{
     return <NoneTypeValue />;
   }
 
-  const transformedLiterals = transformLiteralMap(literals);
+  const transformedLiterals = transformLiterals(literals);
 
   return (
     <>

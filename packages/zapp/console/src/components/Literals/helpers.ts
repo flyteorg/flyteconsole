@@ -1,32 +1,35 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
-import { sortedObjectEntries, timestampToDate } from 'common/utils';
-import { Core } from 'flyteidl';
+import { timestampToDate } from 'common/utils';
+import { Core, Protobuf } from 'flyteidl';
 import * as Long from 'long';
-import {
-  BlobDimensionality,
-  ProtobufListValue,
-  ProtobufStruct,
-  ProtobufValue,
-  SchemaColumnType,
-} from 'models/Common/types';
+import { BlobDimensionality, SchemaColumnType } from 'models/Common/types';
+
+const DEFAULT_UNSUPPORTED = 'This type is not yet supported';
 
 // PRIMITIVE
-function processPrimitive(primitive: Core.IPrimitive) {
-  const type = (primitive as Core.Primitive).value!;
+function processPrimitive(primitive?: (Core.IPrimitive & Pick<Core.Primitive, 'value'>) | null) {
+  if (!primitive) {
+    return 'invalid primitive';
+  }
+
+  const type = primitive.value;
+
   switch (type) {
     case 'datetime':
-      return formatDateUTC(timestampToDate(primitive.datetime!));
+      return formatDateUTC(timestampToDate(primitive.datetime as Protobuf.Timestamp));
     case 'duration':
-      return protobufDurationToHMS(primitive.duration!);
+      return protobufDurationToHMS(primitive.duration as Protobuf.Duration);
     case 'integer': {
-      return Long.fromValue(primitive[type] as Long).toNumber();
+      return Long.fromValue(primitive.integer as Long).toNumber();
     }
     case 'boolean':
+      return primitive.boolean;
     case 'floatValue':
-      return primitive[type];
+      return primitive.floatValue;
     case 'stringValue':
-    default:
       return `${primitive[type]}`;
+    default:
+      return 'unknown';
   }
 }
 
@@ -36,31 +39,50 @@ const dimensionalityStrings: Record<BlobDimensionality, string> = {
   [BlobDimensionality.MULTIPART]: 'multi-part',
 };
 
-function processBlobType(blobType: Core.IBlobType, typePrefix: string = '') {
-  const formatString = blobType && blobType.format ? ` (${blobType.format})` : '';
-  const typeString = `${dimensionalityStrings[blobType!.dimensionality!]}${formatString}`;
+function processBlobType(blobType?: Core.IBlobType | null) {
+  if (!blobType) {
+    return 'invalid blob type';
+  }
 
-  return `${typePrefix}${typeString} blob`;
+  const formatString = blobType.format ? ` (${blobType.format})` : '';
+  const dimensionality = blobType.dimensionality;
+  const dimensionalityString =
+    dimensionality !== null && dimensionality !== undefined
+      ? dimensionalityStrings[dimensionality]
+      : '';
+  const typeString = `${dimensionalityString}${formatString}`;
+
+  return `${typeString} blob`;
 }
 
-function processBlob(blob: Core.IBlob | Core.Blob) {
-  const type = blob?.metadata?.type;
+function processBlob(blob?: Core.IBlob | null) {
+  if (!blob) {
+    return 'invalid blob';
+  }
+
+  const type = blob.metadata?.type;
 
   return {
-    type: processBlobType(type!),
+    type: processBlobType(type),
     uri: blob.uri,
   };
 }
 
 // BINARY
-function processBinary(binary: Core.IBinary) {
+function processBinary(binary?: Core.IBinary | null) {
+  const tag = binary?.tag;
+
+  if (!tag) {
+    return 'invalid binary';
+  }
+
   return {
-    tag: `${binary?.tag!} (binary data not shown)`,
+    tag: `${tag} (binary data not shown)`,
   };
 }
 
 // SCHEMA
-export function columnTypeToString(type: SchemaColumnType) {
+export function columnTypeToString(type?: SchemaColumnType | null) {
   switch (type) {
     case SchemaColumnType.BOOLEAN:
       return 'boolean';
@@ -79,95 +101,114 @@ export function columnTypeToString(type: SchemaColumnType) {
   }
 }
 
-function processSchemaType(schemaType: Core.ISchemaType, shortString = false) {
-  let columns;
-  if (schemaType?.columns?.length) {
-    columns = schemaType?.columns.map((column) =>
-      shortString
-        ? `${columnTypeToString(column.type!)}`
-        : `${column.name!} (${columnTypeToString(column.type!)})`,
-    );
-  }
+function processSchemaType(schemaType?: Core.ISchemaType | null, shortString = false) {
+  const columns =
+    schemaType?.columns?.length &&
+    schemaType.columns.map((column) => {
+      return shortString
+        ? `${columnTypeToString(column.type)}`
+        : `${column.name} (${columnTypeToString(column.type)})`;
+    });
 
   return columns;
 }
 
-function processSchema(schema: Core.ISchema) {
-  const columns = processSchemaType(schema?.type!);
+function processSchema(schema?: Core.ISchema | null) {
+  if (!schema) {
+    return 'invalid schema';
+  }
+
+  const uri = schema.uri;
+  const columns = processSchemaType(schema.type);
 
   return {
-    uri: schema.uri,
+    ...(uri && { uri }),
     ...(columns && { columns }),
   };
 }
 
 // NONE
 /* eslint-disable @typescript-eslint/no-unused-vars */
-function processNone(none?: Core.IVoid) {
+function processNone(none?: Core.IVoid | null) {
   return '(empty)';
 }
 
 // TODO: FC#450 ass support for union types
-function processUnionType(union: Core.IUnionType, shortString = false) {
-  return 'This type is not yet supported';
+function processUnionType(union?: Core.IUnionType | null, shortString = false) {
+  return DEFAULT_UNSUPPORTED;
 }
 
 function processUnion(union: Core.IUnion) {
-  return 'This type is not yet supported';
+  return DEFAULT_UNSUPPORTED;
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 // ERROR
-function processError(error: Core.IError) {
+function processError(error?: Core.IError | null) {
   return {
-    error: error.message,
-    nodeId: error.failedNodeId,
+    error: error?.message,
+    nodeId: error?.failedNodeId,
   };
 }
 
-// GENERIC -- not done
-function processProtobufStructValue(struct: ProtobufStruct) {
-  const { fields } = struct;
-  const res = Object.keys(fields)
-    .map((v) => {
-      return { [v]: processProtobufValue(fields[v]) };
-    })
-    .reduce((acc, v) => ({ ...acc, ...v }), {});
+function processProtobufStructValue(struct?: Protobuf.IStruct | null) {
+  if (!struct) {
+    return 'invalid generic struct value';
+  }
+
+  const fields = struct?.fields;
+  const res =
+    fields &&
+    Object.keys(fields)
+      .map((v) => {
+        return { [v]: processGenericValue(fields[v]) };
+      })
+      .reduce((acc, v) => ({ ...acc, ...v }), {});
 
   return res;
 }
 
-function processProtobufValue(value: ProtobufValue) {
-  switch (value.kind) {
+function processGenericValue(value: Protobuf.IValue & Pick<Protobuf.Value, 'kind'>) {
+  const kind = value.kind;
+
+  switch (kind) {
     case 'nullValue':
       return '(empty)';
     case 'listValue': {
-      const list = value.listValue as ProtobufListValue;
-      return list?.values?.map((x) => processProtobufValue(x));
+      const list = value.listValue;
+      return list?.values?.map((x) => processGenericValue(x));
     }
     case 'structValue':
-      return processProtobufStructValue(value?.structValue as ProtobufStruct);
+      return processProtobufStructValue(value?.structValue);
+    case 'numberValue':
+    case 'stringValue':
+    case 'boolValue':
+      return value[kind];
     default:
-      return value[value.kind];
+      return 'unknown';
   }
 }
 
-function processGeneric(struct: ProtobufStruct) {
+function processGeneric(struct?: Protobuf.IStruct | null) {
+  if (!struct || !struct?.fields) {
+    return null;
+  }
+
   const { fields } = struct;
   const mapContent = Object.keys(fields)
     .map((key) => {
       const value = fields[key];
-      return { [key]: processProtobufValue(value) };
+      return { [key]: processGenericValue(value) };
     })
     .reduce((acc, v) => {
       return { ...acc, ...v };
-    }, {} as any);
+    }, {});
 
   return mapContent;
 }
 
 // SIMPLE
-export function processSimpleType(simpleType: Core.SimpleType) {
+export function processSimpleType(simpleType?: Core.SimpleType | null) {
   switch (simpleType) {
     case Core.SimpleType.NONE:
       return 'none';
@@ -189,60 +230,70 @@ export function processSimpleType(simpleType: Core.SimpleType) {
       return 'error';
     case Core.SimpleType.STRUCT:
       return 'struct';
+    default:
+      return 'unknown';
   }
 }
 
-function processEnumType(enumType: Core.IEnumType) {
+function processEnumType(enumType?: Core.IEnumType | null) {
   return enumType?.values || [];
 }
 
-function processLiteralType(literalType: Core.ILiteralType) {
-  const type = (literalType as Core.LiteralType)?.type;
+function processLiteralType(
+  literalType?: (Core.ILiteralType & Pick<Core.LiteralType, 'type'>) | null,
+) {
+  const type = literalType?.type;
 
   switch (type) {
     case 'simple':
-      return processSimpleType(literalType?.simple!);
+      return processSimpleType(literalType?.simple);
     case 'schema':
-      return `schema (${processSchemaType(literalType?.schema!, true)})`;
+      return `schema (${processSchemaType(literalType?.schema, true)})`;
     case 'collectionType':
-      return `collection of ${processLiteralType(literalType?.collectionType!)}`;
+      return `collection of ${processLiteralType(literalType?.collectionType)}`;
     case 'mapValueType':
-      return `map value of ${processLiteralType(literalType?.mapValueType!)}`;
+      return `map value of ${processLiteralType(literalType?.mapValueType)}`;
     case 'blob':
-      return processBlobType(literalType?.blob!);
+      return processBlobType(literalType?.blob);
     case 'enumType':
-      return `enum (${processEnumType(literalType?.enumType!)})`;
+      return `enum (${processEnumType(literalType?.enumType)})`;
     case 'structuredDatasetType':
-      return processStructuredDatasetType(literalType?.structuredDatasetType!);
+      return processStructuredDatasetType(literalType?.structuredDatasetType);
     case 'unionType':
-      return processUnionType(literalType?.unionType!, true);
+      return processUnionType(literalType?.unionType, true);
     default:
-      return 'This type is not yet supported';
+      return DEFAULT_UNSUPPORTED;
   }
 }
 
-function processStructuredDatasetType(structuredDatasetType: Core.IStructuredDatasetType) {
-  const retJson = {} as any;
-
-  const { columns, format } = structuredDatasetType;
-
-  if (format) {
-    retJson.format = format;
+function processStructuredDatasetType(structuredDatasetType?: Core.IStructuredDatasetType | null) {
+  if (!structuredDatasetType) {
+    return {};
   }
 
-  if (columns && (columns as Core.StructuredDatasetType.IDatasetColumn[])?.length) {
-    retJson.columns = columns
-      .map(({ name, literalType }) => [name, processLiteralType(literalType!)])
+  const { columns, format } = structuredDatasetType;
+  const processedColumns =
+    columns?.length &&
+    columns
+      .map(({ name, literalType }) => [name, processLiteralType(literalType)])
       .reduce((acc, v) => {
         acc[v[0]] = v[1];
         return acc;
       }, []);
-  }
 
-  return retJson;
+  const a = {
+    ...(format && { format }),
+    ...(processedColumns && { columns: processedColumns }),
+  };
+
+  return a;
 }
 
-function processStructuredDataset(structuredDataSet: Core.IStructuredDataset) {
+function processStructuredDataset(structuredDataSet?: Core.IStructuredDataset | null) {
+  if (!structuredDataSet) {
+    return DEFAULT_UNSUPPORTED;
+  }
+
   const retJson = {} as any;
   const { uri, metadata } = structuredDataSet;
 
@@ -250,68 +301,86 @@ function processStructuredDataset(structuredDataSet: Core.IStructuredDataset) {
     retJson.uri = uri;
   }
 
-  const structuredDatasetType = metadata?.structuredDatasetType!;
+  const structuredDatasetType = processStructuredDatasetType(metadata?.structuredDatasetType);
 
   return {
-    ...retJson,
-    ...processStructuredDatasetType(structuredDatasetType),
+    ...(uri && { uri }),
+    ...structuredDatasetType,
   };
 }
 
-function processScalar(scalar: Core.Scalar | Core.IScalar) {
-  const type = (scalar as Core.Scalar).value;
-  const value = scalar[type!];
+function processScalar(scalar?: (Core.IScalar & Pick<Core.Scalar, 'value'>) | null) {
+  const type = scalar?.value;
 
   switch (type) {
     case 'primitive':
-      return processPrimitive(value as Core.IPrimitive);
+      return processPrimitive(scalar?.primitive);
     case 'blob':
-      return processBlob(value as Core.IBlob);
+      return processBlob(scalar?.blob);
     case 'binary':
-      return processBinary(value as Core.IBinary);
+      return processBinary(scalar?.binary);
     case 'schema':
-      return processSchema(value as Core.ISchema);
+      return processSchema(scalar?.schema);
     case 'noneType':
-      return processNone(value as Core.IVoid);
+      return processNone(scalar?.noneType);
     case 'error':
-      return processError(value as Core.IError);
+      return processError(scalar?.error);
     case 'generic':
-      return processGeneric(value as ProtobufStruct);
+      return processGeneric(scalar?.generic);
     case 'structuredDataset':
-      return processStructuredDataset(value as Core.IStructuredDataset);
+      return processStructuredDataset(scalar?.structuredDataset);
     case 'union':
-      return processUnion(value as Core.IUnion);
+      return processUnion(scalar?.union as Core.IUnion);
     default:
-      return 'This type is not yet supported';
+      return DEFAULT_UNSUPPORTED;
   }
 }
 
-function processCollection(collection: Core.ILiteralCollection) {
-  return collection?.literals?.map((literal) => processLiteralValue(literal));
+function processCollection(collection?: Core.ILiteralCollection | null) {
+  const literals = collection?.literals;
+
+  if (!literals) {
+    return 'invalid collection';
+  }
+
+  return literals?.map((literal) => processLiteral(literal));
 }
 
-function processMap(map: Core.ILiteralMap) {
-  return transformLiteralMap(map.literals as Core.ILiteralMap);
+function processMap(map?: Core.ILiteralMap | null) {
+  const literals = map?.literals;
+
+  if (!literals) {
+    return 'invalid map';
+  }
+
+  return transformLiterals(literals);
 }
 
-function processLiteralValue(literal: Core.ILiteral) {
-  const type = (literal as Core.Literal).value;
+function processLiteral(literal?: Core.ILiteral & Pick<Core.Literal, 'value'>) {
+  const type = literal?.value;
+
+  if (!literal || !type || !literal[type]) {
+    return 'invalid literal';
+  }
+
+  // ok to cast below since the two checks above ensure that
+  // we're not passing invalid values
   switch (type) {
     case 'scalar':
-      return processScalar(literal.scalar!);
+      return processScalar(literal.scalar);
     case 'collection':
-      return processCollection(literal.collection!);
+      return processCollection(literal.collection);
     case 'map':
-      return processMap(literal.map!);
+      return processMap(literal.map);
     default:
-      return 'unknown type';
+      return DEFAULT_UNSUPPORTED;
   }
 }
 
-export function transformLiteralMap(json: Core.ILiteralMap) {
-  const obj = sortedObjectEntries(json as any)
+export function transformLiterals(json: { [k: string]: Core.ILiteral }) {
+  const obj = Object.entries(json)
     .map(([key, literal]) => ({
-      [key]: processLiteralValue(literal as Core.Literal),
+      [key]: processLiteral(literal),
     }))
     .reduce(
       (acc, cur) => ({

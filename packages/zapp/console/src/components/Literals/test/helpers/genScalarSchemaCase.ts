@@ -5,7 +5,7 @@ const schemaColumnTypes = Object.keys(Core.SchemaType.SchemaColumn.SchemaColumnT
   .map((key, index) => ({
     [`SCHEMA_WITH_${key}`]: {
       value: {
-        uri: index,
+        uri: `s3/${index}`,
         type: {
           columns: [
             { name: 'name' + index, type: Core.SchemaType.SchemaColumn.SchemaColumnType[key] },
@@ -13,7 +13,7 @@ const schemaColumnTypes = Object.keys(Core.SchemaType.SchemaColumn.SchemaColumnT
         },
       },
       expected: {
-        result_var: { uri: index, columns: [`name${index} (${key.toLocaleLowerCase()})`] },
+        result_var: { uri: `s3/${index}`, columns: [`name${index} (${key.toLocaleLowerCase()})`] },
       },
     },
   }))
