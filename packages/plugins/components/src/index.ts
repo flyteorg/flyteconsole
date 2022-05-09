@@ -1,2 +1,2 @@
 export { NavBar } from './NavBar';
-export { AppInfo } from './AppInfo';
+export { AppInfo, type VersionInfo } from './AppInfo';

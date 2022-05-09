@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { AppInfo } from '@flyteconsole/components';
+import { AppInfo, VersionInfo } from '@flyteconsole/components';
 import { FlyteLogo } from '@flyteconsole/ui-atoms';
 import { useCommonStyles } from 'components/common/styles';
 import * as React from 'react';
@@ -27,21 +27,21 @@ export const DefaultAppBarContent: React.FC = () => {
   const styles = useStyles();
   const { adminVersion } = useAdminVersion();
 
-  const versions = [
+  const versions: VersionInfo[] = [
     {
       name: 'UI Version',
       version: platformVersion,
-      URL: `https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`,
+      url: `https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`,
     },
     {
       name: 'Admin Version',
       version: adminVersion,
-      URL: `https://github.com/flyteorg/flyteadmin/releases/tag/v${adminVersion}`,
+      url: `https://github.com/flyteorg/flyteadmin/releases/tag/v${adminVersion}`,
     },
     {
       name: 'Google Analytics',
       version: env.DISABLE_GA === 'false' ? 'Active' : 'Inactive',
-      URL: 'https://github.com/flyteorg/flyteconsole#google-analytics',
+      url: 'https://github.com/flyteorg/flyteconsole#google-analytics',
     },
   ];
 

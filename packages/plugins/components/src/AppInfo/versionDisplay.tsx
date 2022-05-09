@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type VersionInfo = {
+export type VersionInfo = {
   name: string;
   version: string;
   url: string;

@@ -11,6 +11,8 @@ import { InfoIcon } from '@flyteconsole/ui-atoms';
 import CloseIcon from '@material-ui/icons/Close';
 import { VersionDisplay, VersionDisplayProps } from './versionDisplay';
 
+export type { VersionInfo } from './versionDisplay';
+
 const useStyles = makeStyles((theme: Theme) => ({
   iconButton: {
     cursor: 'pointer',

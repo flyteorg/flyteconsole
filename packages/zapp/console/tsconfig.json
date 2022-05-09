@@ -3,6 +3,9 @@
     "compilerOptions": {
         "baseUrl": "./src",
         "outDir": "./dist",
+        "paths": {
+            "@flyteconsole/*": ["../../../composites/*/src", "../../../plugins/*/src"]
+        },
 
         // TODO: this items should be removed when violations are fixed:
         "noUnusedLocals": false,
