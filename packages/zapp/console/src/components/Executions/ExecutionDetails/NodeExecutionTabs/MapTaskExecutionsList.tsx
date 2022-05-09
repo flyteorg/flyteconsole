@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { ExternalResource } from 'models/Execution/types';
-import { NewTargetLink } from 'components/common/NewTargetLink';
-import { nodePhaseColorMapping } from 'components/flytegraph/ReactFlow/utils';
-import { whiteColor } from 'components/Theme/constants';
 import { Core } from 'flyteidl';
 import { Typography } from '@material-ui/core';
-import t from './strings';
+import classnames from 'classnames';
+import { useCommonStyles } from 'components/common/styles';
+import { TaskExecutionPhase } from 'models/Execution/enums';
+import { ExecutionStatusBadge } from '../../ExecutionStatusBadge';
+import { TaskExecutionLogs } from '../../TaskExecutionsList/TaskExecutionLogs';
+import { formatRetryAttempt } from '../../TaskExecutionsList/utils';
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -14,9 +16,15 @@ const useStyles = makeStyles((theme) => {
       padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
-    phase: ({ color }: { color: string }) => ({
-      color: color,
-    }),
+    section: {
+      marginBottom: theme.spacing(2),
+    },
+    header: {
+      marginBottom: theme.spacing(1),
+    },
+    title: {
+      marginBottom: theme.spacing(1),
+    },
     logLink: {
       margin: `${theme.spacing(0.5)} 0`,
     },
@@ -27,33 +35,27 @@ const useStyles = makeStyles((theme) => {
 });
 
 const MapTaskLogs: React.FC<{
-  text: string;
-  color: string;
+  phase?: TaskExecutionPhase | null;
   retryAttempt?: number | null;
   logs?: Core.ITaskLog[] | null;
-}> = ({ text, color, retryAttempt, logs }) => {
-  const styles = useStyles({ color });
-  const attempt = retryAttempt ? retryAttempt + 1 : 1;
+}> = ({ phase, retryAttempt, logs }) => {
+  const commonStyles = useCommonStyles();
+  const styles = useStyles();
+  const headerText = formatRetryAttempt(retryAttempt ?? 0);
 
   return (
     <div className={styles.detailsPanelCardContent}>
-      <Typography variant="h6">{t('attempt', attempt)}</Typography>
-      {text.length > 0 && (
-        <Typography className={styles.phase} variant="body2">
-          {text}
-        </Typography>
-      )}
-      <Typography variant="h6">{t('logs')}</Typography>
-      {logs?.map(({ name, uri }) =>
-        uri ? (
-          <NewTargetLink className={styles.logLink} key={name} external={true} href={uri}>
-            {name}
-          </NewTargetLink>
-        ) : (
-          // If there is no url, show item a a name string only, as it's not really clickable
-          <div className={styles.logName}>{name}</div>
-        ),
-      )}
+      <section className={styles.section}>
+        <header className={styles.header}>
+          <Typography variant="h6" className={classnames(styles.title, commonStyles.textWrapped)}>
+            {headerText}
+          </Typography>
+        </header>
+        {phase && <ExecutionStatusBadge phase={phase} type="task" variant="text" />}
+      </section>
+      <section className={styles.section}>
+        <TaskExecutionLogs taskLogs={logs || []} />
+      </section>
     </div>
   );
 };
@@ -64,12 +66,9 @@ export const MapTaskExecutionsList: React.FC<{
   return (
     <>
       {mapTask.map((task) => {
-        const color = task.phase ? nodePhaseColorMapping[task.phase].color : whiteColor;
-        const text = task.phase ? nodePhaseColorMapping[task.phase].text : '';
         return (
           <MapTaskLogs
-            color={color}
-            text={text}
+            phase={task.phase}
             retryAttempt={task.retryAttempt}
             logs={task.logs}
             key={task.index}
