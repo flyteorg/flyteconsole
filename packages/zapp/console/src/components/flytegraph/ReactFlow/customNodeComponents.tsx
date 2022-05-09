@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
-import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
+import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from 'components/Theme/constants';
@@ -292,12 +292,15 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     right: '.15rem',
   };
   const taskNameStyle: React.CSSProperties = {
-    backgroundColor: nodePhaseColorMapping[data.nodeExecutionStatus].color,
+    backgroundColor:
+      nodePhaseColorMapping[data.nodeExecutionStatus]?.color ??
+      nodePhaseColorMapping[NodeExecutionPhase.UNDEFINED].color,
     color: 'white',
     padding: '.1rem .2rem',
     fontSize: '.4rem',
     borderRadius: '.15rem',
   };
+
   const cacheIconStyles: React.CSSProperties = {
     width: '8px',
     height: '8px',
