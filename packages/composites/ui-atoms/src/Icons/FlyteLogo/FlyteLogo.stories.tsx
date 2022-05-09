@@ -1,7 +1,7 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
-import { FlyteLogo } from '../FlyteLogo';
+import { FlyteLogo } from '.';
 
 const useStyles = makeStyles((theme: Theme) => ({
   darkContainer: {
@@ -17,16 +17,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const stories = storiesOf('Common/FlyteLogo', module);
+const stories = storiesOf('UI Atoms/FlyteLogo', module);
 
 stories.add('Dark', () => (
   <div className={useStyles().darkContainer}>
-    <FlyteLogo variant="dark" size={64} />
+    <FlyteLogo background="dark" size={64} />
   </div>
 ));
 
 stories.add('Light', () => (
   <div className={useStyles().lightContainer}>
-    <FlyteLogo variant="light" size={64} />
+    <FlyteLogo background="light" size={64} />
   </div>
 ));

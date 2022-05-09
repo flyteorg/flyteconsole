@@ -8,9 +8,8 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "noImplicitAny": false,
-        "exactOptionalPropertyTypes": false,
         "noImplicitOverride": false
     },
-    "references": [{ "path": "../../plugins/components" }],
+    "references": [{ "path": "../../composites/ui-atoms" }, { "path": "../../plugins/components" }],
     "include": ["src/**/*"]
 }

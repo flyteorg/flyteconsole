@@ -92,6 +92,7 @@ const resolve = {
   mainFields: ['browser', 'module', 'main'],
   /** allow to resolve local packages to it's source code */
   alias: {
+    '@flyteconsole/ui-atoms': path.resolve(__dirname, '../../composites/ui-atoms/src'),
     '@flyteconsole/components': path.resolve(__dirname, '../../plugins/components/src'),
   },
 };

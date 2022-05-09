@@ -11,10 +11,15 @@
         "esModuleInterop": true,
         "baseUrl": "./",
         "paths": {
-            "@flyteconsole/*": ["./packages/plugins/*/src", "./packages/zapp/*/src"]
+            "@flyteconsole/*": [
+                "./packages/composites/*/src",
+                "./packages/plugins/*/src",
+                "./packages/zapp/*/src"
+            ]
         }
     },
     "references": [
+        { "path": "./packages/composites/ui-atoms" },
         { "path": "./packages/plugins/components" },
         { "path": "./packages/zapp/console" }
     ]

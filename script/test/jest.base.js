@@ -9,7 +9,11 @@ module.exports = {
   },
 
   moduleNameMapper: {
-    '@flyteconsole/(.*)': ['<rootDir>/packages/plugins/$1/src', '<rootDir>/packages/zapp/$1/src'],
+    '@flyteconsole/(.*)': [
+      '<rootDir>/packages/composites/$1/src',
+      '<rootDir>/packages/plugins/$1/src',
+      '<rootDir>/packages/zapp/$1/src',
+    ],
   },
 
   coveragePathIgnorePatterns: ['mocks', 'src/index'],
