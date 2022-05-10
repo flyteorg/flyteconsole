@@ -41,6 +41,7 @@
         "outDir": "./dist",
         "paths": {
             "@flyteconsole/*": [
+                "./packages/basics/*/src",
                 "./packages/composites/*/src",
                 "./packages/plugins/*/src",
                 "./packages/zapp/*/src"

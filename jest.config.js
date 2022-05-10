@@ -8,6 +8,7 @@ module.exports = {
 
   setupFilesAfterEnv: ['./script/test/jest-setup.ts'],
   projects: [
+    '<rootDir>/packages/basics/locale/',
     '<rootDir>/packages/composites/ui-atoms',
     '<rootDir>/packages/plugins/components',
     '<rootDir>/packages/zapp/console',

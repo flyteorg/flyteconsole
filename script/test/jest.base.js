@@ -10,6 +10,7 @@ module.exports = {
 
   moduleNameMapper: {
     '@flyteconsole/(.*)': [
+      '<rootDir>/packages/basics/$1/src',
       '<rootDir>/packages/composites/$1/src',
       '<rootDir>/packages/plugins/$1/src',
       '<rootDir>/packages/zapp/$1/src',
