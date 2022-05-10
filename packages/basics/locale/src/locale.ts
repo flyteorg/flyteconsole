@@ -5,6 +5,6 @@ export const createLocalizedString =
     return typeof value === 'function' ? value(...rest) : value;
   };
 
-export const patternKey = (parent: string, pattern: string) => {
-  return `${parent}_${pattern}`;
+export const patternKey = (parent: string, pattern?: string) => {
+  return `${parent}_${pattern ?? ''}`;
 };
