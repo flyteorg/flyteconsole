@@ -122,15 +122,9 @@ const ReactFlowGraphComponent = (props) => {
     setState((state) => ({
       ...state,
       onNodeSelectionChanged: onNodeSelectionChanged,
-    }));
-  }, [onNodeSelectionChanged]);
-
-  useEffect(() => {
-    setState((state) => ({
-      ...state,
       onMapTaskSelectionChanged: onMapTaskSelectionChanged,
     }));
-  }, [onMapTaskSelectionChanged]);
+  }, [onNodeSelectionChanged, onMapTaskSelectionChanged]);
 
   const backgroundStyle = getRFBackground().nested;
 
