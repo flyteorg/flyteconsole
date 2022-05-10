@@ -15,7 +15,6 @@ import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 
 export interface WorkflowGraphProps {
   onNodeSelectionChanged: (selectedNodes: string[]) => void;
-  selectedNodes?: string[];
   onMapTaskSelectionChanged: (selectedTask: ExternalResource[]) => void;
   workflow: Workflow;
   nodeExecutionsById?: any;

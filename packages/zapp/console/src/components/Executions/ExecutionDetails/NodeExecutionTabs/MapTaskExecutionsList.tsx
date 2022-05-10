@@ -10,31 +10,29 @@ import { ExecutionStatusBadge } from '../../ExecutionStatusBadge';
 import { TaskExecutionLogs } from '../../TaskExecutionsList/TaskExecutionLogs';
 import { formatRetryAttempt } from '../../TaskExecutionsList/utils';
 
-const useStyles = makeStyles((theme) => {
-  return {
-    detailsPanelCardContent: {
-      padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
-      borderBottom: `1px solid ${theme.palette.divider}`,
-    },
-    section: {
-      marginBottom: theme.spacing(2),
-    },
-    header: {
-      marginBottom: theme.spacing(1),
-    },
-    title: {
-      marginBottom: theme.spacing(1),
-    },
-    logLink: {
-      margin: `${theme.spacing(0.5)} 0`,
-    },
-    logName: {
-      fontWeight: 'lighter',
-    },
-  };
-});
+const useStyles = makeStyles((theme) => ({
+  detailsPanelCardContent: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+  section: {
+    marginBottom: theme.spacing(2),
+  },
+  header: {
+    marginBottom: theme.spacing(1),
+  },
+  title: {
+    marginBottom: theme.spacing(1),
+  },
+  logLink: {
+    margin: `${theme.spacing(0.5)} 0`,
+  },
+  logName: {
+    fontWeight: 'lighter',
+  },
+}));
 
-const MapTaskLogs: React.FC<{
+export const MapTaskLogs: React.FC<{
   phase?: TaskExecutionPhase | null;
   retryAttempt?: number | null;
   logs?: Core.ITaskLog[] | null;
@@ -64,17 +62,17 @@ export const MapTaskExecutionsList: React.FC<{
   mapTask: ExternalResource[];
 }> = ({ mapTask }) => {
   return (
-    <>
+    <div data-testid="map-task-list">
       {mapTask.map((task) => {
         return (
           <MapTaskLogs
             phase={task.phase}
             retryAttempt={task.retryAttempt}
             logs={task.logs}
-            key={task.index}
+            key={task.externalId}
           />
         );
       })}
-    </>
+    </div>
   );
 };
