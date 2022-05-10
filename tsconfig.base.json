@@ -38,7 +38,6 @@
         "sourceMap": true,
         "composite": true,
         "baseUrl": ".",
-        "outDir": "./dist",
         "paths": {
             "@flyteconsole/*": [
                 "./packages/basics/*/src",
