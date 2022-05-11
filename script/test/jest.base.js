@@ -18,5 +18,5 @@ module.exports = {
     ],
   },
 
-  coveragePathIgnorePatterns: ['mocks', 'src/index'],
+  coveragePathIgnorePatterns: ['mocks', '.mock', 'src/index'],
 };
