@@ -5,4 +5,5 @@ const str = {
   docsLink: 'Documentation Link:',
 };
 
+export { patternKey } from '@flyteconsole/locale';
 export default createLocalizedString(str);

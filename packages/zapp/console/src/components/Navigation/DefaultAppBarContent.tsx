@@ -9,6 +9,7 @@ import { Routes } from 'routes/routes';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from 'common/env';
 import { UserInformation } from './UserInformation';
+import t, { patternKey } from './strings';
 
 const { version: platformVersion } = require('../../../package.json');
 
@@ -29,18 +30,18 @@ export const DefaultAppBarContent: React.FC = () => {
 
   const versions: VersionInfo[] = [
     {
-      name: 'UI Version',
+      name: t('versionConsoleUi'),
       version: platformVersion,
       url: `https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`,
     },
     {
-      name: 'Admin Version',
+      name: t('versionAdmin'),
       version: adminVersion,
       url: `https://github.com/flyteorg/flyteadmin/releases/tag/v${adminVersion}`,
     },
     {
-      name: 'Google Analytics',
-      version: env.DISABLE_GA === 'false' ? 'Active' : 'Inactive',
+      name: t('versionGoogleAnalytics'),
+      version: t(patternKey('gaDisable', env.DISABLE_GA)),
       url: 'https://github.com/flyteorg/flyteconsole#google-analytics',
     },
   ];
