@@ -1,1 +1,1 @@
-This is a basic package wwhich woul be used for localization in future
+This is a basic package which would be used for localization in future

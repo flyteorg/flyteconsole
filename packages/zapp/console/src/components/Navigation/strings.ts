@@ -1,6 +1,7 @@
 import { createLocalizedString } from '@flyteconsole/locale';
 
 const str = {
+  login: 'Login',
   versionConsoleUi: 'UI Version',
   versionAdmin: 'Admin Version',
   versionGoogleAnalytics: 'Google Analytics',

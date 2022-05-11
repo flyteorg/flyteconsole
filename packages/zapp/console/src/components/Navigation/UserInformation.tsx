@@ -4,20 +4,17 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { WaitForData } from 'components/common/WaitForData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { getLoginUrl } from 'models/AdminEntity/utils';
+import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     color: theme.palette.common.white,
   },
-  iconButton: {
-    cursor: 'pointer',
-    marginLeft: theme.spacing(1),
-  },
 }));
 
 const LoginLink: React.FC = () => (
   <Link href={getLoginUrl()} color="inherit">
-    Login
+    {t('login')}
   </Link>
 );
 

@@ -15,7 +15,6 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false,
         "noImplicitAny": false,
-        "exactOptionalPropertyTypes": false,
         "noImplicitOverride": false
     },
     "references": [
