@@ -2,6 +2,7 @@ import { dEdge, dNode, dTypes } from 'models/Graph/types';
 import { Edge, Node, Position } from 'react-flow-renderer';
 import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { createDebugLogger } from 'common/log';
+import { ExternalResourcesByPhase } from 'models/Execution/types';
 import { ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
@@ -79,14 +80,8 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
   };
   const nodeExecutionStatus = mapNodeExecutionStatus();
 
-  // nodeExecutionsById null check is required as on first render it can be undefined
-  const mapNodeExternalResources = () => {
-    if (nodeExecutionsById && nodeExecutionsById[node.scopedId]) {
-      return nodeExecutionsById[node.scopedId]?.externalResourcesByPhase;
-    }
-  };
-
-  const nodeExternalResourcesByPhase = mapNodeExternalResources();
+  const nodeExternalResourcesByPhase: ExternalResourcesByPhase | undefined =
+    nodeExecutionsById?.[node.scopedId]?.externalResourcesByPhase;
 
   const cacheStatus: CatalogCacheStatus =
     nodeExecutionsById?.[scopedId]?.closure.taskNodeMetadata?.cacheStatus ??
@@ -108,7 +103,8 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
     },
     onMapTaskSelectionChanged: (phase: TaskExecutionPhase | null) => {
       if (onMapTaskSelectionChanged) {
-        const mapTask = phase ? nodeExternalResourcesByPhase.get(phase) : null;
+        const mapTask =
+          phase && nodeExternalResourcesByPhase ? nodeExternalResourcesByPhase.get(phase) : null;
         onMapTaskSelectionChanged(mapTask);
       }
     },

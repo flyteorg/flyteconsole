@@ -3,8 +3,8 @@ import * as React from 'react';
 import { createTestQueryClient } from 'test/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { WorkflowGraph } from '../WorkflowGraph';
-import { workflow } from './workflowMock';
-import { nodeExecutionsById } from './nodeExecutionsByIdMock';
+import { workflow } from './workflow.mock';
+import { nodeExecutionsById } from './nodeExecutionsById.mock';
 
 jest.mock('../../flytegraph/ReactFlow/ReactFlowWrapper.tsx', () => ({
   ReactFlowWrapper: jest.fn(({ children }) => (

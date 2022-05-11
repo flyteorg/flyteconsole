@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
-import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
+import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from 'components/Theme/constants';
@@ -13,7 +13,7 @@ import {
   getGraphHandleStyle,
   getGraphNodeStyle,
   getNestedContainerStyle,
-  nodePhaseColorMapping,
+  getStatusColor,
 } from './utils';
 import { RFHandleProps } from './types';
 
@@ -292,9 +292,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     right: '.15rem',
   };
   const taskNameStyle: React.CSSProperties = {
-    backgroundColor:
-      nodePhaseColorMapping[data.nodeExecutionStatus]?.color ??
-      nodePhaseColorMapping[NodeExecutionPhase.UNDEFINED].color,
+    backgroundColor: getStatusColor(data.nodeExecutionStatus),
     color: 'white',
     padding: '.1rem .2rem',
     fontSize: '.4rem',
@@ -351,7 +349,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
           if (!externalResourcesByPhase.has(phase)) {
             return null;
           }
-          let color = nodePhaseColorMapping[phase].color;
+          let color = getStatusColor(phase);
           if (selectedMapTask && selectedMapTask !== phase) {
             color = 'gray';
           }

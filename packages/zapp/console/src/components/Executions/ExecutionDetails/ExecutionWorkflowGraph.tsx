@@ -4,7 +4,7 @@ import { DataError } from 'components/Errors/DataError';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { keyBy } from 'lodash';
-import { ExternalResource, NodeExecution } from 'models/Execution/types';
+import { ExternalResource, ExternalResourcesByPhase, NodeExecution } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import * as React from 'react';
@@ -34,9 +34,9 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
       .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
       .filter((resources) => resources?.length);
 
-    const externalResourcesByPhase = new Map();
+    const externalResourcesByPhase: ExternalResourcesByPhase = new Map();
     externalResources.forEach((resource) => {
-      if (resource) {
+      if (resource?.[0].phase) {
         externalResourcesByPhase.set(resource[0].phase, resource);
       }
     });
@@ -77,14 +77,11 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
   const onCloseDetailsPanel = () => setSelectedNodes([]);
 
   const [selectedMapTask, setSelectedMapTask] = useState<ExternalResource[] | null>(null);
-  const onMapTaskSelectionChanged = (newSelection: ExternalResource[] | null) => {
-    setSelectedMapTask(newSelection);
-  };
 
   const renderGraph = (workflow: Workflow) => (
     <WorkflowGraph
       onNodeSelectionChanged={onNodeSelectionChanged}
-      onMapTaskSelectionChanged={onMapTaskSelectionChanged}
+      onMapTaskSelectionChanged={setSelectedMapTask}
       nodeExecutionsById={nodeExecutionsById}
       workflow={workflow}
     />
