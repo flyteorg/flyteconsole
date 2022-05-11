@@ -1,6 +1,6 @@
 export const createLocalizedString =
-  (strings = {}) =>
-  (key, ...rest) => {
+  (strings: any = {}) =>
+  (key: string, ...rest: unknown[]) => {
     const value = strings[key];
     return typeof value === 'function' ? value(...rest) : value;
   };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-interface FlyteLogoProps {
+export interface FlyteLogoProps {
   /** Logo size (height) in pixels. Default: 32 */
   size: number;
   /** If true - hides "Flyte" text */
