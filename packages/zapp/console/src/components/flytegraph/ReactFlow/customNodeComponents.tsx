@@ -207,25 +207,25 @@ export const ReactFlowStaticNode = ({ data }: any) => {
  * @param props.numberOfTasks number of tasks of certain completion phase
  * @param props.color string value of color of the block
  * @param props.phase phase of the current map task item
- * @param props.onMapTaskSelectionChanged callback from the parent component
+ * @param props.onPhaseSelectionChanged callback from the parent component
  */
 
-interface MapTaskItemProps {
+interface TaskPhaseItemProps {
   numberOfTasks: number;
   color: string;
   phase: TaskExecutionPhase;
-  setSelectedMapTask: (phase: TaskExecutionPhase) => void;
+  setSelectedPhase: (phase: TaskExecutionPhase) => void;
   setSelectedNode: (val: boolean) => void;
 }
 
-const MapTaskItem = ({
+const TaskPhaseItem = ({
   numberOfTasks,
   color,
   phase,
-  setSelectedMapTask,
+  setSelectedPhase,
   setSelectedNode,
-}: MapTaskItemProps) => {
-  const mapTaskStyles: React.CSSProperties = {
+}: TaskPhaseItemProps) => {
+  const taskPhaseStyles: React.CSSProperties = {
     borderRadius: '2px',
     backgroundColor: color,
     color: whiteColor,
@@ -241,11 +241,11 @@ const MapTaskItem = ({
   const handleMapTaskClick = (e) => {
     e.stopPropagation();
     setSelectedNode(true);
-    setSelectedMapTask(phase);
+    setSelectedPhase(phase);
   };
 
   return (
-    <div style={mapTaskStyles} onClick={handleMapTaskClick}>
+    <div style={taskPhaseStyles} onClick={handleMapTaskClick}>
       ×{numberOfTasks}
     </div>
   );
@@ -260,18 +260,18 @@ const MapTaskItem = ({
 export const ReactFlowCustomTaskNode = ({ data }: any) => {
   const styles = getGraphNodeStyle(data.nodeType, data.nodeExecutionStatus);
   const onNodeSelectionChanged = data.onNodeSelectionChanged;
-  const onMapTaskSelectionChanged = data.onMapTaskSelectionChanged;
+  const onPhaseSelectionChanged = data.onPhaseSelectionChanged;
   const [selectedNode, setSelectedNode] = useState<boolean>(false);
-  const [selectedMapTask, setSelectedMapTask] = useState<TaskExecutionPhase | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
 
   useEffect(() => {
     if (selectedNode === true) {
       onNodeSelectionChanged(selectedNode);
       setSelectedNode(false);
-      onMapTaskSelectionChanged(selectedMapTask);
-      setSelectedMapTask(selectedMapTask);
+      onPhaseSelectionChanged(selectedPhase);
+      setSelectedPhase(selectedPhase);
     }
-  }, [selectedNode, onNodeSelectionChanged, selectedMapTask, onMapTaskSelectionChanged]);
+  }, [selectedNode, onNodeSelectionChanged, selectedPhase, onPhaseSelectionChanged]);
 
   const taskContainerStyle: React.CSSProperties = {
     position: 'absolute',
@@ -312,7 +312,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
 
   const handleNodeClick = (_e) => {
     setSelectedNode(true);
-    setSelectedMapTask(null);
+    setSelectedPhase(undefined);
   };
 
   const renderTaskType = () => {
@@ -342,25 +342,21 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
     }
   };
 
-  const renderMapTasks = (externalResourcesByPhase) => {
+  const renderTaskPhases = (logsByPhase) => {
     return (
       <div style={mapTaskWrapper}>
         {RENDER_ORDER.map((phase, id) => {
-          if (!externalResourcesByPhase.has(phase)) {
+          if (!logsByPhase.has(phase)) {
             return null;
-          }
-          let color = getStatusColor(phase);
-          if (selectedMapTask && selectedMapTask !== phase) {
-            color = 'gray';
           }
 
           const key = `${id}-${phase}`;
           return (
-            <MapTaskItem
-              numberOfTasks={externalResourcesByPhase.get(phase).length}
-              color={color}
+            <TaskPhaseItem
+              numberOfTasks={logsByPhase.get(phase).length}
+              color={getStatusColor(phase)}
               phase={phase}
-              setSelectedMapTask={setSelectedMapTask}
+              setSelectedPhase={setSelectedPhase}
               setSelectedNode={setSelectedNode}
               key={key}
             />
@@ -372,15 +368,9 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
 
   return (
     <div onClick={handleNodeClick}>
-      {data.nodeExternalResourcesByPhase
-        ? renderTaskName()
-        : data.taskType
-        ? renderTaskType()
-        : null}
+      {data.nodeLogsByPhase ? renderTaskName() : data.taskType ? renderTaskType() : null}
       <div style={styles}>
-        {data.nodeExternalResourcesByPhase
-          ? renderMapTasks(data.nodeExternalResourcesByPhase)
-          : data.text}
+        {data.nodeLogsByPhase ? renderTaskPhases(data.nodeLogsByPhase) : data.text}
         {renderCacheIcon(data.cacheStatus)}
       </div>
       {renderDefaultHandles(

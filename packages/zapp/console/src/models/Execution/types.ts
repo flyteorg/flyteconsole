@@ -11,7 +11,7 @@ import {
 export type WorkflowExecutionIdentifier = RequiredNonNullable<Core.IWorkflowExecutionIdentifier>;
 export type ExecutionError = RequiredNonNullable<Core.IExecutionError>;
 export type ExternalResource = Event.IExternalResourceInfo;
-export type ExternalResourcesByPhase = Map<TaskExecutionPhase, ExternalResource[]>;
+export type LogsByPhase = Map<TaskExecutionPhase, Core.ITaskLog[]>;
 
 export interface BaseExecutionClosure {
   createdAt: Protobuf.ITimestamp;

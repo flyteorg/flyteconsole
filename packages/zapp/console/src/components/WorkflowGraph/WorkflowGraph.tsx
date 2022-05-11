@@ -10,12 +10,12 @@ import { useQuery } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { createDebugLogger } from 'common/log';
 import { CompiledNode } from 'models/Node/types';
-import { ExternalResource } from 'models/Execution/types';
+import { TaskExecutionPhase } from 'models/Execution/enums';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 
 export interface WorkflowGraphProps {
   onNodeSelectionChanged: (selectedNodes: string[]) => void;
-  onMapTaskSelectionChanged: (selectedTask: ExternalResource[]) => void;
+  onPhaseSelectionChanged: (phase: TaskExecutionPhase) => void;
   workflow: Workflow;
   nodeExecutionsById?: any;
 }
@@ -56,7 +56,7 @@ export interface DynamicWorkflowMapping {
   dynamicExecutions: any[];
 }
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
-  const { onNodeSelectionChanged, onMapTaskSelectionChanged, nodeExecutionsById, workflow } = props;
+  const { onNodeSelectionChanged, onPhaseSelectionChanged, nodeExecutionsById, workflow } = props;
   const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
   /**
    * Note:
@@ -112,7 +112,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
         nodeExecutionsById={nodeExecutionsById}
         data={merged}
         onNodeSelectionChanged={onNodeSelectionChanged}
-        onMapTaskSelectionChanged={onMapTaskSelectionChanged}
+        onPhaseSelectionChanged={onPhaseSelectionChanged}
       />
     );
   };

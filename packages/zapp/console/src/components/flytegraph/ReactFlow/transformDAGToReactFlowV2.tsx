@@ -2,7 +2,7 @@ import { dEdge, dNode, dTypes } from 'models/Graph/types';
 import { Edge, Node, Position } from 'react-flow-renderer';
 import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { createDebugLogger } from 'common/log';
-import { ExternalResourcesByPhase } from 'models/Execution/types';
+import { LogsByPhase } from 'models/Execution/types';
 import { ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
@@ -46,7 +46,7 @@ interface BuildDataProps {
   node: dNode;
   nodeExecutionsById: any;
   onNodeSelectionChanged: any;
-  onMapTaskSelectionChanged: any;
+  onPhaseSelectionChanged: any;
   onAddNestedView: any;
   onRemoveNestedView: any;
   rootParentNode: dNode;
@@ -57,7 +57,7 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
     node,
     nodeExecutionsById,
     onNodeSelectionChanged,
-    onMapTaskSelectionChanged,
+    onPhaseSelectionChanged,
     onAddNestedView,
     onRemoveNestedView,
     rootParentNode,
@@ -80,8 +80,7 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
   };
   const nodeExecutionStatus = mapNodeExecutionStatus();
 
-  const nodeExternalResourcesByPhase: ExternalResourcesByPhase | undefined =
-    nodeExecutionsById?.[node.scopedId]?.externalResourcesByPhase;
+  const nodeLogsByPhase: LogsByPhase = nodeExecutionsById?.[node.scopedId]?.logsByPhase;
 
   const cacheStatus: CatalogCacheStatus =
     nodeExecutionsById?.[scopedId]?.closure.taskNodeMetadata?.cacheStatus ??
@@ -94,18 +93,16 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
     nodeType,
     scopedId,
     taskType,
-    nodeExternalResourcesByPhase,
+    nodeLogsByPhase,
     cacheStatus,
     onNodeSelectionChanged: () => {
       if (onNodeSelectionChanged) {
         onNodeSelectionChanged([scopedId]);
       }
     },
-    onMapTaskSelectionChanged: (phase: TaskExecutionPhase | null) => {
-      if (onMapTaskSelectionChanged) {
-        const mapTask =
-          phase && nodeExternalResourcesByPhase ? nodeExternalResourcesByPhase.get(phase) : null;
-        onMapTaskSelectionChanged(mapTask);
+    onPhaseSelectionChanged: (phase: TaskExecutionPhase) => {
+      if (onPhaseSelectionChanged) {
+        onPhaseSelectionChanged(phase);
       }
     },
     onAddNestedView: () => {
@@ -201,7 +198,7 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
   const {
     nodeExecutionsById,
     onNodeSelectionChanged,
-    onMapTaskSelectionChanged,
+    onPhaseSelectionChanged,
     onAddNestedView,
     onRemoveNestedView,
     currentNestedView,
@@ -210,7 +207,7 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
   const nodeDataProps = {
     nodeExecutionsById,
     onNodeSelectionChanged,
-    onMapTaskSelectionChanged,
+    onPhaseSelectionChanged,
     onAddNestedView,
     onRemoveNestedView,
     currentNestedView,

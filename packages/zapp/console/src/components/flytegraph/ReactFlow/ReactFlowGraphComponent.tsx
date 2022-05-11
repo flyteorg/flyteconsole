@@ -19,8 +19,8 @@ const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
 
 const nodeExecutionResourcesChanged = (previous, nodeExecutionsById) => {
   for (const exe in nodeExecutionsById) {
-    const oldStatus = previous[exe]?.externalResourcesByPhase;
-    const newStatus = nodeExecutionsById[exe]?.externalResourcesByPhase;
+    const oldStatus = previous[exe]?.logsByPhase;
+    const newStatus = nodeExecutionsById[exe]?.logsByPhase;
     if (oldStatus !== newStatus) {
       return true;
     }
@@ -40,7 +40,7 @@ const ReactFlowGraphComponent = (props) => {
   const {
     data,
     onNodeSelectionChanged,
-    onMapTaskSelectionChanged,
+    onPhaseSelectionChanged,
     nodeExecutionsById,
     dynamicWorkflows,
   } = props;
@@ -50,7 +50,7 @@ const ReactFlowGraphComponent = (props) => {
     currentNestedView: {},
     nodeExecutionsById,
     onNodeSelectionChanged,
-    onMapTaskSelectionChanged,
+    onPhaseSelectionChanged,
     rfGraphJson: null,
   });
 
@@ -84,7 +84,7 @@ const ReactFlowGraphComponent = (props) => {
       root: state.data,
       nodeExecutionsById: state.nodeExecutionsById,
       onNodeSelectionChanged: state.onNodeSelectionChanged,
-      onMapTaskSelectionChanged: state.onMapTaskSelectionChanged,
+      onPhaseSelectionChanged: state.onPhaseSelectionChanged,
       onAddNestedView: onAddNestedView,
       onRemoveNestedView: onRemoveNestedView,
       currentNestedView: state.currentNestedView,
@@ -122,9 +122,9 @@ const ReactFlowGraphComponent = (props) => {
     setState((state) => ({
       ...state,
       onNodeSelectionChanged: onNodeSelectionChanged,
-      onMapTaskSelectionChanged: onMapTaskSelectionChanged,
+      onPhaseSelectionChanged: onPhaseSelectionChanged,
     }));
-  }, [onNodeSelectionChanged, onMapTaskSelectionChanged]);
+  }, [onNodeSelectionChanged, onPhaseSelectionChanged]);
 
   const backgroundStyle = getRFBackground().nested;
 

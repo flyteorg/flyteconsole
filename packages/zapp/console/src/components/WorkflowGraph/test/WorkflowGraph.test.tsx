@@ -25,7 +25,7 @@ describe('WorkflowGraph', () => {
         <QueryClientProvider client={queryClient}>
           <WorkflowGraph
             onNodeSelectionChanged={jest.fn}
-            onMapTaskSelectionChanged={jest.fn}
+            onPhaseSelectionChanged={jest.fn}
             workflow={workflow}
             nodeExecutionsById={nodeExecutionsById}
           />

@@ -51,7 +51,7 @@ export const nodeExecutionsById = {
       specNodeId: 'n0',
     },
     scopedId: 'n0',
-    externalResourcesByPhase: new Map([
+    logsByPhase: new Map([
       [
         3,
         [

@@ -4,13 +4,15 @@ import { DataError } from 'components/Errors/DataError';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { keyBy } from 'lodash';
-import { ExternalResource, ExternalResourcesByPhase, NodeExecution } from 'models/Execution/types';
+import { TaskExecutionPhase } from 'models/Execution/enums';
+import { ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { NodeExecutionsContext } from '../contexts';
+import { getGroupedLogs } from '../TaskExecutionsList/utils';
 import { useTaskExecutions, useTaskExecutionsRefresher } from '../useTaskExecutions';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 
@@ -30,20 +32,16 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
     const taskExecutions = useTaskExecutions(nodeExecution.id);
     useTaskExecutionsRefresher(nodeExecution, taskExecutions);
 
-    const externalResources = taskExecutions.value
+    const externalResources: ExternalResource[] = taskExecutions.value
       .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
-      .filter((resources) => resources?.length);
+      .flat()
+      .filter((resource): resource is ExternalResource => !!resource);
 
-    const externalResourcesByPhase: ExternalResourcesByPhase = new Map();
-    externalResources.forEach((resource) => {
-      if (resource?.[0].phase) {
-        externalResourcesByPhase.set(resource[0].phase, resource);
-      }
-    });
+    const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
 
     return {
       ...nodeExecution,
-      ...(externalResourcesByPhase.size > 0 && { externalResourcesByPhase }),
+      ...(logsByPhase.size > 0 && { logsByPhase }),
     };
   });
 
@@ -76,12 +74,12 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
 
   const onCloseDetailsPanel = () => setSelectedNodes([]);
 
-  const [selectedMapTask, setSelectedMapTask] = useState<ExternalResource[] | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
 
   const renderGraph = (workflow: Workflow) => (
     <WorkflowGraph
       onNodeSelectionChanged={onNodeSelectionChanged}
-      onMapTaskSelectionChanged={setSelectedMapTask}
+      onPhaseSelectionChanged={setSelectedPhase}
       nodeExecutionsById={nodeExecutionsById}
       workflow={workflow}
     />
@@ -98,7 +96,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
         {selectedExecution && (
           <NodeExecutionDetailsPanelContent
             onClose={onCloseDetailsPanel}
-            mapTask={selectedMapTask}
+            phase={selectedPhase}
             nodeExecutionId={selectedExecution}
           />
         )}

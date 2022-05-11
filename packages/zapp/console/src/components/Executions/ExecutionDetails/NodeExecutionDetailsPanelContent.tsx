@@ -14,12 +14,7 @@ import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 import { Workflow } from 'models/Workflow/types';
-import {
-  ExternalResource,
-  NodeExecution,
-  NodeExecutionIdentifier,
-  TaskExecution,
-} from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier, TaskExecution } from 'models/Execution/types';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
@@ -29,7 +24,7 @@ import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { PanelSection } from 'components/common/PanelSection';
 import { DumpJSON } from 'components/common/DumpJSON';
 import { dNode } from 'models/Graph/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/WorkflowGraph/utils';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
@@ -132,7 +127,7 @@ const tabIds = {
 
 interface NodeExecutionDetailsProps {
   nodeExecutionId: NodeExecutionIdentifier;
-  mapTask?: ExternalResource[] | null;
+  phase?: TaskExecutionPhase;
   onClose?: () => void;
 }
 
@@ -225,7 +220,7 @@ const WorkflowTabs: React.FC<{
  */
 export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProps> = ({
   nodeExecutionId,
-  mapTask,
+  phase,
   onClose,
 }) => {
   const commonStyles = useCommonStyles();
@@ -236,9 +231,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
-  const [shouldShowMapTaskInfo, setShouldShowMapTaskInfo] = useState<boolean>(
-    mapTask ? true : false,
-  );
+  const [shouldShowTaskDetails, setShouldShowTaskDetails] = useState<boolean>(false); // TODO to be reused in https://github.com/flyteorg/flyteconsole/issues/312
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -272,10 +265,6 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     setReasonsVisible(false);
   }, [nodeExecutionId]);
 
-  useEffect(() => {
-    setShouldShowMapTaskInfo(mapTask ? true : false);
-  }, [mapTask, nodeExecutionId]);
-
   const nodeExecution = nodeExecutionQuery.data;
 
   const getWorkflowDag = async () => {
@@ -306,22 +295,24 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const reasons = getTaskExecutionDetailReasons(listTaskExecutionsQuery.data);
 
   const onBackClick = () => {
-    setShouldShowMapTaskInfo(false);
+    setShouldShowTaskDetails(false);
   };
 
   const headerTitle = useMemo(() => {
-    // eslint-disable-next-line no-useless-escape
-    const regex = /\-([\w\s-]+)\-/; // extract string between first and last dash
+    // TODO to be reused in https://github.com/flyteorg/flyteconsole/issues/312
+    // // eslint-disable-next-line no-useless-escape
+    // const regex = /\-([\w\s-]+)\-/; // extract string between first and last dash
 
-    const mapTaskHeader = `${mapTask?.[0].externalId?.match(regex)?.[1]} of ${
-      nodeExecutionId.nodeId
-    }`;
-    const header = shouldShowMapTaskInfo ? mapTaskHeader : nodeExecutionId.nodeId;
+    // const mapTaskHeader = `${mapTask?.[0].externalId?.match(regex)?.[1]} of ${
+    //   nodeExecutionId.nodeId
+    // }`;
+    // const header = shouldShowTaskDetails ? mapTaskHeader : nodeExecutionId.nodeId;
+    const header = nodeExecutionId.nodeId;
 
     return (
       <Typography className={classnames(commonStyles.textWrapped, styles.title)} variant="h3">
         <div>
-          {shouldShowMapTaskInfo && (
+          {shouldShowTaskDetails && (
             <IconButton onClick={onBackClick} size="small">
               <ArrowBackIos />
             </IconButton>
@@ -333,7 +324,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         </IconButton>
       </Typography>
     );
-  }, [mapTask, nodeExecutionId, shouldShowMapTaskInfo]);
+  }, [nodeExecutionId, shouldShowTaskDetails]);
 
   const isRunningPhase = useMemo(() => {
     return (
@@ -377,8 +368,8 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const tabsContent: JSX.Element | null = nodeExecution ? (
     <NodeExecutionTabs
       nodeExecution={nodeExecution}
-      shouldShowMapTaskInfo={shouldShowMapTaskInfo}
-      mapTask={mapTask}
+      shouldShowTaskDetails={shouldShowTaskDetails}
+      phase={phase}
       taskTemplate={details?.taskTemplate}
     />
   ) : null;
