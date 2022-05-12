@@ -82,7 +82,7 @@ export const MapTaskExecutionsListItem: React.FC<MapTaskExecutionsListItemProps>
         if (!logs) {
           return null;
         }
-        const key = `${id}-${phase}-${selectedPhase}`;
+        const key = `${id}-${phase}`;
         return (
           <MapTaskStatusInfo
             phase={phase}

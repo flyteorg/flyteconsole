@@ -60,7 +60,7 @@ const ReactFlowGraphComponent = (props) => {
     onPhaseSelectionChanged,
     rfGraphJson: null,
   });
-  // const [nodeExecutionUpdateCount, setNodeExecutionUpdateCount] = useState<number>(0);
+
   const onAddNestedView = (view) => {
     const currentView = state.currentNestedView[view.parent] || [];
     const newView = {
@@ -101,23 +101,11 @@ const ReactFlowGraphComponent = (props) => {
 
   useEffect(() => {
     const newRFGraphData = buildReactFlowGraphData();
-    // console.log('CLO ~ useEffect ~ newRFGraphData', newRFGraphData);
     setState((state) => ({
       ...state,
       rfGraphJson: newRFGraphData,
     }));
   }, [state.currentNestedView, state.nodeExecutionsById]);
-
-  // useEffect(() => {
-  //   if (nodeExecutionUpdateCount < 2) {
-  //     const newRFGraphData = buildReactFlowGraphData();
-  //     setState((state) => ({
-  //       ...state,
-  //       rfGraphJson: newRFGraphData,
-  //     }));
-  //     setNodeExecutionUpdateCount(nodeExecutionUpdateCount + 1);
-  //   }
-  // }, [state.nodeExecutionsById]);
 
   useEffect(() => {
     if (graphNodeCountChanged(state.data, data)) {
