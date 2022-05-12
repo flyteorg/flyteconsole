@@ -340,7 +340,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const statusContent = nodeExecution ? (
     <div className={styles.statusContainer}>
       <div className={styles.statusHeaderContainer}>
-        <ExecutionStatusBadge phase={nodeExecution?.closure.phase} type="node" />
+        <ExecutionStatusBadge phase={nodeExecution.closure.phase} type="node" />
         {isRunningPhase && (
           <InfoIcon className={styles.reasonsIcon} onClick={handleReasonsVisibility} />
         )}

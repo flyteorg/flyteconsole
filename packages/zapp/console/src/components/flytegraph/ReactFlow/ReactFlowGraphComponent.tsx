@@ -17,12 +17,19 @@ const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
   return false;
 };
 
-const nodeExecutionResourcesChanged = (previous, nodeExecutionsById) => {
+const nodeExecutionLogsChanged = (previous, nodeExecutionsById) => {
   for (const exe in nodeExecutionsById) {
-    const oldStatus = previous[exe]?.logsByPhase;
-    const newStatus = nodeExecutionsById[exe]?.logsByPhase;
-    if (oldStatus !== newStatus) {
+    const oldLogs = previous[exe]?.logsByPhase ?? new Map();
+    const newLogs = nodeExecutionsById[exe]?.logsByPhase ?? new Map();
+    if (oldLogs.size !== newLogs.size) {
       return true;
+    }
+    for (const phase in newLogs) {
+      const oldNumOfLogs = oldLogs.get(phase)?.length ?? 0;
+      const newNumOfLogs = newLogs.get(phase)?.length ?? 0;
+      if (oldNumOfLogs !== newNumOfLogs) {
+        return true;
+      }
     }
   }
   return false;
@@ -53,7 +60,7 @@ const ReactFlowGraphComponent = (props) => {
     onPhaseSelectionChanged,
     rfGraphJson: null,
   });
-
+  // const [nodeExecutionUpdateCount, setNodeExecutionUpdateCount] = useState<number>(0);
   const onAddNestedView = (view) => {
     const currentView = state.currentNestedView[view.parent] || [];
     const newView = {
@@ -68,7 +75,7 @@ const ReactFlowGraphComponent = (props) => {
   const onRemoveNestedView = (viewParent, viewIndex) => {
     const currentNestedView: any = { ...state.currentNestedView };
     currentNestedView[viewParent] = currentNestedView[viewParent]?.filter(
-      (item, i) => i <= viewIndex,
+      (_item, i) => i <= viewIndex,
     );
     if (currentNestedView[viewParent]?.length < 1) {
       delete currentNestedView[viewParent];
@@ -85,8 +92,8 @@ const ReactFlowGraphComponent = (props) => {
       nodeExecutionsById: state.nodeExecutionsById,
       onNodeSelectionChanged: state.onNodeSelectionChanged,
       onPhaseSelectionChanged: state.onPhaseSelectionChanged,
-      onAddNestedView: onAddNestedView,
-      onRemoveNestedView: onRemoveNestedView,
+      onAddNestedView,
+      onRemoveNestedView,
       currentNestedView: state.currentNestedView,
       maxRenderDepth: 1,
     } as ConvertDagProps);
@@ -94,11 +101,23 @@ const ReactFlowGraphComponent = (props) => {
 
   useEffect(() => {
     const newRFGraphData = buildReactFlowGraphData();
+    // console.log('CLO ~ useEffect ~ newRFGraphData', newRFGraphData);
     setState((state) => ({
       ...state,
       rfGraphJson: newRFGraphData,
     }));
   }, [state.currentNestedView, state.nodeExecutionsById]);
+
+  // useEffect(() => {
+  //   if (nodeExecutionUpdateCount < 2) {
+  //     const newRFGraphData = buildReactFlowGraphData();
+  //     setState((state) => ({
+  //       ...state,
+  //       rfGraphJson: newRFGraphData,
+  //     }));
+  //     setNodeExecutionUpdateCount(nodeExecutionUpdateCount + 1);
+  //   }
+  // }, [state.nodeExecutionsById]);
 
   useEffect(() => {
     if (graphNodeCountChanged(state.data, data)) {
@@ -109,11 +128,11 @@ const ReactFlowGraphComponent = (props) => {
     }
     if (
       nodeExecutionStatusChanged(state.nodeExecutionsById, nodeExecutionsById) ||
-      nodeExecutionResourcesChanged(state.nodeExecutionsById, nodeExecutionsById)
+      nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
     ) {
       setState((state) => ({
         ...state,
-        nodeExecutionsById: nodeExecutionsById,
+        nodeExecutionsById,
       }));
     }
   }, [data, nodeExecutionsById]);
@@ -121,8 +140,8 @@ const ReactFlowGraphComponent = (props) => {
   useEffect(() => {
     setState((state) => ({
       ...state,
-      onNodeSelectionChanged: onNodeSelectionChanged,
-      onPhaseSelectionChanged: onPhaseSelectionChanged,
+      onNodeSelectionChanged,
+      onPhaseSelectionChanged,
     }));
   }, [onNodeSelectionChanged, onPhaseSelectionChanged]);
 
@@ -141,7 +160,7 @@ const ReactFlowGraphComponent = (props) => {
       backgroundStyle,
       rfGraphJson: state.rfGraphJson,
       type: RFGraphTypes.main,
-      nodeExecutionsById: nodeExecutionsById,
+      nodeExecutionsById,
       currentNestedView: state.currentNestedView,
     };
     return (
