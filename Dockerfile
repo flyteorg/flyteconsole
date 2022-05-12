@@ -1,4 +1,5 @@
 FROM node:16 as builder
+# FROM node:17 as builder
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
 WORKDIR /code/flyteconsole
@@ -17,7 +18,8 @@ RUN : \
   # build
   && make build_prod \
   # place the runtime application in /app
-  && mv dist index.js env.js plugins.js /app
+  && mv ./packages/zapp/console/dist /app \
+  && mv ./packages/zapp/console/index.js ./packages/zapp/console/env.js ./packages/zapp/console/plugins.js /app
 
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole

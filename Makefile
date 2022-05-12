@@ -18,6 +18,8 @@ lint: #lints the package for common code smells
 build_prod:
 	yarn run clean
 	BASE_URL=/console yarn run build:prod
+	# cd ./packages/zapp/console
+	# yarn run build:prod
 
 # test_unit runs all unit tests
 .PHONY: test_unit
