@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](http://github.com/lyft/flyteconsole/compare/v0.55.1...v1.0.0) (2022-04-26)
+
+
+### chore
+
+* release 1.0 again BREAKING CHANGE ([#426](http://github.com/lyft/flyteconsole/issues/426)) ([73dff24](http://github.com/lyft/flyteconsole/commit/73dff24557c450eb8f32c91a249067e9ebe5a4fb))
+
+
+### BREAKING CHANGES
+
+* BREAKING CHANGE
+Signed-off-by: Nastya Rusina <nastya@union.ai>
+
+## [0.55.1](http://github.com/lyft/flyteconsole/compare/v0.55.0...v0.55.1) (2022-04-26)
+
+
+### Performance Improvements
+
+* Release 1.0 ([#424](http://github.com/lyft/flyteconsole/issues/424)) ([73ec83f](http://github.com/lyft/flyteconsole/commit/73ec83f766e2ff5c28e533bf100ea5b378f4f5fa))
+
 # [0.55.0](http://github.com/lyft/flyteconsole/compare/v0.54.2...v0.55.0) (2022-04-22)
 
 
