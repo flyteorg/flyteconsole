@@ -9,7 +9,9 @@
             rel="stylesheet"
         />
 
-        <script>window.env = <%= htmlWebpackPlugin.options.clientEnv %></script>
+        <script>
+            window.env_old = <%= htmlWebpackPlugin.options.clientEnv %>
+        </script>
     </head>
     <body>
         <div id="react-app"></div>

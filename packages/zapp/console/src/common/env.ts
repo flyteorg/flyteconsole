@@ -4,5 +4,8 @@ import { Env } from 'config/types';
 // tslint:disable-next-line:no-any
 export const env: Env = Object.assign({}, process.env, window.env);
 
+console.log('process.env', process.env);
+console.log('env', env);
+
 export const isDevEnv = () => env.NODE_ENV === 'development';
 export const isTestEnv = () => env.NODE_ENV === 'test';
