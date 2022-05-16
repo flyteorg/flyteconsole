@@ -6,6 +6,7 @@ import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExe
 import { TaskType } from 'models/Task/constants';
 import { createMockWorkflow } from 'models/__mocks__/workflowData';
 import * as React from 'react';
+import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import { NodeExecutionTabs } from '../index';
 
 const getMockNodeExecution = () => createMockNodeExecutions(1).executions[0];
@@ -13,6 +14,7 @@ const nodeExecution = getMockNodeExecution();
 const workflow = createMockWorkflow('SampleWorkflow');
 const taskTemplate = { ...extractTaskTemplates(workflow)[0], type: TaskType.ARRAY };
 const phase = TaskExecutionPhase.SUCCEEDED;
+const log = { uri: '#', name: 'Kubernetes Logs #0-0' };
 
 jest.mock('components/hooks/useTabState');
 
@@ -24,22 +26,24 @@ describe('NodeExecutionTabs', () => {
       const { queryByText, queryAllByRole } = render(
         <NodeExecutionTabs
           nodeExecution={nodeExecution}
-          shouldShowTaskDetails={true}
+          selectedTaskExecution={{ ...mockTaskExecution, taskName: 'abc', log }}
           phase={phase}
           taskTemplate={taskTemplate}
+          onTaskSelected={jest.fn()}
         />,
       );
       expect(queryAllByRole('tab')).toHaveLength(4);
-      expect(queryByText('Execution')).toBeInTheDocument();
+      expect(queryByText('Executions')).toBeInTheDocument();
     });
 
     it('should display proper tab name when it was provided and shouldShow is FALSE', async () => {
       const { queryByText, queryAllByRole } = render(
         <NodeExecutionTabs
           nodeExecution={nodeExecution}
-          shouldShowTaskDetails={false}
+          selectedTaskExecution={null}
           phase={phase}
           taskTemplate={taskTemplate}
+          onTaskSelected={jest.fn()}
         />,
       );
 
@@ -51,7 +55,11 @@ describe('NodeExecutionTabs', () => {
   describe('without map tasks', () => {
     it('should display proper tab name when mapTask was not provided', async () => {
       const { queryAllByRole, queryByText } = render(
-        <NodeExecutionTabs nodeExecution={nodeExecution} shouldShowTaskDetails={false} />,
+        <NodeExecutionTabs
+          nodeExecution={nodeExecution}
+          selectedTaskExecution={null}
+          onTaskSelected={jest.fn()}
+        />,
       );
 
       expect(queryAllByRole('tab')).toHaveLength(3);
