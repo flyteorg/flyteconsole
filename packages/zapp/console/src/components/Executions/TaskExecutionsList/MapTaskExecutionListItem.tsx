@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { PanelSection } from 'components/common/PanelSection';
 import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { TaskExecution } from 'models/Execution/types';
+import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { MapTaskStatusInfo } from 'components/common/MapTaskExecutionsList/MapTaskStatusInfo';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface MapTaskExecutionsListItemProps {
   taskExecution: TaskExecution;
   showAttempts: boolean;
+  onTaskSelected: (val: MapTaskExecution) => void;
   selectedPhase?: TaskExecutionPhase;
 }
 
@@ -41,6 +42,7 @@ interface MapTaskExecutionsListItemProps {
 export const MapTaskExecutionsListItem: React.FC<MapTaskExecutionsListItemProps> = ({
   taskExecution,
   showAttempts,
+  onTaskSelected,
   selectedPhase,
 }) => {
   const commonStyles = useCommonStyles();
@@ -85,10 +87,12 @@ export const MapTaskExecutionsListItem: React.FC<MapTaskExecutionsListItemProps>
         const key = `${id}-${phase}`;
         return (
           <MapTaskStatusInfo
+            taskExecution={taskExecution}
             phase={phase}
             taskLogs={logs}
-            isExpanded={selectedPhase === phase}
+            selectedPhase={selectedPhase}
             key={key}
+            onTaskSelected={onTaskSelected}
           />
         );
       })}

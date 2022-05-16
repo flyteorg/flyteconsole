@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { PanelSection } from 'components/common/PanelSection';
 import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { TaskExecution } from 'models/Execution/types';
+import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface TaskExecutionsListItemProps {
-  taskExecution: TaskExecution;
+  taskExecution: TaskExecution | MapTaskExecution;
 }
 
 /** Renders an individual `TaskExecution` record as part of a list */
@@ -45,6 +45,7 @@ export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({
   const headerText = formatRetryAttempt(taskExecution.id.retryAttempt);
   const taskHasStarted = closure.phase >= TaskExecutionPhase.QUEUED;
 
+  const logs = 'log' in taskExecution ? [taskExecution.log] : taskExecution?.closure?.logs;
   return (
     <PanelSection>
       <section className={styles.section}>
@@ -63,7 +64,7 @@ export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({
       {taskHasStarted && (
         <>
           <section className={styles.section}>
-            <TaskExecutionLogs taskLogs={taskExecution.closure.logs || []} />
+            <TaskExecutionLogs taskLogs={logs ?? []} />
           </section>
           <section className={styles.section}>
             <TaskExecutionDetails taskExecution={taskExecution} />

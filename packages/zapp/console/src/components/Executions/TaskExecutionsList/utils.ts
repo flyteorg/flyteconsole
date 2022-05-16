@@ -61,3 +61,9 @@ export const getGroupedLogs = (resources: Event.IExternalResourceInfo[]): LogsBy
 
   return logsByPhase;
 };
+
+export function getTaskLogName(taskName: string, taskLogName: string): string {
+  const firstDahIndex = taskLogName.indexOf('-');
+  const suffix = firstDahIndex !== -1 ? taskLogName.slice(firstDahIndex) : '';
+  return `${taskName}${suffix}`;
+}

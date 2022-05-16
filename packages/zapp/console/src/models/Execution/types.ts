@@ -111,6 +111,10 @@ export interface TaskExecutionIdentifier extends Core.ITaskExecutionIdentifier {
   nodeExecutionId: NodeExecutionIdentifier;
   retryAttempt?: number;
 }
+export interface MapTaskExecution extends TaskExecution {
+  taskName: string;
+  log: Core.ITaskLog;
+}
 
 export interface TaskExecution extends Admin.ITaskExecution {
   id: TaskExecutionIdentifier;

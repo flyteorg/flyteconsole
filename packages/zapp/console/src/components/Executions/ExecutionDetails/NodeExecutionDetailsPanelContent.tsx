@@ -14,7 +14,12 @@ import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 import { Workflow } from 'models/Workflow/types';
-import { NodeExecution, NodeExecutionIdentifier, TaskExecution } from 'models/Execution/types';
+import {
+  MapTaskExecution,
+  NodeExecution,
+  NodeExecutionIdentifier,
+  TaskExecution,
+} from 'models/Execution/types';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
@@ -231,7 +236,8 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
-  const [shouldShowTaskDetails, setShouldShowTaskDetails] = useState<boolean>(false); // TODO to be reused in https://github.com/flyteorg/flyteconsole/issues/312
+  const [shouldShowTaskDetails, setShouldShowTaskDetails] = useState<boolean>(false);
+  const [selectedTaskExecution, setSelectedTaskExecution] = useState<MapTaskExecution | null>(null);
 
   const isMounted = useRef(false);
   useEffect(() => {
@@ -265,6 +271,19 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
     setReasonsVisible(false);
   }, [nodeExecutionId]);
 
+  useEffect(() => {
+    setShouldShowTaskDetails(false);
+    setSelectedTaskExecution(null);
+  }, [nodeExecutionId, phase]);
+
+  useEffect(() => {
+    if (selectedTaskExecution) {
+      setShouldShowTaskDetails(true);
+    } else {
+      setShouldShowTaskDetails(false);
+    }
+  }, [selectedTaskExecution]);
+
   const nodeExecution = nodeExecutionQuery.data;
 
   const getWorkflowDag = async () => {
@@ -296,18 +315,16 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
   const onBackClick = () => {
     setShouldShowTaskDetails(false);
+    setSelectedTaskExecution(null);
   };
 
   const headerTitle = useMemo(() => {
-    // TODO to be reused in https://github.com/flyteorg/flyteconsole/issues/312
-    // // eslint-disable-next-line no-useless-escape
-    // const regex = /\-([\w\s-]+)\-/; // extract string between first and last dash
-
-    // const mapTaskHeader = `${mapTask?.[0].externalId?.match(regex)?.[1]} of ${
-    //   nodeExecutionId.nodeId
-    // }`;
-    // const header = shouldShowTaskDetails ? mapTaskHeader : nodeExecutionId.nodeId;
-    const header = nodeExecutionId.nodeId;
+    // eslint-disable-next-line no-useless-escape
+    const regex = /.*_(.*)/; // extract string after last underscore
+    const mapTaskHeader = `${selectedTaskExecution?.taskName.match(regex)?.[1]} of ${
+      nodeExecutionId.nodeId
+    }`;
+    const header = selectedTaskExecution ? mapTaskHeader : nodeExecutionId.nodeId;
 
     return (
       <Typography className={classnames(commonStyles.textWrapped, styles.title)} variant="h3">
@@ -368,9 +385,10 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const tabsContent: JSX.Element | null = nodeExecution ? (
     <NodeExecutionTabs
       nodeExecution={nodeExecution}
-      shouldShowTaskDetails={shouldShowTaskDetails}
+      selectedTaskExecution={selectedTaskExecution}
       phase={phase}
       taskTemplate={details?.taskTemplate}
+      onTaskSelected={setSelectedTaskExecution}
     />
   ) : null;
 

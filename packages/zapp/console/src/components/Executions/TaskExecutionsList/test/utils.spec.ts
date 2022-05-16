@@ -1,3 +1,4 @@
+import { getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
 import { Event } from 'flyteidl';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { obj } from 'test/utils';
@@ -60,5 +61,23 @@ describe('getGroupedLogs', () => {
 
     // to filter our previous retry attempt
     expect(logs.get(TaskExecutionPhase.FAILED)?.length).toEqual(1);
+  });
+});
+
+describe('getTaskLogName', () => {
+  it('should return correct names', () => {
+    const taskName = 'task_name_1';
+    const taskLogName1 = 'abc';
+    const taskLogName2 = 'abc-1';
+    const taskLogName3 = 'abc-1-1';
+
+    const result1 = getTaskLogName(taskName, taskLogName1);
+    expect(result1).toStrictEqual(taskName);
+
+    const result2 = getTaskLogName(taskName, taskLogName2);
+    expect(result2).toStrictEqual('task_name_1-1');
+
+    const result3 = getTaskLogName(taskName, taskLogName3);
+    expect(result3).toStrictEqual('task_name_1-1-1');
   });
 });

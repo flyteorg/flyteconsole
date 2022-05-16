@@ -349,12 +349,18 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
           if (!logsByPhase.has(phase)) {
             return null;
           }
-
+          const defaultColor = getStatusColor();
+          const phaseColor = getStatusColor(phase);
+          const color = selectedPhase
+            ? phase === selectedPhase
+              ? phaseColor
+              : defaultColor
+            : phaseColor;
           const key = `${id}-${phase}`;
           return (
             <TaskPhaseItem
               numberOfTasks={logsByPhase.get(phase).length}
-              color={getStatusColor(phase)}
+              color={color}
               phase={phase}
               setSelectedPhase={setSelectedPhase}
               setSelectedNode={setSelectedNode}
