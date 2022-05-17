@@ -12,7 +12,7 @@
         "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' webpack --config webpack.dev.config.ts --mode=development",
         "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production webpack --config webpack.prod.config.ts --mode=production --progress",
         "start": "webpack serve --open --config webpack.dev.config.ts --hot",
-        "start:prod": "NODE_ENV=production BASE_URL=/console ADMIN_API_URL=https://demo.nuclyde.io ADMIN_API_USE_SSL=https node index.js",
+        "start:prod": "NODE_ENV=production node index.js",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "format": "prettier --ignore-path .eslintignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
         "fix": "yarn lint --fix && yarn format",
