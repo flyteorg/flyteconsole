@@ -23,8 +23,6 @@ export default function serverRenderer({ currentDirectory }: ServerRendererArgum
     // populate the app content...
     const $ = cheerio.load(html);
 
-    console.log(processEnv);
-
     // Populate process.env into window.env
     $('head').append($(`<script>window.env = ${JSON.stringify(processEnv)}</script>`));
 
