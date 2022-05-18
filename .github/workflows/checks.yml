@@ -17,10 +17,44 @@ jobs:
     outputs:
       currentTag: ${{ steps.extract_branch.outputs.extract_branch }}
     steps:
+      #1
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
+      #2
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-output name=branch_new::$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
+
+      # extract branch name
+      - name: Extract branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      # extract branch name on pull request
+      - name: Print branch name
+        if: github.event_name == 'pull_request'
+        run: echo "::set-env name=BRANCH_NAME::$(echo ${GITHUB_HEAD_REF})"
+
+      # print branch name
+      - name: Get branch name
+        run: echo 'The BRANCH_NAME name is' $BRANCH_NAME
+
+  job1:
+    runs-on: ubuntu-latest
+    needs: extraxt_branch
+    steps:
+      - run: echo ${{needs.extraxt_branch.outputs.branch}}
+
+  job2:
+    runs-on: ubuntu-latest
+    needs: extraxt_branch
+    steps:
+      - run: echo ${{needs.extraxt_branch.outputs.branch_new}}
 
   unit_tests_with_coverage:
     runs-on: ubuntu-latest
@@ -65,7 +99,7 @@ jobs:
 
   release:
     name: Generate Release
-    if: ${{ (github.event_name != 'pull_request') && (steps.extract_branch.outputs.branch == 'master') }}
+    if: ${{ (github.event_name != 'pull_request') && (needs.extract_branch.outputs.branch == 'master') }}
     needs: [unit_tests_with_coverage, lint_project, build_docker_image, extraxt_branch]
     runs-on: ubuntu-latest
     steps:
