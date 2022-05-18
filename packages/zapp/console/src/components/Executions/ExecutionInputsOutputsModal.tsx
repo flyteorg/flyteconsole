@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: theme.spacing(100),
   },
   tabs: {
-    padding: `0 ${theme.spacing(2)}px`,
+    padding: theme.spacing(0, 2),
   },
   title: {
     display: 'flex',

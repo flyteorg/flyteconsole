@@ -9,16 +9,16 @@ import { Project } from 'models/Project/types';
 import * as React from 'react';
 import { SearchableProjectList } from './SearchableProjectList';
 
-const expanderGridHeight = 12;
+const EXPANDER_GRID_HEIGHT = 96;
 
 const useStyles = makeStyles((theme: Theme) => ({
   expander: {
     alignItems: 'center',
-    borderBottom: `${theme.spacing(1)}px solid ${listhoverColor}`,
+    borderBottom: `8px solid ${listhoverColor}`,
     display: 'flex',
     flex: '0 0 auto',
     flexDirection: 'row',
-    height: theme.spacing(expanderGridHeight),
+    height: EXPANDER_GRID_HEIGHT,
     padding: theme.spacing(2),
     width: '100%',
     '&.expanded': {
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     bottom: 0,
     position: 'absolute',
     overflowY: 'scroll',
-    top: theme.spacing(expanderGridHeight),
+    top: EXPANDER_GRID_HEIGHT,
     width: '100%',
   },
 }));

@@ -8,7 +8,7 @@ import { noLogsFoundString } from '../constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
   logLink: {
-    margin: `${theme.spacing(0.5)} 0`,
+    margin: theme.spacing(0.5, 0),
   },
   sectionHeader: {
     marginTop: theme.spacing(1),

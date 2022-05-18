@@ -27,7 +27,6 @@ const theme = createMuiTheme({
     },
     background: {
       default: whiteColor,
-      // default: '#F4F4FA',
     },
     text: {
       primary: primaryTextColor,
@@ -158,15 +157,15 @@ export const muiTheme = {
       root: {
         fontWeight: 600,
         fontSize: '.875rem',
-        margin: `0 ${theme.spacing(1.75)}px`,
+        margin: theme.spacing(0, 1.75),
         minWidth: 0,
-        padding: `0 ${theme.spacing(1.75)}px`,
+        padding: theme.spacing(0, 1.75),
         textTransform: 'none',
         [theme.breakpoints.up('md')]: {
           fontSize: '.875rem',
-          margin: `0 ${theme.spacing(1.75)}px`,
+          margin: theme.spacing(0, 1.75),
           minWidth: 0,
-          padding: `0 ${theme.spacing(1.75)}px`,
+          padding: theme.spacing(0, 1.75),
         },
         ['&:hover']: {
           backgroundColor: theme.palette.action.hover,

@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     height: theme.spacing(5),
-    padding: `0 ${theme.spacing(1)}px`,
+    padding: theme.spacing(0, 1),
     width: '100%',
     '&:hover': {
       borderColor: theme.palette.primary.main,

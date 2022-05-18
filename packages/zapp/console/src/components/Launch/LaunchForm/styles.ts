@@ -7,7 +7,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
     padding: theme.spacing(2),
   },
   formControl: {
-    padding: `${theme.spacing(1.5)}px 0`,
+    padding: theme.spacing(1.5, 0),
   },
   header: {
     padding: theme.spacing(2),

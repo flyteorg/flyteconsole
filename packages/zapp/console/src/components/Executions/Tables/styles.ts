@@ -29,10 +29,10 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
   },
   childGroupLabel: {
     borderWidth: '2px',
-    padding: `${theme.spacing(2)}px 0`,
+    padding: theme.spacing(2, 0),
   },
   errorContainer: {
-    padding: `0 ${theme.spacing(8)}px ${theme.spacing(2)}px`,
+    padding: theme.spacing(0, 8, 2),
     '$childrenContainer &': {
       paddingTop: theme.spacing(2),
       paddingLeft: theme.spacing(2),
@@ -84,7 +84,7 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
   },
   noRowsContent: {
     color: tablePlaceholderColor,
-    margin: `${theme.spacing(5)}px auto`,
+    margin: theme.spacing(5, 'auto'),
     textAlign: 'center',
   },
   row: {

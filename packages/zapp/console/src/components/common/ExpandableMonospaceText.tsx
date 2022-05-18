@@ -86,7 +86,7 @@ export const useExpandableMonospaceTextStyles = makeStyles((theme: Theme) => ({
     fontSize: smallFontSize,
     fontWeight: 'bold',
     left: '50%',
-    padding: `${theme.spacing(1)}px ${theme.spacing(3)}px`,
+    padding: theme.spacing(1, 3),
     position: 'absolute',
     transform: 'translateX(-50%)',
     '&:hover': {

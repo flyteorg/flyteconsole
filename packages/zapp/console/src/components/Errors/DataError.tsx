@@ -8,7 +8,7 @@ import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
-    margin: `${theme.spacing(2)}px 0`,
+    margin: theme.spacing(2, 0),
   },
 }));
 

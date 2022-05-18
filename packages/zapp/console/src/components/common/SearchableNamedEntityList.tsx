@@ -13,7 +13,7 @@ export const useNamedEntityListStyles = makeStyles((theme: Theme) => ({
   },
   itemName: {
     flex: '1 1 auto',
-    padding: `${theme.spacing(2)}px 0`,
+    padding: theme.spacing(2, 0),
   },
   itemChevron: {
     color: theme.palette.grey[500],
@@ -25,7 +25,7 @@ export const useNamedEntityListStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     position: 'relative',
     flexDirection: 'row',
-    padding: `0 ${theme.spacing(3)}px`,
+    padding: theme.spacing(0, 3),
     '&:first-of-type': {
       borderTop: `1px solid ${separatorColor}`,
     },

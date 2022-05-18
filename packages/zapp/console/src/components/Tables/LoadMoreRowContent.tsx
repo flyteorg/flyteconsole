@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     height: theme.spacing(loadMoreRowGridHeight),
     justifyContent: ' center',
-    padding: `${theme.spacing(2)}px`,
+    padding: theme.spacing(2),
     width: '100%',
   },
   button: {

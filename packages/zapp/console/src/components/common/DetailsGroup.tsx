@@ -1,11 +1,11 @@
-import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
   rowsContainer: {
-    margin: `${theme.spacing(1)}px 0`,
+    margin: theme.spacing(1, 0),
   },
   rowContainer: {
     display: 'flex',
@@ -34,12 +34,11 @@ interface DetailsGroupProps {
 export const DetailsGroup: React.FC<DetailsGroupProps> = ({
   className,
   items,
-  labelWidthGridUnits = 14,
+  labelWidthGridUnits = 112,
 }) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
-  const theme = useTheme<Theme>();
-  const width = `${theme.spacing(labelWidthGridUnits)}px`;
+  const width = labelWidthGridUnits;
   const style = {
     width,
     minWidth: width,

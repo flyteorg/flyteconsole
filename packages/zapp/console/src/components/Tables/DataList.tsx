@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   noRowsContent: {
     color: tablePlaceholderColor,
-    margin: `${theme.spacing(5)}px auto`,
+    margin: theme.spacing(5, 'auto'),
     textAlign: 'center',
   },
 }));

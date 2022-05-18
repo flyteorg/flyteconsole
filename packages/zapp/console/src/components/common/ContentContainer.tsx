@@ -18,17 +18,15 @@ enum ContainerClasses {
 }
 
 const useStyles = makeStyles((theme: Theme) => {
-  const contentMargin = `${theme.spacing(contentMarginGridUnits)}px`;
-  const spacerHeight = `${theme.spacing(navbarGridHeight)}px`;
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
       minHeight: '100vh',
-      padding: `${spacerHeight} ${contentMargin} 0 ${contentMargin}`,
+      padding: theme.spacing(navbarGridHeight, contentMarginGridUnits, 0),
       [`&.${ContainerClasses.NoMargin}`]: {
         margin: 0,
-        padding: `${spacerHeight} 0 0 0`,
+        padding: theme.spacing(navbarGridHeight, 0, 0),
       },
       [`&.${ContainerClasses.Centered}`]: {
         margin: '0 auto',

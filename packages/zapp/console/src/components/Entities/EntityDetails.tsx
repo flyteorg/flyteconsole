@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: '1 1 auto',
     flexDirection: 'column',
-    margin: `0 -${theme.spacing(contentMarginGridUnits)}px`,
+    margin: theme.spacing(0, -contentMarginGridUnits),
     flexBasis: theme.spacing(80),
   },
   versionsContainer: {

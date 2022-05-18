@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme: Theme) => {
     borderColor: theme.palette.text.primary,
     color: theme.palette.text.primary,
   };
-  const horizontalButtonPadding = theme.spacing(1.5);
   return {
     button: {
       backgroundColor: theme.palette.common.white,
@@ -24,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => {
       height: theme.spacing(4),
       fontWeight: 'bold',
       lineHeight: '1.1875rem',
-      padding: `${theme.spacing(0.375)}px ${horizontalButtonPadding}px`,
+      padding: theme.spacing(0.375, 1.5),
       textTransform: 'none',
       '&.active, &.active:hover, &.active.open': {
         backgroundColor: interactiveTextBackgroundColor,
@@ -38,8 +37,7 @@ const useStyles = makeStyles((theme: Theme) => {
       '&.open': buttonInteractiveStyles,
     },
     buttonIcon: {
-      marginLeft: theme.spacing(1),
-      marginRight: -horizontalButtonPadding / 2,
+      margin: theme.spacing(0, -theme.spacing(0.75), 0, theme.spacing(1)),
     },
     resetIcon: {
       cursor: 'pointer',
@@ -51,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) => {
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: 4,
       marginTop: theme.spacing(0.25),
-      padding: `${theme.spacing(2)}px ${theme.spacing(1.5)}px`,
+      padding: theme.spacing(2, 1.5),
     },
   };
 });

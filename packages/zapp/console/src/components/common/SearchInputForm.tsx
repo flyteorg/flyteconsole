@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
   },
   input: {
-    margin: `${theme.spacing(1)}px 0`,
+    margin: theme.spacing(1, 0),
   },
 }));
 

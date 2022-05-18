@@ -36,8 +36,6 @@ import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
 
 const useStyles = makeStyles((theme: Theme) => {
-  const paddingVertical = `${theme.spacing(2)}px`;
-  const paddingHorizontal = `${theme.spacing(3)}px`;
   return {
     notRunStatus: {
       alignItems: 'center',
@@ -71,10 +69,10 @@ const useStyles = makeStyles((theme: Theme) => {
       marginBottom: theme.spacing(1),
     },
     header: {
-      borderBottom: `${theme.spacing(1)}px solid ${theme.palette.divider}`,
+      borderBottom: `8px solid ${theme.palette.divider}`,
     },
     headerContent: {
-      padding: `0 ${paddingHorizontal} ${paddingVertical} ${paddingHorizontal}`,
+      padding: theme.spacing(0, 3, 2),
     },
     nodeTypeContainer: {
       alignItems: 'flex-end',

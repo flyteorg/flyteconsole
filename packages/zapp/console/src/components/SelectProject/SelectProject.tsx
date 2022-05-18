@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: `${theme.spacing(2)} 0`,
+    margin: theme.spacing(2, 0),
   },
   searchContainer: {
     minWidth: theme.spacing(45),

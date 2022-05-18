@@ -11,7 +11,7 @@ import { PropertyGetter, SearchResult, useSearchableListState } from './useSearc
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
-    padding: `0 ${theme.spacing(3)}px`,
+    padding: theme.spacing(0, 3),
     marginBottom: theme.spacing(0.5),
     width: '100%',
   },
