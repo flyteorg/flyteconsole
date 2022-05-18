@@ -7,6 +7,7 @@ import { keyBy } from 'lodash';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
+import { isMapTaskType } from 'models/Task/utils';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -32,6 +33,14 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
     const taskExecutions = useTaskExecutions(nodeExecution.id);
     useTaskExecutionsRefresher(nodeExecution, taskExecutions);
 
+    const useNewMapTaskView = taskExecutions.value.every((taskExecution) => {
+      const {
+        closure: { taskType, metadata, eventVersion = 0 },
+      } = taskExecution;
+      return (
+        isMapTaskType(taskType ?? undefined) && eventVersion >= 1 && metadata?.externalResources
+      );
+    });
     const externalResources: ExternalResource[] = taskExecutions.value
       .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
       .flat()
@@ -41,7 +50,7 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
 
     return {
       ...nodeExecution,
-      ...(logsByPhase.size > 0 && { logsByPhase }),
+      ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
     };
   });
 

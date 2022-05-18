@@ -42,9 +42,11 @@ export const TaskExecutionsListContent: React.FC<{
   return (
     <>
       {taskExecutions.map((taskExecution) => {
-        const taskType = taskExecution.closure.taskType ?? undefined;
+        const {
+          closure: { taskType, metadata, eventVersion = 0 },
+        } = taskExecution;
         const useNewMapTaskView =
-          isMapTaskType(taskType) && taskExecution.closure.metadata?.externalResources;
+          isMapTaskType(taskType ?? undefined) && eventVersion >= 1 && metadata?.externalResources;
         return useNewMapTaskView ? (
           <MapTaskExecutionsListItem
             key={getUniqueTaskExecutionName(taskExecution)}
