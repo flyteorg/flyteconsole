@@ -8,7 +8,7 @@ import { PanelSection } from 'components/common/PanelSection';
 import { DumpJSON } from 'components/common/DumpJSON';
 import { isMapTaskType } from 'models/Task/utils';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { TaskExecutionsListItem } from 'components/Executions/TaskExecutionsList/TaskExecutionsListItem';
+import { MapTaskExecutionDetails } from 'components/Executions/TaskExecutionsList/MapTaskExecutionDetails';
 import { TaskExecutionsList } from '../../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
@@ -61,7 +61,7 @@ export const NodeExecutionTabs: React.FC<{
   switch (tabState.value) {
     case tabIds.executions: {
       tabContent = selectedTaskExecution ? (
-        <TaskExecutionsListItem taskExecution={selectedTaskExecution} />
+        <MapTaskExecutionDetails taskExecution={selectedTaskExecution} />
       ) : (
         <TaskExecutionsList
           nodeExecution={nodeExecution}

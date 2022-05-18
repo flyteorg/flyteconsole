@@ -112,8 +112,7 @@ export interface TaskExecutionIdentifier extends Core.ITaskExecutionIdentifier {
   retryAttempt?: number;
 }
 export interface MapTaskExecution extends TaskExecution {
-  taskName: string;
-  log: Core.ITaskLog;
+  taskIndex: number | null;
 }
 
 export interface TaskExecution extends Admin.ITaskExecution {

@@ -236,7 +236,6 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
-  const [shouldShowTaskDetails, setShouldShowTaskDetails] = useState<boolean>(false);
   const [selectedTaskExecution, setSelectedTaskExecution] = useState<MapTaskExecution | null>(null);
 
   const isMounted = useRef(false);
@@ -272,17 +271,8 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   }, [nodeExecutionId]);
 
   useEffect(() => {
-    setShouldShowTaskDetails(false);
     setSelectedTaskExecution(null);
   }, [nodeExecutionId, phase]);
-
-  useEffect(() => {
-    if (selectedTaskExecution) {
-      setShouldShowTaskDetails(true);
-    } else {
-      setShouldShowTaskDetails(false);
-    }
-  }, [selectedTaskExecution]);
 
   const nodeExecution = nodeExecutionQuery.data;
 
@@ -314,22 +304,17 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const reasons = getTaskExecutionDetailReasons(listTaskExecutionsQuery.data);
 
   const onBackClick = () => {
-    setShouldShowTaskDetails(false);
     setSelectedTaskExecution(null);
   };
 
   const headerTitle = useMemo(() => {
-    // eslint-disable-next-line no-useless-escape
-    const regex = /.*_(.*)/; // extract string after last underscore
-    const mapTaskHeader = `${selectedTaskExecution?.taskName.match(regex)?.[1]} of ${
-      nodeExecutionId.nodeId
-    }`;
+    const mapTaskHeader = `${selectedTaskExecution?.taskIndex} of ${nodeExecutionId.nodeId}`;
     const header = selectedTaskExecution ? mapTaskHeader : nodeExecutionId.nodeId;
 
     return (
       <Typography className={classnames(commonStyles.textWrapped, styles.title)} variant="h3">
         <div>
-          {shouldShowTaskDetails && (
+          {!!selectedTaskExecution && (
             <IconButton onClick={onBackClick} size="small">
               <ArrowBackIos />
             </IconButton>
@@ -341,7 +326,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
         </IconButton>
       </Typography>
     );
-  }, [nodeExecutionId, shouldShowTaskDetails]);
+  }, [nodeExecutionId, selectedTaskExecution]);
 
   const isRunningPhase = useMemo(() => {
     return (

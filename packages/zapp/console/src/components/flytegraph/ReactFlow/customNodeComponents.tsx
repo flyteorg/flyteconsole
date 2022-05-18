@@ -262,7 +262,9 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
   const onNodeSelectionChanged = data.onNodeSelectionChanged;
   const onPhaseSelectionChanged = data.onPhaseSelectionChanged;
   const [selectedNode, setSelectedNode] = useState<boolean>(false);
-  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
+  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(
+    data.selectedPhase,
+  );
 
   useEffect(() => {
     if (selectedNode === true) {
@@ -351,11 +353,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
           }
           const defaultColor = getStatusColor();
           const phaseColor = getStatusColor(phase);
-          const color = selectedPhase
-            ? phase === selectedPhase
-              ? phaseColor
-              : defaultColor
-            : phaseColor;
+          const color = !selectedPhase || phase === selectedPhase ? phaseColor : defaultColor;
           const key = `${id}-${phase}`;
           return (
             <TaskPhaseItem

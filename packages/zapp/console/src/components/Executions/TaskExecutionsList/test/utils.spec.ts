@@ -1,9 +1,14 @@
-import { getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
+import { getTaskLogName, getTaskIndex } from 'components/Executions/TaskExecutionsList/utils';
 import { Event } from 'flyteidl';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { obj } from 'test/utils';
-import { getMockMapTaskLogItem } from '../TaskExecutions.mocks';
-import { formatRetryAttempt, getGroupedLogs, getUniqueTaskExecutionName } from '../utils';
+import {
+  getTaskRetryAtemptsForIndex,
+  formatRetryAttempt,
+  getGroupedLogs,
+  getUniqueTaskExecutionName,
+} from '../utils';
+import { getMockMapTaskLogItem, MockMapTaskExecution } from '../TaskExecutions.mocks';
 
 describe('getUniqueTaskExecutionName', () => {
   const cases: [{ name: string; retryAttempt: number }, string][] = [
@@ -47,7 +52,7 @@ describe('getGroupedLogs', () => {
     getMockMapTaskLogItem(TaskExecutionPhase.FAILED, false, 2),
   ];
 
-  it(`Should properly group to Success and Failed`, () => {
+  it('should properly group to Success and Failed', () => {
     const logs = getGroupedLogs(resources);
     // Do not have key which was not in the logs
     expect(logs.get(TaskExecutionPhase.QUEUED)).toBeUndefined();
@@ -64,20 +69,68 @@ describe('getGroupedLogs', () => {
   });
 });
 
+describe('getTaskRetryAttemptsForIndex', () => {
+  it('should return 2 filtered attempts for provided index', () => {
+    const index = 3;
+    // '?? []' -> TS check, mock contains externalResources
+    const result = getTaskRetryAtemptsForIndex(
+      MockMapTaskExecution.closure.metadata?.externalResources ?? [],
+      index,
+    );
+    expect(result).toHaveLength(2);
+  });
+
+  it('should return 1 filtered attempt for provided index', () => {
+    const index = 0;
+    // '?? []' -> TS check, mock contains externalResources
+    const result = getTaskRetryAtemptsForIndex(
+      MockMapTaskExecution.closure.metadata?.externalResources ?? [],
+      index,
+    );
+    expect(result).toHaveLength(1);
+  });
+
+  it('should return empty array when null index provided', () => {
+    const index = null;
+    // '?? []' -> TS check, mock contains externalResources
+    const result = getTaskRetryAtemptsForIndex(
+      MockMapTaskExecution.closure.metadata?.externalResources ?? [],
+      index,
+    );
+    expect(result).toHaveLength(0);
+  });
+});
+
+describe('getTaskIndex', () => {
+  it('should return index if selected log has a match in externalResources list', () => {
+    const index = 3;
+    const log = getMockMapTaskLogItem(TaskExecutionPhase.SUCCEEDED, true, index, 1).logs?.[0];
+
+    // TS check
+    if (log) {
+      const result1 = getTaskIndex(MockMapTaskExecution, log);
+      expect(result1).toStrictEqual(index);
+    }
+  });
+});
+
 describe('getTaskLogName', () => {
   it('should return correct names', () => {
-    const taskName = 'task_name_1';
+    const taskName = 'task.task_name_1';
     const taskLogName1 = 'abc';
     const taskLogName2 = 'abc-1';
     const taskLogName3 = 'abc-1-1';
 
     const result1 = getTaskLogName(taskName, taskLogName1);
-    expect(result1).toStrictEqual(taskName);
+    expect(result1).toStrictEqual('task_name_1');
 
-    const result2 = getTaskLogName(taskName, taskLogName2);
-    expect(result2).toStrictEqual('task_name_1-1');
+    const result2 = getTaskLogName(taskName, taskLogName1);
+    expect(result2).toStrictEqual('task_name_1');
 
-    const result3 = getTaskLogName(taskName, taskLogName3);
-    expect(result3).toStrictEqual('task_name_1-1-1');
+    const result3 = getTaskLogName(taskName, taskLogName2);
+    expect(result3).toStrictEqual('task_name_1-1');
+
+    const result4 = getTaskLogName(taskName, taskLogName3);
+    expect(result4).toStrictEqual('task_name_1-1-1');
   });
 });

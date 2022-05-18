@@ -14,7 +14,6 @@ const nodeExecution = getMockNodeExecution();
 const workflow = createMockWorkflow('SampleWorkflow');
 const taskTemplate = { ...extractTaskTemplates(workflow)[0], type: TaskType.ARRAY };
 const phase = TaskExecutionPhase.SUCCEEDED;
-const log = { uri: '#', name: 'Kubernetes Logs #0-0' };
 
 jest.mock('components/hooks/useTabState');
 
@@ -22,11 +21,11 @@ describe('NodeExecutionTabs', () => {
   const mockUseTabState = useTabState as jest.Mock<any>;
   mockUseTabState.mockReturnValue({ onChange: jest.fn(), value: 'executions' });
   describe('with map tasks', () => {
-    it('should display proper tab name when it was provided and shouldShow is TRUE', async () => {
+    it('should display proper tab name when it was provided and shouldShow is TRUE', () => {
       const { queryByText, queryAllByRole } = render(
         <NodeExecutionTabs
           nodeExecution={nodeExecution}
-          selectedTaskExecution={{ ...mockTaskExecution, taskName: 'abc', log }}
+          selectedTaskExecution={{ ...mockTaskExecution, taskIndex: 0 }}
           phase={phase}
           taskTemplate={taskTemplate}
           onTaskSelected={jest.fn()}
@@ -36,7 +35,7 @@ describe('NodeExecutionTabs', () => {
       expect(queryByText('Executions')).toBeInTheDocument();
     });
 
-    it('should display proper tab name when it was provided and shouldShow is FALSE', async () => {
+    it('should display proper tab name when it was provided and shouldShow is FALSE', () => {
       const { queryByText, queryAllByRole } = render(
         <NodeExecutionTabs
           nodeExecution={nodeExecution}
@@ -53,7 +52,7 @@ describe('NodeExecutionTabs', () => {
   });
 
   describe('without map tasks', () => {
-    it('should display proper tab name when mapTask was not provided', async () => {
+    it('should display proper tab name when mapTask was not provided', () => {
       const { queryAllByRole, queryByText } = render(
         <NodeExecutionTabs
           nodeExecution={nodeExecution}

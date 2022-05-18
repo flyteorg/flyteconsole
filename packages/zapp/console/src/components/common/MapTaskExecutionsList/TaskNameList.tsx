@@ -2,10 +2,7 @@ import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Core } from 'flyteidl';
-import {
-  getTaskLogName,
-  getUniqueTaskExecutionName,
-} from 'components/Executions/TaskExecutionsList/utils';
+import { getTaskIndex, getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
 import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { useCommonStyles } from '../styles';
@@ -36,16 +33,15 @@ export const TaskNameList = ({ taskExecution, logs, onTaskSelected }: TaskNameLi
     return <span className={commonStyles.hintText}>{noLogsFoundString}</span>;
   }
 
-  const taskName = getUniqueTaskExecutionName(taskExecution);
-
   return (
     <>
       {logs.map((log) => {
         const styles = useStyles({ isLink: !!log.uri });
-        const taskLogName = getTaskLogName(taskName, log.name ?? '');
+        const taskLogName = getTaskLogName(taskExecution.id.taskId.name, log.name ?? '');
+        const taskIndex = getTaskIndex(taskExecution, log);
 
         const handleClick = () => {
-          onTaskSelected({ ...taskExecution, taskName: taskLogName, log });
+          onTaskSelected({ ...taskExecution, taskIndex });
         };
 
         return (
