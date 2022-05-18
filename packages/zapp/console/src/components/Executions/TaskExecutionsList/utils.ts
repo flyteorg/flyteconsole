@@ -115,7 +115,7 @@ export function getTaskIndex(
 
 export function getTaskLogName(taskName: string, taskLogName: string): string {
   const lastDotIndex = taskName.lastIndexOf('.');
-  const prefix = lastDotIndex !== -1 ? taskName.slice(lastDotIndex + 1) : '';
+  const prefix = lastDotIndex !== -1 ? taskName.slice(lastDotIndex + 1) : taskName;
   const firstDahIndex = taskLogName.indexOf('-');
   const suffix = firstDahIndex !== -1 ? taskLogName.slice(firstDahIndex) : '';
   return `${prefix}${suffix}`;

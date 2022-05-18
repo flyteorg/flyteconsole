@@ -1,16 +1,9 @@
 import * as React from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MapTaskExecution } from 'models/Execution/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
+import { PanelSection } from 'components/common/PanelSection';
 import { formatRetryAttempt, getTaskRetryAtemptsForIndex } from './utils';
 import { TaskExecutionLogsCard } from './TaskExecutionLogsCard';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  wrapper: {
-    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-}));
 
 interface MapTaskExecutionDetailsProps {
   taskExecution: MapTaskExecution;
@@ -20,7 +13,6 @@ interface MapTaskExecutionDetailsProps {
 export const MapTaskExecutionDetails: React.FC<MapTaskExecutionDetailsProps> = ({
   taskExecution,
 }) => {
-  const styles = useStyles();
   const {
     closure: { metadata },
     taskIndex,
@@ -32,13 +24,13 @@ export const MapTaskExecutionDetails: React.FC<MapTaskExecutionDetailsProps> = (
   );
 
   return (
-    <>
+    <PanelSection>
       {filteredResources.map((item) => {
         const attempt = item.retryAttempt ?? 0;
         const headerText = formatRetryAttempt(attempt);
 
         return (
-          <div className={styles.wrapper} key={`card-${attempt}`}>
+          <div key={`card-${attempt}`}>
             <TaskExecutionLogsCard
               taskExecution={taskExecution}
               headerText={headerText}
@@ -48,6 +40,6 @@ export const MapTaskExecutionDetails: React.FC<MapTaskExecutionDetailsProps> = (
           </div>
         );
       })}
-    </>
+    </PanelSection>
   );
 };

@@ -116,21 +116,28 @@ describe('getTaskIndex', () => {
 
 describe('getTaskLogName', () => {
   it('should return correct names', () => {
-    const taskName = 'task.task_name_1';
+    const taskName1 = 'task_name_1';
+    const taskName2 = 'task.task_name_1';
     const taskLogName1 = 'abc';
     const taskLogName2 = 'abc-1';
     const taskLogName3 = 'abc-1-1';
 
-    const result1 = getTaskLogName(taskName, taskLogName1);
-    expect(result1).toStrictEqual('task_name_1');
+    const result1 = getTaskLogName(taskName1, taskLogName1);
+    expect(result1).toStrictEqual(taskName1);
 
-    const result2 = getTaskLogName(taskName, taskLogName1);
-    expect(result2).toStrictEqual('task_name_1');
+    const result2 = getTaskLogName(taskName1, taskLogName2);
+    expect(result2).toStrictEqual('task_name_1-1');
 
-    const result3 = getTaskLogName(taskName, taskLogName2);
-    expect(result3).toStrictEqual('task_name_1-1');
+    const result3 = getTaskLogName(taskName1, taskLogName3);
+    expect(result3).toStrictEqual('task_name_1-1-1');
 
-    const result4 = getTaskLogName(taskName, taskLogName3);
-    expect(result4).toStrictEqual('task_name_1-1-1');
+    const result4 = getTaskLogName(taskName2, taskLogName1);
+    expect(result4).toStrictEqual(taskName1);
+
+    const result5 = getTaskLogName(taskName2, taskLogName2);
+    expect(result5).toStrictEqual('task_name_1-1');
+
+    const result6 = getTaskLogName(taskName2, taskLogName3);
+    expect(result6).toStrictEqual('task_name_1-1-1');
   });
 });
