@@ -31,6 +31,8 @@ import { DumpJSON } from 'components/common/DumpJSON';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/WorkflowGraph/utils';
+import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
+import { Identifier } from 'models/Common/types';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionDetails } from '../types';
@@ -191,7 +193,6 @@ const WorkflowTabs: React.FC<{
   let tabContent: JSX.Element | null = null;
   const id = nodeId.slice(nodeId.lastIndexOf('-') + 1);
   const taskTemplate = dagData[id]?.value.template;
-
   switch (tabState.value) {
     case tabIds.inputs: {
       tabContent = taskTemplate ? (
@@ -204,6 +205,7 @@ const WorkflowTabs: React.FC<{
     case tabIds.task: {
       tabContent = taskTemplate ? (
         <PanelSection>
+          <TaskVersionDetailsLink id={taskTemplate.id as Identifier} />
           <DumpJSON value={taskTemplate} />
         </PanelSection>
       ) : null;

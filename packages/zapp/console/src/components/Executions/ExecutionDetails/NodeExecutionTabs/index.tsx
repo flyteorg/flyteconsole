@@ -9,6 +9,8 @@ import { DumpJSON } from 'components/common/DumpJSON';
 import { isMapTaskType } from 'models/Task/utils';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { MapTaskExecutionDetails } from 'components/Executions/TaskExecutionsList/MapTaskExecutionDetails';
+import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
+import { Identifier } from 'models/Common/types';
 import { TaskExecutionsList } from '../../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
@@ -82,6 +84,7 @@ export const NodeExecutionTabs: React.FC<{
     case tabIds.task: {
       tabContent = taskTemplate ? (
         <PanelSection>
+          <TaskVersionDetailsLink id={taskTemplate.id as Identifier} />
           <DumpJSON value={taskTemplate} />
         </PanelSection>
       ) : null;
