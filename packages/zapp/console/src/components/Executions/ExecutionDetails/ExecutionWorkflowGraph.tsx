@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { isMapTaskType } from 'models/Task/utils';
+import { isMapTaskV1 } from 'models/Task/utils';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -37,8 +37,10 @@ export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({
       const {
         closure: { taskType, metadata, eventVersion = 0 },
       } = taskExecution;
-      return (
-        isMapTaskType(taskType ?? undefined) && eventVersion >= 1 && metadata?.externalResources
+      return isMapTaskV1(
+        eventVersion,
+        metadata?.externalResources?.length ?? 0,
+        taskType ?? undefined,
       );
     });
     const externalResources: ExternalResource[] = taskExecutions.value
