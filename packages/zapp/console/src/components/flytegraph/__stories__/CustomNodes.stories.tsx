@@ -1,19 +1,18 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { CacheContext } from 'components/Cache/CacheContext';
-import { createCache } from 'components/Cache/createCache';
+import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { NodeExecutionDisplayType } from 'components/Executions/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
+import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
 import { TaskType } from 'models/Task/constants';
 import * as React from 'react';
+import { ReactFlowProvider } from 'react-flow-renderer';
 import { ReactFlowCustomTaskNode } from '../ReactFlow/customNodeComponents';
-
-const cache = createCache();
 
 const stories = storiesOf('CustomNodes', module);
 stories.addDecorator((story) => (
   <>
-    <CacheContext.Provider value={cache}>{story()}</CacheContext.Provider>
+    <ReactFlowProvider>{story()}</ReactFlowProvider>
   </>
 ));
 
@@ -26,13 +25,71 @@ const commonData = {
 const taskData = {
   ...commonData,
   nodeType: NodeExecutionDisplayType.PythonTask,
-  nodeExecutionStatus: NodeExecutionPhase.SUCCEEDED,
   taskType: TaskType.PYTHON,
-  text: 'pythonTask',
   cacheStatus: 0,
 };
 
-stories.add('Task Node', () => <ReactFlowCustomTaskNode data={taskData} />);
+stories.add('Task Node', () => (
+  <>
+    {RENDER_ORDER.map((phase, i) => (
+      <div
+        style={{
+          position: 'absolute',
+          top: 40 * i + 20,
+          left: 20,
+        }}
+        key={phase}
+      >
+        <ReactFlowCustomTaskNode
+          data={{
+            ...taskData,
+            nodeExecutionStatus: phase,
+            text: getTaskExecutionPhaseConstants(phase).text,
+          }}
+        />
+      </div>
+    ))}
+  </>
+));
+
+const cachedTaskData = {
+  ...commonData,
+  nodeType: NodeExecutionDisplayType.PythonTask,
+  nodeExecutionStatus: NodeExecutionPhase.SUCCEEDED,
+  taskType: TaskType.PYTHON,
+};
+
+const CACHE_STATUSES = [
+  { status: CatalogCacheStatus.CACHE_DISABLED, text: 'cache disabled' },
+  { status: CatalogCacheStatus.CACHE_HIT, text: 'cache hit' },
+  { status: CatalogCacheStatus.CACHE_LOOKUP_FAILURE, text: 'cache lookup failure' },
+  { status: CatalogCacheStatus.CACHE_MISS, text: 'cache miss' },
+  { status: CatalogCacheStatus.CACHE_POPULATED, text: 'cache populated' },
+  { status: CatalogCacheStatus.CACHE_PUT_FAILURE, text: 'cache put failure' },
+];
+
+stories.add('Task Node by Cache Status', () => (
+  <>
+    {CACHE_STATUSES.map((cacheStatus, i) => (
+      <div
+        style={{
+          position: 'absolute',
+          top: 40 * i + 20,
+          left: 20,
+        }}
+        key={cacheStatus.text}
+      >
+        <ReactFlowCustomTaskNode
+          data={{
+            ...cachedTaskData,
+            cacheStatus: cacheStatus.status,
+            text: cacheStatus.text,
+          }}
+        />
+      </div>
+    ))}
+  </>
+));
 
 const logsByPhase = new Map();
 logsByPhase.set(5, [
@@ -63,12 +120,30 @@ logsByPhase.set(6, [
 const mapTaskData = {
   ...commonData,
   nodeType: NodeExecutionDisplayType.MapTask,
-  nodeExecutionStatus: NodeExecutionPhase.SUCCEEDED,
   taskType: TaskType.ARRAY,
-  text: 'mapTask',
   cacheStatus: 0,
-  selectedPhase: undefined,
-  logsByPhase: logsByPhase,
+  nodeLogsByPhase: logsByPhase,
 };
 
-stories.add('Map Task Node', () => <ReactFlowCustomTaskNode data={mapTaskData} />);
+stories.add('Map Task Node', () => (
+  <>
+    {RENDER_ORDER.map((phase, i) => (
+      <div
+        style={{
+          position: 'absolute',
+          top: 45 * i + 20,
+          left: 20,
+        }}
+        key={phase}
+      >
+        <ReactFlowCustomTaskNode
+          data={{
+            ...mapTaskData,
+            nodeExecutionStatus: phase,
+            text: getTaskExecutionPhaseConstants(phase).text,
+          }}
+        />
+      </div>
+    ))}
+  </>
+));
