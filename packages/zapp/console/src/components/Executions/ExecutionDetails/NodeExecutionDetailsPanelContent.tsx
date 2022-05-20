@@ -402,7 +402,11 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
           {statusContent}
           {!dag && detailsContent}
           {details && (
-            <ExecutionDetailsActions className={styles.actionsContainer} details={details} />
+            <ExecutionDetailsActions
+              className={styles.actionsContainer}
+              details={details}
+              nodeExecutionId={nodeExecutionId}
+            />
           )}
         </div>
       </header>
