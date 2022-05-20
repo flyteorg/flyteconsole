@@ -22,7 +22,7 @@ const workflow: Workflow = {
 };
 
 const onNodeSelectionChanged = action('nodeSelected');
-const onMapTaskSelectionChanged = action('mapTaskSelected');
+const onPhaseSelectionChanged = action('phaseSelected');
 
 const cache = createCache();
 const taskTemplates = extractTaskTemplates(workflow);
@@ -49,7 +49,8 @@ stories.addDecorator((story) => (
 stories.add('TaskNodeRenderer', () => (
   <WorkflowGraph
     onNodeSelectionChanged={onNodeSelectionChanged}
-    onMapTaskSelectionChanged={onMapTaskSelectionChanged}
+    onPhaseSelectionChanged={onPhaseSelectionChanged}
     workflow={workflow}
+    isDetailsTabClosed={true}
   />
 ));
