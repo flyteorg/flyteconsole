@@ -1,4 +1,3 @@
-import { PrimitiveType } from 'components/Launch/LaunchForm/inputHelpers/struct';
 import { Admin, Core, Protobuf } from 'flyteidl';
 
 /* --- BEGIN flyteidl type aliases --- */
@@ -151,7 +150,6 @@ export interface LiteralType extends Core.ILiteralType {
   schema?: SchemaType;
   simple?: SimpleType;
   enumType?: EnumType;
-  primitive?: Primitive;
 }
 
 export interface Variable extends Core.IVariable {

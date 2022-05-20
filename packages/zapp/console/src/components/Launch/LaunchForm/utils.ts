@@ -1,7 +1,7 @@
 import { timestampToDate } from 'common/utils';
 import { Core } from 'flyteidl';
 import { isObject } from 'lodash';
-import { Identifier, LiteralType, Scalar, Variable } from 'models/Common/types';
+import { Identifier, LiteralType, Variable } from 'models/Common/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';
 import { Workflow } from 'models/Workflow/types';
@@ -156,12 +156,6 @@ export function getInputDefintionForLiteralType(literalType: LiteralType): Input
     result.type = simpleTypeToInputType[literalType.simple];
   } else if (literalType.enumType) {
     result.type = InputType.Enum;
-  } else if (literalType.primitive) {
-    if (literalType.primitive.stringValue) {
-      result.type = InputType.String;
-    } else if (literalType.primitive.integer) {
-      result.type = InputType.Integer;
-    }
   }
   return result;
 }
