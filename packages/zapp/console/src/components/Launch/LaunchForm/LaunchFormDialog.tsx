@@ -10,9 +10,10 @@ import {
 function getLaunchProps(id: ResourceIdentifier) {
   if (id.resourceType === ResourceType.TASK) {
     return { taskId: id };
+  } else if (id.resourceType === ResourceType.WORKFLOW) {
+    return { workflowId: id };
   }
-
-  return { workflowId: id };
+  throw new Error('Unknown Resource Type');
 }
 
 export const LaunchFormDialog: React.FC<{

@@ -46,11 +46,33 @@ export const NodeExecutionActions: React.FC<{
   });
 
   const literals = executionData.value.fullInputs?.literals;
-  const id = nodeExecutionDetails?.taskTemplate?.id as ResourceIdentifier | undefined;
 
-  const initialParameters: TaskInitialLaunchParameters = {
-    values: literals && literalsToLiteralValueMap(literals),
-    taskId: id as Identifier | undefined,
+  const renderRerunAction = () => {
+    const id = nodeExecutionDetails?.taskTemplate?.id as ResourceIdentifier;
+
+    if (!id) {
+      return <></>;
+    }
+
+    const initialParameters: TaskInitialLaunchParameters = {
+      values: literals && literalsToLiteralValueMap(literals),
+      taskId: id as Identifier | undefined,
+    };
+    return (
+      <>
+        <Tooltip title={t('rerunTooltip')}>
+          <IconButton onClick={rerunIconOnClick}>
+            <RerunIcon />
+          </IconButton>
+        </Tooltip>
+        <LaunchFormDialog
+          id={id}
+          initialParameters={initialParameters}
+          showLaunchForm={showLaunchForm}
+          setShowLaunchForm={setShowLaunchForm}
+        />
+      </>
+    );
   };
 
   return (
@@ -61,20 +83,8 @@ export const NodeExecutionActions: React.FC<{
             <InputsAndOutputsIcon />
           </IconButton>
         </Tooltip>
-        <Tooltip title={t('rerunTooltip')}>
-          <IconButton onClick={rerunIconOnClick}>
-            <RerunIcon />
-          </IconButton>
-        </Tooltip>
+        {renderRerunAction()}
       </div>
-      {id && (
-        <LaunchFormDialog
-          id={id}
-          initialParameters={initialParameters}
-          showLaunchForm={showLaunchForm}
-          setShowLaunchForm={setShowLaunchForm}
-        />
-      )}
     </>
   );
 };

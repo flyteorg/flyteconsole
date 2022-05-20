@@ -19,6 +19,10 @@ export const ExecutionDetailsActions: React.FC<{
 
   const id = details.taskTemplate?.id as ResourceIdentifier | undefined;
 
+  if (!id) {
+    return <></>;
+  }
+
   const literals = executionData.value.fullInputs?.literals;
 
   const initialParameters: TaskInitialLaunchParameters = {
@@ -38,14 +42,12 @@ export const ExecutionDetailsActions: React.FC<{
           {t('rerun')}
         </Button>
       </div>
-      {id && (
-        <LaunchFormDialog
-          id={id}
-          initialParameters={initialParameters}
-          showLaunchForm={showLaunchForm}
-          setShowLaunchForm={setShowLaunchForm}
-        />
-      )}
+      <LaunchFormDialog
+        id={id}
+        initialParameters={initialParameters}
+        showLaunchForm={showLaunchForm}
+        setShowLaunchForm={setShowLaunchForm}
+      />
     </>
   );
 };
