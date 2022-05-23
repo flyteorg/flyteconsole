@@ -38,6 +38,7 @@ stories.addDecorator((story) => (
         right: '35vw',
         left: 0,
         bottom: 0,
+        height: '450px',
       }}
     >
       <CacheContext.Provider value={cache}>{story()}</CacheContext.Provider>
