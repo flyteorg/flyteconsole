@@ -20,6 +20,7 @@ import {
   InputTypeDefinition,
   ParsedInput,
   SearchableVersion,
+  InputValue,
 } from './types';
 
 /** Creates a unique cache key for an input based on its name and type.
@@ -190,6 +191,19 @@ export function isEnterInputsState(state: BaseInterpretedLaunchState): boolean {
     LaunchState.SUBMIT_FAILED,
     LaunchState.SUBMIT_SUCCEEDED,
   ].some(state.matches);
+}
+
+export function parseMappedTypeValue(value: InputValue): { key: string; value: string } {
+  try {
+    const mapObj = JSON.parse(value.toString());
+    const mapKey = Object.keys(mapObj)?.[0] ?? '';
+    const mapValue = mapObj[mapKey] ?? '';
+    return typeof mapObj === 'object'
+      ? { key: mapKey, value: mapValue }
+      : { key: '', value: value.toString() };
+  } catch (e) {
+    return { key: '', value: value.toString() };
+  }
 }
 
 export function literalsToLiteralValueMap(

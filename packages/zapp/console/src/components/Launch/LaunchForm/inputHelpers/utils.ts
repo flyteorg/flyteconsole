@@ -33,7 +33,6 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
   switch (type) {
     case InputType.Binary:
     case InputType.Error:
-    case InputType.Map:
     case InputType.None:
     case InputType.Unknown:
       return false;
@@ -47,6 +46,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.Schema:
     case InputType.String:
     case InputType.Struct:
+    case InputType.Map:
       return true;
     case InputType.Collection: {
       if (!subtype) {
