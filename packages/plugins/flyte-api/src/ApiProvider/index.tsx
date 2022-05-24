@@ -20,7 +20,7 @@ const FlyteApiContext = createContext<FlyteApiContextState>({
 });
 
 interface FlyteApiProviderProps {
-  flyteApiDomain: string;
+  flyteApiDomain?: string;
   children?: React.ReactNode;
 }
 
