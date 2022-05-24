@@ -18,5 +18,5 @@ export const defaultLoginStatus: LoginStatus = {
  */
 export function getLoginUrl(adminUrl?: string, redirectUrl: string = window.location.href) {
   const baseUrl = getEndpointUrl(RawEndpoint.Login, adminUrl);
-  return `${baseUrl}?$redirect_url=${redirectUrl}`;
+  return `${baseUrl}?redirect_url=${redirectUrl}`;
 }
