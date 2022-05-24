@@ -1,6 +1,6 @@
 {
     "name": "@flyteconsole/flyte-api",
-    "version": "0.0.3-rc2",
+    "version": "0.2.2",
     "description": "FlyteConsole plugin to allow access FlyteAPI",
     "main": "./dist/index.js",
     "module": "./lib/esm/index.js",
@@ -13,11 +13,10 @@
     },
     "scripts": {
         "clean": "rm -rf dist && rm -rf lib",
-        "varsion": "npm version premajor",
         "build": "yarn build:esm && yarn build:cjs",
         "build:esm": "tsc --module esnext --outDir lib/esm --project ./tsconfig.build.json",
         "build:cjs": "tsc --project ./tsconfig.build.json",
-        "publish": "yarn clean && npm version premajor && yarn build:esm && npm publish",
+        "publish": "yarn clean && yarn version && yarn build:esm",
         "test": "NODE_ENV=test jest"
     },
     "dependencies": {
