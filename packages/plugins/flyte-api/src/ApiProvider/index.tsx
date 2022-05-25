@@ -8,7 +8,7 @@ export interface FlyteApiContextState {
   loginStatus: LoginStatus;
   getLoginUrl: (redirect?: string) => string;
   getProfileUrl: () => string;
-  getAdminApiUrl: (endpoint: AdminEndpoint) => string;
+  getAdminApiUrl: (endpoint: AdminEndpoint | string) => string;
 }
 
 const FlyteApiContext = createContext<FlyteApiContextState>({
