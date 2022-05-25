@@ -3,12 +3,11 @@ import { Core } from 'flyteidl';
 import { InputTypeDefinition, InputValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
-
-const missingSubTypeError = 'Unexpected missing subtype for map';
+import t from '../../../common/strings';
 
 function fromLiteral(literal: Core.ILiteral, { subtype }: InputTypeDefinition): InputValue {
   if (!subtype) {
-    throw new Error(missingSubTypeError);
+    throw new Error(t('missingMapSubType'));
   }
   if (!literal.map) {
     throw new Error('Map literal missing `map` property');
@@ -32,7 +31,7 @@ function fromLiteral(literal: Core.ILiteral, { subtype }: InputTypeDefinition): 
 
 function toLiteral({ value, typeDefinition: { subtype } }: ConverterInput): Core.ILiteral {
   if (!subtype) {
-    throw new Error(missingSubTypeError);
+    throw new Error(t('missingMapSubType'));
   }
   const obj = JSON.parse(value.toString());
   const key = Object.keys(obj)?.[0];
@@ -46,7 +45,7 @@ function toLiteral({ value, typeDefinition: { subtype } }: ConverterInput): Core
 
 function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) {
   if (!subtype) {
-    throw new Error(missingSubTypeError);
+    throw new Error(t('missingMapSubType'));
   }
   if (typeof value !== 'string') {
     throw new Error('Value is not a string');

@@ -12,6 +12,7 @@ const str = {
   securityContextHeader: 'Security Context',
   serviceAccountHeader: 'Service Account',
   noMatchingResults: 'No matching results',
+  missingMapSubType: 'Unexpected missing subtype for map',
 };
 
 export { patternKey } from '@flyteconsole/locale';

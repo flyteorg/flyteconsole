@@ -42,14 +42,14 @@ export const MapInput: React.FC<InputProps> = (props) => {
 
   const handleKeyChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange(JSON.stringify({ [e.target.value || '']: mapValue }));
+      onChange(JSON.stringify({ [e.target.value ?? '']: mapValue }));
     },
     [mapValue],
   );
 
   const handleValueChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onChange(JSON.stringify({ [mapKey]: e.target.value || '' }));
+      onChange(JSON.stringify({ [mapKey]: e.target.value ?? '' }));
     },
     [mapKey],
   );
