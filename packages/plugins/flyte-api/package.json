@@ -20,11 +20,8 @@
         "test": "NODE_ENV=test jest"
     },
     "dependencies": {
-        "@material-ui/core": "^4.0.0",
-        "@material-ui/icons": "^4.0.0",
         "axios": "^0.27.2",
         "camelcase-keys": "^7.0.2",
-        "classnames": "^2.3.1",
         "snakecase-keys": "^5.4.2"
     },
     "peerDependencies": {
