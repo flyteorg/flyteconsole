@@ -111,7 +111,6 @@ export const supportedPrimitives: InputTypeDefinition[] = [
   inputTypes.integer,
   inputTypes.schema,
   inputTypes.struct,
-  inputTypes.map,
 ];
 
 export const unsupportedTypes: InputTypeDefinition[] = [
