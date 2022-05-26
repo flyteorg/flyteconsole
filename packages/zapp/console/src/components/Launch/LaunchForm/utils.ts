@@ -196,19 +196,16 @@ export function literalsToLiteralValueMap(
   literals: {
     [k: string]: Core.ILiteral;
   },
-  types: Record<string, Variable>,
+  nameToTypeMap: Record<string, Variable>,
 ): LiteralValueMap {
   const literalValueMap: LiteralValueMap = new Map<string, Core.ILiteral>();
   if (literals) {
     for (var i = 0; i < Object.keys(literals).length; i++) {
       const name = Object.keys(literals)[i];
-      const type = types[name].type;
+      const type = nameToTypeMap[name].type;
       const typeDefinition = getInputDefintionForLiteralType(type);
-
-      if (typeDefinition) {
-        const inputKey = createInputCacheKey(name, typeDefinition);
-        literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
-      }
+      const inputKey = createInputCacheKey(name, typeDefinition);
+      literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
     }
   }
 
