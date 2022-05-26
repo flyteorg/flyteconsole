@@ -46,8 +46,12 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.Schema:
     case InputType.String:
     case InputType.Struct:
-    case InputType.Map:
       return true;
+    case InputType.Map:
+      if (!subtype) {
+        return false;
+      }
+      return typeIsSupported(subtype);
     case InputType.Collection: {
       if (!subtype) {
         console.error('Unexpected missing subtype for collection input', typeDefinition);

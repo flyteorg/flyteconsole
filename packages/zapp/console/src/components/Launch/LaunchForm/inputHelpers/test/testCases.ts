@@ -67,6 +67,10 @@ export const inputTypes: Record<InputTypeKey, InputTypeDefinition> = {
     literalType: {
       mapValueType: { simple: Core.SimpleType.STRING },
     },
+    subtype: {
+      literalType: { simple: Core.SimpleType.NONE },
+      type: InputType.None,
+    },
     type: InputType.Map,
   },
   none: {
@@ -193,10 +197,6 @@ export const validityTestCases = {
       Long.MIN_VALUE.toString(),
       Long.MIN_VALUE,
     ],
-  },
-  map: {
-    invalid: ['a', {}, true, new Date(), 1.1, 0 / 0, '1.1', '1a'],
-    valid: [{ a: '1' }, { a: [1, 2, 3] }, { a: { b: 'c' } }],
   },
   // schema is just a specialized string input, so it has the same validity cases as string
   schema: { invalid: [123, true, new Date(), {}], valid: ['', 'abcdefg'] },

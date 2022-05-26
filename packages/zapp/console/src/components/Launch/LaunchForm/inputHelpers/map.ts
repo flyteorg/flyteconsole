@@ -4,6 +4,16 @@ import { InputTypeDefinition, InputValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import t from '../../../common/strings';
+import { parseJSON } from './parseJson';
+import { literalNone } from './constants';
+
+function parseMap(map: string) {
+  const parsed = parseJSON(map);
+  if (typeof parsed !== 'object') {
+    throw new Error(t('valueNotParse'));
+  }
+  return parsed;
+}
 
 function fromLiteral(literal: Core.ILiteral, { subtype }: InputTypeDefinition): InputValue {
   if (!subtype) {
@@ -33,13 +43,23 @@ function toLiteral({ value, typeDefinition: { subtype } }: ConverterInput): Core
   if (!subtype) {
     throw new Error(t('missingMapSubType'));
   }
-  const obj = JSON.parse(value.toString());
-  const key = Object.keys(obj)?.[0];
+  let parsed: { [key: string]: any };
+  // If we're processing a nested map, it may already have been parsed
+  if (typeof value === 'object') {
+    parsed = value;
+  } else {
+    const stringValue = typeof value === 'string' ? value : value.toString();
+    if (!stringValue.length) {
+      return literalNone();
+    }
+    parsed = parseMap(stringValue);
+  }
+  const key = Object.keys(parsed)?.[0];
 
   const helper = getHelperForInput(subtype.type);
 
   return {
-    map: { literals: { [key]: helper.toLiteral({ value: obj[key], typeDefinition: subtype }) } },
+    map: { literals: { [key]: helper.toLiteral({ value: parsed[key], typeDefinition: subtype }) } },
   };
 }
 
@@ -54,11 +74,11 @@ function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) 
     throw new Error(t('valueRequired'));
   }
   try {
-    JSON.parse(value.toString());
+    parseMap(value);
   } catch (e) {
     throw new Error(t('valueNotParse'));
   }
-  const obj = JSON.parse(value.toString());
+  const obj = parseJSON(value);
   if (!Object.keys(obj).length || !Object.keys(obj)[0].trim().length) {
     throw new Error(t('valueKeyRequired'));
   }
