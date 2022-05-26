@@ -199,14 +199,13 @@ export function literalsToLiteralValueMap(
   nameToTypeMap: Record<string, Variable>,
 ): LiteralValueMap {
   const literalValueMap: LiteralValueMap = new Map<string, Core.ILiteral>();
-  if (literals) {
-    for (var i = 0; i < Object.keys(literals).length; i++) {
-      const name = Object.keys(literals)[i];
-      const type = nameToTypeMap[name].type;
-      const typeDefinition = getInputDefintionForLiteralType(type);
-      const inputKey = createInputCacheKey(name, typeDefinition);
-      literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
-    }
+
+  for (var i = 0; i < Object.keys(literals).length; i++) {
+    const name = Object.keys(literals)[i];
+    const type = nameToTypeMap[name].type;
+    const typeDefinition = getInputDefintionForLiteralType(type);
+    const inputKey = createInputCacheKey(name, typeDefinition);
+    literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
   }
 
   return literalValueMap;
