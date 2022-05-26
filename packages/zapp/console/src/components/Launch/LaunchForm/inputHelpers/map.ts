@@ -10,16 +10,16 @@ function fromLiteral(literal: Core.ILiteral, { subtype }: InputTypeDefinition): 
     throw new Error(t('missingMapSubType'));
   }
   if (!literal.map) {
-    throw new Error('Map literal missing `map` property');
+    throw new Error(t('mapMissingMapProperty'));
   }
   if (!literal.map.literals) {
-    throw new Error('Map literal missing `map.literals` property');
+    throw new Error(t('mapMissingMapLiteralsProperty'));
   }
   if (typeof literal.map.literals !== 'object') {
-    throw new Error('Map literal is not an object');
+    throw new Error(t('mapLiternalNotObject'));
   }
   if (!Object.keys(literal.map.literals).length) {
-    throw new Error('Map literal object is empty');
+    throw new Error(t('mapLiternalObjectEmpty'));
   }
 
   const key = Object.keys(literal.map.literals)[0];
@@ -48,19 +48,19 @@ function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) 
     throw new Error(t('missingMapSubType'));
   }
   if (typeof value !== 'string') {
-    throw new Error('Value is not a string');
+    throw new Error(t('valueNotString'));
   }
   if (!value.toString().length) {
-    throw new Error('Value is required');
+    throw new Error(t('valueRequired'));
   }
   try {
     JSON.parse(value.toString());
   } catch (e) {
-    throw new Error(`Value did not parse to an object`);
+    throw new Error(t('valueNotParse'));
   }
   const obj = JSON.parse(value.toString());
   if (!Object.keys(obj).length || !Object.keys(obj)[0].trim().length) {
-    throw new Error("Value's key is required");
+    throw new Error(t('valueKeyRequired'));
   }
   const key = Object.keys(obj)[0];
   const helper = getHelperForInput(subtype.type);
@@ -69,7 +69,7 @@ function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) 
   try {
     helper.validate({ value: subValue, typeDefinition: subtype, name: '', required: false });
   } catch (e) {
-    throw new Error("Value's value is invalid");
+    throw new Error(t('valueValueInvalid'));
   }
 }
 
