@@ -35,19 +35,6 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
   const literals = executionData.value.fullInputs?.literals;
   const id = nodeExecutionDetails?.taskTemplate?.id as ResourceIdentifier;
 
-  // open the side panel for selected execution's detail
-  const inputsAndOutputsIconOnClick = (e: React.MouseEvent<HTMLElement>) => {
-    // prevent the parent row body onClick event trigger
-    e.stopPropagation();
-    // use null in case if there is no execution provided - when it is null will close panel
-    state.setSelectedExecution(execution?.id ?? null);
-  };
-
-  const rerunIconOnClick = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    setShowLaunchForm(true);
-  };
-
   React.useEffect(() => {
     detailsContext.getNodeExecutionDetails(execution).then((res) => {
       setNodeExecutionDetails(res);
@@ -61,6 +48,19 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
     };
     if (id) fetchTask();
   }, [id]);
+
+  // open the side panel for selected execution's detail
+  const inputsAndOutputsIconOnClick = (e: React.MouseEvent<HTMLElement>) => {
+    // prevent the parent row body onClick event trigger
+    e.stopPropagation();
+    // use null in case if there is no execution provided - when it is null will close panel
+    state.setSelectedExecution(execution?.id ?? null);
+  };
+
+  const rerunIconOnClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setShowLaunchForm(true);
+  };
 
   const renderRerunAction = () => {
     if (!id) {

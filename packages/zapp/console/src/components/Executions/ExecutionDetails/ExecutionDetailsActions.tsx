@@ -28,17 +28,17 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
 
   const id = details.taskTemplate?.id as ResourceIdentifier | undefined;
 
-  if (!id) {
-    return <></>;
-  }
-
   React.useEffect(() => {
     const fetchTask = async () => {
       const task = await getTask(id as Identifier);
       setTaskInputsTypes(task.closure.compiledTask.template?.interface?.inputs?.variables);
     };
-    fetchTask();
+    if (id) fetchTask();
   }, [id]);
+
+  if (!id) {
+    return <></>;
+  }
 
   const literals = executionData.value.fullInputs?.literals;
 
