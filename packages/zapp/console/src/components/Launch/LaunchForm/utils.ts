@@ -192,60 +192,25 @@ export function isEnterInputsState(state: BaseInterpretedLaunchState): boolean {
   ].some(state.matches);
 }
 
-export function literalsToLiteralValueMap(literals: {
-  [k: string]: Core.ILiteral;
-}): LiteralValueMap {
+export function literalsToLiteralValueMap(
+  literals: {
+    [k: string]: Core.ILiteral;
+  },
+  types: Record<string, Variable>,
+): LiteralValueMap {
   const literalValueMap: LiteralValueMap = new Map<string, Core.ILiteral>();
   if (literals) {
     for (var i = 0; i < Object.keys(literals).length; i++) {
       const name = Object.keys(literals)[i];
-      const value = literals[name];
-      let typeDefinition: InputTypeDefinition | undefined;
-      if (value?.scalar) {
-        typeDefinition = getInputDefintionForScalar(value.scalar);
-      } else if (value?.collection) {
-        typeDefinition = {
-          literalType: value.collection,
-          type: InputType.Collection,
-        } as InputTypeDefinition;
-      }
+      const type = types[name].type;
+      const typeDefinition = getInputDefintionForLiteralType(type);
+
       if (typeDefinition) {
         const inputKey = createInputCacheKey(name, typeDefinition);
         literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
       }
     }
   }
+
   return literalValueMap;
-}
-
-/** Converts a `Scalar` to an `InputTypeDefintion` to assist with rendering
- * a type annotation and converting input values.
- */
-export function getInputDefintionForScalar(scalar: Core.IScalar): InputTypeDefinition {
-  const result: InputTypeDefinition = {
-    literalType: scalar as LiteralType,
-    type: InputType.Unknown,
-  };
-
-  if (scalar.binary) {
-    result.type = InputType.Binary;
-  } else if (scalar.blob) {
-    result.type = InputType.Blob;
-  } else if (scalar.error) {
-    result.type = InputType.Error;
-  } else if (scalar.noneType) {
-    result.type = InputType.None;
-  } else if (scalar.primitive) {
-    if (scalar.primitive.stringValue) {
-      result.type = InputType.String;
-    } else if (scalar.primitive.floatValue) {
-      result.type = InputType.Float;
-    } else if (scalar.primitive.integer) {
-      result.type = InputType.Integer;
-    } else if (scalar.primitive.boolean) {
-      result.type = InputType.Boolean;
-    }
-  }
-
-  return result;
 }

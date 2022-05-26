@@ -2,9 +2,10 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import InputsAndOutputsIcon from '@material-ui/icons/Tv';
-import { RerunIcon } from 'components/common/Icons/RerunIcon';
-import { Identifier, ResourceIdentifier } from 'models/Common/types';
+import { RerunIcon } from '@flyteconsole/ui-atoms';
+import { Identifier, ResourceIdentifier, Variable } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
+import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
@@ -13,18 +14,26 @@ import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 
-export const NodeExecutionActions: React.FC<{
-  className?: string;
+interface NodeExecutionActionsProps {
   execution: NodeExecution;
   state: NodeExecutionsTableState;
-}> = ({ className, execution, state }) => {
+}
+
+export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Element => {
+  const { execution, state } = props;
+
   const detailsContext = useNodeExecutionContext();
   const [showLaunchForm, setShowLaunchForm] = React.useState<boolean>(false);
   const [nodeExecutionDetails, setNodeExecutionDetails] = React.useState<
     NodeExecutionDetails | undefined
   >();
+  const [taskInputsTypes, setTaskInputsTypes] = React.useState<
+    Record<string, Variable> | undefined
+  >();
 
   const executionData = useNodeExecutionData(execution.id);
+  const literals = executionData.value.fullInputs?.literals;
+  const id = nodeExecutionDetails?.taskTemplate?.id as ResourceIdentifier;
 
   // open the side panel for selected execution's detail
   const inputsAndOutputsIconOnClick = (e: React.MouseEvent<HTMLElement>) => {
@@ -45,17 +54,21 @@ export const NodeExecutionActions: React.FC<{
     });
   });
 
-  const literals = executionData.value.fullInputs?.literals;
+  React.useEffect(() => {
+    const fetchTask = async () => {
+      const task = await getTask(id as Identifier);
+      setTaskInputsTypes(task.closure.compiledTask.template?.interface?.inputs?.variables);
+    };
+    if (id) fetchTask();
+  }, [id]);
 
   const renderRerunAction = () => {
-    const id = nodeExecutionDetails?.taskTemplate?.id as ResourceIdentifier;
-
     if (!id) {
       return <></>;
     }
 
     const initialParameters: TaskInitialLaunchParameters = {
-      values: literals && literalsToLiteralValueMap(literals),
+      values: literals && taskInputsTypes && literalsToLiteralValueMap(literals, taskInputsTypes),
       taskId: id as Identifier | undefined,
     };
     return (
@@ -76,15 +89,13 @@ export const NodeExecutionActions: React.FC<{
   };
 
   return (
-    <>
-      <div>
-        <Tooltip title={t('inputsAndOutputsTooltip')}>
-          <IconButton onClick={inputsAndOutputsIconOnClick}>
-            <InputsAndOutputsIcon />
-          </IconButton>
-        </Tooltip>
-        {renderRerunAction()}
-      </div>
-    </>
+    <div>
+      <Tooltip title={t('inputsAndOutputsTooltip')}>
+        <IconButton onClick={inputsAndOutputsIconOnClick}>
+          <InputsAndOutputsIcon />
+        </IconButton>
+      </Tooltip>
+      {renderRerunAction()}
+    </div>
   );
 };

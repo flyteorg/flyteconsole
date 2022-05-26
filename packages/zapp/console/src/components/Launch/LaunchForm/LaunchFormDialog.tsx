@@ -7,6 +7,13 @@ import {
   WorkflowInitialLaunchParameters,
 } from 'components/Launch/LaunchForm/types';
 
+interface LaunchFormDialogProps {
+  id: ResourceIdentifier;
+  initialParameters: TaskInitialLaunchParameters | WorkflowInitialLaunchParameters;
+  showLaunchForm: boolean;
+  setShowLaunchForm: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 function getLaunchProps(id: ResourceIdentifier) {
   if (id.resourceType === ResourceType.TASK) {
     return { taskId: id };
@@ -16,13 +23,9 @@ function getLaunchProps(id: ResourceIdentifier) {
   throw new Error('Unknown Resource Type');
 }
 
-export const LaunchFormDialog: React.FC<{
-  className?: string;
-  id: ResourceIdentifier;
-  initialParameters: TaskInitialLaunchParameters | WorkflowInitialLaunchParameters;
-  showLaunchForm: boolean;
-  setShowLaunchForm: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ className, id, initialParameters, showLaunchForm, setShowLaunchForm }) => {
+export const LaunchFormDialog = (props: LaunchFormDialogProps): JSX.Element => {
+  const { id, initialParameters, showLaunchForm, setShowLaunchForm } = props;
+
   const onCancelLaunch = () => setShowLaunchForm(false);
 
   // prevent child onclick event in the dialog triggers parent onclick event

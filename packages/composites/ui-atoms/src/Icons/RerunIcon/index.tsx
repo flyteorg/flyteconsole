@@ -1,7 +1,13 @@
 import * as React from 'react';
-import { IconProps } from './interface';
 
-export const RerunIcon: React.FC<IconProps> = ({ size = 18, className, onClick }) => {
+interface IconProps {
+  size?: number;
+  className?: string;
+  onClick?: () => void;
+}
+
+export const RerunIcon = (props: IconProps): JSX.Element => {
+  const { size = 18, className, onClick } = props;
   return (
     <svg
       className={className}
