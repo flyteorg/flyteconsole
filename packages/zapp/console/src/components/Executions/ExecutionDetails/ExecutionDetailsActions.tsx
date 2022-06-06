@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) => {
       maxWidth: `calc(100% - ${theme.spacing(12)}px)`,
       maxHeight: `calc(100% - ${theme.spacing(12)}px)`,
       height: theme.spacing(90),
-      width: theme.spacing(100),
+      width: theme.spacing(110),
       '& iframe': {
         border: 'none',
       },
@@ -38,12 +38,13 @@ const useStyles = makeStyles((theme: Theme) => {
       alignItems: 'center',
       padding: theme.spacing(2),
       paddingBottom: theme.spacing(0),
+      fontFamily: 'Open sans',
     },
     deckTitle: {
       flexGrow: 1,
       textAlign: 'center',
       fontSize: '24px',
-      lineHeight: '28px',
+      lineHeight: '32px',
       marginBlock: 0,
       paddingTop: theme.spacing(2),
       paddingBottom: theme.spacing(2),
@@ -105,14 +106,16 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
   return (
     <>
       <div className={styles.actionsContainer}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={() => setShowDeck(true)}
-          disabled={phase !== NodeExecutionPhase.SUCCEEDED}
-        >
-          {t('flyteDeck')}
-        </Button>
+        {execution?.value?.closure?.deckUri && (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setShowDeck(true)}
+            disabled={phase !== NodeExecutionPhase.SUCCEEDED}
+          >
+            {t('flyteDeck')}
+          </Button>
+        )}
         <Button variant="outlined" color="primary" onClick={rerunOnClick}>
           {t('rerun')}
         </Button>
@@ -123,7 +126,7 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
         showLaunchForm={showLaunchForm}
         setShowLaunchForm={setShowLaunchForm}
       />
-      {nodeExecutionId && execution?.value?.closure?.deckUri ? (
+      {execution?.value?.closure?.deckUri ? (
         <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={showDeck}>
           <div className={styles.dialogTitle}>
             <h3 className={styles.deckTitle}>{t('flyteDeck')}</h3>
