@@ -8,7 +8,7 @@ export const ExecutionNodeDeck: React.FC<{ deckUri: string }> = ({ deckUri }) =>
 
   return (
     <WaitForData {...downloadLocation}>
-      <iframe title="deck" height="600" src={downloadLocation.value.signedUrl} />
+      <iframe title="deck" height="100%" src={downloadLocation.value.signedUrl} />
     </WaitForData>
   );
 };

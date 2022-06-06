@@ -60,10 +60,10 @@ export const getExecution = (id: WorkflowExecutionIdentifier, config?: RequestCo
 
 /** Fetches a signed url of the native url */
 export const getDownloadLocation = (nativeUrl: string, config?: RequestConfig) =>
-  getAdminEntity<Service.CreateDownloadLocationRequest, DownloadLocation>(
+  getAdminEntity<Service.CreateDownloadLocationResponse, DownloadLocation>(
     {
       path: makeCreateDownloadLocationPath(nativeUrl),
-      messageType: Service.CreateDownloadLocationRequest,
+      messageType: Service.CreateDownloadLocationResponse,
     },
     config,
   );
