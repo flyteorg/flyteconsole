@@ -129,7 +129,7 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
       {execution?.value?.closure?.deckUri ? (
         <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={showDeck}>
           <div className={styles.dialogTitle}>
-            <h3 className={styles.deckTitle}>{t('flyteDeck')}</h3>
+            <h2 className={styles.deckTitle}>{t('flyteDeck')}</h2>
             <IconButton aria-label="close" onClick={onCloseDeck} className={styles.close}>
               <Close />
             </IconButton>
