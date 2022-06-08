@@ -1,11 +1,11 @@
-import { Button, Dialog, DialogTitle, IconButton } from '@material-ui/core';
+import { Button, Dialog, IconButton } from '@material-ui/core';
 import * as React from 'react';
 import { ResourceIdentifier, Identifier, Variable } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
-import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
+import { useNodeExecution, useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
@@ -71,6 +71,7 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
   >();
 
   const executionData = useNodeExecutionData(nodeExecutionId);
+  const execution = useNodeExecution(nodeExecutionId);
 
   const id = details.taskTemplate?.id as ResourceIdentifier | undefined;
 
@@ -122,7 +123,7 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
         showLaunchForm={showLaunchForm}
         setShowLaunchForm={setShowLaunchForm}
       />
-      {nodeExecutionId && (
+      {nodeExecutionId && execution?.value?.closure?.deckUri ? (
         <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={showDeck}>
           <div className={styles.dialogTitle}>
             <h3 className={styles.deckTitle}>{t('flyteDeck')}</h3>
@@ -130,9 +131,9 @@ export const ExecutionDetailsActions = (props: ExecutionDetailsActionsProps): JS
               <Close />
             </IconButton>
           </div>
-          <ExecutionNodeDeck nodeExecutionId={nodeExecutionId} />
+          <ExecutionNodeDeck deckUri={execution.value.closure.deckUri} />
         </Dialog>
-      )}
+      ) : null}
     </>
   );
 };

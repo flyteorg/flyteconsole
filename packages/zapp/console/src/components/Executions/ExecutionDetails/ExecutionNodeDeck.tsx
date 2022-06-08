@@ -1,17 +1,14 @@
-import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { useDownloadLocation } from 'components/hooks/useDataProxy';
+import { WaitForData } from 'components/common/WaitForData';
 import * as React from 'react';
 
-/** Fetches and renders the deck data for a given `NodeExecutionIdentifier` */
-export const ExecutionNodeDeck: React.FC<{ nodeExecutionId: NodeExecutionIdentifier }> = ({
-  nodeExecutionId,
-}) => {
-  const executionData = useNodeExecutionData(nodeExecutionId);
+/** Fetches and renders the deck data for a given `deckUri` */
+export const ExecutionNodeDeck: React.FC<{ deckUri: string }> = ({ deckUri }) => {
+  const downloadLocation = useDownloadLocation(deckUri);
+
   return (
-    <iframe
-      title="deck"
-      height="600"
-      src="https://deck-test2.tiiny.site/" // executionData.value.deckUri
-    />
+    <WaitForData {...downloadLocation}>
+      <iframe title="deck" height="600" src={downloadLocation.value.signedUrl} />
+    </WaitForData>
   );
 };
