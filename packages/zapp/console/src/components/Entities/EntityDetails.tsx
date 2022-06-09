@@ -8,6 +8,7 @@ import { ResourceIdentifier } from 'models/Common/types';
 import * as React from 'react';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';
+import { EntityInputs } from './EntityInputs';
 import { EntityExecutions } from './EntityExecutions';
 import { EntitySchedules } from './EntitySchedules';
 import { EntityVersions } from './EntityVersions';
@@ -57,6 +58,8 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
   const styles = useStyles();
   const { chartIds, onToggle, clearCharts } = useChartState();
 
+  console.log(id, sections, project, chartIds);
+
   return (
     <WaitForData {...project}>
       <EntityDetailsHeader project={project.value} id={id} launchable={!!sections.launch} />
@@ -67,14 +70,27 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
             <EntityDescription id={id} />
           </div>
         ) : null}
-        {sections.schedules ? (
+        {!sections.inputs && sections.schedules ? (
           <div className={styles.schedulesContainer}>
             <EntitySchedules id={id} />
           </div>
         ) : null}
       </div>
 
-      {sections.versions ? (
+      <div className={styles.inputsContainer}>
+        {sections.inputs ? (
+          <div className={styles.descriptionContainer}>
+            <EntityInputs id={id} />
+          </div>
+        ) : null}
+        {!sections.inputs && sections.schedules ? (
+          <div className={styles.schedulesContainer}>
+            <EntitySchedules id={id} />
+          </div>
+        ) : null}
+      </div>
+
+      {/* {sections.versions ? (
         <div className={styles.versionsContainer}>
           <EntityVersions id={id} />
         </div>
@@ -86,7 +102,7 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
         <div className={styles.executionsContainer}>
           <EntityExecutions chartIds={chartIds} id={id} clearCharts={clearCharts} />
         </div>
-      ) : null}
+      ) : null} */}
     </WaitForData>
   );
 };

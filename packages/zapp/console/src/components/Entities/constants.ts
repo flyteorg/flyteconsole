@@ -27,14 +27,15 @@ interface EntitySectionsFlags {
   schedules?: boolean;
   versions?: boolean;
   descriptionInputsAndOutputs?: boolean;
+  inputs?: boolean;
 }
 
 export const entitySections: { [k in ResourceType]: EntitySectionsFlags } = {
   [ResourceType.DATASET]: { description: true },
   [ResourceType.LAUNCH_PLAN]: {
-    description: true,
     executions: true,
-    launch: true,
+    launch: false,
+    inputs: true,
     schedules: true,
   },
   [ResourceType.TASK]: {

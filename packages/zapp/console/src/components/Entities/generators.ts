@@ -29,6 +29,8 @@ export const executionFilterGenerator: {
 
 const workflowListGenerator = ({ project, domain }: ResourceIdentifier) =>
   Routes.ProjectDetails.sections.workflows.makeUrl(project, domain);
+const launchPlanListGenerator = ({ project, domain }: ResourceIdentifier) =>
+  Routes.ProjectDetails.sections.launchPlans.makeUrl(project, domain);
 const taskListGenerator = ({ project, domain }: ResourceIdentifier) =>
   Routes.ProjectDetails.sections.tasks.makeUrl(project, domain);
 const unspecifiedGenerator = ({ project, domain }: ResourceIdentifier | Identifier) => {
@@ -42,7 +44,7 @@ export const backUrlGenerator: {
   [k in ResourceType]: (id: ResourceIdentifier) => string;
 } = {
   [ResourceType.DATASET]: unimplementedGenerator,
-  [ResourceType.LAUNCH_PLAN]: unimplementedGenerator,
+  [ResourceType.LAUNCH_PLAN]: launchPlanListGenerator,
   [ResourceType.TASK]: taskListGenerator,
   [ResourceType.UNSPECIFIED]: unspecifiedGenerator,
   [ResourceType.WORKFLOW]: workflowListGenerator,
@@ -50,6 +52,8 @@ export const backUrlGenerator: {
 
 const workflowDetailGenerator = ({ project, domain, name }: ResourceIdentifier) =>
   Routes.WorkflowDetails.makeUrl(project, domain, name);
+const launchPlanDetailGenerator = ({ project, domain, name }: ResourceIdentifier) =>
+  Routes.LaunchPlanDetails.makeUrl(project, domain, name);
 const taskDetailGenerator = ({ project, domain, name }: ResourceIdentifier) =>
   Routes.TaskDetails.makeUrl(project, domain, name);
 
@@ -57,7 +61,7 @@ export const backToDetailUrlGenerator: {
   [k in ResourceType]: (id: ResourceIdentifier) => string;
 } = {
   [ResourceType.DATASET]: unimplementedGenerator,
-  [ResourceType.LAUNCH_PLAN]: unimplementedGenerator,
+  [ResourceType.LAUNCH_PLAN]: launchPlanDetailGenerator,
   [ResourceType.TASK]: taskDetailGenerator,
   [ResourceType.UNSPECIFIED]: unspecifiedGenerator,
   [ResourceType.WORKFLOW]: workflowDetailGenerator,

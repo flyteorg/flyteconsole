@@ -71,7 +71,7 @@ export class Routes {
   static LaunchPlanDetails = {
     makeUrl: (project: string, domain: string, launchPlanName: string) =>
       makeProjectDomainBoundPath(project, domain, `/launchPlans/${launchPlanName}`),
-    path: `${projectDomainBasePath}/launchPlans/:launchPlans`,
+    path: `${projectDomainBasePath}/launchPlans/:launchPlanName`,
   };
 
   // Entity Version Details
