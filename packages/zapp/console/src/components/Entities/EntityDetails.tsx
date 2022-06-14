@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: '1 2 auto',
     marginRight: theme.spacing(30),
   },
+  inputsContainer: {},
 }));
 
 interface EntityDetailsProps {
@@ -77,26 +78,19 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
         ) : null}
       </div>
 
-      <div className={styles.inputsContainer}>
-        {sections.inputs ? (
-          <div className={styles.descriptionContainer}>
-            <EntityInputs id={id} />
-          </div>
-        ) : null}
-        {!sections.inputs && sections.schedules ? (
-          <div className={styles.schedulesContainer}>
-            <EntitySchedules id={id} />
-          </div>
-        ) : null}
-      </div>
+      {sections.inputs ? (
+        <div className={styles.inputsContainer}>
+          <EntityInputs id={id} />
+        </div>
+      ) : null}
 
-      {/* {sections.versions ? (
+      {sections.versions ? (
         <div className={styles.versionsContainer}>
           <EntityVersions id={id} />
         </div>
       ) : null}
 
-      <EntityExecutionsBarChart onToggle={onToggle} chartIds={chartIds} id={id} />
+      {/* <EntityExecutionsBarChart onToggle={onToggle} chartIds={chartIds} id={id} />
 
       {sections.executions ? (
         <div className={styles.executionsContainer}>

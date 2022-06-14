@@ -25,6 +25,13 @@ const str = {
   value: 'Value',
   basicInformation: 'Basic Information',
   description: 'Description',
+  launchPlanLatest: 'Launch Plan Detail  (Latest Version)',
+  expectedInputs: 'Expected Inputs',
+  fixedInputs: 'Fixed Inputs',
+  inputsName: 'Name',
+  inputsType: 'Type',
+  inputsRequired: 'Required',
+  inputsDefault: 'Default Value',
 };
 
 export { patternKey } from '@flyteconsole/locale';

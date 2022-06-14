@@ -37,6 +37,7 @@ export const entitySections: { [k in ResourceType]: EntitySectionsFlags } = {
     launch: false,
     inputs: true,
     schedules: true,
+    versions: true,
   },
   [ResourceType.TASK]: {
     description: true,
