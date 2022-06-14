@@ -37,6 +37,8 @@ const str = {
   configUrl: 'url',
   configSeed: 'seed',
   configTestSplitRatio: 'test_split_ratio',
+  noExpectedInputs: 'This launch plan has no expected inputs.',
+  noFixedInputs: 'This launch plan has no fixed inputs.',
 };
 
 export { patternKey } from '@flyteconsole/locale';

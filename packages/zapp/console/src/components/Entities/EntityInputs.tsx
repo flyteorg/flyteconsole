@@ -8,7 +8,7 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import { makeStyles, styled, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 import { useLaunchPlans } from 'components/hooks/useLaunchPlans';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   firstColumnContainer: {
     width: '60%',
+    marginRight: theme.spacing(3),
   },
   secondColumnContainer: {
     width: '40%',
@@ -55,6 +56,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   headCell: {
     fontSize: '14px',
+    color: theme.palette.grey[400],
+  },
+  noInputs: {
     color: theme.palette.grey[400],
   },
 }));
@@ -141,53 +145,61 @@ export const EntityInputs: React.FC<{
           <Typography className={styles.header} variant="h4">
             {t('expectedInputs')}
           </Typography>
-          <TableContainer component={Paper}>
-            <Table padding="none">
-              <TableHead>
-                <TableRow>
-                  <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
-                  <TableCell className={styles.headCell}>{t('inputsType')}</TableCell>
-                  <TableCell className={styles.headCell} align="center">
-                    {t('inputsRequired')}
-                  </TableCell>
-                  <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {expectedInputs.map(({ name, type, required, defaultValue }) => (
-                  <TableRow key={name}>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>{type}</TableCell>
-                    <TableCell align="center">{required ? <CheckIcon /> : ''}</TableCell>
-                    <TableCell>{defaultValue || '-'}</TableCell>
+          {expectedInputs.length ? (
+            <TableContainer component={Paper}>
+              <Table padding="none">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
+                    <TableCell className={styles.headCell}>{t('inputsType')}</TableCell>
+                    <TableCell className={styles.headCell} align="center">
+                      {t('inputsRequired')}
+                    </TableCell>
+                    <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {expectedInputs.map(({ name, type, required, defaultValue }) => (
+                    <TableRow key={name}>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{type}</TableCell>
+                      <TableCell align="center">{required ? <CheckIcon /> : ''}</TableCell>
+                      <TableCell>{defaultValue || '-'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <p className={styles.noInputs}>{t('noExpectedInputs')}</p>
+          )}
         </div>
         <div className={styles.secondColumnContainer}>
           <Typography className={styles.header} variant="h4">
             {t('fixedInputs')}
           </Typography>
-          <TableContainer component={Paper}>
-            <Table padding="none">
-              <TableHead>
-                <TableRow>
-                  <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
-                  <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {fixedInputs.map(({ name, defaultValue }) => (
-                  <TableRow key={name}>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>{defaultValue || '-'}</TableCell>
+          {fixedInputs.length ? (
+            <TableContainer component={Paper}>
+              <Table padding="none">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
+                    <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {fixedInputs.map(({ name, defaultValue }) => (
+                    <TableRow key={name}>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{defaultValue || '-'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <p className={styles.noInputs}>{t('noFixedInputs')}</p>
+          )}
         </div>
       </div>
       <div className={styles.rowContainer}>
