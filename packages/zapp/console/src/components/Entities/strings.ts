@@ -32,6 +32,11 @@ const str = {
   inputsType: 'Type',
   inputsRequired: 'Required',
   inputsDefault: 'Default Value',
+  configuration: 'Configuration',
+  configType: 'type',
+  configUrl: 'url',
+  configSeed: 'seed',
+  configTestSplitRatio: 'test_split_ratio',
 };
 
 export { patternKey } from '@flyteconsole/locale';

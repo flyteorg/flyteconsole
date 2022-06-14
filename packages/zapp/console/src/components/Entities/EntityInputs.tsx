@@ -8,7 +8,7 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, styled, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 import { useLaunchPlans } from 'components/hooks/useLaunchPlans';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
@@ -27,14 +27,35 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     marginBottom: theme.spacing(1),
   },
-  inputsContainer: {
+  rowContainer: {
+    display: 'flex',
+    marginTop: theme.spacing(3),
+  },
+  firstColumnContainer: {
+    width: '60%',
+  },
+  secondColumnContainer: {
+    width: '40%',
+  },
+  configs: {
+    listStyleType: 'none',
+    paddingInlineStart: 0,
+  },
+  config: {
     display: 'flex',
   },
-  expectedInputsContainer: {
-    flexGrow: 3,
+  configName: {
+    color: theme.palette.grey[400],
+    fontSize: '14px',
+    marginRight: theme.spacing(2),
   },
-  fixedInputsContainer: {
-    flexGrow: 2,
+  configValue: {
+    color: '#333',
+    fontSize: '14px',
+  },
+  headCell: {
+    fontSize: '14px',
+    color: theme.palette.grey[400],
   },
 }));
 
@@ -95,25 +116,41 @@ export const EntityInputs: React.FC<{
     return Object.keys(inputsMap).map((name) => ({ name, defaultValue: inputsMap[name] }));
   }, [spec]);
 
+  const configs = React.useMemo(
+    () => [
+      { name: t('configType'), value: 'single (csv)' },
+      {
+        name: t('configUrl'),
+        value:
+          'https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv',
+      },
+      { name: t('configSeed'), value: '7' },
+      { name: t('configTestSplitRatio'), value: '0.33' },
+    ],
+    [],
+  );
+
   return (
     <>
       <Typography className={styles.header} variant="h3">
         {t('launchPlanLatest')}
       </Typography>
       <div className={styles.divider} />
-      <div className={styles.inputsContainer}>
-        <div className={styles.expectedInputsContainer}>
+      <div className={styles.rowContainer}>
+        <div className={styles.firstColumnContainer}>
           <Typography className={styles.header} variant="h4">
             {t('expectedInputs')}
           </Typography>
           <TableContainer component={Paper}>
-            <Table>
+            <Table padding="none">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('inputsName')}</TableCell>
-                  <TableCell>{t('inputsType')}</TableCell>
-                  <TableCell>{t('inputsRequired')}</TableCell>
-                  <TableCell>{t('inputsDefault')}</TableCell>
+                  <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
+                  <TableCell className={styles.headCell}>{t('inputsType')}</TableCell>
+                  <TableCell className={styles.headCell} align="center">
+                    {t('inputsRequired')}
+                  </TableCell>
+                  <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -121,7 +158,7 @@ export const EntityInputs: React.FC<{
                   <TableRow key={name}>
                     <TableCell>{name}</TableCell>
                     <TableCell>{type}</TableCell>
-                    <TableCell>{required ? <CheckIcon /> : ''}</TableCell>
+                    <TableCell align="center">{required ? <CheckIcon /> : ''}</TableCell>
                     <TableCell>{defaultValue || '-'}</TableCell>
                   </TableRow>
                 ))}
@@ -129,16 +166,16 @@ export const EntityInputs: React.FC<{
             </Table>
           </TableContainer>
         </div>
-        <div className={styles.fixedInputsContainer}>
+        <div className={styles.secondColumnContainer}>
           <Typography className={styles.header} variant="h4">
             {t('fixedInputs')}
           </Typography>
           <TableContainer component={Paper}>
-            <Table>
+            <Table padding="none">
               <TableHead>
                 <TableRow>
-                  <TableCell>{t('inputsName')}</TableCell>
-                  <TableCell>{t('inputsDefault')}</TableCell>
+                  <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
+                  <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -152,6 +189,22 @@ export const EntityInputs: React.FC<{
             </Table>
           </TableContainer>
         </div>
+      </div>
+      <div className={styles.rowContainer}>
+        <div className={styles.firstColumnContainer}>
+          <Typography className={styles.header} variant="h4">
+            {t('configuration')}
+          </Typography>
+          <ul className={styles.configs}>
+            {configs.map(({ name, value }) => (
+              <li className={styles.config} key={name}>
+                <span className={styles.configName}>{name}:</span>
+                <span className={styles.configValue}>{value}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className={styles.secondColumnContainer}>{/* TODO: Schedule */}</div>
       </div>
     </>
   );
