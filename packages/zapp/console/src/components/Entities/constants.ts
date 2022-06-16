@@ -14,7 +14,7 @@ type TypeNameToEntityResourceType = { [key: string]: ResourceType };
 
 export const typeNameToEntityResource: TypeNameToEntityResourceType = {
   ['dataset']: ResourceType.DATASET,
-  ['launch plan']: ResourceType.LAUNCH_PLAN,
+  ['launch_plan']: ResourceType.LAUNCH_PLAN,
   ['task']: ResourceType.TASK,
   ['item']: ResourceType.UNSPECIFIED,
   ['workflow']: ResourceType.WORKFLOW,
