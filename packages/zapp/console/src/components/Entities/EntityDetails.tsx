@@ -90,13 +90,13 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
         </div>
       ) : null}
 
-      {/* <EntityExecutionsBarChart onToggle={onToggle} chartIds={chartIds} id={id} />
+      <EntityExecutionsBarChart onToggle={onToggle} chartIds={chartIds} id={id} />
 
       {sections.executions ? (
         <div className={styles.executionsContainer}>
           <EntityExecutions chartIds={chartIds} id={id} clearCharts={clearCharts} />
         </div>
-      ) : null} */}
+      ) : null}
     </WaitForData>
   );
 };

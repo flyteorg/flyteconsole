@@ -6,10 +6,30 @@ import { entityStrings } from './constants';
 const noFilters = () => [];
 
 export const executionFilterGenerator: {
-  [k in ResourceType]: (id: ResourceIdentifier) => FilterOperation[];
+  [k in ResourceType]: (id: ResourceIdentifier, version?: string) => FilterOperation[];
 } = {
   [ResourceType.DATASET]: noFilters,
-  [ResourceType.LAUNCH_PLAN]: noFilters,
+  [ResourceType.LAUNCH_PLAN]: ({ name }, version) =>
+    version
+      ? [
+          {
+            key: 'launch_plan.name',
+            operation: FilterOperationName.EQ,
+            value: name,
+          },
+          {
+            key: 'launch_plan.version',
+            operation: FilterOperationName.EQ,
+            value: version,
+          },
+        ]
+      : [
+          {
+            key: 'launch_plan.name',
+            operation: FilterOperationName.EQ,
+            value: name,
+          },
+        ],
   [ResourceType.TASK]: ({ name }) => [
     {
       key: 'task.name',
@@ -83,12 +103,20 @@ const taskVersionDetailsGenerator = ({ project, domain, name, version }: Identif
     entityStrings[ResourceType.TASK],
     version,
   );
+const launchPlanVersionDetailsGenerator = ({ project, domain, name, version }: Identifier) =>
+  Routes.EntityVersionDetails.makeUrl(
+    project,
+    domain,
+    name,
+    entityStrings[ResourceType.LAUNCH_PLAN],
+    version,
+  );
 
 const entityMapVersionDetailsUrl: {
   [k in ResourceType]: (id: Identifier) => string;
 } = {
   [ResourceType.DATASET]: unimplementedGenerator,
-  [ResourceType.LAUNCH_PLAN]: unimplementedGenerator,
+  [ResourceType.LAUNCH_PLAN]: launchPlanVersionDetailsGenerator,
   [ResourceType.TASK]: taskVersionDetailsGenerator,
   [ResourceType.UNSPECIFIED]: unspecifiedGenerator,
   [ResourceType.WORKFLOW]: workflowVersopmDetailsGenerator,

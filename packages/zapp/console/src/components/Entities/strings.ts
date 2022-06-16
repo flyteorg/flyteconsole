@@ -12,6 +12,7 @@ const str = {
   noSchedules_task: 'This task has no schedules.',
   allExecutionsChartTitle_workflow: 'All Executions in the Workflow',
   allExecutionsChartTitle_task: 'All Execuations in the Task',
+  allExecutionsChartTitle_launch_plan: 'All Execuations Used the Launch Plan',
   versionsTitle_workflow: 'Recent Workflow Versions',
   versionsTitle_task: 'Recent Task Versions',
   details_task: 'Task Details',

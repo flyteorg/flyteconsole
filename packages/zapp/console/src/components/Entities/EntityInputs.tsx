@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.grey[400],
     fontSize: '14px',
     marginRight: theme.spacing(2),
+    minWidth: '95px',
   },
   configValue: {
     color: '#333',
@@ -147,7 +148,7 @@ export const EntityInputs: React.FC<{
           </Typography>
           {expectedInputs.length ? (
             <TableContainer component={Paper}>
-              <Table padding="none">
+              <Table size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
@@ -163,7 +164,9 @@ export const EntityInputs: React.FC<{
                     <TableRow key={name}>
                       <TableCell>{name}</TableCell>
                       <TableCell>{type}</TableCell>
-                      <TableCell align="center">{required ? <CheckIcon /> : ''}</TableCell>
+                      <TableCell align="center">
+                        {required ? <CheckIcon fontSize="small" /> : ''}
+                      </TableCell>
                       <TableCell>{defaultValue || '-'}</TableCell>
                     </TableRow>
                   ))}
@@ -180,7 +183,7 @@ export const EntityInputs: React.FC<{
           </Typography>
           {fixedInputs.length ? (
             <TableContainer component={Paper}>
-              <Table padding="none">
+              <Table size="small">
                 <TableHead>
                   <TableRow>
                     <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>

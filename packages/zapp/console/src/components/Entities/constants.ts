@@ -4,7 +4,7 @@ type EntityStringMap = { [k in ResourceType]: string };
 
 export const entityStrings: EntityStringMap = {
   [ResourceType.DATASET]: 'dataset',
-  [ResourceType.LAUNCH_PLAN]: 'launch plan',
+  [ResourceType.LAUNCH_PLAN]: 'launch_plan',
   [ResourceType.TASK]: 'task',
   [ResourceType.UNSPECIFIED]: 'item',
   [ResourceType.WORKFLOW]: 'workflow',
