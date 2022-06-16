@@ -39,6 +39,9 @@ It will contain at least two items:
 
 Feel free to play around with the views in Storybook:
 
+<img width="874" alt="Screen Shot 2022-06-15 at 2 01 29 PM" src="https://user-images.githubusercontent.com/55718143/173962811-a3603d6c-3fe4-4cab-b57a-4d4806c88cfc.png">
+
+
 #### Note
 
 Please let us know in [Slack #flyte-console](https://flyte-org.slack.com/archives/CTJJLM8BY) channel if you found bugs or need more support than.
