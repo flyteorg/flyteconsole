@@ -1,5 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { SvgIconProps } from '@material-ui/core';
+import classnames from 'classnames';
 import * as React from 'react';
 
 const useStyles = makeStyles(() => ({
@@ -18,10 +19,9 @@ const useStyles = makeStyles(() => ({
 export const MuiLaunchPlanIcon: React.FunctionComponent = (props: SvgIconProps) => {
   const { viewBox, fill, className } = props;
   const styles = useStyles();
-  console.log(props);
   return (
     <svg
-      className={styles.svg + ' ' + className}
+      className={classnames(styles.svg, className)}
       viewBox={viewBox || '0 0 16 16'}
       fill={fill || 'currentColor'}
       xmlns="http://www.w3.org/2000/svg"
