@@ -11,10 +11,6 @@ export function makeLaunchPlanQuery(
     queryKey: [QueryType.LaunchPlan, id],
     queryFn: async () => {
       const launchPlan = await getLaunchPlan(id);
-      // On successful launchPlan fetch, extract and cache all task templates
-      // stored on the launchPlan so that we don't need to fetch them separately
-      // if future queries reference them.
-      // Todo or missing
 
       return launchPlan;
     },

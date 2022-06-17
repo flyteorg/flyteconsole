@@ -76,9 +76,6 @@ const LaunchPlanVersionDetailsContainer: React.FC<LaunchPlanVersionDetailsRouteP
         backToWorkflow
       />
       <div className={styles.verionDetailsContatiner}>
-        <div className={styles.staticGraphContainer}>
-          {/* <StaticGraphContainer launchPlanId={launchPlanId} /> */}
-        </div>
         <div className={styles.versionsContainer}>
           <EntityVersions id={id} showAll />
         </div>

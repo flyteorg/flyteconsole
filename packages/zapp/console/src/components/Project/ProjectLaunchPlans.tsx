@@ -1,5 +1,4 @@
 import { WaitForData } from 'components/common/WaitForData';
-import { useLaunchPlanShowArchivedState } from 'components/LaunchPlan/filters/useLaunchPlanShowArchivedState';
 import { SearchableLaunchPlanNameList } from 'components/LaunchPlan/SearchableLaunchPlanNameList';
 import { limits } from 'models/AdminEntity/constants';
 import { SortDirection } from 'models/AdminEntity/types';
@@ -22,13 +21,12 @@ export const ProjectLaunchPlans: React.FC<ProjectLaunchPlansProps> = ({
   domainId: domain,
   projectId: project,
 }) => {
-  const archivedFilter = useLaunchPlanShowArchivedState();
   const launchPlans = useLaunchPlanInfoList(
     { domain, project },
     {
       limit: limits.NONE,
       sort: DEFAULT_SORT,
-      filter: [archivedFilter.getFilter()],
+      filter: [],
     },
   );
 

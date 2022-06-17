@@ -9,7 +9,6 @@ import {
 } from './enums';
 
 export type WorkflowExecutionIdentifier = RequiredNonNullable<Core.IWorkflowExecutionIdentifier>;
-export type LaunchPlanExecutionIdentifier = RequiredNonNullable<Core.IWorkflowExecutionIdentifier>;
 export type ExecutionError = RequiredNonNullable<Core.IExecutionError>;
 export type ExternalResource = Event.IExternalResourceInfo;
 export type LogsByPhase = Map<TaskExecutionPhase, Core.ITaskLog[]>;

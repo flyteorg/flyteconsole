@@ -14,7 +14,7 @@ export enum QueryType {
   Workflow = 'workflow',
   WorkflowExecution = 'workflowExecution',
   WorkflowExecutionList = 'workflowExecutionList',
-  LaunchPlan = 'workflow',
+  LaunchPlan = 'launchPlan',
 }
 
 type QueryKeyArray = [QueryType, ...unknown[]];

@@ -17,7 +17,7 @@ import { EntityExecutionsBarChart } from './EntityExecutionsBarChart';
 const useStyles = makeStyles((theme: Theme) => ({
   metadataContainer: {
     display: 'flex',
-    marginBottom: theme.spacing(5),
+    marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
     width: '100%',
   },
@@ -40,7 +40,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: '1 2 auto',
     marginRight: theme.spacing(30),
   },
-  inputsContainer: {},
+  inputsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
 }));
 
 interface EntityDetailsProps {
@@ -58,8 +61,6 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
   const project = useProject(id.project);
   const styles = useStyles();
   const { chartIds, onToggle, clearCharts } = useChartState();
-
-  console.log(id, sections, project, chartIds);
 
   return (
     <WaitForData {...project}>

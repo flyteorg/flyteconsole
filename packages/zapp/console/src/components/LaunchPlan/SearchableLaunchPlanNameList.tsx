@@ -24,28 +24,6 @@ interface SearchableLaunchPlanNameListProps {
 export const showOnHoverClass = 'showOnHover';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  actionContainer: {
-    display: 'flex',
-    right: 0,
-    top: 0,
-    position: 'absolute',
-    height: '100%',
-  },
-  archiveCheckbox: {
-    whiteSpace: 'nowrap',
-  },
-  centeredChild: {
-    alignItems: 'center',
-    marginRight: 24,
-  },
-  confirmationButton: {
-    borderRadius: 0,
-    minWidth: '100px',
-    minHeight: '53px',
-    '&:last-child': {
-      borderRadius: '0px 16px 16px 0px', // to ensure that cancel button will have rounded corners on the right side
-    },
-  },
   container: {
     padding: theme.spacing(2),
     paddingRight: theme.spacing(5),
@@ -56,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'row',
     margin: theme.spacing(4, 5, 2, 2),
   },
-
   itemContainer: {
     marginBottom: 15,
     borderRadius: 16,
@@ -106,9 +83,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   searchInputContainer: {
     paddingLeft: 0,
-  },
-  w100: {
-    flex: 1,
   },
 }));
 
