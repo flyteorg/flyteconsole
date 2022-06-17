@@ -3,6 +3,7 @@ import { formatDateUTC } from 'common/formatters';
 import { padExecutionPaths, padExecutions, timestampToDate } from 'common/utils';
 import { WaitForData } from 'components/common/WaitForData';
 import ProjectStatusBar from 'components/Project/ProjectStatusBar';
+import * as moment from 'moment';
 import * as React from 'react';
 import { useWorkflowVersionsColumnStyles } from './styles';
 import { WorkflowVersionColumnDefinition } from './types';
@@ -44,13 +45,13 @@ export function useWorkflowVersionsTableColumns(): WorkflowVersionColumnDefiniti
             <WaitForData {...executions}>
               <Typography variant="body1">
                 {executions.value.length
-                  ? formatDateUTC(timestampToDate(executions.value[0].closure.createdAt))
+                  ? moment(timestampToDate(executions.value[0].closure.createdAt)).fromNow()
                   : ''}
               </Typography>
             </WaitForData>
           );
         },
-        className: styles.columnCreatedAt,
+        className: styles.columnLastRun,
         key: 'lastExecution',
         label: 'last execution',
       },
@@ -67,7 +68,7 @@ export function useWorkflowVersionsTableColumns(): WorkflowVersionColumnDefiniti
             </WaitForData>
           );
         },
-        className: styles.columnCreatedAt,
+        className: styles.columnRecentRun,
         key: 'recentRun',
         label: 'recent run',
       },
