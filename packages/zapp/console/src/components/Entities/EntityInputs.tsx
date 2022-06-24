@@ -101,15 +101,15 @@ export const EntityInputs: React.FC<{
 
   const expectedInputs = React.useMemo<Input[]>(() => {
     const results = [] as Input[];
-    Object.keys(closure?.expectedInputs?.parameters || {}).forEach((name) => {
+    Object.keys(closure?.expectedInputs?.parameters ?? {}).forEach((name) => {
       const parameter = closure?.expectedInputs.parameters[name];
       if (parameter?.var?.type) {
-        const typeDefinition = getInputDefintionForLiteralType(parameter?.var?.type);
+        const typeDefinition = getInputDefintionForLiteralType(parameter.var.type);
         results.push({
           name,
           type: formatType(typeDefinition),
-          required: !!parameter?.required,
-          defaultValue: parameter?.default?.value,
+          required: !!parameter.required,
+          defaultValue: parameter.default?.value,
         });
       }
     });
@@ -117,7 +117,7 @@ export const EntityInputs: React.FC<{
   }, [closure]);
 
   const fixedInputs = React.useMemo<Input[]>(() => {
-    const inputsMap = transformLiterals(spec?.fixedInputs?.literals || {});
+    const inputsMap = transformLiterals(spec?.fixedInputs?.literals ?? {});
     return Object.keys(inputsMap).map((name) => ({ name, defaultValue: inputsMap[name] }));
   }, [spec]);
 

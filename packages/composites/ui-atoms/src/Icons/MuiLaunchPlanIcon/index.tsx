@@ -1,11 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { SvgIconProps } from '@material-ui/core';
+import { SvgIconProps, Theme } from '@material-ui/core';
 import classnames from 'classnames';
 import * as React from 'react';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   svg: {
     marginTop: 0,
+    marginRight: theme.spacing(2),
     width: '1em',
     height: '1em',
     display: 'inline-block',
@@ -17,17 +18,16 @@ const useStyles = makeStyles(() => ({
 }));
 
 export const MuiLaunchPlanIcon: React.FunctionComponent = (props: SvgIconProps) => {
-  const { viewBox, fill, className } = props;
+  const { viewBox, fill, className, width, height } = props;
   const styles = useStyles();
   return (
     <svg
       className={classnames(styles.svg, className)}
+      width={width || 16}
+      height={height || 16}
       viewBox={viewBox || '0 0 16 16'}
       fill={fill || 'currentColor'}
       xmlns="http://www.w3.org/2000/svg"
-      style={{
-        marginRight: '16px',
-      }}
     >
       <path
         fillRule="evenodd"

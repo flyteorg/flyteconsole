@@ -9,9 +9,12 @@ import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';
 import { Typography, FormGroup } from '@material-ui/core';
+import { ResourceType } from 'models/Common/types';
 import { LaunchPlanListStructureItem } from './types';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
+import t, { patternKey } from '../Entities/strings';
+import { entityStrings } from '../Entities/constants';
 
 interface SearchableLaunchPlanNameItemProps {
   item: LaunchPlanListStructureItem;
@@ -35,9 +38,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: theme.spacing(4, 5, 2, 2),
   },
   itemContainer: {
-    marginBottom: 15,
-    borderRadius: 16,
-    padding: '23px 30px',
+    marginBottom: theme.spacing(1),
+    borderRadius: theme.spacing(2),
+    padding: theme.spacing(2, 3),
     border: `1px solid ${separatorColor}`,
     display: 'flex',
     flexDirection: 'column',
@@ -56,20 +59,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     fontWeight: 600,
     color: primaryTextColor,
-    marginBottom: 10,
+    alignItems: 'center',
   },
   itemDescriptionRow: {
     color: '#757575',
-    marginBottom: 30,
+    marginBottom: theme.spacing(2),
     width: '100%',
   },
   itemIcon: {
-    marginRight: 14,
+    marginRight: theme.spacing(2),
     color: '#636379',
   },
   itemRow: {
     display: 'flex',
-    marginBottom: 10,
+    marginBottom: theme.spacing(1),
     '&:last-child': {
       marginBottom: 0,
     },
@@ -151,7 +154,7 @@ export const SearchableLaunchPlanNameList: React.FC<SearchableLaunchPlanNameList
           variant="normal"
           value={search}
           className={styles.searchInputContainer}
-          placeholder="Search Launch Plan Name"
+          placeholder={t(patternKey('searchName', entityStrings[ResourceType.LAUNCH_PLAN]))}
         />
       </FormGroup>
       <div className={styles.container}>
