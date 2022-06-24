@@ -7,9 +7,7 @@ import { separatorColor, primaryTextColor, workflowLabelColor } from 'components
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { Shimmer } from 'components/common/Shimmer';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { debounce } from 'lodash';
 import {
   IconButton,

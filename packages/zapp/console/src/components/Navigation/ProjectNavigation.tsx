@@ -14,7 +14,6 @@ import { matchPath, NavLink, NavLinkProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
-import { ProjectDetails } from 'components/Project/ProjectDetails';
 import { ProjectSelector } from './ProjectSelector';
 
 interface ProjectNavigationRouteParams {

@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common/WaitForData';
@@ -15,8 +14,6 @@ import { executionSortFields } from 'models/Execution/constants';
 import { compact } from 'lodash';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';
 import { executionFilterGenerator } from './generators';
-import { entityStrings } from './constants';
-import t, { patternKey } from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filtersContainer: {

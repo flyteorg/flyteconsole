@@ -1,5 +1,4 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import DeviceHub from '@material-ui/icons/DeviceHub';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
 import { useCommonStyles } from 'components/common/styles';
@@ -10,6 +9,7 @@ import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';
 import { Typography, FormGroup } from '@material-ui/core';
 import { ResourceType } from 'models/Common/types';
+import { MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import { LaunchPlanListStructureItem } from './types';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
@@ -35,13 +35,12 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexWrap: 'nowrap',
     flexDirection: 'row',
-    margin: theme.spacing(4, 5, 2, 2),
+    margin: theme.spacing(4, 5, 0, 2),
   },
   itemContainer: {
-    marginBottom: theme.spacing(1),
-    borderRadius: theme.spacing(2),
-    padding: theme.spacing(2, 3),
-    border: `1px solid ${separatorColor}`,
+    padding: theme.spacing(3, 3),
+    border: 'none',
+    borderTop: `1px solid ${separatorColor}`,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -85,7 +84,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: launchPlanLabelColor,
   },
   searchInputContainer: {
-    paddingLeft: 0,
+    padding: 0,
   },
 }));
 
@@ -108,7 +107,7 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
       >
         <div className={classNames(listStyles.searchResult, styles.itemContainer)}>
           <div className={styles.itemName}>
-            <DeviceHub className={styles.itemIcon} />
+            <MuiLaunchPlanIcon width={16} height={16} />
             <div>{id.name}</div>
           </div>
           {description && (

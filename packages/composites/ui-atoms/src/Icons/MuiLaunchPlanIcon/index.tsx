@@ -7,8 +7,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   svg: {
     marginTop: 0,
     marginRight: theme.spacing(2),
-    width: '1em',
-    height: '1em',
     display: 'inline-block',
     fontSize: '1.5rem',
     transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
@@ -17,17 +15,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const MuiLaunchPlanIcon: React.FunctionComponent = (props: SvgIconProps) => {
-  const { viewBox, fill, className, width, height } = props;
+export const MuiLaunchPlanIcon: React.FunctionComponent<SvgIconProps> = (props: SvgIconProps) => {
+  const { viewBox, fill, className, width, height, fontSize } = props;
   const styles = useStyles();
   return (
     <svg
       className={classnames(styles.svg, className)}
-      width={width || 16}
-      height={height || 16}
+      width={width || '1em'}
+      height={height || '1em'}
       viewBox={viewBox || '0 0 16 16'}
       fill={fill || 'currentColor'}
       xmlns="http://www.w3.org/2000/svg"
+      fontSize={fontSize}
     >
       <path
         fillRule="evenodd"
