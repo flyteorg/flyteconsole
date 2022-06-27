@@ -32,11 +32,14 @@ function fromLiteral(literal: Core.ILiteral, { subtype }: InputTypeDefinition): 
     throw new Error(t('mapLiternalObjectEmpty'));
   }
 
-  const key = Object.keys(literal.map.literals)[0];
-  const childLiteral = literal.map.literals[key];
-  const helper = getHelperForInput(subtype.type);
+  const result = {};
 
-  return stringifyValue({ [key]: helper.fromLiteral(childLiteral, subtype) });
+  Object.entries(literal.map.literals).forEach(([key, childLiteral]) => {
+    const helper = getHelperForInput(subtype.type);
+    result[key] = helper.fromLiteral(childLiteral, subtype);
+  });
+
+  return stringifyValue(result);
 }
 
 function toLiteral({ value, typeDefinition: { subtype } }: ConverterInput): Core.ILiteral {
@@ -54,13 +57,13 @@ function toLiteral({ value, typeDefinition: { subtype } }: ConverterInput): Core
     }
     parsed = parseMap(stringValue);
   }
-  const key = Object.keys(parsed)?.[0];
+  const result = { map: { literals: {} } };
+  Object.keys(parsed)?.forEach((key) => {
+    const helper = getHelperForInput(subtype.type);
+    result.map.literals[key] = helper.toLiteral({ value: parsed[key], typeDefinition: subtype });
+  });
 
-  const helper = getHelperForInput(subtype.type);
-
-  return {
-    map: { literals: { [key]: helper.toLiteral({ value: parsed[key], typeDefinition: subtype }) } },
-  };
+  return result;
 }
 
 function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) {
@@ -79,18 +82,19 @@ function validate({ value, typeDefinition: { subtype } }: InputValidatorParams) 
     throw new Error(t('valueNotParse'));
   }
   const obj = parseJSON(value);
-  if (!Object.keys(obj).length || !Object.keys(obj)[0].trim().length) {
+  if (!Object.keys(obj).length || Object.keys(obj).some((key) => !key.trim().length)) {
     throw new Error(t('valueKeyRequired'));
   }
-  const key = Object.keys(obj)[0];
-  const helper = getHelperForInput(subtype.type);
-  const subValue = obj[key];
+  Object.keys(obj).forEach((key) => {
+    const helper = getHelperForInput(subtype.type);
+    const subValue = obj[key];
 
-  try {
-    helper.validate({ value: subValue, typeDefinition: subtype, name: '', required: false });
-  } catch (e) {
-    throw new Error(t('valueValueInvalid'));
-  }
+    try {
+      helper.validate({ value: subValue, typeDefinition: subtype, name: '', required: false });
+    } catch (e) {
+      throw new Error(t('valueValueInvalid'));
+    }
+  });
 }
 
 export const mapHelper: InputHelper = {

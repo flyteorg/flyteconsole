@@ -193,17 +193,23 @@ export function isEnterInputsState(state: BaseInterpretedLaunchState): boolean {
   ].some(state.matches);
 }
 
-export function parseMappedTypeValue(value: InputValue): { key: string; value: string } {
+export function parseMappedTypeValue(value: InputValue): { key: string; value: string }[] {
   try {
     const mapObj = JSON.parse(value.toString());
-    const mapKey = Object.keys(mapObj)?.[0] ?? '';
-    const mapValue = mapObj[mapKey] ?? '';
     return typeof mapObj === 'object'
-      ? { key: mapKey, value: mapValue }
-      : { key: '', value: value.toString() };
+      ? Object.keys(mapObj).map((key) => ({ key, value: mapObj[key] }))
+      : [{ key: '', value: value.toString() }];
   } catch (e) {
-    return { key: '', value: value.toString() };
+    return [{ key: '', value: value.toString() }];
   }
+}
+
+export function toMappedTypeValue(entries: { key: string; value: string }[]): string {
+  const result = {};
+  entries.forEach(
+    ({ key, value }) => (result[key] = result[key] === undefined ? value : result[key]),
+  );
+  return JSON.stringify(result);
 }
 
 export function literalsToLiteralValueMap(
