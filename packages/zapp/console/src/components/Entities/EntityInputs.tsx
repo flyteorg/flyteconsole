@@ -47,7 +47,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   configName: {
     color: theme.palette.grey[400],
-    fontSize: '14px',
     marginRight: theme.spacing(2),
     minWidth: '95px',
   },
@@ -56,7 +55,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '14px',
   },
   headCell: {
-    fontSize: '14px',
     color: theme.palette.grey[400],
   },
   noInputs: {
@@ -151,12 +149,26 @@ export const EntityInputs: React.FC<{
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
-                    <TableCell className={styles.headCell}>{t('inputsType')}</TableCell>
-                    <TableCell className={styles.headCell} align="center">
-                      {t('inputsRequired')}
+                    <TableCell>
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsName')}
+                      </Typography>
                     </TableCell>
-                    <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
+                    <TableCell className={styles.headCell}>
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsType')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className={styles.headCell} align="center">
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsRequired')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell className={styles.headCell}>
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsDefault')}
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -186,8 +198,16 @@ export const EntityInputs: React.FC<{
               <Table size="small">
                 <TableHead>
                   <TableRow>
-                    <TableCell className={styles.headCell}>{t('inputsName')}</TableCell>
-                    <TableCell className={styles.headCell}>{t('inputsDefault')}</TableCell>
+                    <TableCell>
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsName')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography className={styles.headCell} variant="h4">
+                        {t('inputsDefault')}
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -205,7 +225,7 @@ export const EntityInputs: React.FC<{
           )}
         </div>
       </div>
-      <div className={styles.rowContainer}>
+      {/* <div className={styles.rowContainer}>
         <div className={styles.firstColumnContainer}>
           <Typography className={styles.header} variant="h4">
             {t('configuration')}
@@ -213,14 +233,14 @@ export const EntityInputs: React.FC<{
           <ul className={styles.configs}>
             {configs.map(({ name, value }) => (
               <li className={styles.config} key={name}>
-                <span className={styles.configName}>{name}:</span>
-                <span className={styles.configValue}>{value}</span>
+                <span className={styles.configName}><Typography variant="body">{name}:</Typography></span>
+                <span className={styles.configValue}><Typography variant="body">{value}</Typography></span>
               </li>
             ))}
           </ul>
         </div>
-        <div className={styles.secondColumnContainer}>{/* TODO: Schedule */}</div>
-      </div>
+        <div className={styles.secondColumnContainer}></div>
+      </div> */}
     </>
   );
 };

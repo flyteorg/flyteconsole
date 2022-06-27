@@ -20,6 +20,7 @@ import t, { patternKey } from './strings';
 const useStyles = makeStyles((theme: Theme) => ({
   headerContainer: {
     display: 'flex',
+    marginTop: theme.spacing(3),
   },
   collapseButton: {
     marginTop: theme.spacing(-0.5),

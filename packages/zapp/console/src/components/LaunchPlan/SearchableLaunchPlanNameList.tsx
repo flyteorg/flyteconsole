@@ -60,11 +60,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: primaryTextColor,
     alignItems: 'center',
   },
-  itemDescriptionRow: {
-    color: '#757575',
-    marginBottom: theme.spacing(2),
-    width: '100%',
-  },
   itemIcon: {
     marginRight: theme.spacing(2),
     color: '#636379',
@@ -98,7 +93,7 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
     const commonStyles = useCommonStyles();
     const listStyles = useNamedEntityListStyles();
     const styles = useStyles();
-    const { id, description } = item;
+    const { id } = item;
 
     return (
       <Link
@@ -110,11 +105,6 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
             <MuiLaunchPlanIcon width={16} height={16} />
             <div>{id.name}</div>
           </div>
-          {description && (
-            <Typography variant="body2" className={styles.itemDescriptionRow}>
-              {description}
-            </Typography>
-          )}
         </div>
       </Link>
     );
