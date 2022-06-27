@@ -3,7 +3,6 @@ import { Edge, Node, Position } from 'react-flow-renderer';
 import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { createDebugLogger } from 'common/log';
 import { LogsByPhase } from 'models/Execution/types';
-import { TaskType } from 'models/Task/constants';
 import { isMapTaskType } from 'models/Task/utils';
 import { ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';

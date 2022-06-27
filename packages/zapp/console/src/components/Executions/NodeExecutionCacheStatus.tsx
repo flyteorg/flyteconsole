@@ -11,7 +11,7 @@ import { NodeExecutionDetails } from 'components/Executions/types';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { CatalogCacheStatus } from 'models/Execution/enums';
 import { NodeExecution, TaskExecutionIdentifier } from 'models/Execution/types';
-import { TaskType } from 'models/Task/constants';
+import { MapCacheIcon } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { isMapTaskType } from 'models/Task/utils';
 import { Link as RouterLink } from 'react-router-dom';
@@ -55,7 +55,7 @@ export const NodeExecutionCacheStatusIcon: React.FC<
       return <ErrorOutlined {...props} ref={ref} />;
     }
     case CatalogCacheStatus.MAP_CACHE: {
-      return <InfoOutlined {...props} ref={ref} />;
+      return <MapCacheIcon {...props} ref={ref} />;
     }
     default: {
       assertNever(status);
@@ -105,7 +105,8 @@ export const NodeExecutionCacheStatus: React.FC<NodeExecutionCacheStatusProps> =
     }
   }
 
-  if (!taskNodeMetadata?.cacheStatus) {
+  // cachestatus can be 0
+  if (taskNodeMetadata?.cacheStatus == null) {
     return null;
   }
 
@@ -159,7 +160,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
     <Tooltip title={message} aria-label="cache status">
       <NodeExecutionCacheStatusIcon
         className={classnames(
-          commonStyles.iconLeft,
+          // commonStyles.iconLeft,
           commonStyles.iconRight,
           commonStyles.iconSecondary,
         )}

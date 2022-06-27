@@ -1,7 +1,6 @@
 import { timestampToDate } from 'common/utils';
 import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
 import { dNode } from 'models/Graph/types';
-import { TaskType } from 'models/Task/constants';
 import { isMapTaskType } from 'models/Task/utils';
 import { BarItemData } from './utils';
 
