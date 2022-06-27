@@ -4,6 +4,7 @@ import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'mode
 import { createDebugLogger } from 'common/log';
 import { LogsByPhase } from 'models/Execution/types';
 import { TaskType } from 'models/Task/constants';
+import { isMapTaskType } from 'models/Task/utils';
 import { ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
@@ -86,8 +87,7 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
   const nodeLogsByPhase: LogsByPhase = nodeExecutionsById?.[node.scopedId]?.logsByPhase;
 
   // get the cache status for mapped task
-  const isMapCache =
-    taskType === TaskType.ARRAY && nodeValue?.template?.metadata?.cacheSerializable;
+  const isMapCache = isMapTaskType(taskType) && nodeValue?.template?.metadata?.cacheSerializable;
 
   const cacheStatus: CatalogCacheStatus = isMapCache
     ? CatalogCacheStatus.MAP_CACHE

@@ -142,7 +142,7 @@ export function generateColumns(
       cellRenderer: ({ execution }) => (
         <>
           <ExecutionStatusBadge
-            phase={execution.closure?.phase || NodeExecutionPhase.UNDEFINED}
+            phase={execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED}
             type="node"
           />
           <NodeExecutionCacheStatus execution={execution} variant="iconOnly" />

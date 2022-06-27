@@ -13,6 +13,7 @@ import { CatalogCacheStatus } from 'models/Execution/enums';
 import { NodeExecution, TaskExecutionIdentifier } from 'models/Execution/types';
 import { TaskType } from 'models/Task/constants';
 import * as React from 'react';
+import { isMapTaskType } from 'models/Task/utils';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import {
@@ -98,14 +99,13 @@ export const NodeExecutionCacheStatus: React.FC<NodeExecutionCacheStatusProps> =
     };
   });
 
-  console.log('testiung', nodeDetails);
-  if (nodeDetails?.taskTemplate?.type === TaskType.ARRAY) {
+  if (isMapTaskType(nodeDetails?.taskTemplate?.type)) {
     if (nodeDetails?.taskTemplate?.metadata?.cacheSerializable) {
       return <CacheStatus cacheStatus={CatalogCacheStatus.MAP_CACHE} variant={variant} />;
     }
   }
 
-  if (taskNodeMetadata == null || taskNodeMetadata.cacheStatus == null) {
+  if (!taskNodeMetadata?.cacheStatus) {
     return null;
   }
 
