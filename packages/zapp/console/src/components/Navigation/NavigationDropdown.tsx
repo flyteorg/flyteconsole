@@ -27,17 +27,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface NavigationDropdownProps {
-  items: FlyteNavItem[];
+  items: FlyteNavItem[]; // all other navigation items
+  console?: string; // name for default navigation, if not provided "Console" is used.
 }
-
-// Flyte Console list item - always there ans is first in the list
-const ConsoleItem: FlyteNavItem = {
-  title: 'Console',
-  url: makeRoute('/'),
-};
 
 /** Renders the default content for the app bar, which is the logo and help links */
 export const NavigationDropdown = (props: NavigationDropdownProps) => {
+  // Flyte Console list item - always there ans is first in the list
+  const ConsoleItem: FlyteNavItem = React.useMemo(() => {
+    return {
+      title: props.console ?? 'Console',
+      url: makeRoute('/'),
+    };
+  }, [props.console]);
+
   const [selectedPage, setSelectedPage] = React.useState<string>(ConsoleItem.title);
   const [open, setOpen] = React.useState(false);
 
@@ -47,11 +50,11 @@ export const NavigationDropdown = (props: NavigationDropdownProps) => {
   const handleItemSelection = (item: FlyteNavItem) => {
     setSelectedPage(item.title);
 
-    if (item.url.startsWith('/')) {
-      // local navigation without BASE_URL addition
-      history.push(item.url);
+    if (item.url.startsWith('+')) {
+      // local navigation with BASE_URL addition
+      history.push(makeRoute(item.url.slice(1)));
     } else {
-      // external navigation
+      // treated as external navigation
       window.location.assign(item.url);
     }
   };
