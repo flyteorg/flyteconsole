@@ -52,6 +52,7 @@ export const TaskNameList = ({ taskExecution, logs, onTaskSelected }: TaskNameLi
           <div
             style={{
               display: 'flex',
+              alignItems: 'center',
             }}
           >
             <Typography
