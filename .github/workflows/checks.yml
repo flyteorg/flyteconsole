@@ -109,6 +109,13 @@ jobs:
           CURRENT_TAG=$(git tag --sort=-refname --points-at ${{ github.ref }} | head -n 1)
           echo "::set-output name=currentTag::$CURRENT_TAG"
 
+  upgrade:
+    name: Update package.json
+    needs: [check_for_tag]
+    uses: ./upgrade_automation.yml
+    with:
+      component: flyteconsole
+
   push_docker_image:
     name: Build & Push Flyteconsole Image
     needs: [check_for_tag]
