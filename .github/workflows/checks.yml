@@ -111,6 +111,7 @@ jobs:
 
   push_docker_image:
     name: Push to Github Registry
+    needs: [check_for_tag]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
