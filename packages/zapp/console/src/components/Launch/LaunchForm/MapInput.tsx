@@ -1,11 +1,11 @@
-import { Button, IconButton, TextField } from '@material-ui/core';
+import { Button, IconButton, TextField, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { requiredInputSuffix } from './constants';
-import { InputProps, InputType, InputTypeDefinition } from './types';
+import { InputProps, InputType, InputTypeDefinition, InputValue } from './types';
 import { formatType, toMappedTypeValue } from './utils';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,12 +36,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-type MapInputItem = {
-  id: number | null;
-  key: string;
-  value: string;
-};
-
 interface MapInputItemProps {
   data: MapInputItem;
   subtype?: InputTypeDefinition;
@@ -54,8 +48,6 @@ interface MapInputItemProps {
 const MapSingleInputItem = (props: MapInputItemProps) => {
   const classes = useStyles();
   const { data, subtype, setKey, setValue, isValid, onDeleteItem } = props;
-  // const [key, setKey] = React.useState(data.key);
-  // const [value, setValue] = React.useState(data.value);
   const [error, setError] = React.useState(false);
 
   const isOneLineType = subtype?.type === InputType.String || subtype?.type === InputType.Integer;
@@ -93,31 +85,46 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
   );
 };
 
+type MapInputItem = {
+  id: number | null;
+  key: string;
+  value: string;
+};
+
+const getNewMapItem = (id, key = '', value = ''): MapInputItem => {
+  return { id, key, value };
+};
+
+function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
+  const fallback = [getNewMapItem(0)];
+  if (!value) {
+    return fallback;
+  }
+  try {
+    const mapObj = JSON.parse(value.toString());
+    if (typeof mapObj === 'object') {
+      return Object.keys(mapObj).map((key, index) => getNewMapItem(index, key, mapObj[key]));
+    }
+  } catch (e) {
+    // do nothing
+  }
+
+  return fallback;
+}
+
 export const MapInput = (props: InputProps) => {
   const {
+    value,
+    label,
     onChange,
     typeDefinition: { subtype },
   } = props;
   const classes = useStyles();
 
-  const isValid = (id: number | null, value: string) => {
-    if (id === null) return true;
-    // findIndex returns -1 if value is not found, which means we can use that key
-    return (
-      data
-        .filter((item) => item.id !== null && item.id !== id)
-        .findIndex((item) => item.key === value) === -1
-    );
-  };
-
-  const getNewItem = (id): MapInputItem => {
-    return { id, key: '', value: '' };
-  };
-
-  const [data, setData] = React.useState<MapInputItem[]>([getNewItem(0)]);
+  const [data, setData] = React.useState<MapInputItem[]>(parseMappedTypeValue(value));
 
   const onAddItem = () => {
-    setData((data) => [...data, getNewItem(data.length)]);
+    setData((data) => [...data, getNewMapItem(data.length)]);
   };
 
   const updateUpperStream = () => {
@@ -166,9 +173,22 @@ export const MapInput = (props: InputProps) => {
     updateUpperStream();
   };
 
+  const isValid = (id: number | null, value: string) => {
+    if (id === null) return true;
+    // findIndex returns -1 if value is not found, which means we can use that key
+    return (
+      data
+        .filter((item) => item.id !== null && item.id !== id)
+        .findIndex((item) => item.key === value) === -1
+    );
+  };
+
   return (
     <Card variant="outlined">
       <CardContent>
+        <Typography variant="body1" component="label">
+          {label}
+        </Typography>
         {data
           .filter((item) => item.id !== null)
           .map((item) => {

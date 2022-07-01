@@ -193,17 +193,6 @@ export function isEnterInputsState(state: BaseInterpretedLaunchState): boolean {
   ].some(state.matches);
 }
 
-export function parseMappedTypeValue(value: InputValue): { key: string; value: string }[] {
-  try {
-    const mapObj = JSON.parse(value.toString());
-    return typeof mapObj === 'object'
-      ? Object.keys(mapObj).map((key) => ({ key, value: mapObj[key] }))
-      : [{ key: '', value: value.toString() }];
-  } catch (e) {
-    return [{ key: '', value: value.toString() }];
-  }
-}
-
 export function toMappedTypeValue(entries: { key: string; value: string }[]): string {
   const result = {};
   entries.forEach(

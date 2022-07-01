@@ -14,8 +14,8 @@ stories.add('Base', () => {
   return (
     <MapInput
       description="Something"
-      name="Ostap"
-      label="Nastya"
+      name="Variable A"
+      label="Variable_A"
       required={false}
       typeDefinition={inputTypes.map}
       onChange={(newValue: InputValue) => {
