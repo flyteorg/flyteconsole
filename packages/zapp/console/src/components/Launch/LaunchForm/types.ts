@@ -159,6 +159,7 @@ export enum InputType {
   Schema = 'SCHEMA',
   String = 'STRING',
   Struct = 'STRUCT',
+  Union = 'Union',
   Unknown = 'UNKNOWN',
 }
 
@@ -174,7 +175,7 @@ export interface BlobValue {
   uri: string;
 }
 
-export type InputValue = string | number | boolean | Date | BlobValue;
+export type InputValue = string | number | boolean | Date | BlobValue | Core.ILiteral;
 export type InputChangeHandler = (newValue: InputValue) => void;
 
 export interface InputProps {

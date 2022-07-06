@@ -20,6 +20,7 @@ export const CollectionInput: React.FC<InputProps> = (props) => {
     log.warn('Unexpected missing subtype for collection input', props.typeDefinition);
     return <UnsupportedInput {...props} />;
   }
+  console.log('here???', subtype);
   const hasError = !!error;
   const helperText = hasError ? error : props.helperText;
   switch (subtype.type) {

@@ -144,6 +144,7 @@ async function loadInputs(
     defaultInputValues,
   );
 
+  console.log('load inputs...', parsedInputs);
   return {
     parsedInputs,
     unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs),
@@ -175,6 +176,8 @@ async function submit(
   const interruptible = interruptibleInputRef.current?.getValue();
   const launchPlanId = launchPlan.id;
   const { domain, project } = workflowVersion;
+
+  console.log('literals', literals);
 
   const response = await createWorkflowExecution({
     annotations,

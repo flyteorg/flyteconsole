@@ -83,6 +83,7 @@ function useFormInputState(parsedInput: ParsedInput): FormInputState {
  * See https://reactjs.org/docs/hooks-rules.html#explanation
  */
 export function useFormInputsState(parsedInputs: ParsedInput[]): FormInputsState {
+  console.log('checking ', parsedInputs);
   const inputs = parsedInputs.map(useFormInputState);
 
   const validate = () => {

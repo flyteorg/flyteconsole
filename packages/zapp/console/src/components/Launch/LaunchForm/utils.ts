@@ -124,6 +124,7 @@ export function launchPlansToSearchableSelectorOptions(
  * a CreateExecutionRequest.
  */
 export function convertFormInputsToLiterals(inputs: InputProps[]): Record<string, Core.ILiteral> {
+  console.log('inputs....', inputs);
   const literals: Record<string, Core.ILiteral> = {};
   return inputs.reduce(
     (out, input) => ({
@@ -157,6 +158,8 @@ export function getInputDefintionForLiteralType(literalType: LiteralType): Input
     result.type = simpleTypeToInputType[literalType.simple];
   } else if (literalType.enumType) {
     result.type = InputType.Enum;
+  } else if (literalType.unionType) {
+    result.type = InputType.Union;
   }
   return result;
 }

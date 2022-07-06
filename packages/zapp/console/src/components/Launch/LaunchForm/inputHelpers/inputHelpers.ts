@@ -1,7 +1,7 @@
 import { createDebugLogger } from 'common/log';
 import { ValueError } from 'errors/parameterErrors';
 import { Core } from 'flyteidl';
-import { InputProps, InputTypeDefinition, InputValue } from '../types';
+import { InputProps, InputType, InputTypeDefinition, InputValue } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
 import { InputValidatorParams, ValidationParams } from './types';
@@ -19,6 +19,10 @@ export function inputToLiteral({
 }: ToLiteralParams): Core.ILiteral {
   if (value == null) {
     return initialValue != null ? initialValue : literalNone();
+  }
+
+  if (typeDefinition.type === InputType.Union) {
+    return value as Core.ILiteral;
   }
 
   const { toLiteral } = getHelperForInput(typeDefinition.type);

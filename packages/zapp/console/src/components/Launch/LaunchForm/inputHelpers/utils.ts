@@ -47,6 +47,9 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.String:
     case InputType.Struct:
       return true;
+    case InputType.Union:
+      // TODO: check subtask
+      return true;
     case InputType.Map:
       if (!subtype) {
         return false;
