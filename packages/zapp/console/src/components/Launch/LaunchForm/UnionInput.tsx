@@ -49,31 +49,67 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const getInitialValue = (variants: Core.ILiteralType[] | undefined, initialValue) => {
+const getInitialValue = (
+  variants: Core.ILiteralType[] | undefined | null,
+  initialValue: Core.ILiteral | undefined,
+  initialType: LiteralType,
+) => {
   if (!variants) {
     return <></>;
   }
 
-  return variants.reduce(function (map, variant) {
-    map[JSON.stringify(variant)] = null;
+  return variants.reduce(function (map, variant: LiteralType) {
+    if (initialValue && JSON.stringify(variant) === JSON.stringify(initialType)) {
+      map[JSON.stringify(variant)] = initialValue;
+    } else {
+      map[JSON.stringify(variant)] = null;
+    }
     return map;
   }, {});
+};
+
+const getInitialType = (
+  variants: Core.ILiteralType[] | undefined | null,
+  initialValue: Core.ILiteral | undefined,
+): LiteralType | null => {
+  if (!variants?.length) {
+    return null;
+  }
+
+  if (initialValue) {
+    for (let i = 0; i < variants.length; i++) {
+      const type = variants[i] as LiteralType;
+      const inputType = type && getInputDefintionForLiteralType(type);
+      try {
+        if (getHelperForInput(inputType.type).fromLiteral(initialValue, inputType)) {
+          return type;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  return variants[0] as LiteralType;
 };
 
 export const UnionInput = (props: InputProps) => {
   const { initialValue, value, label, onChange, typeDefinition } = props;
   const variants = typeDefinition.literalType.unionType?.variants;
+  const initialType = getInitialType(variants, initialValue);
+
+  if (!initialType) {
+    return;
+  }
 
   const [typesToValue, setTypeMapValue] = React.useState<Record<any, any>>(
-    getInitialValue(variants, initialValue),
+    getInitialValue(variants, initialValue, initialType),
   );
 
   const classes = useStyles();
-  const [type, setType] = React.useState<LiteralType>();
+  const [type, setType] = React.useState<LiteralType>(initialType);
 
   const inputType = type && getInputDefintionForLiteralType(type);
-
-  console.log('typesToValuetypesToValue', typesToValue);
 
   return (
     <Card variant="outlined">
@@ -82,22 +118,20 @@ export const UnionInput = (props: InputProps) => {
           {label}
         </Typography>
 
-        <FormControl className={classes.formControl}>
-          <InputLabel shrink id="demo-simple-select-placeholder-label-label">
-            Type
-          </InputLabel>
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel id="demo-simple-select-placeholder-label-label">Type</InputLabel>
           <Select
+            variant="outlined"
             labelId="demo-simple-select-placeholder-label-label"
             id="demo-simple-select-placeholder-label"
             value={type}
             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
               setType(event.target.value as LiteralType);
             }}
-            displayEmpty
             className={classes.selectEmpty}
           >
             {variants?.map((variant) => (
-              <MenuItem value={variant}>
+              <MenuItem value={variant} key={variant.structure?.tag}>
                 <em>{variant.structure?.tag}</em>
               </MenuItem>
             ))}
@@ -108,10 +142,9 @@ export const UnionInput = (props: InputProps) => {
           {inputType &&
             getComponentForInput(
               {
-                description: 'test',
-                name: 'name',
-                label: 'label',
-
+                description: '',
+                name: '',
+                label: '',
                 required: true,
                 typeDefinition: inputType,
                 onChange: (input: any) => {
@@ -139,25 +172,6 @@ export const UnionInput = (props: InputProps) => {
               false,
             )}
         </div>
-
-        {/* {data
-          .filter((item) => item.id !== null)
-          .map((item) => {
-            return (
-              <MapSingleInputItem
-                key={item.id}
-                data={item}
-                subtype={subtype}
-                setKey={(key) => onSetKey(item.id, key)}
-                setValue={(value) => onSetValue(item.id, value)}
-                isValid={(value) => isValid(item.id, value)}
-                onDeleteItem={() => onDeleteItem(item.id)}
-              />
-            );
-          })}
-        <div className={classes.addButton}>
-          <Button onClick={onAddItem}>+ ADD ITEM</Button>
-        </div> */}
       </CardContent>
     </Card>
   );

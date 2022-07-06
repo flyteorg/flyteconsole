@@ -82,6 +82,9 @@ export function formatType({ type, subtype }: InputTypeDefinition): string {
   if (type === InputType.Map) {
     return subtype ? `map<string, ${formatType(subtype)}>` : 'map';
   }
+  if (type === InputType.Union) {
+    return 'union...';
+  }
   return typeLabels[type];
 }
 
