@@ -8,6 +8,7 @@ import { formatType } from './utils';
 import { getComponentForInput } from './LaunchFormInputs';
 import { getHelperForInput } from './inputHelpers/getHelperForInput';
 import { SearchableSelector, SearchableSelectorOption } from './SearchableSelector';
+import t from '../../common/strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   inlineTitle: {
@@ -128,7 +129,7 @@ export const UnionInput = (props: InputProps) => {
           </Typography>
 
           <SearchableSelector
-            label="Type"
+            label={t('type')}
             options={generateListOfSearchableSelectorOptions(listOfSubTypes)}
             selectedItem={generateSearchableSelectorOption(selectedInputTypeDefintion)}
             onSelectionChanged={handleTypeOnSelectionChanged}

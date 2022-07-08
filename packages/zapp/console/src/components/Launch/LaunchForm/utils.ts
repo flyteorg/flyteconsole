@@ -85,12 +85,7 @@ export function formatType({ type, subtype, listOfSubTypes }: InputTypeDefinitio
   if (type === InputType.Union) {
     if (!listOfSubTypes) return 'union';
 
-    const concatListOfSubTypes = listOfSubTypes.reduce((previous, currentValue, currentIndex) => {
-      if (currentIndex === listOfSubTypes.length - 1) {
-        return previous + `${formatType(currentValue)}`;
-      }
-      return previous + `${formatType(currentValue)} |`;
-    }, '');
+    const concatListOfSubTypes = listOfSubTypes.map((subtype) => formatType(subtype)).join(' | ');
 
     return `union [${concatListOfSubTypes}]`;
   }
