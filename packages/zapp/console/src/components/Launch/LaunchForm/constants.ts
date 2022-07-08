@@ -45,7 +45,7 @@ export const typeLabels: { [k in InputType]: string } = {
   [InputType.Schema]: 'schema - uri',
   [InputType.String]: 'string',
   [InputType.Struct]: 'struct',
-  [InputType.Union]: '',
+  [InputType.Union]: 'union',
   [InputType.Unknown]: 'unknown',
 };
 

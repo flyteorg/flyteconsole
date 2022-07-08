@@ -83,11 +83,11 @@ export function formatType({ type, subtype, listOfSubTypes }: InputTypeDefinitio
     return subtype ? `map<string, ${formatType(subtype)}>` : 'map';
   }
   if (type === InputType.Union) {
-    if (!listOfSubTypes) return 'union';
+    if (!listOfSubTypes) return typeLabels[type];
 
     const concatListOfSubTypes = listOfSubTypes.map((subtype) => formatType(subtype)).join(' | ');
 
-    return `union [${concatListOfSubTypes}]`;
+    return `${typeLabels[type]} [${concatListOfSubTypes}]`;
   }
   return typeLabels[type];
 }
