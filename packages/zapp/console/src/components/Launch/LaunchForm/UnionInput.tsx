@@ -63,7 +63,7 @@ export const UnionInput = (props: InputProps) => {
 
   const listOfSubTypes = typeDefinition?.listOfSubTypes;
 
-  if (!listOfSubTypes) {
+  if (!listOfSubTypes?.length) {
     return <></>;
   }
 

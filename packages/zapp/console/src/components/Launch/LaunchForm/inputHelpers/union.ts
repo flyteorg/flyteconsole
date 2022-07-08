@@ -20,7 +20,10 @@ function fromLiteral(literal: Core.ILiteral, inputTypeDefinition: InputTypeDefin
       );
       return { value, typeDefinition: listOfSubTypes[i] } as UnionValue;
     } catch (error) {
-      // do nothing here it's expected to have error
+      // do nothing here. it's expected to have error from fromLiteral
+      // because we loop through all the type to decode the input value
+      // the error should be something like this
+      // new Error(`Failed to extract literal value with path ${path}`);
     }
   }
   throw new Error(t('noMatchingResults'));
