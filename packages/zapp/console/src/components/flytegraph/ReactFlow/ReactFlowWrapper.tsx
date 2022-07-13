@@ -40,15 +40,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     nodes: rfGraphJson.nodes,
     edges: rfGraphJson.edges,
     version: version,
+    reactFlowInstance: null,
   });
-
-  const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(null);
-
-  useEffect(() => {
-    if (reactFlowInstance) {
-      setTimeout(() => reactFlowInstance?.fitView(), 0);
-    }
-  }, [state.shouldUpdate, reactFlowInstance]);
 
   useEffect(() => {
     setState((state) => ({
@@ -60,7 +53,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   }, [rfGraphJson]);
 
   const onLoad = (rf: any) => {
-    setReactFlowInstance(rf);
+    setState({ ...state, reactFlowInstance: rf });
   };
 
   const onNodesChange = useCallback(
@@ -87,6 +80,9 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
           nodes: hashGraph,
           edges: hashEdges,
         }));
+      }
+      if (state.reactFlowInstance) {
+        (state.reactFlowInstance as any)?.fitView();
       }
     },
     [state.shouldUpdate],
