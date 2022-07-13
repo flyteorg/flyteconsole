@@ -45,8 +45,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(null);
 
   useEffect(() => {
-    if (reactFlowInstance && state.shouldUpdate === false) {
-      reactFlowInstance?.fitView();
+    if (reactFlowInstance) {
+      setTimeout(() => reactFlowInstance?.fitView(), 0);
     }
   }, [state.shouldUpdate, reactFlowInstance]);
 
