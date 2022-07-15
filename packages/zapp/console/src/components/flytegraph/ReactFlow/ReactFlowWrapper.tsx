@@ -107,6 +107,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
       style={reactFlowStyle}
       onInit={onLoad}
       fitView
+      defaultEdgeOptions={{ zIndex: 0 }}
     >
       <Background
         style={backgroundStyle.background}
