@@ -10,44 +10,68 @@ import { SimpleInput } from './SimpleInput';
 import { StructInput } from './StructInput';
 import { UnionInput } from './UnionInput';
 import { useStyles } from './styles';
-import { BaseInterpretedLaunchState, InputProps, InputType, LaunchFormInputsRef } from './types';
+import {
+  BaseInterpretedLaunchState,
+  InputProps,
+  InputType,
+  InputValue,
+  LaunchFormInputsRef,
+} from './types';
 import { UnsupportedInput } from './UnsupportedInput';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useFormInputsState } from './useFormInputsState';
 import { isEnterInputsState } from './utils';
+import { getHelperForInput } from './inputHelpers/getHelperForInput';
 
-export function getComponentForInput(input: InputProps, showErrors: boolean) {
-  const props = { ...input, error: showErrors ? input.error : undefined };
+export function getComponentForInput(
+  input: InputProps,
+  showErrors: boolean,
+  setIsError: (boolean) => void,
+) {
+  const props = { ...input, error: showErrors ? input.error : undefined, setIsError };
+
+  const onChange = (newValue: InputValue) => {
+    const helper = getHelperForInput(input.typeDefinition.type);
+    try {
+      helper.validate({ ...input, value: newValue });
+      setIsError(false);
+    } catch (e) {
+      setIsError(true);
+    }
+    input.onChange(newValue);
+  };
 
   switch (input.typeDefinition.type) {
     case InputType.Union:
-      return <UnionInput {...props} />;
+      return <UnionInput {...props} onChange={onChange} />;
     case InputType.Blob:
-      return <BlobInput {...props} />;
+      return <BlobInput {...props} onChange={onChange} />;
     case InputType.Collection:
-      return <CollectionInput {...props} />;
+      return <CollectionInput {...props} onChange={onChange} />;
     case InputType.Struct:
-      return <StructInput {...props} />;
+      return <StructInput {...props} onChange={onChange} />;
     case InputType.Map:
-      return <MapInput {...props} />;
+      return <MapInput {...props} onChange={onChange} />;
     case InputType.Unknown:
     case InputType.None:
-      return <UnsupportedInput {...props} />;
+      return <UnsupportedInput {...props} onChange={onChange} />;
     default:
-      return <SimpleInput {...props} />;
+      return <SimpleInput {...props} onChange={onChange} />;
   }
 }
 
 export interface LaunchFormInputsProps {
   state: BaseInterpretedLaunchState;
   variant: 'workflow' | 'task';
+  setIsError: (boolean) => void;
 }
 
 const RenderFormInputs: React.FC<{
   inputs: InputProps[];
   showErrors: boolean;
   variant: LaunchFormInputsProps['variant'];
-}> = ({ inputs, showErrors, variant }) => {
+  setIsError: (boolean) => void;
+}> = ({ inputs, showErrors, variant, setIsError }) => {
   const styles = useStyles();
   return inputs.length === 0 ? (
     <NoInputsNeeded variant={variant} />
@@ -59,7 +83,7 @@ const RenderFormInputs: React.FC<{
       </header>
       {inputs.map((input) => (
         <div key={input.label} className={styles.formControl}>
-          {getComponentForInput(input, showErrors)}
+          {getComponentForInput(input, showErrors, setIsError)}
         </div>
       ))}
     </>
@@ -69,7 +93,7 @@ const RenderFormInputs: React.FC<{
 export const LaunchFormInputsImpl: React.RefForwardingComponent<
   LaunchFormInputsRef,
   LaunchFormInputsProps
-> = ({ state, variant }, ref) => {
+> = ({ state, variant, setIsError }, ref) => {
   const { parsedInputs, unsupportedRequiredInputs, showErrors } = state.context;
   const { getValues, inputs, validate } = useFormInputsState(parsedInputs);
   React.useImperativeHandle(ref, () => ({
@@ -82,7 +106,12 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
       {state.matches(LaunchState.UNSUPPORTED_INPUTS) ? (
         <UnsupportedRequiredInputsError inputs={unsupportedRequiredInputs} variant={variant} />
       ) : (
-        <RenderFormInputs inputs={inputs} showErrors={showErrors} variant={variant} />
+        <RenderFormInputs
+          inputs={inputs}
+          showErrors={showErrors}
+          variant={variant}
+          setIsError={setIsError}
+        />
       )}
     </section>
   ) : null;
