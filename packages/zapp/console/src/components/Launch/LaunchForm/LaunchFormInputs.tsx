@@ -28,8 +28,6 @@ export function getComponentForInput(
   showErrors: boolean,
   setIsError: (boolean) => void,
 ) {
-  const props = { ...input, error: showErrors ? input.error : undefined, setIsError };
-
   const onChange = (newValue: InputValue) => {
     const helper = getHelperForInput(input.typeDefinition.type);
     try {
@@ -41,22 +39,24 @@ export function getComponentForInput(
     input.onChange(newValue);
   };
 
+  const props = { ...input, error: showErrors ? input.error : undefined, setIsError, onChange };
+
   switch (input.typeDefinition.type) {
     case InputType.Union:
-      return <UnionInput {...props} onChange={onChange} />;
+      return <UnionInput {...props} />;
     case InputType.Blob:
-      return <BlobInput {...props} onChange={onChange} />;
+      return <BlobInput {...props} />;
     case InputType.Collection:
-      return <CollectionInput {...props} onChange={onChange} />;
+      return <CollectionInput {...props} />;
     case InputType.Struct:
-      return <StructInput {...props} onChange={onChange} />;
+      return <StructInput {...props} />;
     case InputType.Map:
-      return <MapInput {...props} onChange={onChange} />;
+      return <MapInput {...props} />;
     case InputType.Unknown:
     case InputType.None:
-      return <UnsupportedInput {...props} onChange={onChange} />;
+      return <UnsupportedInput {...props} />;
     default:
-      return <SimpleInput {...props} onChange={onChange} />;
+      return <SimpleInput {...props} />;
   }
 }
 
