@@ -59,7 +59,7 @@ describe('ExecutionDetails > Timeline', () => {
     render(
       <ThemeProvider theme={muiTheme}>
         <QueryClientProvider client={queryClient}>
-          <ExecutionNodesTimeline nodeExecutions={[]} />
+          <ExecutionNodesTimeline />
         </QueryClientProvider>
       </ThemeProvider>,
     );

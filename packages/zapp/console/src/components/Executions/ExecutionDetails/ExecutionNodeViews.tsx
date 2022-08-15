@@ -21,7 +21,7 @@ import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 import { ExecutionNodesTimeline } from './Timeline';
 import { fetchTaskExecutionList } from '../taskExecutionQueries';
 import { getGroupedLogs } from '../TaskExecutionsList/utils';
-import { useAllChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
+import { useAllTreeNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { ExecutionWorkflowGraph } from './ExecutionWorkflowGraph';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -128,30 +128,16 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     };
   }, [nodeExecutions]);
 
-  // const childGroupsTreeQuery = useAllTreeNodeExecutionGroupsQuery(
-  //   nodeExecutionsQuery.data ?? [],
-  //   requestConfig,
-  // );
-
-  const childGroupsAllQuery = useAllChildNodeExecutionGroupsQuery(
+  const childGroupsQuery = useAllTreeNodeExecutionGroupsQuery(
     nodeExecutionsQuery.data ?? [],
     requestConfig,
   );
 
   useEffect(() => {
-    if (!childGroupsAllQuery.isLoading) {
-      const output: any[] = nodeExecutionsQuery.data ?? [];
-      const childGroups = childGroupsAllQuery.data ?? [];
-      for (let i = 0; i < childGroups.length; i++) {
-        for (let j = 0; j < childGroups[i].length; j++) {
-          for (let k = 0; k < childGroups[i][j].nodeExecutions.length; k++) {
-            output.push(childGroups[i][j].nodeExecutions[k] as NodeExecution);
-          }
-        }
-      }
-      setNodeExecutions(output.concat(nodeExecutions));
+    if (!childGroupsQuery.isLoading && childGroupsQuery.data) {
+      setNodeExecutions(childGroupsQuery.data);
     }
-  }, [childGroupsAllQuery.data]);
+  }, [childGroupsQuery.data]);
 
   const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
     <NodeExecutionsRequestConfigContext.Provider value={nodeExecutionsRequestConfig}>
@@ -167,7 +153,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
 
   const renderExecutionLoader = () => {
     return (
-      <WaitForQuery errorComponent={DataError} query={childGroupsAllQuery}>
+      <WaitForQuery errorComponent={DataError} query={childGroupsQuery}>
         {renderExecutionChildrenLoader}
       </WaitForQuery>
     );
@@ -176,7 +162,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const renderExecutionsTimeline = () => (
     <WaitForQuery
       errorComponent={DataError}
-      query={childGroupsAllQuery}
+      query={childGroupsQuery}
       loadingComponent={TimelineLoading}
     >
       {() => <ExecutionNodesTimeline />}

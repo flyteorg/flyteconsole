@@ -9,7 +9,7 @@ import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { useQuery } from 'react-query';
-import { useEffect, useState } from 'react';
+import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { checkForDynamicExeuctions } from 'components/common/utils';
 import { convertToPlainNodes } from './helpers';
@@ -77,9 +77,9 @@ interface ExProps {
 export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
   const [chartWidth, setChartWidth] = useState(0);
   const [labelInterval, setLabelInterval] = useState(INTERVAL_LENGTH);
-  const durationsRef = React.useRef<HTMLDivElement>(null);
-  const durationsLabelsRef = React.useRef<HTMLDivElement>(null);
-  const taskNamesRef = React.createRef<HTMLDivElement>();
+  const durationsRef = useRef<HTMLDivElement>(null);
+  const durationsLabelsRef = useRef<HTMLDivElement>(null);
+  const taskNamesRef = createRef<HTMLDivElement>();
 
   const [originalNodes, setOriginalNodes] = useState<dNode[]>([]);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
@@ -91,7 +91,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : [];
 
-  const nodeExecutionsById = React.useContext(NodeExecutionsByIdContext);
+  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
 
   const dynamicParents = checkForDynamicExeuctions(nodeExecutionsById, staticExecutionIdsMap);
 
