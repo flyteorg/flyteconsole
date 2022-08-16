@@ -11,7 +11,7 @@ import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workf
 import { useQuery } from 'react-query';
 import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
-import { checkForDynamicExeuctions } from 'components/common/utils';
+import { checkForDynamicExecutions } from 'components/common/utils';
 import { convertToPlainNodes } from './helpers';
 import { ChartHeader } from './chartHeader';
 import { useScaleContext } from './scaleContext';
@@ -93,7 +93,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
 
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
 
-  const dynamicParents = checkForDynamicExeuctions(nodeExecutionsById, staticExecutionIdsMap);
+  const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
 
   const { data: dynamicWorkflows } = useQuery(
     makeNodeExecutionDynamicWorkflowQuery(dynamicParents),

@@ -13,7 +13,7 @@ import { CompiledNode } from 'models/Node/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useContext } from 'react';
-import { checkForDynamicExeuctions } from 'components/common/utils';
+import { checkForDynamicExecutions } from 'components/common/utils';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 
 export interface WorkflowGraphProps {
@@ -70,7 +70,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
 
-  const dynamicParents = checkForDynamicExeuctions(nodeExecutionsById, staticExecutionIdsMap);
+  const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
   const dynamicWorkflowQuery = useQuery(makeNodeExecutionDynamicWorkflowQuery(dynamicParents));
   const renderReactFlowGraph = (dynamicWorkflows) => {
     debug('DynamicWorkflows:', dynamicWorkflows);

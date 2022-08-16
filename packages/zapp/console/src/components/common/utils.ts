@@ -25,7 +25,7 @@ export function measureText(fontDefinition: string, text: string) {
  *  those executions into the dag by using the executions 'uniqueParentId'
  *  to render that node as a subworkflow
  */
-export const checkForDynamicExeuctions = (allExecutions, staticExecutions) => {
+export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   const parentsToFetch = {};
   for (const executionId in allExecutions) {
     if (!staticExecutions[executionId]) {
