@@ -4,6 +4,7 @@ import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
+import _ from 'lodash';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**
  * TODO FC#393: these are dupes for testing, remove once tests fixed
@@ -35,17 +36,7 @@ export function isExpanded(node: any) {
  * @returns     boolean
  */
 export const checkIfObjectsAreSame = (a, b) => {
-  // if one of the objects is null (undefined), objects can't be the same
-  if ((!a || !b) && a != b) {
-    return false;
-  }
-
-  for (const k in a) {
-    if (a[k] != b[k]) {
-      return false;
-    }
-  }
-  return true;
+  return _.isEqual(a, b);
 };
 
 /**
@@ -115,11 +106,12 @@ export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
 };
 
 export const getSubWorkflowFromId = (id, workflow) => {
+  const _ = require('lodash');
   const { subWorkflows } = workflow;
   /* Find current matching entitity from subWorkflows */
   for (const k in subWorkflows) {
     const subWorkflowId = subWorkflows[k].template.id;
-    if (checkIfObjectsAreSame(subWorkflowId, id)) {
+    if (_.isEqual(subWorkflowId, id)) {
       return subWorkflows[k];
     }
   }
@@ -127,11 +119,12 @@ export const getSubWorkflowFromId = (id, workflow) => {
 };
 
 export const getTaskTypeFromCompiledNode = (taskNode: TaskNode, tasks: CompiledTask[]) => {
+  const _ = require('lodash');
   for (let i = 0; i < tasks.length; i++) {
     const compiledTask: CompiledTask = tasks[i];
     const taskTemplate: TaskTemplate = compiledTask.template;
     const templateId: Identifier = taskTemplate.id;
-    if (checkIfObjectsAreSame(templateId, taskNode.referenceId)) {
+    if (_.isEqual(templateId, taskNode.referenceId)) {
       return compiledTask;
     }
   }
