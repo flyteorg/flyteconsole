@@ -4,7 +4,6 @@ import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
-import _ from 'lodash';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**
  * TODO FC#393: these are dupes for testing, remove once tests fixed
@@ -27,17 +26,6 @@ export function isEndNode(node: any) {
 export function isExpanded(node: any) {
   return !!node.expanded;
 }
-
-/**
- * Utility funciton assumes (loose) parity between [a]->[b] if matching
- * keys have matching values.
- * @param a     object
- * @param b     object
- * @returns     boolean
- */
-export const checkIfObjectsAreSame = (a, b) => {
-  return _.isEqual(a, b);
-};
 
 /**
  * Returns a display name from either workflows or nodes
