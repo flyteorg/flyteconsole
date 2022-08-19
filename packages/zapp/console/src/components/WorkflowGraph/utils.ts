@@ -35,6 +35,11 @@ export function isExpanded(node: any) {
  * @returns     boolean
  */
 export const checkIfObjectsAreSame = (a, b) => {
+  // if one of the objects is null (undefined), objects can't be the same
+  if ((!a || !b) && a != b) {
+    return false;
+  }
+
   for (const k in a) {
     if (a[k] != b[k]) {
       return false;
