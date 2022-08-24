@@ -155,16 +155,16 @@ export const MapInput = (props: InputProps) => {
     setData((data) => [...data, getNewMapItem(data.length)]);
   };
 
-  const updateUpperStream = () => {
+  const updateUpperStream = (newData: MapInputItem[]) => {
     let newError = false;
-    data.forEach((item) => {
+    newData.forEach((item) => {
       if (item.id === null || !item.key?.length || !item.value?.length) newError = true;
       else {
         if (data.findIndex(({ key, id }) => id !== item.id && key === item.key) >= 0)
           newError = true;
       }
     });
-    const newPairs = data
+    const newPairs = newData
       .filter((item) => {
         // we filter out delted values and items with errors or empty keys/values
         return item.id !== null && !!item.key && !!item.value;
@@ -182,32 +182,29 @@ export const MapInput = (props: InputProps) => {
 
   const onSetKey = (id: number | null, key: string) => {
     if (id === null) return;
-    setData((data) => {
-      data[id].key = key;
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    newData[id].key = key;
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const onSetValue = (id: number | null, value: string) => {
     if (id === null) return;
-    setData((data) => {
-      data[id].value = value;
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    newData[id].value = value;
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const onDeleteItem = (id: number | null) => {
     if (id === null) return;
-    setData((data) => {
-      const dataIndex = data.findIndex((item) => item.id === id);
-      if (dataIndex >= 0 && dataIndex < data.length) {
-        return [...data.splice(0, dataIndex), ...data.splice(dataIndex + 1)];
-      }
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    const dataIndex = newData.findIndex((item) => item.id === id);
+    if (dataIndex >= 0 && dataIndex < newData.length) {
+      newData[dataIndex].id = null;
+    }
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const isValid = (id: number | null, value: string) => {
