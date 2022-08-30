@@ -76,19 +76,25 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
       return true;
     });
     setSelectedNodes(validSelection);
+    const newSelectedExecution = validSelection.length
+      ? nodeExecutionsById[validSelection[0]]
+        ? nodeExecutionsById[validSelection[0]].id
+        : {
+            nodeId: validSelection[0],
+            executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
+          }
+      : null;
+    setSelectedExecution(newSelectedExecution);
   };
 
   const onCloseDetailsPanel = () => {
-    // console.log('CLO here');
     setSelectedExecution(null);
     setSelectedPhase(undefined);
     setSelectedNodes([]);
   };
 
-  // const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(null);
   const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
 
-  // const onCloseDetailsPanel = () => setSelectedExecution(null);
   const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
   const timelineContext = useMemo(
@@ -124,8 +130,8 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
         </WaitForQuery>
       )}
       {/* Side panel, shows information for specific node */}
-      <DetailsPanel open={!!selectedExecution} onClose={onCloseDetailsPanel}>
-        {selectedExecution && (
+      <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
+        {!isDetailsTabClosed && selectedExecution && (
           <NodeExecutionDetailsPanelContent
             onClose={onCloseDetailsPanel}
             phase={selectedPhase}

@@ -114,7 +114,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
       const execution = nodeExecutionsById[node.scopedId];
       return {
         ...node,
-        startedAt: execution.closure.startedAt,
+        startedAt: execution?.closure?.startedAt,
         execution,
       };
     });
