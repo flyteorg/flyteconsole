@@ -5,20 +5,19 @@ import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { Workflow, WorkflowId } from 'models/Workflow/types';
+import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from '../contexts';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 
-export interface ExecutionWorkflowGraphProps {
-  workflowId: WorkflowId;
-}
-
+// TODO remove component
 /** Wraps a WorkflowGraph, customizing it to also show execution statuses */
-export const ExecutionWorkflowGraph: React.FC<ExecutionWorkflowGraphProps> = ({ workflowId }) => {
+export const ExecutionWorkflowGraph: React.FC = () => {
   const queryClient = useQueryClient();
+  const { workflowId } = useNodeExecutionContext();
   const workflowQuery = useQuery<Workflow, Error>(makeWorkflowQuery(queryClient, workflowId));
 
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);

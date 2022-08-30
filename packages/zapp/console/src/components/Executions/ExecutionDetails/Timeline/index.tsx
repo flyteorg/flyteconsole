@@ -23,6 +23,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
+// TODO remove component
 export const ExecutionNodesTimeline = () => {
   const styles = useStyles();
 
