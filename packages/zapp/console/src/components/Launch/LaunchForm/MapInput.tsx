@@ -1,4 +1,4 @@
-import { Button, IconButton, TextField, Typography } from '@material-ui/core';
+import { Button, FormHelperText, IconButton, TextField, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import { requiredInputSuffix } from './constants';
 import { InputProps, InputType, InputTypeDefinition, InputValue } from './types';
 import { formatType, toMappedTypeValue } from './utils';
+import { getHelperForInput } from './inputHelpers/getHelperForInput';
 
 const useStyles = makeStyles((theme: Theme) => ({
   formControl: {
@@ -49,8 +50,25 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
   const classes = useStyles();
   const { data, subtype, setKey, setValue, isValid, onDeleteItem } = props;
   const [error, setError] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const [touched, setTouched] = React.useState(false);
 
   const isOneLineType = subtype?.type === InputType.String || subtype?.type === InputType.Integer;
+
+  let invalidValueError = null;
+  if (subtype && !focused && touched) {
+    const helper = getHelperForInput(subtype.type);
+    try {
+      helper.validate({
+        name: data.key,
+        value: data.value,
+        required: true,
+        typeDefinition: subtype,
+      });
+    } catch (e) {
+      invalidValueError = e?.message;
+    }
+  }
 
   return (
     <div className={classes.controls}>
@@ -70,6 +88,7 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
       <TextField
         label={subtype ? `${formatType(subtype)}${requiredInputSuffix}` : ''}
         onChange={({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
+          setTouched(true);
           setValue(value);
         }}
         value={data.value}
@@ -77,6 +96,10 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
         className={classes.valueControl}
         multiline={!isOneLineType}
         type={subtype?.type === InputType.Integer ? 'number' : 'text'}
+        error={!!invalidValueError}
+        helperText={invalidValueError ? invalidValueError : ''}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       />
       <IconButton onClick={onDeleteItem}>
         <RemoveIcon />
@@ -117,18 +140,31 @@ export const MapInput = (props: InputProps) => {
     value,
     label,
     onChange,
+    error,
     typeDefinition: { subtype },
+    setIsError,
   } = props;
   const classes = useStyles();
+
+  console.log('MY FILTER: org error: ', error);
 
   const [data, setData] = React.useState<MapInputItem[]>(parseMappedTypeValue(value));
 
   const onAddItem = () => {
+    setIsError?.(true);
     setData((data) => [...data, getNewMapItem(data.length)]);
   };
 
-  const updateUpperStream = () => {
-    const newPairs = data
+  const updateUpperStream = (newData: MapInputItem[]) => {
+    let newError = false;
+    newData.forEach((item) => {
+      if (item.id === null || !item.key?.length || !item.value?.length) newError = true;
+      else {
+        if (data.findIndex(({ key, id }) => id !== item.id && key === item.key) >= 0)
+          newError = true;
+      }
+    });
+    const newPairs = newData
       .filter((item) => {
         // we filter out delted values and items with errors or empty keys/values
         return item.id !== null && !!item.key && !!item.value;
@@ -141,36 +177,34 @@ export const MapInput = (props: InputProps) => {
       });
     const newValue = toMappedTypeValue(newPairs);
     onChange(newValue);
+    if (newError) setIsError?.(newError);
   };
 
   const onSetKey = (id: number | null, key: string) => {
     if (id === null) return;
-    setData((data) => {
-      data[id].key = key;
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    newData[id].key = key;
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const onSetValue = (id: number | null, value: string) => {
     if (id === null) return;
-    setData((data) => {
-      data[id].value = value;
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    newData[id].value = value;
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const onDeleteItem = (id: number | null) => {
     if (id === null) return;
-    setData((data) => {
-      const dataIndex = data.findIndex((item) => item.id === id);
-      if (dataIndex >= 0 && dataIndex < data.length) {
-        data[dataIndex].id = null;
-      }
-      return [...data];
-    });
-    updateUpperStream();
+    const newData = [...data];
+    const dataIndex = newData.findIndex((item) => item.id === id);
+    if (dataIndex >= 0 && dataIndex < newData.length) {
+      newData[dataIndex].id = null;
+    }
+    setData([...newData]);
+    updateUpperStream([...newData]);
   };
 
   const isValid = (id: number | null, value: string) => {
@@ -204,6 +238,7 @@ export const MapInput = (props: InputProps) => {
               />
             );
           })}
+        {error && <FormHelperText error={true}>{error}</FormHelperText>}
         <div className={classes.addButton}>
           <Button onClick={onAddItem}>+ ADD ITEM</Button>
         </div>
