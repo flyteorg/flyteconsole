@@ -1,7 +1,7 @@
 import { createDebugLogger } from 'common/log';
 import { ValueError } from 'errors/parameterErrors';
 import { Core } from 'flyteidl';
-import { InputProps, InputTypeDefinition, InputValue } from '../types';
+import { InputProps, InputType, InputTypeDefinition, InputValue } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
 import { InputValidatorParams, ValidationParams } from './types';
@@ -60,13 +60,15 @@ export function literalToInputValue(
  */
 export function validateInput(params: ValidationParams) {
   const { initialValue, name, required, typeDefinition, value } = params;
+  console.log('validateInput ', params);
   const { validate } = getHelperForInput(typeDefinition.type);
-  if (value == null) {
+  if (typeDefinition.type !== InputType.Unknown && value == null) {
     if (required && initialValue == null) {
       throw new ValueError(name, 'Value is required');
     }
     return;
   }
+  console.log(validate);
 
   try {
     validate(params as InputValidatorParams);

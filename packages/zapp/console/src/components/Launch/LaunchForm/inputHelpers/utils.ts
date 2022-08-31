@@ -47,13 +47,15 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.Struct:
       return true;
     case InputType.Union:
+      console.log('InputType.Union ', listOfSubTypes);
       if (listOfSubTypes?.length) {
         var isSupported = true;
         listOfSubTypes.forEach((subtype) => {
-          if (!typeIsSupported(subtype)) {
+          if (subtype.type !== InputType.Unknown && !typeIsSupported(subtype)) {
             isSupported = false;
           }
         });
+        console.log('isSupported', isSupported);
         return isSupported;
       }
       return false;
