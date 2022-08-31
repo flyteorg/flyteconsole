@@ -13,9 +13,9 @@ import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { convertToPlainNodes } from './helpers';
-import { ChartHeader } from './TempChartHeader';
+import { ChartHeader } from './ChartHeader';
 import { useScaleContext } from './scaleContext';
-import { TaskNames } from './TempTaskNames';
+import { TaskNames } from './TaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 
@@ -114,7 +114,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
       const execution = nodeExecutionsById[node.scopedId];
       return {
         ...node,
-        startedAt: execution?.closure?.startedAt,
+        startedAt: execution?.closure.startedAt,
         execution,
       };
     });
