@@ -9,7 +9,7 @@ import * as React from 'react';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
-import { generateColumns } from './nodeExecutionColumns';
+import { generateColumns } from './tempNodeExecutionColumns';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';

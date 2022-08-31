@@ -13,9 +13,9 @@ import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { convertToPlainNodes } from './helpers';
-import { ChartHeader } from './ChartHeader';
+import { ChartHeader } from './TempChartHeader';
 import { useScaleContext } from './scaleContext';
-import { TaskNames } from './TaskNames';
+import { TaskNames } from './TempTaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 
