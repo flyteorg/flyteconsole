@@ -32,7 +32,6 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
   switch (type) {
     case InputType.Binary:
     case InputType.Error:
-    case InputType.None:
     case InputType.Unknown:
       return false;
     case InputType.Boolean:
@@ -71,6 +70,9 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
       }
       return typeIsSupported(subtype);
     }
+    case InputType.None:
+      console.log('NONENONENONENONE');
+      return true;
     default:
       // This will cause a compiler error if new types are added and there is
       // no case for them listed above.
