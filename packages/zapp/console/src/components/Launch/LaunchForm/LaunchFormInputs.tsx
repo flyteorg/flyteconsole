@@ -15,6 +15,7 @@ import { UnsupportedInput } from './UnsupportedInput';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useFormInputsState } from './useFormInputsState';
 import { isEnterInputsState } from './utils';
+import { NoneInput } from './NoneInput';
 
 export function getComponentForInput(input: InputProps, showErrors: boolean) {
   const props = { ...input, error: showErrors ? input.error : undefined };
@@ -31,8 +32,9 @@ export function getComponentForInput(input: InputProps, showErrors: boolean) {
     case InputType.Map:
       return <MapInput {...props} />;
     case InputType.Unknown:
-    case InputType.None:
       return <UnsupportedInput {...props} />;
+    case InputType.None:
+      return <NoneInput {...props} />;
     default:
       return <SimpleInput {...props} />;
   }
