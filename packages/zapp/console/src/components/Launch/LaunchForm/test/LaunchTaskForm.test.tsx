@@ -242,7 +242,7 @@ describe('LaunchForm: Task', () => {
       await waitFor(() => expect(submitButton).not.toBeDisabled());
     });
 
-    it('should show disable submit button if the value in input is invalid', async () => {
+    it('should show disabled submit button if the value in input is invalid', async () => {
       const { container, getByLabelText } = renderForm();
       await waitFor(() => {});
 
