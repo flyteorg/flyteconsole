@@ -30,6 +30,7 @@ const baseInputProps: InputProps = {
   onChange: () => {},
   required: false,
   typeDefinition: inputTypes.unknown,
+  setIsError: () => {},
 };
 
 function makeSimpleInput(typeDefinition: InputTypeDefinition, value: any): InputProps {
@@ -98,7 +99,7 @@ describe('literalToInputValue', () => {
       });
     });
 
-    it('should return empty for noneType literals', () => {
+    it('should return literal as an empty object for noneType literals', () => {
       const map: Core.ILiteral = {
         map: {
           literals: { a: literalNone() },
@@ -110,7 +111,9 @@ describe('literalToInputValue', () => {
         type: InputType.None,
       };
 
-      expect(literalToInputValue(mapInputTypeDefinition(typeDefinition), map)).toEqual('{}');
+      expect(literalToInputValue(mapInputTypeDefinition(typeDefinition), map)).toEqual(`{
+  "a": {}
+}`);
     });
   });
 
@@ -135,7 +138,7 @@ describe('literalToInputValue', () => {
       });
     });
 
-    it('should return empty for noneType literals', () => {
+    it('should return empty objects for each noneType literals', () => {
       const collection: Core.ILiteral = {
         collection: {
           // Duplicate it to test comma separation
@@ -150,7 +153,7 @@ describe('literalToInputValue', () => {
 
       expect(
         literalToInputValue(collectionInputTypeDefinition(typeDefinition), collection),
-      ).toEqual('[]');
+      ).toEqual('[{},{}]');
     });
   });
 
