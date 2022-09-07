@@ -261,7 +261,7 @@ describe('LaunchForm: Workflow', () => {
       expect(submitButton).not.toBeDisabled();
     });
 
-    it('should update validation errors while typing', async () => {
+    it('should show disable submit button if the value in input is invalid', async () => {
       const { container, getByLabelText } = renderForm();
       await waitFor(() => {});
 
