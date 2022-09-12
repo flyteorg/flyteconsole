@@ -13,11 +13,11 @@ describe('useOnlyMyExecutionsFilterState', () => {
 
   describe.each`
     isFilterDisabled | initialValue | expected
-    ${undefined}     | ${undefined} | ${{ isFilterDisabled: false, onlyMyExecutionsValue: false }}
+    ${undefined}     | ${undefined} | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
     ${false}         | ${undefined} | ${{ isFilterDisabled: false, onlyMyExecutionsValue: false }}
     ${true}          | ${undefined} | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
-    ${undefined}     | ${false}     | ${{ isFilterDisabled: false, onlyMyExecutionsValue: false }}
-    ${undefined}     | ${true}      | ${{ isFilterDisabled: false, onlyMyExecutionsValue: true }}
+    ${undefined}     | ${false}     | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
+    ${undefined}     | ${true}      | ${{ isFilterDisabled: true, onlyMyExecutionsValue: true }}
     ${false}         | ${false}     | ${{ isFilterDisabled: false, onlyMyExecutionsValue: false }}
     ${false}         | ${true}      | ${{ isFilterDisabled: false, onlyMyExecutionsValue: true }}
     ${true}          | ${false}     | ${{ isFilterDisabled: true, onlyMyExecutionsValue: false }}
