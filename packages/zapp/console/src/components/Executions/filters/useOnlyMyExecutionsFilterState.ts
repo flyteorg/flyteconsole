@@ -31,6 +31,7 @@ export function useOnlyMyExecutionsFilterState({
   const [onlyMyExecutionsValue, setOnlyMyExecutionsValue] = useState<boolean>(
     isFlagEnabled ? onlyMineExecutionsSelectedValue : initialValue ?? false, // if flag is enable let's use the value from only mine
   );
+  const defaultIsFilterDisabled = profile.value ? false : true;
 
   const getFilter = (): FilterOperation | null => {
     if (!onlyMyExecutionsValue) {
@@ -53,7 +54,7 @@ export function useOnlyMyExecutionsFilterState({
 
   return {
     onlyMyExecutionsValue,
-    isFilterDisabled: isFilterDisabled ?? false,
+    isFilterDisabled: isFilterDisabled ?? defaultIsFilterDisabled,
     onOnlyMyExecutionsFilterChange: setOnlyMyExecutionsValue,
     getFilter,
   };
