@@ -42,7 +42,7 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
   devtool,
   devServer: {
     hot: true,
-    open: [BASE_URL],
+    open: [BASE_URL || '/'],
     static: {
       directory: path.join(__dirname, 'dist'),
       publicPath,
