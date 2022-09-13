@@ -7,6 +7,7 @@ import {
   CERTIFICATE_PATH,
   ADMIN_API_USE_SSL,
   ASSETS_PATH as publicPath,
+  BASE_URL,
 } from './env';
 
 const { merge } = require('webpack-merge');
@@ -31,6 +32,7 @@ if (
   process.exit(0);
 }
 
+console.log('publicPath', publicPath);
 /**
  * Client configuration
  *
@@ -41,7 +43,11 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
   devtool,
   devServer: {
     hot: true,
-    static: path.join(__dirname, 'dist'),
+    open: [BASE_URL],
+    static: {
+      directory: path.join(__dirname, 'dist'),
+      publicPath,
+    },
     compress: true,
     port: 3000,
     host: LOCAL_DEV_HOST,
