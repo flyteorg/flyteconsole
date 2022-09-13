@@ -32,7 +32,6 @@ if (
   process.exit(0);
 }
 
-console.log('publicPath', publicPath);
 /**
  * Client configuration
  *
