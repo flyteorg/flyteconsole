@@ -55,6 +55,7 @@ export const statusColors = {
   SKIPPED: COLOR_SPECTRUM.sunset20.color,
   UNKNOWN: COLOR_SPECTRUM.gray20.color,
   WARNING: COLOR_SPECTRUM.yellow40.color,
+  PAUSED: COLOR_SPECTRUM.amber30.color,
 };
 
 export type TaskColorMap = Record<TaskType, string>;

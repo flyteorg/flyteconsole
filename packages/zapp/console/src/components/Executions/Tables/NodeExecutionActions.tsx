@@ -2,6 +2,7 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import InputsAndOutputsIcon from '@material-ui/icons/Tv';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { RerunIcon } from '@flyteconsole/ui-atoms';
 import { Identifier, ResourceIdentifier } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
@@ -9,6 +10,7 @@ import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
+import { useEffect, useState } from 'react';
 import { NodeExecutionsTableState } from './types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
@@ -23,24 +25,31 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
   const { execution, state } = props;
 
   const detailsContext = useNodeExecutionContext();
-  const [showLaunchForm, setShowLaunchForm] = React.useState<boolean>(false);
-  const [nodeExecutionDetails, setNodeExecutionDetails] = React.useState<
+  const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
     NodeExecutionDetails | undefined
   >();
-  const [initialParameters, setInitialParameters] = React.useState<
+  const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
 
   const executionData = useNodeExecutionData(execution.id);
   const id = nodeExecutionDetails?.taskTemplate?.id;
 
-  React.useEffect(() => {
+  const isSignal = false; // execution.closure.signal;
+  // const isPausedPhase = isSignal && execution.closure.phase === NodeExecutionPhase.RUNNING;
+  const isPausedPhase = isSignal;
+  // const phase = isPausedPhase
+  //   ? NodeExecutionPhase.PAUSED
+  //   : execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED;
+
+  useEffect(() => {
     detailsContext.getNodeExecutionDetails(execution).then((res) => {
       setNodeExecutionDetails(res);
     });
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!id) {
       return;
     }
@@ -73,6 +82,11 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
     setShowLaunchForm(true);
   };
 
+  const handleGatedNodeResume = () => {
+    // TODO launches the form
+    console.log('CLO resume');
+  };
+
   const renderRerunAction = () => {
     if (!id || !initialParameters) {
       return <></>;
@@ -97,6 +111,13 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
 
   return (
     <div>
+      {isPausedPhase && (
+        <Tooltip title={t('resumeTooltip')}>
+          <IconButton onClick={handleGatedNodeResume}>
+            <PlayCircleOutlineIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       <Tooltip title={t('inputsAndOutputsTooltip')}>
         <IconButton onClick={inputsAndOutputsIconOnClick}>
           <InputsAndOutputsIcon />

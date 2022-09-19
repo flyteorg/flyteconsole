@@ -127,6 +127,11 @@ export const nodeExecutionPhaseConstants: {
     text: t('recovered'),
     textColor: positiveTextColor,
   },
+  [NodeExecutionPhase.PAUSED]: {
+    badgeColor: statusColors.PAUSED,
+    text: t('paused'),
+    textColor: secondaryTextColor,
+  },
   [NodeExecutionPhase.UNDEFINED]: {
     badgeColor: statusColors.UNKNOWN,
     text: t('unknown'),

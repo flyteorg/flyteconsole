@@ -130,15 +130,20 @@ export function generateColumns(
       label: 'type',
     },
     {
-      cellRenderer: ({ execution }) => (
-        <>
-          <ExecutionStatusBadge
-            phase={execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED}
-            type="node"
-          />
-          <NodeExecutionCacheStatus execution={execution} variant="iconOnly" />
-        </>
-      ),
+      cellRenderer: ({ execution }) => {
+        const isSignal = true; // execution.closure.signal;
+        // const isPausedPhase = isSignal && execution.closure.phase === NodeExecutionPhase.RUNNING;
+        const isPausedPhase = isSignal;
+        const phase = isPausedPhase
+          ? NodeExecutionPhase.PAUSED
+          : execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED;
+        return (
+          <>
+            <ExecutionStatusBadge phase={phase} type="node" />
+            <NodeExecutionCacheStatus execution={execution} variant="iconOnly" />
+          </>
+        );
+      },
       className: styles.columnStatus,
       key: 'phase',
       label: 'status',
