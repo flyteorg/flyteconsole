@@ -80,9 +80,19 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   initialParameters?: TaskInitialLaunchParameters;
 }
 
+export interface ResumeSignalFormProps extends BaseLaunchFormProps {
+  taskId: NamedEntityIdentifier;
+  initialParameters?: TaskInitialLaunchParameters;
+}
+
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
 export interface LaunchFormInputsRef {
+  getValues(): Record<string, Core.ILiteral>;
+  validate(): boolean;
+}
+
+export interface ResumeFormInputsRef {
   getValues(): Record<string, Core.ILiteral>;
   validate(): boolean;
 }

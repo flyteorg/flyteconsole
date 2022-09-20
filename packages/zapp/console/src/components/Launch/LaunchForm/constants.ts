@@ -4,13 +4,17 @@ import { BlobValue, InputType, AuthRoleTypes, AuthRoleMeta } from './types';
 export const formStrings = {
   cancel: 'Cancel',
   inputs: 'Inputs',
+  gateInput: 'Gate input',
   role: 'Role',
   submit: 'Launch',
+  resume: 'Resume',
   taskVersion: 'Task Version',
   title: 'Create New Execution',
+  resumeTitle: 'Resume Paused Execution',
   workflowVersion: 'Workflow Version',
   launchPlan: 'Launch Plan',
   interruptible: 'Interruptible',
+  viewNodeInputs: 'View node inputs',
 };
 
 export const AuthRoleStrings: { [k in AuthRoleTypes]: AuthRoleMeta } = {
@@ -75,6 +79,7 @@ export const cannotLaunchWorkflowString = 'Workflow cannot be launched';
 export const cannotLaunchTaskString = 'Task cannot be launched';
 export const inputsDescription =
   'Enter input values below. Items marked with an asterisk(*) are required.';
+export const gateInputDescription = 'Enter input values below.';
 export const workflowNoInputsString = 'This workflow does not accept any inputs.';
 export const taskNoInputsString = 'This task does not accept any inputs.';
 export const workflowUnsupportedRequiredInputsString = `This Workflow version contains one or more required inputs which are not supported by Flyte Console and do not have default values specified in the Workflow definition or the selected Launch Plan.\n\nYou can launch this Workflow version with the Flyte CLI or by selecting a Launch Plan which provides values for the unsupported inputs.\n\nThe required inputs are :`;
