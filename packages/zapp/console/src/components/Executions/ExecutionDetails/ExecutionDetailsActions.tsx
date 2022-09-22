@@ -4,13 +4,14 @@ import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
+import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { useNodeExecution, useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import Close from '@material-ui/icons/Close';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
@@ -70,8 +71,10 @@ export const ExecutionDetailsActions = ({
 }: ExecutionDetailsActionsProps): JSX.Element => {
   const styles = useStyles();
 
-  const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
-  const [initialParameters, setInitialParameters] = useState<
+  const [showLaunchForm, setShowLaunchForm] = React.useState<boolean>(false);
+  const [showResumeForm, setShowResumeForm] = React.useState<boolean>(false);
+
+  const [initialParameters, setInitialParameters] = React.useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
 
@@ -107,8 +110,10 @@ export const ExecutionDetailsActions = ({
     setShowLaunchForm(true);
   };
 
-  const resumeAction = () => {
+  const resumeOnClick = (e: React.MouseEvent<HTMLElement>) => {
     // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+    e.stopPropagation();
+    setShowResumeForm(true);
   };
 
   return (
@@ -130,7 +135,7 @@ export const ExecutionDetailsActions = ({
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
-          <Button variant="outlined" color="primary" onClick={resumeAction}>
+          <Button variant="outlined" color="primary" onClick={resumeOnClick}>
             {t('resume')}
           </Button>
         )}
@@ -143,6 +148,12 @@ export const ExecutionDetailsActions = ({
           setShowLaunchForm={setShowLaunchForm}
         />
       )}
+      <ResumeFormDialog
+        id={id as ResourceIdentifier}
+        initialParameters={initialParameters}
+        showResumeForm={showResumeForm}
+        setShowResumeForm={setShowResumeForm}
+      />
       {execution?.value?.closure?.deckUri && (
         <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={showDeck}>
           <div className={styles.dialogTitle}>
