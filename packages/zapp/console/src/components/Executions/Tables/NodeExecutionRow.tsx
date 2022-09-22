@@ -22,6 +22,7 @@ interface NodeExecutionRowProps {
   execution: NodeExecution;
   level?: number;
   style?: React.CSSProperties;
+  isFuture?: boolean;
 }
 
 const ChildFetchErrorIcon: React.FC<{
@@ -53,6 +54,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   index,
   level = 0,
   style,
+  isFuture = false,
 }) => {
   const theme = useTheme();
   const { columns, state } = React.useContext(NodeExecutionsTableContext);
@@ -108,7 +110,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
-  const onClickRow = () => state.setSelectedExecution(nodeExecution?.id ?? null);
+  const onClickRow = () => {
+    if (!isFuture) state.setSelectedExecution(nodeExecution?.id ?? null);
+  };
 
   return (
     <div
@@ -135,6 +139,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
               {cellRenderer({
                 state,
                 execution: nodeExecution,
+                isFuture,
               })}
             </div>
           ))}

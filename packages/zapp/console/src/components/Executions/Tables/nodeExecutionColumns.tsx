@@ -15,7 +15,7 @@ import { SelectNodeExecutionLink } from './SelectNodeExecutionLink';
 import { useColumnStyles } from './styles';
 import { NodeExecutionCellRendererData, NodeExecutionColumnDefinition } from './types';
 
-const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, state }) => {
+const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, state, isFuture }) => {
   const detailsContext = useNodeExecutionContext();
   const [displayName, setDisplayName] = useState<string | undefined>();
 
@@ -40,18 +40,19 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
   const name = displayName ?? execution.id.nodeId;
   const truncatedName = name?.split('.').pop() || name;
 
-  const readableName = isSelected ? (
-    <Typography variant="body1" className={styles.selectedExecutionName}>
-      {truncatedName}
-    </Typography>
-  ) : (
-    <SelectNodeExecutionLink
-      className={commonStyles.primaryLink}
-      execution={execution}
-      linkText={truncatedName || ''}
-      setSelectedExecution={setSelectedExecution}
-    />
-  );
+  const readableName =
+    isSelected || isFuture ? (
+      <Typography variant="body1" className={styles.selectedExecutionName}>
+        {truncatedName}
+      </Typography>
+    ) : (
+      <SelectNodeExecutionLink
+        className={commonStyles.primaryLink}
+        execution={execution}
+        linkText={truncatedName || ''}
+        setSelectedExecution={setSelectedExecution}
+      />
+    );
 
   return (
     <>
@@ -144,9 +145,9 @@ export function generateColumns(
       label: 'status',
     },
     {
-      cellRenderer: ({ execution: { closure } }) => {
+      cellRenderer: ({ execution: { closure }, isFuture }) => {
         const { startedAt } = closure;
-        if (!startedAt) {
+        if (!startedAt || isFuture) {
           return '';
         }
         const startedAtDate = timestampToDate(startedAt);
@@ -164,9 +165,9 @@ export function generateColumns(
       label: 'start time',
     },
     {
-      cellRenderer: ({ execution }) => {
+      cellRenderer: ({ execution, isFuture }) => {
         const timing = getNodeExecutionTimingMS(execution);
-        if (timing === null) {
+        if (timing === null || isFuture) {
           return '';
         }
         return (
@@ -189,9 +190,8 @@ export function generateColumns(
       ),
     },
     {
-      cellRenderer: ({ execution, state }) => (
-        <NodeExecutionActions execution={execution} state={state} />
-      ),
+      cellRenderer: ({ execution, state, isFuture }) =>
+        !isFuture ? <NodeExecutionActions execution={execution} state={state} /> : <div></div>,
       className: styles.columnLogs,
       key: 'actions',
       label: '',

@@ -21,6 +21,7 @@ export interface ColumnDefinition<CellRendererData> {
 export interface NodeExecutionCellRendererData {
   execution: NodeExecution;
   state: NodeExecutionsTableState;
+  isFuture?: boolean;
 }
 export type NodeExecutionColumnDefinition = ColumnDefinition<NodeExecutionCellRendererData>;
 
