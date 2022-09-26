@@ -4,17 +4,18 @@ const positionStyle: CSSProperties = {
   bottom: '1rem',
   zIndex: 10,
   position: 'absolute',
-  width: '150px',
 };
 
 export const leftPositionStyle: CSSProperties = {
   ...positionStyle,
   left: '1rem',
+  width: '336px',
 };
 
 export const rightPositionStyle: CSSProperties = {
   ...positionStyle,
   right: '1rem',
+  width: '150px',
 };
 
 export const graphButtonContainer: CSSProperties = {

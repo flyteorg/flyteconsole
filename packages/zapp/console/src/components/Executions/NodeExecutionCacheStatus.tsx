@@ -159,11 +159,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
   return variant === 'iconOnly' ? (
     <Tooltip title={message} aria-label="cache status">
       <NodeExecutionCacheStatusIcon
-        className={classnames(
-          // commonStyles.iconLeft,
-          commonStyles.iconRight,
-          commonStyles.iconSecondary,
-        )}
+        className={classnames(commonStyles.iconRight, commonStyles.iconSecondary)}
         style={iconStyles}
         status={cacheStatus}
       />

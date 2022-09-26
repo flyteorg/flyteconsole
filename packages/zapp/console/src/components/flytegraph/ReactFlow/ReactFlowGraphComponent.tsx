@@ -2,6 +2,12 @@ import * as React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { NodeExecutionPhase } from 'models/Execution/enums';
+import { isNodeGateNode } from 'components/Executions/utils';
+import { dNode } from 'models/Graph/types';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
+import { convertToPlainNodes } from 'components/Executions/ExecutionDetails/Timeline/helpers';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -45,16 +51,19 @@ const graphNodeCountChanged = (previous, data) => {
   }
 };
 
-const ReactFlowGraphComponent = (props) => {
-  const {
-    data,
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    isDetailsTabClosed,
-    dynamicWorkflows,
-  } = props;
+const ReactFlowGraphComponent = ({
+  data,
+  onNodeSelectionChanged,
+  onPhaseSelectionChanged,
+  selectedPhase,
+  isDetailsTabClosed,
+  dynamicWorkflows,
+}) => {
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
+
+  const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
+
   const [state, setState] = useState({
     data,
     dynamicWorkflows,
@@ -142,8 +151,28 @@ const ReactFlowGraphComponent = (props) => {
 
   const backgroundStyle = getRFBackground().nested;
 
-  // TODO replace with proper gateNodes check
-  const hasPausedNodes = true;
+  useEffect(() => {
+    const nodes: dNode[] = compiledWorkflowClosure
+      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows).dag.nodes
+      : [];
+    // we remove start/end node info in the root dNode list during first assignment
+    const initializeNodes = convertToPlainNodes(nodes);
+    const pausedNodes: dNode[] = initializeNodes.filter((node) => {
+      const nodeExecution = nodeExecutionsById[node.id];
+      if (nodeExecution) {
+        const phase = nodeExecution?.closure.phase;
+        const isGateNode = isNodeGateNode(
+          compiledWorkflowClosure?.primary.template.nodes ?? [],
+          nodeExecution.id,
+        );
+        // const check = isGateNode && phase === NodeExecutionPhase.RUNNING;
+        const check = isGateNode && phase;
+        return check;
+      }
+      return false;
+    });
+    setPausedNodes(pausedNodes);
+  }, [dynamicWorkflows, compiledWorkflowClosure]);
 
   const containerStyle: React.CSSProperties = {
     display: 'flex',
@@ -164,7 +193,9 @@ const ReactFlowGraphComponent = (props) => {
     };
     return (
       <div style={containerStyle}>
-        {hasPausedNodes && <PausedTasksComponent />}
+        {pausedNodes && pausedNodes.length > 0 && (
+          <PausedTasksComponent pausedNodes={pausedNodes} />
+        )}
         <Legend />
         <ReactFlowWrapper {...ReactFlowProps} />
       </div>

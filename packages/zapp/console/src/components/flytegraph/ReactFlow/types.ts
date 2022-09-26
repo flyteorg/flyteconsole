@@ -65,6 +65,7 @@ export interface DagToReactFlowProps extends ConvertDagProps {
   parents: any;
 }
 
+// TODO fix type and use it for custom nodes props
 export interface RFCustomData {
   nodeExecutionStatus: NodeExecutionsById;
   text: string;

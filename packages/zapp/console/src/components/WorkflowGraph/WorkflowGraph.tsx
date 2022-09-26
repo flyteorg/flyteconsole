@@ -59,19 +59,19 @@ export interface DynamicWorkflowMapping {
   dynamicWorkflow: any;
   dynamicExecutions: any[];
 }
-export const WorkflowGraph: React.FC<WorkflowGraphProps> = (props) => {
-  const {
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    isDetailsTabClosed,
-    workflow,
-  } = props;
+export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
+  onNodeSelectionChanged,
+  onPhaseSelectionChanged,
+  selectedPhase,
+  isDetailsTabClosed,
+  workflow,
+}) => {
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { dag, staticExecutionIdsMap, error } = workflowToDag(workflow);
 
   const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
   const dynamicWorkflowQuery = useQuery(makeNodeExecutionDynamicWorkflowQuery(dynamicParents));
+
   const renderReactFlowGraph = (dynamicWorkflows) => {
     debug('DynamicWorkflows:', dynamicWorkflows);
     let mergedDag = dag;

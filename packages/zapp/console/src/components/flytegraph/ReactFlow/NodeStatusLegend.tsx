@@ -44,9 +44,7 @@ interface LegendProps {
   initialIsVisible?: boolean;
 }
 
-export const Legend: React.FC<LegendProps> = (props) => {
-  const { initialIsVisible = false } = props;
-
+export const Legend: React.FC<LegendProps> = ({ initialIsVisible = false }) => {
   const [isVisible, setIsVisible] = useState(initialIsVisible);
 
   const toggleVisibility = () => {

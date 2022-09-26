@@ -11,6 +11,7 @@ import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { useEffect, useState } from 'react';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsTableState } from './types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
@@ -42,7 +43,7 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
     compiledWorkflowClosure?.primary.template.nodes ?? [],
     execution.id,
   );
-  const isPausedPhase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+  const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
 
   useEffect(() => {
     detailsContext.getNodeExecutionDetails(execution).then((res) => {
@@ -111,7 +112,7 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
 
   return (
     <div>
-      {isPausedPhase && (
+      {phase === NodeExecutionPhase.PAUSED && (
         <Tooltip title={t('resumeTooltip')}>
           <IconButton onClick={handleGatedNodeResume}>
             <PlayCircleOutlineIcon />
