@@ -89,7 +89,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone }) => {
   const { chartInterval: chartTimeInterval } = useScaleContext();
   const { staticExecutionIdsMap } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
-    : [];
+    : { staticExecutionIdsMap: {} };
 
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
 

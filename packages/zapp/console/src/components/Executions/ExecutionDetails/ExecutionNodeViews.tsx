@@ -15,7 +15,6 @@ import { NodeExecutionDetailsContextProvider } from '../contextProvider/NodeExec
 import { NodeExecutionsByIdContext, NodeExecutionsRequestConfigContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 import { fetchTaskExecutionList } from '../taskExecutionQueries';
@@ -59,6 +58,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
   const requestConfig = useContext(NodeExecutionsRequestConfigContext);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const {
     closure: { abortMetadata, workflowId },
@@ -78,13 +78,12 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     we will only pass filters to the execution state when on the nodes tab. */
   const appliedFilters = tabState.value === tabs.nodes.id ? filterState.appliedFilters : [];
 
-  const { nodeExecutionsQuery, nodeExecutionsRequestConfig } = useExecutionNodeViewsState(
-    execution,
-    appliedFilters,
-  );
+  const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution, appliedFilters);
 
   useEffect(() => {
     let isCurrent = true;
+    setLoading(true);
+
     async function fetchData(baseNodeExecutions, queryClient) {
       const newValue = await Promise.all(
         baseNodeExecutions.map(async (baseNodeExecution) => {
@@ -116,6 +115,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
 
       if (isCurrent) {
         setNodeExecutionsWithResources(newValue);
+        setLoading(false);
       }
     }
 
@@ -138,22 +138,13 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     }
   }, [childGroupsQuery.data]);
 
-  const renderNodeExecutionsTable = (nodeExecutions: NodeExecution[]) => (
-    <NodeExecutionsRequestConfigContext.Provider value={nodeExecutionsRequestConfig}>
-      <NodeExecutionsTable
-        abortMetadata={abortMetadata ?? undefined}
-        nodeExecutions={nodeExecutions}
-      />
-    </NodeExecutionsRequestConfigContext.Provider>
-  );
-
   const renderTab = (tabType) => (
     <WaitForQuery
       errorComponent={DataError}
       query={childGroupsQuery}
       loadingComponent={TimelineLoading}
     >
-      {() => <ExecutionTab tabType={tabType} />}
+      {() => <ExecutionTab tabType={tabType} abortMetadata={abortMetadata ?? undefined} />}
     </WaitForQuery>
   );
 
@@ -164,6 +155,14 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className={styles.loading}>
+        <LargeLoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -176,20 +175,14 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
         <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
           {nodeExecutions.length > 0 ? (
             <div className={styles.nodesContainer}>
-              {tabState.value === tabs.nodes.id ? (
-                <>
-                  <div className={styles.filters}>
-                    <ExecutionFilters {...filterState} />
-                  </div>
-                  <WaitForQuery errorComponent={DataError} query={nodeExecutionsQuery}>
-                    {renderNodeExecutionsTable}
-                  </WaitForQuery>
-                </>
-              ) : (
-                <WaitForQuery errorComponent={DataError} query={nodeExecutionsQuery}>
-                  {() => renderTab(tabState.value)}
-                </WaitForQuery>
+              {tabState.value === tabs.nodes.id && (
+                <div className={styles.filters}>
+                  <ExecutionFilters {...filterState} />
+                </div>
               )}
+              <WaitForQuery errorComponent={DataError} query={nodeExecutionsQuery}>
+                {() => renderTab(tabState.value)}
+              </WaitForQuery>
             </div>
           ) : null}
         </NodeExecutionsByIdContext.Provider>

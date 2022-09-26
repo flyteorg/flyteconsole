@@ -7,12 +7,14 @@ import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
+import { Admin } from 'flyteidl';
 import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from '../contexts';
+import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTimelineContext } from './Timeline/context';
@@ -23,6 +25,7 @@ import { ScaleProvider } from './Timeline/scaleContext';
 
 export interface ExecutionTabProps {
   tabType: string;
+  abortMetadata?: Admin.IAbortMetadata;
 }
 
 const useStyles = makeStyles(() => ({
@@ -39,7 +42,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
-export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
+export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType, abortMetadata }) => {
   const styles = useStyles();
   const queryClient = useQueryClient();
   const { workflowId } = useNodeExecutionContext();
@@ -102,33 +105,40 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
     [selectedExecution, setSelectedExecution],
   );
 
-  const renderGraph = (workflow: Workflow) => (
-    <WorkflowGraph
-      onNodeSelectionChanged={onNodeSelectionChanged}
-      selectedPhase={selectedPhase}
-      onPhaseSelectionChanged={setSelectedPhase}
-      isDetailsTabClosed={isDetailsTabClosed}
-      workflow={workflow}
-    />
-  );
+  const renderContent = () => {
+    switch (tabType) {
+      case tabs.timeline.id:
+        return (
+          <div className={styles.wrapper}>
+            <div className={styles.container}>
+              <NodeExecutionsTimelineContext.Provider value={timelineContext}>
+                <ExecutionTimeline chartTimezone={chartTimezone} />;
+              </NodeExecutionsTimelineContext.Provider>
+            </div>
+            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
+          </div>
+        );
+      case tabs.graph.id:
+        return (
+          <WorkflowGraph
+            onNodeSelectionChanged={onNodeSelectionChanged}
+            selectedPhase={selectedPhase}
+            onPhaseSelectionChanged={setSelectedPhase}
+            isDetailsTabClosed={isDetailsTabClosed}
+          />
+        );
+      case tabs.nodes.id:
+        return <NodeExecutionsTable abortMetadata={abortMetadata} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <ScaleProvider>
-      {tabType === tabs.timeline.id && (
-        <div className={styles.wrapper}>
-          <div className={styles.container}>
-            <NodeExecutionsTimelineContext.Provider value={timelineContext}>
-              <ExecutionTimeline chartTimezone={chartTimezone} />;
-            </NodeExecutionsTimelineContext.Provider>
-          </div>
-          <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-        </div>
-      )}
-      {tabType === tabs.graph.id && (
-        <WaitForQuery errorComponent={DataError} query={workflowQuery}>
-          {renderGraph}
-        </WaitForQuery>
-      )}
+      <WaitForQuery errorComponent={DataError} query={workflowQuery}>
+        {renderContent}
+      </WaitForQuery>
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
         {!isDetailsTabClosed && selectedExecution && (

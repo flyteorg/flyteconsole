@@ -40,18 +40,19 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
   const name = displayName ?? execution.id.nodeId;
   const truncatedName = name?.split('.').pop() || name;
 
-  const readableName = isSelected ? (
-    <Typography variant="body1" className={styles.selectedExecutionName}>
-      {truncatedName}
-    </Typography>
-  ) : (
-    <SelectNodeExecutionLink
-      className={commonStyles.primaryLink}
-      execution={execution}
-      linkText={truncatedName || ''}
-      setSelectedExecution={setSelectedExecution}
-    />
-  );
+  const readableName =
+    isSelected || execution.closure.phase === NodeExecutionPhase.UNDEFINED ? (
+      <Typography variant="body1" className={styles.selectedExecutionName}>
+        {truncatedName}
+      </Typography>
+    ) : (
+      <SelectNodeExecutionLink
+        className={commonStyles.primaryLink}
+        execution={execution}
+        linkText={truncatedName || ''}
+        setSelectedExecution={setSelectedExecution}
+      />
+    );
 
   return (
     <>
@@ -189,9 +190,12 @@ export function generateColumns(
       ),
     },
     {
-      cellRenderer: ({ execution, state }) => (
-        <NodeExecutionActions execution={execution} state={state} />
-      ),
+      cellRenderer: ({ execution, state }) =>
+        execution.closure.phase === NodeExecutionPhase.UNDEFINED ? (
+          ''
+        ) : (
+          <NodeExecutionActions execution={execution} state={state} />
+        ),
       className: styles.columnLogs,
       key: 'actions',
       label: '',
