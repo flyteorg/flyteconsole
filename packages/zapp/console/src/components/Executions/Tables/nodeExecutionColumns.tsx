@@ -191,9 +191,7 @@ export function generateColumns(
     },
     {
       cellRenderer: ({ execution, state }) =>
-        execution.closure.phase === NodeExecutionPhase.UNDEFINED ? (
-          ''
-        ) : (
+        execution.closure.phase === NodeExecutionPhase.UNDEFINED ? null : (
           <NodeExecutionActions execution={execution} state={state} />
         ),
       className: styles.columnLogs,

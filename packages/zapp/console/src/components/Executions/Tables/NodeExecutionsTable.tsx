@@ -5,14 +5,11 @@ import { DetailsPanel } from 'components/common/DetailsPanel';
 import { useCommonStyles } from 'components/common/styles';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
-import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { useQuery } from 'react-query';
-import { checkForDynamicExecutions } from 'components/common/utils';
-import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import * as React from 'react';
+import { useMemo, useEffect, FC, useState, useContext } from 'react';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
@@ -20,12 +17,11 @@ import { generateColumns } from './nodeExecutionColumns';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from '../contexts';
-import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 
 export interface NodeExecutionsTableProps {
   abortMetadata?: Admin.IAbortMetadata;
+  initializeNodes: dNode[];
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -35,30 +31,17 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ abortMetadata }) => {
-  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(
-    null,
-  );
-  const [nodeExecutions, setNodeExecutions] = React.useState<NodeExecution[]>([]);
+export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
+  abortMetadata,
+  initializeNodes,
+}) => {
+  const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(null);
+  const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
+  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
 
-  const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { staticExecutionIdsMap } = compiledWorkflowClosure
-    ? transformerWorkflowToDag(compiledWorkflowClosure)
-    : { staticExecutionIdsMap: {} };
-  const nodeExecutionsById = React.useContext(NodeExecutionsByIdContext);
-  const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
-  const { data: dynamicWorkflows } = useQuery(
-    makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
-  );
-
-  React.useEffect(() => {
-    const nodes: dNode[] = compiledWorkflowClosure
-      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows).dag.nodes
-      : [];
-    // we remove start/end node info in the root dNode list during first assignment
-    const initializeNodes = convertToPlainNodes(nodes);
+  useEffect(() => {
     if (nodeExecutionsById) {
       const executions: NodeExecution[] = [];
       initializeNodes.map((node) => {
@@ -84,9 +67,9 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ abortM
       });
       setNodeExecutions(executions);
     }
-  }, [dynamicWorkflows, compiledWorkflowClosure, nodeExecutionsById]);
+  }, [nodeExecutionsById, initializeNodes]);
 
-  const executionsWithKeys = React.useMemo(
+  const executionsWithKeys = useMemo(
     () =>
       nodeExecutions.map((nodeExecution) => ({
         nodeExecution,
@@ -97,8 +80,8 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ abortM
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change
-  const columns = React.useMemo(() => generateColumns(columnStyles), [columnStyles]);
-  const tableContext = React.useMemo(
+  const columns = useMemo(() => generateColumns(columnStyles), [columnStyles]);
+  const tableContext = useMemo(
     () => ({ columns, state: { selectedExecution, setSelectedExecution } }),
     [columns, selectedExecution, setSelectedExecution],
   );

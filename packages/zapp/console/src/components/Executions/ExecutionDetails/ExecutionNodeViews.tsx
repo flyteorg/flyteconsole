@@ -138,17 +138,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     }
   }, [childGroupsQuery.data]);
 
-  const renderTab = (tabType) => (
-    <WaitForQuery
-      errorComponent={DataError}
-      query={childGroupsQuery}
-      loadingComponent={TimelineLoading}
-    >
-      {() => <ExecutionTab tabType={tabType} abortMetadata={abortMetadata ?? undefined} />}
-    </WaitForQuery>
-  );
-
-  const TimelineLoading = () => {
+  const LoadingComponent = () => {
     return (
       <div className={styles.loading}>
         <LargeLoadingSpinner />
@@ -156,12 +146,18 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     );
   };
 
+  const renderTab = (tabType) => (
+    <WaitForQuery
+      errorComponent={DataError}
+      query={childGroupsQuery}
+      loadingComponent={LoadingComponent}
+    >
+      {() => <ExecutionTab tabType={tabType} abortMetadata={abortMetadata ?? undefined} />}
+    </WaitForQuery>
+  );
+
   if (loading) {
-    return (
-      <div className={styles.loading}>
-        <LargeLoadingSpinner />
-      </div>
-    );
+    return <LoadingComponent />;
   }
 
   return (
