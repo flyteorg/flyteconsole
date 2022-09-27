@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, CSSProperties } from 'react';
 import { Button } from '@material-ui/core';
-import { nodePhaseColorMapping } from './utils';
+import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -9,8 +9,9 @@ import {
   rightPositionStyle,
 } from './commonStyles';
 import t from './strings';
+import { graphNodePhasesList } from './utils';
 
-export const LegendItem = ({ color, text }) => {
+export const LegendItem = ({ nodeColor, text }) => {
   /**
    * @TODO temporary check for nested graph until
    * nested functionality is deployed
@@ -26,8 +27,8 @@ export const LegendItem = ({ color, text }) => {
   const colorStyle: CSSProperties = {
     width: '28px',
     height: '22px',
-    background: isNested ? color : 'none',
-    border: `3px solid ${color}`,
+    background: isNested ? nodeColor : 'none',
+    border: `3px solid ${nodeColor}`,
     borderRadius: '4px',
     paddingRight: '10px',
     marginRight: '1rem',
@@ -53,15 +54,15 @@ export const Legend: React.FC<LegendProps> = ({ initialIsVisible = false }) => {
 
   const renderLegend = () => (
     <div style={popupContainerStyle}>
-      {Object.keys(nodePhaseColorMapping).map((phase) => {
+      {graphNodePhasesList.map((phase) => {
         return (
           <LegendItem
-            {...nodePhaseColorMapping[phase]}
-            key={`gl-${nodePhaseColorMapping[phase].text}`}
+            {...nodeExecutionPhaseConstants[phase]}
+            key={`gl-${nodeExecutionPhaseConstants[phase].text}`}
           />
         );
       })}
-      <LegendItem color="#aaa" text="Nested" />
+      <LegendItem nodeColor="#aaa" text="Nested" />
     </div>
   );
 

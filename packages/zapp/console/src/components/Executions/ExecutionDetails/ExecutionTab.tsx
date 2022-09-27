@@ -114,21 +114,21 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
 
   return (
     <ScaleProvider>
-      {tabType === tabs.timeline.id && (
-        <div className={styles.wrapper}>
-          <div className={styles.container}>
-            <NodeExecutionsTimelineContext.Provider value={timelineContext}>
+      <NodeExecutionsTimelineContext.Provider value={timelineContext}>
+        {tabType === tabs.timeline.id && (
+          <div className={styles.wrapper}>
+            <div className={styles.container}>
               <ExecutionTimeline chartTimezone={chartTimezone} />;
-            </NodeExecutionsTimelineContext.Provider>
+            </div>
+            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
           </div>
-          <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-        </div>
-      )}
-      {tabType === tabs.graph.id && (
-        <WaitForQuery errorComponent={DataError} query={workflowQuery}>
-          {renderGraph}
-        </WaitForQuery>
-      )}
+        )}
+        {tabType === tabs.graph.id && (
+          <WaitForQuery errorComponent={DataError} query={workflowQuery}>
+            {renderGraph}
+          </WaitForQuery>
+        )}
+      </NodeExecutionsTimelineContext.Provider>
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
         {!isDetailsTabClosed && selectedExecution && (

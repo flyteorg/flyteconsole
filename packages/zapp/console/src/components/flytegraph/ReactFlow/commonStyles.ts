@@ -4,6 +4,7 @@ const positionStyle: CSSProperties = {
   bottom: '1rem',
   zIndex: 10,
   position: 'absolute',
+  maxHeight: '520px',
 };
 
 export const leftPositionStyle: CSSProperties = {
@@ -20,8 +21,6 @@ export const rightPositionStyle: CSSProperties = {
 
 export const graphButtonContainer: CSSProperties = {
   width: '100%',
-  display: 'flex',
-  justifyContent: 'center',
 };
 
 export const graphButtonStyle: CSSProperties = {

@@ -9,6 +9,7 @@ import { CacheStatus } from 'components/Executions/NodeExecutionCacheStatus';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Tooltip } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { getNodeFrontendPhase } from 'components/Executions/utils';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
@@ -16,9 +17,8 @@ import {
   getNestedContainerStyle,
   getStatusColor,
 } from './utils';
-import { RFHandleProps } from './types';
-
-// TODO clean up duplication of common styles
+import { RFHandleProps, RFNode } from './types';
+import t from './strings';
 
 const taskContainerStyle: React.CSSProperties = {
   position: 'absolute',
@@ -113,7 +113,7 @@ export const renderStardEndHandles = (nodeType: dTypes, scopedId: string) => {
  * Styles start/end nodes as a point; used for nested workflows
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowCustomNestedPoint = ({ data }: any) => {
+export const ReactFlowCustomNestedPoint = ({ data }: RFNode) => {
   const { nodeType, scopedId } = data;
   const containerStyle = getGraphNodeStyle(nodeType);
   return (
@@ -132,7 +132,7 @@ export const ReactFlowCustomNestedPoint = ({ data }: any) => {
  * @param props.data data property of ReactFlowGraphNodeData
  */
 
-export const ReactFlowCustomMaxNested = ({ data }: any) => {
+export const ReactFlowCustomMaxNested = ({ data }: RFNode) => {
   const { text, taskType, scopedId, onAddNestedView } = data;
   const styles = getGraphNodeStyle(dTypes.nestedMaxDepth);
 
@@ -143,13 +143,13 @@ export const ReactFlowCustomMaxNested = ({ data }: any) => {
   return renderBasicNode(taskType, text, scopedId, styles, onClick);
 };
 
-export const ReactFlowStaticNested = ({ data }: any) => {
+export const ReactFlowStaticNested = ({ data }: RFNode) => {
   const { text, taskType, scopedId } = data;
   const styles = getGraphNodeStyle(dTypes.staticNestedNode);
   return renderBasicNode(taskType, text, scopedId, styles);
 };
 
-export const ReactFlowStaticNode = ({ data }: any) => {
+export const ReactFlowStaticNode = ({ data }: RFNode) => {
   const { text, taskType, scopedId } = data;
   const styles = getGraphNodeStyle(dTypes.staticNode);
   return renderBasicNode(taskType, text, scopedId, styles);
@@ -210,9 +210,10 @@ const TaskPhaseItem = ({
  * @param props.data data property of ReactFlowGraphNodeData
  */
 
-export const ReactFlowGateNode = ({ data }: any) => {
+export const ReactFlowGateNode = ({ data }: RFNode) => {
   const { nodeType, nodeExecutionStatus, text, scopedId, onNodeSelectionChanged } = data;
-  const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
+  const phase = getNodeFrontendPhase(nodeExecutionStatus, true);
+  const styles = getGraphNodeStyle(nodeType, phase);
 
   const iconStyles: React.CSSProperties = {
     width: '10px',
@@ -236,9 +237,8 @@ export const ReactFlowGateNode = ({ data }: any) => {
     <div onClick={handleNodeClick}>
       <div style={styles}>
         {text}
-        {/* {nodeExecutionStatus === NodeExecutionPhase.PAUSED && ( */}
-        {nodeExecutionStatus && (
-          <Tooltip title="resume">
+        {phase === NodeExecutionPhase.PAUSED && (
+          <Tooltip title={t('resumeTooltip')}>
             <PlayCircleOutlineIcon onClick={handleActionClick} style={iconStyles} />
           </Tooltip>
         )}
@@ -254,7 +254,7 @@ export const ReactFlowGateNode = ({ data }: any) => {
  * @param props.data data property of ReactFlowGraphNodeData
  */
 
-export const ReactFlowCustomTaskNode = ({ data }: any) => {
+export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
   const {
     nodeType,
     nodeExecutionStatus,
@@ -361,7 +361,7 @@ export const ReactFlowCustomTaskNode = ({ data }: any) => {
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
+export const ReactFlowSubWorkflowContainer = ({ data }: RFNode) => {
   const { nodeExecutionStatus, text, scopedId, currentNestedView, onRemoveNestedView } = data;
   const BREAD_FONT_SIZE = '9px';
   const BREAD_COLOR_ACTIVE = COLOR_SPECTRUM.purple60.color;
@@ -476,7 +476,7 @@ export const ReactFlowSubWorkflowContainer = ({ data }: any) => {
  * Custom component renders start node
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowCustomStartNode = ({ data }: any) => {
+export const ReactFlowCustomStartNode = ({ data }: RFNode) => {
   const { text, nodeType, scopedId } = data;
   const styles = getGraphNodeStyle(nodeType);
   return (
@@ -491,7 +491,7 @@ export const ReactFlowCustomStartNode = ({ data }: any) => {
  * Custom component renders start node
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowCustomEndNode = ({ data }: any) => {
+export const ReactFlowCustomEndNode = ({ data }: RFNode) => {
   const { text, nodeType, scopedId } = data;
   const styles = getGraphNodeStyle(nodeType);
   return (

@@ -2,11 +2,13 @@ import * as React from 'react';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { dTypes } from 'models/Graph/types';
 import { CSSProperties } from 'react';
+import { graphStatusColors } from 'components/Theme/constants';
+import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import { RFBackgroundProps } from './types';
 
 const dagre = require('dagre');
 
-export const COLOR_EXECUTED = '#2892f4';
+export const COLOR_EXECUTED = graphStatusColors.RUNNING;
 export const COLOR_NOT_EXECUTED = '#c6c6c6';
 export const COLOR_GRAPH_BACKGROUND = '#666666';
 export const GRAPH_PADDING_FACTOR = 50;
@@ -87,17 +89,16 @@ export const getGraphHandleStyle = (handleType: string, type?: dTypes): CSSPrope
   }
 };
 
-// TODO combine with nodeExecutionPhaseConstants ???
-export const nodePhaseColorMapping = {
-  [NodeExecutionPhase.FAILED]: { color: '#e90000', text: 'Failed' },
-  [NodeExecutionPhase.FAILING]: { color: '#f2a4ad', text: 'Failing' },
-  [NodeExecutionPhase.SUCCEEDED]: { color: '#37b789', text: 'Succeded' },
-  [NodeExecutionPhase.ABORTED]: { color: '#be25d7', text: 'Aborted' },
-  [NodeExecutionPhase.RUNNING]: { color: '#2892f4', text: 'Running' },
-  [NodeExecutionPhase.QUEUED]: { color: '#dfd71b', text: 'Queued' },
-  [NodeExecutionPhase.PAUSED]: { color: '#f5a684', text: 'Paused' },
-  [NodeExecutionPhase.UNDEFINED]: { color: '#4a2839', text: 'Undefined' },
-};
+export const graphNodePhasesList = [
+  NodeExecutionPhase.FAILED,
+  NodeExecutionPhase.FAILING,
+  NodeExecutionPhase.SUCCEEDED,
+  NodeExecutionPhase.ABORTED,
+  NodeExecutionPhase.RUNNING,
+  NodeExecutionPhase.QUEUED,
+  NodeExecutionPhase.PAUSED,
+  NodeExecutionPhase.UNDEFINED,
+];
 
 /**
  * Maps node execution phases to UX colors
@@ -107,9 +108,8 @@ export const nodePhaseColorMapping = {
 export const getStatusColor = (
   nodeExecutionStatus?: NodeExecutionPhase | TaskExecutionPhase,
 ): string => {
-  // TODO add paused state case ???
-  if (nodeExecutionStatus && nodePhaseColorMapping[nodeExecutionStatus]) {
-    return nodePhaseColorMapping[nodeExecutionStatus].color;
+  if (nodeExecutionStatus && nodeExecutionPhaseConstants[nodeExecutionStatus]) {
+    return nodeExecutionPhaseConstants[nodeExecutionStatus].nodeColor;
   } else {
     /** @TODO decide what we want default color to be */
     return COLOR_NOT_EXECUTED;

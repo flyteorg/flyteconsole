@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button } from '@material-ui/core';
+import { Badge, Button, withStyles } from '@material-ui/core';
 import { TaskNames } from 'components/Executions/ExecutionDetails/Timeline/TaskNames';
 import { dNode } from 'models/Graph/types';
 import { isExpanded } from 'components/WorkflowGraph/utils';
+import { NodeExecutionPhase } from 'models/Execution/enums';
+import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -16,6 +19,13 @@ interface PausedTasksComponentProps {
   pausedNodes: dNode[];
   initialIsVisible?: boolean;
 }
+
+const CustomBadge = withStyles({
+  badge: {
+    backgroundColor: nodeExecutionPhaseConstants[NodeExecutionPhase.PAUSED].nodeColor,
+    color: COLOR_SPECTRUM.white.color,
+  },
+})(Badge);
 
 export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
@@ -44,7 +54,6 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
       }
     };
     searchNode(pausedNodes, 0);
-    // setOriginalNodes([...originalNodes]);
   };
 
   const resumeAction = (id: string) => {
@@ -57,21 +66,22 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     </div>
   );
 
-  // TODO add banner with the number of paused tasks
   return (
     <div style={leftPositionStyle}>
       <div>
         {isVisible ? renderPausedTasksBlock() : null}
         <div style={graphButtonContainer}>
-          <Button
-            style={graphButtonStyle}
-            color="default"
-            id="graph-paused-tasks"
-            onClick={toggleVisibility}
-            variant="contained"
-          >
-            {t('pausedTasksButton')}
-          </Button>
+          <CustomBadge badgeContent={pausedNodes.length}>
+            <Button
+              style={graphButtonStyle}
+              color="default"
+              id="graph-paused-tasks"
+              onClick={toggleVisibility}
+              variant="contained"
+            >
+              {t('pausedTasksButton')}
+            </Button>
+          </CustomBadge>
         </div>
       </div>
     </div>

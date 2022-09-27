@@ -6,6 +6,7 @@ import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { NodeExecutionName } from './NodeExecutionName';
+import t from '../strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   taskNamesList: {
@@ -108,8 +109,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                 </div>
               </div>
               {onAction && (
-                // TODO update string
-                <Tooltip title="resume">
+                <Tooltip title={t('resumeTooltip')}>
                   <IconButton onClick={() => onAction(node.id)}>
                     <PlayCircleOutlineIcon />
                   </IconButton>

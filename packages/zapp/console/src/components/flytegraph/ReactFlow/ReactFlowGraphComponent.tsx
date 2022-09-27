@@ -165,13 +165,19 @@ const ReactFlowGraphComponent = ({
           compiledWorkflowClosure?.primary.template.nodes ?? [],
           nodeExecution.id,
         );
-        // const check = isGateNode && phase === NodeExecutionPhase.RUNNING;
-        const check = isGateNode && phase;
-        return check;
+        return isGateNode && phase === NodeExecutionPhase.RUNNING;
       }
       return false;
     });
-    setPausedNodes(pausedNodes);
+    const nodesWithExecutions = pausedNodes.map((node) => {
+      const execution = nodeExecutionsById[node.scopedId];
+      return {
+        ...node,
+        startedAt: execution?.closure.startedAt,
+        execution,
+      };
+    });
+    setPausedNodes(nodesWithExecutions);
   }, [dynamicWorkflows, compiledWorkflowClosure]);
 
   const containerStyle: React.CSSProperties = {
