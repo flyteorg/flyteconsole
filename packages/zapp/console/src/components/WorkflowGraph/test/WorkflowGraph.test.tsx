@@ -3,7 +3,6 @@ import * as React from 'react';
 import { createTestQueryClient } from 'test/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { WorkflowGraph } from '../WorkflowGraph';
-import { workflow } from './workflow.mock';
 
 jest.mock('../../flytegraph/ReactFlow/ReactFlowWrapper.tsx', () => ({
   ReactFlowWrapper: jest.fn(({ children }) => (
@@ -25,7 +24,6 @@ describe('WorkflowGraph', () => {
           <WorkflowGraph
             onNodeSelectionChanged={jest.fn}
             onPhaseSelectionChanged={jest.fn}
-            workflow={workflow}
             isDetailsTabClosed={true}
           />
         </QueryClientProvider>,
