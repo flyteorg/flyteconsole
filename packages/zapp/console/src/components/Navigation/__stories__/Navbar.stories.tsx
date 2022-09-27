@@ -5,8 +5,8 @@ import { ExecutionContext } from 'components/Executions/contexts';
 import { ExecutionDetailsAppBarContent } from 'components/Executions/ExecutionDetails/ExecutionDetailsAppBarContent';
 import { mockExecution } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import { createMockExecution } from 'models/__mocks__/executionsData';
+import { FlyteNavigation, FlyteNavItem } from '@flyteconsole/components';
 import { NavBar } from '../NavBar';
-import { FlyteNavigation, FlyteNavItem } from '../utils';
 
 export default {
   title: 'Navigation/NavBar',

@@ -2,8 +2,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { navBarContentId } from 'common/constants';
 import * as React from 'react';
+import { FlyteNavigation } from '@flyteconsole/components';
 import { DefaultAppBarContent } from './DefaultAppBarContent';
-import { FlyteNavigation, getFlyteNavigationData } from './utils';
+import { getFlyteNavigationData } from './utils';
 
 export interface NavBarProps {
   useCustomContent?: boolean;

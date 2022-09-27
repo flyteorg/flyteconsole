@@ -1,12 +1,19 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { MenuItem, Select } from '@material-ui/core';
+import { MenuItem, Select, SelectProps, StyledComponentProps } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { makeRoute } from 'routes/utils';
-import { headerFontFamily } from 'components/Theme/constants';
-import { FlyteNavItem } from './utils';
+import { getBasePathName, makeRoute } from '@flyteconsole/components';
+import classNames from 'classnames';
+import { FlyteNavItem } from './types';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const DEFAULT_SELECT_LABELID = 'demo-controlled-open-select-label';
+const DEFAULT_SELECT_ID = 'demo-controlled-open-select';
+
+export type Style = {
+  headerFontFamily?: string;
+};
+
+const useStyles = makeStyles<Theme, Style>((theme: Theme) => ({
   selectStyling: {
     minWidth: '120px',
     margin: theme.spacing(0, 2),
@@ -20,39 +27,48 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   colorInherit: {
     color: 'inherit',
-    fontFamily: headerFontFamily,
+    fontFamily: ({ headerFontFamily }) => headerFontFamily,
     fontWeight: 600,
     lineHeight: 1.75,
   },
 }));
 
-interface NavigationDropdownProps {
+export type MenuItemProps = typeof MenuItem;
+
+export interface Config extends StyledComponentProps {
+  headerFontFamily: string;
+  Select?: Omit<SelectProps, 'open' | 'onClose' | 'onOpen' | 'value'>;
+  MenuProps?: Pick<SelectProps, 'MenuProps'>;
+  DefaultMenuItem?: MenuItemProps;
+}
+
+export interface NavigationDropdownProps {
+  baseUrl: string;
   items: FlyteNavItem[]; // all other navigation items
-  console?: string; // name for default navigation, if not provided "Console" is used.
+  config: Config;
 }
 
 /** Renders the default content for the app bar, which is the logo and help links */
 export const NavigationDropdown = (props: NavigationDropdownProps) => {
-  // Flyte Console list item - always there ans is first in the list
-  const ConsoleItem: FlyteNavItem = React.useMemo(() => {
-    return {
-      title: props.console ?? 'Console',
-      url: makeRoute('/'),
-    };
-  }, [props.console]);
+  const { baseUrl, items: menuItems, config } = props;
 
-  const [selectedPage, setSelectedPage] = React.useState<string>(ConsoleItem.title);
+  const basePathName = React.useMemo(() => getBasePathName(), []);
+  const selectedMenuItem = menuItems.find((menuItem) => menuItem.url === basePathName);
+
+  const [selectedPage, setSelectedPage] = React.useState<string>(
+    selectedMenuItem?.title || menuItems[0].title,
+  );
   const [open, setOpen] = React.useState(false);
 
   const history = useHistory();
-  const styles = useStyles();
+  const styles = useStyles({ headerFontFamily: config?.headerFontFamily });
 
   const handleItemSelection = (item: FlyteNavItem) => {
     setSelectedPage(item.title);
 
     if (item.url.startsWith('+')) {
       // local navigation with BASE_URL addition
-      history.push(makeRoute(item.url.slice(1)));
+      history.push(makeRoute(baseUrl, item.url.slice(1)));
     } else {
       // treated as external navigation
       window.location.assign(item.url);
@@ -61,13 +77,13 @@ export const NavigationDropdown = (props: NavigationDropdownProps) => {
 
   return (
     <Select
-      labelId="demo-controlled-open-select-label"
-      id="demo-controlled-open-select"
+      labelId={DEFAULT_SELECT_LABELID}
+      id={DEFAULT_SELECT_ID}
       open={open}
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       value={selectedPage}
-      className={styles.selectStyling}
+      className={classNames(styles.selectStyling, config?.Select?.className)}
       classes={{
         // update color of text and icon
         root: styles.colorInherit,
@@ -85,14 +101,7 @@ export const NavigationDropdown = (props: NavigationDropdownProps) => {
         getContentAnchorEl: null,
       }}
     >
-      <MenuItem
-        key={ConsoleItem.title}
-        value={ConsoleItem.title}
-        onClick={() => handleItemSelection(ConsoleItem)}
-      >
-        {ConsoleItem.title}
-      </MenuItem>
-      {props.items.map((item) => (
+      {menuItems.map((item) => (
         <MenuItem key={item.title} value={item.title} onClick={() => handleItemSelection(item)}>
           {item.title}
         </MenuItem>
