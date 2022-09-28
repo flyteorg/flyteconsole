@@ -91,7 +91,7 @@ describe('NodeExecutionsTable', () => {
       },
       shouldUpdateFn,
     );
-    return query.data ? <NodeExecutionsTable nodeExecutions={query.data} /> : null;
+    return query.data ? <NodeExecutionsTable /> : null;
   };
 
   const renderTable = () =>

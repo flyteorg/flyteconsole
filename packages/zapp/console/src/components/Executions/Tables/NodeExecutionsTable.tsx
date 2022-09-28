@@ -20,8 +20,10 @@ import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
 
 export interface NodeExecutionsTableProps {
+  setSelectedExecution: (execution: NodeExecutionIdentifier | null) => void;
+  selectedExecution: NodeExecutionIdentifier | null;
   abortMetadata?: Admin.IAbortMetadata;
-  initializeNodes: dNode[];
+  initialNodes: dNode[];
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -32,10 +34,11 @@ const scrollbarPadding = scrollbarSize();
  * TaskExecutions
  */
 export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
+  setSelectedExecution,
+  selectedExecution,
   abortMetadata,
-  initializeNodes,
+  initialNodes,
 }) => {
-  const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(null);
   const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
@@ -44,7 +47,8 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
   useEffect(() => {
     if (nodeExecutionsById) {
       const executions: NodeExecution[] = [];
-      initializeNodes.map((node) => {
+      // console.log('MYLOG initialNodes', initialNodes, nodeExecutionsById)
+      initialNodes.map((node) => {
         if (nodeExecutionsById[node.scopedId]) executions.push(nodeExecutionsById[node.scopedId]);
         else
           executions.push({
@@ -67,7 +71,7 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
       });
       setNodeExecutions(executions);
     }
-  }, [nodeExecutionsById, initializeNodes]);
+  }, [nodeExecutionsById, initialNodes]);
 
   const executionsWithKeys = useMemo(
     () =>
@@ -85,8 +89,6 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
     () => ({ columns, state: { selectedExecution, setSelectedExecution } }),
     [columns, selectedExecution, setSelectedExecution],
   );
-
-  const onCloseDetailsPanel = () => setSelectedExecution(null);
 
   const rowProps = {
     selectedExecution,
@@ -115,14 +117,6 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
       <NodeExecutionsTableContext.Provider value={tableContext}>
         <div className={tableStyles.scrollContainer}>{content}</div>
       </NodeExecutionsTableContext.Provider>
-      <DetailsPanel open={selectedExecution !== null} onClose={onCloseDetailsPanel}>
-        {selectedExecution != null ? (
-          <NodeExecutionDetailsPanelContent
-            onClose={onCloseDetailsPanel}
-            nodeExecutionId={selectedExecution}
-          />
-        ) : null}
-      </DetailsPanel>
     </div>
   );
 };

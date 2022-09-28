@@ -46,23 +46,39 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { staticExecutionIdsMap } = compiledWorkflowClosure
+  const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
-    : { staticExecutionIdsMap: {} };
+    : { dag: {}, staticExecutionIdsMap: {}, error: null };
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
   const { data: dynamicWorkflows } = useQuery(
     makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
   );
-  const [initializeNodes, setInitilizeNodes] = useState<dNode[]>([]);
+  const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
+  const [mergedDag, setMergedDag] = useState(null);
 
   useEffect(() => {
     const nodes: dNode[] = compiledWorkflowClosure
       ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows).dag.nodes
       : [];
     // we remove start/end node info in the root dNode list during first assignment
-    const initializeNodes = convertToPlainNodes(nodes);
-    setInitilizeNodes(initializeNodes);
+    const initialNodes = convertToPlainNodes(nodes);
+
+    let newMergedDag = dag;
+
+    for (const dynamicId in dynamicWorkflows) {
+      if (staticExecutionIdsMap[dynamicId]) {
+        if (compiledWorkflowClosure) {
+          const dynamicWorkflow = transformerWorkflowToDag(
+            compiledWorkflowClosure,
+            dynamicWorkflows,
+          );
+          newMergedDag = dynamicWorkflow.dag;
+        }
+      }
+    }
+    setMergedDag(newMergedDag);
+    setInitialNodes(initialNodes);
   }, [compiledWorkflowClosure, dynamicWorkflows]);
 
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
@@ -121,6 +137,9 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     setSelectedExecution(newSelectedExecution);
   };
 
+  const onExecutionSelectionChanged = (execution: NodeExecutionIdentifier | null) =>
+    setSelectedExecution(execution);
+
   const renderContent = () => {
     switch (tabType) {
       case tabs.timeline.id:
@@ -128,11 +147,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           <div className={styles.wrapper}>
             <div className={styles.container}>
               <NodeExecutionsTimelineContext.Provider value={timelineContext}>
-                <ExecutionTimeline
-                  chartTimezone={chartTimezone}
-                  initializeNodes={initializeNodes}
-                />
-                ;
+                <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
               </NodeExecutionsTimelineContext.Provider>
             </div>
             <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
@@ -141,6 +156,9 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
       case tabs.graph.id:
         return (
           <WorkflowGraph
+            mergedDag={mergedDag}
+            error={error}
+            dynamicWorkflows={dynamicWorkflows}
             onNodeSelectionChanged={onNodeSelectionChanged}
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}
@@ -149,7 +167,12 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         );
       case tabs.nodes.id:
         return (
-          <NodeExecutionsTable abortMetadata={abortMetadata} initializeNodes={initializeNodes} />
+          <NodeExecutionsTable
+            abortMetadata={abortMetadata}
+            initialNodes={initialNodes}
+            selectedExecution={selectedExecution}
+            setSelectedExecution={onExecutionSelectionChanged}
+          />
         );
       default:
         return null;

@@ -66,29 +66,25 @@ const INTERVAL_LENGTH = 110;
 
 interface ExProps {
   chartTimezone: string;
-  initializeNodes: dNode[];
+  initialNodes: dNode[];
 }
 
-export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initializeNodes }) => {
+export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNodes }) => {
   const [chartWidth, setChartWidth] = useState(0);
   const [labelInterval, setLabelInterval] = useState(INTERVAL_LENGTH);
   const durationsRef = useRef<HTMLDivElement>(null);
   const durationsLabelsRef = useRef<HTMLDivElement>(null);
   const taskNamesRef = createRef<HTMLDivElement>();
 
-  const [originalNodes, setOriginalNodes] = useState<dNode[]>([]);
+  const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {
-    setOriginalNodes(initializeNodes);
-  }, [initializeNodes]);
-
-  useEffect(() => {
-    const initializeNodes = convertToPlainNodes(originalNodes);
-    const updatedShownNodesMap = initializeNodes.map((node) => {
+    const plainNodes = convertToPlainNodes(originalNodes);
+    const updatedShownNodesMap = plainNodes.map((node) => {
       const execution = nodeExecutionsById[node.scopedId];
       return {
         ...node,
