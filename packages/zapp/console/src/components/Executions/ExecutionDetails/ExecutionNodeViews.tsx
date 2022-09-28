@@ -73,6 +73,23 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     return keyBy(nodeExecutionsWithResources, 'scopedId');
   }, [nodeExecutionsWithResources]);
 
+  console.log('nodeExecutionsById:', nodeExecutionsById);
+
+  // const nodeExecutionsById = useMemo(() => {
+  //   const output = {};
+  //   for (let i = 0; i < nodeExecutionsWithResources.length; i++) {
+  //     const ne = nodeExecutionsWithResources[i];
+  //     if (ne.id.executionId.name == execution.id.name) {
+  //       output[ne.scopedId] = ne;
+  //     } else if (ne.scopedId?.includes('-0-')) {
+  //       output[ne.scopedId] = ne;
+  //     } else {
+  //       console.log('DID NOT INCLUDE:', ne);
+  //     }
+  //   }
+  //   return output;
+  // }, [nodeExecutionsWithResources]);
+
   /* We want to maintain the filter selection when switching away from the Nodes
     tab and back, but do not want to filter the nodes when viewing the graph. So,
     we will only pass filters to the execution state when on the nodes tab. */
@@ -147,15 +164,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     </NodeExecutionsRequestConfigContext.Provider>
   );
 
-  const renderTab = (tabType) => (
-    <WaitForQuery
-      errorComponent={DataError}
-      query={childGroupsQuery}
-      loadingComponent={TimelineLoading}
-    >
-      {() => <ExecutionTab tabType={tabType} />}
-    </WaitForQuery>
-  );
+  const renderTab = (tabType) => <ExecutionTab tabType={tabType} />;
 
   const TimelineLoading = () => {
     return (

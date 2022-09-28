@@ -257,6 +257,29 @@ async function fetchGroupsForParentNodeExecution(
   return Array.from(groupsByName.values());
 }
 
+// function fetchChildNodeExecutionGroups(
+//   queryClient: QueryClient,
+//   nodeExecution: NodeExecution,
+//   config: RequestConfig,
+// ) {
+//   const { workflowNodeMetadata } = nodeExecution.closure;
+//   // Newer NodeExecution structures can directly indicate their parent
+//   // status and have their children fetched in bulk.
+//   if (isParentNode(nodeExecution)) {
+//     return fetchGroupsForParentNodeExecution(queryClient, nodeExecution, config);
+//   }
+//   // Otherwise, we need to determine the type of the node and
+//   // recursively fetch NodeExecutions for the corresponding Workflow
+//   // or Task executions.
+//   if (
+//     workflowNodeMetadata &&
+//     !isEqual(workflowNodeMetadata.executionId, nodeExecution.id.executionId)
+//   ) {
+//     return fetchGroupsForWorkflowExecutionNode(queryClient, nodeExecution, config);
+//   }
+//   return fetchGroupsForTaskExecutionNode(queryClient, nodeExecution, config);
+// }
+
 function fetchChildNodeExecutionGroups(
   queryClient: QueryClient,
   nodeExecution: NodeExecution,
@@ -273,7 +296,8 @@ function fetchChildNodeExecutionGroups(
   // or Task executions.
   if (
     workflowNodeMetadata &&
-    !isEqual(workflowNodeMetadata.executionId, nodeExecution.id.executionId)
+    !isEqual(workflowNodeMetadata.executionId, nodeExecution.id.executionId) &&
+    !isEqual(nodeExecution.metadata?.specNodeId, nodeExecution.scopedId)
   ) {
     return fetchGroupsForWorkflowExecutionNode(queryClient, nodeExecution, config);
   }
