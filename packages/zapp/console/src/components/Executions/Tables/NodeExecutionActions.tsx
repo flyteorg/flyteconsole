@@ -15,6 +15,7 @@ import { NodeExecutionsTableState } from './types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
+import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
 
 interface NodeExecutionActionsProps {
   execution: NodeExecution;
@@ -23,6 +24,7 @@ interface NodeExecutionActionsProps {
 
 export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Element => {
   const { execution, state } = props;
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const detailsContext = useNodeExecutionContext();
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
@@ -36,12 +38,11 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
   const executionData = useNodeExecutionData(execution.id);
   const id = nodeExecutionDetails?.taskTemplate?.id;
 
-  const isSignal = false; // execution.closure.signal;
-  // const isPausedPhase = isSignal && execution.closure.phase === NodeExecutionPhase.RUNNING;
-  const isPausedPhase = isSignal;
-  // const phase = isPausedPhase
-  //   ? NodeExecutionPhase.PAUSED
-  //   : execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED;
+  const isGateNode = isNodeGateNode(
+    compiledWorkflowClosure?.primary.template.nodes ?? [],
+    execution.id,
+  );
+  const isPausedPhase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
 
   useEffect(() => {
     detailsContext.getNodeExecutionDetails(execution).then((res) => {
@@ -84,7 +85,6 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
 
   const handleGatedNodeResume = () => {
     // TODO launches the form
-    console.log('CLO resume');
   };
 
   const renderRerunAction = () => {

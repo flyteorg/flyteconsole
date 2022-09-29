@@ -6,6 +6,7 @@ import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
+import { PausedTasksComponent } from './PausedTasksComponent';
 
 const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
   for (const exe in nodeExecutionsById) {
@@ -141,6 +142,9 @@ const ReactFlowGraphComponent = (props) => {
 
   const backgroundStyle = getRFBackground().nested;
 
+  // TODO replace with proper gateNodes check
+  const hasPausedNodes = true;
+
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     flex: `1 1 100%`,
@@ -160,6 +164,7 @@ const ReactFlowGraphComponent = (props) => {
     };
     return (
       <div style={containerStyle}>
+        {hasPausedNodes && <PausedTasksComponent />}
         <Legend />
         <ReactFlowWrapper {...ReactFlowProps} />
       </div>

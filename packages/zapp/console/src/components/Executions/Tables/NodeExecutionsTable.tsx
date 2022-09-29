@@ -6,6 +6,7 @@ import { useCommonStyles } from 'components/common/styles';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
+import { useMemo, useState } from 'react';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
@@ -13,6 +14,7 @@ import { generateColumns } from './nodeExecutionColumns';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 export interface NodeExecutionsTableProps {
   abortMetadata?: Admin.IAbortMetadata;
@@ -30,13 +32,12 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   abortMetadata,
   nodeExecutions,
 }) => {
-  const [selectedExecution, setSelectedExecution] = React.useState<NodeExecutionIdentifier | null>(
-    null,
-  );
+  const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(null);
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
 
-  const executionsWithKeys = React.useMemo(
+  const executionsWithKeys = useMemo(
     () =>
       nodeExecutions.map((nodeExecution) => ({
         nodeExecution,
@@ -47,8 +48,11 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change
-  const columns = React.useMemo(() => generateColumns(columnStyles), [columnStyles]);
-  const tableContext = React.useMemo(
+  const columns = useMemo(
+    () => generateColumns(columnStyles, compiledWorkflowClosure?.primary.template.nodes ?? []),
+    [columnStyles],
+  );
+  const tableContext = useMemo(
     () => ({ columns, state: { selectedExecution, setSelectedExecution } }),
     [columns, selectedExecution, setSelectedExecution],
   );

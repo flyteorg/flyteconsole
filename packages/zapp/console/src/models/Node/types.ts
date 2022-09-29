@@ -33,6 +33,8 @@ export interface CompiledNode extends Core.INode {
   taskNode?: TaskNode;
   upstreamNodeIds?: string[];
   workflowNode?: WorkflowNode;
+  // TODO replace with Core type once available
+  gateNode?: any;
 }
 
 /** Holds all connections/edges for a given `CompiledNode` */

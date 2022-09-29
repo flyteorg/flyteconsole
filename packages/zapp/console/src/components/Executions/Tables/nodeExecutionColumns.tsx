@@ -3,17 +3,18 @@ import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'commo
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { isEqual } from 'lodash';
-import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { CompiledNode } from 'models/Node/types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
-import { getNodeExecutionTimingMS } from '../utils';
+import { getNodeExecutionTimingMS, getNodeFrontendPhase, isNodeGateNode } from '../utils';
 import { NodeExecutionActions } from './NodeExecutionActions';
 import { SelectNodeExecutionLink } from './SelectNodeExecutionLink';
 import { useColumnStyles } from './styles';
 import { NodeExecutionCellRendererData, NodeExecutionColumnDefinition } from './types';
+import t from '../strings';
 
 const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, state }) => {
   const detailsContext = useNodeExecutionContext();
@@ -109,34 +110,32 @@ const DisplayType: React.FC<NodeExecutionCellRendererData> = ({ execution }) => 
 
 export function generateColumns(
   styles: ReturnType<typeof useColumnStyles>,
+  nodes: CompiledNode[],
 ): NodeExecutionColumnDefinition[] {
   return [
     {
       cellRenderer: (props) => <ExecutionName {...props} />,
       className: styles.columnName,
       key: 'name',
-      label: 'task name',
+      label: t('nameLabel'),
     },
     {
       cellRenderer: (props) => <DisplayId {...props} />,
       className: styles.columnNodeId,
       key: 'nodeId',
-      label: 'node id',
+      label: t('nodeIdLabel'),
     },
     {
       cellRenderer: (props) => <DisplayType {...props} />,
       className: styles.columnType,
       key: 'type',
-      label: 'type',
+      label: t('typeLabel'),
     },
     {
       cellRenderer: ({ execution }) => {
-        const isSignal = true; // execution.closure.signal;
-        // const isPausedPhase = isSignal && execution.closure.phase === NodeExecutionPhase.RUNNING;
-        const isPausedPhase = isSignal;
-        const phase = isPausedPhase
-          ? NodeExecutionPhase.PAUSED
-          : execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED;
+        const isGateNode = isNodeGateNode(nodes, execution.id);
+        const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+
         return (
           <>
             <ExecutionStatusBadge phase={phase} type="node" />
@@ -146,7 +145,7 @@ export function generateColumns(
       },
       className: styles.columnStatus,
       key: 'phase',
-      label: 'status',
+      label: t('phaseLabel'),
     },
     {
       cellRenderer: ({ execution: { closure } }) => {
@@ -166,7 +165,7 @@ export function generateColumns(
       },
       className: styles.columnStartedAt,
       key: 'startedAt',
-      label: 'start time',
+      label: t('startedAtLabel'),
     },
     {
       cellRenderer: ({ execution }) => {
@@ -185,10 +184,10 @@ export function generateColumns(
       label: () => (
         <>
           <Typography component="div" variant="overline">
-            duration
+            {t('durationLabel')}
           </Typography>
           <Typography component="div" variant="subtitle1" color="textSecondary">
-            Queued Time
+            {t('queuedTimeLabel')}
           </Typography>
         </>
       ),

@@ -15,6 +15,7 @@ import {
   BaseExecutionClosure,
   Execution,
   NodeExecution,
+  NodeExecutionIdentifier,
   TaskExecution,
 } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
@@ -162,4 +163,12 @@ export function getTaskExecutionTimingMS(execution: TaskExecution) {
 export function isExecutionArchived(execution: Execution): boolean {
   const state = execution.closure.stateChangeDetails?.state ?? null;
   return !!state && state === ExecutionState.EXECUTION_ARCHIVED;
+}
+
+export function isNodeGateNode(nodes: CompiledNode[], executionId: NodeExecutionIdentifier) {
+  return nodes[executionId.nodeId]?.gateNode;
+}
+
+export function getNodeFrontendPhase(phase: NodeExecutionPhase, isGateNode: boolean) {
+  return isGateNode ? NodeExecutionPhase.PAUSED : phase ?? NodeExecutionPhase.UNDEFINED;
 }
