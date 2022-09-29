@@ -7,6 +7,7 @@ import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
 import { useMemo, useState } from 'react';
+import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
@@ -89,6 +90,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       <DetailsPanel open={selectedExecution !== null} onClose={onCloseDetailsPanel}>
         {selectedExecution != null ? (
           <NodeExecutionDetailsPanelContent
+            taskPhase={TaskExecutionPhase.UNDEFINED}
             onClose={onCloseDetailsPanel}
             nodeExecutionId={selectedExecution}
           />

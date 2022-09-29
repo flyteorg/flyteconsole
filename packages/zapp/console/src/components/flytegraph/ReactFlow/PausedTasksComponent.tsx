@@ -56,12 +56,12 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     searchNode(pausedNodes, 0);
   };
 
-  const resumeAction = (id: string) => {
+  const resumeAction = () => {
     // TODO Launch form for node id
   };
 
   const renderPausedTasksBlock = () => (
-    <div style={popupContainerStyle}>
+    <div style={popupContainerStyle} data-testid="paused-tasks-table">
       <TaskNames nodes={pausedNodes} onToggle={toggleNode} onAction={resumeAction} />
     </div>
   );
@@ -78,6 +78,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
               id="graph-paused-tasks"
               onClick={toggleVisibility}
               variant="contained"
+              title={t('pausedTasksButton')}
             >
               {t('pausedTasksButton')}
             </Button>

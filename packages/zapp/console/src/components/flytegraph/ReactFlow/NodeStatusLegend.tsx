@@ -34,7 +34,7 @@ export const LegendItem = ({ nodeColor, text }) => {
     marginRight: '1rem',
   };
   return (
-    <div style={containerStyle}>
+    <div style={containerStyle} data-testid="legend-item">
       <div style={colorStyle}></div>
       <div>{text}</div>
     </div>
@@ -53,7 +53,7 @@ export const Legend: React.FC<LegendProps> = ({ initialIsVisible = false }) => {
   };
 
   const renderLegend = () => (
-    <div style={popupContainerStyle}>
+    <div style={popupContainerStyle} data-testid="legend-table">
       {graphNodePhasesList.map((phase) => {
         return (
           <LegendItem
@@ -77,6 +77,7 @@ export const Legend: React.FC<LegendProps> = ({ initialIsVisible = false }) => {
             id="graph-show-legend"
             onClick={toggleVisibility}
             variant="contained"
+            title={t('legendButton', isVisible)}
           >
             {t('legendButton', isVisible)}
           </Button>

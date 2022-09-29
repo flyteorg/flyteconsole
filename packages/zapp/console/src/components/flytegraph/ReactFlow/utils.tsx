@@ -108,7 +108,8 @@ export const graphNodePhasesList = [
 export const getStatusColor = (
   nodeExecutionStatus?: NodeExecutionPhase | TaskExecutionPhase,
 ): string => {
-  if (nodeExecutionStatus && nodeExecutionPhaseConstants[nodeExecutionStatus]) {
+  // should explicitely check for undefined, as one of the phases is '0' and fails the presence check
+  if (nodeExecutionStatus !== undefined && nodeExecutionPhaseConstants[nodeExecutionStatus]) {
     return nodeExecutionPhaseConstants[nodeExecutionStatus].nodeColor;
   } else {
     /** @TODO decide what we want default color to be */

@@ -69,6 +69,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
             <div
               className={styles.namesContainer}
               key={`level=${nodeLevel}-id=${node.id}-name=${node.scopedId}`}
+              data-testid="task-name-item"
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -109,7 +110,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                 </div>
               </div>
               {onAction && (
-                <Tooltip title={t('resumeTooltip')}>
+                <Tooltip title={t('resume')}>
                   <IconButton onClick={() => onAction(node.id)}>
                     <PlayCircleOutlineIcon />
                   </IconButton>

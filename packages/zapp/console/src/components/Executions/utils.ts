@@ -179,7 +179,5 @@ export function getNodeFrontendPhase(
   phase: NodeExecutionPhase,
   isGateNode: boolean,
 ): NodeExecutionPhase {
-  return isGateNode && phase === NodeExecutionPhase.RUNNING
-    ? NodeExecutionPhase.PAUSED
-    : phase ?? NodeExecutionPhase.UNDEFINED;
+  return isGateNode && phase === NodeExecutionPhase.RUNNING ? NodeExecutionPhase.PAUSED : phase;
 }

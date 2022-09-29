@@ -23,15 +23,16 @@ interface NodeExecutionActionsProps {
   state: NodeExecutionsTableState;
 }
 
-export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Element => {
-  const { execution, state } = props;
-  const { compiledWorkflowClosure } = useNodeExecutionContext();
+export const NodeExecutionActions = ({
+  execution,
+  state,
+}: NodeExecutionActionsProps): JSX.Element => {
+  const { compiledWorkflowClosure, getNodeExecutionDetails } = useNodeExecutionContext();
 
-  const detailsContext = useNodeExecutionContext();
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
   const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
     NodeExecutionDetails | undefined
-  >();
+  >(undefined);
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
@@ -46,7 +47,7 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
   const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
 
   useEffect(() => {
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+    getNodeExecutionDetails(execution).then((res) => {
       setNodeExecutionDetails(res);
     });
   });
@@ -84,8 +85,8 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
     setShowLaunchForm(true);
   };
 
-  const handleGatedNodeResume = () => {
-    // TODO launches the form
+  const resumeAction = () => {
+    // TODO Launch form for node id
   };
 
   const renderRerunAction = () => {
@@ -114,7 +115,7 @@ export const NodeExecutionActions = (props: NodeExecutionActionsProps): JSX.Elem
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
         <Tooltip title={t('resumeTooltip')}>
-          <IconButton onClick={handleGatedNodeResume}>
+          <IconButton onClick={resumeAction}>
             <PlayCircleOutlineIcon />
           </IconButton>
         </Tooltip>

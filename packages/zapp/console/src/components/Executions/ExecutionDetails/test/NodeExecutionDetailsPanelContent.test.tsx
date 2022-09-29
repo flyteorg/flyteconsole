@@ -6,7 +6,7 @@ import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
 import { ResourceType } from 'models/Common/types';
-import { CatalogCacheStatus } from 'models/Execution/enums';
+import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution, TaskNodeMetadata } from 'models/Execution/types';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import * as React from 'react';
@@ -20,7 +20,7 @@ import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelCo
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
-describe('NodeExecutionDetails', () => {
+describe('NodeExecutionDetailsPanelContent', () => {
   let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
   let execution: NodeExecution;
   let queryClient: QueryClient;
@@ -38,7 +38,10 @@ describe('NodeExecutionDetails', () => {
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
           <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-            <NodeExecutionDetailsPanelContent nodeExecutionId={execution.id} />
+            <NodeExecutionDetailsPanelContent
+              nodeExecutionId={execution.id}
+              taskPhase={TaskExecutionPhase.UNDEFINED}
+            />
           </NodeExecutionDetailsContextProvider>
         </QueryClientProvider>
       </MemoryRouter>,

@@ -3,7 +3,7 @@ import { createLocalizedString } from '@flyteconsole/locale';
 const str = {
   rerun: 'RERUN',
   flyteDeck: 'Flyte Deck',
-  resumeTooltip: 'Resume',
+  resume: 'Resume',
 };
 
 export { patternKey } from '@flyteconsole/locale';

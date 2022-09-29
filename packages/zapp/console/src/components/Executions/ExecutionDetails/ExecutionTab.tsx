@@ -134,7 +134,7 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
         {!isDetailsTabClosed && selectedExecution && (
           <NodeExecutionDetailsPanelContent
             onClose={onCloseDetailsPanel}
-            phase={selectedPhase}
+            taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
             nodeExecutionId={selectedExecution}
           />
         )}
