@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
 import { WaitForData } from 'components/common/WaitForData';
@@ -78,9 +77,6 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
 
   return (
     <>
-      <Typography className={styles.header} variant="h3">
-        {t(patternKey('allExecutionsChartTitle', entityStrings[id.resourceType]))}
-      </Typography>
       <div className={styles.filtersContainer}>
         <ExecutionFilters
           {...filtersState}

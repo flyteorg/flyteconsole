@@ -2,7 +2,13 @@ import * as webpack from 'webpack';
 import * as HTMLWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import chalk from 'chalk';
-import { LOCAL_DEV_HOST, CERTIFICATE_PATH } from './env';
+import {
+  LOCAL_DEV_HOST,
+  CERTIFICATE_PATH,
+  ADMIN_API_USE_SSL,
+  ASSETS_PATH as publicPath,
+  BASE_URL,
+} from './env';
 
 const { merge } = require('webpack-merge');
 const fs = require('fs');
@@ -35,14 +41,21 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
   mode: 'development',
   devtool,
   devServer: {
+    historyApiFallback: {
+      logger: console.log.bind(console),
+      disableDotRule: true,
+    },
     hot: true,
-    static: path.join(__dirname, 'dist'),
+    open: [BASE_URL || '/'],
+    static: {
+      directory: path.join(__dirname, 'dist'),
+      publicPath,
+    },
     compress: true,
     port: 3000,
     host: LOCAL_DEV_HOST,
-    historyApiFallback: true,
     server: {
-      type: 'https',
+      type: ADMIN_API_USE_SSL,
       options: {
         key: fs.readFileSync(`${CERTIFICATE_PATH}/server.key`),
         cert: fs.readFileSync(`${CERTIFICATE_PATH}/server.crt`),
@@ -64,6 +77,7 @@ export const clientConfig: webpack.Configuration = merge(common.default.clientCo
   plugins: [
     new HTMLWebpackPlugin({
       template: './src/assets/index.html',
+      publicPath,
       inject: 'body',
       minify: false,
       hash: false,

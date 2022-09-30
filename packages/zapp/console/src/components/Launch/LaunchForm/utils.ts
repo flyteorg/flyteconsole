@@ -20,6 +20,7 @@ import {
   InputTypeDefinition,
   ParsedInput,
   SearchableVersion,
+  InputValue,
 } from './types';
 
 /** Creates a unique cache key for an input based on its name and type.
@@ -74,12 +75,18 @@ export function getTaskInputs(task: Task): Record<string, Variable> {
 /** Returns a formatted string based on an InputTypeDefinition.
  * ex. `string`, `string[]`, `map<string, number>`
  */
-export function formatType({ type, subtype }: InputTypeDefinition): string {
+export function formatType({ type, subtype, listOfSubTypes }: InputTypeDefinition): string {
   if (type === InputType.Collection) {
     return subtype ? `${formatType(subtype)}[]` : 'collection';
   }
   if (type === InputType.Map) {
     return subtype ? `map<string, ${formatType(subtype)}>` : 'map';
+  }
+  if (type === InputType.Union) {
+    if (!listOfSubTypes) return typeLabels[type];
+    const concatListOfSubTypes = listOfSubTypes.map((subtype) => formatType(subtype)).join(' | ');
+
+    return `${typeLabels[type]} [${concatListOfSubTypes}]`;
   }
   return typeLabels[type];
 }
@@ -156,6 +163,13 @@ export function getInputDefintionForLiteralType(literalType: LiteralType): Input
     result.type = simpleTypeToInputType[literalType.simple];
   } else if (literalType.enumType) {
     result.type = InputType.Enum;
+  } else if (literalType.unionType) {
+    result.type = InputType.Union;
+    result.listOfSubTypes = literalType.unionType.variants?.map((variant) =>
+      getInputDefintionForLiteralType(variant as LiteralType),
+    );
+  } else if (literalType.simple === 0 && literalType.structure?.tag === 'none') {
+    result.type = simpleTypeToInputType[literalType.simple];
   }
   return result;
 }
@@ -190,6 +204,14 @@ export function isEnterInputsState(state: BaseInterpretedLaunchState): boolean {
     LaunchState.SUBMIT_FAILED,
     LaunchState.SUBMIT_SUCCEEDED,
   ].some(state.matches);
+}
+
+export function toMappedTypeValue(entries: { key: string; value: string }[]): string {
+  const result = {};
+  entries.forEach(
+    ({ key, value }) => (result[key] = result[key] === undefined ? value : result[key]),
+  );
+  return JSON.stringify(result);
 }
 
 export function literalsToLiteralValueMap(

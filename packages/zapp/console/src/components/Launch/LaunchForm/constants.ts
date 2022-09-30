@@ -45,6 +45,7 @@ export const typeLabels: { [k in InputType]: string } = {
   [InputType.Schema]: 'schema - uri',
   [InputType.String]: 'string',
   [InputType.Struct]: 'struct',
+  [InputType.Union]: 'union',
   [InputType.Unknown]: 'unknown',
 };
 
@@ -81,6 +82,7 @@ export const taskUnsupportedRequiredInputsString = `This Task version contains o
 export const blobUriHelperText = '(required) location of the data';
 export const blobFormatHelperText = '(optional) csv, parquet, etc...';
 export const correctInputErrors = 'Some inputs have errors. Please correct them before submitting.';
+export const noneInputTypeDescription = 'The value of none type is empty';
 
 export const qualityOfServiceTier = {
   UNDEFINED: 0,

@@ -369,7 +369,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   if (nodeExecution) {
     detailsContent = (
       <>
-        <NodeExecutionCacheStatus taskNodeMetadata={nodeExecution.closure.taskNodeMetadata} />
+        <NodeExecutionCacheStatus execution={nodeExecution} />
         <ExecutionTypeDetails details={details} execution={nodeExecution} />
       </>
     );
@@ -403,9 +403,9 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
           {!dag && detailsContent}
           {details && (
             <ExecutionDetailsActions
-              className={styles.actionsContainer}
               details={details}
               nodeExecutionId={nodeExecutionId}
+              phase={nodeExecution?.closure.phase}
             />
           )}
         </div>
