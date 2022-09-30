@@ -94,6 +94,11 @@ const useStyles = makeStyles((theme: Theme) => {
       marginTop: theme.spacing(2),
       paddingTop: theme.spacing(2),
     },
+    actionsContainer: {
+      borderTop: `1px solid ${theme.palette.divider}`,
+      marginTop: theme.spacing(2),
+      paddingTop: theme.spacing(2),
+    },
     nodeTypeContent: {
       minWidth: theme.spacing(9),
     },
