@@ -6,10 +6,12 @@ import { datetimeHelper } from './datetime';
 import { durationHelper } from './duration';
 import { floatHelper } from './float';
 import { integerHelper } from './integer';
+import { mapHelper } from './map';
 import { noneHelper } from './none';
 import { schemaHelper } from './schema';
 import { stringHelper } from './string';
 import { structHelper } from './struct';
+import { unionHelper } from './union';
 import { InputHelper } from './types';
 
 const unsupportedHelper = noneHelper;
@@ -26,11 +28,12 @@ const inputHelpers: Record<InputType, InputHelper> = {
   [InputType.Error]: unsupportedHelper,
   [InputType.Float]: floatHelper,
   [InputType.Integer]: integerHelper,
-  [InputType.Map]: unsupportedHelper,
+  [InputType.Map]: mapHelper,
   [InputType.None]: noneHelper,
   [InputType.Schema]: schemaHelper,
   [InputType.String]: stringHelper,
   [InputType.Struct]: structHelper,
+  [InputType.Union]: unionHelper,
   [InputType.Unknown]: unsupportedHelper,
 };
 

@@ -54,9 +54,27 @@ For help with installing dependencies look into
 
 3. Start the server (uses localhost:3000)
 
-    `yarn start`
+    `bash yarn start `
 
 4. Explore your local copy at `http://localhost:3000`
+
+### Note: Python errors with OSX
+
+Recently OSX (12.3) removed python 2.7 from default installation and this can cause build errors for some users depending on it's setup. In this repository you can experience `env: python: No such file or directory` error from gyp ([node-gyp](https://github.com/nodejs/node-gyp)).
+The easiest way to fix it:
+
+-   Install the XCode Command Line Tools standalone by running `xcode-select --install` in the terminal
+
+OR
+
+```bash
+   brew install python    # install python with brew
+   which python           # check if python path is properly defined
+   # if path not defined
+   where python3
+   # Take the version and location from above and run this command (replacing `/usr/bin/python3` with the location of your python instalation). This will symlink python to python3
+   ln -s /usr/bin/python3 /usr/local/bin/python
+```
 
 ### Environment Variables
 
@@ -80,10 +98,14 @@ For help with installing dependencies look into
 
 -   `BASE_URL` (default: `undefined`)
 
-    This allows running the console at a prefix on the target host. This is
+    This setting allows running the console at a prefix on the target host. This is
     necessary when hosting the API and console on the same domain (with prefixes of
     `/api/v1` and `/console` for example). For local development, this is
     usually not needed, so the default behavior is to run without a prefix.
+
+-   `FLYTE_NAVIGATION` (default: `undefined`)
+    UI related. Allows you to change colors of the navigation bar and add links
+    to other internal pages or external sites. **[More info](packages/zapp/console/src/components/Navigation/Readme.md)**
 
 ### Running from docker image as localhost
 
@@ -115,6 +137,10 @@ This will spin up a Webpack development server, compile all of the code into bun
 and start the NodeJS server on the default port (3000). All requests to the NodeJS server
 will be stalled until the bundles have finished. The application will be accessible
 at http://localhost:3000 (if using the default port).
+
+### 🎱 Using items in your own application
+
+-   Authorize your app to call flyte admin api. **[More info](packages/plugins/flyte-api/README.md)**
 
 ## 🛠 Development
 

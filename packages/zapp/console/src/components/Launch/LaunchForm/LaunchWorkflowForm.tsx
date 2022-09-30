@@ -26,10 +26,12 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
     service,
     workflowSourceSelectorState,
   } = useLaunchWorkflowFormState(props);
+  const { securityContext } = props;
 
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
   const baseService = service as BaseLaunchService;
+  const [isError, setIsError] = React.useState<boolean>(false);
 
   // Any time the inputs change (even if it's just re-ordering), we must
   // change the form key so that the inputs component will re-mount.
@@ -56,6 +58,15 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
     ![LaunchState.LOADING_LAUNCH_PLANS, LaunchState.FAILED_LOADING_LAUNCH_PLANS].some(
       state.matches,
     );
+
+  const roleInitialValue = React.useMemo(() => {
+    if (securityContext) return { securityContext };
+    return (
+      state.context.defaultAuthRole ||
+      selectedLaunchPlan?.data.spec.securityContext ||
+      selectedLaunchPlan?.data.spec.authRole
+    );
+  }, [securityContext, state.context.defaultAuthRole, selectedLaunchPlan]);
 
   return (
     <>
@@ -84,7 +95,13 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
             />
           </section>
         ) : null}
-        <LaunchFormInputs key={formKey} ref={formInputsRef} state={baseState} variant="workflow" />
+        <LaunchFormInputs
+          key={formKey}
+          ref={formInputsRef}
+          state={baseState}
+          variant="workflow"
+          setIsError={setIsError}
+        />
         <Accordion className={styles.noBorder}>
           <AccordionSummary
             classes={{
@@ -97,11 +114,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
           <AccordionDetails classes={{ root: styles.detailsWrapper }}>
             {isEnterInputsState(baseState) ? (
               <LaunchRoleInput
-                initialValue={
-                  state.context.defaultAuthRole ||
-                  selectedLaunchPlan?.data.spec.securityContext ||
-                  selectedLaunchPlan?.data.spec.authRole
-                }
+                initialValue={roleInitialValue}
                 ref={roleInputRef}
                 showErrors={state.context.showErrors}
               />
@@ -114,7 +127,12 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
           </AccordionDetails>
         </Accordion>
       </DialogContent>
-      <LaunchFormActions state={baseState} service={baseService} onClose={props.onClose} />
+      <LaunchFormActions
+        state={baseState}
+        service={baseService}
+        onClose={props.onClose}
+        isError={isError}
+      />
     </>
   );
 };

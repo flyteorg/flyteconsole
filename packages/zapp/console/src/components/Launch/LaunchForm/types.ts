@@ -65,6 +65,7 @@ export interface WorkflowInitialLaunchParameters extends BaseInitialLaunchParame
 
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
   workflowId: NamedEntityIdentifier;
+  securityContext?: Core.ISecurityContext;
   initialParameters?: WorkflowInitialLaunchParameters;
 }
 
@@ -158,6 +159,7 @@ export enum InputType {
   Schema = 'SCHEMA',
   String = 'STRING',
   Struct = 'STRUCT',
+  Union = 'Union',
   Unknown = 'UNKNOWN',
 }
 
@@ -165,6 +167,7 @@ export interface InputTypeDefinition {
   literalType: LiteralType;
   type: InputType;
   subtype?: InputTypeDefinition;
+  listOfSubTypes?: InputTypeDefinition[];
 }
 
 export interface BlobValue {
@@ -173,7 +176,14 @@ export interface BlobValue {
   uri: string;
 }
 
-export type InputValue = string | number | boolean | Date | BlobValue;
+export interface UnionValue {
+  value: InputValue;
+  typeDefinition: InputTypeDefinition;
+}
+
+export interface NoneValue {}
+
+export type InputValue = string | number | boolean | Date | BlobValue | UnionValue | NoneValue;
 export type InputChangeHandler = (newValue: InputValue) => void;
 
 export interface InputProps {
@@ -187,6 +197,7 @@ export interface InputProps {
   typeDefinition: InputTypeDefinition;
   value?: InputValue;
   onChange: InputChangeHandler;
+  setIsError: (boolean) => void;
 }
 
 export interface ParsedInput

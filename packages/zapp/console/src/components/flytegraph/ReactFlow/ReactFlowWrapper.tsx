@@ -40,27 +40,21 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     nodes: rfGraphJson.nodes,
     edges: rfGraphJson.edges,
     version: version,
+    reactFlowInstance: null,
+    needFitView: false,
   });
-
-  const [reactFlowInstance, setReactFlowInstance] = useState<null | any>(null);
-
-  useEffect(() => {
-    if (reactFlowInstance && state.shouldUpdate === false) {
-      reactFlowInstance?.fitView();
-    }
-  }, [state.shouldUpdate, reactFlowInstance]);
 
   useEffect(() => {
     setState((state) => ({
       ...state,
       shouldUpdate: true,
       nodes: rfGraphJson.nodes,
-      edges: rfGraphJson.edges,
+      edges: rfGraphJson.edges.map((edge) => ({ ...edge, zIndex: 0 })),
     }));
   }, [rfGraphJson]);
 
   const onLoad = (rf: any) => {
-    setReactFlowInstance(rf);
+    setState({ ...state, needFitView: true, reactFlowInstance: rf });
   };
 
   const onNodesChange = useCallback(
@@ -88,8 +82,11 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
           edges: hashEdges,
         }));
       }
+      if (changes.length === state.nodes.length && state.reactFlowInstance && state.needFitView) {
+        (state.reactFlowInstance as any)?.fitView();
+      }
     },
-    [state.shouldUpdate],
+    [state.shouldUpdate, state.reactFlowInstance, state.needFitView],
   );
 
   const reactFlowStyle: React.CSSProperties = {
@@ -98,15 +95,21 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     flexDirection: 'column',
   };
 
+  const onNodeClick = () => {
+    setState((state) => ({ ...state, needFitView: false }));
+  };
+
   return (
     <ReactFlow
       nodes={state.nodes}
       edges={state.edges}
       nodeTypes={CustomNodeTypes}
       onNodesChange={onNodesChange}
+      onNodeClick={onNodeClick}
       style={reactFlowStyle}
       onInit={onLoad}
       fitView
+      defaultEdgeOptions={{ zIndex: 0 }}
     >
       <Background
         style={backgroundStyle.background}
