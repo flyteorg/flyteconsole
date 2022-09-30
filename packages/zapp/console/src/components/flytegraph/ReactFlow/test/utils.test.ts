@@ -15,9 +15,7 @@ describe('getStatusColor', () => {
     ${NodeExecutionPhase.PAUSED}    | ${nodeExecutionPhaseConstants[NodeExecutionPhase.PAUSED].nodeColor}
     ${NodeExecutionPhase.UNDEFINED} | ${nodeExecutionPhaseConstants[NodeExecutionPhase.UNDEFINED].nodeColor}
   `('for each case', ({ nodeExecutionStatus, expected }) => {
-    it(`should return ${JSON.stringify(
-      expected,
-    )} when called with nodeExecutionStatus = ${nodeExecutionStatus}`, () => {
+    it(`should return ${expected} when called with nodeExecutionStatus = ${nodeExecutionStatus}`, () => {
       const result = getStatusColor(nodeExecutionStatus);
       expect(result).toEqual(expected);
     });

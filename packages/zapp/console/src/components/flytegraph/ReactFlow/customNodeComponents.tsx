@@ -5,11 +5,11 @@ import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from 'components/Theme/constants';
-import { CacheStatus } from 'components/Executions/NodeExecutionCacheStatus';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Tooltip } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
+import { CacheStatus } from 'components/Executions/CacheStatus';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,

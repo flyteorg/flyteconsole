@@ -23,6 +23,7 @@ describe('getDisplayName', () => {
   });
 });
 
+// TODO add tests for `launchplan` branch
 describe('getNodeTypeFromCompiledNode', () => {
   const branchNode = {
     branchNode: {},
