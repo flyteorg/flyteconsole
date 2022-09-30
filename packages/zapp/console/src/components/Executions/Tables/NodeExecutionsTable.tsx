@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { Admin } from 'flyteidl';
 import { getCacheKey } from 'components/Cache/utils';
-import { DetailsPanel } from 'components/common/DetailsPanel';
 import { useCommonStyles } from 'components/common/styles';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
@@ -9,8 +8,7 @@ import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import * as React from 'react';
-import { useMemo, useEffect, FC, useState, useContext } from 'react';
-import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
+import { useMemo, useEffect, useState, useContext } from 'react';
 import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
@@ -33,7 +31,7 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
+export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   setSelectedExecution,
   selectedExecution,
   abortMetadata,
@@ -47,7 +45,6 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
   useEffect(() => {
     if (nodeExecutionsById) {
       const executions: NodeExecution[] = [];
-      // console.log('MYLOG initialNodes', initialNodes, nodeExecutionsById)
       initialNodes.map((node) => {
         if (nodeExecutionsById[node.scopedId]) executions.push(nodeExecutionsById[node.scopedId]);
         else
@@ -94,28 +91,27 @@ export const NodeExecutionsTable: FC<NodeExecutionsTableProps> = ({
     selectedExecution,
     setSelectedExecution,
   };
-  const content =
-    executionsWithKeys.length > 0 ? (
-      executionsWithKeys.map(({ nodeExecution, cacheKey }, index) => {
-        return (
-          <NodeExecutionRow
-            {...rowProps}
-            abortMetadata={abortMetadata}
-            index={index}
-            key={cacheKey}
-            execution={nodeExecution}
-          />
-        );
-      })
-    ) : (
-      <NoExecutionsContent size="large" />
-    );
-
   return (
     <div className={classnames(tableStyles.tableContainer, commonStyles.flexFill)}>
       <ExecutionsTableHeader columns={columns} scrollbarPadding={scrollbarPadding} />
       <NodeExecutionsTableContext.Provider value={tableContext}>
-        <div className={tableStyles.scrollContainer}>{content}</div>
+        <div className={tableStyles.scrollContainer}>
+          {executionsWithKeys.length > 0 ? (
+            executionsWithKeys.map(({ nodeExecution, cacheKey }, index) => {
+              return (
+                <NodeExecutionRow
+                  {...rowProps}
+                  abortMetadata={abortMetadata}
+                  index={index}
+                  key={cacheKey}
+                  execution={nodeExecution}
+                />
+              );
+            })
+          ) : (
+            <NoExecutionsContent size="large" />
+          )}
+        </div>
       </NodeExecutionsTableContext.Provider>
     </div>
   );

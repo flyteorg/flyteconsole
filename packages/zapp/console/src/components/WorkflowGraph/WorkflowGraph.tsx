@@ -10,7 +10,7 @@ export interface WorkflowGraphProps {
   selectedPhase?: TaskExecutionPhase;
   isDetailsTabClosed: boolean;
   mergedDag: any;
-  error: any;
+  error: Error | null;
   dynamicWorkflows: any;
 }
 export interface DynamicWorkflowMapping {
