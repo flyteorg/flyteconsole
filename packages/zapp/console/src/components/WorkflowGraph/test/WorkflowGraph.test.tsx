@@ -25,6 +25,18 @@ describe('WorkflowGraph', () => {
             onNodeSelectionChanged={jest.fn}
             onPhaseSelectionChanged={jest.fn}
             isDetailsTabClosed={true}
+            mergedDag={{
+              edges: [],
+              id: 'node',
+              name: 'node',
+              nodes: [],
+              type: 4,
+              value: {
+                id: 'name',
+              },
+            }}
+            error={null}
+            dynamicWorkflows={[]}
           />
         </QueryClientProvider>,
       );

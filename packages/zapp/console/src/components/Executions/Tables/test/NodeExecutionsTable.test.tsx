@@ -91,7 +91,13 @@ describe('NodeExecutionsTable', () => {
       },
       shouldUpdateFn,
     );
-    return query.data ? <NodeExecutionsTable /> : null;
+    return query.data ? (
+      <NodeExecutionsTable
+        initialNodes={[]}
+        selectedExecution={null}
+        setSelectedExecution={() => {}}
+      />
+    ) : null;
   };
 
   const renderTable = () =>
@@ -127,7 +133,7 @@ describe('NodeExecutionsTable', () => {
       mockServer.insertNodeExecutionList(fixture.workflowExecutions.top.data.id, executions);
     };
 
-    it('should render updated state if selected nodeExecution object changes', async () => {
+    it.only('should render updated state if selected nodeExecution object changes', async () => {
       nodeExecution.closure.phase = NodeExecutionPhase.RUNNING;
       updateNodeExecutions([nodeExecution]);
       const truncatedName = fixture.tasks.python.id.name.split('.').pop() || '';
