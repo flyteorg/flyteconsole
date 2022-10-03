@@ -57,7 +57,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   };
 
   const resumeAction = () => {
-    // TODO Launch form for node id
+    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
   };
 
   const renderPausedTasksBlock = () => (

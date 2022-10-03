@@ -229,7 +229,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
   };
 
   const handleActionClick = (e) => {
-    // TODO Launch form for node id
+    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
     e.stopPropagation();
   };
 
