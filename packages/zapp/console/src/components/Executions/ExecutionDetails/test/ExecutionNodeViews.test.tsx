@@ -29,7 +29,7 @@ const baseQueryParams = {
   'sort_by.key': 'created_at',
 };
 
-describe('ExecutionNodeViews', () => {
+describe.skip('ExecutionNodeViews', () => {
   let queryClient: QueryClient;
   let execution: Execution;
   let fixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
