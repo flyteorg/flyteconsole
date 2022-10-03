@@ -3,11 +3,10 @@ import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'commo
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { isEqual } from 'lodash';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase, NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { CompiledNode } from 'models/Node/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
