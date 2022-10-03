@@ -16,6 +16,7 @@ import { NodeExecutionRow } from './NodeExecutionRow';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 export interface NodeExecutionsTableProps {
   setSelectedExecution: (execution: NodeExecutionIdentifier | null) => void;
@@ -41,6 +42,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   useEffect(() => {
     if (nodeExecutionsById) {

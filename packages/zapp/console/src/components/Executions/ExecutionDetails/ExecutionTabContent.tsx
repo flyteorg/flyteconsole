@@ -157,6 +157,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             mergedDag={mergedDag}
             error={error}
             dynamicWorkflows={dynamicWorkflows}
+            initialNodes={initialNodes}
             onNodeSelectionChanged={onNodeSelectionChanged}
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}

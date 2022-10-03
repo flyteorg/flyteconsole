@@ -56,7 +56,7 @@ const ReactFlowGraphComponent = ({
   selectedPhase,
   isDetailsTabClosed,
   dynamicWorkflows,
-  plainNodes,
+  initialNodes,
 }) => {
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
@@ -151,7 +151,7 @@ const ReactFlowGraphComponent = ({
   const backgroundStyle = getRFBackground().nested;
 
   useEffect(() => {
-    const pausedNodes: dNode[] = plainNodes.filter((node) => {
+    const pausedNodes: dNode[] = initialNodes.filter((node) => {
       const nodeExecution = nodeExecutionsById[node.id];
       if (nodeExecution) {
         const phase = nodeExecution?.closure.phase;
@@ -172,7 +172,7 @@ const ReactFlowGraphComponent = ({
       };
     });
     setPausedNodes(nodesWithExecutions);
-  }, [plainNodes]);
+  }, [initialNodes]);
 
   const containerStyle: React.CSSProperties = {
     display: 'flex',
