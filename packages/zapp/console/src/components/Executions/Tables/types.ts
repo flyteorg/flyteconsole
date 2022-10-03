@@ -20,7 +20,6 @@ export interface ColumnDefinition<CellRendererData> {
 
 export interface NodeExecutionCellRendererData {
   execution: NodeExecution;
-  state: NodeExecutionsTableState;
 }
 export type NodeExecutionColumnDefinition = ColumnDefinition<NodeExecutionCellRendererData>;
 

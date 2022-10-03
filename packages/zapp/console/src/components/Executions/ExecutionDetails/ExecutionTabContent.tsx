@@ -17,10 +17,10 @@ import { NodeExecutionsByIdContext } from '../contexts';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
-import { NodeExecutionsTimelineContext } from './Timeline/context';
 import { ExecutionTimeline } from './Timeline/ExecutionTimeline';
 import { ExecutionTimelineFooter } from './Timeline/ExecutionTimelineFooter';
 import { convertToPlainNodes, TimeZone } from './Timeline/helpers';
+import { DetailsPanelContext } from './DetailsPanelContext';
 
 export interface ExecutionTabContentProps {
   tabType: string;
@@ -113,7 +113,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
-  const timelineContext = useMemo(
+  const detailsPanelContext = useMemo(
     () => ({ selectedExecution, setSelectedExecution }),
     [selectedExecution, setSelectedExecution],
   );
@@ -136,9 +136,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
       : null;
     setSelectedExecution(newSelectedExecution);
   };
-
-  const onExecutionSelectionChanged = (execution: NodeExecutionIdentifier | null) =>
-    setSelectedExecution(execution);
 
   const renderContent = () => {
     switch (tabType) {
@@ -166,14 +163,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           />
         );
       case tabs.nodes.id:
-        return (
-          <NodeExecutionsTable
-            abortMetadata={abortMetadata}
-            initialNodes={initialNodes}
-            selectedExecution={selectedExecution}
-            setSelectedExecution={onExecutionSelectionChanged}
-          />
-        );
+        return <NodeExecutionsTable abortMetadata={abortMetadata} initialNodes={initialNodes} />;
       default:
         return null;
     }
@@ -181,7 +171,9 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   return (
     <>
-      {renderContent()}
+      <DetailsPanelContext.Provider value={detailsPanelContext}>
+        {renderContent()}
+      </DetailsPanelContext.Provider>
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
         {!isDetailsTabClosed && selectedExecution && (

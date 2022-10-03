@@ -3,13 +3,12 @@ import { Admin } from 'flyteidl';
 import { getCacheKey } from 'components/Cache/utils';
 import { useCommonStyles } from 'components/common/styles';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
-import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import * as React from 'react';
 import { useMemo, useEffect, useState, useContext } from 'react';
-import { NodeExecutionsTableContext } from './contexts';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NodeExecutionRow } from './NodeExecutionRow';
@@ -18,8 +17,6 @@ import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
 
 export interface NodeExecutionsTableProps {
-  setSelectedExecution: (execution: NodeExecutionIdentifier | null) => void;
-  selectedExecution: NodeExecutionIdentifier | null;
   abortMetadata?: Admin.IAbortMetadata;
   initialNodes: dNode[];
 }
@@ -32,8 +29,6 @@ const scrollbarPadding = scrollbarSize();
  * TaskExecutions
  */
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
-  setSelectedExecution,
-  selectedExecution,
   abortMetadata,
   initialNodes,
 }) => {
@@ -81,38 +76,31 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change
-  const columns = useMemo(() => generateColumns(columnStyles), [columnStyles]);
-  const tableContext = useMemo(
-    () => ({ columns, state: { selectedExecution, setSelectedExecution } }),
-    [columns, selectedExecution, setSelectedExecution],
+  const columns = useMemo(
+    () => generateColumns(columnStyles, compiledWorkflowClosure?.primary.template.nodes ?? []),
+    [columnStyles],
   );
 
-  const rowProps = {
-    selectedExecution,
-    setSelectedExecution,
-  };
   return (
     <div className={classnames(tableStyles.tableContainer, commonStyles.flexFill)}>
       <ExecutionsTableHeader columns={columns} scrollbarPadding={scrollbarPadding} />
-      <NodeExecutionsTableContext.Provider value={tableContext}>
-        <div className={tableStyles.scrollContainer}>
-          {executionsWithKeys.length > 0 ? (
-            executionsWithKeys.map(({ nodeExecution, cacheKey }, index) => {
-              return (
-                <NodeExecutionRow
-                  {...rowProps}
-                  abortMetadata={abortMetadata}
-                  index={index}
-                  key={cacheKey}
-                  execution={nodeExecution}
-                />
-              );
-            })
-          ) : (
-            <NoExecutionsContent size="large" />
-          )}
-        </div>
-      </NodeExecutionsTableContext.Provider>
+      <div className={tableStyles.scrollContainer}>
+        {executionsWithKeys.length > 0 ? (
+          executionsWithKeys.map(({ nodeExecution, cacheKey }, index) => {
+            return (
+              <NodeExecutionRow
+                abortMetadata={abortMetadata}
+                columns={columns}
+                index={index}
+                key={cacheKey}
+                execution={nodeExecution}
+              />
+            );
+          })
+        ) : (
+          <NoExecutionsContent size="large" />
+        )}
+      </div>
     </div>
   );
 };

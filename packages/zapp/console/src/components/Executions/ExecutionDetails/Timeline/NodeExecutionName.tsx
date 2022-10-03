@@ -6,7 +6,7 @@ import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import { useContext } from 'react';
-import { NodeExecutionsTimelineContext } from './context';
+import { DetailsPanelContext } from '../DetailsPanelContext';
 
 interface NodeExecutionTimelineNameData {
   name: string;
@@ -23,7 +23,7 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({ nam
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
-  const { selectedExecution, setSelectedExecution } = useContext(NodeExecutionsTimelineContext);
+  const { selectedExecution, setSelectedExecution } = useContext(DetailsPanelContext);
 
   if (!execution) {
     // to avoid crash - disable items which do not have associated execution.

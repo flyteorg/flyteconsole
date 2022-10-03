@@ -5,7 +5,9 @@ import { useCommonStyles } from 'components/common/styles';
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { CompiledNode } from 'models/Node/types';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
@@ -14,14 +16,20 @@ import { NodeExecutionActions } from './NodeExecutionActions';
 import { SelectNodeExecutionLink } from './SelectNodeExecutionLink';
 import { useColumnStyles } from './styles';
 import { NodeExecutionCellRendererData, NodeExecutionColumnDefinition } from './types';
+import t from '../strings';
+import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 
-const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, state }) => {
-  const detailsContext = useNodeExecutionContext();
+const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
+  const commonStyles = useCommonStyles();
+  const styles = useColumnStyles();
+
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
+  const { selectedExecution, setSelectedExecution } = useContext(DetailsPanelContext);
   const [displayName, setDisplayName] = useState<string | undefined>();
 
   useEffect(() => {
     let isCurrent = true;
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+    getNodeExecutionDetails(execution).then((res) => {
       if (isCurrent) {
         setDisplayName(res.displayName);
       }
@@ -31,11 +39,7 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
     };
   });
 
-  const commonStyles = useCommonStyles();
-  const styles = useColumnStyles();
-  const { selectedExecution, setSelectedExecution } = state;
-
-  const isSelected = state.selectedExecution != null && isEqual(execution.id, selectedExecution);
+  const isSelected = selectedExecution != null && isEqual(execution.id, selectedExecution);
 
   const name = displayName ?? execution.id.nodeId;
   const truncatedName = name?.split('.').pop() || name;
@@ -66,12 +70,12 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
 
 const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
   const commonStyles = useCommonStyles();
-  const detailsContext = useNodeExecutionContext();
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [displayId, setDisplayId] = useState<string | undefined>();
 
   useEffect(() => {
     let isCurrent = true;
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+    getNodeExecutionDetails(execution).then((res) => {
       if (isCurrent) {
         setDisplayId(res.displayId);
       }
@@ -90,12 +94,12 @@ const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
 };
 
 const DisplayType: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
-  const detailsContext = useNodeExecutionContext();
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [type, setType] = useState<string | undefined>();
 
   useEffect(() => {
     let isCurrent = true;
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+    getNodeExecutionDetails(execution).then((res) => {
       if (isCurrent) {
         setType(res.displayType);
       }
@@ -190,9 +194,9 @@ export function generateColumns(
       ),
     },
     {
-      cellRenderer: ({ execution, state }) =>
+      cellRenderer: ({ execution }) =>
         execution.closure.phase === NodeExecutionPhase.UNDEFINED ? null : (
-          <NodeExecutionActions execution={execution} state={state} />
+          <NodeExecutionActions execution={execution} />
         ),
       className: styles.columnLogs,
       key: 'actions',

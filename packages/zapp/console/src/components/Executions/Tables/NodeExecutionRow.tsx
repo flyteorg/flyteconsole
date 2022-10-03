@@ -10,15 +10,17 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { titleStrings } from './constants';
-import { NodeExecutionsTableContext } from './contexts';
 import { ExpandableExecutionError } from './ExpandableExecutionError';
 import { NodeExecutionChildren } from './NodeExecutionChildren';
 import { RowExpander } from './RowExpander';
 import { selectedClassName, useExecutionTableStyles } from './styles';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
+import { NodeExecutionColumnDefinition } from './types';
 
 interface NodeExecutionRowProps {
   abortMetadata?: Admin.IAbortMetadata;
+  columns: NodeExecutionColumnDefinition[];
   index: number;
   execution: NodeExecution;
   level?: number;
@@ -50,14 +52,15 @@ const ChildFetchErrorIcon: React.FC<{
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   abortMetadata,
+  columns,
   execution: nodeExecution,
   index,
   level = 0,
   style,
 }) => {
   const theme = useTheme();
-  const { columns, state } = React.useContext(NodeExecutionsTableContext);
-  const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);
+  const { selectedExecution, setSelectedExecution } = useContext(DetailsPanelContext);
+  const requestConfig = useContext(NodeExecutionsRequestConfigContext);
 
   const [expanded, setExpanded] = React.useState(false);
   const toggleExpanded = () => {
@@ -78,9 +81,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const isExpandable = childGroups.length > 0;
   const tableStyles = useExecutionTableStyles();
 
-  const selected = state.selectedExecution
-    ? isEqual(state.selectedExecution, nodeExecution)
-    : false;
+  const selected = selectedExecution ? isEqual(selectedExecution, nodeExecution) : false;
   const { error } = nodeExecution.closure;
 
   const expanderContent = childGroupsQuery.error ? (
@@ -101,6 +102,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     >
       <NodeExecutionChildren
         abortMetadata={abortMetadata}
+        columns={columns}
         childGroups={childGroups}
         level={level + 1}
       />
@@ -111,7 +113,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   // use null in case if there is no execution provided - when it is null, will close side panel
   const onClickRow = () =>
     nodeExecution.closure.phase !== NodeExecutionPhase.UNDEFINED &&
-    state.setSelectedExecution(nodeExecution?.id ?? null);
+    setSelectedExecution(nodeExecution?.id ?? null);
 
   return (
     <div
@@ -136,7 +138,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
           {columns.map(({ className, key: columnKey, cellRenderer }) => (
             <div key={columnKey} className={classnames(tableStyles.rowColumn, className)}>
               {cellRenderer({
-                state,
                 execution: nodeExecution,
               })}
             </div>

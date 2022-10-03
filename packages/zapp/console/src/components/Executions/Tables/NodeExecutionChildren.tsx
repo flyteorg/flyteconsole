@@ -5,13 +5,17 @@ import { getCacheKey } from 'components/Cache/utils';
 import { useTheme } from 'components/Theme/useTheme';
 import { Admin } from 'flyteidl';
 import * as React from 'react';
+import { useCallback, useState } from 'react';
 import { NodeExecutionGroup } from '../types';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useExecutionTableStyles } from './styles';
+import { NodeExecutionColumnDefinition } from './types';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import t from './strings';
 
 export interface NodeExecutionChildrenProps {
   abortMetadata?: Admin.IAbortMetadata;
+  columns: NodeExecutionColumnDefinition[];
   childGroups: NodeExecutionGroup[];
   level: number;
 }
@@ -30,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 /** Renders a nested list of row items for children of a NodeExecution */
 export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
   abortMetadata,
+  columns,
   childGroups,
   level,
 }) => {
@@ -41,11 +46,9 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
     // The label is aligned with the parent above, so remove one level of spacing
     marginLeft: `${calculateNodeExecutionRowLeftSpacing(level - 1, theme.spacing)}px`,
   };
-  const [loadedNodes, setLoadedNodes] = React.useState(
-    new Array(childGroups.length).fill(PAGE_SIZE),
-  );
+  const [loadedNodes, setLoadedNodes] = useState(new Array(childGroups.length).fill(PAGE_SIZE));
 
-  const loadMoreRows = React.useCallback(
+  const loadMoreRows = useCallback(
     (which: number) => () => {
       const newLoadedNodes = [...loadedNodes];
       newLoadedNodes[which] += PAGE_SIZE;
@@ -57,7 +60,7 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
   const loadMoreButton = (which: number) => (
     <div className={styles.loadMoreContainer}>
       <Button onClick={loadMoreRows(which)} size="small" variant="outlined">
-        Load More
+        {t('loadMoreButton')}
       </Button>
     </div>
   );
@@ -70,6 +73,7 @@ export const NodeExecutionChildren: React.FC<NodeExecutionChildrenProps> = ({
           .map((nodeExecution, index) => (
             <NodeExecutionRow
               abortMetadata={abortMetadata}
+              columns={columns}
               key={getCacheKey(nodeExecution.id)}
               index={index}
               execution={nodeExecution}
