@@ -7,6 +7,7 @@ import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import { useContext, useState } from 'react';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { titleStrings } from './constants';
@@ -109,7 +110,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
-  const onClickRow = () => state.setSelectedExecution(nodeExecution?.id ?? null);
+  const onClickRow = () =>
+    nodeExecution.closure.phase !== NodeExecutionPhase.UNDEFINED &&
+    state.setSelectedExecution(nodeExecution?.id ?? null);
 
   return (
     <div

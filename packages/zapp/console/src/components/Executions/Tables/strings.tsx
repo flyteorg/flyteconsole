@@ -2,7 +2,7 @@ import { createLocalizedString } from '@flyteconsole/locale';
 
 const str = {
   durationLabel: 'duration',
-  inputsAndOutputsTooltip: 'View Inputs & Outpus',
+  inputsAndOutputsTooltip: 'View Inputs & Outputs',
   nameLabel: 'task name',
   nodeIdLabel: 'node id',
   phaseLabel: 'status',

@@ -6,6 +6,7 @@ import { isEqual } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { CompiledNode } from 'models/Node/types';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
@@ -41,18 +42,19 @@ const ExecutionName: React.FC<NodeExecutionCellRendererData> = ({ execution, sta
   const name = displayName ?? execution.id.nodeId;
   const truncatedName = name?.split('.').pop() || name;
 
-  const readableName = isSelected ? (
-    <Typography variant="body1" className={styles.selectedExecutionName}>
-      {truncatedName}
-    </Typography>
-  ) : (
-    <SelectNodeExecutionLink
-      className={commonStyles.primaryLink}
-      execution={execution}
-      linkText={truncatedName || ''}
-      setSelectedExecution={setSelectedExecution}
-    />
-  );
+  const readableName =
+    isSelected || execution.closure.phase === NodeExecutionPhase.UNDEFINED ? (
+      <Typography variant="body1" className={styles.selectedExecutionName}>
+        {truncatedName}
+      </Typography>
+    ) : (
+      <SelectNodeExecutionLink
+        className={commonStyles.primaryLink}
+        execution={execution}
+        linkText={truncatedName || ''}
+        setSelectedExecution={setSelectedExecution}
+      />
+    );
 
   return (
     <>
@@ -134,7 +136,10 @@ export function generateColumns(
     {
       cellRenderer: ({ execution }) => {
         const isGateNode = isNodeGateNode(nodes, execution.id);
-        const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+        const phase = getNodeFrontendPhase(
+          execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED,
+          isGateNode,
+        );
 
         return (
           <>
@@ -193,9 +198,10 @@ export function generateColumns(
       ),
     },
     {
-      cellRenderer: ({ execution, state }) => (
-        <NodeExecutionActions execution={execution} state={state} />
-      ),
+      cellRenderer: ({ execution, state }) =>
+        execution.closure.phase === NodeExecutionPhase.UNDEFINED ? null : (
+          <NodeExecutionActions execution={execution} state={state} />
+        ),
       className: styles.columnLogs,
       key: 'actions',
       label: '',

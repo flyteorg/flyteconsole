@@ -108,7 +108,7 @@ export const graphNodePhasesList = [
 export const getStatusColor = (
   nodeExecutionStatus?: NodeExecutionPhase | TaskExecutionPhase,
 ): string => {
-  // should explicitely check for undefined, as one of the phases is '0' and fails the presence check
+  // should explicitly check for undefined, as one of the phases is '0' and fails the presence check
   if (nodeExecutionStatus !== undefined && nodeExecutionPhaseConstants[nodeExecutionStatus]) {
     return nodeExecutionPhaseConstants[nodeExecutionStatus].nodeColor;
   } else {

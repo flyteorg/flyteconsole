@@ -6,8 +6,6 @@ import { useNodeExecutionContext } from 'components/Executions/contextProvider/N
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
-import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { convertToPlainNodes } from 'components/Executions/ExecutionDetails/Timeline/helpers';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -58,6 +56,7 @@ const ReactFlowGraphComponent = ({
   selectedPhase,
   isDetailsTabClosed,
   dynamicWorkflows,
+  plainNodes,
 }) => {
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
@@ -152,12 +151,7 @@ const ReactFlowGraphComponent = ({
   const backgroundStyle = getRFBackground().nested;
 
   useEffect(() => {
-    const nodes: dNode[] = compiledWorkflowClosure
-      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows).dag.nodes
-      : [];
-    // we remove start/end node info in the root dNode list during first assignment
-    const initializeNodes = convertToPlainNodes(nodes);
-    const pausedNodes: dNode[] = initializeNodes.filter((node) => {
+    const pausedNodes: dNode[] = plainNodes.filter((node) => {
       const nodeExecution = nodeExecutionsById[node.id];
       if (nodeExecution) {
         const phase = nodeExecution?.closure.phase;
@@ -178,7 +172,7 @@ const ReactFlowGraphComponent = ({
       };
     });
     setPausedNodes(nodesWithExecutions);
-  }, [dynamicWorkflows, compiledWorkflowClosure]);
+  }, [plainNodes]);
 
   const containerStyle: React.CSSProperties = {
     display: 'flex',
