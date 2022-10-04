@@ -7,9 +7,9 @@ import { dNode } from 'models/Graph/types';
 import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { convertToPlainNodes } from './helpers';
-import { ChartHeader } from './ChartHeader';
+import { ChartHeader } from './chartHeader';
 import { useScaleContext } from './scaleContext';
-import { TaskNames } from './TaskNames';
+import { TaskNames } from './taskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 
