@@ -20,7 +20,16 @@ jest.mock('chart.js', () => ({
 jest.mock('chartjs-plugin-datalabels', () => ({
   ChartDataLabels: null,
 }));
-
+jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
+  NodeExecutionRow: jest.fn(({ children, execution }) => {
+    return (
+      <div data-testid="node-execution-row">
+        <span id="node-execution-col-id">{execution?.id?.nodeId}</span>
+        {children}
+      </div>
+    );
+  }),
+}));
 // ExecutionNodeViews uses query params for NE list, so we must match them
 // for the list to be returned properly
 const baseQueryParams = {
@@ -29,7 +38,7 @@ const baseQueryParams = {
   'sort_by.key': 'created_at',
 };
 
-describe.skip('ExecutionNodeViews', () => {
+describe('ExecutionNodeViews', () => {
   let queryClient: QueryClient;
   let execution: Execution;
   let fixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
