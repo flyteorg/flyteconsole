@@ -21,10 +21,6 @@ import { NodeExecutionsTable } from '../NodeExecutionsTable';
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
-jest.mock('components/common/DetailsPanel', () => ({
-  DetailsPanel: jest.fn(({ children }) => <div data-testid="details-panel">{children}</div>),
-}));
-
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
   NodeExecutionRow: jest.fn(({ children, execution }) => {
     return (
@@ -74,7 +70,7 @@ const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
   return nodeExecutionsById;
 };
 
-describe('NodeExecutionsTable', () => {
+describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   let queryClient: QueryClient;
   let requestConfig: RequestConfig;
   const initialNodes = mockNodes(2);
@@ -106,7 +102,7 @@ describe('NodeExecutionsTable', () => {
       </QueryClientProvider>,
     );
 
-  describe('when rendering the DetailsPanel', () => {
+  describe('when rendering the table', () => {
     let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
 
     beforeEach(() => {
