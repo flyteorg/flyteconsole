@@ -63,6 +63,7 @@ export interface WorkflowInitialLaunchParameters extends BaseInitialLaunchParame
   labels?: Admin.ILabels | null;
   annotations?: Admin.IAnnotations | null;
   interruptible?: Protobuf.IBoolValue | null;
+  skipCache?: boolean | null;
 }
 
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
@@ -76,6 +77,7 @@ export interface TaskInitialLaunchParameters extends BaseInitialLaunchParameters
   authRole?: Admin.IAuthRole;
   securityContext?: Core.ISecurityContext;
   interruptible?: Protobuf.IBoolValue | null;
+  skipCache?: boolean | null;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   taskId: NamedEntityIdentifier;
@@ -109,6 +111,11 @@ export interface LaunchAdvancedOptionsRef {
   validate(): boolean;
 }
 
+export interface LaunchSkipCacheInputRef {
+  getValue(): boolean;
+  validate(): boolean;
+}
+
 export interface WorkflowSourceSelectorState {
   launchPlanSelectorOptions: SearchableSelectorOption<LaunchPlan>[];
   selectedWorkflow?: SearchableSelectorOption<Identifier>;
@@ -131,6 +138,7 @@ export interface LaunchWorkflowFormState {
   formInputsRef: React.RefObject<LaunchFormInputsRef>;
   roleInputRef: React.RefObject<LaunchRoleInputRef>;
   interruptibleInputRef: React.RefObject<LaunchInterruptibleInputRef>;
+  skipCacheInputRef: React.RefObject<LaunchSkipCacheInputRef>;
   state: State<WorkflowLaunchContext, WorkflowLaunchEvent, any, WorkflowLaunchTypestate>;
   service: Interpreter<WorkflowLaunchContext, any, WorkflowLaunchEvent, WorkflowLaunchTypestate>;
   workflowSourceSelectorState: WorkflowSourceSelectorState;
@@ -140,6 +148,7 @@ export interface LaunchTaskFormState {
   formInputsRef: React.RefObject<LaunchFormInputsRef>;
   roleInputRef: React.RefObject<LaunchRoleInputRef>;
   interruptibleInputRef: React.RefObject<LaunchInterruptibleInputRef>;
+  skipCacheInputRef: React.RefObject<LaunchSkipCacheInputRef>;
   state: State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
   service: Interpreter<TaskLaunchContext, any, TaskLaunchEvent, TaskLaunchTypestate>;
   taskSourceSelectorState: TaskSourceSelectorState;

@@ -38,7 +38,8 @@ const NodeExecutionCacheStatusIcon: React.FC<
 > = React.forwardRef(({ status, ...props }, ref) => {
   switch (status) {
     case CatalogCacheStatus.CACHE_DISABLED:
-    case CatalogCacheStatus.CACHE_MISS: {
+    case CatalogCacheStatus.CACHE_MISS:
+    case CatalogCacheStatus.CACHE_SKIPPED: {
       return <InfoOutlined {...props} ref={ref} data-testid="cache-icon" />;
     }
     case CatalogCacheStatus.CACHE_HIT: {

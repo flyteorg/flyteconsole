@@ -26,6 +26,7 @@ import {
   ParsedInput,
   LaunchRoles,
   LaunchInterruptibleInputRef,
+  LaunchSkipCacheInputRef,
 } from './types';
 import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
 import { getUnsupportedRequiredInputs } from './utils';
@@ -156,6 +157,7 @@ async function submit(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
   { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext,
 ) {
   if (!launchPlan) {
@@ -173,6 +175,7 @@ async function submit(
   const { disableAll, labels, annotations, maxParallelism, rawOutputDataConfig } =
     advancedOptionsRef.current?.getValues() || {};
   const interruptible = interruptibleInputRef.current?.getValue();
+  const skipCache = skipCacheInputRef.current?.getValue();
   const launchPlanId = launchPlan.id;
   const { domain, project } = workflowVersion;
 
@@ -189,6 +192,7 @@ async function submit(
     referenceExecutionId,
     inputs: { literals },
     interruptible,
+    skipCache,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -203,6 +207,7 @@ async function validate(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   _advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   _interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  _skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
 ) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
@@ -220,6 +225,7 @@ function getServices(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
 ) {
   return {
     loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
@@ -235,15 +241,17 @@ function getServices(
         roleInputRef,
         advancedOptionsRef,
         interruptibleInputRef,
+        skipCacheInputRef,
         launchContext,
       ),
-    validate: partial(
-      validate,
-      formInputsRef,
-      roleInputRef,
-      advancedOptionsRef,
-      interruptibleInputRef,
-    ),
+    validate: () =>
+      validate(
+        formInputsRef,
+        roleInputRef,
+        advancedOptionsRef,
+        interruptibleInputRef,
+        skipCacheInputRef,
+      ),
   };
 }
 
@@ -269,6 +277,7 @@ export function useLaunchWorkflowFormState({
     annotations,
     securityContext,
     interruptible,
+    skipCache,
   } = initialParameters;
 
   const apiContext = useAPIContext();
@@ -276,6 +285,7 @@ export function useLaunchWorkflowFormState({
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
+  const skipCacheInputRef = useRef<LaunchSkipCacheInputRef>(null);
 
   const services = useMemo(
     () =>
@@ -285,8 +295,16 @@ export function useLaunchWorkflowFormState({
         roleInputRef,
         advancedOptionsRef,
         interruptibleInputRef,
+        skipCacheInputRef,
       ),
-    [apiContext, formInputsRef, roleInputRef, advancedOptionsRef, interruptibleInputRef],
+    [
+      apiContext,
+      formInputsRef,
+      roleInputRef,
+      advancedOptionsRef,
+      interruptibleInputRef,
+      skipCacheInputRef,
+    ],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -310,6 +328,7 @@ export function useLaunchWorkflowFormState({
       labels,
       annotations,
       interruptible,
+      skipCache,
     },
   });
 
@@ -420,7 +439,8 @@ export function useLaunchWorkflowFormState({
     advancedOptionsRef,
     formInputsRef,
     roleInputRef,
-    interruptibleInputRef: interruptibleInputRef,
+    interruptibleInputRef,
+    skipCacheInputRef,
     state,
     service,
     workflowSourceSelectorState,

@@ -8,6 +8,7 @@ import { LaunchFormInputs } from './LaunchFormInputs';
 import { LaunchState } from './launchMachine';
 import { LaunchRoleInput } from './LaunchRoleInput';
 import { LaunchInterruptibleInput } from './LaunchInterruptibleInput';
+import { LaunchSkipCacheInput } from './LaunchSkipCacheInput';
 import { SearchableSelector } from './SearchableSelector';
 import { useStyles } from './styles';
 import { BaseInterpretedLaunchState, BaseLaunchService, LaunchTaskFormProps } from './types';
@@ -20,6 +21,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
     formInputsRef,
     roleInputRef,
     interruptibleInputRef,
+    skipCacheInputRef,
     state,
     service,
     taskSourceSelectorState,
@@ -81,6 +83,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
           initialValue={state.context.interruptible}
           ref={interruptibleInputRef}
         />
+        <LaunchSkipCacheInput initialValue={state.context.skipCache} ref={skipCacheInputRef} />
       </DialogContent>
       <LaunchFormActions
         state={baseState}

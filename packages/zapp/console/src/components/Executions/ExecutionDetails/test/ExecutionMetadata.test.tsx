@@ -13,6 +13,7 @@ const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
 const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
+const skipCacheTestId = `metadata-${ExecutionMetadataLabels.skipCache}`;
 
 jest.mock('models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -94,5 +95,23 @@ describe('ExecutionMetadata', () => {
     delete execution.spec.interruptible;
     const { getByTestId } = renderMetadata();
     expect(getByTestId(interruptibleTestId)).toHaveTextContent(dashedValueString);
+  });
+
+  it('shows true if cache was skipped for execution', () => {
+    execution.spec.skipCache = true;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(skipCacheTestId)).toHaveTextContent('true');
+  });
+
+  it('shows false if cache was not skipped for execution', () => {
+    execution.spec.skipCache = false;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(skipCacheTestId)).toHaveTextContent('false');
+  });
+
+  it('shows false if no cache skip value is found in execution spec', () => {
+    delete execution.spec.skipCache;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(skipCacheTestId)).toHaveTextContent('false');
   });
 });

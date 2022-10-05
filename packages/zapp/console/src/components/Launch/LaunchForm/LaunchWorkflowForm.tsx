@@ -14,6 +14,7 @@ import { isEnterInputsState } from './utils';
 import { LaunchRoleInput } from './LaunchRoleInput';
 import { LaunchFormAdvancedInputs } from './LaunchFormAdvancedInputs';
 import { LaunchInterruptibleInput } from './LaunchInterruptibleInput';
+import { LaunchSkipCacheInput } from './LaunchSkipCacheInput';
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => {
@@ -22,6 +23,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
     roleInputRef,
     advancedOptionsRef,
     interruptibleInputRef,
+    skipCacheInputRef,
     state,
     service,
     workflowSourceSelectorState,
@@ -124,6 +126,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
               initialValue={state.context.interruptible}
               ref={interruptibleInputRef}
             />
+            <LaunchSkipCacheInput initialValue={state.context.skipCache} ref={skipCacheInputRef} />
           </AccordionDetails>
         </Accordion>
       </DialogContent>
