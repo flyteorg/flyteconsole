@@ -17,15 +17,21 @@ export function isValidDate(input: string | Date): boolean {
 /** Converts a Protobuf Timestamp object to a JS Date */
 export function timestampToDate(timestamp: Protobuf.ITimestamp): Date {
   const nanos = timestamp.nanos || 0;
-  const milliseconds = (timestamp.seconds as Long).toNumber() * 1000 + nanos / 1e6;
+  const seconds =
+    typeof timestamp.seconds === 'number'
+      ? timestamp.seconds
+      : (timestamp.seconds as Long).toNumber();
+  const milliseconds = seconds * 1000 + nanos / 1e6;
   return new Date(milliseconds);
 }
 
 /** A sort comparison function for ordering timestamps in ascending progression */
 export function compareTimestampsAscending(a: Protobuf.ITimestamp, b: Protobuf.ITimestamp) {
-  const leftSeconds: Long = a.seconds || Long.fromNumber(0);
+  const leftSeconds: Long =
+    (typeof a.seconds === 'number' ? Long.fromNumber(a.seconds) : a.seconds) || Long.fromNumber(0);
   const leftNanos: number = a.nanos || 0;
-  const rightSeconds: Long = b.seconds || Long.fromNumber(0);
+  const rightSeconds: Long =
+    (typeof b.seconds === 'number' ? Long.fromNumber(b.seconds) : b.seconds) || Long.fromNumber(0);
   const rightNanos: number = b.nanos || 0;
   if (leftSeconds.eq(rightSeconds)) {
     return leftNanos - rightNanos;
@@ -44,7 +50,9 @@ export function dateToTimestamp(date: Date): Protobuf.Timestamp {
 /** Converts a Protobuf Duration object to its equivalent value in milliseconds */
 export function durationToMilliseconds(duration: Protobuf.IDuration): number {
   const nanos = duration.nanos || 0;
-  return (duration.seconds as Long).toNumber() * 1000 + nanos / 1e6;
+  const seconds =
+    typeof duration.seconds === 'number' ? duration.seconds : (duration.seconds as Long).toNumber();
+  return seconds * 1000 + nanos / 1e6;
 }
 
 /** Converts a (possibly fractional) value in milliseconds to a Protobuf Duration object */
