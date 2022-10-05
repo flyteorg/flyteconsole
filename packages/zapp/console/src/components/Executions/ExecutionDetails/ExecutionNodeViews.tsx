@@ -58,7 +58,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
   const requestConfig = useContext(NodeExecutionsRequestConfigContext);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const {
     closure: { abortMetadata, workflowId },
@@ -82,7 +81,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
 
   useEffect(() => {
     let isCurrent = true;
-    setLoading(true);
 
     async function fetchData(baseNodeExecutions, queryClient) {
       const newValue = await Promise.all(
@@ -115,11 +113,12 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
 
       if (isCurrent) {
         setNodeExecutionsWithResources(newValue);
-        setLoading(false);
       }
     }
 
-    fetchData(nodeExecutions, queryClient);
+    if (nodeExecutions.length > 0) {
+      fetchData(nodeExecutions, queryClient);
+    }
     return () => {
       isCurrent = false;
     };
@@ -145,9 +144,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   };
 
   const renderTab = (tabType) => {
-    if (loading) {
-      return <LoadingComponent />;
-    }
     return (
       <WaitForQuery
         errorComponent={DataError}
@@ -174,7 +170,11 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
                 <ExecutionFilters {...filterState} />
               </div>
             )}
-            <WaitForQuery errorComponent={DataError} query={nodeExecutionsQuery}>
+            <WaitForQuery
+              errorComponent={DataError}
+              loadingComponent={LoadingComponent}
+              query={nodeExecutionsQuery}
+            >
               {() => renderTab(tabState.value)}
             </WaitForQuery>
           </div>

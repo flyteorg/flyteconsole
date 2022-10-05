@@ -15,6 +15,7 @@ import * as React from 'react';
 import { dateToTimestamp } from 'common/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
+import { dNode } from 'models/Graph/types';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 
 jest.mock('components/Workflow/workflowQueries');
@@ -28,34 +29,55 @@ jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
   NodeExecutionRow: jest.fn(({ children, execution }) => {
     return (
       <div data-testid="node-execution-row">
-        <span id={`node-execution-col-id-${execution?.id?.nodeId}`} />
-        <span id="node-execution-col-phase">{execution?.closure?.phase}</span>
+        <span>
+          node-execution-{execution?.id?.nodeId}-{execution?.closure?.phase}
+        </span>
         {children}
       </div>
     );
   }),
 }));
 
+const mockNodes = (n: number): dNode[] => {
+  const nodes: dNode[] = [];
+  for (let i = 1; i <= n; i++) {
+    nodes.push({
+      id: `node${i}`,
+      scopedId: `n${i}`,
+      type: 4,
+      name: `Node ${i}`,
+      nodes: [],
+      edges: [],
+    });
+  }
+  return nodes;
+};
+
+const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
+  const nodeExecutionsById = {};
+
+  for (let i = 1; i <= n; i++) {
+    nodeExecutionsById[`n${i}`] = {
+      closure: {
+        createdAt: dateToTimestamp(new Date()),
+        outputUri: '',
+        phase: phases[i - 1],
+      },
+      id: {
+        executionId: { domain: 'domain', name: 'name', project: 'project' },
+        nodeId: `node${i}`,
+      },
+      inputUri: '',
+      scopedId: `n${i}`,
+    };
+  }
+  return nodeExecutionsById;
+};
+
 describe('NodeExecutionsTable', () => {
   let queryClient: QueryClient;
   let requestConfig: RequestConfig;
-  const node1 = {
-    id: 'node1',
-    scopedId: 'n1',
-    type: 4,
-    name: 'Node 1',
-    nodes: [],
-    edges: [],
-  };
-  const node2 = {
-    id: 'node2',
-    scopedId: 'n2',
-    type: 4,
-    name: 'Node 2',
-    nodes: [],
-    edges: [],
-  };
-  const initialNodes = [node1, node2];
+  const initialNodes = mockNodes(2);
 
   beforeEach(() => {
     requestConfig = {};
@@ -97,7 +119,7 @@ describe('NodeExecutionsTable', () => {
       const selectedExecution = null;
       const setSelectedExecution = jest.fn();
 
-      const { container, queryByText } = renderTable({
+      const { container, getByText } = renderTable({
         initialNodes: [],
         selectedExecution,
         setSelectedExecution,
@@ -105,43 +127,16 @@ describe('NodeExecutionsTable', () => {
       });
 
       await waitFor(() => container);
-      expect(queryByText(noExecutionsFoundString)).toBeTruthy();
+      expect(getByText(noExecutionsFoundString)).toBeInTheDocument();
     });
 
     it('renders NodeExecutionRows with proper nodeExecutions', async () => {
       const selectedExecution = null;
       const setSelectedExecution = jest.fn();
-      const phases = [3, 4];
-      const nodeExecutionsById = {
-        n1: {
-          closure: {
-            createdAt: dateToTimestamp(new Date()),
-            outputUri: '',
-            phase: phases[0],
-          },
-          id: {
-            executionId: { domain: 'domain', name: 'name', project: 'project' },
-            nodeId: 'node1',
-          },
-          inputUri: '',
-          scopedId: 'n1',
-        },
-        n2: {
-          closure: {
-            createdAt: dateToTimestamp(new Date()),
-            outputUri: '',
-            phase: phases[1],
-          },
-          id: {
-            executionId: { domain: 'domain', name: 'name', project: 'project' },
-            nodeId: 'node2',
-          },
-          inputUri: '',
-          scopedId: 'n2',
-        },
-      };
+      const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
+      const nodeExecutionsById = mockExecutionsById(2, phases);
 
-      const { container, getAllByTestId } = renderTable({
+      const { container, getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
@@ -149,36 +144,18 @@ describe('NodeExecutionsTable', () => {
       });
 
       await waitFor(() => container);
-      const rows = getAllByTestId('node-execution-row');
       for (const i in initialNodes) {
-        expect(rows[i].querySelector(`#node-execution-col-id-${initialNodes[i].id}`)).toBeValid();
-        expect(rows[i].querySelector('#node-execution-col-phase')?.innerHTML).toBe(
-          phases[i].toString(),
-        );
+        expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
       }
     });
 
     it('renders future nodes with UNDEFINED phase', async () => {
       const selectedExecution = null;
       const setSelectedExecution = jest.fn();
-      const phases = [3, NodeExecutionPhase.UNDEFINED];
-      const nodeExecutionsById = {
-        n1: {
-          closure: {
-            createdAt: dateToTimestamp(new Date()),
-            outputUri: '',
-            phase: phases[0],
-          },
-          id: {
-            executionId: { domain: 'domain', name: 'name', project: 'project' },
-            nodeId: 'node1',
-          },
-          inputUri: '',
-          scopedId: 'n1',
-        },
-      };
+      const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
+      const nodeExecutionsById = mockExecutionsById(1, phases);
 
-      const { container, getAllByTestId } = renderTable({
+      const { container, getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
@@ -186,12 +163,8 @@ describe('NodeExecutionsTable', () => {
       });
 
       await waitFor(() => container);
-      const rows = getAllByTestId('node-execution-row');
       for (const i in initialNodes) {
-        expect(rows[i].querySelector(`#node-execution-col-id-${initialNodes[i].id}`)).toBeValid();
-        expect(rows[i].querySelector('#node-execution-col-phase')?.innerHTML).toBe(
-          phases[i].toString(),
-        );
+        expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
       }
     });
   });
