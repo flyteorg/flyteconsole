@@ -106,7 +106,6 @@
         "cronstrue": "^1.31.0",
         "d3-dag": "^0.3.4",
         "d3-shape": "^1.2.2",
-        "debug": "^3.1.0",
         "dom-helpers": "^3.4.0",
         "eslint": "^8.11.0",
         "eslint-config-airbnb": "^19.0.4",

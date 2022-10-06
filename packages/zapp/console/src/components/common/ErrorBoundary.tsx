@@ -3,7 +3,7 @@ import Card from '@material-ui/core/Card';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import { useCommonStyles } from 'components/common/styles';
 import { NotFound } from 'components/NotFound/NotFound';
 import { NotFoundError } from 'errors/fetchErrors';

@@ -1,3 +1,5 @@
+export * from "./log";
+
 export const makeRoute = (baseUrl: string, path: string) => `${baseUrl}${path}`;
 
 export const getBasePathName = () => {

@@ -8,7 +8,7 @@ import { DataError } from 'components/Errors/DataError';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useQuery } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
-import { createDebugLogger } from 'common/log';
+import { createDebugLogger } from '@flyteconsole/components';
 import { CompiledNode } from 'models/Node/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';

@@ -1,10 +1,10 @@
 import { useMachine } from '@xstate/react';
 import { FlyteApiContextState, useFlyteApi } from '@flyteconsole/flyte-api';
-import { createDebugLogger } from 'common/log';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { NotAuthorizedError } from 'errors/fetchErrors';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import {
+  createDebugLogger,
   CacheContext, ValueCache, getCacheKey,
   FetchableData,
   FetchEventObject,

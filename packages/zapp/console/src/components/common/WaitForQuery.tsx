@@ -1,4 +1,4 @@
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import * as React from 'react';
 import { QueryObserverResult } from 'react-query';
 import { ErrorBoundary } from './ErrorBoundary';

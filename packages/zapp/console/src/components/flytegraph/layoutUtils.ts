@@ -1,6 +1,6 @@
 import * as d3 from 'd3-dag';
 import { cloneDeep } from 'lodash';
-import { createDebugLogger } from 'common/log';
+import { createDebugLogger } from '@flyteconsole/components';
 import { layoutSize, nodeSpacingMultiplier } from './constants';
 import { createTimer } from './timer';
 import { GraphConfig, GraphInputNode, GraphLayoutResult, RenderableNode } from './types';

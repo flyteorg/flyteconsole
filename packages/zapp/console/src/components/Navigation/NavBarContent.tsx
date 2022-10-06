@@ -1,5 +1,5 @@
 import { navBarContentId } from 'common/constants';
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
