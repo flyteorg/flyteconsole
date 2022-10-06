@@ -1,4 +1,4 @@
-import { Protobuf, Event } from 'flyteidl';
+import { Protobuf, Event } from '@flyteconsole/flyteidl';
 import { MessageFormat, ResourceType, TaskLog } from 'models/Common/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
@@ -74,12 +74,12 @@ export const getMockMapTaskLogItem = (
     retryAttempt: retryAttempt,
     logs: hasLogs
       ? [
-          {
-            uri: '#',
-            name: `Kubernetes Logs #0-${index ?? 0}${retryString} (State)`,
-            messageFormat: MessageFormat.JSON,
-          },
-        ]
+        {
+          uri: '#',
+          name: `Kubernetes Logs #0-${index ?? 0}${retryString} (State)`,
+          messageFormat: MessageFormat.JSON,
+        },
+      ]
       : [],
   };
 };

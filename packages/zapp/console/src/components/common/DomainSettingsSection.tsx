@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { DataTable } from 'components/common/DataTable';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { isEmpty } from 'lodash';
 import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 import ExpandLess from '@material-ui/icons/ExpandLess';

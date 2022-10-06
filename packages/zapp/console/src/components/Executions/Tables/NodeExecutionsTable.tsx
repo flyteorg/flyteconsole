@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { getCacheKey } from 'components/Cache/utils';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { useCommonStyles } from 'components/common/styles';

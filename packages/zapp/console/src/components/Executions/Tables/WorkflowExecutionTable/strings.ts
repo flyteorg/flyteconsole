@@ -1,7 +1,7 @@
 import { createLocalizedString } from '@flyteconsole/locale';
 import { dateFromNow } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 
 const str = {
   tableLabel_name: 'execution id',

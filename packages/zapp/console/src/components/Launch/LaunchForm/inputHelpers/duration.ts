@@ -1,5 +1,5 @@
 import { durationToMilliseconds, millisecondsToDuration } from 'common/utils';
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import { InputValue } from '../types';
 import { primitiveLiteralPaths } from './constants';
 import { isValidFloat } from './float';

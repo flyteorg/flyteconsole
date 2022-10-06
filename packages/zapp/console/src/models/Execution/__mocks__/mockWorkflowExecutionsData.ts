@@ -1,5 +1,5 @@
 import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { cloneDeep, random } from 'lodash';
 import * as Long from 'long';
 import { LiteralMap } from 'models/Common/types';

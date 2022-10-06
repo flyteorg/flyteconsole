@@ -1,5 +1,5 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { getNamedEntity } from 'models/Common/api';
 import { DomainIdentifierScope, NamedEntity, ResourceType } from 'models/Common/types';

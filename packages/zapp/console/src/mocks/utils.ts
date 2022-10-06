@@ -1,4 +1,4 @@
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 import { isObject, isPlainObject } from 'lodash';
 
 /** Offsets a given `Protobuf.ITimestamp` by a value in seconds. Useful

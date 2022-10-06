@@ -1,4 +1,4 @@
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import {
   Identifier,
   LiteralMap,

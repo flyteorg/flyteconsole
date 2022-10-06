@@ -1,5 +1,5 @@
 import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { TaskLog } from 'models/Common/types';
 import { TaskExecutionPhase } from '../enums';
@@ -67,10 +67,10 @@ export const createMockTaskExecutionsListResponse = (length: number) => {
       const error =
         phase === TaskExecutionPhase.FAILED
           ? {
-              code: 'user_error',
-              errorUri: '',
-              message: sampleError,
-            }
+            code: 'user_error',
+            errorUri: '',
+            message: sampleError,
+          }
           : undefined;
 
       Object.assign(execution.closure, {

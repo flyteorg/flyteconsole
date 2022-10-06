@@ -1,5 +1,5 @@
 import { env } from 'common/env';
-import { Admin, Core } from 'flyteidl';
+import { Admin, Core } from '@flyteconsole/flyteidl';
 import { getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';

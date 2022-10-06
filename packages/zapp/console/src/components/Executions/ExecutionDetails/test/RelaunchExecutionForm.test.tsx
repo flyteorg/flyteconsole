@@ -9,7 +9,7 @@ import {
 } from 'components/Launch/LaunchForm/utils';
 import { mockSimpleVariables } from 'components/Launch/LaunchForm/__mocks__/mockInputs';
 import { primitiveLiteral } from 'components/Launch/LaunchForm/__mocks__/utils';
-import { Admin, Protobuf } from 'flyteidl';
+import { Admin, Protobuf } from '@flyteconsole/flyteidl';
 import { LiteralMap, ResourceType, Variable } from 'models/Common/types';
 import { getExecutionData } from 'models/Execution/api';
 import { Execution, ExecutionData } from 'models/Execution/types';

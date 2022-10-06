@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { blobScalars, schemaScalars } from '../scalarValues';
 
 // SIMPLE

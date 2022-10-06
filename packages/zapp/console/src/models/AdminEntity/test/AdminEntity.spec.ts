@@ -1,5 +1,5 @@
 import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { mockServer } from 'mocks/server';
 import { rest } from 'msw';
 import { getAdminEntity } from '../AdminEntity';

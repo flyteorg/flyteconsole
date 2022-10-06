@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { InputProps, InputTypeDefinition, InputValue } from '../types';
 
 export interface ConverterInput {

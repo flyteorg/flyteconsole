@@ -1,5 +1,5 @@
 import { timestampToDate } from 'common/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { isObject } from 'lodash';
 import { Identifier, LiteralType, Variable } from 'models/Common/types';
 import { LaunchPlan } from 'models/Launch/types';

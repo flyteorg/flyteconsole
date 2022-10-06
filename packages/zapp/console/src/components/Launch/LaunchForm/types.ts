@@ -1,4 +1,4 @@
-import { Admin, Core, Protobuf } from 'flyteidl';
+import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
 import {
   BlobDimensionality,
   Identifier,
@@ -181,7 +181,7 @@ export interface UnionValue {
   typeDefinition: InputTypeDefinition;
 }
 
-export interface NoneValue {}
+export interface NoneValue { }
 
 export type InputValue = string | number | boolean | Date | BlobValue | UnionValue | NoneValue;
 export type InputChangeHandler = (newValue: InputValue) => void;

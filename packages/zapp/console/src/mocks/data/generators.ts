@@ -1,6 +1,6 @@
 import { DeepPartial } from 'common/types';
 import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
-import { Admin, Core } from 'flyteidl';
+import { Admin, Core } from '@flyteconsole/flyteidl';
 import { merge } from 'lodash';
 import { timeStampOffset } from 'mocks/utils';
 import { Identifier, ResourceType } from 'models/Common/types';

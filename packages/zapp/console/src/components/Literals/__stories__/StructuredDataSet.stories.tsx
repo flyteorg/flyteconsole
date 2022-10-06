@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/react';
 import { Scalar } from 'models/Common/types';
 import { Card, CardContent } from '@material-ui/core';
 import * as React from 'react';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 import { blobScalars } from './scalarValues';
 import { extractSimpleTypes, extractSchemaTypes, extractBlobTypes } from './helpers/typeGenerators';

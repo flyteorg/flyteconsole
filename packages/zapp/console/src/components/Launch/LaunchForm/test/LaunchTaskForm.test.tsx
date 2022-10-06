@@ -11,7 +11,7 @@ import {
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from 'components/Theme/muiTheme';
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { Identifier, NamedEntityIdentifier, Variable } from 'models/Common/types';
@@ -244,7 +244,7 @@ describe('LaunchForm: Task', () => {
 
     it('should show disabled submit button if the value in input is invalid', async () => {
       const { container, getByLabelText } = renderForm();
-      await waitFor(() => {});
+      await waitFor(() => { });
 
       const integerInput = await waitFor(() =>
         getByLabelText(integerInputName, {
@@ -262,7 +262,7 @@ describe('LaunchForm: Task', () => {
 
     it('should allow submission after fixing validation errors', async () => {
       const { container, getByLabelText } = renderForm();
-      await waitFor(() => {});
+      await waitFor(() => { });
 
       const integerInput = await waitFor(() =>
         getByLabelText(integerInputName, {

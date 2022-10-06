@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { PanelViewDecorator } from 'components/common/__stories__/Decorators';
 import { TaskType } from 'models/Task/constants';

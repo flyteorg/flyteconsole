@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { mapValues } from 'lodash';
 import { Scalar } from 'models/Common/types';
 import { binaryValues } from './binaryValues';

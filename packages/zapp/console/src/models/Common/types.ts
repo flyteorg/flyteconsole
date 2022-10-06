@@ -1,4 +1,4 @@
-import { Admin, Core, Protobuf } from 'flyteidl';
+import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
 
 /* --- BEGIN flyteidl type aliases --- */
 /** These are types shared across multiple sections of the data model. Most of

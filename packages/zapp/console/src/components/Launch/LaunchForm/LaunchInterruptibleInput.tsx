@@ -2,7 +2,7 @@ import { makeStyles, Theme, Typography } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import * as React from 'react';
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 import { useStyles } from './styles';
 import { LaunchInterruptibleInputRef } from './types';
 import { formStrings } from './constants';

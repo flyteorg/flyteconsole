@@ -1,4 +1,4 @@
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { ExpandableMonospaceText } from 'components/common/ExpandableMonospaceText';
 import { ExecutionError } from 'models/Execution/types';
 import * as React from 'react';

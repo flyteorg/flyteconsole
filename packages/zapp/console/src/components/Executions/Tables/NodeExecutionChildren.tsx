@@ -3,7 +3,7 @@ import { Theme, makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { getCacheKey } from 'components/Cache/utils';
 import { useTheme } from 'components/Theme/useTheme';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import * as React from 'react';
 import { NodeExecutionGroup } from '../types';
 import { NodeExecutionRow } from './NodeExecutionRow';

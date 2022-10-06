@@ -1,5 +1,5 @@
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { useEffect, useState } from 'react';
 import { launchInputDebouncDelay } from './constants';
 import {
@@ -72,7 +72,7 @@ function useFormInputState(parsedInput: ParsedInput): FormInputState {
     validate,
     value,
     helperText: parsedInput.description,
-    setIsError: () => {},
+    setIsError: () => { },
   };
 }
 

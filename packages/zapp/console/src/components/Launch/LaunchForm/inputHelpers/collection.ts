@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { InputTypeDefinition, InputValue } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';

@@ -1,5 +1,5 @@
 import { stringifyValue } from 'common/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { InputTypeDefinition, InputValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';

@@ -1,5 +1,5 @@
 import { NodeExecutionDisplayType } from 'components/Executions/types';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 
 export const UNKNOWN_DETAILS = {
   displayId: 'unknownNode',

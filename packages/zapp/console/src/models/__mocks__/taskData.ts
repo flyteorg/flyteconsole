@@ -1,5 +1,5 @@
 import { getCacheKey } from 'components/Cache/utils';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { Identifier, ResourceType } from 'models/Common/types';
 import { Task, TaskClosure } from 'models/Task/types';

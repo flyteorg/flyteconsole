@@ -1,4 +1,4 @@
-import { Admin, Core } from 'flyteidl';
+import { Admin, Core } from '@flyteconsole/flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';
 import { RequestConfig } from 'models/AdminEntity/types';

@@ -10,7 +10,7 @@ import {
   Paper,
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import t from '../strings';
 

@@ -18,6 +18,7 @@
         "noImplicitOverride": false
     },
     "references": [
+        { "path": "../../basics/flyteidl" },
         { "path": "../../basics/locale" },
         { "path": "../../composites/ui-atoms" },
         { "path": "../../plugins/components" },

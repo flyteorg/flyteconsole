@@ -1,4 +1,4 @@
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import * as Long from 'long';
 import { LiteralMap, LiteralMapBlob } from 'models/Common/types';
 import {

@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import * as Long from 'long';
 import { InputValue } from '../types';
 import { primitiveLiteralPaths } from './constants';
