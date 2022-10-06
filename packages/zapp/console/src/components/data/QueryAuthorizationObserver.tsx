@@ -1,4 +1,4 @@
-import { NotAuthorizedError } from 'errors/fetchErrors';
+import { NotAuthorizedError } from '@flyteconsole/components';
 import * as React from 'react';
 import { onlineManager, Query, useQueryClient } from 'react-query';
 import { useFlyteApi } from '@flyteconsole/flyte-api';

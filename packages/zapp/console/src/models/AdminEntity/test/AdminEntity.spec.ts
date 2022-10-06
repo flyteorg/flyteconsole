@@ -1,4 +1,4 @@
-import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
+import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { mockServer } from 'mocks/server';
 import { rest } from 'msw';

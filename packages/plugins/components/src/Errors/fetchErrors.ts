@@ -2,7 +2,7 @@
 
 /** Indicates failure to fetch a resource because it does not exist (404) */
 export class NotFoundError extends Error {
-  constructor(public name: string, msg = 'The requested item could not be found') {
+  constructor(public override name: string, msg = 'The requested item could not be found') {
     super(msg);
   }
 }
