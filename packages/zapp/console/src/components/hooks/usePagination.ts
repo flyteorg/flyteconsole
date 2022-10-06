@@ -1,4 +1,4 @@
-import { CacheContext } from 'components/Cache/CacheContext';
+import { CacheContext } from '@flyteconsole/components';
 import { RequestConfig } from 'models/AdminEntity/types';
 import { useContext, useMemo } from 'react';
 import { FetchFn, PaginatedFetchableData, PaginatedFetchFn, PaginationValue } from './types';

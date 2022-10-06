@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { ListRowRenderer } from 'react-virtualized';
 import { noExecutionsFoundString } from 'common/constants';
-import { getCacheKey } from 'components/Cache/utils';
+import { getCacheKey } from '@flyteconsole/components';
 import { useCommonStyles } from 'components/common/styles';
 import { ListProps } from 'components/common/types';
 import { DataList, DataListRef } from 'components/Tables/DataList';

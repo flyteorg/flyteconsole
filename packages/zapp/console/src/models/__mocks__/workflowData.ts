@@ -1,4 +1,4 @@
-import { getCacheKey } from 'components/Cache/utils';
+import { getCacheKey } from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { Identifier, ResourceType } from 'models/Common/types';

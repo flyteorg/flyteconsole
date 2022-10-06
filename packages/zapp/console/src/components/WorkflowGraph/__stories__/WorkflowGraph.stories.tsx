@@ -1,7 +1,6 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { CacheContext } from 'components/Cache/CacheContext';
-import { createCache } from 'components/Cache/createCache';
+import { CacheContext, createCache } from '@flyteconsole/components';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';

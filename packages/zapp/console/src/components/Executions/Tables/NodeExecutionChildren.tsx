@@ -1,7 +1,7 @@
 import { Button, Typography } from '@material-ui/core';
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { getCacheKey } from 'components/Cache/utils';
+import { getCacheKey } from '@flyteconsole/components';
 import { useTheme } from 'components/Theme/useTheme';
 import { Admin } from '@flyteconsole/flyteidl';
 import * as React from 'react';

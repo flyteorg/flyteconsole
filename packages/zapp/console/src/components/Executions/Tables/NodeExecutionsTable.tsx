@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { Admin } from '@flyteconsole/flyteidl';
-import { getCacheKey } from 'components/Cache/utils';
+import { getCacheKey } from '@flyteconsole/components';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { useCommonStyles } from 'components/common/styles';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
