@@ -13,6 +13,7 @@ import { getInputsForTask } from './getInputs';
 import {
   LaunchState,
   TaskLaunchContext,
+  TaskLaunchContextExtended,
   TaskLaunchEvent,
   taskLaunchMachine,
   TaskLaunchTypestate,
@@ -225,7 +226,7 @@ export function useLaunchTaskFormState({
   useEffect(() => {
     const subscription = service.subscribe((newState) => {
       if (newState.matches(LaunchState.SELECT_TASK_VERSION)) {
-        const { taskVersionOptions, preferredTaskId } = newState.context;
+        const { taskVersionOptions, preferredTaskId } = newState.context as TaskLaunchContextExtended;
         if (taskVersionOptions.length > 0) {
           let taskToSelect = taskVersionOptions[0];
           if (preferredTaskId) {

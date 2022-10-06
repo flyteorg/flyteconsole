@@ -202,32 +202,36 @@ export type BaseLaunchTypestate =
     };
   };
 
+export type WorkflowLaunchContextExtended = WorkflowLaunchContext & {
+  sourceId: NamedEntityIdentifier;
+  workflowVersionOptions: Workflow[];
+};
+
+export type LaunchPlanLaunchContextExtended = WorkflowLaunchContext & {
+  launchPlanOptions: LaunchPlan[];
+  sourceId: NamedEntityIdentifier;
+  workflowVersionOptions: Workflow[];
+};
 export type WorkflowLaunchTypestate =
   | BaseLaunchTypestate
   | {
     value: LaunchState.SELECT_WORKFLOW_VERSION;
-    context: WorkflowLaunchContext & {
-      sourceId: NamedEntityIdentifier;
-      workflowVersionOptions: Workflow[];
-    };
+    context: WorkflowLaunchContextExtended;
   }
   | {
     value: LaunchState.SELECT_LAUNCH_PLAN;
-    context: WorkflowLaunchContext & {
-      launchPlanOptions: LaunchPlan[];
-      sourceId: NamedEntityIdentifier;
-      workflowVersionOptions: Workflow[];
-    };
+    context: LaunchPlanLaunchContextExtended;
   };
 
+export type TaskLaunchContextExtended = TaskLaunchContext & {
+  sourceId: NamedEntityIdentifier;
+  taskVersionOptions: Task[];
+};
 export type TaskLaunchTypestate =
   | BaseLaunchTypestate
   | {
     value: LaunchState.SELECT_TASK_VERSION;
-    context: TaskLaunchContext & {
-      sourceId: NamedEntityIdentifier;
-      taskVersionOptions: Task[];
-    };
+    context: TaskLaunchContextExtended;
   };
 
 const defaultBaseContext: BaseLaunchContext = {
