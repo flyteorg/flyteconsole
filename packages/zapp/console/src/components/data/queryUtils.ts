@@ -1,4 +1,4 @@
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import { QueryClient, QueryFunction, QueryKey } from 'react-query';
 import { InfiniteQueryInput, InfiniteQueryPage } from './types';
 

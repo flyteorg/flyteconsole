@@ -1,4 +1,4 @@
-import { createDebugLogger } from 'common/log';
+import { createDebugLogger } from '@flyteconsole/components';
 import { createTimer } from 'common/timer';
 import { cloneDeep, keyBy, values } from 'lodash';
 import { identifierToString } from 'models/Common/utils';

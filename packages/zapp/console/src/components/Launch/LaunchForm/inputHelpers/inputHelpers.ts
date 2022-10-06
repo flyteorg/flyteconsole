@@ -1,4 +1,4 @@
-import { createDebugLogger } from 'common/log';
+import { createDebugLogger } from '@flyteconsole/components';
 import { ValueError } from 'errors/parameterErrors';
 import { Core } from '@flyteconsole/flyteidl';
 import { InputProps, InputTypeDefinition, InputValue } from '../types';

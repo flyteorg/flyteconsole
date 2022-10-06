@@ -1,6 +1,6 @@
 import { TextField } from '@material-ui/core';
 import * as React from 'react';
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import { makeStringChangeHandler } from './handlers';
 import { InputProps, InputType } from './types';
 import { UnsupportedInput } from './UnsupportedInput';

@@ -1,5 +1,5 @@
 import { Mark } from '@material-ui/core/Slider';
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import * as React from 'react';
 import { createContext, useContext } from 'react';
 import { formatSecondsToHmsFormat } from './TimelineChart/utils';
@@ -73,8 +73,8 @@ export const ScaleProvider = (props: ScaleProviderProps) => {
       newMax < MIN_SCALE_VALUE
         ? MIN_SCALE_VALUE
         : newMax > MAX_SCALE_VALUE
-        ? MAX_SCALE_VALUE
-        : newMax;
+          ? MAX_SCALE_VALUE
+          : newMax;
     // round a value to have full amount of minutes:
     newValue = Math.ceil(newValue / 60) * 60;
     setMaxValue(newValue);

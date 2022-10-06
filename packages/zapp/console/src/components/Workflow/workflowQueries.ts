@@ -1,4 +1,4 @@
-import { log } from 'common/log';
+import { log } from '@flyteconsole/components';
 import { QueryInput, QueryType } from 'components/data/types';
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { getNodeExecutionData } from 'models/Execution/api';

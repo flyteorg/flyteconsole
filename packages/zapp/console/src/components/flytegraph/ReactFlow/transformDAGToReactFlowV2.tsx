@@ -1,7 +1,7 @@
 import { dEdge, dNode, dTypes } from 'models/Graph/types';
 import { Edge, Node, Position } from 'react-flow-renderer';
 import { CatalogCacheStatus, NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
-import { createDebugLogger } from 'common/log';
+import { createDebugLogger } from '@flyteconsole/components';
 import { LogsByPhase } from 'models/Execution/types';
 import { isMapTaskType } from 'models/Task/utils';
 import { ReactFlowGraphConfig } from './utils';
