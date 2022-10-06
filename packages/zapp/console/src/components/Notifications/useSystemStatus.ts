@@ -1,5 +1,5 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { defaultSystemStatus } from 'models/Common/constants';
 import { SystemStatus } from 'models/Common/types';

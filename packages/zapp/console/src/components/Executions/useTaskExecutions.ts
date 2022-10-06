@@ -11,7 +11,7 @@ import {
   TaskExecutionIdentifier,
 } from 'models/Execution/types';
 import { taskSortFields } from 'models/Task/constants';
-import { FetchableData } from '../hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { useFetchableData } from '../hooks/useFetchableData';
 import { executionRefreshIntervalMs } from './constants';
 import { nodeExecutionIsTerminal, taskExecutionIsTerminal } from './utils';

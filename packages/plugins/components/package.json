@@ -20,7 +20,8 @@
     "dependencies": {
         "@material-ui/core": "^4.0.0",
         "@material-ui/icons": "^4.0.0",
-        "classnames": "^2.3.1"
+        "classnames": "^2.3.1",
+        "xstate": "4.14.1"
     },
     "peerDependencies": {
         "react": "^16.13.1",

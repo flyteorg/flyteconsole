@@ -8,6 +8,7 @@ import {
   FetchStateSchema,
 } from './types';
 
+export * from "./types";
 /** Helper function to determine if the State object from a fetchMachine
  * is one in which data is being fetched.
  */

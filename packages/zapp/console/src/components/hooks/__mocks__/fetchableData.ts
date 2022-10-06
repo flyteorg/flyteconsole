@@ -1,5 +1,5 @@
 import { State } from 'xstate';
-import { FetchableData, fetchStates } from '../types';
+import { FetchableData, fetchStates } from '@flyteconsole/components';
 
 export function createMockFetchable<T>(value: any, fetch: () => void): FetchableData<T> {
   return {

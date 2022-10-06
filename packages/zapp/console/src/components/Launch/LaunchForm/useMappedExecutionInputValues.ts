@@ -1,7 +1,7 @@
 import { log } from 'common/log';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { fetchWorkflowExecutionInputs } from 'components/Executions/useWorkflowExecution';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { Variable } from 'models/Common/types';
 import { Execution } from 'models/Execution/types';

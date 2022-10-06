@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'test/utils';
 import { useUserProfile } from 'components/hooks/useUserProfile';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { getProjectDomainAttributes } from 'models/Project/api';
 import { Admin } from '@flyteconsole/flyteidl';

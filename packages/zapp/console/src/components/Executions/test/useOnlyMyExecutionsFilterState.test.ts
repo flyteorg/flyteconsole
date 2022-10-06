@@ -3,7 +3,7 @@ import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';
 import { UserProfile } from 'models/Common/types';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 
 jest.mock('components/hooks/useUserProfile');
 
