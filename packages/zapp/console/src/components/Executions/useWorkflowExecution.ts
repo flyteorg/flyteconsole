@@ -5,8 +5,7 @@ import { LiteralMap } from 'models/Common/types';
 import { getExecution } from 'models/Execution/api';
 import { Execution, ExecutionData, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { QueryClient } from 'react-query';
-import { FetchableData } from '@flyteconsole/components';
-import { useFetchableData } from '../hooks/useFetchableData';
+import { FetchableData, useFetchableData } from '@flyteconsole/components';
 import { executionRefreshIntervalMs } from './constants';
 import { executionIsTerminal } from './utils';
 

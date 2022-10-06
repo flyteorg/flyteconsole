@@ -2,8 +2,7 @@ import { useAPIContext } from 'components/data/apiContext';
 import { RequestConfig } from '@flyteconsole/flyteidl';
 import { Identifier, IdentifierScope } from 'models/Common/types';
 import { Task, TaskTemplate } from 'models/Task/types';
-import { FetchableData } from '@flyteconsole/components';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData, FetchableData } from '@flyteconsole/components';
 import { usePagination } from './usePagination';
 
 /** A hook for fetching a Task template. TaskTemplates may have already been

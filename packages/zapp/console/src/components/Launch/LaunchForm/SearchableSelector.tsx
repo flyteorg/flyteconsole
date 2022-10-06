@@ -4,9 +4,8 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import { escapeKeyListener } from 'components/common/keyboardEvents';
 import { useCommonStyles } from 'components/common/styles';
-import { isLoadingState, FetchableData, FetchFn } from '@flyteconsole/components';
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
-import { useFetchableData } from 'components/hooks/useFetchableData';
+import { useFetchableData, isLoadingState, FetchableData, FetchFn } from '@flyteconsole/components';
 import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
 

@@ -14,7 +14,7 @@ import {
   fetchStates,
   fetchMachine,
   NotAuthorizedError
-} from '@flyteconsole/components';
+} from '..';
 
 const log = createDebugLogger('useFetchableData');
 

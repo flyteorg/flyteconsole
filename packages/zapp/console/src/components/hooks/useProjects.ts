@@ -1,8 +1,7 @@
 import { listProjects } from 'models/Project/api';
 import { Project } from 'models/Project/types';
 import { useContext } from 'react';
-import { FetchableData, NotFoundError, CacheContext, ValueCache } from '@flyteconsole/components';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData, FetchableData, NotFoundError, CacheContext, ValueCache } from '@flyteconsole/components';
 
 const fetchableKey = Symbol('ProjectsList');
 const makeProjectCacheKey = (id: string) => ({ id, collection: fetchableKey });

@@ -1,7 +1,6 @@
 import { useAPIContext } from 'components/data/apiContext';
 import { ExecutionData, NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
-import { FetchableData } from '@flyteconsole/components';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData, FetchableData } from '@flyteconsole/components';
 
 /** A hook for fetching a NodeExecution */
 export function useNodeExecution(id: NodeExecutionIdentifier): FetchableData<NodeExecution> {

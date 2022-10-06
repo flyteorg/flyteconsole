@@ -1,7 +1,6 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { fetchWorkflowExecutionInputs } from 'components/Executions/useWorkflowExecution';
-import { log, FetchableData } from '@flyteconsole/components';
-import { useFetchableData } from 'components/hooks/useFetchableData';
+import { log, FetchableData, useFetchableData } from '@flyteconsole/components';
 import { Variable } from 'models/Common/types';
 import { Execution } from 'models/Execution/types';
 import { LiteralValueMap } from './types';
