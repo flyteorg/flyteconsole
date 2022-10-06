@@ -1,4 +1,5 @@
-import { Env } from 'common/env';
+import { Env } from '@flyteconsole/components';
+type Dictionary<T> = { [k: string]: T };
 
 declare global {
   export interface Window {

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import { baseUrlString, makeRoute } from 'routes/utils';
 import { headerFontFamily } from 'components/Theme/constants';
 import { UserInformation } from './UserInformation';

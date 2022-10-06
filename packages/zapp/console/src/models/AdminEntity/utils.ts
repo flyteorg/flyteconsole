@@ -1,4 +1,4 @@
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import { createDebugLogger } from '@flyteconsole/components';
 import { createLocalURL, ensureSlashPrefixed } from 'common/utils';
 import {

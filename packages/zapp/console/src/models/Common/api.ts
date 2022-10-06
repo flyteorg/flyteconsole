@@ -1,4 +1,4 @@
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import { Admin, Core } from '@flyteconsole/flyteidl';
 import { getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { getAdminEntity } from 'models/AdminEntity/AdminEntity';

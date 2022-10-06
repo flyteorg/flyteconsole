@@ -1,4 +1,4 @@
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 
 let baseUrl = env.BASE_URL ? env.BASE_URL : '';
 if (baseUrl.length && baseUrl[0] !== '/') {

@@ -1,6 +1,6 @@
 /**
  * @file Provides environment variables
- * Do not import this file into client/server code. Use common/env.ts instead
+ * Do not import this file into client/server code. Use @flyteconsole/components.ts instead
  */
 
 /** Current environment environment. "development", "test" or "production" */

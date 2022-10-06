@@ -1,5 +1,5 @@
 import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
-import { labels as commonLabels } from 'components/common/constants';
+import { labels as commonLabels } from '@flyteconsole/components';
 import { ExecutionContext, ExecutionContextData } from 'components/Executions/contexts';
 import { Identifier, ResourceType } from 'models/Common/types';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
