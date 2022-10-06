@@ -3,7 +3,7 @@ import { NotFoundError } from 'errors/fetchErrors';
 import { listProjects } from 'models/Project/api';
 import { Project } from 'models/Project/types';
 import { useContext } from 'react';
-import { FetchableData } from './types';
+import { FetchableData } from '@flyteconsole/components';
 import { useFetchableData } from './useFetchableData';
 
 const fetchableKey = Symbol('ProjectsList');

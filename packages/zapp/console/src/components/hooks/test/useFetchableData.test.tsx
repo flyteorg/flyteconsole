@@ -1,6 +1,6 @@
 import { fireEvent, getByLabelText, render, waitFor } from '@testing-library/react';
 import * as React from 'react';
-import { fetchStates } from '../types';
+import { fetchStates } from '@flyteconsole/components';
 import { FetchableDataConfig, useFetchableData } from '../useFetchableData';
 
 const stateLabel = 'fetch-state';

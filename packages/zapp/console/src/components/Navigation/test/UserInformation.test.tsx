@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { UserProfile } from 'models/Common/types';

@@ -1,6 +1,6 @@
 import { WaitForData } from 'components/common/WaitForData';
 import { useAPIContext } from 'components/data/apiContext';
-import { fetchStates } from 'components/hooks/types';
+import { fetchStates } from '@flyteconsole/components';
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import {

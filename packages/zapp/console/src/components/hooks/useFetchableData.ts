@@ -1,12 +1,11 @@
 import { useMachine } from '@xstate/react';
 import { FlyteApiContextState, useFlyteApi } from '@flyteconsole/flyte-api';
 import { createDebugLogger } from 'common/log';
-import { CacheContext, ValueCache, getCacheKey } from '@flyteconsole/components';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { NotAuthorizedError } from 'errors/fetchErrors';
 import { useContext, useEffect, useMemo, useRef } from 'react';
-import { fetchMachine } from './fetchMachine';
 import {
+  CacheContext, ValueCache, getCacheKey,
   FetchableData,
   FetchEventObject,
   fetchEvents,
@@ -14,7 +13,8 @@ import {
   FetchMachine,
   FetchStateContext,
   fetchStates,
-} from './types';
+  fetchMachine
+} from '@flyteconsole/components';
 
 const log = createDebugLogger('useFetchableData');
 

@@ -1,4 +1,4 @@
-import { PaginatedFetchableData } from 'components/hooks/types';
+import { PaginatedFetchableData } from '@flyteconsole/components';
 import { Execution, NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { Workflow } from 'models/Workflow/types';
 

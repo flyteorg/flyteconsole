@@ -1,8 +1,8 @@
 import { createDebugLogger } from 'common/log';
 import { getCacheKey } from '@flyteconsole/components';
 import { useEffect } from 'react';
-import { isLoadingState } from './fetchMachine';
-import { FetchableData, fetchStates, RefreshConfig } from './types';
+import { isLoadingState } from '../../../../../plugins/components/src/FetchMachine';
+import { FetchableData, fetchStates, RefreshConfig } from '@flyteconsole/components';
 
 const log = createDebugLogger('useDataRefresher');
 

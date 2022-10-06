@@ -1,7 +1,7 @@
 import { log } from 'common/log';
 import { isFunction } from 'common/typeCheckers';
 import { DataError } from 'components/Errors/DataError';
-import { FetchableState, fetchStates } from 'components/hooks/types';
+import { FetchableState, fetchStates } from '@flyteconsole/components';
 import * as React from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { LoadingSpinner } from './LoadingSpinner';

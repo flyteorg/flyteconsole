@@ -7,7 +7,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
 import { WaitForData } from 'components/common/WaitForData';
 import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersionsTable';
-import { isLoadingState } from 'components/hooks/fetchMachine';
+import { isLoadingState } from '@flyteconsole/components';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from 'components/Theme/constants';
 import { SortDirection } from '@flyteconsole/flyteidl';

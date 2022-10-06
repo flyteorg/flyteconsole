@@ -13,6 +13,7 @@
         "**/*.stories.*"
     ],
     "references": [
+        { "path": "../../basics/flyteidl/tsconfig.build.json" },
         { "path": "../../basics/locale/tsconfig.build.json" },
         { "path": "../../composites/ui-atoms/tsconfig.build.json" }
     ]

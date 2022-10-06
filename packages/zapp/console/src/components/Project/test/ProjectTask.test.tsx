@@ -2,7 +2,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { FetchableData } from 'components/hooks/types';
+import { FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
