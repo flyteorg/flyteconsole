@@ -58,6 +58,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
   const requestConfig = useContext(NodeExecutionsRequestConfigContext);
+  const [nodeExecutionsLoading, setNodeExecutionsLoading] = useState<boolean>(true);
 
   const {
     closure: { abortMetadata, workflowId },
@@ -83,6 +84,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     let isCurrent = true;
 
     async function fetchData(baseNodeExecutions, queryClient) {
+      setNodeExecutionsLoading(true);
       const newValue = await Promise.all(
         baseNodeExecutions.map(async (baseNodeExecution) => {
           const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
@@ -113,11 +115,16 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
 
       if (isCurrent) {
         setNodeExecutionsWithResources(newValue);
+        setNodeExecutionsLoading(false);
       }
     }
 
     if (nodeExecutions.length > 0) {
       fetchData(nodeExecutions, queryClient);
+    } else {
+      if (isCurrent) {
+        setNodeExecutionsLoading(false);
+      }
     }
     return () => {
       isCurrent = false;
@@ -144,6 +151,9 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   };
 
   const renderTab = (tabType) => {
+    if (nodeExecutionsLoading) {
+      return <LoadingComponent />;
+    }
     return (
       <WaitForQuery
         errorComponent={DataError}

@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   NodeExecutionsByIdContext,
@@ -74,6 +74,8 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   let queryClient: QueryClient;
   let requestConfig: RequestConfig;
   const initialNodes = mockNodes(2);
+  const selectedExecution = null;
+  const setSelectedExecution = jest.fn();
 
   beforeEach(() => {
     requestConfig = {};
@@ -112,53 +114,43 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     });
 
     it('renders empty content when there are no nodes', async () => {
-      const selectedExecution = null;
-      const setSelectedExecution = jest.fn();
-
-      const { container, getByText } = renderTable({
+      const { getByText } = renderTable({
         initialNodes: [],
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById: {},
       });
 
-      await waitFor(() => container);
       expect(getByText(noExecutionsFoundString)).toBeInTheDocument();
     });
 
     it('renders NodeExecutionRows with proper nodeExecutions', async () => {
-      const selectedExecution = null;
-      const setSelectedExecution = jest.fn();
       const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
       const nodeExecutionsById = mockExecutionsById(2, phases);
 
-      const { container, getByText } = renderTable({
+      const { getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById,
       });
 
-      await waitFor(() => container);
       for (const i in initialNodes) {
         expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
       }
     });
 
     it('renders future nodes with UNDEFINED phase', async () => {
-      const selectedExecution = null;
-      const setSelectedExecution = jest.fn();
       const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
       const nodeExecutionsById = mockExecutionsById(1, phases);
 
-      const { container, getByText } = renderTable({
+      const { getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById,
       });
 
-      await waitFor(() => container);
       for (const i in initialNodes) {
         expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
       }

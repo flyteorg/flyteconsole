@@ -37,7 +37,7 @@ jest.mock('components/WorkflowGraph/WorkflowGraph', () => ({
   WorkflowGraph: jest.fn(({ children }) => <div data-testid="workflow-graph">{children}</div>),
 }));
 
-describe('ExecutionTabContent', () => {
+describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {

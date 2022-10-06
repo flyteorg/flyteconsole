@@ -43,26 +43,13 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
-  const filterState = useNodeExecutionFiltersState();
-
-  const showUnknownNodes = useMemo<Boolean>(() => {
-    if (
-      filterState.filters[0].active &&
-      !(filterState.filters[0] as MultiFilterState<any, any>).selectedStates[
-        NodeExecutionPhase.UNDEFINED
-      ]
-    ) {
-      return false;
-    }
-    return !filterState.filters[1].active && !filterState.filters[2].active;
-  }, [filterState]);
 
   useEffect(() => {
     if (nodeExecutionsById) {
       const executions: NodeExecution[] = [];
       initialNodes.map((node) => {
         if (nodeExecutionsById[node.scopedId]) executions.push(nodeExecutionsById[node.scopedId]);
-        else if (showUnknownNodes)
+        else
           executions.push({
             closure: {
               createdAt: dateToTimestamp(new Date()),
@@ -83,7 +70,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       });
       setNodeExecutions(executions);
     }
-  }, [nodeExecutionsById, initialNodes, showUnknownNodes]);
+  }, [nodeExecutionsById, initialNodes]);
 
   const executionsWithKeys = useMemo(
     () =>
