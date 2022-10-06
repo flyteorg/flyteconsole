@@ -32,7 +32,7 @@ import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { notFoundError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
-import { FilterOperationName, RequestConfig } from 'models/AdminEntity/types';
+import { FilterOperationName, RequestConfig } from '@flyteconsole/flyteidl';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
 import { Execution, NodeExecution, TaskNodeMetadata } from 'models/Execution/types';

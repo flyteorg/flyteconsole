@@ -1,4 +1,4 @@
-import { FilterOperation, FilterOperationList } from 'models/AdminEntity/types';
+import { FilterOperation, FilterOperationList } from '@flyteconsole/flyteidl';
 
 export interface FilterValue<FilterKey extends string, DataType = FilterOperationList> {
   label: string;

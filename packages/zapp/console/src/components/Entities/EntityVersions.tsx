@@ -10,7 +10,7 @@ import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersions
 import { isLoadingState } from 'components/hooks/fetchMachine';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from 'components/Theme/constants';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { Identifier, ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator, versionDetailsUrlGenerator } from './generators';

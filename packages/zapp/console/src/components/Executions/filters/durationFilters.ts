@@ -1,4 +1,4 @@
-import { FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { FilterMap } from './types';
 
 const key = 'duration';

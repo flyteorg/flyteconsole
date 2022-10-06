@@ -12,7 +12,7 @@ import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge
 import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
-import { PaginatedEntityResponse } from 'models/AdminEntity/types';
+import { PaginatedEntityResponse } from '@flyteconsole/flyteidl';
 import { Workflow } from 'models/Workflow/types';
 import {
   MapTaskExecution,

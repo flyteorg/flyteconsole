@@ -1,4 +1,4 @@
-import { RequestConfig } from './types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 
 export const apiPrefix = '/api/v1';
 

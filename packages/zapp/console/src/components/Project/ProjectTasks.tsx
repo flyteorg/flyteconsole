@@ -3,7 +3,7 @@ import { useTaskNameList } from 'components/hooks/useNamedEntity';
 import { SearchableTaskNameList } from 'components/Task/SearchableTaskNameList';
 import { useTaskShowArchivedState } from 'components/Task/useTaskShowArchivedState';
 import { limits } from 'models/AdminEntity/constants';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { taskSortFields } from 'models/Task/constants';
 import * as React from 'react';
 

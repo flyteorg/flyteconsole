@@ -1,4 +1,4 @@
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { listIdentifiers } from 'models/Common/api';
 import { IdentifierScope, NamedEntityIdentifier, ResourceType } from 'models/Common/types';
 import { listLaunchPlans } from 'models/Launch/api';

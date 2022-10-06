@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { createMockLaunchPlan, mockLaunchPlanSchedules } from 'models/__mocks__/launchPlanData';
-import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { listLaunchPlans } from 'models/Launch/api';
 import { LaunchPlan, LaunchPlanState } from 'models/Launch/types';

@@ -10,3 +10,4 @@ import event = flyteidl.event;
 import protobuf = google.protobuf;
 
 export { admin as Admin, core as Core, service as Service, protobuf as Protobuf, event as Event };
+export * from "./custom/adminEntity";

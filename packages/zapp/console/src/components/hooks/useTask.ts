@@ -1,5 +1,5 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { Identifier, IdentifierScope } from 'models/Common/types';
 import { Task, TaskTemplate } from 'models/Task/types';
 import { FetchableData } from './types';

@@ -4,7 +4,7 @@ import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { FetchableData } from 'components/hooks/types';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
 import { NamedEntity, UserProfile } from 'models/Common/types';
 import { NamedEntityState } from 'models/enums';
@@ -56,7 +56,7 @@ describe('ProjectWorkflows', () => {
 
   it('does not show archived workflows', async () => {
     renderComponent();
-    await waitFor(() => {});
+    await waitFor(() => { });
 
     expect(mockListNamedEntities).toHaveBeenCalledWith(
       expect.anything(),
@@ -75,7 +75,7 @@ describe('ProjectWorkflows', () => {
   it('should display checkbox if user login', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getAllByRole } = renderComponent();
-    await waitFor(() => {});
+    await waitFor(() => { });
     const checkboxes = getAllByRole(/checkbox/i) as HTMLInputElement[];
     expect(checkboxes).toHaveLength(1);
     expect(checkboxes[0]).toBeTruthy();
@@ -86,7 +86,7 @@ describe('ProjectWorkflows', () => {
   it('clicking show archived should hide active workflows', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getByText, queryByText, getAllByRole } = renderComponent();
-    await waitFor(() => {});
+    await waitFor(() => { });
     const checkboxes = getAllByRole(/checkbox/i) as HTMLInputElement[];
     expect(checkboxes[0]).toBeTruthy();
     expect(checkboxes[0]?.checked).toEqual(false);

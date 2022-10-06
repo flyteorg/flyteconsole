@@ -2,7 +2,7 @@ import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
-import { FilterOperationName, SortDirection } from 'models/AdminEntity/types';
+import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { workflowSortFields } from 'models/Workflow/constants';

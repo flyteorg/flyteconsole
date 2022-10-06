@@ -1,13 +1,13 @@
 import { env } from 'common/env';
 import { createDebugLogger } from 'common/log';
 import { createLocalURL, ensureSlashPrefixed } from 'common/utils';
-import { apiPrefix } from './constants';
 import {
   AdminEntityTransformer,
   DecodableType,
   EncodableType,
   PaginatedEntityResponse,
-} from './types';
+} from '@flyteconsole/flyteidl';
+import { apiPrefix } from './constants';
 
 const debug = createDebugLogger('adminEntity');
 

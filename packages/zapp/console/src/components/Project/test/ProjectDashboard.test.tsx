@@ -5,7 +5,7 @@ import { insertFixture } from 'mocks/data/insertFixture';
 import { unexpectedError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
 import { sortQueryKeys } from 'models/AdminEntity/constants';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { DomainIdentifierScope, UserProfile } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { Execution } from 'models/Execution/types';

@@ -1,5 +1,5 @@
 import { QueryInput, QueryType } from 'components/data/types';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { getTaskExecution, listTaskExecutions } from 'models/Execution/api';
 import {
   NodeExecutionIdentifier,

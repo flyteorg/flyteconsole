@@ -1,6 +1,6 @@
 import { useQueryState } from 'components/hooks/useQueryState';
 import { isEqual, mapValues, pickBy } from 'lodash';
-import { FilterOperationName, FilterOperationValue } from 'models/AdminEntity/types';
+import { FilterOperationName, FilterOperationValue } from '@flyteconsole/flyteidl';
 import { useEffect, useState } from 'react';
 import { FilterValue, MultiFilterState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';
@@ -92,12 +92,12 @@ export function useMultiFilterState<
     );
     return value.length
       ? [
-          {
-            value,
-            key: filterKey,
-            operation: filterOperation,
-          },
-        ]
+        {
+          value,
+          key: filterKey,
+          operation: filterOperation,
+        },
+      ]
       : [];
   };
 

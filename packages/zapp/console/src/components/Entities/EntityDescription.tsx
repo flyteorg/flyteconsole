@@ -10,7 +10,7 @@ import reactLoadingSkeleton from 'react-loading-skeleton';
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { executionSortFields } from 'models/Execution/constants';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { TaskClosure } from 'models/Task/types';
 import { executionFilterGenerator } from './generators';
 import { Row } from './Row';

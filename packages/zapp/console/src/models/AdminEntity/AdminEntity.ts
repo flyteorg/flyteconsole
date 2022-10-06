@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
+import { AdminEntityTransformer, DecodableType, EncodableType, RequestConfig } from '@flyteconsole/flyteidl';
 import { generateAdminApiQuery } from './AdminApiQuery';
 import { transformRequestError } from './transformRequestError';
-import { AdminEntityTransformer, DecodableType, EncodableType, RequestConfig } from './types';
 import { adminApiUrl, decodeProtoResponse, encodeProtoPayload, logProtoResponse } from './utils';
 
 /** Base work function used by the HTTP verb methods below. It does not handle

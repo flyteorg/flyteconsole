@@ -1,5 +1,5 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { FilterOperationName, SortDirection } from 'models/AdminEntity/types';
+import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
 import { taskSortFields } from 'models/Task/constants';
 import { Task } from 'models/Task/types';

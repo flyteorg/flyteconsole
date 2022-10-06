@@ -1,6 +1,6 @@
 import { createPaginationQuery } from 'components/data/queryUtils';
 import { InfiniteQueryInput, QueryType } from 'components/data/types';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { DomainIdentifierScope } from 'models/Common/types';
 import { listExecutions } from 'models/Execution/api';
 import { Execution } from 'models/Execution/types';

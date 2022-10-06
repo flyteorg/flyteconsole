@@ -1,5 +1,5 @@
 import { fireEvent, getByLabelText, getByText, render, waitFor } from '@testing-library/react';
-import { PaginatedEntityResponse, RequestConfig } from 'models/AdminEntity/types';
+import { PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
 import * as React from 'react';
 import { PaginationConfig, usePagination } from '../usePagination';
 

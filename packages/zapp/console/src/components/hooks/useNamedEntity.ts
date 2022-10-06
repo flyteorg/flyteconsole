@@ -1,6 +1,6 @@
 import { useAPIContext } from 'components/data/apiContext';
 import { Core } from '@flyteconsole/flyteidl';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { getNamedEntity } from 'models/Common/api';
 import { DomainIdentifierScope, NamedEntity, ResourceType } from 'models/Common/types';
 import { useFetchableData } from './useFetchableData';

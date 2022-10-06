@@ -12,7 +12,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
 import { useLaunchPlans } from 'components/hooks/useLaunchPlans';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
-import { FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { ResourceIdentifier } from 'models/Common/types';
 import { LaunchPlanClosure, LaunchPlanSpec } from 'models/Launch/types';
 import * as React from 'react';
