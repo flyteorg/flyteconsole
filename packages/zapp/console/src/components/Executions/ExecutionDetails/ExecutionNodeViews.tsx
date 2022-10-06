@@ -160,7 +160,13 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
         query={childGroupsQuery}
         loadingComponent={LoadingComponent}
       >
-        {() => <ExecutionTab tabType={tabType} abortMetadata={abortMetadata ?? undefined} />}
+        {() => (
+          <ExecutionTab
+            tabType={tabType}
+            abortMetadata={abortMetadata ?? undefined}
+            filteredNodeExecutions={nodeExecutionsQuery.data ?? []}
+          />
+        )}
       </WaitForQuery>
     );
   };

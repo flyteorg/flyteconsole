@@ -49,7 +49,7 @@ describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
           <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
-            <ExecutionTabContent tabType={tabType} />
+            <ExecutionTabContent tabType={tabType} filteredNodeExecutions={[]} />
           </NodeExecutionsByIdContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,

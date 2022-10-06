@@ -3,7 +3,7 @@ import { DetailsPanel } from 'components/common/DetailsPanel';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import { Admin } from 'flyteidl';
 import * as React from 'react';
@@ -25,6 +25,7 @@ import { convertToPlainNodes, TimeZone } from './Timeline/helpers';
 export interface ExecutionTabContentProps {
   tabType: string;
   abortMetadata?: Admin.IAbortMetadata;
+  filteredNodeExecutions: NodeExecution[];
 }
 
 const useStyles = makeStyles(() => ({
@@ -43,6 +44,7 @@ const useStyles = makeStyles(() => ({
 export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   tabType,
   abortMetadata,
+  filteredNodeExecutions,
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
@@ -172,6 +174,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             initialNodes={initialNodes}
             selectedExecution={selectedExecution}
             setSelectedExecution={onExecutionSelectionChanged}
+            filteredNodeExecutions={filteredNodeExecutions}
           />
         );
       default:

@@ -15,6 +15,7 @@ import * as React from 'react';
 import { dateToTimestamp } from 'common/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
+import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 
@@ -47,6 +48,26 @@ const mockNodes = (n: number): dNode[] => {
     });
   }
   return nodes;
+};
+
+const mockNodeExecutions = (n: number, phases: NodeExecutionPhase[]): NodeExecution[] => {
+  const nodeExecutions: NodeExecution[] = [];
+  for (let i = 1; i <= n; i++) {
+    nodeExecutions.push({
+      closure: {
+        createdAt: dateToTimestamp(new Date()),
+        outputUri: '',
+        phase: phases[i - 1],
+      },
+      id: {
+        executionId: { domain: 'domain', name: 'name', project: 'project' },
+        nodeId: `node${i}`,
+      },
+      inputUri: '',
+      scopedId: `n${i}`,
+    });
+  }
+  return nodeExecutions;
 };
 
 const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
@@ -85,6 +106,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   const renderTable = ({
     nodeExecutionsById,
     initialNodes,
+    filteredNodeExecutions,
     selectedExecution,
     setSelectedExecution,
   }) =>
@@ -97,6 +119,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
                 initialNodes={initialNodes}
                 selectedExecution={selectedExecution}
                 setSelectedExecution={setSelectedExecution}
+                filteredNodeExecutions={filteredNodeExecutions}
               />
             </NodeExecutionsByIdContext.Provider>
           </NodeExecutionDetailsContextProvider>
@@ -119,6 +142,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById: {},
+        filteredNodeExecutions: [],
       });
 
       expect(getByText(noExecutionsFoundString)).toBeInTheDocument();
@@ -127,12 +151,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     it('renders NodeExecutionRows with proper nodeExecutions', async () => {
       const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
       const nodeExecutionsById = mockExecutionsById(2, phases);
+      const filteredNodeExecutions = mockNodeExecutions(2, phases);
 
       const { getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById,
+        filteredNodeExecutions,
       });
 
       for (const i in initialNodes) {
@@ -143,12 +169,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     it('renders future nodes with UNDEFINED phase', async () => {
       const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
       const nodeExecutionsById = mockExecutionsById(1, phases);
+      const filteredNodeExecutions = mockNodeExecutions(1, phases);
 
       const { getByText } = renderTable({
         initialNodes,
         selectedExecution,
         setSelectedExecution,
         nodeExecutionsById,
+        filteredNodeExecutions,
       });
 
       for (const i in initialNodes) {
