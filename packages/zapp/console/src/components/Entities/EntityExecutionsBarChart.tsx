@@ -5,7 +5,7 @@ import { BarChart } from 'components/common/BarChart';
 import { WaitForData } from 'components/common/WaitForData';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { ResourceIdentifier } from 'models/Common/types';
 import { Execution } from 'models/Execution/types';
 import { executionSortFields } from 'models/Execution/constants';

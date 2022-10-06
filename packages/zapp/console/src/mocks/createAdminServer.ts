@@ -1,6 +1,6 @@
 import { Admin } from '@flyteconsole/flyteidl';
 import { limits } from 'models/AdminEntity/constants';
-import { EncodableType } from 'models/AdminEntity/types';
+import { EncodableType } from '@flyteconsole/flyteidl';
 import { adminApiUrl, encodeProtoPayload } from 'models/AdminEntity/utils';
 import { DomainIdentifierScope, Identifier, ResourceType } from 'models/Common/types';
 import {

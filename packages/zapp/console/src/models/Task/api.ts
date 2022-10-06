@@ -1,7 +1,7 @@
 import { Admin, Core } from '@flyteconsole/flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { Identifier, IdentifierScope } from 'models/Common/types';
 import { makeNamedEntityPath } from 'models/Common/utils';
 import { NamedEntityState } from 'models/enums';

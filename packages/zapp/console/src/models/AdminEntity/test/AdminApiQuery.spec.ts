@@ -1,6 +1,6 @@
+import { FilterOperation, FilterOperationName, Sort, SortDirection } from '@flyteconsole/flyteidl';
 import { generateAdminApiQuery } from '../AdminApiQuery';
 import { sortQueryKeys } from '../constants';
-import { FilterOperation, FilterOperationName, Sort, SortDirection } from '../types';
 
 function makeFilter(key: string, operation: FilterOperationName, value: string): FilterOperation {
   return { key, operation, value };

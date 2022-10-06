@@ -1,4 +1,4 @@
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { IdentifierScope } from 'models/Common/types';
 import { listExecutions } from 'models/Execution/api';
 import { Execution } from 'models/Execution/types';

@@ -1,5 +1,5 @@
 import { DomainIdentifierScope, ResourceType } from 'models/Common/types';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { usePagination } from 'components/hooks/usePagination';
 import { useAPIContext } from 'components/data/apiContext';
 import { LaunchPlanListStructureItem } from './types';

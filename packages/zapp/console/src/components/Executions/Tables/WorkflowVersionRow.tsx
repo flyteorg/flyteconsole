@@ -7,7 +7,7 @@ import { Workflow } from 'models/Workflow/types';
 import TableRow from '@material-ui/core/TableRow';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { executionSortFields } from 'models/Execution/constants';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionFilterGenerator } from 'components/Entities/generators';
 import { ResourceIdentifier } from 'models/Common/types';
 import { useWorkflowVersionsColumnStyles } from './styles';
@@ -65,9 +65,9 @@ export const WorkflowVersionRow: React.FC<WorkflowVersionRowProps> = ({
     () =>
       workflow.id.resourceType
         ? executionFilterGenerator[workflow.id.resourceType](
-            workflow.id as ResourceIdentifier,
-            workflow.id.version,
-          )
+          workflow.id as ResourceIdentifier,
+          workflow.id.version,
+        )
         : [],
     [workflow.id],
   );

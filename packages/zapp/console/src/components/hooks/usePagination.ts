@@ -1,5 +1,5 @@
 import { CacheContext } from '@flyteconsole/components';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { useContext, useMemo } from 'react';
 import { FetchFn, PaginatedFetchableData, PaginatedFetchFn, PaginationValue } from './types';
 import { useFetchableData } from './useFetchableData';

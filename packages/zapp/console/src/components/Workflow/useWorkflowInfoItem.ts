@@ -1,5 +1,5 @@
 import { NamedEntityIdentifier } from 'models/Common/types';
-import { FilterOperationName, SortDirection } from 'models/AdminEntity/types';
+import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { listExecutions } from 'models/Execution/api';
 import { listWorkflows } from 'models/Workflow/api';

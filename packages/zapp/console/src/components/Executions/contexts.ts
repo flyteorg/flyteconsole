@@ -1,4 +1,4 @@
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { Execution, NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 

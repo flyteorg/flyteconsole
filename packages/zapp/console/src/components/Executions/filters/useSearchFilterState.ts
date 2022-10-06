@@ -1,5 +1,5 @@
 import { useQueryState } from 'components/hooks/useQueryState';
-import { FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { useEffect, useState } from 'react';
 import { SearchFilterState } from './types';
 import { useFilterButtonState } from './useFilterButtonState';
@@ -59,12 +59,12 @@ export function useSearchFilterState({
   const getFilter = () =>
     value
       ? [
-          {
-            value,
-            key: filterKey,
-            operation: filterOperation,
-          },
-        ]
+        {
+          value,
+          key: filterKey,
+          operation: filterOperation,
+        },
+      ]
       : [];
 
   return {

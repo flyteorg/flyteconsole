@@ -2,7 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import { noExecutionsFoundString } from 'common/constants';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { listTaskExecutions } from 'models/Execution/api';
 import { NodeExecution } from 'models/Execution/types';
 import { mockNodeExecutionResponse } from 'models/Execution/__mocks__/mockNodeExecutionsData';
@@ -31,14 +31,14 @@ describe('TaskExecutionsList', () => {
 
   it('Renders message when no task executions exist', async () => {
     const { queryByText } = renderList();
-    await waitFor(() => {});
+    await waitFor(() => { });
     expect(mockListTaskExecutions).toHaveBeenCalled();
     expect(queryByText(noExecutionsFoundString)).toBeInTheDocument();
   });
 
   it('Requests items in correct order', async () => {
     renderList();
-    await waitFor(() => {});
+    await waitFor(() => { });
     expect(mockListTaskExecutions).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({

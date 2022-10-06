@@ -1,5 +1,5 @@
 import { IdentifierScope, ResourceIdentifier } from 'models/Common/types';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { usePagination } from '../usePagination';
 import { EntityType, entityFunctions } from './constants';
 

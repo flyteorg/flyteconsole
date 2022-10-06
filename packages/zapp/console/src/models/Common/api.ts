@@ -3,7 +3,7 @@ import { Admin, Core } from '@flyteconsole/flyteidl';
 import { getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { PaginatedEntityResponse, RequestConfig } from 'models/AdminEntity/types';
+import { PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
 import { defaultSystemStatus, identifierPrefixes } from './constants';
 import {
   IdentifierScope,

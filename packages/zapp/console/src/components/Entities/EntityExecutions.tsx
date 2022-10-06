@@ -8,7 +8,7 @@ import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { isLoadingState } from 'components/hooks/fetchMachine';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { ResourceIdentifier } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { compact } from 'lodash';

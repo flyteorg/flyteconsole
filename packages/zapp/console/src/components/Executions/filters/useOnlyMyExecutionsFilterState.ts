@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
+import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { useOnlyMineSelectedValue } from 'components/hooks/useOnlyMineSelectedValue';
 import { OnlyMyFilter } from 'basics/LocalCache/onlyMineDefaultConfig';

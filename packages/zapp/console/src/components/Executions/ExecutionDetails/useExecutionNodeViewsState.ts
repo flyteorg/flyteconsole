@@ -1,6 +1,6 @@
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { limits } from 'models/AdminEntity/constants';
-import { FilterOperation, SortDirection } from 'models/AdminEntity/types';
+import { FilterOperation, SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { Execution, NodeExecution } from 'models/Execution/types';
 import { useQueryClient } from 'react-query';

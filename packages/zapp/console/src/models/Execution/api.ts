@@ -4,7 +4,7 @@ import {
   defaultListExecutionChildrenConfig,
   defaultPaginationConfig,
 } from 'models/AdminEntity/constants';
-import { RequestConfig } from 'models/AdminEntity/types';
+import { RequestConfig } from '@flyteconsole/flyteidl';
 import { endpointPrefixes } from 'models/Common/constants';
 import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
 import { makeIdentifierPath } from 'models/Common/utils';

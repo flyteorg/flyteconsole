@@ -1,6 +1,6 @@
 import { useFetchableData } from 'components/hooks/useFetchableData';
 import { NotFoundError } from 'errors/fetchErrors';
-import { SortDirection } from 'models/AdminEntity/types';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { NamedEntityIdentifier } from 'models/Common/types';
 import { listTasks } from 'models/Task/api';
 import { taskSortFields } from 'models/Task/constants';

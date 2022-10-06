@@ -4,7 +4,7 @@ import {
   FilterOperationName,
   Sort,
   SortDirection,
-} from './types';
+} from '@flyteconsole/flyteidl';
 
 import { sortQueryKeys } from './constants';
 
