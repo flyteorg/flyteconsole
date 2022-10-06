@@ -1,9 +1,8 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { Core } from '@flyteconsole/flyteidl';
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import { Core, RequestConfig } from '@flyteconsole/flyteidl';
 import { getNamedEntity } from 'models/Common/api';
 import { DomainIdentifierScope, NamedEntity, ResourceType } from 'models/Common/types';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData } from '@flyteconsole/components';
 import { usePagination } from './usePagination';
 
 export interface UseNamedEntityInput {

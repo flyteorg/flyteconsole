@@ -1,5 +1,4 @@
-import { useFetchableData } from 'components/hooks/useFetchableData';
-import { NotFoundError } from '@flyteconsole/components';
+import { NotFoundError, useFetchableData } from '@flyteconsole/components';
 import { SortDirection } from '@flyteconsole/flyteidl';
 import { NamedEntityIdentifier } from 'models/Common/types';
 import { listTasks } from 'models/Task/api';

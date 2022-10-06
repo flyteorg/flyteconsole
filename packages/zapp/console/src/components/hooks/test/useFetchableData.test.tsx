@@ -1,7 +1,6 @@
 import { fireEvent, getByLabelText, render, waitFor } from '@testing-library/react';
 import * as React from 'react';
-import { fetchStates } from '@flyteconsole/components';
-import { FetchableDataConfig, useFetchableData } from '../useFetchableData';
+import { fetchStates, FetchableDataConfig, useFetchableData } from '@flyteconsole/components';
 
 const stateLabel = 'fetch-state';
 const errorLabel = 'fetch-error';

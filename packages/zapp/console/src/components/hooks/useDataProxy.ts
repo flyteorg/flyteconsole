@@ -1,7 +1,6 @@
 import { useAPIContext } from 'components/data/apiContext';
 import { DownloadLocation } from 'models/Execution/types';
-import { FetchableData } from '@flyteconsole/components';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData, FetchableData } from '@flyteconsole/components';
 
 /** A hook for fetching a NodeExecution */
 export function useDownloadLocation(nativeUrl: string): FetchableData<DownloadLocation> {

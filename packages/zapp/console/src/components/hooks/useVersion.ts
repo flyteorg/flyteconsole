@@ -1,6 +1,6 @@
 import { useFlyteApi, AdminEndpoint, getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { GetVersionResponse } from 'models/Common/types';
-import { useFetchableData } from './useFetchableData';
+import { useFetchableData } from '@flyteconsole/components';
 
 /** State hook that returns the version information */
 function useVersion() {

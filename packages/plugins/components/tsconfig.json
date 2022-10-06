@@ -6,6 +6,9 @@
     },
     "references": [
         {
+            "path": "../../plugins/flyte-api"
+        },
+        {
             "path": "../../basics/flyteidl"
         },
         {
