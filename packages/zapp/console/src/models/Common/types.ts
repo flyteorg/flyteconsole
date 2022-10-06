@@ -207,6 +207,3 @@ export interface SystemStatus {
   status: StatusString;
 }
 
-export interface GetVersionResponse extends Admin.GetVersionResponse {
-  controlPlaneVersion: Admin.IVersion | null;
-}

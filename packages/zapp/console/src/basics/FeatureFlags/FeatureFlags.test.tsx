@@ -1,12 +1,20 @@
 import * as React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 
-import { useAdminVersion } from 'components/hooks/useVersion';
+import { useAdminVersion } from '@flyteconsole/components';
 import { FeatureFlagsProvider, useFeatureFlag } from '.';
 import { AdminFlag, FeatureFlag } from './defaultConfig';
 import { useIsEnabledInAdmin } from './AdminFlag';
 
-jest.mock('components/hooks/useVersion');
+jest.mock('@flyteconsole/components', () => {
+  const originalModule = jest.requireActual('@flyteconsole/components');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    useAdminVersion: jest.fn(),
+  };
+});
 
 function TestContent() {
   const enabledTestFlag = useFeatureFlag(FeatureFlag.TestFlagUndefined);
