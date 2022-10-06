@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
+import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
 import * as React from 'react';
 import { DataError, DataErrorProps } from '../DataError';
 

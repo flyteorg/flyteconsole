@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { NotAuthorizedError, NotFoundError } from 'errors/fetchErrors';
+import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { decodeProtoResponse } from './utils';
 
