@@ -156,7 +156,7 @@
         "webpack-merge": "^5.8.0",
         "webpack-node-externals": "^3.0.0",
         "webpack-stats-plugin": "^1.0.3",
-        "xstate": "^4.11.0"
+        "xstate": "4.33.6"
     },
     "resolutions": {
         "micromatch": "^4.0.0"

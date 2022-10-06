@@ -10,8 +10,10 @@ import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { getInputsForWorkflow } from './getInputs';
 import {
+  LaunchPlanLaunchContextExtended,
   LaunchState,
   WorkflowLaunchContext,
+  WorkflowLaunchContextExtended,
   WorkflowLaunchEvent,
   workflowLaunchMachine,
   WorkflowLaunchTypestate,
@@ -353,7 +355,7 @@ export function useLaunchWorkflowFormState({
   useEffect(() => {
     const subscription = service.subscribe((newState) => {
       if (newState.matches(LaunchState.SELECT_WORKFLOW_VERSION)) {
-        const { workflowVersionOptions, preferredWorkflowId } = newState.context;
+        const { workflowVersionOptions, preferredWorkflowId } = newState.context as WorkflowLaunchContextExtended;
         if (workflowVersionOptions.length > 0) {
           let workflowToSelect = workflowVersionOptions[0];
           if (preferredWorkflowId) {
@@ -372,7 +374,7 @@ export function useLaunchWorkflowFormState({
       }
 
       if (newState.matches(LaunchState.SELECT_LAUNCH_PLAN)) {
-        const { launchPlan, launchPlanOptions, sourceId } = newState.context;
+        const { launchPlan, launchPlanOptions, sourceId } = newState.context as LaunchPlanLaunchContextExtended;
         if (!launchPlanOptions.length) {
           return;
         }
@@ -399,7 +401,7 @@ export function useLaunchWorkflowFormState({
           }
         } else {
           const defaultLaunchPlan = launchPlanOptions.find(
-            ({ id: { name } }) => name === sourceId.name,
+            ({ id: { name } }) => name === sourceId?.name,
           );
           if (defaultLaunchPlan) {
             launchPlanToSelect = defaultLaunchPlan;

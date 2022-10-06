@@ -46,7 +46,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
       // id and navigate to the Execution Details page.
       // if (state.matches({ submit: 'succeeded' })) {
       if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
-        history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId));
+        history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId!));
       }
     });
 
@@ -56,7 +56,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
   return (
     <div className={styles.footer}>
       {state.matches(LaunchState.SUBMIT_FAILED) ? (
-        <FormHelperText error={true}>{state.context.error.message}</FormHelperText>
+        <FormHelperText error={true}>{state.context.error?.message}</FormHelperText>
       ) : null}
       <DialogActions>
         <Button
