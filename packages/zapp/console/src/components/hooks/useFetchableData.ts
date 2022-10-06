@@ -1,9 +1,7 @@
 import { useMachine } from '@xstate/react';
 import { FlyteApiContextState, useFlyteApi } from '@flyteconsole/flyte-api';
 import { createDebugLogger } from 'common/log';
-import { CacheContext } from 'components/Cache/CacheContext';
-import { ValueCache } from 'components/Cache/createCache';
-import { getCacheKey } from 'components/Cache/utils';
+import { CacheContext, ValueCache, getCacheKey } from '@flyteconsole/components';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { NotAuthorizedError } from 'errors/fetchErrors';
 import { useContext, useEffect, useMemo, useRef } from 'react';

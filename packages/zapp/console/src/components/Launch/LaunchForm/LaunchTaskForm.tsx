@@ -1,5 +1,5 @@
 import { DialogContent } from '@material-ui/core';
-import { getCacheKey } from 'components/Cache/utils';
+import { getCacheKey } from '@flyteconsole/components';
 import * as React from 'react';
 import { formStrings } from './constants';
 import { LaunchFormActions } from './LaunchFormActions';

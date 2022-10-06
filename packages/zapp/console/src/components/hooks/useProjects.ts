@@ -1,5 +1,4 @@
-import { CacheContext } from 'components/Cache/CacheContext';
-import { ValueCache } from 'components/Cache/createCache';
+import { CacheContext, ValueCache } from '@flyteconsole/components';
 import { NotFoundError } from 'errors/fetchErrors';
 import { listProjects } from 'models/Project/api';
 import { Project } from 'models/Project/types';
