@@ -1,4 +1,4 @@
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import {
   adminApiUrl,
   createPaginationTransformer,
@@ -6,8 +6,8 @@ import {
   encodeProtoPayload,
 } from '../utils';
 
-jest.mock('common/env', () => ({
-  env: jest.requireActual('common/env').env,
+jest.mock('@flyteconsole/components', () => ({
+  env: jest.requireActual('@flyteconsole/components').env,
 }));
 
 const adminPrefix = 'http://admin';
@@ -55,9 +55,9 @@ describe('AdminEntity/utils', () => {
       const messageType = {
         encode: jest.fn(
           () =>
-            ({
-              finish: jest.fn(() => data),
-            } as any),
+          ({
+            finish: jest.fn(() => data),
+          } as any),
         ),
       };
       const result = encodeProtoPayload([], messageType);

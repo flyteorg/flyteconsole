@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { FlyteApiProvider } from '@flyteconsole/flyte-api';
 import { SnackbarProvider } from 'notistack';
 import { FeatureFlagsProvider } from 'basics/FeatureFlags';
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import { debug, debugPrefix } from '@flyteconsole/components';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { APIContext, useAPIState } from 'components/data/apiContext';

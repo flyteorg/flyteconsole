@@ -11,9 +11,8 @@ import {
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from 'components/Theme/muiTheme';
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import { RequestConfig, Core, Protobuf } from '@flyteconsole/flyteidl';
 import { Identifier, NamedEntityIdentifier, Variable } from 'models/Common/types';
 import { createWorkflowExecution } from 'models/Execution/api';
 import { getTask, listTasks } from 'models/Task/api';

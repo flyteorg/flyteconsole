@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
-import { barChartColors } from 'components/common/constants';
+import { barChartColors } from '@flyteconsole/components';
 import { useCommonStyles } from 'components/common/styles';
 
 const useStyles = makeStyles(() => ({

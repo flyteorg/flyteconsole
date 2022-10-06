@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isDevEnv, isTestEnv } from 'common/env';
+import { isDevEnv, isTestEnv } from '@flyteconsole/components';
 import { defaultFlagConfig, FeatureFlag, FeatureFlagConfig } from './defaultConfig';
 
 export { FeatureFlag } from './defaultConfig';

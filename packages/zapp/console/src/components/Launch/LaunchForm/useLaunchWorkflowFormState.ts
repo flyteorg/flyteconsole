@@ -1,5 +1,5 @@
 import { useMachine } from '@xstate/react';
-import { defaultStateMachineConfig } from 'components/common/constants';
+import { defaultStateMachineConfig } from '@flyteconsole/components';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
 import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';

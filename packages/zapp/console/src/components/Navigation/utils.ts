@@ -1,5 +1,5 @@
 import { FlyteNavigation } from '@flyteconsole/components';
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 
 export const getFlyteNavigationData = (): FlyteNavigation | undefined => {
   return env.FLYTE_NAVIGATION ? JSON.parse(env.FLYTE_NAVIGATION) : undefined;

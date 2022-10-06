@@ -1,4 +1,4 @@
-import { env } from 'common/env';
+import { env } from '@flyteconsole/components';
 import 'intersection-observer';
 import 'protobuf';
 import * as React from 'react';

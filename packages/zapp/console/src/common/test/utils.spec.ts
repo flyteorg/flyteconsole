@@ -11,8 +11,8 @@ import {
   timestampToDate,
 } from '../utils';
 
-jest.mock('common/env', () => ({
-  env: jest.requireActual('common/env').env,
+jest.mock('@flyteconsole/components', () => ({
+  env: jest.requireActual('@flyteconsole/components').env,
 }));
 
 describe('isValidDate', () => {
