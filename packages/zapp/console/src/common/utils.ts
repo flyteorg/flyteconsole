@@ -1,4 +1,4 @@
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 import * as Long from 'long';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';

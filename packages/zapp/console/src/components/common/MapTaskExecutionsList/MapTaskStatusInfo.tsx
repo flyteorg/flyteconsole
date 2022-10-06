@@ -5,7 +5,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { TaskNameList } from './TaskNameList';
 

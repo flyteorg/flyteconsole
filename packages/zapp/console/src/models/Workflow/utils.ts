@@ -1,4 +1,4 @@
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { createPaginationTransformer } from 'models/AdminEntity/utils';
 import { endpointPrefixes } from 'models/Common/constants';
 import { IdentifierScope } from 'models/Common/types';

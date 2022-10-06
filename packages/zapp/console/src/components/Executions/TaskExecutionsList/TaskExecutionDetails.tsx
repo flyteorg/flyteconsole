@@ -3,7 +3,7 @@ import { dateWithFromNow, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { DetailsGroup } from 'components/common/DetailsGroup';
 import * as React from 'react';
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 
 /** Renders the less important details for a `TaskExecution` as a `DetailsGroup`
  */

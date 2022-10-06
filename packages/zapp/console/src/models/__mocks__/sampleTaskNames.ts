@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { NamedEntity, NamedEntityIdentifier } from 'models/Common/types';
 import { NamedEntityState } from 'models/enums';
 

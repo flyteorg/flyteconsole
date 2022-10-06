@@ -1,5 +1,5 @@
 import { dateToTimestamp, millisecondsToDuration, stringifyValue } from 'common/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import * as Long from 'long';
 import { BlobDimensionality, SchemaColumnType } from 'models/Common/types';
 import { InputType, InputTypeDefinition, InputValue } from '../../types';

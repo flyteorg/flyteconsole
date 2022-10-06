@@ -1,5 +1,5 @@
 import cronstrue from 'cronstrue';
-import { Admin, Protobuf } from 'flyteidl';
+import { Admin, Protobuf } from '@flyteconsole/flyteidl';
 import * as moment from 'moment-timezone';
 import { unknownValueString, zeroSecondsString } from './constants';
 import { timezone } from './timezone';

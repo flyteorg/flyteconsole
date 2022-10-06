@@ -1,5 +1,5 @@
 import { stringifyValue } from 'common/utils';
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import { InputValue } from '../types';
 import { structPath } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';

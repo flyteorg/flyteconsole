@@ -5,7 +5,7 @@ import { useTaskNameList, useWorkflowNameList } from 'components/hooks/useNamedE
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import { DomainSettingsSection } from 'components/common/DomainSettingsSection';
 import { getCacheKey } from 'components/Cache/utils';
 import { limits } from 'models/AdminEntity/constants';

@@ -1,4 +1,4 @@
-import { Admin, Core, Event, Protobuf, Service } from 'flyteidl';
+import { Admin, Core, Event, Protobuf, Service } from '@flyteconsole/flyteidl';
 import { Identifier, LiteralMap, LiteralMapBlob, TaskLog, UrlBlob } from 'models/Common/types';
 import { CompiledWorkflow } from 'models/Workflow/types';
 import {

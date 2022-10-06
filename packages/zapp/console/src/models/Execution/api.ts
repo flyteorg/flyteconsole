@@ -1,4 +1,4 @@
-import { Admin, Core, Protobuf, Service } from 'flyteidl';
+import { Admin, Core, Protobuf, Service } from '@flyteconsole/flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
   defaultListExecutionChildrenConfig,

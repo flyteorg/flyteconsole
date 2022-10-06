@@ -1,6 +1,6 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 import * as Long from 'long';
 import { BlobDimensionality, SchemaColumnType } from 'models/Common/types';
 

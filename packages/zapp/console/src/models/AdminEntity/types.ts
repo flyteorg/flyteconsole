@@ -1,4 +1,4 @@
-import { Admin } from 'flyteidl';
+import { Admin } from '@flyteconsole/flyteidl';
 import * as $protobuf from 'protobufjs';
 
 /** Maps filter operations to the strings which should be used in queries to the Admin API */

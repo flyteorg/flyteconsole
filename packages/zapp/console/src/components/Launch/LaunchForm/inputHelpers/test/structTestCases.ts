@@ -1,5 +1,5 @@
 import { stringifyValue } from 'common/utils';
-import { Core, Protobuf } from 'flyteidl';
+import { Core, Protobuf } from '@flyteconsole/flyteidl';
 
 export function structLiteral(generic: Protobuf.IStruct): Core.ILiteral {
   return { scalar: { generic } };

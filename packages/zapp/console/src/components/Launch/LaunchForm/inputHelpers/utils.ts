@@ -1,5 +1,5 @@
 import { assertNever, stringifyValue } from 'common/utils';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { get, has } from 'lodash';
 import { BlobDimensionality } from 'models/Common/types';
 import { InputType, InputTypeDefinition } from '../types';

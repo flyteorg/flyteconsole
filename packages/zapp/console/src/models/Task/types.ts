@@ -1,4 +1,4 @@
-import { Admin, Core, Protobuf } from 'flyteidl';
+import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
 import {
   Container,
   Identifier,

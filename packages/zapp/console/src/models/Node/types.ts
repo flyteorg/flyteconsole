@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { Alias, Binding, Identifier } from 'models/Common/types';
 
 /** A graph node indicating a subworkflow execution */

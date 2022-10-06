@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { TestCaseList } from '../types';
 import { processSimpleType, columnTypeToString } from '../../helpers';
 

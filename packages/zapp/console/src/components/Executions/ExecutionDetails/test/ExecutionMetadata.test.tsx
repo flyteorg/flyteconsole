@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { dashedValueString } from 'common/constants';
-import { Protobuf } from 'flyteidl';
+import { Protobuf } from '@flyteconsole/flyteidl';
 import { Execution, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';

@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { InputValue } from '../types';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 
@@ -12,7 +12,7 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
   };
 }
 
-function validate({ value }: InputValidatorParams) {}
+function validate({ value }: InputValidatorParams) { }
 
 export const noneHelper: InputHelper = {
   fromLiteral,

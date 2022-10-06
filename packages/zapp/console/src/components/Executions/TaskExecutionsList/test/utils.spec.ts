@@ -1,5 +1,5 @@
 import { getTaskLogName, getTaskIndex } from 'components/Executions/TaskExecutionsList/utils';
-import { Event } from 'flyteidl';
+import { Event } from '@flyteconsole/flyteidl';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { obj } from 'test/utils';
 import {

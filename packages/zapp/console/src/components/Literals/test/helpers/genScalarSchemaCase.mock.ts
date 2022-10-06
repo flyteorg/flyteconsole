@@ -1,4 +1,4 @@
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { TestCaseList } from '../types';
 
 const schemaColumnTypes: TestCaseList<Core.ISchema> = Object.keys(

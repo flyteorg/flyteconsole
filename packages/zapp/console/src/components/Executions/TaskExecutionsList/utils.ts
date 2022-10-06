@@ -1,6 +1,6 @@
 import { ExternalResource, LogsByPhase, TaskExecution } from 'models/Execution/types';
 import { leftPaddedNumber } from 'common/formatters';
-import { Core, Event } from 'flyteidl';
+import { Core, Event } from '@flyteconsole/flyteidl';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 
 /** Generates a unique name for a task execution, suitable for display in a

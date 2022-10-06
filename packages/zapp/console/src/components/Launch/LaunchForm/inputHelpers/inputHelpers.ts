@@ -1,6 +1,6 @@
 import { createDebugLogger } from 'common/log';
 import { ValueError } from 'errors/parameterErrors';
-import { Core } from 'flyteidl';
+import { Core } from '@flyteconsole/flyteidl';
 import { InputProps, InputTypeDefinition, InputValue } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
