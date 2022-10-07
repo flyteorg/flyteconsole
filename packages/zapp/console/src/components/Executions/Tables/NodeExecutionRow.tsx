@@ -7,6 +7,7 @@ import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { useContext, useState } from 'react';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { titleStrings } from './constants';
@@ -22,7 +23,7 @@ interface NodeExecutionRowProps {
   abortMetadata?: Admin.IAbortMetadata;
   columns: NodeExecutionColumnDefinition[];
   index: number;
-  execution: NodeExecution;
+  nodeExecution: NodeExecution;
   level?: number;
   style?: React.CSSProperties;
 }
@@ -53,16 +54,17 @@ const ChildFetchErrorIcon: React.FC<{
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   abortMetadata,
   columns,
-  execution: nodeExecution,
+  nodeExecution,
   index,
   level = 0,
   style,
 }) => {
   const theme = useTheme();
+  const tableStyles = useExecutionTableStyles();
   const { selectedExecution, setSelectedExecution } = useContext(DetailsPanelContext);
   const requestConfig = useContext(NodeExecutionsRequestConfigContext);
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
@@ -79,7 +81,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const { data: childGroups = [] } = childGroupsQuery;
 
   const isExpandable = childGroups.length > 0;
-  const tableStyles = useExecutionTableStyles();
 
   const selected = selectedExecution ? isEqual(selectedExecution, nodeExecution) : false;
   const { error } = nodeExecution.closure;
@@ -100,12 +101,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         [tableStyles.borderBottom]: level === 0,
       })}
     >
-      <NodeExecutionChildren
-        abortMetadata={abortMetadata}
-        columns={columns}
-        childGroups={childGroups}
-        level={level + 1}
-      />
+      <NodeExecutionChildren columns={columns} childGroups={childGroups} level={level + 1} />
     </div>
   ) : null;
 

@@ -61,7 +61,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const [loading, setLoading] = useState<boolean>(true);
 
   const {
-    closure: { abortMetadata, workflowId },
+    closure: { workflowId },
   } = execution;
 
   const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
@@ -152,7 +152,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
       query={childGroupsQuery}
       loadingComponent={LoadingComponent}
     >
-      {() => <ExecutionTab tabType={tabType} abortMetadata={abortMetadata ?? undefined} />}
+      {() => <ExecutionTab tabType={tabType} />}
     </WaitForQuery>
   );
 

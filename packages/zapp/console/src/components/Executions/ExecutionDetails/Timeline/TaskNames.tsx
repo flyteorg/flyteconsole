@@ -53,44 +53,49 @@ interface TaskNamesProps {
   onToggle: (id: string, scopeId: string, level: number) => void;
 }
 
-export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>((props, ref) => {
-  const { nodes, onScroll, onToggle } = props;
-  const styles = useStyles();
+export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
+  ({ nodes, onScroll, onToggle }, ref) => {
+    const styles = useStyles();
 
-  return (
-    <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
-      {nodes.map((node) => {
-        const templateName = getNodeTemplateName(node);
-        const nodeLevel = node?.level ?? 0;
-        return (
-          <div
-            className={styles.namesContainer}
-            key={`level=${nodeLevel}-id=${node.id}-name=${node.scopedId}`}
-            style={{ paddingLeft: nodeLevel * 16 }}
-          >
-            <div className={styles.namesContainerExpander}>
-              {node.nodes?.length ? (
-                <RowExpander
-                  expanded={node.expanded || false}
-                  onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
+    return (
+      <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
+        {nodes.map((node) => {
+          const templateName = getNodeTemplateName(node);
+          const nodeLevel = node?.level ?? 0;
+          return (
+            <div
+              className={styles.namesContainer}
+              key={`level=${nodeLevel}-id=${node.id}-name=${node.scopedId}`}
+              style={{ paddingLeft: nodeLevel * 16 }}
+            >
+              <div className={styles.namesContainerExpander}>
+                {node.nodes?.length ? (
+                  <RowExpander
+                    expanded={node.expanded || false}
+                    onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
+                  />
+                ) : (
+                  <div className={styles.leaf} />
+                )}
+              </div>
+
+              <div className={styles.namesContainerBody}>
+                <NodeExecutionName
+                  name={node.name}
+                  execution={node.execution!} // some nodes don't have associated execution
                 />
-              ) : (
-                <div className={styles.leaf} />
-              )}
+                <Typography
+                  variant="subtitle1"
+                  color="textSecondary"
+                  className={styles.displayName}
+                >
+                  {templateName}
+                </Typography>
+              </div>
             </div>
-
-            <div className={styles.namesContainerBody}>
-              <NodeExecutionName
-                name={node.name}
-                execution={node.execution!} // some nodes don't have associated execution
-              />
-              <Typography variant="subtitle1" color="textSecondary" className={styles.displayName}>
-                {templateName}
-              </Typography>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-});
+          );
+        })}
+      </div>
+    );
+  },
+);

@@ -5,7 +5,6 @@ import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
-import { Admin } from 'flyteidl';
 import * as React from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { checkForDynamicExecutions } from 'components/common/utils';
@@ -24,7 +23,6 @@ import { DetailsPanelContext } from './DetailsPanelContext';
 
 export interface ExecutionTabContentProps {
   tabType: string;
-  abortMetadata?: Admin.IAbortMetadata;
 }
 
 const useStyles = makeStyles(() => ({
@@ -40,10 +38,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
-  tabType,
-  abortMetadata,
-}) => {
+export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({ tabType }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
@@ -163,7 +158,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           />
         );
       case tabs.nodes.id:
-        return <NodeExecutionsTable abortMetadata={abortMetadata} initialNodes={initialNodes} />;
+        return <NodeExecutionsTable initialNodes={initialNodes} />;
       default:
         return null;
     }
