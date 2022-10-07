@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
+import { FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
 import { useCommonStyles } from 'components/common/styles';
 import { WorkflowExecutionColumnDefinition } from '../types';
 import {

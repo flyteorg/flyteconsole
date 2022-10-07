@@ -1,4 +1,4 @@
-import { useAdminVersion } from '@flyteconsole/components';
+import { useAdminVersion } from '../useVersion';
 import { AdminFlag, AdminVersion, baseAdminConfig } from './defaultConfig';
 
 export const useIsEnabledInAdmin = (flag: AdminFlag): boolean => {

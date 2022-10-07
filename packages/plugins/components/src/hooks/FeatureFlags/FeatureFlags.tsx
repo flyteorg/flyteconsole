@@ -1,12 +1,15 @@
 /**
  * Feature Flag provider - allows a multi-stage development.
  */
+// eslint-disable-next-line import/no-duplicates
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { isDevEnv, isTestEnv } from '@flyteconsole/components';
+// eslint-disable-next-line import/no-duplicates
+import { isDevEnv, isTestEnv } from '../../Utils';
 import { defaultFlagConfig, FeatureFlag, FeatureFlagConfig } from './defaultConfig';
 
 export { FeatureFlag } from './defaultConfig';
+
 
 // To turn on flag for local development only - update flag value here
 // REMOVE change prior to commit
