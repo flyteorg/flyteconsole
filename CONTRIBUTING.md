@@ -34,17 +34,20 @@ After new package is generated, you will need to update some values to be able t
 For example in case if package plan to be used in `console` app
 
 Ensure to add proper webpack alias path resolutions into:
-* ./storybook/main.js -  as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
-* packages/zapp/console/webpack.common.config.ts to alias section -  as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
+
+-   ./storybook/main.js - as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
+-   packages/zapp/console/webpack.common.config.ts to alias section - as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
 
 To add child package usage to other package, in parent package ->
-* Add `{ "path": “../../${type}/${package-name}" }` to tsconfig.json
-* Add `{ "path": “../../${type}/${package-name}/tsconfig.build.json" }` to tsconfig.build.json (if exists)
-- Then you can import your changes as `import { getLoginUrl } from '@flyteconsole/flyte-api’;`
 
-> If you see `yarn lint` package not defined issues update `.\eslintrc.js` by adding your package to 
+-   Add `{ "path": “../../${type}/${package-name}" }` to tsconfig.json
+-   Add `{ "path": “../../${type}/${package-name}/tsconfig.build.json" }` to tsconfig.build.json (if exists)
+
+*   Then you can import your changes as `import { getLoginUrl } from '@flyteconsole/flyte-api’;`
+
+> If you see `yarn lint` package not defined issues update `.\eslintrc.js` by adding your package to
+
     'import/core-modules': ['@clients/locale', '@clients/primitives', '@clients/theme'],
-
 
 ## Storybook
 
@@ -72,7 +75,7 @@ Initally all flags must be disabled, meaning you code path should not be execute
 **Example - flag usage**:
 
 ```javascript
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
+import { FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
 
 export function MyComponent(props: Props): React.ReactNode {
     ...
@@ -192,8 +195,10 @@ yarn install
 4. Install Chrome plugin: [Moesif Origin & CORS Changer](https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc)
 
     > _NOTE:_
+    >
     > 1. Activate plugin (toggle to "on")
     > 1. Open 'Advanced Settings':
+    >
     > - set `Access-Control-Allow-Credentials`: `true`
     > - set `Domain List`: `your.localhost.com`
 

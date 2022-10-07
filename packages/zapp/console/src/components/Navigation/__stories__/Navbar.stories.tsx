@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { FeatureFlag, useFeatureFlagContext } from 'basics/FeatureFlags';
 import { ExecutionContext } from 'components/Executions/contexts';
 import { ExecutionDetailsAppBarContent } from 'components/Executions/ExecutionDetails/ExecutionDetailsAppBarContent';
 import { mockExecution } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import { createMockExecution } from 'models/__mocks__/executionsData';
-import { FlyteNavigation, FlyteNavItem } from '@flyteconsole/components';
+import { FlyteNavigation, FlyteNavItem, FeatureFlag, useFeatureFlagContext } from '@flyteconsole/components';
 import { NavBar } from '../NavBar';
 
 export default {

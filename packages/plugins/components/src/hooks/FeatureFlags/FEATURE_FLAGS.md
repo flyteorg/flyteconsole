@@ -32,7 +32,7 @@ To check flag's value use `useFeatureFlag` hook.
 **Example - flag usage**:
 
 ```javascript
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
+import { FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
 
 export function MyComponent(props: Props): React.ReactNode {
     ...
