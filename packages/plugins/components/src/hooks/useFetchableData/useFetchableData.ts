@@ -10,15 +10,10 @@ import {
   FetchStateContext,
   fetchStates,
   fetchMachine,
-} from "../FetchMachine"
-import {
-  defaultStateMachineConfig,
-  createDebugLogger
-} from "../Utils"
-import { CacheContext, ValueCache, getCacheKey, } from "../Cache";
-import {
-  NotAuthorizedError
-} from '../Errors';
+} from '../../FetchMachine';
+import { defaultStateMachineConfig, createDebugLogger } from '../../Utils';
+import { CacheContext, ValueCache, getCacheKey } from '../../Cache';
+import { NotAuthorizedError } from '../../Errors';
 
 const log = createDebugLogger('useFetchableData');
 
