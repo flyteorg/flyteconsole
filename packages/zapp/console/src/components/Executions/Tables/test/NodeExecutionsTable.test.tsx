@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   NodeExecutionsByIdContext,
@@ -23,16 +23,13 @@ jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
-  NodeExecutionRow: jest.fn(({ children, execution }) => {
-    return (
-      <div data-testid="node-execution-row">
-        <span>
-          node-execution-{execution?.id?.nodeId}-{execution?.closure?.phase}
-        </span>
-        {children}
-      </div>
-    );
-  }),
+  NodeExecutionRow: jest.fn(({ children, execution }) => (
+    <div data-testid="node-execution-row">
+      <div data-testid="node-execution-col-id">{execution?.id?.nodeId}</div>
+      <div data-testid="node-execution-col-phase">{execution?.closure?.phase}</div>
+      {children}
+    </div>
+  )),
 }));
 
 const mockNodes = (n: number): dNode[] => {
@@ -94,6 +91,7 @@ const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
 describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   let queryClient: QueryClient;
   let requestConfig: RequestConfig;
+  let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
   const initialNodes = mockNodes(2);
   const selectedExecution = null;
   const setSelectedExecution = jest.fn();
@@ -101,6 +99,9 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   beforeEach(() => {
     requestConfig = {};
     queryClient = createTestQueryClient();
+    fixture = basicPythonWorkflow.generate();
+    insertFixture(mockServer, fixture);
+    fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
   });
 
   const renderTable = ({
@@ -127,61 +128,70 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
       </QueryClientProvider>,
     );
 
-  describe('when rendering the table', () => {
-    let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
-
-    beforeEach(() => {
-      fixture = basicPythonWorkflow.generate();
-      insertFixture(mockServer, fixture);
-      fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
+  it('renders empty content when there are no nodes', async () => {
+    const { queryByText, queryByTestId } = renderTable({
+      initialNodes: [],
+      selectedExecution,
+      setSelectedExecution,
+      nodeExecutionsById: {},
+      filteredNodeExecutions: [],
     });
 
-    it('renders empty content when there are no nodes', async () => {
-      const { getByText } = renderTable({
-        initialNodes: [],
-        selectedExecution,
-        setSelectedExecution,
-        nodeExecutionsById: {},
-        filteredNodeExecutions: [],
-      });
+    await waitFor(() => queryByText(noExecutionsFoundString));
 
-      expect(getByText(noExecutionsFoundString)).toBeInTheDocument();
+    expect(queryByText(noExecutionsFoundString)).toBeInTheDocument();
+    expect(queryByTestId('node-execution-row')).not.toBeInTheDocument();
+  });
+
+  it('renders NodeExecutionRows with proper nodeExecutions', async () => {
+    const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
+    const nodeExecutionsById = mockExecutionsById(2, phases);
+    const filteredNodeExecutions = mockNodeExecutions(2, phases);
+
+    const { queryAllByTestId } = renderTable({
+      initialNodes,
+      selectedExecution,
+      setSelectedExecution,
+      nodeExecutionsById,
+      filteredNodeExecutions,
     });
 
-    it('renders NodeExecutionRows with proper nodeExecutions', async () => {
-      const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
-      const nodeExecutionsById = mockExecutionsById(2, phases);
-      const filteredNodeExecutions = mockNodeExecutions(2, phases);
+    await waitFor(() => queryAllByTestId('node-execution-row'));
 
-      const { getByText } = renderTable({
-        initialNodes,
-        selectedExecution,
-        setSelectedExecution,
-        nodeExecutionsById,
-        filteredNodeExecutions,
-      });
+    expect(queryAllByTestId('node-execution-row')).toHaveLength(initialNodes.length);
+    const ids = queryAllByTestId('node-execution-col-id');
+    expect(ids).toHaveLength(initialNodes.length);
+    const renderedPhases = queryAllByTestId('node-execution-col-phase');
+    expect(renderedPhases).toHaveLength(initialNodes.length);
+    for (const i in initialNodes) {
+      expect(ids[i]).toHaveTextContent(initialNodes[i].id);
+      expect(renderedPhases[i]).toHaveTextContent(phases[i].toString());
+    }
+  });
 
-      for (const i in initialNodes) {
-        expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
-      }
+  it('renders future nodes with UNDEFINED phase', async () => {
+    const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
+    const nodeExecutionsById = mockExecutionsById(1, phases);
+    const filteredNodeExecutions = mockNodeExecutions(1, phases);
+
+    const { queryAllByTestId } = renderTable({
+      initialNodes,
+      selectedExecution,
+      setSelectedExecution,
+      nodeExecutionsById,
+      filteredNodeExecutions,
     });
 
-    it('renders future nodes with UNDEFINED phase', async () => {
-      const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
-      const nodeExecutionsById = mockExecutionsById(1, phases);
-      const filteredNodeExecutions = mockNodeExecutions(1, phases);
+    await waitFor(() => queryAllByTestId('node-execution-row'));
 
-      const { getByText } = renderTable({
-        initialNodes,
-        selectedExecution,
-        setSelectedExecution,
-        nodeExecutionsById,
-        filteredNodeExecutions,
-      });
-
-      for (const i in initialNodes) {
-        expect(getByText(`node-execution-${initialNodes[i].id}-${phases[i]}`)).toBeInTheDocument();
-      }
-    });
+    expect(queryAllByTestId('node-execution-row')).toHaveLength(initialNodes.length);
+    const ids = queryAllByTestId('node-execution-col-id');
+    expect(ids).toHaveLength(initialNodes.length);
+    const renderedPhases = queryAllByTestId('node-execution-col-phase');
+    expect(renderedPhases).toHaveLength(initialNodes.length);
+    for (const i in initialNodes) {
+      expect(ids[i]).toHaveTextContent(initialNodes[i].id);
+      expect(renderedPhases[i]).toHaveTextContent(phases[i].toString());
+    }
   });
 });

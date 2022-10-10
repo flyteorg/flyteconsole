@@ -39,9 +39,13 @@ jest.mock('components/WorkflowGraph/WorkflowGraph', () => ({
 
 describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
   let queryClient: QueryClient;
+  let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
 
   beforeEach(() => {
     queryClient = createTestQueryClient();
+    fixture = basicPythonWorkflow.generate();
+    insertFixture(mockServer, fixture);
+    fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
   });
 
   const renderTabContent = ({ tabType, nodeExecutionsById }) => {
@@ -56,43 +60,33 @@ describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
     );
   };
 
-  describe('when rendering the tabContent', () => {
-    let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
-
-    beforeEach(() => {
-      fixture = basicPythonWorkflow.generate();
-      insertFixture(mockServer, fixture);
-      fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
+  it('renders NodeExecutionsTable when the Nodes tab is selected', async () => {
+    const { queryByTestId } = renderTabContent({
+      tabType: tabs.nodes.id,
+      nodeExecutionsById: {},
     });
 
-    it('renders NodeExecutionsTable when the Nodes tab is selected', async () => {
-      const { container, getByTestId } = renderTabContent({
-        tabType: tabs.nodes.id,
-        nodeExecutionsById: {},
-      });
+    await waitFor(() => queryByTestId('node-executions-table'));
+    expect(queryByTestId('node-executions-table')).toBeInTheDocument();
+  });
 
-      await waitFor(() => container);
-      expect(getByTestId('node-executions-table')).toBeInTheDocument();
+  it('renders WorkflowGraph when the Graph tab is selected', async () => {
+    const { queryByTestId } = renderTabContent({
+      tabType: tabs.graph.id,
+      nodeExecutionsById: {},
     });
 
-    it('renders WorkflowGraph when the Graph tab is selected', async () => {
-      const { container, getByTestId } = renderTabContent({
-        tabType: tabs.graph.id,
-        nodeExecutionsById: {},
-      });
+    await waitFor(() => queryByTestId('workflow-graph'));
+    expect(queryByTestId('workflow-graph')).toBeInTheDocument();
+  });
 
-      await waitFor(() => container);
-      expect(getByTestId('workflow-graph')).toBeInTheDocument();
+  it('renders ExecutionTimeline when the Timeline tab is selected', async () => {
+    const { queryByTestId } = renderTabContent({
+      tabType: tabs.timeline.id,
+      nodeExecutionsById: {},
     });
 
-    it('renders ExecutionTimeline when the Timeline tab is selected', async () => {
-      const { container, getByTestId } = renderTabContent({
-        tabType: tabs.timeline.id,
-        nodeExecutionsById: {},
-      });
-
-      await waitFor(() => container);
-      expect(getByTestId('execution-timeline')).toBeInTheDocument();
-    });
+    await waitFor(() => queryByTestId('execution-timeline'));
+    expect(queryByTestId('execution-timeline')).toBeInTheDocument();
   });
 });
