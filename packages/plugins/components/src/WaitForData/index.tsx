@@ -1,13 +1,8 @@
-import { isFunction } from 'common/typeCheckers';
-import {
-  log,
-  FetchableState,
-  fetchStates,
-  DataError,
-  ErrorBoundary,
-  LoadingSpinner,
-} from '@flyteconsole/components';
 import * as React from 'react';
+import { DataError, ErrorBoundary } from '../Errors';
+import { FetchableState, fetchStates } from '../FetchMachine';
+import { LoadingSpinner } from '../LoadingSpinner';
+import { isFunction, log } from '../Utils';
 
 const defaultErrorTitle = 'Failed to fetch data';
 

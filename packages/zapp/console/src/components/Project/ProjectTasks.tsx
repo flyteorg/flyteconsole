@@ -1,4 +1,4 @@
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { useTaskNameList } from 'components/hooks/useNamedEntity';
 import { SearchableTaskNameList } from 'components/Task/SearchableTaskNameList';
 import { useTaskShowArchivedState } from 'components/Task/useTaskShowArchivedState';

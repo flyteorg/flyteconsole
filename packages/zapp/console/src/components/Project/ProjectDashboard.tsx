@@ -12,6 +12,7 @@ import {
   DataError,
   ErrorBoundary,
   LargeLoadingSpinner,
+  WaitForData,
 } from '@flyteconsole/components';
 import { limits } from 'models/AdminEntity/constants';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
@@ -27,7 +28,6 @@ import {
 } from 'components/Entities/EntityExecutionsBarChart';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';
-import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { compact } from 'lodash';

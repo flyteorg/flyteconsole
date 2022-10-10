@@ -1,4 +1,4 @@
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { SearchableLaunchPlanNameList } from 'components/LaunchPlan/SearchableLaunchPlanNameList';
 import { limits } from 'models/AdminEntity/constants';
 import { SortDirection } from '@flyteconsole/flyteidl';

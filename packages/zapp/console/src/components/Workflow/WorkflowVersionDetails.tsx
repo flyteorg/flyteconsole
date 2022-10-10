@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { useProject } from 'components/hooks/useProjects';
 import { StaticGraphContainer } from 'components/Workflow/StaticGraphContainer';
 import { WorkflowId } from 'models/Workflow/types';

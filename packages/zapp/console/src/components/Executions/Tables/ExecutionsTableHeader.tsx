@@ -1,6 +1,6 @@
 import { Typography } from '@material-ui/core';
 import classnames from 'classnames';
-import { isFunction } from 'common/typeCheckers';
+import { isFunction } from '@flyteconsole/components';
 import * as React from 'react';
 import { useExecutionTableStyles } from './styles';
 import { ColumnDefinition } from './types';

@@ -1,5 +1,5 @@
 import { PanelSection } from 'components/common/PanelSection';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { NodeExecution } from 'models/Execution/types';

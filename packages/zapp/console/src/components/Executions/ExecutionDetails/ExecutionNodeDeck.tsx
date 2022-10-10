@@ -1,5 +1,5 @@
 import { useDownloadLocation } from 'components/hooks/useDataProxy';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import * as React from 'react';
 
 /** Fetches and renders the deck data for a given `deckUri` */

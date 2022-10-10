@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import { formatDateUTC } from 'common/formatters';
 import { padExecutionPaths, padExecutions, timestampToDate } from 'common/utils';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import ProjectStatusBar from 'components/Project/ProjectStatusBar';
 import * as moment from 'moment';
 import * as React from 'react';

@@ -4,8 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import { IconButton, makeStyles, Theme } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import { LocalCacheItem, useLocalCache, isLoadingState } from '@flyteconsole/components';
-import { WaitForData } from 'components/common/WaitForData';
+import {
+  LocalCacheItem,
+  useLocalCache,
+  isLoadingState,
+  WaitForData,
+} from '@flyteconsole/components';
 import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersionsTable';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from '@flyteconsole/ui-atoms';
