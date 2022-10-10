@@ -5,7 +5,7 @@ import { insertFixture } from 'mocks/data/insertFixture';
 import { unexpectedError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
 import { sortQueryKeys } from 'models/AdminEntity/constants';
-import { SortDirection } from '@flyteconsole/flyteidl';
+import { SortDirection, Admin } from '@flyteconsole/flyteidl';
 import { DomainIdentifierScope, UserProfile } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { Execution } from 'models/Execution/types';
@@ -17,7 +17,6 @@ import { useUserProfile } from 'components/hooks/useUserProfile';
 import { FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { getProjectDomainAttributes } from 'models/Project/api';
-import { Admin } from '@flyteconsole/flyteidl';
 import * as LocalCache from 'basics/LocalCache';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
@@ -112,20 +111,20 @@ describe('ProjectDashboard', () => {
   it('should show loading spinner', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { queryByTestId } = renderView();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(queryByTestId(/loading-spinner/i)).toBeDefined();
   });
 
   it('should display WorkflowExecutionsTable and BarChart ', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { queryByTestId } = renderView();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(queryByTestId('workflow-table')).toBeDefined();
   });
 
   it('should not display checkbox if user does not login', async () => {
     const { queryByTestId } = renderView();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(mockUseUserProfile).toHaveBeenCalled();
     expect(queryByTestId(/checkbox/i)).toBeNull();
   });
@@ -134,7 +133,7 @@ describe('ProjectDashboard', () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getAllByRole } = renderView();
 
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(mockUseUserProfile).toHaveBeenCalled();
 
     // There are 2 checkboxes on a page: 1 - onlyMyExecutions, 2 - show archived, both unchecked by default
@@ -148,7 +147,7 @@ describe('ProjectDashboard', () => {
   it('should not display workflow if the user does not have one when filtered onlyMyExecutions', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getByText, queryByText, getAllByRole } = renderView();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(mockUseUserProfile).toHaveBeenCalled();
 
     // There are 2 checkboxes on a page: 1 - onlyMyExecutions, 2 - show archived, both unchecked by default
