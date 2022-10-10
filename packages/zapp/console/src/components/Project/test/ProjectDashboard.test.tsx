@@ -6,21 +6,28 @@ import { unexpectedError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
 import { sortQueryKeys } from 'models/AdminEntity/constants';
 import { SortDirection, Admin } from '@flyteconsole/flyteidl';
-import { DomainIdentifierScope, UserProfile } from 'models/Common/types';
+import { DomainIdentifierScope } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'test/utils';
-import { useUserProfile } from 'components/hooks/useUserProfile';
-import { FetchableData } from '@flyteconsole/components';
+import { useUserProfile, UserProfile, FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { getProjectDomainAttributes } from 'models/Project/api';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
-jest.mock('components/hooks/useUserProfile');
+jest.mock('@flyteconsole/components', () => {
+  const originalModule = jest.requireActual('@flyteconsole/components');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    useUserProfile: jest.fn(),
+  };
+});
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),

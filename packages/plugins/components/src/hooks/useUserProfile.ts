@@ -1,6 +1,15 @@
-import { UserProfile } from 'models/Common/types';
 import { useFlyteApi, getAxiosApiCall } from '@flyteconsole/flyte-api';
-import { useFetchableData } from '@flyteconsole/components';
+import { useFetchableData } from './useFetchableData';
+
+export interface UserProfile {
+  subject: string;
+  name: string;
+  preferredUsername: string;
+  givenName: string;
+  familyName: string;
+  email: string;
+  picture: string;
+}
 
 /** State hook that returns the user information if logged in, null otherwise */
 export function useUserProfile() {
