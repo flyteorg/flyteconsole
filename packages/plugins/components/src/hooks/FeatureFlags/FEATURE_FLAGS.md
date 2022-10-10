@@ -38,7 +38,7 @@ export function MyComponent(props: Props): React.ReactNode {
     ...
     const isFlagEnabled = useFeatureFlag(FeatureFlag.AddNewPage);
 
-    return isFlagEnabled ? <NewPage ...props/> : null;
+    return isFlagEnabled ? <NewPage {...props} /> : null;
 }
 ```
 

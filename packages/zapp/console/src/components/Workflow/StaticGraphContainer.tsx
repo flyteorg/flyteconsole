@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { useQuery, useQueryClient } from 'react-query';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { DataError } from 'components/Errors/DataError';
+import { DataError } from '@flyteconsole/components';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { ReactFlowWrapper } from 'components/flytegraph/ReactFlow/ReactFlowWrapper';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';

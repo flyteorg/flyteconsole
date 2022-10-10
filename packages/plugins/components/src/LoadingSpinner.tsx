@@ -1,9 +1,10 @@
 import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { useDelayedValue } from 'components/hooks/useDelayedValue';
 import * as React from 'react';
-import { loadingSpinnerDelayMs } from './constants';
+import { useDelayedValue } from './hooks';
+
+export const loadingSpinnerDelayMs = 1000;
 
 const useStyles = makeStyles({
   container: {

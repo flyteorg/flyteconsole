@@ -4,9 +4,11 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { log, NotFoundError, NotFound } from '@flyteconsole/components';
 import * as React from 'react';
 import { NonIdealState } from './NonIdealState';
+import { NotFoundError } from './fetchErrors';
+import { log } from '../Utils';
+import { NotFound } from './NotFound';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -70,12 +72,12 @@ export class ErrorBoundary extends React.Component<{ fixed?: boolean }, ErrorBou
     this.state = { error: undefined };
   }
 
-  componentDidCatch(error: Error, info: unknown) {
+  override componentDidCatch(error: Error, info: unknown) {
     this.setState({ error });
     log.error(error, info);
   }
 
-  render() {
+  override render() {
     const { fixed = false } = this.props;
     if (this.state.error) {
       if (this.state.error instanceof NotFoundError) {

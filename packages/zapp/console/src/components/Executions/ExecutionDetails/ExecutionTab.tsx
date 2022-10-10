@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { DataError } from 'components/Errors/DataError';
+import { DataError } from '@flyteconsole/components';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';

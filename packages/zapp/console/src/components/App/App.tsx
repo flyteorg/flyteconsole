@@ -9,8 +9,8 @@ import {
   env,
   FeatureFlagsProvider,
   LocalCacheProvider,
+  ErrorBoundary,
 } from '@flyteconsole/components';
-import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { QueryAuthorizationObserver } from 'components/data/QueryAuthorizationObserver';
 import { createQueryClient } from 'components/data/queryCache';

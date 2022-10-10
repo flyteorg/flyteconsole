@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
-import { NonIdealState } from 'components/common/NonIdealState';
+import { NonIdealState } from '@flyteconsole/components';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import {

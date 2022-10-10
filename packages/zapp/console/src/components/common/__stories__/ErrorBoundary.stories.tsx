@@ -3,7 +3,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { storiesOf } from '@storybook/react';
-import { ErrorBoundary } from '../ErrorBoundary';
+import { ErrorBoundary } from '@flyteconsole/components';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
