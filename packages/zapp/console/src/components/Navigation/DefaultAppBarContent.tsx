@@ -13,10 +13,10 @@ import {
   FlyteNavItem,
   FeatureFlag,
   useFeatureFlag,
+  OnlyMine,
 } from '@flyteconsole/components';
 import { baseUrlString, makeRoute } from 'routes/utils';
 import { UserInformation } from './UserInformation';
-import { OnlyMine } from './OnlyMine';
 import t, { patternKey } from './strings';
 
 const { version: platformVersion } = require('../../../package.json');

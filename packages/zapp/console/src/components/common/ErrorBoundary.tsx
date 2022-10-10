@@ -4,8 +4,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { NotFound } from 'components/NotFound/NotFound';
-import { log, NotFoundError } from '@flyteconsole/components';
+import { log, NotFoundError, NotFound } from '@flyteconsole/components';
 import * as React from 'react';
 import { NonIdealState } from './NonIdealState';
 

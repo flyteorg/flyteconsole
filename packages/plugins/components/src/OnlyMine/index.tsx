@@ -2,17 +2,17 @@ import { Switch, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
-import {
-  MultiSelectForm,
-  LocalCacheItem,
-  useLocalCache,
-  filterByDefault,
-  defaultSelectedValues,
-  OnlyMyFilter,
-} from '@flyteconsole/components';
 import { smallIconSize } from '@flyteconsole/ui-atoms';
 import { FilterPopoverIcon } from './FilterPopoverIcon';
 import t from './strings';
+import {
+  defaultSelectedValues,
+  filterByDefault,
+  LocalCacheItem,
+  OnlyMyFilter,
+  useLocalCache,
+} from '../LocalCache';
+import { MultiSelectForm } from '../MultiSelectForm';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
