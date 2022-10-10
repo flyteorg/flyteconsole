@@ -1,8 +1,7 @@
 import { Node } from 'components/flytegraph/Node';
 import { NodeRendererProps } from 'components/flytegraph/types';
-import { taskColors } from 'components/Theme/constants';
+import { taskColors, TaskType } from '@flyteconsole/ui-atoms';
 import { DAGNode } from 'models/Graph/types';
-import { TaskType } from 'models/Task/constants';
 import * as React from 'react';
 import { InputOutputNodeRenderer } from './InputOutputNodeRenderer';
 import { isEndNode, isStartNode } from './utils';

@@ -1,4 +1,4 @@
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { useLiteralStyles } from './styles';
 import { ValueLabel } from './ValueLabel';

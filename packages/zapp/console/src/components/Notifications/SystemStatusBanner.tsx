@@ -12,7 +12,7 @@ import {
   mutedButtonColor,
   mutedButtonHoverColor,
   warningIconColor,
-} from 'components/Theme/constants';
+} from '@flyteconsole/ui-atoms';
 import { StatusString, SystemStatus } from 'models/Common/types';
 import * as React from 'react';
 import { useSystemStatus } from './useSystemStatus';

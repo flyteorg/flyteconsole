@@ -3,7 +3,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Core } from '@flyteconsole/flyteidl';
 import { NewTargetLink } from 'components/common/NewTargetLink';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { noLogsFoundString } from '../constants';
 
 const useStyles = makeStyles((theme: Theme) => ({

@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getScheduleFrequencyString, getScheduleOffsetString } from 'common/formatters';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { WaitForData } from 'components/common/WaitForData';
 import { useWorkflowSchedules } from 'components/hooks/useWorkflowSchedules';
 import { ResourceIdentifier } from 'models/Common/types';

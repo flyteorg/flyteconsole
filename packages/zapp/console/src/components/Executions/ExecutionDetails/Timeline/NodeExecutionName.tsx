@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { SelectNodeExecutionLink } from 'components/Executions/Tables/SelectNodeExecutionLink';
 import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';

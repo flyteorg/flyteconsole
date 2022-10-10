@@ -7,7 +7,7 @@ import {
   SearchableNamedEntityListProps,
   useNamedEntityListStyles,
 } from 'components/common/SearchableNamedEntityList';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { WaitForData } from 'components/common/WaitForData';
 import { NamedEntity } from 'models/Common/types';
 import * as React from 'react';

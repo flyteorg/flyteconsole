@@ -3,14 +3,19 @@ import { CssBaseline, Collapse } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { FlyteApiProvider } from '@flyteconsole/flyte-api';
 import { SnackbarProvider } from 'notistack';
-import { debug, debugPrefix, env, FeatureFlagsProvider } from '@flyteconsole/components';
+import {
+  debug,
+  debugPrefix,
+  env,
+  FeatureFlagsProvider,
+  LocalCacheProvider,
+} from '@flyteconsole/components';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { QueryAuthorizationObserver } from 'components/data/QueryAuthorizationObserver';
 import { createQueryClient } from 'components/data/queryCache';
 import { SystemStatusBanner } from 'components/Notifications/SystemStatusBanner';
-import { skeletonColor, skeletonHighlightColor } from 'components/Theme/constants';
-import { muiTheme } from 'components/Theme/muiTheme';
+import { skeletonColor, skeletonHighlightColor, muiTheme } from '@flyteconsole/ui-atoms';
 import { hot } from 'react-hot-loader';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { QueryClientProvider } from 'react-query';
@@ -19,7 +24,6 @@ import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
 import { NavBarRouter } from 'routes/NavBarRouter';
-import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
 
 const queryClient = createQueryClient();
 

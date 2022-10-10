@@ -9,7 +9,7 @@ import {
   Theme,
 } from '@material-ui/core';
 import * as React from 'react';
-import { useCommonStyles } from './styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles((theme: Theme) => ({
   group: {
@@ -46,6 +46,7 @@ export interface MultiSelectFormProps {
   onReset?: () => void;
   values: SelectValue[];
   selectedStates: Record<string, boolean>;
+  commonStyles?: ReturnType<typeof useCommonStyles>;
 }
 
 /** Form content for rendering a header and list of checkboxes. If the form is
@@ -60,8 +61,8 @@ export const MultiSelectForm: React.FC<MultiSelectFormProps> = ({
   onReset,
   values,
   selectedStates,
+  commonStyles = useCommonStyles(),
 }) => {
-  const commonStyles = useCommonStyles();
   const styles = useStyles();
   const showReset = active && onReset;
 

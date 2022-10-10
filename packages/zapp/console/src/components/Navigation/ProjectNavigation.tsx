@@ -5,7 +5,7 @@ import DeviceHub from '@material-ui/icons/DeviceHub';
 import LinearScale from '@material-ui/icons/LinearScale';
 import Dashboard from '@material-ui/icons/Dashboard';
 import classnames from 'classnames';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles, MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject, useProjects } from 'components/hooks/useProjects';
 import { Project } from 'models/Project/types';
@@ -13,7 +13,6 @@ import * as React from 'react';
 import { matchPath, NavLink, NavLinkProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
-import { MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import { ProjectSelector } from './ProjectSelector';
 
 interface ProjectNavigationRouteParams {

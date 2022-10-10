@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { Admin } from '@flyteconsole/flyteidl';
 import { getCacheKey } from '@flyteconsole/components';
 import { DetailsPanel } from 'components/common/DetailsPanel';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';

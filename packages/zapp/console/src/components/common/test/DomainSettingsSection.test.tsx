@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import * as React from 'react';
-import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
+import { LocalCacheProvider } from '@flyteconsole/components';
 import { DomainSettingsSection } from '../DomainSettingsSection';
 
 const serviceAccount = 'default';

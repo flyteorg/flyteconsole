@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ListRowRenderer } from 'react-virtualized';
 import { noExecutionsFoundString } from 'common/constants';
 import { getCacheKey } from '@flyteconsole/components';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { ListProps } from 'components/common/types';
 import { DataList, DataListRef } from 'components/Tables/DataList';
 import { Execution } from 'models/Execution/types';

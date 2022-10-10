@@ -4,7 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { isEndNode, isStartNode, isExpanded } from 'components/WorkflowGraph/utils';
-import { tableHeaderColor } from 'components/Theme/constants';
+import { tableHeaderColor } from '@flyteconsole/ui-atoms';
 import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';

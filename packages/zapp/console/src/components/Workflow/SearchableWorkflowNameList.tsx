@@ -2,8 +2,12 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import DeviceHub from '@material-ui/icons/DeviceHub';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
-import { useCommonStyles } from 'components/common/styles';
-import { separatorColor, primaryTextColor, workflowLabelColor } from 'components/Theme/constants';
+import {
+  useCommonStyles,
+  separatorColor,
+  primaryTextColor,
+  workflowLabelColor,
+} from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';

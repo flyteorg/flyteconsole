@@ -1,7 +1,7 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
-import { taskSortFields } from 'models/Task/constants';
+import { taskSortFields } from '@flyteconsole/ui-atoms';
 import { Task } from 'models/Task/types';
 import { useMemo, useState } from 'react';
 import { SearchableSelectorOption } from './SearchableSelector';

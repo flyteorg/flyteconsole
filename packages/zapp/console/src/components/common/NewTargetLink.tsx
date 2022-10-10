@@ -2,7 +2,7 @@ import Link, { LinkProps } from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import OpenInNew from '@material-ui/icons/OpenInNew';
 import classnames from 'classnames';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 
 const useStyles = makeStyles({

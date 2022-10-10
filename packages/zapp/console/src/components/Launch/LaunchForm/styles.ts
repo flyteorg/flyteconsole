@@ -1,6 +1,6 @@
 import { Theme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { interactiveTextColor, smallFontSize } from 'components/Theme/constants';
+import { interactiveTextColor, smallFontSize } from '@flyteconsole/ui-atoms';
 
 export const useStyles = makeStyles((theme: Theme) => ({
   footer: {

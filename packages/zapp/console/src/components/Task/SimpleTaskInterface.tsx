@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { noneString } from 'common/constants';
 import { sortedObjectKeys } from 'common/utils';
 import { DetailsGroup } from 'components/common/DetailsGroup';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
 import { Variable } from 'models/Common/types';
 import { Task } from 'models/Task/types';

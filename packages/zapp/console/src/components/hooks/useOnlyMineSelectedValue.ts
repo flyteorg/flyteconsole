@@ -1,4 +1,4 @@
-import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
+import { LocalCacheItem, useLocalCache } from '@flyteconsole/components';
 
 export function useOnlyMineSelectedValue(settingKey: string): boolean {
   const [OnlyMineSettingValue] = useLocalCache(LocalCacheItem.OnlyMineSetting);

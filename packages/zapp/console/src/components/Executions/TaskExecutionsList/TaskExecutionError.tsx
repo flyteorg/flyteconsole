@@ -1,5 +1,5 @@
 import { ExpandableContentLink } from 'components/common/ExpandableContentLink';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { ExecutionError } from 'models/Execution/types';
 import * as React from 'react';
 

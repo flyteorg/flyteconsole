@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { WorkflowExecutionColumnDefinition } from '../types';
 import {
   ApprovalDoubleCell,

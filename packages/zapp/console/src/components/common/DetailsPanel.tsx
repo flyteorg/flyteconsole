@@ -2,7 +2,7 @@ import { Drawer, Paper } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { CSSProperties } from '@material-ui/styles';
 import { detailsPanelId } from 'common/constants';
-import { useTheme } from 'components/Theme/useTheme';
+import { useTheme } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { detailsPanelWidth } from './constants';
 

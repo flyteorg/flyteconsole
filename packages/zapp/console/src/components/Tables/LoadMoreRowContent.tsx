@@ -1,7 +1,7 @@
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { loadMoreRowGridHeight } from './constants';
 

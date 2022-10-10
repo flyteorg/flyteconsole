@@ -3,14 +3,14 @@ import {
   positiveTextColor,
   secondaryTextColor,
   statusColors,
-} from 'components/Theme/constants';
+  TaskType,
+} from '@flyteconsole/ui-atoms';
 import {
   CatalogCacheStatus,
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,
 } from 'models/Execution/enums';
-import { TaskType } from 'models/Task/constants';
 import t from './strings';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 

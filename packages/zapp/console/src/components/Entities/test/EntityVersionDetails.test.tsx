@@ -1,6 +1,6 @@
 import { render, waitFor, screen } from '@testing-library/react';
 import { ThemeProvider } from '@material-ui/styles';
-import { muiTheme } from 'components/Theme/muiTheme';
+import { muiTheme } from '@flyteconsole/ui-atoms';
 import { ResourceIdentifier } from 'models/Common/types';
 import * as React from 'react';
 import { createMockTask } from 'models/__mocks__/taskData';

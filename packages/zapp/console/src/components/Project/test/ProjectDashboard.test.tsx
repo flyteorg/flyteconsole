@@ -17,7 +17,6 @@ import { useUserProfile } from 'components/hooks/useUserProfile';
 import { FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { getProjectDomainAttributes } from 'models/Project/api';
-import * as LocalCache from 'basics/LocalCache';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
@@ -71,7 +70,7 @@ describe('ProjectDashboard', () => {
     [sortQueryKeys.key]: executionSortFields.createdAt,
   };
 
-  jest.spyOn(LocalCache, 'useLocalCache');
+  // jest.spyOn(LocalCache, 'useLocalCache');
 
   beforeEach(() => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(null, jest.fn()));

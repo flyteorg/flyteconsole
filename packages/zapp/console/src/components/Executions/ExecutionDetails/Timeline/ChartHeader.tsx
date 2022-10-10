@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as moment from 'moment-timezone';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 import { useScaleContext } from './scaleContext';
 import { TimeZone } from './helpers';
 

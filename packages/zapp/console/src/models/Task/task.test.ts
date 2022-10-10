@@ -1,4 +1,4 @@
-import { TaskType } from './constants';
+import { TaskType } from '@flyteconsole/ui-atoms';
 import { isMapTaskType, isMapTaskV1 } from './utils';
 
 describe('models/Task', () => {

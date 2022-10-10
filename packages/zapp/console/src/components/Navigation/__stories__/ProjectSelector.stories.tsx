@@ -1,7 +1,7 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { storiesOf } from '@storybook/react';
 import { sideNavGridWidth } from 'common/layout';
-import { separatorColor } from 'components/Theme/constants';
+import { separatorColor } from '@flyteconsole/ui-atoms';
 import { Project } from 'models/Project/types';
 import { createMockProjects } from 'models/__mocks__/projectData';
 import * as React from 'react';

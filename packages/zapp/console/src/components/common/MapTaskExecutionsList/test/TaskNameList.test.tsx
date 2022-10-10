@@ -1,6 +1,6 @@
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { render } from '@testing-library/react';
-import { muiTheme } from 'components/Theme/muiTheme';
+import { muiTheme } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 

@@ -11,8 +11,8 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import { PropsWithChildren } from 'react';
 import { Typography } from '@material-ui/core';
+import { headerFontFamily, tableHeaderColor } from '@flyteconsole/ui-atoms';
 import { ColumnDefinition } from '../Executions/Tables/types';
-import { headerFontFamily, tableHeaderColor } from '../Theme/constants';
 import { headerGridHeight } from './constants';
 import { workflowVersionsTableColumnWidths } from '../Executions/Tables/constants';
 

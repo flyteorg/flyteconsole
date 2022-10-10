@@ -8,7 +8,7 @@ import {
   Theme,
 } from '@material-ui/core';
 import * as React from 'react';
-import { useCommonStyles } from './styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {

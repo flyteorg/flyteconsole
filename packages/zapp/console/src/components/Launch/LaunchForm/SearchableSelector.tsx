@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import { escapeKeyListener } from 'components/common/keyboardEvents';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
 import { useFetchableData, isLoadingState, FetchableData, FetchFn } from '@flyteconsole/components';
 import * as React from 'react';

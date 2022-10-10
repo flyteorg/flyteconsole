@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FormControlLabel, Checkbox, FormGroup } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { MultiSelectForm } from 'components/common/MultiSelectForm';
+import { MultiSelectForm } from '@flyteconsole/components';
 import { SearchInputForm } from 'components/common/SearchInputForm';
 import { SingleSelectForm } from 'components/common/SingleSelectForm';
 import { FilterPopoverButton } from 'components/Tables/filters/FilterPopoverButton';

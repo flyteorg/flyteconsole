@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Theme, Radio, RadioGroup, Slider } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 import { TimeZone } from './helpers';
 import { useScaleContext } from './scaleContext';
 

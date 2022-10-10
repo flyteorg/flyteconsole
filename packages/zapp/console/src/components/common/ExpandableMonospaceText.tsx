@@ -9,7 +9,7 @@ import {
   nestedListColor,
   separatorColor,
   smallFontSize,
-} from 'components/Theme/constants';
+} from '@flyteconsole/ui-atoms';
 import * as copyToClipboard from 'copy-to-clipboard';
 import * as React from 'react';
 

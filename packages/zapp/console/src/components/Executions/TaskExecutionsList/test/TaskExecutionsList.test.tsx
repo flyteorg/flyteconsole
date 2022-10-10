@@ -6,7 +6,7 @@ import { SortDirection } from '@flyteconsole/flyteidl';
 import { listTaskExecutions } from 'models/Execution/api';
 import { NodeExecution } from 'models/Execution/types';
 import { mockNodeExecutionResponse } from 'models/Execution/__mocks__/mockNodeExecutionsData';
-import { taskSortFields } from 'models/Task/constants';
+import { taskSortFields } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { TaskExecutionsList } from '../TaskExecutionsList';
 
@@ -31,14 +31,14 @@ describe('TaskExecutionsList', () => {
 
   it('Renders message when no task executions exist', async () => {
     const { queryByText } = renderList();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(mockListTaskExecutions).toHaveBeenCalled();
     expect(queryByText(noExecutionsFoundString)).toBeInTheDocument();
   });
 
   it('Requests items in correct order', async () => {
     renderList();
-    await waitFor(() => { });
+    await waitFor(() => {});
     expect(mockListTaskExecutions).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({

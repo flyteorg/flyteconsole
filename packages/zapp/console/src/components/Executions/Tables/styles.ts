@@ -7,7 +7,7 @@ import {
   smallFontSize,
   tableHeaderColor,
   tablePlaceholderColor,
-} from 'components/Theme/constants';
+} from '@flyteconsole/ui-atoms';
 import { nodeExecutionsTableColumnWidths, workflowVersionsTableColumnWidths } from './constants';
 
 export const selectedClassName = 'selected';

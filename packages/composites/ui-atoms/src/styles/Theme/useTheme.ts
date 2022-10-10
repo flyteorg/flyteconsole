@@ -1,6 +1,6 @@
 import { Theme as MaterialTheme, useTheme as useMaterialTheme } from '@material-ui/core/styles';
 import { Variant } from '@material-ui/core/styles/createTypography';
-import { measureText } from 'components/common/utils';
+import { measureText } from './utils';
 
 export interface Theme extends MaterialTheme {
   measureTextWidth(variant: Variant, text: string): number;

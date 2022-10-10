@@ -10,7 +10,7 @@ import {
   TaskExecution,
   TaskExecutionIdentifier,
 } from 'models/Execution/types';
-import { taskSortFields } from 'models/Task/constants';
+import { taskSortFields } from '@flyteconsole/ui-atoms';
 import { useFetchableData, FetchableData } from '@flyteconsole/components';
 import { executionRefreshIntervalMs } from './constants';
 import { nodeExecutionIsTerminal, taskExecutionIsTerminal } from './utils';

@@ -4,7 +4,7 @@ import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants
 import { NodeExecutionDisplayType } from 'components/Executions/types';
 import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
 import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
-import { TaskType } from 'models/Task/constants';
+import { TaskType } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { ReactFlowCustomTaskNode } from '../ReactFlow/customNodeComponents';

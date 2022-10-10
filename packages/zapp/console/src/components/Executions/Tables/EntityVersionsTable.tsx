@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { noVersionsFoundString } from 'common/constants';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { ListProps } from 'components/common/types';
 import PaginatedDataList from 'components/Tables/PaginatedDataList';
 import { Workflow } from 'models/Workflow/types';
