@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useFlyteApi } from '@flyteconsole/flyte-api';
 import { Link, makeStyles, Theme } from '@material-ui/core';
-import { WaitForData, useUserProfile } from '@flyteconsole/components';
 import t from './strings';
+import { WaitForData } from '../WaitForData';
+import { useUserProfile } from '../hooks';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
