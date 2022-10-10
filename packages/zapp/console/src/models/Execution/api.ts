@@ -1,10 +1,9 @@
-import { Admin, Core, Protobuf, Service } from '@flyteconsole/flyteidl';
+import { Admin, Core, Protobuf, Service, RequestConfig } from '@flyteconsole/flyteidl';
 import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
   defaultListExecutionChildrenConfig,
   defaultPaginationConfig,
 } from 'models/AdminEntity/constants';
-import { RequestConfig } from '@flyteconsole/flyteidl';
 import { endpointPrefixes } from 'models/Common/constants';
 import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
 import { makeIdentifierPath } from 'models/Common/utils';

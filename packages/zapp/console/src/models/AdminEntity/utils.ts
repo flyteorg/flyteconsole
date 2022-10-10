@@ -1,5 +1,4 @@
-import { env } from '@flyteconsole/components';
-import { createDebugLogger } from '@flyteconsole/components';
+import { env, createDebugLogger } from '@flyteconsole/components';
 import { createLocalURL, ensureSlashPrefixed } from 'common/utils';
 import {
   AdminEntityTransformer,
