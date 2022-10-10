@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
 import * as React from 'react';
-import { DataError, DataErrorProps } from '../DataError';
+import { DataError, DataErrorProps } from '..';
+import { NotAuthorizedError, NotFoundError } from '../..';
 
 describe('DataError', () => {
   const defaultProps: DataErrorProps = {

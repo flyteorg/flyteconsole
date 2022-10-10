@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
 
-import { LoadingSpinner } from '../LoadingSpinner';
+import { LoadingSpinner } from '@flyteconsole/components';
 
 const stories = storiesOf('Common', module);
 stories.add('LoadingSpinner', () => (

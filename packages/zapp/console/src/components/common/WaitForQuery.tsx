@@ -1,7 +1,6 @@
-import { log } from '@flyteconsole/components';
+import { log, ErrorBoundary } from '@flyteconsole/components';
 import * as React from 'react';
 import { QueryObserverResult } from 'react-query';
-import { ErrorBoundary } from './ErrorBoundary';
 
 const defaultErrorTitle = 'Failed to fetch data';
 

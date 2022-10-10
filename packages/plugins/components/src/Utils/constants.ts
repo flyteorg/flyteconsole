@@ -2,7 +2,6 @@ import { InterpreterOptions } from 'xstate';
 import { env } from './environment';
 
 export const detailsPanelWidth = 432;
-export const loadingSpinnerDelayMs = 1000;
 
 export const labels = {
   moreOptionsButton: 'Display more options',

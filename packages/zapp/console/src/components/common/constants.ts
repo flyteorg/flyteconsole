@@ -2,7 +2,6 @@ import { env } from '@flyteconsole/components';
 import { InterpreterOptions } from 'xstate';
 
 export const detailsPanelWidth = 432;
-export const loadingSpinnerDelayMs = 1000;
 
 export const labels = {
   moreOptionsButton: 'Display more options',

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { noExecutionsFoundString } from 'common/constants';
-import { NonIdealState } from 'components/common/NonIdealState';
+import { NonIdealState } from '@flyteconsole/components';
 import { WaitForData } from 'components/common/WaitForData';
 import { MapTaskExecution, NodeExecution, TaskExecution } from 'models/Execution/types';
 import { isMapTaskV1 } from 'models/Task/utils';

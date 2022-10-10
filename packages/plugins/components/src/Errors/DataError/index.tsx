@@ -1,9 +1,10 @@
 import { Button } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
-import { NonIdealState } from 'components/common/NonIdealState';
-import { NotAuthorizedError, NotFoundError, NotFound } from '@flyteconsole/components';
 import * as React from 'react';
+import { NotAuthorizedError, NotFoundError } from '../fetchErrors';
+import { NonIdealState } from '../NonIdealState';
+import { NotFound } from '../NotFound';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

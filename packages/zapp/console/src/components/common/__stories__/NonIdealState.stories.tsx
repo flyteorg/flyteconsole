@@ -5,7 +5,7 @@ import * as React from 'react';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 
-import { NonIdealState } from '../NonIdealState';
+import { NonIdealState } from '@flyteconsole/components';
 
 const baseProps = {
   icon: ErrorOutline,
