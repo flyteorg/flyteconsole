@@ -6,6 +6,7 @@ import { useTheme } from 'components/Theme/useTheme';
 import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
@@ -56,10 +57,10 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   style,
 }) => {
   const theme = useTheme();
-  const { columns, state } = React.useContext(NodeExecutionsTableContext);
-  const requestConfig = React.useContext(NodeExecutionsRequestConfigContext);
+  const { columns, state } = useContext(NodeExecutionsTableContext);
+  const requestConfig = useContext(NodeExecutionsRequestConfigContext);
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
