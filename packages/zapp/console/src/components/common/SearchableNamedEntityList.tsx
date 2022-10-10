@@ -1,10 +1,9 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { listhoverColor, separatorColor } from 'components/Theme/constants';
+import { listhoverColor, separatorColor, useCommonStyles } from '@flyteconsole/ui-atoms';
 import { NamedEntity } from 'models/Common/types';
 import * as React from 'react';
 import { NoResults } from './NoResults';
 import { SearchableList, SearchResult } from './SearchableList';
-import { useCommonStyles } from './styles';
 
 export const useNamedEntityListStyles = makeStyles((theme: Theme) => ({
   container: {

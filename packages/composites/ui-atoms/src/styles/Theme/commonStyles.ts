@@ -6,7 +6,7 @@ import {
   dangerousButtonHoverColor,
   mutedPrimaryTextColor,
   smallFontSize,
-} from 'components/Theme/constants';
+} from '.';
 
 const unstyledLinkProps = {
   textDecoration: 'none',

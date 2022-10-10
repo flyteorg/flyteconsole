@@ -4,7 +4,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { DataError } from 'components/Errors/DataError';
 import { useTabState } from 'components/hooks/useTabState';
-import { secondaryBackgroundColor } from 'components/Theme/constants';
+import { secondaryBackgroundColor } from '@flyteconsole/ui-atoms';
 import { Execution, ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { keyBy } from 'lodash';

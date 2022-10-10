@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Core } from '@flyteconsole/flyteidl';
-import { getTaskIndex, getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
+import { getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
 import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { CacheStatus } from 'components/Executions/NodeExecutionCacheStatus';
-import { useCommonStyles } from '../styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 
 interface StyleProps {
   isLink: boolean;

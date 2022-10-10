@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { ExecutionsTableHeader } from '../ExecutionsTableHeader';
 import { useExecutionTableStyles } from '../styles';

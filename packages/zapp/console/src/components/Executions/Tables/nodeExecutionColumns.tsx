@@ -1,7 +1,7 @@
 import { Tooltip, Typography } from '@material-ui/core';
 import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';

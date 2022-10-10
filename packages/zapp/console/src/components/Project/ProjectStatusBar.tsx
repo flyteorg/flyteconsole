@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { barChartColors } from '@flyteconsole/components';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles(() => ({
   barContainer: {

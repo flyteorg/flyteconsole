@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 import classNames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => ({

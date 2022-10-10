@@ -4,7 +4,7 @@ import { SearchableTaskNameList } from 'components/Task/SearchableTaskNameList';
 import { useTaskShowArchivedState } from 'components/Task/useTaskShowArchivedState';
 import { limits } from 'models/AdminEntity/constants';
 import { SortDirection } from '@flyteconsole/flyteidl';
-import { taskSortFields } from 'models/Task/constants';
+import { taskSortFields } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 
 export interface ProjectTasksProps {

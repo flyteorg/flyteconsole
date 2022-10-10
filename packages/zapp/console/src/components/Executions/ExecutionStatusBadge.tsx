@@ -1,6 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { bodyFontFamily, smallFontSize, statusColors } from 'components/Theme/constants';
+import { bodyFontFamily, smallFontSize, statusColors } from '@flyteconsole/ui-atoms';
 import {
   NodeExecutionPhase,
   TaskExecutionPhase,

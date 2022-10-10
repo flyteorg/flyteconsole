@@ -18,7 +18,5 @@
             "path": "../../composites/ui-atoms"
         }
     ],
-    "include": [
-        "src/**/*"
-    ]
+    "include": ["src/**/*"]
 }

@@ -1,13 +1,20 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { FlyteLogo } from '@flyteconsole/ui-atoms';
-import { useCommonStyles } from 'components/common/styles';
+import { FlyteLogo, useCommonStyles, headerFontFamily } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
-import { env,useAdminVersion, AppInfo, NavigationDropdown, VersionInfo, FlyteNavItem, FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
+import {
+  env,
+  useAdminVersion,
+  AppInfo,
+  NavigationDropdown,
+  VersionInfo,
+  FlyteNavItem,
+  FeatureFlag,
+  useFeatureFlag,
+} from '@flyteconsole/components';
 import { baseUrlString, makeRoute } from 'routes/utils';
-import { headerFontFamily } from 'components/Theme/constants';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
 import t, { patternKey } from './strings';

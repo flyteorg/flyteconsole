@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { useOnlyMineSelectedValue } from 'components/hooks/useOnlyMineSelectedValue';
-import { OnlyMyFilter } from 'basics/LocalCache/onlyMineDefaultConfig';
-import { FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
+import { OnlyMyFilter, FeatureFlag, useFeatureFlag } from '@flyteconsole/components';
 import { useFlyteApi } from '@flyteconsole/flyte-api';
 
 interface OnlyMyExecutionsFilterState {

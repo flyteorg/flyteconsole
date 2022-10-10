@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles((theme: Theme) => ({
   row: {

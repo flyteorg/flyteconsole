@@ -1,6 +1,6 @@
 import { Popover } from '@material-ui/core';
 import { fade, makeStyles, Theme } from '@material-ui/core/styles';
-import { interactiveTextColor } from 'components/Theme/constants';
+import { interactiveTextColor } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => {

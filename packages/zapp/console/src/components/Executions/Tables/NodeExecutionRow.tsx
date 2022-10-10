@@ -2,7 +2,7 @@ import { CircularProgress, IconButton } from '@material-ui/core';
 import { Admin } from '@flyteconsole/flyteidl';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
-import { useTheme } from 'components/Theme/useTheme';
+import { useTheme } from '@flyteconsole/ui-atoms';
 import { isEqual } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';

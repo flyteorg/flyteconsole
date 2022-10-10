@@ -5,7 +5,7 @@ import { isEqual, partial, uniqBy } from 'lodash';
 import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { Identifier } from 'models/Common/types';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
-import { taskSortFields } from 'models/Task/constants';
+import { taskSortFields } from '@flyteconsole/ui-atoms';
 import { Task } from 'models/Task/types';
 import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { correctInputErrors } from './constants';
@@ -226,7 +226,8 @@ export function useLaunchTaskFormState({
   useEffect(() => {
     const subscription = service.subscribe((newState) => {
       if (newState.matches(LaunchState.SELECT_TASK_VERSION)) {
-        const { taskVersionOptions, preferredTaskId } = newState.context as TaskLaunchContextExtended;
+        const { taskVersionOptions, preferredTaskId } =
+          newState.context as TaskLaunchContextExtended;
         if (taskVersionOptions.length > 0) {
           let taskToSelect = taskVersionOptions[0];
           if (preferredTaskId) {

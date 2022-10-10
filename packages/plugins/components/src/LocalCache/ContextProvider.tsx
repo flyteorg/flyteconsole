@@ -1,7 +1,7 @@
 // More info on Local storage: https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
-import { log } from '@flyteconsole/components';
 import * as React from 'react';
 import { useState, createContext, useCallback } from 'react';
+import { log } from '..';
 import { defaultLocalCacheConfig, LocalCacheItem } from './defaultConfig';
 
 export { LocalCacheItem } from './defaultConfig';

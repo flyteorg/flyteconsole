@@ -3,7 +3,7 @@ import { useTabState } from 'components/hooks/useTabState';
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
-import { TaskType } from 'models/Task/constants';
+import { TaskType } from '@flyteconsole/ui-atoms';
 import { createMockWorkflow } from 'models/__mocks__/workflowData';
 import * as React from 'react';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';

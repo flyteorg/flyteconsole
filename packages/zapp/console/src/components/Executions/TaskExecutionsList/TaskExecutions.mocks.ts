@@ -4,7 +4,7 @@ import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
 
 import * as Long from 'long';
-import { TaskType } from 'models/Task/constants';
+import { TaskType } from '@flyteconsole/ui-atoms';
 
 // we probably will create a new helper function in future, to make testing/storybooks closer to what we see in API Json responses
 const getProtobufTimestampFromIsoTime = (isoDateTime: string): Protobuf.ITimestamp => {
@@ -74,12 +74,12 @@ export const getMockMapTaskLogItem = (
     retryAttempt: retryAttempt,
     logs: hasLogs
       ? [
-        {
-          uri: '#',
-          name: `Kubernetes Logs #0-${index ?? 0}${retryString} (State)`,
-          messageFormat: MessageFormat.JSON,
-        },
-      ]
+          {
+            uri: '#',
+            name: `Kubernetes Logs #0-${index ?? 0}${retryString} (State)`,
+            messageFormat: MessageFormat.JSON,
+          },
+        ]
       : [],
   };
 };

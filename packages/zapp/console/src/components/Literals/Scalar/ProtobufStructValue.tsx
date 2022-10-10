@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { sortedObjectEntries } from 'common/utils';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { ProtobufListValue, ProtobufStruct, ProtobufValue } from 'models/Common/types';
 import * as React from 'react';
 import { htmlEntities } from '../constants';

@@ -1,8 +1,13 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
-import { useCommonStyles } from 'components/common/styles';
-import { separatorColor, primaryTextColor, launchPlanLabelColor } from 'components/Theme/constants';
+import {
+  useCommonStyles,
+  separatorColor,
+  primaryTextColor,
+  launchPlanLabelColor,
+  MuiLaunchPlanIcon,
+} from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -10,7 +15,6 @@ import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';
 import { FormGroup } from '@material-ui/core';
 import { ResourceType } from 'models/Common/types';
-import { MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import { LaunchPlanListStructureItem } from './types';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';

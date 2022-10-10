@@ -2,8 +2,7 @@ import { FormControl, FormLabel, OutlinedInput } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
-import { useCommonStyles } from 'components/common/styles';
-import { smallFontSize } from 'components/Theme/constants';
+import { useCommonStyles, smallFontSize } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { useTerminateExecutionState } from './useTerminateExecutionState';
 

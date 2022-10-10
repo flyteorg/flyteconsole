@@ -5,6 +5,8 @@ import { defaultLocalCacheConfig, LocalCacheItem } from './defaultConfig';
 import { LocalCacheContext } from './ContextProvider';
 
 export { LocalCacheItem } from './defaultConfig';
+export * from './onlyMineDefaultConfig';
+export * from './ContextProvider';
 
 export function ClearLocalCache() {
   localStorage.clear();

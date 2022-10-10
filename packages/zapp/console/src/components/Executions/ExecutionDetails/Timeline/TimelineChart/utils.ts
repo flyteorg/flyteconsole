@@ -1,5 +1,5 @@
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
-import { primaryTextColor } from 'components/Theme/constants';
+import { primaryTextColor } from '@flyteconsole/ui-atoms';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
 

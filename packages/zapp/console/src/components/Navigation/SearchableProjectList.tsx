@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { NoResults } from 'components/common/NoResults';
 import { SearchableList, SearchResult } from 'components/common/SearchableList';
-import { useCommonStyles } from 'components/common/styles';
+import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { defaultProjectDescription } from 'components/SelectProject/constants';
 import { Project } from 'models/Project/types';
 import * as React from 'react';

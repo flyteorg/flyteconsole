@@ -7,7 +7,7 @@ import {
   buttonHoverColor,
   interactiveTextBackgroundColor,
   interactiveTextColor,
-} from 'components/Theme/constants';
+} from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => {

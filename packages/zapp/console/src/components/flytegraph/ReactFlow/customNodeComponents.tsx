@@ -6,7 +6,7 @@ import CachedOutlined from '@material-ui/icons/CachedOutlined';
 import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
-import { whiteColor } from 'components/Theme/constants';
+import { whiteColor } from '@flyteconsole/ui-atoms';
 import { CacheStatus } from 'components/Executions/NodeExecutionCacheStatus';
 import {
   COLOR_TASK_TYPE,

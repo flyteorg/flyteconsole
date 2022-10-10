@@ -1,8 +1,7 @@
 import { ListProps, Typography } from '@material-ui/core';
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { useCommonStyles } from 'components/common/styles';
-import { tablePlaceholderColor } from 'components/Theme/constants';
+import { useCommonStyles, tablePlaceholderColor } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import {
   AutoSizer,

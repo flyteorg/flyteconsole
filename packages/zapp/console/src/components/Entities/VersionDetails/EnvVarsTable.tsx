@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { Core } from '@flyteconsole/flyteidl';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 import t from '../strings';
 
 const useStyles = makeStyles((theme: Theme) => ({

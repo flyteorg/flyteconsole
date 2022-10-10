@@ -1,11 +1,11 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
 import { IconButton, Typography } from '@material-ui/core';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import { COLOR_SPECTRUM } from '@flyteconsole/ui-atoms';
 import { DataTable } from 'components/common/DataTable';
 import { Admin } from '@flyteconsole/flyteidl';
 import { isEmpty } from 'lodash';
-import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
+import { LocalCacheItem, useLocalCache } from '@flyteconsole/components';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import t from './strings';
