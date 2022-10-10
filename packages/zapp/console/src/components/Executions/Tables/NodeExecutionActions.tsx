@@ -2,6 +2,7 @@ import { IconButton, Tooltip } from '@material-ui/core';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import InputsAndOutputsIcon from '@material-ui/icons/Tv';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { RerunIcon } from '@flyteconsole/ui-atoms';
 import { Identifier, ResourceIdentifier } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
@@ -25,25 +26,30 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
   const { compiledWorkflowClosure, getNodeExecutionDetails } = useNodeExecutionContext();
   const { setSelectedExecution } = useContext(DetailsPanelContext);
 
-  const detailsContext = useNodeExecutionContext();
-  const [showLaunchForm, setShowLaunchForm] = React.useState<boolean>(false);
-  const [nodeExecutionDetails, setNodeExecutionDetails] = React.useState<
+  const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
     NodeExecutionDetails | undefined
-  >();
-  const [initialParameters, setInitialParameters] = React.useState<
+  >(undefined);
+  const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
 
   const executionData = useNodeExecutionData(execution.id);
   const id = nodeExecutionDetails?.taskTemplate?.id;
 
-  React.useEffect(() => {
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+  const isGateNode = isNodeGateNode(
+    compiledWorkflowClosure?.primary.template.nodes ?? [],
+    execution.id,
+  );
+  const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+
+  useEffect(() => {
+    getNodeExecutionDetails(execution).then((res) => {
       setNodeExecutionDetails(res);
     });
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!id) {
       return;
     }
@@ -76,6 +82,10 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     setShowLaunchForm(true);
   };
 
+  const resumeAction = () => {
+    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+  };
+
   const renderRerunAction = () => {
     if (!id || !initialParameters) {
       return <></>;
@@ -100,6 +110,13 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
 
   return (
     <div>
+      {phase === NodeExecutionPhase.PAUSED && (
+        <Tooltip title={t('resumeTooltip')}>
+          <IconButton onClick={resumeAction}>
+            <PlayCircleOutlineIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       <Tooltip title={t('inputsAndOutputsTooltip')}>
         <IconButton onClick={inputsAndOutputsIconOnClick}>
           <InputsAndOutputsIcon />

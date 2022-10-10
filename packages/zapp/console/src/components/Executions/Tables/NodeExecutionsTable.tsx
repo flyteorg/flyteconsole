@@ -23,6 +23,7 @@ import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 export interface NodeExecutionsTableProps {
   initialNodes: dNode[];
@@ -41,6 +42,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ initia
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change

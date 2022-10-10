@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { makeStyles, Theme, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Theme, Tooltip, Typography } from '@material-ui/core';
 
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
 import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { NodeExecutionName } from './NodeExecutionName';
+import t from '../strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   taskNamesList: {
@@ -49,12 +51,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface TaskNamesProps {
   nodes: dNode[];
-  onScroll: () => void;
   onToggle: (id: string, scopeId: string, level: number) => void;
+  onAction?: (id: string) => void;
+  onScroll?: () => void;
 }
 
 export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
-  ({ nodes, onScroll, onToggle }, ref) => {
+  ({ nodes, onScroll, onToggle, onAction }, ref) => {
     const styles = useStyles();
 
     return (
@@ -66,32 +69,53 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
             <div
               className={styles.namesContainer}
               key={`level=${nodeLevel}-id=${node.id}-name=${node.scopedId}`}
-              style={{ paddingLeft: nodeLevel * 16 }}
+              data-testid="task-name-item"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                width: '100%',
+                paddingLeft: nodeLevel * 16,
+              }}
             >
-              <div className={styles.namesContainerExpander}>
-                {node.nodes?.length ? (
-                  <RowExpander
-                    expanded={node.expanded || false}
-                    onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
-                  />
-                ) : (
-                  <div className={styles.leaf} />
-                )}
-              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                }}
+              >
+                <div className={styles.namesContainerExpander}>
+                  {node.nodes?.length ? (
+                    <RowExpander
+                      expanded={node.expanded || false}
+                      onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
+                    />
+                  ) : (
+                    <div className={styles.leaf} />
+                  )}
+                </div>
 
-              <div className={styles.namesContainerBody}>
-                <NodeExecutionName
-                  name={node.name}
-                  execution={node.execution!} // some nodes don't have associated execution
-                />
-                <Typography
-                  variant="subtitle1"
-                  color="textSecondary"
-                  className={styles.displayName}
-                >
-                  {templateName}
-                </Typography>
+                <div className={styles.namesContainerBody}>
+                  <NodeExecutionName
+                    name={node.name}
+                    execution={node.execution!} // some nodes don't have associated execution
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    color="textSecondary"
+                    className={styles.displayName}
+                  >
+                    {templateName}
+                  </Typography>
+                </div>
               </div>
+              {onAction && (
+                <Tooltip title={t('resume')}>
+                  <IconButton onClick={() => onAction(node.id)}>
+                    <PlayCircleOutlineIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
             </div>
           );
         })}

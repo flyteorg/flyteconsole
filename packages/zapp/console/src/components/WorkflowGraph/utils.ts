@@ -93,6 +93,8 @@ export const getNodeTypeFromCompiledNode = (node: CompiledNode): dTypes => {
     } else {
       return dTypes.subworkflow;
     }
+  } else if (node.gateNode) {
+    return dTypes.gateNode;
   } else {
     return dTypes.task;
   }
