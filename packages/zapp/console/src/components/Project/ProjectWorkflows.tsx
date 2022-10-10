@@ -1,4 +1,4 @@
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { useWorkflowShowArchivedState } from 'components/Workflow/filters/useWorkflowShowArchivedState';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
 import { limits } from 'models/AdminEntity/constants';

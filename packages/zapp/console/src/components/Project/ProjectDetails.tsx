@@ -1,6 +1,6 @@
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject } from 'components/hooks/useProjects';
 import { useQueryState } from 'components/hooks/useQueryState';

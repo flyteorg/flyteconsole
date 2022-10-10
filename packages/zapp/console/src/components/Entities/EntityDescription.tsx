@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { WaitForData } from 'components/common/WaitForData';
+import { WaitForData } from '@flyteconsole/components';
 import { useNamedEntity } from 'components/hooks/useNamedEntity';
 import { NamedEntityMetadata, ResourceIdentifier, Variable } from 'models/Common/types';
 import * as React from 'react';
