@@ -382,7 +382,7 @@ export const computeRootNodePositions = ({
       const parent = parentMap[el.parentNode];
       for (let i = 0; i < parent.nodes.length; i++) {
         const node = parent.nodes[i];
-        if (node.id == el.id) {
+        if (node.id === el.id) {
           return {
             ...el,
             position: { ...node.position },

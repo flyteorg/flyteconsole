@@ -1,8 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
-import { useUserProfile } from 'components/hooks/useUserProfile';
+import { useUserProfile, FetchableData, UserProfile } from '@flyteconsole/components';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
@@ -11,7 +10,6 @@ import {
   NamedEntityIdentifier,
   NamedEntityMetadata,
   ResourceType,
-  UserProfile,
 } from 'models/Common/types';
 import { NamedEntityState } from 'models/enums';
 import { updateTaskState } from 'models/Task/api';
@@ -30,7 +28,15 @@ const sampleUserProfile: UserProfile = {
   subject: 'subject',
 } as UserProfile;
 
-jest.mock('components/hooks/useUserProfile');
+jest.mock('@flyteconsole/components', () => {
+  const originalModule = jest.requireActual('@flyteconsole/components');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    useUserProfile: jest.fn(),
+  };
+});
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),
 }));
@@ -74,7 +80,7 @@ describe('ProjectTasks', () => {
 
   it('does not show archived tasks', async () => {
     const { getByText } = renderComponent();
-    await waitFor(() => { });
+    await waitFor(() => {});
 
     expect(mockListNamedEntities).toHaveBeenCalledWith(
       expect.anything(),
@@ -94,7 +100,7 @@ describe('ProjectTasks', () => {
   it('should display checkbox if user login', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getAllByRole } = renderComponent();
-    await waitFor(() => { });
+    await waitFor(() => {});
     const checkboxes = getAllByRole(/checkbox/i) as HTMLInputElement[];
     expect(checkboxes).toHaveLength(1);
     expect(checkboxes[0]).toBeTruthy();
@@ -104,7 +110,7 @@ describe('ProjectTasks', () => {
   it('should display archive button', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getByText, getAllByTitle, findAllByText } = renderComponent();
-    await waitFor(() => { });
+    await waitFor(() => {});
 
     const task = getByText('MyTask');
     expect(task).toBeTruthy();
@@ -133,7 +139,7 @@ describe('ProjectTasks', () => {
   it('clicking show archived should hide active tasks', async () => {
     mockUseUserProfile.mockReturnValue(loadedFetchable(sampleUserProfile, jest.fn()));
     const { getByText, queryByText, getAllByRole } = renderComponent();
-    await waitFor(() => { });
+    await waitFor(() => {});
 
     // check the checkbox is present
     const checkboxes = getAllByRole(/checkbox/i) as HTMLInputElement[];

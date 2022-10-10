@@ -2,8 +2,8 @@ import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MenuItem, Select, SelectProps, StyledComponentProps } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { getBasePathName, makeRoute } from '@flyteconsole/components';
 import classNames from 'classnames';
+import { getBasePathName, makeRoute } from '../Utils';
 import { FlyteNavItem } from './types';
 
 const DEFAULT_SELECT_LABELID = 'demo-controlled-open-select-label';

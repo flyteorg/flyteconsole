@@ -1,13 +1,19 @@
 import { render, waitFor } from '@testing-library/react';
-import { FetchableData } from '@flyteconsole/components';
-import { useUserProfile } from 'components/hooks/useUserProfile';
+import { FetchableData, useUserProfile, UserProfile } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { UserProfile } from 'models/Common/types';
 import * as React from 'react';
 
 import { UserInformation } from '../UserInformation';
 
-jest.mock('components/hooks/useUserProfile');
+jest.mock('@flyteconsole/components', () => {
+  const originalModule = jest.requireActual('@flyteconsole/components');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    useUserProfile: jest.fn(),
+  };
+});
 
 describe('UserInformation', () => {
   const sampleUserProfile: UserProfile = {

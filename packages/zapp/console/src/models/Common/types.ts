@@ -190,20 +190,9 @@ export type IdentifierScope =
   | NameIdentifierScope
   | Identifier;
 
-export interface UserProfile {
-  subject: string;
-  name: string;
-  preferredUsername: string;
-  givenName: string;
-  familyName: string;
-  email: string;
-  picture: string;
-}
-
 export type StatusString = 'normal' | 'degraded' | 'down';
 
 export interface SystemStatus {
   message?: string;
   status: StatusString;
 }
-
