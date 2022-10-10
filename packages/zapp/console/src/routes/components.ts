@@ -1,5 +1,5 @@
 import { ExecutionDetails } from 'components/Executions/ExecutionDetails/ExecutionDetails';
-import { NotFound } from 'components/NotFound/NotFound';
+import { NotFound } from '@flyteconsole/components';
 import { ProjectDetails } from 'components/Project/ProjectDetails';
 import { SelectProject } from 'components/SelectProject/SelectProject';
 import { TaskDetails } from 'components/Task/TaskDetails';

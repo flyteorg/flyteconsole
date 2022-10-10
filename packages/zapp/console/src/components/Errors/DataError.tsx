@@ -2,8 +2,7 @@ import { Button } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import { NonIdealState } from 'components/common/NonIdealState';
-import { NotFound } from 'components/NotFound/NotFound';
-import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
+import { NotAuthorizedError, NotFoundError, NotFound } from '@flyteconsole/components';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
