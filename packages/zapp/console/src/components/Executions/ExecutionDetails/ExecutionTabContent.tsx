@@ -148,9 +148,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         return (
           <div className={styles.wrapper}>
             <div className={styles.container}>
-              <NodeExecutionsTimelineContext.Provider value={timelineContext}>
-                <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
-              </NodeExecutionsTimelineContext.Provider>
+              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
             </div>
             <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
           </div>
@@ -161,6 +159,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             mergedDag={mergedDag}
             error={error}
             dynamicWorkflows={dynamicWorkflows}
+            initialNodes={initialNodes}
             onNodeSelectionChanged={onNodeSelectionChanged}
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}
@@ -184,13 +183,15 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   return (
     <>
-      {renderContent()}
+      <NodeExecutionsTimelineContext.Provider value={timelineContext}>
+        {renderContent()}
+      </NodeExecutionsTimelineContext.Provider>
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
         {!isDetailsTabClosed && selectedExecution && (
           <NodeExecutionDetailsPanelContent
             onClose={onCloseDetailsPanel}
-            phase={selectedPhase}
+            taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
             nodeExecutionId={selectedExecution}
           />
         )}

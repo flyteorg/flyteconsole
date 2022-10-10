@@ -17,6 +17,7 @@ import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 export interface NodeExecutionsTableProps {
   setSelectedExecution: (execution: NodeExecutionIdentifier | null) => void;
@@ -45,6 +46,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   const tableStyles = useExecutionTableStyles();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const filterState = useNodeExecutionFiltersState();
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   useEffect(() => {
     if (nodeExecutionsById) {
@@ -87,7 +89,10 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change
-  const columns = useMemo(() => generateColumns(columnStyles), [columnStyles]);
+  const columns = useMemo(
+    () => generateColumns(columnStyles, compiledWorkflowClosure?.primary.template.nodes ?? []),
+    [columnStyles],
+  );
   const tableContext = useMemo(
     () => ({ columns, state: { selectedExecution, setSelectedExecution } }),
     [columns, selectedExecution, setSelectedExecution],

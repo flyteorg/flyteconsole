@@ -1,9 +1,9 @@
 import { createLocalizedString } from '@flyteconsole/locale';
 
 const str = {
-  rerun: 'RERUN',
-  flyteDeck: 'Flyte Deck',
-  resume: 'Resume',
+  pausedTasksButton: 'Paused Tasks',
+  legendButton: (isVisible: boolean) => `${isVisible ? 'Hide' : 'Show'} Legend`,
+  resumeTooltip: 'Resume',
 };
 
 export { patternKey } from '@flyteconsole/locale';

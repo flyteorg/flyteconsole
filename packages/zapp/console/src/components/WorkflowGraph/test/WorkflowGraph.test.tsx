@@ -37,6 +37,7 @@ describe('WorkflowGraph', () => {
             }}
             error={null}
             dynamicWorkflows={[]}
+            initialNodes={[]}
           />
         </QueryClientProvider>,
       );
