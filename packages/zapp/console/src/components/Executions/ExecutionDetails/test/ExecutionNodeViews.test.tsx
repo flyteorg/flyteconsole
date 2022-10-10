@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { filterLabels } from 'components/Executions/filters/constants';
 import { nodeExecutionStatusFilters } from 'components/Executions/filters/statusFilters';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
@@ -20,15 +20,14 @@ jest.mock('chart.js', () => ({
 jest.mock('chartjs-plugin-datalabels', () => ({
   ChartDataLabels: null,
 }));
+
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
-  NodeExecutionRow: jest.fn(({ children, execution }) => {
-    return (
-      <div data-testid="node-execution-row">
-        <span id="node-execution-col-id">{execution?.id?.nodeId}</span>
-        {children}
-      </div>
-    );
-  }),
+  NodeExecutionRow: jest.fn(({ children, execution }) => (
+    <div data-testid="node-execution-row">
+      <span id="node-execution-col-id">{execution?.id?.nodeId}</span>
+      {children}
+    </div>
+  )),
 }));
 // ExecutionNodeViews uses query params for NE list, so we must match them
 // for the list to be returned properly
@@ -73,35 +72,43 @@ describe('ExecutionNodeViews', () => {
     const failedNodeName = nodeExecutions.failedNode.data.id.nodeId;
     const succeededNodeName = nodeExecutions.pythonNode.data.id.nodeId;
 
-    const { getByText, queryByText } = renderViews();
-    const nodesTab = await waitFor(() => getByText(tabs.nodes.label));
-    const graphTab = await waitFor(() => getByText(tabs.graph.label));
+    const { getByText, queryByText, getByLabelText } = renderViews();
+
+    await waitFor(() => getByText(tabs.nodes.label));
+
+    const nodesTab = getByText(tabs.nodes.label);
+    const graphTab = getByText(tabs.graph.label);
 
     // Ensure we are on Nodes tab
     fireEvent.click(nodesTab);
-    await waitFor(() => getByText(succeededNodeName));
+    await waitFor(() => queryByText(succeededNodeName));
 
     const statusButton = await waitFor(() => getByText(filterLabels.status));
 
     // Apply 'Failed' filter and wait for list to include only the failed item
     fireEvent.click(statusButton);
     const failedFilter = await waitFor(() =>
-      screen.getByLabelText(nodeExecutionStatusFilters.failed.label),
+      getByLabelText(nodeExecutionStatusFilters.failed.label),
     );
 
     // Wait for succeeded task to disappear and ensure failed task remains
     fireEvent.click(failedFilter);
-    await waitFor(() => queryByText(succeededNodeName) == null);
-    await waitFor(() => expect(getByText(failedNodeName)).toBeInTheDocument());
+    await waitFor(() => queryByText(failedNodeName));
+
+    expect(queryByText(succeededNodeName)).not.toBeInTheDocument();
+    expect(getByText(failedNodeName)).toBeInTheDocument();
 
     // Switch to the Graph tab
     fireEvent.click(statusButton);
     fireEvent.click(graphTab);
-    await waitFor(() => queryByText(failedNodeName) == null);
+    await waitFor(() => queryByText(succeededNodeName));
+
+    expect(queryByText(succeededNodeName)).toBeInTheDocument();
 
     // Switch back to Nodes Tab and verify filter still applied
     fireEvent.click(nodesTab);
-    await waitFor(() => getByText(failedNodeName));
-    expect(queryByText(succeededNodeName)).toBeNull();
+    await waitFor(() => queryByText(failedNodeName));
+    expect(queryByText(succeededNodeName)).not.toBeInTheDocument();
+    expect(queryByText(failedNodeName)).toBeInTheDocument();
   });
 });
