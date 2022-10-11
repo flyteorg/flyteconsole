@@ -2,11 +2,4 @@ export * from './log';
 export * from './constants';
 export * from './environment';
 export * from './typeCheckers';
-
-export const makeRoute = (baseUrl: string, path: string) => `${baseUrl}${path}`;
-
-export const getBasePathName = () => {
-  const pathName = window.location.pathname;
-
-  return `/${pathName?.split('/')?.[1]}`;
-};
+export * from './navigation';

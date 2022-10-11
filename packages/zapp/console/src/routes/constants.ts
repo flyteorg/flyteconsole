@@ -1,4 +1,4 @@
-import { makeRoute } from './utils';
+import { makeRoute } from '@flyteconsole/components';
 
 const projectPrefix = '/projects/:projectId';
 

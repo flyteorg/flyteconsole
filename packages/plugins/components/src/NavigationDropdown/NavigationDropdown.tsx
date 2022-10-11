@@ -43,14 +43,13 @@ export interface Config extends StyledComponentProps {
 }
 
 export interface NavigationDropdownProps {
-  baseUrl: string;
   items: FlyteNavItem[]; // all other navigation items
   config: Config;
 }
 
 /** Renders the default content for the app bar, which is the logo and help links */
 export const NavigationDropdown = (props: NavigationDropdownProps) => {
-  const { baseUrl, items: menuItems, config } = props;
+  const { items: menuItems, config } = props;
 
   const basePathName = React.useMemo(() => getBasePathName(), []);
   const selectedMenuItem = menuItems.find((menuItem) => menuItem.url === basePathName);
@@ -68,7 +67,7 @@ export const NavigationDropdown = (props: NavigationDropdownProps) => {
 
     if (item.url.startsWith('+')) {
       // local navigation with BASE_URL addition
-      history.push(makeRoute(baseUrl, item.url.slice(1)));
+      history.push(makeRoute(item.url.slice(1)));
     } else {
       // treated as external navigation
       window.location.assign(item.url);
