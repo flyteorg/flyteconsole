@@ -135,18 +135,18 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const nodeExecutionsById = mockExecutionsById(2, phases);
     const filteredNodeExecutions = mockNodeExecutions(2, phases);
 
-    const { getAllByTestId } = renderTable({
+    const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
       filteredNodeExecutions,
     });
 
-    await waitFor(() => getAllByTestId('node-execution-row'));
+    await waitFor(() => queryAllByTestId('node-execution-row'));
 
-    expect(getAllByTestId('node-execution-row')).toHaveLength(initialNodes.length);
-    const ids = getAllByTestId('node-execution-col-id');
+    expect(queryAllByTestId('node-execution-row')).toHaveLength(initialNodes.length);
+    const ids = queryAllByTestId('node-execution-col-id');
     expect(ids).toHaveLength(initialNodes.length);
-    const renderedPhases = getAllByTestId('node-execution-col-phase');
+    const renderedPhases = queryAllByTestId('node-execution-col-phase');
     expect(renderedPhases).toHaveLength(initialNodes.length);
     for (const i in initialNodes) {
       expect(ids[i]).toHaveTextContent(initialNodes[i].id);
