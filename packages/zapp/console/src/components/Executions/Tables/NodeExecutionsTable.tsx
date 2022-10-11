@@ -16,6 +16,7 @@ import { NodeExecutionRow } from './NodeExecutionRow';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 export interface NodeExecutionsTableProps {
@@ -23,6 +24,7 @@ export interface NodeExecutionsTableProps {
   selectedExecution: NodeExecutionIdentifier | null;
   abortMetadata?: Admin.IAbortMetadata;
   initialNodes: dNode[];
+  filteredNodeExecutions: NodeExecution[];
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -37,40 +39,44 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   selectedExecution,
   abortMetadata,
   initialNodes,
+  filteredNodeExecutions,
 }) => {
   const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const filterState = useNodeExecutionFiltersState();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   useEffect(() => {
     if (nodeExecutionsById) {
-      const executions: NodeExecution[] = [];
-      initialNodes.map((node) => {
-        if (nodeExecutionsById[node.scopedId]) executions.push(nodeExecutionsById[node.scopedId]);
-        else
-          executions.push({
-            closure: {
-              createdAt: dateToTimestamp(new Date()),
-              outputUri: '',
-              phase: NodeExecutionPhase.UNDEFINED,
-            },
-            id: {
-              executionId: {
-                domain: node.value?.taskNode?.referenceId?.domain,
-                name: node.value?.taskNode?.referenceId?.name,
-                project: node.value?.taskNode?.referenceId?.project,
+      const executions: NodeExecution[] = [...filteredNodeExecutions];
+      if (!filterState.appliedFilters?.length) {
+        initialNodes.forEach((node) => {
+          if (!nodeExecutionsById[node.scopedId]) {
+            executions.push({
+              closure: {
+                createdAt: dateToTimestamp(new Date()),
+                outputUri: '',
+                phase: NodeExecutionPhase.UNDEFINED,
               },
-              nodeId: node.id,
-            },
-            inputUri: '',
-            scopedId: node.scopedId,
-          });
-      });
+              id: {
+                executionId: {
+                  domain: node.value?.taskNode?.referenceId?.domain,
+                  name: node.value?.taskNode?.referenceId?.name,
+                  project: node.value?.taskNode?.referenceId?.project,
+                },
+                nodeId: node.id,
+              },
+              inputUri: '',
+              scopedId: node.scopedId,
+            });
+          }
+        });
+      }
       setNodeExecutions(executions);
     }
-  }, [nodeExecutionsById, initialNodes]);
+  }, [nodeExecutionsById, initialNodes, filteredNodeExecutions]);
 
   const executionsWithKeys = useMemo(
     () =>
