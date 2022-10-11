@@ -28,6 +28,7 @@
     "author": "Lyft <flyte-eng@lyft.com>",
     "license": "Apache-2.0",
     "dependencies": {
+        "@flyteorg/flyteidl": "^1.1.4",
         "@rjsf/core": "^3.2.1",
         "@rjsf/material-ui": "^3.2.1",
         "chalk": "^2.0.1",
