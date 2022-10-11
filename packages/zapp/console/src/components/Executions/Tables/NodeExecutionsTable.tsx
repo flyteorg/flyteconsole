@@ -15,11 +15,13 @@ import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
 import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
+// import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 
 export interface NodeExecutionsTableProps {
   initialNodes: dNode[];
+  filteredNodeExecutions: NodeExecution[];
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -40,6 +42,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ initia
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
+  // const filterState = useNodeExecutionFiltersState();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const columnStyles = useColumnStyles();

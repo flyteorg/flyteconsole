@@ -3,7 +3,7 @@ import { DetailsPanel } from 'components/common/DetailsPanel';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import * as React from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
@@ -23,6 +23,7 @@ import { DetailsPanelContext } from './DetailsPanelContext';
 
 export interface ExecutionTabContentProps {
   tabType: string;
+  filteredNodeExecutions: NodeExecution[];
 }
 
 const useStyles = makeStyles(() => ({
@@ -38,7 +39,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({ tabType }) => {
+export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
+  tabType,
+  filteredNodeExecutions,
+}) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
@@ -135,7 +139,12 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({ tabTyp
   const renderContent = () => {
     switch (tabType) {
       case tabs.nodes.id:
-        return <NodeExecutionsTable initialNodes={initialNodes} />;
+        return (
+          <NodeExecutionsTable
+            initialNodes={initialNodes}
+            filteredNodeExecutions={filteredNodeExecutions}
+          />
+        );
       case tabs.graph.id:
         return (
           <WorkflowGraph
