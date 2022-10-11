@@ -1667,10 +1667,10 @@
   resolved "https://registry.yarnpkg.com/@flyteorg/flyteidl/-/flyteidl-1.1.16.tgz#7afbbf5aac70ae55ab1147f37e317165f3c26bc9"
   integrity sha512-zbcvCeSXyrBaEQp7tOkCcyAz/kqet8fHMOQ+4618KnhnvS4L6GrI5ZXlZRLeJgVofRqBOFjnRIxEvtq7i5ukGQ==
 
-"@flyteorg/flyteidl@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@flyteorg/flyteidl/-/flyteidl-1.1.4.tgz#7a02d80e22c623817b6061f1f5e88ec243041cf1"
-  integrity sha512-CmO/H3vbjluV/G4J9TFnSo3HiefOQ8f46BbpordSlVA2CANWQZaNc6Csz7JTGdotyZ2DdUXJkBcPRiA/r9H3lQ==
+"@flyteorg/flyteidl@^1.1.4":
+  version "1.1.21"
+  resolved "https://registry.yarnpkg.com/@flyteorg/flyteidl/-/flyteidl-1.1.21.tgz#dc21ae56d5c2a5e6ff849faaae587bfdd09acd6c"
+  integrity sha512-SmCKBYyWK1q0qzcvcv2qUa9kFlJwevGrR9jPo5OYYp85X9X3Kfx7x1mWx2R891TWrRFXWtYs0sf4E1OGrf7Ydw==
 
 "@gar/promisify@^1.0.1", "@gar/promisify@^1.1.3":
   version "1.1.3"
@@ -7171,11 +7171,9 @@ conventional-commits-parser@^3.2.3:
     through2 "^4.0.0"
 
 convert-source-map@^1.1.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.8.0.tgz#f3373c32d21b4d780dd8004514684fb791ca4369"
-  integrity sha512-+OQdjP49zViI/6i7nIJpA8rAl4sV/JdPfU9nZs3VqOwGIgizICvuN2ru6fMd+4llL0tar18UYJXfZ/TWtmhUjA==
-  dependencies:
-    safe-buffer "~5.1.1"
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/convert-source-map/-/convert-source-map-1.9.0.tgz#7faae62353fb4213366d0ca98358d22e8368b05f"
+  integrity sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==
 
 convert-source-map@^1.4.0, convert-source-map@^1.5.0, convert-source-map@^1.6.0, convert-source-map@^1.7.0:
   version "1.7.0"
