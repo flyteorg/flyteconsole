@@ -12,6 +12,7 @@ import {
   getNodeTypeFromCompiledNode,
   isStartNode,
   isEndNode,
+  getNodeTemplateName,
 } from '../utils';
 
 describe('getDisplayName', () => {
@@ -82,5 +83,37 @@ describe('getSubWorkflowFromId', () => {
   });
   it('should return false when not start-node', () => {
     expect(isStartNode(mockCompiledTaskNode)).toBe(false);
+  });
+});
+
+describe('getNodeTemplateName', () => {
+  const name = 'Test';
+  const node = {
+    id: 'n1',
+    scopedId: 'n1',
+    type: dTypes.start,
+    name: 'node1',
+    nodes: [],
+    edges: [],
+  };
+
+  it('should return undefined when node does not have value field', () => {
+    expect(getNodeTemplateName(node)).toBeUndefined();
+  });
+  it('should return undefined when node value is neither workflowNode nor taskNode', () => {
+    const otherNode = { ...node, value: { gateNode: {} } };
+    expect(getNodeTemplateName(otherNode)).toBeUndefined();
+  });
+  it('should return referenceId name for taskNode', () => {
+    const otherNode = { ...node, value: { taskNode: { referenceId: { name } } } };
+    expect(getNodeTemplateName(otherNode)).toEqual(name);
+  });
+  it('should return launchplan name for launch plan', () => {
+    const otherNode = { ...node, value: { workflowNode: { launchplanRef: { name } } } };
+    expect(getNodeTemplateName(otherNode)).toEqual(name);
+  });
+  it('should return subworkflow name for standard workflowNode', () => {
+    const otherNode = { ...node, value: { workflowNode: { subWorkflowRef: { name } } } };
+    expect(getNodeTemplateName(otherNode)).toEqual(name);
   });
 });

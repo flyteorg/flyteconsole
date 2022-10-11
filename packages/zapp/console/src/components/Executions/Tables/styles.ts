@@ -20,10 +20,6 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
   },
   errorContainer: {
     padding: `0 ${theme.spacing(8)}px ${theme.spacing(2)}px`,
-    '$childrenContainer &': {
-      paddingTop: theme.spacing(2),
-      paddingLeft: theme.spacing(2),
-    },
   },
   expander: {
     alignItems: 'center',
