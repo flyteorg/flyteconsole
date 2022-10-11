@@ -1,7 +1,7 @@
 import { ensureSlashPrefixed } from 'common/utils';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { makeRoute } from '@flyteconsole/components';
 import { projectBasePath, projectDomainBasePath } from './constants';
-import { makeRoute } from './utils';
 
 /** Creates a path relative to a particular project */
 export const makeProjectBoundPath = (projectId: string, path = '') =>

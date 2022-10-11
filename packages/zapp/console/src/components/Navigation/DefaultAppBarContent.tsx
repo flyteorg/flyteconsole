@@ -15,8 +15,8 @@ import {
   useFeatureFlag,
   OnlyMine,
   UserInformation,
+  makeRoute,
 } from '@flyteconsole/components';
-import { baseUrlString, makeRoute } from 'routes/utils';
 import t, { patternKey } from './strings';
 
 const { version: platformVersion } = require('../../../package.json');
@@ -85,7 +85,6 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
       {items?.length > 0 ? (
         <NavigationDropdown
           config={{ headerFontFamily: headerFontFamily }}
-          baseUrl={baseUrlString}
           items={dropdownMenuItems}
         />
       ) : (

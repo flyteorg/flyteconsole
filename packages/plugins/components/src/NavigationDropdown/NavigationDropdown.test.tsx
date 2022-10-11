@@ -22,7 +22,6 @@ describe('NavigationDopdown', () => {
     const { getByRole } = render(
       <ThemeProvider theme={muiTheme}>
         <NavigationDropdown
-          baseUrl="/console"
           items={menuItems}
           config={{ headerFontFamily: `"Open Sans", helvetica, arial, sans-serif` }}
         />
