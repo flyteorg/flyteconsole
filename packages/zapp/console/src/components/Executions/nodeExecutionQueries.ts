@@ -281,32 +281,6 @@ function fetchChildNodeExecutionGroups(
   return fetchGroupsForTaskExecutionNode(queryClient, nodeExecution, config);
 }
 
-/** Fetches and groups `NodeExecution`s which are direct children of the given
- * `NodeExecution`.
- */
-export function useChildNodeExecutionGroupsQuery(
-  nodeExecution: NodeExecution,
-  config: RequestConfig,
-): QueryObserverResult<NodeExecutionGroup[], Error> {
-  const queryClient = useQueryClient();
-  // Use cached data if the parent node execution is terminal and all children
-  // in all groups are terminal
-  const shouldEnableFn = (groups: NodeExecutionGroup[]) => {
-    if (!nodeExecutionIsTerminal(nodeExecution)) {
-      return true;
-    }
-    return groups.some((group) => group.nodeExecutions.some((ne) => !nodeExecutionIsTerminal(ne)));
-  };
-
-  return useConditionalQuery<NodeExecutionGroup[]>(
-    {
-      queryKey: [QueryType.NodeExecutionChildList, nodeExecution.id, config],
-      queryFn: () => fetchChildNodeExecutionGroups(queryClient, nodeExecution, config),
-    },
-    shouldEnableFn,
-  );
-}
-
 /**
  * Query returns all children (not only direct childs) for a list of `nodeExecutions`
  */

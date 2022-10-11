@@ -17,12 +17,6 @@ export const nodeExecutionsTableColumnWidths = {
   startedAt: 200,
 };
 
-export const titleStrings = {
-  childGroupFetchFailed: 'Failed to fetch children. Click to retry.',
-  expandRow: 'Expand row',
-  groupName: 'Group name',
-};
-
 export const workflowVersionsTableColumnWidths = {
   radio: 40,
   name: 380,

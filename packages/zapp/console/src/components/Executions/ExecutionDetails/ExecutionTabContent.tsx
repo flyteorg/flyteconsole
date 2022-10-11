@@ -134,15 +134,8 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({ tabTyp
 
   const renderContent = () => {
     switch (tabType) {
-      case tabs.timeline.id:
-        return (
-          <div className={styles.wrapper}>
-            <div className={styles.container}>
-              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
-            </div>
-            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-          </div>
-        );
+      case tabs.nodes.id:
+        return <NodeExecutionsTable initialNodes={initialNodes} />;
       case tabs.graph.id:
         return (
           <WorkflowGraph
@@ -156,8 +149,15 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({ tabTyp
             isDetailsTabClosed={isDetailsTabClosed}
           />
         );
-      case tabs.nodes.id:
-        return <NodeExecutionsTable initialNodes={initialNodes} />;
+      case tabs.timeline.id:
+        return (
+          <div className={styles.wrapper}>
+            <div className={styles.container}>
+              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
+            </div>
+            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
+          </div>
+        );
       default:
         return null;
     }

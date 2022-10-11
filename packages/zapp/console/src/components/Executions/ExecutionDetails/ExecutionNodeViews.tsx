@@ -57,7 +57,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
-  const requestConfig = useContext(NodeExecutionsRequestConfigContext);
+  const requestConfig = useContext(NodeExecutionsRequestConfigContext); // Can't find initialization of the provider
   const [loading, setLoading] = useState<boolean>(true);
 
   const {
