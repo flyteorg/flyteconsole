@@ -3,23 +3,13 @@ import classnames from 'classnames';
 import { FlyteLogo, useCommonStyles, headerFontFamily } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Routes } from 'routes/routes';
-import {
-  env,
-  useAdminVersion,
-  AppInfo,
-  NavigationDropdown,
-  VersionInfo,
-  FlyteNavItem,
-  FeatureFlag,
-  useFeatureFlag,
-  OnlyMine,
-  UserInformation,
-  makeRoute,
-} from '@flyteconsole/components';
-import t, { patternKey } from './strings';
+import { FlyteNavItem, NavigationDropdown } from '../NavigationDropdown';
+import { AppInfo, VersionInfo } from '../AppInfo';
+import { FeatureFlag, useFeatureFlag } from '../hooks';
+import { makeRoute } from '../Utils';
+import { OnlyMine } from '../OnlyMine';
+import { UserInformation } from '../UserInformation';
 
-const { version: platformVersion } = require('../../../package.json');
 
 const useStyles = makeStyles((theme: Theme) => ({
   spacer: {
@@ -33,38 +23,22 @@ const useStyles = makeStyles((theme: Theme) => ({
 interface DefaultAppBarProps {
   items: FlyteNavItem[];
   console?: string;
+  versions: VersionInfo[];
+  routes: {
+    SelectProject: {
+      path: string
+    }
+  }
 }
 
 /** Renders the default content for the app bar, which is the logo and help links */
 export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
-  const { console, items } = props;
+  const { console, items, versions, routes } = props;
 
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
   const isFlagEnabled = useFeatureFlag(FeatureFlag.OnlyMine);
-  const { adminVersion } = useAdminVersion();
-
-  const versions: VersionInfo[] = React.useMemo(
-    () => [
-      {
-        name: t('versionConsoleUi'),
-        version: platformVersion,
-        url: `https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`,
-      },
-      {
-        name: t('versionAdmin'),
-        version: adminVersion,
-        url: `https://github.com/flyteorg/flyteadmin/releases/tag/v${adminVersion}`,
-      },
-      {
-        name: t('versionGoogleAnalytics'),
-        version: t(patternKey('gaDisable', env.DISABLE_GA)),
-        url: 'https://github.com/flyteorg/flyteconsole#google-analytics',
-      },
-    ],
-    [],
-  );
 
   const dropdownMenuItems = React.useMemo(
     () => [
@@ -79,7 +53,9 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
 
   return (
     <>
-      <Link className={classnames(commonStyles.linkUnstyled)} to={Routes.SelectProject.path}>
+      <Link
+        className={classnames(commonStyles.linkUnstyled)}
+        to={routes.SelectProject.path}>
         <FlyteLogo size={32} />
       </Link>
       {items?.length > 0 ? (
