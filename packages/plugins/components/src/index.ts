@@ -10,3 +10,4 @@ export * from './LocalCache';
 export * from './OnlyMine';
 export * from './LoadingSpinner';
 export * from './WaitForData';
+export * from './UserInformation';
