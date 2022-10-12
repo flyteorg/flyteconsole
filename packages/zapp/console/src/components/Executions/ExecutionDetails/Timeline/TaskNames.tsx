@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton, makeStyles, Theme, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Theme, Tooltip } from '@material-ui/core';
 
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
 import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
@@ -38,12 +38,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '100%',
     overflow: 'hidden',
   },
-  displayName: {
-    marginTop: 4,
-    textOverflow: 'ellipsis',
-    width: '100%',
-    overflow: 'hidden',
-  },
   leaf: {
     width: 30,
   },
@@ -63,7 +57,6 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
     return (
       <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
         {nodes.map((node) => {
-          const templateName = getNodeTemplateName(node);
           const nodeLevel = node?.level ?? 0;
           return (
             <div
@@ -98,15 +91,9 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                 <div className={styles.namesContainerBody}>
                   <NodeExecutionName
                     name={node.name}
-                    execution={node.execution!} // some nodes don't have associated execution
+                    templateName={getNodeTemplateName(node)}
+                    execution={node.execution}
                   />
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    className={styles.displayName}
-                  >
-                    {templateName}
-                  </Typography>
                 </div>
               </div>
               {onAction && (

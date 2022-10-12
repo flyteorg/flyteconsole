@@ -151,7 +151,7 @@ const ReactFlowGraphComponent = ({
   const backgroundStyle = getRFBackground().nested;
 
   useEffect(() => {
-    const pausedNodes: dNode[] = initialNodes.filter((node) => {
+    const updatedPausedNodes: dNode[] = initialNodes.filter((node) => {
       const nodeExecution = nodeExecutionsById[node.id];
       if (nodeExecution) {
         const phase = nodeExecution?.closure.phase;
@@ -163,7 +163,7 @@ const ReactFlowGraphComponent = ({
       }
       return false;
     });
-    const nodesWithExecutions = pausedNodes.map((node) => {
+    const nodesWithExecutions = updatedPausedNodes.map((node) => {
       const execution = nodeExecutionsById[node.scopedId];
       return {
         ...node,

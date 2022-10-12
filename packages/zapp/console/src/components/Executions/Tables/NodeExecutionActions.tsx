@@ -10,24 +10,21 @@ import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { NodeExecutionsTableState } from './types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
+import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 
 interface NodeExecutionActionsProps {
   execution: NodeExecution;
-  state: NodeExecutionsTableState;
 }
 
-export const NodeExecutionActions = ({
-  execution,
-  state,
-}: NodeExecutionActionsProps): JSX.Element => {
+export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): JSX.Element => {
   const { compiledWorkflowClosure, getNodeExecutionDetails } = useNodeExecutionContext();
+  const { setSelectedExecution } = useContext(DetailsPanelContext);
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
   const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
@@ -77,7 +74,7 @@ export const NodeExecutionActions = ({
     // prevent the parent row body onClick event trigger
     e.stopPropagation();
     // use null in case if there is no execution provided - when it is null will close panel
-    state.setSelectedExecution(execution?.id ?? null);
+    setSelectedExecution(execution?.id ?? null);
   };
 
   const rerunIconOnClick = (e: React.MouseEvent<HTMLElement>) => {

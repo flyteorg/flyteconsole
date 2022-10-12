@@ -3,9 +3,8 @@ import { DetailsPanel } from 'components/common/DetailsPanel';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
-import { Admin } from 'flyteidl';
 import * as React from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { checkForDynamicExecutions } from 'components/common/utils';
@@ -17,14 +16,14 @@ import { NodeExecutionsByIdContext } from '../contexts';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
-import { NodeExecutionsTimelineContext } from './Timeline/context';
 import { ExecutionTimeline } from './Timeline/ExecutionTimeline';
 import { ExecutionTimelineFooter } from './Timeline/ExecutionTimelineFooter';
 import { convertToPlainNodes, TimeZone } from './Timeline/helpers';
+import { DetailsPanelContext } from './DetailsPanelContext';
 
 export interface ExecutionTabContentProps {
   tabType: string;
-  abortMetadata?: Admin.IAbortMetadata;
+  filteredNodeExecutions: NodeExecution[];
 }
 
 const useStyles = makeStyles(() => ({
@@ -42,7 +41,7 @@ const useStyles = makeStyles(() => ({
 
 export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   tabType,
-  abortMetadata,
+  filteredNodeExecutions,
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
@@ -113,7 +112,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
-  const timelineContext = useMemo(
+  const detailsPanelContext = useMemo(
     () => ({ selectedExecution, setSelectedExecution }),
     [selectedExecution, setSelectedExecution],
   );
@@ -137,19 +136,14 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     setSelectedExecution(newSelectedExecution);
   };
 
-  const onExecutionSelectionChanged = (execution: NodeExecutionIdentifier | null) =>
-    setSelectedExecution(execution);
-
   const renderContent = () => {
     switch (tabType) {
-      case tabs.timeline.id:
+      case tabs.nodes.id:
         return (
-          <div className={styles.wrapper}>
-            <div className={styles.container}>
-              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
-            </div>
-            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-          </div>
+          <NodeExecutionsTable
+            initialNodes={initialNodes}
+            filteredNodeExecutions={filteredNodeExecutions}
+          />
         );
       case tabs.graph.id:
         return (
@@ -164,14 +158,14 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             isDetailsTabClosed={isDetailsTabClosed}
           />
         );
-      case tabs.nodes.id:
+      case tabs.timeline.id:
         return (
-          <NodeExecutionsTable
-            abortMetadata={abortMetadata}
-            initialNodes={initialNodes}
-            selectedExecution={selectedExecution}
-            setSelectedExecution={onExecutionSelectionChanged}
-          />
+          <div className={styles.wrapper}>
+            <div className={styles.container}>
+              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
+            </div>
+            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
+          </div>
         );
       default:
         return null;
@@ -180,9 +174,9 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   return (
     <>
-      <NodeExecutionsTimelineContext.Provider value={timelineContext}>
+      <DetailsPanelContext.Provider value={detailsPanelContext}>
         {renderContent()}
-      </NodeExecutionsTimelineContext.Provider>
+      </DetailsPanelContext.Provider>
       {/* Side panel, shows information for specific node */}
       <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
         {!isDetailsTabClosed && selectedExecution && (
