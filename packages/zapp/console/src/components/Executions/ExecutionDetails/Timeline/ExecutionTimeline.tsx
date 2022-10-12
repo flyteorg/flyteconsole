@@ -12,6 +12,7 @@ import { useScaleContext } from './scaleContext';
 import { TaskNames } from './TaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
+import t from '../strings';
 
 interface StyleProps {
   chartWidth: number;
@@ -165,7 +166,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
   return (
     <>
       <div className={styles.taskNames}>
-        <Typography className={styles.taskNamesHeader}>Task Name</Typography>
+        <Typography className={styles.taskNamesHeader}>{t('taskNameColumnHeader')}</Typography>
         <TaskNames
           nodes={showNodes}
           ref={taskNamesRef}

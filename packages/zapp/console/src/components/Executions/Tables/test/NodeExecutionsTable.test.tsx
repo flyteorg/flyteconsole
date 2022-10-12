@@ -23,11 +23,10 @@ jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
-  NodeExecutionRow: jest.fn(({ children, execution }) => (
+  NodeExecutionRow: jest.fn(({ nodeExecution }) => (
     <div data-testid="node-execution-row">
-      <div data-testid="node-execution-col-id">{execution?.id?.nodeId}</div>
-      <div data-testid="node-execution-col-phase">{execution?.closure?.phase}</div>
-      {children}
+      <div data-testid="node-execution-col-id">{nodeExecution?.id?.nodeId}</div>
+      <div data-testid="node-execution-col-phase">{nodeExecution?.closure?.phase}</div>
     </div>
   )),
 }));
@@ -93,8 +92,6 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   let requestConfig: RequestConfig;
   let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
   const initialNodes = mockNodes(2);
-  const selectedExecution = null;
-  const setSelectedExecution = jest.fn();
 
   beforeEach(() => {
     requestConfig = {};
@@ -104,13 +101,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
   });
 
-  const renderTable = ({
-    nodeExecutionsById,
-    initialNodes,
-    filteredNodeExecutions,
-    selectedExecution,
-    setSelectedExecution,
-  }) =>
+  const renderTable = ({ nodeExecutionsById, initialNodes, filteredNodeExecutions }) =>
     render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionsRequestConfigContext.Provider value={requestConfig}>
@@ -118,8 +109,6 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
             <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
               <NodeExecutionsTable
                 initialNodes={initialNodes}
-                selectedExecution={selectedExecution}
-                setSelectedExecution={setSelectedExecution}
                 filteredNodeExecutions={filteredNodeExecutions}
               />
             </NodeExecutionsByIdContext.Provider>
@@ -131,8 +120,6 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   it('renders empty content when there are no nodes', async () => {
     const { queryByText, queryByTestId } = renderTable({
       initialNodes: [],
-      selectedExecution,
-      setSelectedExecution,
       nodeExecutionsById: {},
       filteredNodeExecutions: [],
     });
@@ -150,8 +137,6 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
 
     const { queryAllByTestId } = renderTable({
       initialNodes,
-      selectedExecution,
-      setSelectedExecution,
       nodeExecutionsById,
       filteredNodeExecutions,
     });
@@ -176,8 +161,6 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
 
     const { queryAllByTestId } = renderTable({
       initialNodes,
-      selectedExecution,
-      setSelectedExecution,
       nodeExecutionsById,
       filteredNodeExecutions,
     });

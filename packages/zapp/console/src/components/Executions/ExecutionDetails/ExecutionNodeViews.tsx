@@ -57,11 +57,11 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
-  const requestConfig = useContext(NodeExecutionsRequestConfigContext);
+  const requestConfig = useContext(NodeExecutionsRequestConfigContext); // Can't find initialization of the provider
   const [nodeExecutionsLoading, setNodeExecutionsLoading] = useState<boolean>(true);
 
   const {
-    closure: { abortMetadata, workflowId },
+    closure: { workflowId },
   } = execution;
 
   const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
@@ -161,11 +161,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
         loadingComponent={LoadingComponent}
       >
         {() => (
-          <ExecutionTab
-            tabType={tabType}
-            abortMetadata={abortMetadata ?? undefined}
-            filteredNodeExecutions={nodeExecutionsQuery.data ?? []}
-          />
+          <ExecutionTab tabType={tabType} filteredNodeExecutions={nodeExecutionsQuery.data ?? []} />
         )}
       </WaitForQuery>
     );
@@ -188,8 +184,8 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
             )}
             <WaitForQuery
               errorComponent={DataError}
-              loadingComponent={LoadingComponent}
               query={nodeExecutionsQuery}
+              loadingComponent={LoadingComponent}
             >
               {() => renderTab(tabState.value)}
             </WaitForQuery>

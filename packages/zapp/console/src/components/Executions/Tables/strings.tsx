@@ -6,11 +6,13 @@ const str = {
   nameLabel: 'task name',
   nodeIdLabel: 'node id',
   phaseLabel: 'status',
-  queuedTimeLabel: 'Queued Time',
+  queuedTimeLabel: 'queued time',
   rerunTooltip: 'Rerun',
   resumeTooltip: 'Resume',
   startedAtLabel: 'start time',
   typeLabel: 'type',
+  loadMoreButton: 'Load More',
+  expanderTitle: (expanded: boolean) => (expanded ? 'Collapse row' : 'Expand row'),
 };
 
 export { patternKey } from '@flyteconsole/locale';
