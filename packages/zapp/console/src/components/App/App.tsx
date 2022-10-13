@@ -22,6 +22,7 @@ import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
 import { NavBarRouter } from 'routes/NavBarRouter';
 import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
+import { OverlaySandboxTimer } from '../Sandbox';
 
 const queryClient = createQueryClient();
 
@@ -49,8 +50,10 @@ export const AppComponent: React.FC = () => {
                     <CssBaseline />
                     <Router history={history}>
                       <ErrorBoundary fixed={true}>
-                        <NavBarRouter />
-                        <ApplicationRouter />
+                        <OverlaySandboxTimer>
+                          <NavBarRouter />
+                          <ApplicationRouter />
+                        </OverlaySandboxTimer>
                       </ErrorBoundary>
                     </Router>
                     <SystemStatusBanner />

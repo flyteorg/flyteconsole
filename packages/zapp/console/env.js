@@ -41,6 +41,8 @@ const GA_TRACKING_ID = process.env.GA_TRACKING_ID || 'G-0QW4DJWJ20';
 
 const FLYTE_NAVIGATION = process.env.FLYTE_NAVIGATION || '';
 
+const SANDBOX_EXPIRED_TIMESTAMP = process.env.SANDBOX_EXPIRED_TIMESTAMP || '1668285564718';
+
 module.exports = {
   ADMIN_API_URL,
   ADMIN_API_USE_SSL,
@@ -61,5 +63,6 @@ module.exports = {
     NODE_ENV,
     STATUS_URL,
     FLYTE_NAVIGATION,
+    SANDBOX_EXPIRED_TIMESTAMP,
   },
 };
