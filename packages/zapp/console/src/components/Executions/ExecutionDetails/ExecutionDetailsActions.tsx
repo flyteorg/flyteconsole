@@ -151,6 +151,7 @@ export const ExecutionDetailsActions = ({
       <ResumeFormDialog
         id={id as ResourceIdentifier}
         initialParameters={initialParameters}
+        nodeExecutionId={nodeExecutionId}
         showResumeForm={showResumeForm}
         setShowResumeForm={setShowResumeForm}
       />

@@ -2,6 +2,7 @@ import { Dialog } from '@material-ui/core';
 import * as React from 'react';
 import { ResourceIdentifier } from 'models/Common/types';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
+import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { ResumeForm } from './ResumeForm';
 
 interface ResumeFormDialogProps {
@@ -9,10 +10,11 @@ interface ResumeFormDialogProps {
   initialParameters: TaskInitialLaunchParameters | undefined;
   showResumeForm: boolean;
   setShowResumeForm: React.Dispatch<React.SetStateAction<boolean>>;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 export const ResumeFormDialog = (props: ResumeFormDialogProps): JSX.Element => {
-  const { id, initialParameters, showResumeForm, setShowResumeForm } = props;
+  const { id, initialParameters, showResumeForm, setShowResumeForm, nodeExecutionId } = props;
 
   const onCancelResume = () => setShowResumeForm(false);
 
@@ -29,7 +31,12 @@ export const ResumeFormDialog = (props: ResumeFormDialogProps): JSX.Element => {
       open={showResumeForm}
       onClick={dialogOnClick}
     >
-      <ResumeForm initialParameters={initialParameters} onClose={onCancelResume} taskId={id} />
+      <ResumeForm
+        initialParameters={initialParameters}
+        nodeExecutionId={nodeExecutionId}
+        onClose={onCancelResume}
+        taskId={id}
+      />
     </Dialog>
   );
 };

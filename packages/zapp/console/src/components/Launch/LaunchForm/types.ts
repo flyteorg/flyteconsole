@@ -5,7 +5,7 @@ import {
   LiteralType,
   NamedEntityIdentifier,
 } from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecutionIdentifier, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
@@ -83,6 +83,7 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   taskId: NamedEntityIdentifier;
   initialParameters?: TaskInitialLaunchParameters;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
