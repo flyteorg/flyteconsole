@@ -3,7 +3,7 @@ import { getTaskDisplayType } from 'components/Executions/utils';
 import { NodeExecutionDetails, NodeExecutionDisplayType } from 'components/Executions/types';
 import { Workflow } from 'models/Workflow/types';
 import { Identifier } from 'models/Common/types';
-import { CompiledTask } from 'models/Task/types';
+import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dNode } from 'models/Graph/types';
 import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
 import { UNKNOWN_DETAILS } from './types';
@@ -70,6 +70,19 @@ const getNodeDetails = (node: dNode, tasks: CompiledTask[]): NodeExecutionInfo =
     };
   }
 
+  if (node.value.gateNode) {
+    const templateName = node.name;
+    const task = tasks.find((t) => t.template.id.name === templateName);
+    const taskType = getTaskDisplayType(task?.template.type);
+    return {
+      scopedId: node.scopedId,
+      displayId: node.value.id ?? node.id,
+      displayName: 'gateNode',
+      displayType: taskType,
+      taskTemplate: task?.template,
+    };
+  }
+
   return UNKNOWN_DETAILS;
 };
 
@@ -88,6 +101,8 @@ export function createExecutionDetails(workflow: Workflow): CurrentExecutionDeta
 
   let dNodes = transformerWorkflowToDag(compiledWorkflow).dag.nodes ?? [];
   dNodes = convertToPlainNodes(dNodes);
+
+  console.log('MYLOG', dNodes);
 
   dNodes.forEach((n) => {
     const details = getNodeDetails(n, tasks);

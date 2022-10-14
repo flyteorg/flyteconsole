@@ -17,6 +17,7 @@ export enum NodeExecutionDisplayType {
   MapTask = 'Map Task',
   BatchHiveTask = 'Hive Batch Task',
   BranchNode = 'Branch Node',
+  GateNode = 'Gate Node',
   DynamicTask = 'Dynamic Task',
   HiveTask = 'Hive Task',
   PythonTask = 'Python Task',
