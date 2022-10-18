@@ -16,6 +16,7 @@ import {
   FilterOperationName,
   FilterOperationValueList,
 } from 'models/AdminEntity/types';
+import { isEqual } from 'lodash';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from '../contexts';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
@@ -81,6 +82,8 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
   const [initialFilteredNodes, setInitialFilteredNodes] = useState<dNode[] | undefined>(undefined);
   const [mergedDag, setMergedDag] = useState(null);
+  const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
+  const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
 
   useEffect(() => {
     const nodes: dNode[] = compiledWorkflowClosure
@@ -107,6 +110,15 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   }, [compiledWorkflowClosure, dynamicWorkflows]);
 
   useEffect(() => {
+    if (!isEqual(filters, appliedFilters)) {
+      setFilters(appliedFilters);
+      setIsFiltersChanged(true);
+    } else {
+      setIsFiltersChanged(false);
+    }
+  }, [appliedFilters]);
+
+  useEffect(() => {
     if (appliedFilters.length > 0) {
       // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
       // and need to clear out items manually
@@ -124,7 +136,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         setInitialFilteredNodes(filteredNodes);
       }
     }
-  }, [initialNodes, filteredNodeExecutions]);
+  }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
 
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
