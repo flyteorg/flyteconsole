@@ -2,6 +2,7 @@ import { Admin, Core, Protobuf } from 'flyteidl';
 import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
+import { CompiledNode } from 'models/Node/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import {
@@ -51,6 +52,14 @@ export type TaskLaunchEvent =
   | TaskVersionOptionsLoadedEvent
   | SelectTaskVersionEvent;
 
+export type TaskResumeEvent =
+  | { type: 'CANCEL' }
+  | { type: 'SUBMIT' }
+  | { type: 'RETRY' }
+  | InputsParsedEvent
+  | ExecutionCreatedEvent
+  | ErrorEvent;
+
 export type WorkflowLaunchEvent =
   | BaseLaunchEvent
   | SelectWorkflowVersionEvent
@@ -91,6 +100,10 @@ export interface TaskLaunchContext extends BaseLaunchContext {
   taskVersion?: Identifier;
   taskVersionOptions?: Task[];
   interruptible?: Protobuf.IBoolValue | null;
+}
+
+export interface TaskResumeContext extends BaseLaunchContext {
+  compiledNode?: CompiledNode;
 }
 
 export enum LaunchState {
@@ -230,6 +243,7 @@ export type TaskLaunchTypestate =
       };
     };
 
+export type TaskResumeTypestate = BaseLaunchTypestate;
 const defaultBaseContext: BaseLaunchContext = {
   parsedInputs: [],
   showErrors: false,
@@ -366,6 +380,20 @@ export const taskLaunchMachineConfig: MachineConfig<
   },
 };
 
+export const taskResumeMachineConfig: MachineConfig<
+  TaskResumeContext,
+  BaseLaunchSchema,
+  TaskResumeEvent
+> = {
+  id: 'resumeTask',
+  initial: LaunchState.LOADING_INPUTS,
+  context: defaultBaseContext,
+  on: defaultHandlers,
+  states: {
+    ...(baseStateConfig as StatesConfig<TaskResumeContext, BaseLaunchSchema, TaskResumeEvent>),
+  },
+};
+
 export const workflowLaunchMachineConfig: MachineConfig<
   WorkflowLaunchContext,
   WorkflowLaunchSchema,
@@ -476,6 +504,11 @@ export const taskLaunchMachine = Machine(taskLaunchMachineConfig, {
     ...baseServices,
     loadTaskVersions: () => Promise.reject('No `loadTaskVersions` service has been provided'),
   },
+});
+
+export const taskResumeMachine = Machine(taskResumeMachineConfig, {
+  actions: baseActions,
+  services: baseServices,
 });
 
 /** A full machine for representing the Launch flow, combining the state definitions

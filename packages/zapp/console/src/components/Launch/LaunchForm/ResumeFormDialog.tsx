@@ -3,10 +3,11 @@ import * as React from 'react';
 import { ResourceIdentifier } from 'models/Common/types';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { CompiledNode } from 'models/Node/types';
 import { ResumeForm } from './ResumeForm';
 
 interface ResumeFormDialogProps {
-  id: ResourceIdentifier;
+  compiledNode: CompiledNode;
   initialParameters: TaskInitialLaunchParameters | undefined;
   showResumeForm: boolean;
   setShowResumeForm: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +15,8 @@ interface ResumeFormDialogProps {
 }
 
 export const ResumeFormDialog = (props: ResumeFormDialogProps): JSX.Element => {
-  const { id, initialParameters, showResumeForm, setShowResumeForm, nodeExecutionId } = props;
+  const { compiledNode, initialParameters, showResumeForm, setShowResumeForm, nodeExecutionId } =
+    props;
 
   const onCancelResume = () => setShowResumeForm(false);
 
@@ -35,7 +37,7 @@ export const ResumeFormDialog = (props: ResumeFormDialogProps): JSX.Element => {
         initialParameters={initialParameters}
         nodeExecutionId={nodeExecutionId}
         onClose={onCancelResume}
-        taskId={id}
+        compiledNode={compiledNode}
       />
     </Dialog>
   );

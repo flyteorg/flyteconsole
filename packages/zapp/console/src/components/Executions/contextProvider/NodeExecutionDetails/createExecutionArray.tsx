@@ -102,8 +102,6 @@ export function createExecutionDetails(workflow: Workflow): CurrentExecutionDeta
   let dNodes = transformerWorkflowToDag(compiledWorkflow).dag.nodes ?? [];
   dNodes = convertToPlainNodes(dNodes);
 
-  console.log('MYLOG', dNodes);
-
   dNodes.forEach((n) => {
     const details = getNodeDetails(n, tasks);
     result.nodes.push({

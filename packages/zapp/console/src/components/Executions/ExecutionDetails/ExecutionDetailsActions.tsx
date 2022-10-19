@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -80,7 +81,11 @@ export const ExecutionDetailsActions = ({
 
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {
@@ -148,13 +153,15 @@ export const ExecutionDetailsActions = ({
           setShowLaunchForm={setShowLaunchForm}
         />
       )}
-      <ResumeFormDialog
-        id={id as ResourceIdentifier}
-        initialParameters={initialParameters}
-        nodeExecutionId={nodeExecutionId}
-        showResumeForm={showResumeForm}
-        setShowResumeForm={setShowResumeForm}
-      />
+      {compiledNode && (
+        <ResumeFormDialog
+          compiledNode={compiledNode}
+          initialParameters={initialParameters}
+          nodeExecutionId={nodeExecutionId}
+          showResumeForm={showResumeForm}
+          setShowResumeForm={setShowResumeForm}
+        />
+      )}
       {execution?.value?.closure?.deckUri && (
         <Dialog PaperProps={{ className: styles.dialog }} maxWidth={false} open={showDeck}>
           <div className={styles.dialogTitle}>

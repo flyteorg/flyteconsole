@@ -7,6 +7,7 @@ import {
 } from 'models/Common/types';
 import { NodeExecutionIdentifier, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
+import { CompiledNode } from 'models/Node/types';
 import { Task } from 'models/Task/types';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { Interpreter, State } from 'xstate';
@@ -17,6 +18,9 @@ import {
   TaskLaunchContext,
   TaskLaunchEvent,
   TaskLaunchTypestate,
+  TaskResumeContext,
+  TaskResumeEvent,
+  TaskResumeTypestate,
   WorkflowLaunchContext,
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
@@ -80,8 +84,13 @@ export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   initialParameters?: TaskInitialLaunchParameters;
 }
 
+export interface ResumeFormProps extends BaseLaunchFormProps {
+  compiledNode: CompiledNode;
+  initialParameters?: TaskInitialLaunchParameters;
+}
+
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
-  taskId: NamedEntityIdentifier;
+  compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
   nodeExecutionId: NodeExecutionIdentifier;
 }
@@ -89,11 +98,6 @@ export interface ResumeSignalFormProps extends BaseLaunchFormProps {
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
 
 export interface LaunchFormInputsRef {
-  getValues(): Record<string, Core.ILiteral>;
-  validate(): boolean;
-}
-
-export interface ResumeFormInputsRef {
   getValues(): Record<string, Core.ILiteral>;
   validate(): boolean;
 }
@@ -152,6 +156,12 @@ export interface LaunchTaskFormState {
   state: State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
   service: Interpreter<TaskLaunchContext, any, TaskLaunchEvent, TaskLaunchTypestate>;
   taskSourceSelectorState: TaskSourceSelectorState;
+}
+
+export interface ResumeFormState {
+  formInputsRef: React.RefObject<LaunchFormInputsRef>;
+  state: State<TaskResumeContext, TaskResumeEvent, any, TaskResumeTypestate>;
+  service: Interpreter<TaskResumeContext, any, TaskResumeEvent, TaskResumeTypestate>;
 }
 
 export enum InputType {
