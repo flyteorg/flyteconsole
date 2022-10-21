@@ -1,4 +1,4 @@
-import { DialogContent } from '@material-ui/core';
+import { DialogContent, Typography } from '@material-ui/core';
 import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
 import { useState, useContext, useEffect } from 'react';
@@ -7,6 +7,7 @@ import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { WaitForData } from 'components/common/WaitForData';
+import t from 'components/common/strings';
 import { useStyles } from './styles';
 import { BaseInterpretedLaunchState, BaseLaunchService, ResumeSignalFormProps } from './types';
 import { ResumeFormHeader } from './ResumeFormHeader';
@@ -41,7 +42,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
 
   return (
     <>
-      <ResumeFormHeader title={nodeExecution.id.executionId.name} />
+      <ResumeFormHeader title={nodeExecution.id.nodeId} />
       <DialogContent dividers={true} className={styles.inputsSection}>
         <LaunchFormInputs
           key={formKey}
@@ -50,6 +51,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
           variant="task"
           setIsError={setIsError}
         />
+        <Typography variant="h6">{t('gateNodeInput')}</Typography>
         <WaitForData {...executionData}>
           <LiteralMapViewer map={executionData.value.fullInputs} />
         </WaitForData>

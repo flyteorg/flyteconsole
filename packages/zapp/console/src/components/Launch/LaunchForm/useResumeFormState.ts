@@ -1,6 +1,7 @@
 import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
+import { Core } from 'flyteidl';
 import { partial } from 'lodash';
 import { RefObject, useMemo, useRef } from 'react';
 import {
@@ -31,7 +32,7 @@ async function loadInputs({ compiledNode }: TaskResumeContext) {
     {
       description: '',
       label: '',
-      name: '',
+      name: 'signal',
       required: true,
       typeDefinition: {
         type: InputType.Boolean,
@@ -53,44 +54,25 @@ async function validate(formInputsRef: RefObject<LaunchFormInputsRef>) {
 }
 
 async function submit(
-  { createWorkflowExecution }: APIContextValue,
+  { resumeSignalNode }: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
   { compiledNode }: TaskResumeContext,
 ) {
-  return '';
-  /*
-  if (!taskVersion) {
-    throw new Error('Attempting to launch with no Task version');
+  if (!compiledNode?.gateNode?.signal?.signalId) {
+    throw new Error('SignalId is empty');
   }
   if (formInputsRef.current === null) {
     throw new Error('Unexpected empty form inputs ref');
   }
-  if (roleInputRef.current === null) {
-    throw new Error('Unexpected empty role input ref');
-  }
 
-  const { securityContext } = roleInputRef.current?.getValue();
   const literals = formInputsRef.current.getValues();
-  const interruptible = interruptibleInputRef.current?.getValue();
-  const launchPlanId = taskVersion;
-  const { domain, project } = taskVersion;
 
-  const response = await createWorkflowExecution({
-    securityContext,
-    domain,
-    launchPlanId,
-    project,
-    referenceExecutionId,
-    inputs: { literals },
-    interruptible,
+  const response = await resumeSignalNode({
+    id: compiledNode?.gateNode?.signal?.signalId as unknown as Core.SignalIdentifier,
+    value: literals['signal'],
   });
-  const newExecutionId = response.id as WorkflowExecutionIdentifier;
-  if (!newExecutionId) {
-    throw new Error('API Response did not include new execution id');
-  }
 
-  return newExecutionId;
-  */
+  return response;
 }
 
 function getServices(apiContext: APIContextValue, formInputsRef: RefObject<LaunchFormInputsRef>) {
