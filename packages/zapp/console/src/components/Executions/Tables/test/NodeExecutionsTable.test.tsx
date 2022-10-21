@@ -1,26 +1,26 @@
 import { render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import {
-  NodeExecutionsByIdContext,
-  NodeExecutionsRequestConfigContext,
-} from 'components/Executions/contexts';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { noExecutionsFoundString } from 'common/constants';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
-import { RequestConfig } from 'models/AdminEntity/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import * as React from 'react';
 import { dateToTimestamp } from 'common/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
-import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
+import { useNodeExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { NodeExecutionsTable } from '../NodeExecutionsTable';
 
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
+
+jest.mock('components/Executions/filters/useExecutionFiltersState');
+const mockUseNodeExecutionFiltersState = useNodeExecutionFiltersState as jest.Mock<any>;
+mockUseNodeExecutionFiltersState.mockReturnValue({ filters: [], appliedFilters: [] });
 
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
   NodeExecutionRow: jest.fn(({ nodeExecution }) => (
@@ -46,26 +46,6 @@ const mockNodes = (n: number): dNode[] => {
   return nodes;
 };
 
-const mockNodeExecutions = (n: number, phases: NodeExecutionPhase[]): NodeExecution[] => {
-  const nodeExecutions: NodeExecution[] = [];
-  for (let i = 1; i <= n; i++) {
-    nodeExecutions.push({
-      closure: {
-        createdAt: dateToTimestamp(new Date()),
-        outputUri: '',
-        phase: phases[i - 1],
-      },
-      id: {
-        executionId: { domain: 'domain', name: 'name', project: 'project' },
-        nodeId: `node${i}`,
-      },
-      inputUri: '',
-      scopedId: `n${i}`,
-    });
-  }
-  return nodeExecutions;
-};
-
 const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
   const nodeExecutionsById = {};
 
@@ -89,31 +69,24 @@ const mockExecutionsById = (n: number, phases: NodeExecutionPhase[]) => {
 
 describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   let queryClient: QueryClient;
-  let requestConfig: RequestConfig;
   let fixture: ReturnType<typeof basicPythonWorkflow.generate>;
   const initialNodes = mockNodes(2);
 
   beforeEach(() => {
-    requestConfig = {};
     queryClient = createTestQueryClient();
     fixture = basicPythonWorkflow.generate();
     insertFixture(mockServer, fixture);
     fetchWorkflow.mockImplementation(() => Promise.resolve(fixture.workflows.top));
   });
 
-  const renderTable = ({ nodeExecutionsById, initialNodes, filteredNodeExecutions }) =>
+  const renderTable = ({ nodeExecutionsById, initialNodes, filteredNodes }) =>
     render(
       <QueryClientProvider client={queryClient}>
-        <NodeExecutionsRequestConfigContext.Provider value={requestConfig}>
-          <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-            <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
-              <NodeExecutionsTable
-                initialNodes={initialNodes}
-                filteredNodeExecutions={filteredNodeExecutions}
-              />
-            </NodeExecutionsByIdContext.Provider>
-          </NodeExecutionDetailsContextProvider>
-        </NodeExecutionsRequestConfigContext.Provider>
+        <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
+          <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+            <NodeExecutionsTable initialNodes={initialNodes} filteredNodes={filteredNodes} />
+          </NodeExecutionsByIdContext.Provider>
+        </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );
 
@@ -121,7 +94,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const { queryByText, queryByTestId } = renderTable({
       initialNodes: [],
       nodeExecutionsById: {},
-      filteredNodeExecutions: [],
+      filteredNodes: [],
     });
 
     await waitFor(() => queryByText(noExecutionsFoundString));
@@ -130,15 +103,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     expect(queryByTestId('node-execution-row')).not.toBeInTheDocument();
   });
 
-  it('renders NodeExecutionRows with proper nodeExecutions', async () => {
+  it('renders NodeExecutionRows with initialNodes when no filteredNodes were provided', async () => {
     const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
     const nodeExecutionsById = mockExecutionsById(2, phases);
-    const filteredNodeExecutions = mockNodeExecutions(2, phases);
 
     const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
-      filteredNodeExecutions,
+      filteredNodes: undefined,
     });
 
     await waitFor(() => queryAllByTestId('node-execution-row'));
@@ -154,15 +126,15 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     }
   });
 
-  it('renders future nodes with UNDEFINED phase', async () => {
-    const phases = [NodeExecutionPhase.SUCCEEDED, NodeExecutionPhase.UNDEFINED];
-    const nodeExecutionsById = mockExecutionsById(1, phases);
-    const filteredNodeExecutions = mockNodeExecutions(1, phases);
+  it('renders NodeExecutionRows with initialNodes even when filterNodes were provided, if appliedFilters is empty', async () => {
+    const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
+    const nodeExecutionsById = mockExecutionsById(2, phases);
+    const filteredNodes = mockNodes(1);
 
     const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
-      filteredNodeExecutions,
+      filteredNodes,
     });
 
     await waitFor(() => queryAllByTestId('node-execution-row'));
@@ -174,6 +146,35 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     expect(renderedPhases).toHaveLength(initialNodes.length);
     for (const i in initialNodes) {
       expect(ids[i]).toHaveTextContent(initialNodes[i].id);
+      expect(renderedPhases[i]).toHaveTextContent(phases[i].toString());
+    }
+  });
+
+  it('renders NodeExecutionRows with filterNodes if appliedFilters is not empty', async () => {
+    mockUseNodeExecutionFiltersState.mockReturnValueOnce({
+      filters: [],
+      appliedFilters: [{ key: 'phase', operation: 'value_in', value: ['FAILED', 'SUCCEEDED'] }],
+    });
+
+    const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
+    const nodeExecutionsById = mockExecutionsById(2, phases);
+    const filteredNodes = mockNodes(1);
+
+    const { queryAllByTestId } = renderTable({
+      initialNodes,
+      nodeExecutionsById,
+      filteredNodes,
+    });
+
+    await waitFor(() => queryAllByTestId('node-execution-row'));
+
+    expect(queryAllByTestId('node-execution-row')).toHaveLength(filteredNodes.length);
+    const ids = queryAllByTestId('node-execution-col-id');
+    expect(ids).toHaveLength(filteredNodes.length);
+    const renderedPhases = queryAllByTestId('node-execution-col-phase');
+    expect(renderedPhases).toHaveLength(filteredNodes.length);
+    for (const i in filteredNodes) {
+      expect(ids[i]).toHaveTextContent(filteredNodes[i].id);
       expect(renderedPhases[i]).toHaveTextContent(phases[i].toString());
     }
   });

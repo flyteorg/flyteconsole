@@ -11,7 +11,7 @@ import { ExecutionTabContent } from './ExecutionTabContent';
 
 export interface ExecutionTabProps {
   tabType: string;
-  filteredNodeExecutions: NodeExecution[];
+  filteredNodeExecutions?: NodeExecution[];
 }
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */

@@ -8,6 +8,7 @@ import { TaskTemplate } from 'models/Task/types';
 
 export interface ExecutionPhaseConstants {
   text: string;
+  value: string;
   badgeColor: string;
   nodeColor: string;
   textColor: string;

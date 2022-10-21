@@ -15,13 +15,13 @@ import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
 import { NodeExecutionsByIdContext } from '../contexts';
 import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
-// import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 
 export interface NodeExecutionsTableProps {
   initialNodes: dNode[];
-  filteredNodeExecutions: NodeExecution[];
+  filteredNodes?: dNode[];
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -36,13 +36,18 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ initialNodes }) => {
+export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
+  initialNodes,
+  filteredNodes,
+}) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
-  const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
+  const { appliedFilters } = useNodeExecutionFiltersState();
+  const [originalNodes, setOriginalNodes] = useState<dNode[]>(
+    appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
+  );
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
-  // const filterState = useNodeExecutionFiltersState();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const columnStyles = useColumnStyles();
@@ -53,7 +58,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ initia
   );
 
   useEffect(() => {
-    setOriginalNodes(initialNodes);
+    setOriginalNodes(appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes);
     const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map((node) => {
       const execution = nodeExecutionsById[node.scopedId];
@@ -64,7 +69,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({ initia
       };
     });
     setShowNodes(updatedShownNodesMap);
-  }, [initialNodes, originalNodes, nodeExecutionsById]);
+  }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
   const toggleNode = (id: string, scopeId: string, level: number) => {
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
