@@ -7,6 +7,8 @@ import { isExpanded } from 'components/WorkflowGraph/utils';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
+import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
+import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -31,7 +33,10 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
   initialIsVisible = false,
 }) => {
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [isVisible, setIsVisible] = useState(initialIsVisible);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -56,9 +61,14 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     searchNode(pausedNodes, 0);
   };
 
-  const resumeAction = () => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+  const resumeAction = (nodeId: string) => {
+    setSelectedNodeId(nodeId);
+    setShowResumeForm(true);
   };
+
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === selectedNodeId,
+  );
 
   const renderPausedTasksBlock = () => (
     <div style={popupContainerStyle} data-testid="paused-tasks-table">
@@ -85,6 +95,15 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
           </CustomBadge>
         </div>
       </div>
+      {compiledNode && selectedNodeId ? (
+        <ResumeFormDialog
+          compiledNode={compiledNode}
+          initialParameters={undefined}
+          nodeId={selectedNodeId}
+          showResumeForm={showResumeForm}
+          setShowResumeForm={setShowResumeForm}
+        />
+      ) : null}
     </div>
   );
 };

@@ -17,12 +17,10 @@ import { LaunchFormInputs } from './LaunchFormInputs';
 
 /** Renders the form for initiating a Launch request based on a Task */
 export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
-  const { nodeExecutionId } = props;
+  const { nodeId } = props;
   const { formInputsRef, state, service } = useResumeFormState(props);
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
-  const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
-    nodeExecutionsById[nodeExecutionId.nodeId],
-  );
+  const [nodeExecution, setNodeExecution] = useState<NodeExecution>(nodeExecutionsById[nodeId]);
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
   const baseService = service as BaseLaunchService;
@@ -36,9 +34,9 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
   }, [state.context.parsedInputs]);
 
   useEffect(() => {
-    const newNodeExecution = nodeExecutionsById[nodeExecutionId.nodeId];
+    const newNodeExecution = nodeExecutionsById[nodeId];
     setNodeExecution(newNodeExecution);
-  }, [nodeExecutionId]);
+  }, [nodeId]);
 
   return (
     <>

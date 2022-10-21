@@ -11,7 +11,7 @@ import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import Close from '@material-ui/icons/Close';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
@@ -72,10 +72,10 @@ export const ExecutionDetailsActions = ({
 }: ExecutionDetailsActionsProps): JSX.Element => {
   const styles = useStyles();
 
-  const [showLaunchForm, setShowLaunchForm] = React.useState<boolean>(false);
-  const [showResumeForm, setShowResumeForm] = React.useState<boolean>(false);
+  const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
 
-  const [initialParameters, setInitialParameters] = React.useState<
+  const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
 
@@ -116,7 +116,6 @@ export const ExecutionDetailsActions = ({
   };
 
   const resumeOnClick = (e: React.MouseEvent<HTMLElement>) => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
     e.stopPropagation();
     setShowResumeForm(true);
   };
@@ -157,7 +156,7 @@ export const ExecutionDetailsActions = ({
         <ResumeFormDialog
           compiledNode={compiledNode}
           initialParameters={initialParameters}
-          nodeExecutionId={nodeExecutionId}
+          nodeId={nodeExecutionId.nodeId}
           showResumeForm={showResumeForm}
           setShowResumeForm={setShowResumeForm}
         />

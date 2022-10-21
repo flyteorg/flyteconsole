@@ -6,6 +6,7 @@ import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { RerunIcon } from '@flyteconsole/ui-atoms';
 import { Identifier, ResourceIdentifier } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
+import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
 import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
@@ -27,6 +28,7 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
   const { setSelectedExecution } = useContext(DetailsPanelContext);
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
   const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
     NodeExecutionDetails | undefined
   >(undefined);
@@ -42,6 +44,9 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     execution.id,
   );
   const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === execution.id.nodeId,
+  );
 
   useEffect(() => {
     getNodeExecutionDetails(execution).then((res) => {
@@ -82,8 +87,9 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     setShowLaunchForm(true);
   };
 
-  const resumeAction = () => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+  const resumeAction = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setShowResumeForm(true);
   };
 
   const renderRerunAction = () => {
@@ -104,6 +110,15 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
           showLaunchForm={showLaunchForm}
           setShowLaunchForm={setShowLaunchForm}
         />
+        {compiledNode && (
+          <ResumeFormDialog
+            compiledNode={compiledNode}
+            initialParameters={initialParameters}
+            nodeId={execution.id.nodeId}
+            showResumeForm={showResumeForm}
+            setShowResumeForm={setShowResumeForm}
+          />
+        )}
       </>
     );
   };

@@ -92,7 +92,7 @@ export interface ResumeFormProps extends BaseLaunchFormProps {
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
-  nodeExecutionId: NodeExecutionIdentifier;
+  nodeId: string;
 }
 
 export type LaunchFormProps = LaunchWorkflowFormProps | LaunchTaskFormProps;
