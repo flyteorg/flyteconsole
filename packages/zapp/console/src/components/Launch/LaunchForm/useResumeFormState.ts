@@ -5,12 +5,7 @@ import { Core } from 'flyteidl';
 import { partial } from 'lodash';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
-import {
-  TaskResumeContext,
-  TaskResumeEvent,
-  TaskResumeTypestate,
-  taskResumeMachine,
-} from './launchMachine';
+import { TaskResumeContext, TaskResumeTypestate, taskResumeMachine } from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
   BaseLaunchFormProps,
@@ -103,7 +98,7 @@ export function useResumeFormState({ compiledNode }: ResumeFormProps): ResumeFor
     [apiContext, formInputsRef],
   );
 
-  const [state, , service] = useMachine<TaskResumeContext, TaskResumeEvent, TaskResumeTypestate>(
+  const [state, , service] = useMachine<TaskResumeContext, BaseLaunchEvent, TaskResumeTypestate>(
     taskResumeMachine,
     {
       ...defaultStateMachineConfig,

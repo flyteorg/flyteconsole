@@ -52,14 +52,6 @@ export type TaskLaunchEvent =
   | TaskVersionOptionsLoadedEvent
   | SelectTaskVersionEvent;
 
-export type TaskResumeEvent =
-  | { type: 'CANCEL' }
-  | { type: 'SUBMIT' }
-  | { type: 'RETRY' }
-  | InputsParsedEvent
-  | ExecutionCreatedEvent
-  | ErrorEvent;
-
 export type WorkflowLaunchEvent =
   | BaseLaunchEvent
   | SelectWorkflowVersionEvent
@@ -383,14 +375,14 @@ export const taskLaunchMachineConfig: MachineConfig<
 export const taskResumeMachineConfig: MachineConfig<
   TaskResumeContext,
   BaseLaunchSchema,
-  TaskResumeEvent
+  BaseLaunchEvent
 > = {
   id: 'resumeTask',
   initial: LaunchState.LOADING_INPUTS,
   context: defaultBaseContext,
   on: defaultHandlers,
   states: {
-    ...(baseStateConfig as StatesConfig<TaskResumeContext, BaseLaunchSchema, TaskResumeEvent>),
+    ...(baseStateConfig as StatesConfig<TaskResumeContext, BaseLaunchSchema, BaseLaunchEvent>),
   },
 };
 
