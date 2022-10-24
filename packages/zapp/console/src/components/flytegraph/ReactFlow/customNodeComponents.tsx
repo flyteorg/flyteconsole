@@ -10,7 +10,7 @@ import { Tooltip } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CacheStatus } from 'components/Executions/CacheStatus';
-import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
+import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import {
@@ -255,12 +255,12 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
       </div>
       {renderDefaultHandles(scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
       {compiledNode && (
-        <ResumeFormDialog
+        <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
           nodeId={scopedId}
-          showResumeForm={showResumeForm}
-          setShowResumeForm={setShowResumeForm}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
         />
       )}
     </div>

@@ -70,7 +70,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
 
   return (
     <>
-      <LaunchFormHeader title={state.context.sourceId?.name} />
+      <LaunchFormHeader title={state.context.sourceId?.name} formTitle={formStrings.title} />
       <DialogContent dividers={true} className={styles.inputsSection}>
         {showWorkflowSelector ? (
           <section title={formStrings.workflowVersion} className={styles.formControl}>
@@ -132,6 +132,7 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = (props) => 
         service={baseService}
         onClose={props.onClose}
         isError={isError}
+        submitTitle={formStrings.submit}
       />
     </>
   );

@@ -8,17 +8,33 @@ import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { WaitForData } from 'components/common/WaitForData';
 import t from 'components/common/strings';
+import { CompiledNode } from 'models/Node/types';
 import { useStyles } from './styles';
-import { BaseInterpretedLaunchState, BaseLaunchService, ResumeSignalFormProps } from './types';
-import { ResumeFormHeader } from './ResumeFormHeader';
-import { ResumeFormActions } from './ResumeFormActions';
+import {
+  BaseInterpretedLaunchState,
+  BaseLaunchFormProps,
+  BaseLaunchService,
+  TaskInitialLaunchParameters,
+} from './types';
 import { useResumeFormState } from './useResumeFormState';
 import { LaunchFormInputs } from './LaunchFormInputs';
+import { LaunchFormHeader } from './LaunchFormHeader';
+import { formStrings } from './constants';
+import { LaunchFormActions } from './LaunchFormActions';
+
+export interface ResumeSignalFormProps extends BaseLaunchFormProps {
+  compiledNode: CompiledNode;
+  initialParameters?: TaskInitialLaunchParameters;
+  nodeId: string;
+}
 
 /** Renders the form for initiating a Launch request based on a Task */
-export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
-  const { nodeId } = props;
-  const { formInputsRef, state, service } = useResumeFormState(props);
+export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
+  compiledNode,
+  nodeId,
+  onClose,
+}) => {
+  const { formInputsRef, state, service } = useResumeFormState({ compiledNode, nodeId, onClose });
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(nodeExecutionsById[nodeId]);
   const styles = useStyles();
@@ -40,7 +56,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
 
   return (
     <>
-      <ResumeFormHeader title={nodeExecution.id.nodeId} />
+      <LaunchFormHeader title={nodeExecution.id.nodeId} formTitle={formStrings.resumeTitle} />
       <DialogContent dividers={true} className={styles.inputsSection}>
         <LaunchFormInputs
           key={formKey}
@@ -54,11 +70,12 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = (props) => {
           <LiteralMapViewer map={executionData.value.fullInputs} />
         </WaitForData>
       </DialogContent>
-      <ResumeFormActions
+      <LaunchFormActions
         state={baseState}
         service={baseService}
-        onClose={props.onClose}
+        onClose={onClose}
         isError={isError}
+        submitTitle={formStrings.resume}
       />
     </>
   );

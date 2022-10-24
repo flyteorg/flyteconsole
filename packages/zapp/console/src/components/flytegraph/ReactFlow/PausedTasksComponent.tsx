@@ -7,7 +7,7 @@ import { isExpanded } from 'components/WorkflowGraph/utils';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
-import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
+import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   graphButtonContainer,
@@ -96,12 +96,12 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
         </div>
       </div>
       {compiledNode && selectedNodeId ? (
-        <ResumeFormDialog
+        <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
           nodeId={selectedNodeId}
-          showResumeForm={showResumeForm}
-          setShowResumeForm={setShowResumeForm}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
         />
       ) : null}
     </div>

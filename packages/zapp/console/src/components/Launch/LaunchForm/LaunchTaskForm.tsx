@@ -49,7 +49,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
 
   return (
     <>
-      <LaunchFormHeader title={state.context.sourceId?.name} />
+      <LaunchFormHeader title={state.context.sourceId?.name} formTitle={formStrings.title} />
       <DialogContent dividers={true} className={styles.inputsSection}>
         {showTaskSelector ? (
           <section title={formStrings.taskVersion} className={styles.formControl}>
@@ -87,6 +87,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
         service={baseService}
         onClose={props.onClose}
         isError={isError}
+        submitTitle={formStrings.submit}
       />
     </>
   );

@@ -6,7 +6,6 @@ import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { RerunIcon } from '@flyteconsole/ui-atoms';
 import { Identifier, ResourceIdentifier } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
 import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
@@ -111,12 +110,12 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
           setShowLaunchForm={setShowLaunchForm}
         />
         {compiledNode && (
-          <ResumeFormDialog
+          <LaunchFormDialog
             compiledNode={compiledNode}
             initialParameters={initialParameters}
             nodeId={execution.id.nodeId}
-            showResumeForm={showResumeForm}
-            setShowResumeForm={setShowResumeForm}
+            showLaunchForm={showResumeForm}
+            setShowLaunchForm={setShowResumeForm}
           />
         )}
       </>

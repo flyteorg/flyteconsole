@@ -3,6 +3,7 @@ import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { Core } from 'flyteidl';
 import { partial } from 'lodash';
+import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
 import {
   TaskResumeContext,
@@ -12,13 +13,20 @@ import {
 } from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
+  BaseLaunchFormProps,
   InputType,
   LaunchFormInputsRef,
   ParsedInput,
-  ResumeFormProps,
   ResumeFormState,
+  TaskInitialLaunchParameters,
 } from './types';
 import { getUnsupportedRequiredInputs } from './utils';
+
+export interface ResumeFormProps extends BaseLaunchFormProps {
+  compiledNode: CompiledNode;
+  initialParameters?: TaskInitialLaunchParameters;
+  nodeId: string;
+}
 
 async function loadInputs({ compiledNode }: TaskResumeContext) {
   if (!compiledNode) {
@@ -77,7 +85,6 @@ async function submit(
 
 function getServices(apiContext: APIContextValue, formInputsRef: RefObject<LaunchFormInputsRef>) {
   return {
-    // loadTaskVersions: partial(loadTaskVersions, apiContext),
     loadInputs: partial(loadInputs),
     submit: partial(submit, apiContext, formInputsRef),
     validate: partial(validate, formInputsRef),
@@ -96,17 +103,16 @@ export function useResumeFormState({ compiledNode }: ResumeFormProps): ResumeFor
     [apiContext, formInputsRef],
   );
 
-  const [state, sendEvent, service] = useMachine<
-    TaskResumeContext,
-    TaskResumeEvent,
-    TaskResumeTypestate
-  >(taskResumeMachine, {
-    ...defaultStateMachineConfig,
-    services,
-    context: {
-      compiledNode,
+  const [state, , service] = useMachine<TaskResumeContext, TaskResumeEvent, TaskResumeTypestate>(
+    taskResumeMachine,
+    {
+      ...defaultStateMachineConfig,
+      services,
+      context: {
+        compiledNode,
+      },
     },
-  });
+  );
 
   return {
     formInputsRef,

@@ -4,7 +4,6 @@ import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { ResumeFormDialog } from 'components/Launch/LaunchForm/ResumeFormDialog';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { useNodeExecution, useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
@@ -153,12 +152,12 @@ export const ExecutionDetailsActions = ({
         />
       )}
       {compiledNode && (
-        <ResumeFormDialog
+        <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={initialParameters}
           nodeId={nodeExecutionId.nodeId}
-          showResumeForm={showResumeForm}
-          setShowResumeForm={setShowResumeForm}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
         />
       )}
       {execution?.value?.closure?.deckUri && (
