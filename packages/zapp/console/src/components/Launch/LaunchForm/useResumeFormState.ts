@@ -5,7 +5,12 @@ import { Core } from 'flyteidl';
 import { partial } from 'lodash';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
-import { TaskResumeContext, TaskResumeTypestate, taskResumeMachine } from './launchMachine';
+import {
+  TaskResumeContext,
+  TaskResumeTypestate,
+  taskResumeMachine,
+  BaseLaunchEvent,
+} from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
   BaseLaunchFormProps,
