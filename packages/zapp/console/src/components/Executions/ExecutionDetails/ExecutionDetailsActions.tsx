@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
+import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -71,13 +72,19 @@ export const ExecutionDetailsActions = ({
   const styles = useStyles();
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
+
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
 
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {
@@ -107,8 +114,9 @@ export const ExecutionDetailsActions = ({
     setShowLaunchForm(true);
   };
 
-  const resumeAction = () => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+  const onResumeClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setShowResumeForm(true);
   };
 
   return (
@@ -130,7 +138,7 @@ export const ExecutionDetailsActions = ({
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
-          <Button variant="outlined" color="primary" onClick={resumeAction}>
+          <Button variant="outlined" color="primary" onClick={onResumeClick}>
             {t('resume')}
           </Button>
         )}
@@ -141,6 +149,15 @@ export const ExecutionDetailsActions = ({
           initialParameters={initialParameters}
           showLaunchForm={showLaunchForm}
           setShowLaunchForm={setShowLaunchForm}
+        />
+      )}
+      {compiledNode && (
+        <LaunchFormDialog
+          compiledNode={compiledNode}
+          initialParameters={initialParameters}
+          nodeId={nodeExecutionId.nodeId}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
         />
       )}
       {execution?.value?.closure?.deckUri && (

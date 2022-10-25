@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
@@ -10,6 +10,9 @@ import { Tooltip } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CacheStatus } from 'components/Executions/CacheStatus';
+import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
+import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
@@ -211,9 +214,16 @@ const TaskPhaseItem = ({
  */
 
 export const ReactFlowGateNode = ({ data }: RFNode) => {
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
+  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { nodeType, nodeExecutionStatus, text, scopedId, onNodeSelectionChanged } = data;
   const phase = getNodeFrontendPhase(nodeExecutionStatus, true);
   const styles = getGraphNodeStyle(nodeType, phase);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
+
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === nodeExecutionsById[scopedId]?.id?.nodeId,
+  );
 
   const iconStyles: React.CSSProperties = {
     width: '10px',
@@ -228,9 +238,9 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
     onNodeSelectionChanged(true);
   };
 
-  const handleActionClick = (e) => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
+  const onResumeClick = (e) => {
     e.stopPropagation();
+    setShowResumeForm(true);
   };
 
   return (
@@ -239,11 +249,20 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         {text}
         {phase === NodeExecutionPhase.PAUSED && (
           <Tooltip title={t('resumeTooltip')}>
-            <PlayCircleOutlineIcon onClick={handleActionClick} style={iconStyles} />
+            <PlayCircleOutlineIcon onClick={onResumeClick} style={iconStyles} />
           </Tooltip>
         )}
       </div>
       {renderDefaultHandles(scopedId, getGraphHandleStyle('source'), getGraphHandleStyle('target'))}
+      {compiledNode && (
+        <LaunchFormDialog
+          compiledNode={compiledNode}
+          initialParameters={undefined}
+          nodeId={scopedId}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
+        />
+      )}
     </div>
   );
 };
