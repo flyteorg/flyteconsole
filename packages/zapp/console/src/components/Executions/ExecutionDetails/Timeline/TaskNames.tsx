@@ -98,7 +98,10 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
               </div>
               {onAction && (
                 <Tooltip title={t('resume')}>
-                  <IconButton onClick={() => onAction(node.id)}>
+                  <IconButton
+                    onClick={() => onAction(node.id)}
+                    data-testid={`resume-gate-node-${node.id}`}
+                  >
                     <PlayCircleOutlineIcon />
                   </IconButton>
                 </Tooltip>
