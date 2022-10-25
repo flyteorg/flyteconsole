@@ -48,9 +48,15 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
   );
 
   useEffect(() => {
+    let isCurrent = true;
     getNodeExecutionDetails(execution).then((res) => {
-      setNodeExecutionDetails(res);
+      if (isCurrent) {
+        setNodeExecutionDetails(res);
+      }
     });
+    return () => {
+      isCurrent = false;
+    };
   });
 
   useEffect(() => {

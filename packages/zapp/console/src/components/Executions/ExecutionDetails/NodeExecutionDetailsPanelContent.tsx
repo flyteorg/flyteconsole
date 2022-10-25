@@ -241,7 +241,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const queryClient = useQueryClient();
-  const detailsContext = useNodeExecutionContext();
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
   const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const isGateNode = isNodeGateNode(
@@ -270,7 +270,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
   useEffect(() => {
     let isCurrent = true;
-    detailsContext.getNodeExecutionDetails(nodeExecution).then((res) => {
+    getNodeExecutionDetails(nodeExecution).then((res) => {
       if (isCurrent) {
         setDetails(res);
       }

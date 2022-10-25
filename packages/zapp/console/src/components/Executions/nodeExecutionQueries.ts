@@ -351,7 +351,16 @@ export function useAllTreeNodeExecutionGroupsQuery(
     }
   };
 
-  const key = `${nodeExecutions?.[0]?.scopedId}-${nodeExecutions?.[0]?.closure?.phase}`;
+  const n = nodeExecutions.length - 1;
+  let key = '';
+  if (n >= 0) {
+    const keyP1 = `${nodeExecutions[0]?.scopedId}-${nodeExecutions[0].closure.phase}-${nodeExecutions[0].closure?.startedAt?.nanos}`;
+    key = keyP1;
+    if (n >= 1) {
+      const keyP2 = `${nodeExecutions[n]?.scopedId}-${nodeExecutions[n].closure.phase}-${nodeExecutions[n].closure?.startedAt?.nanos}`;
+      key = keyP1 + '-' + keyP2;
+    }
+  }
 
   return useConditionalQuery<NodeExecution[]>(
     {

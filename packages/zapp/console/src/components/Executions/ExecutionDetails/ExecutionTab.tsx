@@ -9,7 +9,7 @@ import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails
 import { ScaleProvider } from './Timeline/scaleContext';
 import { ExecutionTabContent } from './ExecutionTabContent';
 
-export interface ExecutionTabProps {
+interface ExecutionTabProps {
   tabType: string;
   filteredNodeExecutions?: NodeExecution[];
 }

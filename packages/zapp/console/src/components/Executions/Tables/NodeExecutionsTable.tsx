@@ -19,7 +19,7 @@ import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 
-export interface NodeExecutionsTableProps {
+interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
 }
@@ -36,7 +36,7 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
+const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
 }) => {
@@ -139,3 +139,5 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     </div>
   );
 };
+
+export default React.memo(NodeExecutionsTable);
