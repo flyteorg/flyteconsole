@@ -6,13 +6,14 @@ import { DataError } from 'components/Errors/DataError';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { Execution, ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { keyBy } from 'lodash';
 import { isMapTaskV1 } from 'models/Task/utils';
 import { useQueryClient } from 'react-query';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
+import { FilterOperation } from 'models/AdminEntity/types';
 import { NodeExecutionDetailsContextProvider } from '../contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext, NodeExecutionsRequestConfigContext } from '../contexts';
+import { NodeExecutionsByIdContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { tabs } from './constants';
@@ -42,6 +43,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
+  if (appliedFilters.length === 1 && appliedFilters[0].key === 'phase') {
+    return true;
+  }
+  return false;
+};
+
 interface WorkflowNodeExecution extends NodeExecution {
   logsByPhase?: LogsByPhase;
 }
@@ -57,7 +65,6 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
   const queryClient = useQueryClient();
-  const requestConfig = useContext(NodeExecutionsRequestConfigContext); // Can't find initialization of the provider
   const [nodeExecutionsLoading, setNodeExecutionsLoading] = useState<boolean>(true);
 
   const {
@@ -73,12 +80,12 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     return keyBy(nodeExecutionsWithResources, 'scopedId');
   }, [nodeExecutionsWithResources]);
 
-  /* We want to maintain the filter selection when switching away from the Nodes
-    tab and back, but do not want to filter the nodes when viewing the graph. So,
-    we will only pass filters to the execution state when on the nodes tab. */
-  const appliedFilters = tabState.value === tabs.nodes.id ? filterState.appliedFilters : [];
-
-  const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution, appliedFilters);
+  // query to get all data to build Graph and Timeline
+  const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution);
+  // query to get filtered data to narrow down Table outputs
+  const {
+    nodeExecutionsQuery: { data: filteredNodeExecutions },
+  } = useExecutionNodeViewsState(execution, filterState.appliedFilters);
 
   useEffect(() => {
     let isCurrent = true;
@@ -131,10 +138,7 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     };
   }, [nodeExecutions]);
 
-  const childGroupsQuery = useAllTreeNodeExecutionGroupsQuery(
-    nodeExecutionsQuery.data ?? [],
-    requestConfig,
-  );
+  const childGroupsQuery = useAllTreeNodeExecutionGroupsQuery(nodeExecutionsQuery.data ?? [], {});
 
   useEffect(() => {
     if (!childGroupsQuery.isLoading && childGroupsQuery.data) {
@@ -161,7 +165,13 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
         loadingComponent={LoadingComponent}
       >
         {() => (
-          <ExecutionTab tabType={tabType} filteredNodeExecutions={nodeExecutionsQuery.data ?? []} />
+          <ExecutionTab
+            tabType={tabType}
+            // if only phase filter was applied, ignore request response, and filter out nodes via frontend filter
+            filteredNodeExecutions={
+              isPhaseFilter(filterState.appliedFilters) ? undefined : filteredNodeExecutions
+            }
+          />
         )}
       </WaitForQuery>
     );

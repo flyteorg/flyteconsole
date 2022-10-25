@@ -27,6 +27,7 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
   const { setSelectedExecution } = useContext(DetailsPanelContext);
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
+  const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
   const [nodeExecutionDetails, setNodeExecutionDetails] = useState<
     NodeExecutionDetails | undefined
   >(undefined);
@@ -42,6 +43,9 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     execution.id,
   );
   const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
+  const compiledNode = (compiledWorkflowClosure?.primary.template.nodes ?? []).find(
+    (node) => node.id === execution.id.nodeId,
+  );
 
   useEffect(() => {
     getNodeExecutionDetails(execution).then((res) => {
@@ -82,37 +86,16 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     setShowLaunchForm(true);
   };
 
-  const resumeAction = () => {
-    // TODO https://github.com/flyteorg/flyteconsole/issues/587 Launch form for node id
-  };
-
-  const renderRerunAction = () => {
-    if (!id || !initialParameters) {
-      return <></>;
-    }
-
-    return (
-      <>
-        <Tooltip title={t('rerunTooltip')}>
-          <IconButton onClick={rerunIconOnClick}>
-            <RerunIcon />
-          </IconButton>
-        </Tooltip>
-        <LaunchFormDialog
-          id={id as ResourceIdentifier}
-          initialParameters={initialParameters}
-          showLaunchForm={showLaunchForm}
-          setShowLaunchForm={setShowLaunchForm}
-        />
-      </>
-    );
+  const onResumeClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setShowResumeForm(true);
   };
 
   return (
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
         <Tooltip title={t('resumeTooltip')}>
-          <IconButton onClick={resumeAction}>
+          <IconButton onClick={onResumeClick}>
             <PlayCircleOutlineIcon />
           </IconButton>
         </Tooltip>
@@ -122,7 +105,30 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
           <InputsAndOutputsIcon />
         </IconButton>
       </Tooltip>
-      {renderRerunAction()}
+      {id && initialParameters ? (
+        <>
+          <Tooltip title={t('rerunTooltip')}>
+            <IconButton onClick={rerunIconOnClick}>
+              <RerunIcon />
+            </IconButton>
+          </Tooltip>
+          <LaunchFormDialog
+            id={id as ResourceIdentifier}
+            initialParameters={initialParameters}
+            showLaunchForm={showLaunchForm}
+            setShowLaunchForm={setShowLaunchForm}
+          />
+        </>
+      ) : null}
+      {compiledNode && (
+        <LaunchFormDialog
+          compiledNode={compiledNode}
+          initialParameters={initialParameters}
+          nodeId={execution.id.nodeId}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
+        />
+      )}
     </div>
   );
 };

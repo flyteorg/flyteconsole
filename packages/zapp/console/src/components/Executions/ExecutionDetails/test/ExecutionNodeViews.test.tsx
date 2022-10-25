@@ -11,24 +11,26 @@ import { createTestQueryClient } from 'test/utils';
 import { tabs } from '../constants';
 import { ExecutionNodeViews } from '../ExecutionNodeViews';
 
-jest.mock('chart.js', () => ({
-  Chart: { register: () => null },
-  Tooltip: { positioners: { cursor: () => null } },
-  registerables: [],
-}));
-
-jest.mock('chartjs-plugin-datalabels', () => ({
-  ChartDataLabels: null,
-}));
-
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
-  NodeExecutionRow: jest.fn(({ children, execution }) => (
+  NodeExecutionRow: jest.fn(({ nodeExecution }) => (
     <div data-testid="node-execution-row">
-      <span id="node-execution-col-id">{execution?.id?.nodeId}</span>
-      {children}
+      <span id="node-execution-col-id">{nodeExecution?.id?.nodeId}</span>
     </div>
   )),
 }));
+
+jest.mock('components/Executions/ExecutionDetails/Timeline/ExecutionTimelineFooter', () => ({
+  ExecutionTimelineFooter: jest.fn(() => <div></div>),
+}));
+
+jest.mock('components/Executions/ExecutionDetails/Timeline/TimelineChart/index', () => ({
+  TimelineChart: jest.fn(() => <div></div>),
+}));
+
+jest.mock('components/Executions/ExecutionDetails/Timeline/NodeExecutionName', () => ({
+  NodeExecutionName: jest.fn(({ name }) => <div>{name}</div>),
+}));
+
 // ExecutionNodeViews uses query params for NE list, so we must match them
 // for the list to be returned properly
 const baseQueryParams = {
@@ -77,7 +79,7 @@ describe('ExecutionNodeViews', () => {
     await waitFor(() => getByText(tabs.nodes.label));
 
     const nodesTab = getByText(tabs.nodes.label);
-    const graphTab = getByText(tabs.graph.label);
+    const timelineTab = getByText(tabs.timeline.label);
 
     // Ensure we are on Nodes tab
     fireEvent.click(nodesTab);
@@ -96,11 +98,11 @@ describe('ExecutionNodeViews', () => {
     await waitFor(() => queryByText(failedNodeName));
 
     expect(queryByText(succeededNodeName)).not.toBeInTheDocument();
-    expect(getByText(failedNodeName)).toBeInTheDocument();
+    expect(queryByText(failedNodeName)).toBeInTheDocument();
 
     // Switch to the Graph tab
     fireEvent.click(statusButton);
-    fireEvent.click(graphTab);
+    fireEvent.click(timelineTab);
     await waitFor(() => queryByText(succeededNodeName));
 
     expect(queryByText(succeededNodeName)).toBeInTheDocument();
