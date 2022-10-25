@@ -1,7 +1,7 @@
 import { DialogContent, Typography } from '@material-ui/core';
 import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, useMemo } from 'react';
 import { NodeExecution } from 'models/Execution/types';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
@@ -28,7 +28,7 @@ export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   nodeId: string;
 }
 
-/** Renders the form for initiating a Launch request based on a Task */
+/** Renders the form for requesting a resume request on a gate node */
 export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   compiledNode,
   nodeId,
@@ -45,7 +45,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
 
   // Any time the inputs change (even if it's just re-ordering), we must
   // change the form key so that the inputs component will re-mount.
-  const formKey = React.useMemo<string>(() => {
+  const formKey = useMemo<string>(() => {
     return getCacheKey(state.context.parsedInputs);
   }, [state.context.parsedInputs]);
 

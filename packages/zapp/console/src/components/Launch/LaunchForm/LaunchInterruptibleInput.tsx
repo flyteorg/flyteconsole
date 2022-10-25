@@ -71,6 +71,7 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
   const styles = useStyles();
   const interruptibleStyles = useInterruptibleStyles();
 
+  // TODO: to cover all text variants in localization conditional
   const getInterruptibleLabel = () => {
     if (indeterminate) {
       return (

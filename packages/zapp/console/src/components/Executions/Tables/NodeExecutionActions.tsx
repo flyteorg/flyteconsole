@@ -105,17 +105,21 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
           <InputsAndOutputsIcon />
         </IconButton>
       </Tooltip>
-      <Tooltip title={t('rerunTooltip')}>
-        <IconButton onClick={rerunIconOnClick}>
-          <RerunIcon />
-        </IconButton>
-      </Tooltip>
-      <LaunchFormDialog
-        id={id as ResourceIdentifier}
-        initialParameters={initialParameters}
-        showLaunchForm={showLaunchForm}
-        setShowLaunchForm={setShowLaunchForm}
-      />
+      {id && initialParameters ? (
+        <>
+          <Tooltip title={t('rerunTooltip')}>
+            <IconButton onClick={rerunIconOnClick}>
+              <RerunIcon />
+            </IconButton>
+          </Tooltip>
+          <LaunchFormDialog
+            id={id as ResourceIdentifier}
+            initialParameters={initialParameters}
+            showLaunchForm={showLaunchForm}
+            setShowLaunchForm={setShowLaunchForm}
+          />
+        </>
+      ) : null}
       {compiledNode && (
         <LaunchFormDialog
           compiledNode={compiledNode}

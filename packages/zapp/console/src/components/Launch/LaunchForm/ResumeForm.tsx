@@ -11,7 +11,7 @@ interface ResumeFormProps extends BaseLaunchFormProps {
   nodeId: string;
 }
 
-/** Renders the form for initiating a Launch request based on a Workflow or Task */
+/** Renders the form for requesting a resume request on a gate node */
 export const ResumeForm: React.FC<ResumeFormProps> = (props) => {
   const [inputValueCache] = useState(createInputValueCache());
 
