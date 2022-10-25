@@ -91,37 +91,6 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     setShowResumeForm(true);
   };
 
-  const renderRerunAction = () => {
-    if (!id || !initialParameters) {
-      return <></>;
-    }
-
-    return (
-      <>
-        <Tooltip title={t('rerunTooltip')}>
-          <IconButton onClick={rerunIconOnClick}>
-            <RerunIcon />
-          </IconButton>
-        </Tooltip>
-        <LaunchFormDialog
-          id={id as ResourceIdentifier}
-          initialParameters={initialParameters}
-          showLaunchForm={showLaunchForm}
-          setShowLaunchForm={setShowLaunchForm}
-        />
-        {compiledNode && (
-          <LaunchFormDialog
-            compiledNode={compiledNode}
-            initialParameters={initialParameters}
-            nodeId={execution.id.nodeId}
-            showLaunchForm={showResumeForm}
-            setShowLaunchForm={setShowResumeForm}
-          />
-        )}
-      </>
-    );
-  };
-
   return (
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
@@ -136,7 +105,26 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
           <InputsAndOutputsIcon />
         </IconButton>
       </Tooltip>
-      {renderRerunAction()}
+      <Tooltip title={t('rerunTooltip')}>
+        <IconButton onClick={rerunIconOnClick}>
+          <RerunIcon />
+        </IconButton>
+      </Tooltip>
+      <LaunchFormDialog
+        id={id as ResourceIdentifier}
+        initialParameters={initialParameters}
+        showLaunchForm={showLaunchForm}
+        setShowLaunchForm={setShowLaunchForm}
+      />
+      {compiledNode && (
+        <LaunchFormDialog
+          compiledNode={compiledNode}
+          initialParameters={initialParameters}
+          nodeId={execution.id.nodeId}
+          showLaunchForm={showResumeForm}
+          setShowLaunchForm={setShowResumeForm}
+        />
+      )}
     </div>
   );
 };
