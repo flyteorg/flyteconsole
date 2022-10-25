@@ -40,7 +40,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
   const baseService = service as BaseLaunchService;
-  const [isError, setIsError] = React.useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const executionData = useNodeExecutionData(nodeExecution.id);
 
   // Any time the inputs change (even if it's just re-ordering), we must

@@ -22,7 +22,7 @@ import {
 } from './types';
 import { getUnsupportedRequiredInputs } from './utils';
 
-export interface ResumeFormProps extends BaseLaunchFormProps {
+interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
   nodeId: string;

@@ -5,7 +5,7 @@ import { createInputValueCache, InputValueCacheContext } from './inputValueCache
 import { ResumeSignalForm } from './ResumeSignalForm';
 import { BaseLaunchFormProps, TaskInitialLaunchParameters } from './types';
 
-export interface ResumeFormProps extends BaseLaunchFormProps {
+interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
   nodeId: string;

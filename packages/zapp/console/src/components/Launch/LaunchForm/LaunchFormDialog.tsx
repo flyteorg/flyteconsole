@@ -27,9 +27,14 @@ function getLaunchProps(id: ResourceIdentifier) {
   throw new Error('Unknown Resource Type');
 }
 
-export const LaunchFormDialog = (props: LaunchFormDialogProps): JSX.Element => {
-  const { id, initialParameters, showLaunchForm, setShowLaunchForm, compiledNode, nodeId } = props;
-
+export const LaunchFormDialog = ({
+  id,
+  initialParameters,
+  showLaunchForm,
+  setShowLaunchForm,
+  compiledNode,
+  nodeId,
+}: LaunchFormDialogProps): JSX.Element => {
   const onCancelLaunch = () => setShowLaunchForm(false);
 
   // prevent child onclick event in the dialog triggers parent onclick event
