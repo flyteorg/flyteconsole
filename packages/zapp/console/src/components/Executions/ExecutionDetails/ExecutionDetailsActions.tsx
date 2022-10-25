@@ -114,7 +114,7 @@ export const ExecutionDetailsActions = ({
     setShowLaunchForm(true);
   };
 
-  const resumeOnClick = (e: React.MouseEvent<HTMLElement>) => {
+  const onResumeClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setShowResumeForm(true);
   };
@@ -138,7 +138,7 @@ export const ExecutionDetailsActions = ({
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
-          <Button variant="outlined" color="primary" onClick={resumeOnClick}>
+          <Button variant="outlined" color="primary" onClick={onResumeClick}>
             {t('resume')}
           </Button>
         )}

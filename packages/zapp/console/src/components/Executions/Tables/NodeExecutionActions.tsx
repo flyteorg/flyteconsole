@@ -86,7 +86,7 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     setShowLaunchForm(true);
   };
 
-  const resumeAction = (e: React.MouseEvent<HTMLElement>) => {
+  const onResumeClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setShowResumeForm(true);
   };
@@ -126,7 +126,7 @@ export const NodeExecutionActions = ({ execution }: NodeExecutionActionsProps): 
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
         <Tooltip title={t('resumeTooltip')}>
-          <IconButton onClick={resumeAction}>
+          <IconButton onClick={onResumeClick}>
             <PlayCircleOutlineIcon />
           </IconButton>
         </Tooltip>

@@ -238,7 +238,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
     onNodeSelectionChanged(true);
   };
 
-  const handleActionClick = (e) => {
+  const onResumeClick = (e) => {
     e.stopPropagation();
     setShowResumeForm(true);
   };
@@ -249,7 +249,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         {text}
         {phase === NodeExecutionPhase.PAUSED && (
           <Tooltip title={t('resumeTooltip')}>
-            <PlayCircleOutlineIcon onClick={handleActionClick} style={iconStyles} />
+            <PlayCircleOutlineIcon onClick={onResumeClick} style={iconStyles} />
           </Tooltip>
         )}
       </div>

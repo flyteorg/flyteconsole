@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
-import { formStrings } from './constants';
+import t from './strings';
 import { LaunchState } from './launchMachine';
 import { useStyles } from './styles';
 import { BaseInterpretedLaunchState, BaseLaunchService } from './types';
@@ -69,7 +69,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
           onClick={onCancel}
           variant="outlined"
         >
-          {formStrings.cancel}
+          {t('cancel')}
         </Button>
         <Button
           color="primary"

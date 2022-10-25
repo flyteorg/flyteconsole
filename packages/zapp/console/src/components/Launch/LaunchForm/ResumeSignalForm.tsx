@@ -19,7 +19,7 @@ import {
 import { useResumeFormState } from './useResumeFormState';
 import { LaunchFormInputs } from './LaunchFormInputs';
 import { LaunchFormHeader } from './LaunchFormHeader';
-import { formStrings } from './constants';
+import launchFormStrings from './strings';
 import { LaunchFormActions } from './LaunchFormActions';
 
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
@@ -56,7 +56,10 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
 
   return (
     <>
-      <LaunchFormHeader title={nodeExecution.id.nodeId} formTitle={formStrings.resumeTitle} />
+      <LaunchFormHeader
+        title={nodeExecution.id.nodeId}
+        formTitle={launchFormStrings('resumeTitle')}
+      />
       <DialogContent dividers={true} className={styles.inputsSection}>
         <LaunchFormInputs
           key={formKey}
@@ -75,7 +78,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
         service={baseService}
         onClose={onClose}
         isError={isError}
-        submitTitle={formStrings.resume}
+        submitTitle={launchFormStrings('resume')}
       />
     </>
   );

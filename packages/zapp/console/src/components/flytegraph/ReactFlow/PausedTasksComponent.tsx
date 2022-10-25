@@ -61,7 +61,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     searchNode(pausedNodes, 0);
   };
 
-  const resumeAction = (nodeId: string) => {
+  const onResumeClick = (nodeId: string) => {
     setSelectedNodeId(nodeId);
     setShowResumeForm(true);
   };
@@ -72,7 +72,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
 
   const renderPausedTasksBlock = () => (
     <div style={popupContainerStyle} data-testid="paused-tasks-table">
-      <TaskNames nodes={pausedNodes} onToggle={toggleNode} onAction={resumeAction} />
+      <TaskNames nodes={pausedNodes} onToggle={toggleNode} onAction={onResumeClick} />
     </div>
   );
 
