@@ -41,6 +41,7 @@ import {
   stringNoLabelName,
 } from './constants';
 import { createMockObjects } from './utils';
+import { workflowNoInputsString } from '../constants';
 
 describe('LaunchForm: Workflow', () => {
   let onClose: jest.Mock;
@@ -169,7 +170,7 @@ describe('LaunchForm: Workflow', () => {
       const submitButton = await waitFor(() => getSubmitButton(container));
       await waitFor(() => expect(submitButton).toBeEnabled());
 
-      expect(getByText(t('workflowNoInputsString'))).toBeInTheDocument();
+      expect(getByText(workflowNoInputsString)).toBeInTheDocument();
     });
 
     it('should not render inputs header/description', async () => {
