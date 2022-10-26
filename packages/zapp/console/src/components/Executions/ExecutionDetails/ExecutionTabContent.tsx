@@ -19,7 +19,7 @@ import {
 import { isEqual } from 'lodash';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from '../contexts';
-import NodeExecutionsTable from '../Tables/NodeExecutionsTable';
+import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 import { ExecutionTimeline } from './Timeline/ExecutionTimeline';

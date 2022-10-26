@@ -36,7 +36,7 @@ const scrollbarPadding = scrollbarSize();
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
+export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
 }) => {
@@ -139,5 +139,3 @@ const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     </div>
   );
 };
-
-export default React.memo(NodeExecutionsTable);
