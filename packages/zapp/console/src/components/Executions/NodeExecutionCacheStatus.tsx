@@ -7,7 +7,7 @@ import { isMapTaskType } from 'models/Task/utils';
 import { useEffect, useState } from 'react';
 import { CacheStatus } from './CacheStatus';
 
-export interface NodeExecutionCacheStatusProps {
+interface NodeExecutionCacheStatusProps {
   execution: NodeExecution;
   /** `normal` will render an icon with description message beside it
    *  `iconOnly` will render just the icon with the description as a tooltip
@@ -27,12 +27,12 @@ export const NodeExecutionCacheStatus: React.FC<NodeExecutionCacheStatusProps> =
   variant = 'normal',
 }) => {
   const taskNodeMetadata = execution.closure?.taskNodeMetadata;
-  const detailsContext = useNodeExecutionContext();
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [nodeDetails, setNodeDetails] = useState<NodeExecutionDetails | undefined>();
 
   useEffect(() => {
     let isCurrent = true;
-    detailsContext.getNodeExecutionDetails(execution).then((res) => {
+    getNodeExecutionDetails(execution).then((res) => {
       if (isCurrent) {
         setNodeDetails(res);
       }
