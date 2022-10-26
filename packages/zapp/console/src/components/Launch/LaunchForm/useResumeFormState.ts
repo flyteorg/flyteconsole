@@ -14,13 +14,12 @@ import {
 import { validate as baseValidate } from './services';
 import {
   BaseLaunchFormProps,
-  InputType,
   LaunchFormInputsRef,
   ParsedInput,
   ResumeFormState,
   TaskInitialLaunchParameters,
 } from './types';
-import { getUnsupportedRequiredInputs } from './utils';
+import { getInputDefintionForLiteralType, getUnsupportedRequiredInputs } from './utils';
 
 interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
@@ -39,15 +38,10 @@ async function loadInputs({ compiledNode }: TaskResumeContext) {
   const parsedInputs: ParsedInput[] = [
     {
       description: '',
-      label: '',
+      label: 'Signal Input',
       name: 'signal',
       required: true,
-      typeDefinition: {
-        type: InputType.Boolean,
-        literalType: {
-          simple: signalType.simple ?? undefined,
-        },
-      },
+      typeDefinition: getInputDefintionForLiteralType({ simple: signalType.simple ?? undefined }),
     },
   ];
 

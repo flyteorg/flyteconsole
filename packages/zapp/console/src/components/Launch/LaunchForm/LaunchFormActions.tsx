@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import t from './strings';
-import { LaunchState } from './launchMachine';
+import { LaunchState, TaskResumeContext } from './launchMachine';
 import { useStyles } from './styles';
 import { BaseInterpretedLaunchState, BaseLaunchService } from './types';
 
@@ -49,7 +49,12 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
       // id and navigate to the Execution Details page.
       // if (state.matches({ submit: 'succeeded' })) {
       if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
-        history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId));
+        if (newState.context.resultExecutionId) {
+          history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId));
+        }
+        if ((newState.context as TaskResumeContext).compiledNode) {
+          onCancel();
+        }
       }
     });
 
