@@ -18,6 +18,4 @@ module.exports = {
   collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*/*.stories.{ts,tsx}', '!**/*/*.mocks.{ts,tsx}'],
   coveragePathIgnorePatterns: [...sharedConfig.coveragePathIgnorePatterns],
   coverageReporters: ['text', 'json', 'html'],
-
-  watchPathIgnorePatterns: ['node_modules'],
 };
