@@ -52,7 +52,7 @@ const createMockCompiledWorkflowClosure = (nodes: CompiledNode[]): CompiledWorkf
   tasks: [],
 });
 
-const createMockCompiledNode = (type: Core.ILiteralType | null): CompiledNode => ({
+const createMockCompiledNode = (type?: Core.ILiteralType): CompiledNode => ({
   id: mockNodeExecutionId,
   metadata: {
     name: 'my-signal-name',
@@ -79,7 +79,7 @@ describe('ResumeSignalForm', () => {
     queryClient = createTestQueryClient();
   });
 
-  const renderForm = (type: Core.ILiteralType | null) => {
+  const renderForm = (type?: Core.ILiteralType) => {
     const mockCompiledNode = createMockCompiledNode(type);
     const mockCompiledWorkflowClosure = createMockCompiledWorkflowClosure([mockCompiledNode]);
     return render(
@@ -92,7 +92,7 @@ describe('ResumeSignalForm', () => {
           >
             <NodeExecutionDetailsContext.Provider
               value={{
-                getNodeExecutionDetails: jest.fn.call,
+                getNodeExecutionDetails: jest.fn(),
                 workflowId: mockWorkflowId,
                 compiledWorkflowClosure: mockCompiledWorkflowClosure,
               }}
@@ -125,12 +125,12 @@ describe('ResumeSignalForm', () => {
     });
 
     it('should render the node id as a header title', async () => {
-      const { getByText } = renderForm(null);
+      const { getByText } = renderForm();
       expect(getByText('node0')).toBeInTheDocument();
     });
 
     it('should disable the submit button until the input is filled', async () => {
-      const { container } = renderForm(null);
+      const { container } = renderForm();
       const submitButton = await waitFor(() => getSubmitButton(container));
       expect(submitButton).toBeDisabled();
     });
