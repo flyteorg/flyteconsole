@@ -84,6 +84,10 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {
+    setOriginalNodes(initialNodes);
+  }, [initialNodes]);
+
+  useEffect(() => {
     const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map((node) => {
       const execution = nodeExecutionsById[node.scopedId];
