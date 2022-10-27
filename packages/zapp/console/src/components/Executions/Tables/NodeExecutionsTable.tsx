@@ -19,7 +19,7 @@ import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 
-export interface NodeExecutionsTableProps {
+interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
 }

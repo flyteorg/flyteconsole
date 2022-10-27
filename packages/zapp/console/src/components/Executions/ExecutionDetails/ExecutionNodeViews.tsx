@@ -54,7 +54,7 @@ interface WorkflowNodeExecution extends NodeExecution {
   logsByPhase?: LogsByPhase;
 }
 
-export interface ExecutionNodeViewsProps {
+interface ExecutionNodeViewsProps {
   execution: Execution;
 }
 

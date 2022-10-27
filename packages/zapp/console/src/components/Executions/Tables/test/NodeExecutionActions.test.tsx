@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -42,17 +42,25 @@ describe('Executions > Tables > NodeExecutionActions', () => {
     );
 
   it('should render rerun action, if id can be determined', async () => {
-    const { queryByTitle } = renderComponent({ execution, state });
-    await waitFor(() => queryByTitle('Rerun'));
+    let queryByTitle;
+    await act(() => {
+      const component = renderComponent({ execution, state });
+      queryByTitle = component.queryByTitle;
+    });
+    await waitFor(() => queryByTitle('View Inputs & Outputs'));
 
     expect(queryByTitle('View Inputs & Outputs')).toBeInTheDocument();
-    expect(queryByTitle('Rerun')).toBeInTheDocument();
     expect(queryByTitle('Resume')).not.toBeInTheDocument();
+    expect(queryByTitle('Rerun')).toBeInTheDocument();
   });
 
   it('should render resume action, if the status is PAUSED', async () => {
     const mockExecution = { ...execution, closure: { phase: 100 } };
-    const { queryByTitle } = renderComponent({ execution: mockExecution, state });
+    let queryByTitle;
+    await act(() => {
+      const component = renderComponent({ execution: mockExecution, state });
+      queryByTitle = component.queryByTitle;
+    });
     await waitFor(() => queryByTitle('Resume'));
 
     expect(queryByTitle('View Inputs & Outputs')).toBeInTheDocument();
@@ -62,9 +70,12 @@ describe('Executions > Tables > NodeExecutionActions', () => {
 
   it('should render ResumeForm on resume button click', async () => {
     const mockExecution = { ...execution, closure: { phase: 100 } };
-    const { queryByTitle, getByTitle, queryByTestId } = renderComponent({
-      execution: mockExecution,
-      state,
+    let queryByTitle, getByTitle, queryByTestId;
+    await act(() => {
+      const component = renderComponent({ execution: mockExecution, state });
+      queryByTitle = component.queryByTitle;
+      getByTitle = component.getByTitle;
+      queryByTestId = component.queryByTestId;
     });
     await waitFor(() => queryByTitle('Resume'));
 

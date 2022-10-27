@@ -29,7 +29,7 @@ import { DetailsPanelContext } from './DetailsPanelContext';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { nodeExecutionPhaseConstants } from '../constants';
 
-export interface ExecutionTabContentProps {
+interface ExecutionTabContentProps {
   tabType: string;
   filteredNodeExecutions?: NodeExecution[];
 }
