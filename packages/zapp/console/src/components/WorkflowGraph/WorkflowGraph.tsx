@@ -5,6 +5,7 @@ import { NonIdealState } from 'components/common/NonIdealState';
 import { CompiledNode } from 'models/Node/types';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { dNode } from 'models/Graph/types';
+import t from './strings';
 
 export interface WorkflowGraphProps {
   onNodeSelectionChanged: (selectedNodes: string[]) => void;
@@ -32,7 +33,12 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   initialNodes,
 }) => {
   if (error) {
-    return <NonIdealState title="Cannot render Workflow graph" description={error.message} />;
+    return <NonIdealState title={t('graphErrorTitle')} description={error.message} />;
+  }
+
+  // If the dag is empty, show the message, instead of trying to display it
+  if (!mergedDag) {
+    return <NonIdealState title={t('graphErrorTitle')} description={t('graphErrorEmptyGraph')} />;
   }
 
   return (
