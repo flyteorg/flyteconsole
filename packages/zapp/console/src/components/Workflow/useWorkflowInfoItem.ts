@@ -1,5 +1,9 @@
-import { NamedEntityIdentifier, timestampToDate } from '@flyteconsole/components';
-import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
+import {
+  NamedEntityIdentifier,
+  timestampToDate,
+  FilterOperationName,
+  SortDirection,
+} from '@flyteconsole/components';
 import { executionSortFields } from 'models/Execution/constants';
 import { listExecutions } from 'models/Execution/api';
 import { listWorkflows } from 'models/Workflow/api';

@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import { TestCaseList } from '../types';
 
 const scalarNoneTestCase: TestCaseList<Core.IVoid> = {

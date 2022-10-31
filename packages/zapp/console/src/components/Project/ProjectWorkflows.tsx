@@ -1,7 +1,6 @@
-import { WaitForData, limits } from '@flyteconsole/components';
+import { WaitForData, limits, SortDirection } from '@flyteconsole/components';
 import { useWorkflowShowArchivedState } from 'components/Workflow/filters/useWorkflowShowArchivedState';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { workflowSortFields } from 'models/Workflow/constants';
 import * as React from 'react';
 import { useWorkflowInfoList } from '../Workflow/useWorkflowInfoList';

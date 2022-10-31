@@ -1,6 +1,5 @@
-import { Protobuf } from '@flyteconsole/flyteidl';
 import Long from 'long';
-import { WorkflowExecutionPhase } from '../typings';
+import { Protobuf, WorkflowExecutionPhase } from '../models';
 
 /** Determines if a given date string or object is a valid, usable date. This will detect
  * JS Date objects which have been initialized with invalid values as well as strings which

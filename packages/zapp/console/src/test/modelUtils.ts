@@ -1,5 +1,5 @@
-import { Core } from '@flyteconsole/flyteidl';
 import {
+  Core,
   Identifier,
   NamedEntity,
   NamedEntityIdentifier,

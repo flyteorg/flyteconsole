@@ -3,8 +3,8 @@ import {
   useFetchableData,
   NamedEntityIdentifier,
   Task,
+  SortDirection,
 } from '@flyteconsole/components';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { listTasks } from 'models/Task/api';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
 

@@ -1,5 +1,4 @@
-import { assertNever, stringifyValue, BlobDimensionality } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
+import { assertNever, stringifyValue, BlobDimensionality, Core } from '@flyteconsole/components';
 import { get, has } from 'lodash';
 import { InputType, InputTypeDefinition } from '../types';
 

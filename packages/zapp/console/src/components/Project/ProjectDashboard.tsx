@@ -5,9 +5,9 @@ import { useTaskNameList, useWorkflowNameList } from 'components/hooks/useNamedE
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
-import { Admin, SortDirection } from '@flyteconsole/flyteidl';
-import { DomainSettingsSection } from 'components/common/DomainSettingsSection';
 import {
+  Admin,
+  SortDirection,
   getCacheKey,
   DataError,
   ErrorBoundary,
@@ -19,6 +19,7 @@ import {
   getProjectDomainAttributes,
   history,
 } from '@flyteconsole/components';
+import { DomainSettingsSection } from 'components/common/DomainSettingsSection';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';

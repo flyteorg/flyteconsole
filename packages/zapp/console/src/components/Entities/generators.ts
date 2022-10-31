@@ -1,5 +1,11 @@
-import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
-import { ResourceIdentifier, ResourceType, Identifier, Routes } from '@flyteconsole/components';
+import {
+  FilterOperation,
+  FilterOperationName,
+  ResourceIdentifier,
+  ResourceType,
+  Identifier,
+  Routes,
+} from '@flyteconsole/components';
 import { entityStrings } from './constants';
 
 const noFilters = () => [];

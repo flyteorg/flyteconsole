@@ -5,12 +5,13 @@ import {
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
+  PaginatedEntityResponse,
+  RequestConfig,
 } from '@flyteconsole/components';
 import { QueryInput, QueryType } from 'components/data/types';
 import { retriesToZero } from 'components/flytegraph/ReactFlow/utils';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
-import { PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
 import {
   getNodeExecution,
   listNodeExecutions,

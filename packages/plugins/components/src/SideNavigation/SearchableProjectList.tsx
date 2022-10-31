@@ -5,7 +5,7 @@ import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { defaultProjectDescription } from '../SelectProject';
 import { SearchResult } from '../hooks';
-import { Project } from '../typings';
+import { Project } from '../models';
 import { NoResults } from '../Errors';
 import { SearchableList } from '../SearchableList';
 

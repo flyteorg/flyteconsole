@@ -32,9 +32,9 @@ import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { notFoundError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
-import { FilterOperationName, RequestConfig } from '@flyteconsole/flyteidl';
-import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import {
+  FilterOperationName,
+  RequestConfig,
   CatalogCacheStatus,
   NodeExecutionPhase,
   ResourceType,
@@ -42,6 +42,7 @@ import {
   NodeExecution,
   TaskNodeMetadata,
 } from '@flyteconsole/components';
+import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';

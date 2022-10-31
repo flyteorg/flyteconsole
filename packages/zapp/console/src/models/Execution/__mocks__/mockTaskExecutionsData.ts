@@ -5,8 +5,8 @@ import {
   TaskExecutionPhase,
   TaskExecution,
   TaskExecutionClosure,
+  Admin,
 } from '@flyteconsole/components';
-import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { sampleError } from './sampleExecutionError';
 

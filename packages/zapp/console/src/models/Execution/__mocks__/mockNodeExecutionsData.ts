@@ -4,8 +4,8 @@ import {
   CompiledNode,
   NodeExecutionPhase,
   NodeExecution,
+  Admin,
 } from '@flyteconsole/components';
-import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep, random, sample } from 'lodash';
 import { mockNodes } from 'models/Node/__mocks__/mockNodeData';
 import { mockWorkflowExecutionId } from './constants';

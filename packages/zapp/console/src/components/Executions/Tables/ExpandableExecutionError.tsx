@@ -1,6 +1,5 @@
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin, ExecutionError } from '@flyteconsole/components';
 import { ExpandableMonospaceText } from 'components/common/ExpandableMonospaceText';
-import { ExecutionError } from '@flyteconsole/components';
 import * as React from 'react';
 import { useExecutionTableStyles } from './styles';
 

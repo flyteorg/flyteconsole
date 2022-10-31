@@ -1,4 +1,4 @@
-import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
+import { Admin, Core, Protobuf } from '..';
 import { Container, Identifier, RetryStrategy, RuntimeMetadata, TypedInterface } from '../common';
 
 /** Additional, optional metadata pertaining to a task template */

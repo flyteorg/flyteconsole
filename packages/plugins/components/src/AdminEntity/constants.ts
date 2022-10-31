@@ -1,4 +1,4 @@
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import { RequestConfig } from '../models';
 
 export const limits = {
   DEFAULT: 25,

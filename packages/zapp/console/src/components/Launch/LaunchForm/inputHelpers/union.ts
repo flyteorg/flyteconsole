@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import { isObject } from 'lodash';
 import { InputTypeDefinition, InputValue, UnionValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';

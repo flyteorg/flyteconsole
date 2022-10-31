@@ -1,5 +1,4 @@
-import { IdentifierScope, ResourceIdentifier } from '@flyteconsole/components';
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import { IdentifierScope, ResourceIdentifier, RequestConfig } from '@flyteconsole/components';
 import { usePagination } from '../usePagination';
 import { EntityType, entityFunctions } from './constants';
 

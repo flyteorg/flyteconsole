@@ -4,8 +4,8 @@ import {
   Execution,
   TaskExecution,
   Routes,
+  PaginatedEntityResponse,
 } from '@flyteconsole/components';
-import { PaginatedEntityResponse } from '@flyteconsole/flyteidl';
 
 export function isSingleTaskExecution(execution: Execution) {
   return execution.spec.launchPlan.resourceType === ResourceType.TASK;

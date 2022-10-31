@@ -1,5 +1,5 @@
 import { compact, flatMap } from 'lodash';
-import { FilterOperation } from '@flyteconsole/flyteidl';
+import { FilterOperation } from '@flyteconsole/components';
 import { filterLabels } from './constants';
 import { durationFilters } from './durationFilters';
 import {

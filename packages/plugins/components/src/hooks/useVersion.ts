@@ -1,11 +1,10 @@
 import { useFlyteApi, AdminEndpoint, getAxiosApiCall } from '@flyteconsole/flyte-api';
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin } from '../models';
 import { useFetchableData } from './useFetchableData';
 
 export interface GetVersionResponse extends Admin.GetVersionResponse {
   controlPlaneVersion: Admin.IVersion | null;
 }
-
 
 /** State hook that returns the version information */
 function useVersion() {

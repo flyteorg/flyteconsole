@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
 import {
+  FilterOperation,
+  FilterOperationName,
   useUserProfile,
   OnlyMyFilter,
   FeatureFlag,

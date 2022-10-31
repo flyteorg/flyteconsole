@@ -1,4 +1,4 @@
-import { Admin, Core } from '@flyteconsole/flyteidl';
+import { Admin, Core } from '..';
 import { Identifier, TypedInterface } from '../common';
 import { CompiledNode, ConnectionSet } from '../Node';
 import { CompiledTask } from '../Task';

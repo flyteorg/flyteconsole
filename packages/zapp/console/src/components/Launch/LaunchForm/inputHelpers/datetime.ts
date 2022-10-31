@@ -1,5 +1,4 @@
-import { dateToTimestamp, timestampToDate } from '@flyteconsole/components';
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
+import { dateToTimestamp, timestampToDate, Core, Protobuf } from '@flyteconsole/components';
 import { utc as moment } from 'moment';
 import { InputValue } from '../types';
 import { allowedDateFormats, primitiveLiteralPaths } from './constants';

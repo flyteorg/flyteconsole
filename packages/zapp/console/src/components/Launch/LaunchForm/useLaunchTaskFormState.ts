@@ -4,10 +4,11 @@ import {
   Identifier,
   Task,
   WorkflowExecutionIdentifier,
+  FilterOperationName,
+  SortDirection,
 } from '@flyteconsole/components';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
-import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
 import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { correctInputErrors } from './constants';

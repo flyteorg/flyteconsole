@@ -1,5 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
-import { BlobDimensionality } from '@flyteconsole/components';
+import { Core, BlobDimensionality } from '@flyteconsole/components';
 import { InputType, InputTypeDefinition } from '../types';
 
 export function primitiveLiteral(primitive: Core.IPrimitive): Core.ILiteral {

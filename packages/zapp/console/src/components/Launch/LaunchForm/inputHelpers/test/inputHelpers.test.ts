@@ -1,5 +1,4 @@
-import { stringifyValue, BlobDimensionality, SimpleType } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
+import { stringifyValue, BlobDimensionality, SimpleType, Core } from '@flyteconsole/components';
 import Long from 'long';
 import { InputProps, InputType, InputTypeDefinition } from '../../types';
 import {

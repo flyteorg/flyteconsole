@@ -13,8 +13,10 @@ import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from '@flyteconsole/ui-atoms';
 import { cloneDeep, get } from 'lodash';
 import Long from 'long';
-import { RequestConfig, Core, Protobuf } from '@flyteconsole/flyteidl';
 import {
+  RequestConfig,
+  Core,
+  Protobuf,
   Identifier,
   Literal,
   NamedEntityIdentifier,

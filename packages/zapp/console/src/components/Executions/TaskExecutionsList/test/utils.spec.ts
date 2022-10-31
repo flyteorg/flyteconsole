@@ -1,6 +1,5 @@
 import { getTaskLogName, getTaskIndex } from 'components/Executions/TaskExecutionsList/utils';
-import { Event } from '@flyteconsole/flyteidl';
-import { TaskExecutionPhase } from '@flyteconsole/components';
+import { Event, TaskExecutionPhase } from '@flyteconsole/components';
 import { obj } from 'test/utils';
 import {
   getTaskRetryAtemptsForIndex,

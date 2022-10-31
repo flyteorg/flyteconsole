@@ -1,4 +1,4 @@
-import { WorkflowExecutionIdentifier } from '../../typings';
+import { WorkflowExecutionIdentifier } from '../../models';
 import { makeRoute } from '../navigation';
 import { ensureSlashPrefixed } from '../utils';
 import { projectBasePath, projectDomainBasePath } from './constants';

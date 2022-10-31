@@ -1,6 +1,13 @@
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import {
+  RequestConfig,
+  useFetchableData,
+  CacheContext,
+  FetchFn,
+  PaginatedFetchableData,
+  PaginatedFetchFn,
+  PaginationValue,
+} from '@flyteconsole/components';
 import { useContext, useMemo } from 'react';
-import { useFetchableData, CacheContext, FetchFn, PaginatedFetchableData, PaginatedFetchFn, PaginationValue } from '@flyteconsole/components';
 
 export interface PaginationConfig<FetchArgType> extends RequestConfig {
   /** Whether to individually cache returned items. Should only be used

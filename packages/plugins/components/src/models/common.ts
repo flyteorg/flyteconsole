@@ -1,9 +1,9 @@
-import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
-
 /* --- BEGIN flyteidl type aliases --- */
 /** These are types shared across multiple sections of the data model. Most of
  * map to types found in `flyteidl.core`.
  */
+
+import { Admin, Core, Protobuf } from './@flyteidl';
 
 /* It's an ENUM exports, and as such need to be exported as both type and const value */
 /* eslint-disable @typescript-eslint/no-redeclare */

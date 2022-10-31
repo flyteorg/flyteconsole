@@ -1,5 +1,4 @@
-import { createDebugLogger, ValueError } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
+import { createDebugLogger, ValueError, Core } from '@flyteconsole/components';
 import { InputProps, InputTypeDefinition, InputValue } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';

@@ -1,6 +1,6 @@
 import { long, obj } from 'test/utils';
-import { Protobuf } from '@flyteconsole/flyteidl';
 import {
+  Protobuf,
   compareTimestampsAscending,
   createLocalURL,
   dateToTimestamp,

@@ -1,6 +1,6 @@
 import { useAPIContext } from 'components/data/apiContext';
-import { RequestConfig } from '@flyteconsole/flyteidl';
 import {
+  RequestConfig,
   Identifier,
   IdentifierScope,
   useFetchableData,

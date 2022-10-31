@@ -1,7 +1,6 @@
-import { Admin } from '@flyteconsole/flyteidl';
 import { sortBy } from 'lodash';
+import { Admin, IdentifierScope, Project } from '../../models';
 import { getAdminEntity } from '../../AdminEntity';
-import { IdentifierScope, Project } from '../../typings';
 import { endpointPrefixes } from './constants';
 import { makeProjectDomainAttributesPath } from './project';
 

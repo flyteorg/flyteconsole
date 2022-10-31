@@ -5,8 +5,8 @@ import {
   Variable,
   Task,
   Workflow,
+  Core,
 } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
 import { isObject } from 'lodash';
 import { LaunchPlan } from 'models/Launch/types';
 import moment from 'moment';

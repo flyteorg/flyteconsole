@@ -4,10 +4,11 @@ import {
   Workflow,
   WorkflowId,
   WorkflowExecutionIdentifier,
+  FilterOperationName,
+  SortDirection,
 } from '@flyteconsole/components';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
-import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { LaunchPlan } from 'models/Launch/types';
 import { workflowSortFields } from 'models/Workflow/constants';
 import { RefObject, useEffect, useMemo, useRef } from 'react';

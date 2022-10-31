@@ -1,5 +1,4 @@
-import { Admin } from '@flyteconsole/flyteidl';
-import { createPaginationTransformer } from '@flyteconsole/components';
+import { Admin, createPaginationTransformer } from '@flyteconsole/components';
 import { LaunchPlan } from './types';
 
 /** Transformer to coerce an `Admin.LaunchPlanList` into a standard shape */

@@ -1,4 +1,4 @@
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
+import { Core, Protobuf } from '@flyteconsole/components';
 
 export function getIValue(
   kind: 'nullValue' | 'numberValue' | 'stringValue' | 'boolValue' | 'structValue' | 'listValue',

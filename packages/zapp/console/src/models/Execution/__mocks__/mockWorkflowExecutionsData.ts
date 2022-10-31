@@ -6,8 +6,8 @@ import {
   ExecutionState,
   WorkflowExecutionPhase,
   Execution,
+  Core,
 } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
 import { cloneDeep, random } from 'lodash';
 import Long from 'long';
 import { mockWorkflowExecutionId } from './constants';

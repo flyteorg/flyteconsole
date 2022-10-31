@@ -3,8 +3,8 @@ import {
   NotFoundError,
   adminApiUrl,
   getAdminEntity,
+  Admin,
 } from '@flyteconsole/components';
-import { Admin } from '@flyteconsole/flyteidl';
 import { mockServer } from 'mocks/server';
 import { rest } from 'msw';
 

@@ -1,7 +1,6 @@
 import { createPaginationQuery } from 'components/data/queryUtils';
 import { InfiniteQueryInput, QueryType } from 'components/data/types';
-import { RequestConfig } from '@flyteconsole/flyteidl';
-import { DomainIdentifierScope, Execution } from '@flyteconsole/components';
+import { RequestConfig, DomainIdentifierScope, Execution } from '@flyteconsole/components';
 import { listExecutions } from 'models/Execution/api';
 
 /** A query for fetching a list of workflow executions belonging to a project/domain */

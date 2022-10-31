@@ -1,6 +1,11 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
-import { timestampToDate, BlobDimensionality, SchemaColumnType } from '@flyteconsole/components';
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
+import {
+  timestampToDate,
+  BlobDimensionality,
+  SchemaColumnType,
+  Core,
+  Protobuf,
+} from '@flyteconsole/components';
 import Long from 'long';
 
 const DEFAULT_UNSUPPORTED = 'This type is not yet supported';

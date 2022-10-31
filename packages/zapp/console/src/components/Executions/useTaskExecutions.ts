@@ -10,8 +10,8 @@ import {
   TaskExecutionIdentifier,
   useFetchableData,
   FetchableData,
+  SortDirection,
 } from '@flyteconsole/components';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
 import { executionRefreshIntervalMs } from './constants';
 import { nodeExecutionIsTerminal, taskExecutionIsTerminal } from './utils';

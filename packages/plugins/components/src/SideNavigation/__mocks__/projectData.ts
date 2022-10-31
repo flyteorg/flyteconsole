@@ -1,4 +1,4 @@
-import { Domain, Project } from '../../typings';
+import { Domain, Project } from '../../models';
 
 export const mockDomainIds = ['development', 'production'];
 export const mockProjectIds = Array.from(Array(10).keys()).map((idx) => `project number ${idx}`);

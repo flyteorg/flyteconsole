@@ -1,5 +1,9 @@
-import { Admin, Core, Protobuf, Service, RequestConfig } from '@flyteconsole/flyteidl';
 import {
+  Admin,
+  Core,
+  Protobuf,
+  Service,
+  RequestConfig,
   getAdminEntity,
   postAdminEntity,
   defaultListExecutionChildrenConfig,

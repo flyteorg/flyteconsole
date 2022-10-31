@@ -1,8 +1,7 @@
-import { WaitForData, limits } from '@flyteconsole/components';
+import { WaitForData, limits, SortDirection } from '@flyteconsole/components';
 import { useTaskNameList } from 'components/hooks/useNamedEntity';
 import { SearchableTaskNameList } from 'components/Task/SearchableTaskNameList';
 import { useTaskShowArchivedState } from 'components/Task/useTaskShowArchivedState';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 

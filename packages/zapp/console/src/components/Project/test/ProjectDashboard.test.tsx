@@ -12,8 +12,9 @@ import {
   FetchableData,
   Execution,
   getProjectDomainAttributes,
+  SortDirection,
+  Admin,
 } from '@flyteconsole/components';
-import { SortDirection, Admin } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';

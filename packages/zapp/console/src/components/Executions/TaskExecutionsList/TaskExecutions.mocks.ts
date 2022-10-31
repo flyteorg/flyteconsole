@@ -1,5 +1,6 @@
-import { Protobuf, Event } from '@flyteconsole/flyteidl';
 import {
+  Protobuf,
+  Event,
   MessageFormat,
   ResourceType,
   TaskLog,

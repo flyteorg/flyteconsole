@@ -11,8 +11,8 @@ import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge
 import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
-import { PaginatedEntityResponse } from '@flyteconsole/flyteidl';
 import {
+  PaginatedEntityResponse,
   Workflow,
   NodeExecutionPhase,
   TaskExecutionPhase,

@@ -1,5 +1,4 @@
-import { stringifyValue } from '@flyteconsole/components';
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
+import { stringifyValue, Core, Protobuf } from '@flyteconsole/components';
 import { InputValue } from '../types';
 import { structPath } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';

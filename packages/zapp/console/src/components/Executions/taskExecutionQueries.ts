@@ -1,11 +1,11 @@
 import { QueryInput, QueryType } from 'components/data/types';
-import { RequestConfig } from '@flyteconsole/flyteidl';
-import { getTaskExecution, listTaskExecutions } from 'models/Execution/api';
 import {
+  RequestConfig,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
 } from '@flyteconsole/components';
+import { getTaskExecution, listTaskExecutions } from 'models/Execution/api';
 import { QueryClient } from 'react-query';
 
 /** A query for fetching a single `TaskExecution` by id. */

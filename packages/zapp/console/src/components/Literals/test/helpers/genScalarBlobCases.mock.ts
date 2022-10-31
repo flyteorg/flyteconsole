@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import { generateBlobType } from './literalHelpers';
 import { TestCaseList } from '../types';
 

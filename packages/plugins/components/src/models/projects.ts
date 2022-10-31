@@ -1,4 +1,4 @@
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin } from '.';
 
 export interface Project extends Admin.IProject {
   /** The display name for this project */

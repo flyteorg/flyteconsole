@@ -1,9 +1,9 @@
-import { Admin, Core } from '@flyteconsole/flyteidl';
-
 /** These enums are only aliased and exported from this file. They should
  * be imported directly from here to avoid runtime errors when TS processes
  * modules individually (such as when running with ts-jest)
  */
+
+import { Admin, Core } from '..';
 
 /* It's an ENUM exports, and as such need to be exported as both type and const value */
 /* eslint-disable @typescript-eslint/no-redeclare */

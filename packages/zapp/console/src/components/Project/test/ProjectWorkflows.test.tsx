@@ -1,9 +1,14 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { FetchableData, useUserProfile, UserProfile, NamedEntity } from '@flyteconsole/components';
+import {
+  FetchableData,
+  useUserProfile,
+  UserProfile,
+  NamedEntity,
+  FilterOperationName,
+} from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
 import { NamedEntityState } from 'models/enums';
 import * as React from 'react';

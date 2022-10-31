@@ -4,7 +4,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import classnames from 'classnames';
 import { useCommonStyles, listhoverColor } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
-import { Project } from '../typings';
+import { Project } from '../models';
 import { KeyCodes } from './constants';
 import { SearchableProjectList } from './SearchableProjectList';
 

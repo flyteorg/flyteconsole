@@ -8,10 +8,10 @@ import {
   NamedEntityIdentifier,
   NamedEntityMetadata,
   ResourceType,
+  FilterOperationName,
 } from '@flyteconsole/components';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
 import { NamedEntityState } from 'models/enums';
 import { updateTaskState } from 'models/Task/api';

@@ -1,6 +1,5 @@
-import { WaitForData, limits } from '@flyteconsole/components';
+import { WaitForData, limits, SortDirection } from '@flyteconsole/components';
 import { SearchableLaunchPlanNameList } from 'components/LaunchPlan/SearchableLaunchPlanNameList';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { launchSortFields } from 'models/Launch/constants';
 import * as React from 'react';
 import { useLaunchPlanInfoList } from '../LaunchPlan/useLaunchPlanInfoList';

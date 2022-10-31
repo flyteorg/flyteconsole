@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Core } from '@flyteconsole/flyteidl';
+import { Core, MapTaskExecution, TaskExecution } from '@flyteconsole/components';
 import { getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
-import { MapTaskExecution, TaskExecution } from '@flyteconsole/components';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { CacheStatus } from 'components/Executions/NodeExecutionCacheStatus';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';

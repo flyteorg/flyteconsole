@@ -1,4 +1,4 @@
-import { LiteralMapBlob, ResourceType, SystemStatus } from '../../typings';
+import { LiteralMapBlob, ResourceType, SystemStatus } from '../../models';
 
 export const endpointPrefixes = {
   execution: '/executions',

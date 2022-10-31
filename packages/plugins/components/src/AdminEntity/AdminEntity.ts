@@ -1,13 +1,8 @@
 import axios, { AxiosRequestConfig, Method } from 'axios';
-import {
-  AdminEntityTransformer,
-  DecodableType,
-  EncodableType,
-  RequestConfig,
-} from '@flyteconsole/flyteidl';
 import { generateAdminApiQuery } from './AdminApiQuery';
 import { transformRequestError } from './transformRequestError';
 import { adminApiUrl, decodeProtoResponse, encodeProtoPayload, logProtoResponse } from '../Utils';
+import { AdminEntityTransformer, DecodableType, EncodableType, RequestConfig } from '../models';
 
 /** Base work function used by the HTTP verb methods below. It does not handle
  * encoding/decoding of protobuf.

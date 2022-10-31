@@ -1,5 +1,6 @@
-import { Admin, EncodableType } from '@flyteconsole/flyteidl';
 import {
+  Admin,
+  EncodableType,
   limits,
   adminApiUrl,
   encodeProtoPayload,

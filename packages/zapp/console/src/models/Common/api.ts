@@ -9,8 +9,11 @@ import {
   defaultPaginationConfig,
   defaultSystemStatus,
   identifierPrefixes,
+  Admin,
+  Core,
+  PaginatedEntityResponse,
+  RequestConfig,
 } from '@flyteconsole/components';
-import { Admin, Core, PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
 import { getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { makeIdentifierPath, makeNamedEntityPath } from './utils';
 

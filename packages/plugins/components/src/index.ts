@@ -1,4 +1,3 @@
-export * from './typings';
 export { AppInfo, type VersionInfo } from './AppInfo';
 export * from './AdminEntity';
 export * from './Utils';
@@ -17,3 +16,4 @@ export * from './DefaultAppBarContent';
 export * from './SearchableList';
 export * from './SelectProject';
 export * from './SideNavigation';
+export * from './models';

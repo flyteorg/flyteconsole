@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 
 export function extractSimpleTypes() {
   const simpleTypes = Object.keys(Core.SimpleType)

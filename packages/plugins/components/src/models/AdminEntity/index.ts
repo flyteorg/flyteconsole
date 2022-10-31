@@ -1,8 +1,5 @@
-import $protobuf from 'protobufjs';
-import { Admin } from '../index';
-
-type RequireFields<T, FieldTypes extends keyof T> = T & { [K in FieldTypes]-?: NonNullable<T[K]> };
-type RequiredNonNullable<T> = RequireFields<T, keyof T>;
+import * as $protobuf from 'protobufjs';
+import { Admin } from '../@flyteidl';
 
 /** Maps filter operations to the strings which should be used in queries to the Admin API */
 export enum FilterOperationName {

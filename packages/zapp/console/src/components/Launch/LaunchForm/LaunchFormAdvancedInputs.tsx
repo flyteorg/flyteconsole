@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin } from '@flyteconsole/components';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';

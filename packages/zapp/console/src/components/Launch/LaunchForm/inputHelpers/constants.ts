@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import { ISO_8601, RFC_2822 } from 'moment';
 
 export function literalNone(): Core.ILiteral {

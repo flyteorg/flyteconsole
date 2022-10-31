@@ -5,11 +5,11 @@ import {
   WaitForData,
   ResourceIdentifier,
   Execution,
+  SortDirection,
 } from '@flyteconsole/components';
 import { BarChart } from 'components/common/BarChart';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator } from './generators';
 import {

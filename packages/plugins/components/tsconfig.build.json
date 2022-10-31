@@ -14,7 +14,6 @@
     ],
     "references": [
         { "path": "../../plugins/flyte-api/tsconfig.build.json" },
-        { "path": "../../basics/flyteidl/tsconfig.build.json" },
         { "path": "../../basics/locale/tsconfig.build.json" },
         { "path": "../../composites/ui-atoms/tsconfig.build.json" }
     ]

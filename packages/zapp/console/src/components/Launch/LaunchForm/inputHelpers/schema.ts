@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import { InputValue } from '../types';
 import { schemaUriPath } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';

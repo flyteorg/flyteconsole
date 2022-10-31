@@ -5,7 +5,7 @@ import * as React from 'react';
 import { createMockProjects } from './__mocks__/projectData';
 import { ProjectSelector } from './ProjectSelector';
 import { sideNavGridWidth } from '../Utils';
-import { Project } from '../typings';
+import { Project } from '../models';
 
 const stories = storiesOf('Navigation', module);
 

@@ -1,6 +1,11 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
-import { NamedEntityIdentifier, Workflow, WorkflowId } from '@flyteconsole/components';
+import {
+  FilterOperationName,
+  SortDirection,
+  NamedEntityIdentifier,
+  Workflow,
+  WorkflowId,
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
 import { workflowSortFields } from 'models/Workflow/constants';
 import { useMemo, useState } from 'react';

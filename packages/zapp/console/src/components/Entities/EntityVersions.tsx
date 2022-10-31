@@ -8,6 +8,7 @@ import {
   Identifier,
   ResourceIdentifier,
   ResourceType,
+  SortDirection,
 } from '@flyteconsole/components';
 import Typography from '@material-ui/core/Typography';
 import { IconButton, makeStyles, Theme } from '@material-ui/core';
@@ -16,7 +17,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersionsTable';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from '@flyteconsole/ui-atoms';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator, versionDetailsUrlGenerator } from './generators';
 import { WorkflowVersionsTablePageSize, entityStrings } from './constants';

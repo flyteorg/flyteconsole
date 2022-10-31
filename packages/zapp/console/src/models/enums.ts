@@ -1,4 +1,4 @@
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin } from '@flyteconsole/components';
 
 /** These enums are only aliased and exported from this file. They should
  * be imported directly from here to avoid runtime errors when TS processes

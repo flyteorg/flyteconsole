@@ -9,7 +9,7 @@ import { useCommonStyles, MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { matchPath, NavLink, NavLinkProps } from 'react-router-dom';
 import { useProject, useProjects, withRouteParams } from '../hooks';
-import { Project } from '../typings';
+import { Project } from '../models';
 import { Routes, history } from '../Utils';
 import { ProjectSelector } from './ProjectSelector';
 

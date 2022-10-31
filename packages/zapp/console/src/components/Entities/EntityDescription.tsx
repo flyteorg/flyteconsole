@@ -8,6 +8,7 @@ import {
   ResourceIdentifier,
   Variable,
   TaskClosure,
+  SortDirection,
 } from '@flyteconsole/components';
 import { useNamedEntity } from 'components/hooks/useNamedEntity';
 import * as React from 'react';
@@ -15,7 +16,6 @@ import reactLoadingSkeleton from 'react-loading-skeleton';
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { executionSortFields } from 'models/Execution/constants';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionFilterGenerator } from './generators';
 import { Row } from './Row';
 import t, { patternKey } from './strings';

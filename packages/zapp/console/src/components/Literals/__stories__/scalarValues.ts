@@ -1,6 +1,5 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core, Scalar } from '@flyteconsole/components';
 import { mapValues } from 'lodash';
-import { Scalar } from '@flyteconsole/components';
 import { binaryValues } from './binaryValues';
 import { blobValues } from './blobValues';
 import { errorValues } from './errorValues';

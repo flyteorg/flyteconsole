@@ -1,4 +1,4 @@
-import { FilterOperation, FilterOperationList } from '@flyteconsole/flyteidl';
+import { FilterOperation, FilterOperationList } from '@flyteconsole/components';
 
 export interface FilterValue<FilterKey extends string, DataType = FilterOperationList> {
   label: string;

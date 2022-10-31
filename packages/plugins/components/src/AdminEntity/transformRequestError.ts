@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
-import { Admin } from '@flyteconsole/flyteidl';
 import { decodeProtoResponse } from '../Utils';
 import { NotAuthorizedError, NotFoundError } from '../Errors';
+import { Admin } from '../models';
 
 // to enrich the error message by adding the response
 function decodeErrorResponseMessage(error: AxiosError) {

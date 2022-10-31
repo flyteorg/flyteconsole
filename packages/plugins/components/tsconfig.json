@@ -9,9 +9,6 @@
             "path": "../../plugins/flyte-api"
         },
         {
-            "path": "../../basics/flyteidl"
-        },
-        {
             "path": "../../basics/locale"
         },
         {

@@ -14,8 +14,9 @@ import {
   Execution,
   NodeExecution,
   TaskExecution,
+  Admin,
+  Core,
 } from '@flyteconsole/components';
-import { Admin, Core } from '@flyteconsole/flyteidl';
 import { merge } from 'lodash';
 import { timeStampOffset } from 'mocks/utils';
 import { LaunchPlan } from 'models/Launch/types';

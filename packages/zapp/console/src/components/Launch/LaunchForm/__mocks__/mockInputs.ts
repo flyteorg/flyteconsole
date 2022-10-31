@@ -5,8 +5,8 @@ import {
   SimpleType,
   TypedInterface,
   Variable,
+  Core,
 } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
 import { cloneDeep, mapValues } from 'lodash';
 import Long from 'long';
 import { literalNone } from '../inputHelpers/constants';

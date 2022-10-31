@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
+import { FilterOperation, FilterOperationName } from '@flyteconsole/components';
 import { NamedEntityState } from 'models/enums';
 
 interface ArchiveFilterState {

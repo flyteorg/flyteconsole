@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { CacheContext, ValueCache } from '../Cache';
 import { NotFoundError } from '../Errors';
 import { FetchableData } from '../FetchMachine';
-import { Project } from '../typings';
+import { Project } from '../models';
 import { listProjects } from '../Utils';
 import { useFetchableData } from './useFetchableData';
 

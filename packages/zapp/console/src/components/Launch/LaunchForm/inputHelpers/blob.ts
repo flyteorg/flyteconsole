@@ -1,6 +1,5 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core, BlobDimensionality } from '@flyteconsole/components';
 import { isObject } from 'lodash';
-import { BlobDimensionality } from '@flyteconsole/components';
 import { BlobValue, InputValue } from '../types';
 import { literalNone } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';

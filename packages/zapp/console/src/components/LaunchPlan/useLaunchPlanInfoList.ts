@@ -1,5 +1,4 @@
-import { DomainIdentifierScope, ResourceType } from '@flyteconsole/components';
-import { RequestConfig } from '@flyteconsole/flyteidl';
+import { DomainIdentifierScope, ResourceType, RequestConfig } from '@flyteconsole/components';
 import { usePagination } from 'components/hooks/usePagination';
 import { useAPIContext } from 'components/data/apiContext';
 import { LaunchPlanListStructureItem } from './types';

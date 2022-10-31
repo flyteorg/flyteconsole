@@ -1,5 +1,5 @@
-import { Admin } from '@flyteconsole/flyteidl';
 import {
+  Admin,
   createPaginationTransformer,
   NameIdentifierScope,
   Execution,

@@ -1,7 +1,6 @@
 import cronstrue from 'cronstrue';
-import { Admin, Protobuf } from '@flyteconsole/flyteidl';
+import { Admin, Protobuf, durationToMilliseconds, isValidDate } from '@flyteconsole/components';
 import moment from 'moment-timezone';
-import { durationToMilliseconds, isValidDate } from '@flyteconsole/components';
 import { unknownValueString, zeroSecondsString } from './constants';
 import { timezone } from './timezone';
 

@@ -3,9 +3,10 @@ import {
   LogsByPhase,
   TaskExecution,
   TaskExecutionPhase,
+  Core,
+  Event,
 } from '@flyteconsole/components';
 import { leftPaddedNumber } from 'common/formatters';
-import { Core, Event } from '@flyteconsole/flyteidl';
 
 /** Generates a unique name for a task execution, suitable for display in a
  * header and use as a child component key. The name is a combination of task

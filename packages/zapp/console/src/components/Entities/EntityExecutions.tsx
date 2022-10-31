@@ -5,13 +5,13 @@ import {
   WaitForData,
   isLoadingState,
   ResourceIdentifier,
+  SortDirection,
 } from '@flyteconsole/components';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { compact } from 'lodash';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';

@@ -4,8 +4,8 @@ import {
   stringifyValue,
   BlobDimensionality,
   SchemaColumnType,
+  Core,
 } from '@flyteconsole/components';
-import { Core } from '@flyteconsole/flyteidl';
 import Long from 'long';
 import { InputType, InputTypeDefinition, InputValue } from '../../types';
 import { blobLiteral, primitiveLiteral } from '../../__mocks__/utils';

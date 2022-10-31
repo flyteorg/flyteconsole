@@ -1,5 +1,7 @@
-import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
 import {
+  Admin,
+  Core,
+  Protobuf,
   BlobDimensionality,
   Identifier,
   LiteralType,

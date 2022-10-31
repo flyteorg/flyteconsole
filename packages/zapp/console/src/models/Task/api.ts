@@ -1,5 +1,7 @@
-import { Admin, Core, RequestConfig } from '@flyteconsole/flyteidl';
 import {
+  Admin,
+  Core,
+  RequestConfig,
   getAdminEntity,
   postAdminEntity,
   defaultPaginationConfig,

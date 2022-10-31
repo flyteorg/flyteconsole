@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import { dashedValueString } from 'common/constants';
-import { Protobuf } from '@flyteconsole/flyteidl';
-import { Execution, WorkflowExecutionIdentifier, Routes } from '@flyteconsole/components';
+import { Protobuf, Execution, WorkflowExecutionIdentifier, Routes } from '@flyteconsole/components';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router';

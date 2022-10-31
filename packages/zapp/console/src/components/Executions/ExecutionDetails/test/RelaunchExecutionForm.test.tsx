@@ -9,8 +9,9 @@ import {
 } from 'components/Launch/LaunchForm/utils';
 import { mockSimpleVariables } from 'components/Launch/LaunchForm/__mocks__/mockInputs';
 import { primitiveLiteral } from 'components/Launch/LaunchForm/__mocks__/utils';
-import { Admin, Protobuf } from '@flyteconsole/flyteidl';
 import {
+  Admin,
+  Protobuf,
   LiteralMap,
   ResourceType,
   Variable,

@@ -1,9 +1,8 @@
 import { Button, Typography } from '@material-ui/core';
 import { Theme, makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { getCacheKey } from '@flyteconsole/components';
+import { getCacheKey, Admin } from '@flyteconsole/components';
 import { useTheme } from '@flyteconsole/ui-atoms';
-import { Admin } from '@flyteconsole/flyteidl';
 import * as React from 'react';
 import { NodeExecutionGroup } from '../types';
 import { NodeExecutionRow } from './NodeExecutionRow';

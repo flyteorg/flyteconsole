@@ -1,6 +1,6 @@
-import { Core, Protobuf } from '@flyteconsole/flyteidl';
-import Long from 'long';
 import {
+  Core,
+  Protobuf,
   LiteralMap,
   LiteralMapBlob,
   ExecutionMode,
@@ -11,6 +11,7 @@ import {
   ExecutionMetadata,
   ExecutionSpec,
 } from '@flyteconsole/components';
+import Long from 'long';
 
 export const MOCK_LAUNCH_PLAN_ID = {
   resourceType: Core.ResourceType.LAUNCH_PLAN,

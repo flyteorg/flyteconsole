@@ -1,8 +1,7 @@
 import { storiesOf } from '@storybook/react';
-import { Scalar } from '@flyteconsole/components';
+import { Scalar, Core } from '@flyteconsole/components';
 import { Card, CardContent } from '@material-ui/core';
 import * as React from 'react';
-import { Core } from '@flyteconsole/flyteidl';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 import { blobScalars } from './scalarValues';
 import { extractSimpleTypes, extractSchemaTypes, extractBlobTypes } from './helpers/typeGenerators';

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
-import { ExecutionState } from '@flyteconsole/components';
+import { FilterOperation, FilterOperationName, ExecutionState } from '@flyteconsole/components';
 
 interface ArchiveFilterState {
   showArchived: boolean;

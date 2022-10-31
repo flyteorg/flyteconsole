@@ -1,4 +1,4 @@
-import { Identifier, Project } from '../../typings';
+import { Identifier, Project } from '../../models';
 
 export function getProjectDomain(project: Project, domainId: string) {
   const domain = project.domains.find((d) => d.id === domainId);

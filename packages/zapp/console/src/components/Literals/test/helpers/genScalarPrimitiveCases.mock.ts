@@ -1,4 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
+import { Core } from '@flyteconsole/components';
 import Long from 'long';
 import { long } from 'test/utils';
 import { getPrimitive } from './literalHelpers';

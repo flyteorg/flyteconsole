@@ -1,10 +1,9 @@
 import { CircularProgress, IconButton } from '@material-ui/core';
-import { Admin } from '@flyteconsole/flyteidl';
+import { Admin, NodeExecution } from '@flyteconsole/components';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
 import { useTheme } from '@flyteconsole/ui-atoms';
 import { isEqual } from 'lodash';
-import { NodeExecution } from '@flyteconsole/components';
 import * as React from 'react';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';

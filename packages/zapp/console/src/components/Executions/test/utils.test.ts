@@ -1,5 +1,5 @@
-import { Protobuf } from '@flyteconsole/flyteidl';
 import {
+  Protobuf,
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,

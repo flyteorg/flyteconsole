@@ -4,8 +4,8 @@ import {
   ResourceType,
   Workflow,
   WorkflowClosure,
+  Admin,
 } from '@flyteconsole/components';
-import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
 import { testDomain, testProject } from 'mocks/data/constants';
 import * as simpleClosure from './simpleWorkflowClosure.json';

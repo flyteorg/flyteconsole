@@ -1,5 +1,5 @@
-import { PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
 import { EventObject, State, StateMachine } from 'xstate';
+import { PaginatedEntityResponse, RequestConfig } from '../models';
 
 export enum fetchStates {
   IDLE = 'IDLE',

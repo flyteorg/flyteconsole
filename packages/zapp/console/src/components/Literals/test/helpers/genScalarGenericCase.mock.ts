@@ -1,4 +1,4 @@
-import { Protobuf } from '@flyteconsole/flyteidl';
+import { Protobuf } from '@flyteconsole/components';
 import { TestCaseList } from '../types';
 import { getIValue } from './literalHelpers';
 

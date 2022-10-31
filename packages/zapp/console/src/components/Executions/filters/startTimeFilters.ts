@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { FilterOperationName } from '@flyteconsole/flyteidl';
+import { FilterOperationName } from '@flyteconsole/components';
 import { FilterMap } from './types';
 
 const workflowExecutionStartTimeKey = 'execution_created_at';

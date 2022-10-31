@@ -1,9 +1,8 @@
 import { unknownValueString } from 'common/constants';
 import { dateWithFromNow, protobufDurationToHMS } from 'common/formatters';
-import { timestampToDate } from '@flyteconsole/components';
+import { timestampToDate, Protobuf } from '@flyteconsole/components';
 import { DetailsGroup } from 'components/common/DetailsGroup';
 import * as React from 'react';
-import { Protobuf } from '@flyteconsole/flyteidl';
 
 /** Renders the less important details for a `TaskExecution` as a `DetailsGroup`
  */

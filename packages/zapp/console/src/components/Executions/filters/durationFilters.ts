@@ -1,4 +1,4 @@
-import { FilterOperationName } from '@flyteconsole/flyteidl';
+import { FilterOperationName } from '@flyteconsole/components';
 import { FilterMap } from './types';
 
 const key = 'duration';

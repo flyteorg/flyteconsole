@@ -1,5 +1,5 @@
-import { Admin } from '@flyteconsole/flyteidl';
 import {
+  Admin,
   Identifier,
   LiteralMap,
   Notification,

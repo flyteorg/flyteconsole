@@ -1,5 +1,8 @@
-import { FilterOperationName } from '@flyteconsole/flyteidl';
-import { NamedEntityIdentifier, FetchableData } from '@flyteconsole/components';
+import {
+  FilterOperationName,
+  NamedEntityIdentifier,
+  FetchableData,
+} from '@flyteconsole/components';
 import { LaunchPlan, LaunchPlanState } from 'models/Launch/types';
 import { useLaunchPlans } from './useLaunchPlans';
 

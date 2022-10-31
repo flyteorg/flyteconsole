@@ -1,5 +1,4 @@
-import { Core } from '@flyteconsole/flyteidl';
-import { NamedEntity, NamedEntityIdentifier } from '@flyteconsole/components';
+import { Core, NamedEntity, NamedEntityIdentifier } from '@flyteconsole/components';
 import { NamedEntityState } from 'models/enums';
 
 export const sampleTaskIds: NamedEntityIdentifier[] = [
