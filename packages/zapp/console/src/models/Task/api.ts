@@ -1,10 +1,14 @@
 import { Admin, Core, RequestConfig } from '@flyteconsole/flyteidl';
-import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { Identifier, IdentifierScope } from 'models/Common/types';
+import {
+  getAdminEntity,
+  postAdminEntity,
+  defaultPaginationConfig,
+  Identifier,
+  IdentifierScope,
+  Task,
+} from '@flyteconsole/components';
 import { makeNamedEntityPath } from 'models/Common/utils';
 import { NamedEntityState } from 'models/enums';
-import { Task } from './types';
 import { makeTaskPath, taskListTransformer } from './utils';
 
 /** Fetches a list of `Task` records matching the provided `scope` */

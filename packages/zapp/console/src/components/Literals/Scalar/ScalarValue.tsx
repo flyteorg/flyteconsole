@@ -6,7 +6,7 @@ import {
   ProtobufStruct,
   Scalar,
   Schema,
-} from 'models/Common/types';
+} from '@flyteconsole/components';
 import * as React from 'react';
 import { PrintValue } from '../PrintValue';
 import { UnsupportedType } from '../UnsupportedType';

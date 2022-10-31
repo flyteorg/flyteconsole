@@ -2,10 +2,13 @@ import { Collapse, IconButton } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import classnames from 'classnames';
-import { LargeLoadingSpinner, DataError } from '@flyteconsole/components';
+import {
+  LargeLoadingSpinner,
+  DataError,
+  withRouteParams,
+  Execution,
+} from '@flyteconsole/components';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { withRouteParams } from 'components/common/withRouteParams';
-import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { ExecutionContext } from '../contexts';
 import { useWorkflowExecutionQuery } from '../useWorkflowExecution';

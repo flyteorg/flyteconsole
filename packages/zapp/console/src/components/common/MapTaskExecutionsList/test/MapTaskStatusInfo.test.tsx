@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import * as React from 'react';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 
@@ -37,7 +37,7 @@ describe('MapTaskStatusInfo', () => {
 
     // Expand item - see logs section
     const buttonEl = getByTitle('Expand row');
-    fireEvent.click(buttonEl);
+    await fireEvent.click(buttonEl);
     await waitFor(() => {
       const taskName = getUniqueTaskExecutionName(mockTaskExecution);
       const taskLogName = getTaskLogName(taskName, taskLogs[0].name);

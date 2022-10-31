@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
-import { CatalogCacheStatus, TaskExecutionPhase } from 'models/Execution/enums';
+import { CatalogCacheStatus, TaskExecutionPhase } from '@flyteconsole/components';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from '@flyteconsole/ui-atoms';

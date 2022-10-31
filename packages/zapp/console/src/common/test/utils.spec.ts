@@ -9,11 +9,7 @@ import {
   isValidDate,
   millisecondsToDuration,
   timestampToDate,
-} from '../utils';
-
-jest.mock('@flyteconsole/components', () => ({
-  env: jest.requireActual('@flyteconsole/components').env,
-}));
+} from '@flyteconsole/components';
 
 describe('isValidDate', () => {
   const cases: [string | Date, boolean][] = [

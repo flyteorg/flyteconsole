@@ -1,12 +1,15 @@
 import { Checkbox, debounce, FormControlLabel, FormGroup } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { NamedEntity } from 'models/Common/types';
+import {
+  NamedEntity,
+  SearchableInput,
+  SearchResult,
+  useSearchableListState,
+  NoResults,
+} from '@flyteconsole/components';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { NoResults } from './NoResults';
-import { SearchableInput, SearchResult } from './SearchableList';
-import { useSearchableListState } from './useSearchableListState';
 
 export const useStyles = makeStyles((theme: Theme) => ({
   archiveCheckbox: {

@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { useTabState } from 'components/hooks/useTabState';
 import { extractTaskTemplates } from 'components/hooks/utils';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
 import { TaskType } from '@flyteconsole/ui-atoms';
 import { createMockWorkflow } from 'models/__mocks__/workflowData';

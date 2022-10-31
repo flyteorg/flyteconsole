@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { FilterMap } from './types';
 

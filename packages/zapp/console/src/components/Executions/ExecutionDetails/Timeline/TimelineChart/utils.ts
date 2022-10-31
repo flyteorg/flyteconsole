@@ -1,6 +1,6 @@
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from '@flyteconsole/ui-atoms';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase } from '@flyteconsole/components';
 import t from 'components/Executions/strings';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity

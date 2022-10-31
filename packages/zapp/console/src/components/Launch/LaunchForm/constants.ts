@@ -1,4 +1,4 @@
-import { BlobDimensionality, SimpleType } from 'models/Common/types';
+import { BlobDimensionality, SimpleType } from '@flyteconsole/components';
 import { BlobValue, InputType, AuthRoleTypes, AuthRoleMeta } from './types';
 
 export const formStrings = {

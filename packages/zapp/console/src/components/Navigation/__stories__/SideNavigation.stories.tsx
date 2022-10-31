@@ -1,8 +1,8 @@
 import { storiesOf } from '@storybook/react';
 import { ContentContainer } from 'components/common/ContentContainer';
 import * as React from 'react';
+import { SideNavigation } from '@flyteconsole/components';
 import { NavBar } from '../NavBar';
-import { SideNavigation } from '../SideNavigation';
 
 const stories = storiesOf('Navigation', module);
 stories.addDecorator((story) => (

@@ -1,4 +1,4 @@
-import { Execution } from 'models/Execution/types';
+import { Execution } from '@flyteconsole/components';
 import { useState } from 'react';
 import { WorkflowExecutionsTableState } from './types';
 

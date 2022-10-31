@@ -1,6 +1,6 @@
 import { createLocalizedString } from '@flyteconsole/locale';
 import { dateFromNow } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
+import { timestampToDate } from '@flyteconsole/components';
 import { Protobuf } from '@flyteconsole/flyteidl';
 
 const str = {

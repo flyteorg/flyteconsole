@@ -1,9 +1,12 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { SearchableList, SearchResult } from 'components/common/SearchableList';
-import { WaitForData } from '@flyteconsole/components';
-import { useProjects } from 'components/hooks/useProjects';
-import { Project } from 'models/Project/types';
+import {
+  SearchableList,
+  SearchResult,
+  WaitForData,
+  Project,
+  useProjects,
+} from '@flyteconsole/components';
 import * as React from 'react';
 import { ProjectList } from './ProjectList';
 

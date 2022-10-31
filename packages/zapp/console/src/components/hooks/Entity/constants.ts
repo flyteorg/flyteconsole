@@ -1,9 +1,7 @@
-import { ResourceType } from 'models/Common/types';
+import { ResourceType, Task, Workflow } from '@flyteconsole/components';
 import { listTasks } from 'models/Task/api';
 import { listWorkflows } from 'models/Workflow/api';
 import { listLaunchPlans } from 'models/Launch/api';
-import { Workflow } from 'models/Workflow/types';
-import { Task } from 'models/Task/types';
 import { LaunchPlan } from 'models/Launch/types';
 
 interface EntityFunctions {

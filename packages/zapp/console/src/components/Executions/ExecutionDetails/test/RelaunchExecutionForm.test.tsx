@@ -10,13 +10,18 @@ import {
 import { mockSimpleVariables } from 'components/Launch/LaunchForm/__mocks__/mockInputs';
 import { primitiveLiteral } from 'components/Launch/LaunchForm/__mocks__/utils';
 import { Admin, Protobuf } from '@flyteconsole/flyteidl';
-import { LiteralMap, ResourceType, Variable } from 'models/Common/types';
+import {
+  LiteralMap,
+  ResourceType,
+  Variable,
+  Task,
+  Workflow,
+  Execution,
+  ExecutionData,
+} from '@flyteconsole/components';
 import { getExecutionData } from 'models/Execution/api';
-import { Execution, ExecutionData } from 'models/Execution/types';
 import { getTask } from 'models/Task/api';
-import { Task } from 'models/Task/types';
 import { getWorkflow } from 'models/Workflow/api';
-import { Workflow } from 'models/Workflow/types';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import { createMockTask } from 'models/__mocks__/taskData';
 import { createMockWorkflow, createMockWorkflowClosure } from 'models/__mocks__/workflowData';

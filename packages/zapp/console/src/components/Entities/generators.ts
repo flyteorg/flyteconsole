@@ -1,6 +1,5 @@
 import { FilterOperation, FilterOperationName } from '@flyteconsole/flyteidl';
-import { ResourceIdentifier, ResourceType, Identifier } from 'models/Common/types';
-import { Routes } from 'routes/routes';
+import { ResourceIdentifier, ResourceType, Identifier, Routes } from '@flyteconsole/components';
 import { entityStrings } from './constants';
 
 const noFilters = () => [];
@@ -12,24 +11,24 @@ export const executionFilterGenerator: {
   [ResourceType.LAUNCH_PLAN]: ({ name }, version) =>
     version
       ? [
-        {
-          key: 'launch_plan.name',
-          operation: FilterOperationName.EQ,
-          value: name,
-        },
-        {
-          key: 'launch_plan.version',
-          operation: FilterOperationName.EQ,
-          value: version,
-        },
-      ]
+          {
+            key: 'launch_plan.name',
+            operation: FilterOperationName.EQ,
+            value: name,
+          },
+          {
+            key: 'launch_plan.version',
+            operation: FilterOperationName.EQ,
+            value: version,
+          },
+        ]
       : [
-        {
-          key: 'launch_plan.name',
-          operation: FilterOperationName.EQ,
-          value: name,
-        },
-      ],
+          {
+            key: 'launch_plan.name',
+            operation: FilterOperationName.EQ,
+            value: name,
+          },
+        ],
   [ResourceType.TASK]: ({ name }) => [
     {
       key: 'task.name',

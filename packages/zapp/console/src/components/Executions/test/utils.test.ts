@@ -3,8 +3,10 @@ import {
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,
-} from 'models/Execution/enums';
-import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+  Execution,
+  NodeExecution,
+  TaskExecution,
+} from '@flyteconsole/components';
 import { createMockNodeExecutions } from 'models/Execution/__mocks__/mockNodeExecutionsData';
 import { createMockTaskExecutionsListResponse } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import { createMockWorkflowExecutionsListResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';

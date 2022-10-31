@@ -1,8 +1,7 @@
 import { Button, DialogActions, FormHelperText } from '@material-ui/core';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import * as React from 'react';
-import { history } from 'routes/history';
-import { Routes } from 'routes/routes';
+import { history, Routes } from '@flyteconsole/components';
 import { formStrings } from './constants';
 import { LaunchState } from './launchMachine';
 import { useStyles } from './styles';

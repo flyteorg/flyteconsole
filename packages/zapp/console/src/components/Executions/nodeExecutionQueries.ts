@@ -1,4 +1,11 @@
-import { compareTimestampsAscending } from 'common/utils';
+import {
+  compareTimestampsAscending,
+  NodeExecution,
+  NodeExecutionIdentifier,
+  TaskExecution,
+  TaskExecutionIdentifier,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { QueryInput, QueryType } from 'components/data/types';
 import { retriesToZero } from 'components/flytegraph/ReactFlow/utils';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
@@ -11,13 +18,6 @@ import {
   listTaskExecutions,
 } from 'models/Execution/api';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
-import {
-  NodeExecution,
-  NodeExecutionIdentifier,
-  TaskExecution,
-  TaskExecutionIdentifier,
-  WorkflowExecutionIdentifier,
-} from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { QueryClient, QueryObserverResult, useQueryClient } from 'react-query';
 import { executionRefreshIntervalMs } from './constants';

@@ -1,5 +1,4 @@
-import { timestampToDate } from 'common/utils';
-import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
+import { timestampToDate, CatalogCacheStatus, NodeExecutionPhase } from '@flyteconsole/components';
 import { dNode } from 'models/Graph/types';
 import { isMapTaskType } from 'models/Task/utils';
 import { BarItemData } from './utils';

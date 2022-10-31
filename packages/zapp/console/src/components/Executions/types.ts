@@ -3,8 +3,8 @@ import {
   NodeExecutionClosure,
   NodeExecutionMetadata,
   WorkflowNodeMetadata,
-} from 'models/Execution/types';
-import { TaskTemplate } from 'models/Task/types';
+  TaskTemplate,
+} from '@flyteconsole/components';
 
 export interface ExecutionPhaseConstants {
   badgeColor: string;

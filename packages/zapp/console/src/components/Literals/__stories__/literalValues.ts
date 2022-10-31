@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash';
-import { Literal } from 'models/Common/types';
+import { Literal } from '@flyteconsole/components';
 import {
   binaryScalars,
   blobScalars,

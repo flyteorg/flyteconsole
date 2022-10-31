@@ -1,10 +1,9 @@
 import classnames from 'classnames';
 import { Admin } from '@flyteconsole/flyteidl';
-import { getCacheKey } from '@flyteconsole/components';
+import { getCacheKey, NodeExecution, NodeExecutionIdentifier } from '@flyteconsole/components';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import * as scrollbarSize from 'dom-helpers/util/scrollbarSize';
-import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import scrollbarSize from 'dom-helpers/util/scrollbarSize';
 import * as React from 'react';
 import { NodeExecutionDetailsPanelContent } from '../ExecutionDetails/NodeExecutionDetailsPanelContent';
 import { NodeExecutionsTableContext } from './contexts';

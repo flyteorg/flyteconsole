@@ -2,8 +2,7 @@ import * as React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { Link } from 'react-router-dom';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
-import { barChartColors } from '@flyteconsole/components';
+import { WorkflowExecutionPhase, barChartColors } from '@flyteconsole/components';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles(() => ({

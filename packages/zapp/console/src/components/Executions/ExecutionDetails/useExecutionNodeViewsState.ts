@@ -1,8 +1,7 @@
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { limits } from 'models/AdminEntity/constants';
+import { limits, Execution, NodeExecution } from '@flyteconsole/components';
 import { FilterOperation, SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
-import { Execution, NodeExecution } from 'models/Execution/types';
 import { useQueryClient } from 'react-query';
 import { executionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionListQuery } from '../nodeExecutionQueries';

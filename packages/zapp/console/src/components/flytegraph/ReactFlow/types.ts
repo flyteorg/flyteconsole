@@ -1,5 +1,4 @@
-import { CatalogCacheStatus } from 'models/Execution/enums';
-import { NodeExecutionsById } from 'models/Execution/types';
+import { CatalogCacheStatus, NodeExecutionsById } from '@flyteconsole/components';
 import { dNode, dTypes } from 'models/Graph/types';
 import { HandleProps } from 'react-flow-renderer';
 

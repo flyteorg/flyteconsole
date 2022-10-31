@@ -2,9 +2,8 @@ import { Button, Card, CardActions, CardContent, Typography } from '@material-ui
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ButtonLink } from 'components/common/ButtonLink';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { Project } from 'models/Project/types';
+import { Project, Routes } from '@flyteconsole/components';
 import * as React from 'react';
-import { Routes } from 'routes/routes';
 import { defaultProjectDescription } from './constants';
 
 const useStyles = makeStyles((theme: Theme) => ({

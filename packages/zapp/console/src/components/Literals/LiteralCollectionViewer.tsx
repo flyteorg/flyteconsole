@@ -1,4 +1,4 @@
-import { Literal, LiteralCollection } from 'models/Common/types';
+import { Literal, LiteralCollection } from '@flyteconsole/components';
 import * as React from 'react';
 import { LiteralValue } from './LiteralValue';
 import { PrintList } from './PrintList';

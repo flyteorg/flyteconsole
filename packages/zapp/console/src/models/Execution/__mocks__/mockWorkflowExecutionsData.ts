@@ -1,10 +1,15 @@
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
+import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  LiteralMap,
+  ExecutionMode,
+  ExecutionState,
+  WorkflowExecutionPhase,
+  Execution,
+} from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
 import { cloneDeep, random } from 'lodash';
-import * as Long from 'long';
-import { LiteralMap } from 'models/Common/types';
-import { ExecutionMode, ExecutionState, WorkflowExecutionPhase } from '../enums';
-import { Execution } from '../types';
+import Long from 'long';
 import { mockWorkflowExecutionId } from './constants';
 import { sampleError } from './sampleExecutionError';
 

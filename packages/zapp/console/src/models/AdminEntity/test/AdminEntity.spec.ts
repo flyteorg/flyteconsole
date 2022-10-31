@@ -1,9 +1,12 @@
-import { NotAuthorizedError, NotFoundError } from '@flyteconsole/components';
+import {
+  NotAuthorizedError,
+  NotFoundError,
+  adminApiUrl,
+  getAdminEntity,
+} from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { mockServer } from 'mocks/server';
 import { rest } from 'msw';
-import { getAdminEntity } from '../AdminEntity';
-import { adminApiUrl } from '../utils';
 
 describe('getAdminEntity', () => {
   const messageType = Admin.Workflow;

@@ -1,7 +1,6 @@
-import { stringifyValue } from 'common/utils';
+import { stringifyValue, BlobDimensionality, SimpleType } from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
-import * as Long from 'long';
-import { BlobDimensionality, SimpleType } from 'models/Common/types';
+import Long from 'long';
 import { InputProps, InputType, InputTypeDefinition } from '../../types';
 import {
   collectionInputTypeDefinition,
@@ -27,10 +26,10 @@ const baseInputProps: InputProps = {
   description: 'test',
   label: 'test',
   name: '',
-  onChange: () => { },
+  onChange: () => {},
   required: false,
   typeDefinition: inputTypes.unknown,
-  setIsError: () => { },
+  setIsError: () => {},
 };
 
 function makeSimpleInput(typeDefinition: InputTypeDefinition, value: any): InputProps {
@@ -206,17 +205,19 @@ describe('inputToLiteral', () => {
         nestedMapValue = `{"a":{"b":${stringValue}}}`;
       }
 
-      it(`should correctly convert map of type ${typeDefinition.type
-        }: ${singleMapValue} (${typeof input})`, () => {
-          const result = inputToLiteral(makeMapInput(typeDefinition, singleMapValue));
-          expect(result.map!.literals!.a).toEqual(output);
-        });
+      it(`should correctly convert map of type ${
+        typeDefinition.type
+      }: ${singleMapValue} (${typeof input})`, () => {
+        const result = inputToLiteral(makeMapInput(typeDefinition, singleMapValue));
+        expect(result.map!.literals!.a).toEqual(output);
+      });
 
-      it(`should correctly convert nested map of type ${typeDefinition.type
-        }: ${nestedMapValue} (${typeof input})`, () => {
-          const result = inputToLiteral(makeNestedMapInput(typeDefinition, nestedMapValue));
-          expect(result.map!.literals!.a.map!.literals!.b).toEqual(output);
-        });
+      it(`should correctly convert nested map of type ${
+        typeDefinition.type
+      }: ${nestedMapValue} (${typeof input})`, () => {
+        const result = inputToLiteral(makeNestedMapInput(typeDefinition, nestedMapValue));
+        expect(result.map!.literals!.a.map!.literals!.b).toEqual(output);
+      });
     });
   });
 
@@ -247,19 +248,21 @@ describe('inputToLiteral', () => {
         nestedCollectionValue = `[[${stringValue}]]`;
       }
 
-      it(`should correctly convert collection of type ${typeDefinition.type
-        }: ${singleCollectionValue} (${typeof input})`, () => {
-          const result = inputToLiteral(makeCollectionInput(typeDefinition, singleCollectionValue));
-          expect(result.collection!.literals![0]).toEqual(output);
-        });
+      it(`should correctly convert collection of type ${
+        typeDefinition.type
+      }: ${singleCollectionValue} (${typeof input})`, () => {
+        const result = inputToLiteral(makeCollectionInput(typeDefinition, singleCollectionValue));
+        expect(result.collection!.literals![0]).toEqual(output);
+      });
 
-      it(`should correctly convert nested collection of type ${typeDefinition.type
-        }: ${nestedCollectionValue} (${typeof input})`, () => {
-          const result = inputToLiteral(
-            makeNestedCollectionInput(typeDefinition, nestedCollectionValue),
-          );
-          expect(result.collection!.literals![0].collection!.literals![0]).toEqual(output);
-        });
+      it(`should correctly convert nested collection of type ${
+        typeDefinition.type
+      }: ${nestedCollectionValue} (${typeof input})`, () => {
+        const result = inputToLiteral(
+          makeNestedCollectionInput(typeDefinition, nestedCollectionValue),
+        );
+        expect(result.collection!.literals![0].collection!.literals![0]).toEqual(output);
+      });
     });
 
     it('should convert empty array string literal to empty collection', () => {

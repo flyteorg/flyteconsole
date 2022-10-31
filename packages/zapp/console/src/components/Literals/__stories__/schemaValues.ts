@@ -1,4 +1,4 @@
-import { Schema, SchemaColumnType } from 'models/Common/types';
+import { Schema, SchemaColumnType } from '@flyteconsole/components';
 
 const schemaWithNoColumns: Schema = {
   uri: 's3://path/to/my/schema_with_no_columns',

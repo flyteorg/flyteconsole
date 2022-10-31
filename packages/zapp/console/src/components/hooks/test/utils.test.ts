@@ -1,5 +1,5 @@
 import { createMockWorkflow, createMockWorkflowClosure } from 'models/__mocks__/workflowData';
-import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
+import { CompiledWorkflow, Workflow } from '@flyteconsole/components';
 import { extractAndIdentifyNodes, extractTaskTemplates } from '../utils';
 
 describe('hooks/utils', () => {

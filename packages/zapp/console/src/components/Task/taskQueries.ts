@@ -1,7 +1,6 @@
 import { QueryInput, QueryType } from 'components/data/types';
-import { Identifier } from 'models/Common/types';
+import { Identifier, TaskTemplate } from '@flyteconsole/components';
 import { getTask } from 'models/Task/api';
-import { TaskTemplate } from 'models/Task/types';
 import { QueryClient } from 'react-query';
 
 export function makeTaskTemplateQuery(id: Identifier): QueryInput<TaskTemplate> {

@@ -1,7 +1,7 @@
-import * as cheerio from 'cheerio';
-import * as express from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
+import cheerio from 'cheerio';
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
 
 const { processEnv } = require('../env');
 

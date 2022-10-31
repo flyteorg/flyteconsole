@@ -1,4 +1,4 @@
-import { ResourceType } from 'models/Common/types';
+import { ResourceType } from '@flyteconsole/components';
 
 type EntityStringMap = { [k in ResourceType]: string };
 

@@ -1,4 +1,4 @@
-import { stringifyValue } from 'common/utils';
+import { stringifyValue } from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
 import { InputTypeDefinition, InputValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';

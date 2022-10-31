@@ -1,13 +1,12 @@
-import { NamedEntityIdentifier } from 'models/Common/types';
+import { NamedEntityIdentifier, timestampToDate } from '@flyteconsole/components';
 import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
 import { executionSortFields } from 'models/Execution/constants';
 import { listExecutions } from 'models/Execution/api';
 import { listWorkflows } from 'models/Workflow/api';
 import { listLaunchPlans } from 'models/Launch/api';
 import { workflowSortFields } from 'models/Workflow/constants';
-import * as Long from 'long';
+import Long from 'long';
 import { formatDateUTC } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
 import { useQuery } from 'react-query';
 import { getInputsForWorkflow, getOutputsForWorkflow } from '../Launch/LaunchForm/getInputs';
 

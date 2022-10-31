@@ -1,4 +1,4 @@
-import { dateToTimestamp } from 'common/utils';
+import { dateToTimestamp } from '@flyteconsole/components';
 import { timeStampOffset } from 'mocks/utils';
 
 // Arbitrary start date used as a basis for generating timestamps

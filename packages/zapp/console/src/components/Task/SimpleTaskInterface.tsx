@@ -1,11 +1,9 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { noneString } from 'common/constants';
-import { sortedObjectKeys } from 'common/utils';
+import { sortedObjectKeys, Variable, Task } from '@flyteconsole/components';
 import { DetailsGroup } from 'components/common/DetailsGroup';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
-import { Variable } from 'models/Common/types';
-import { Task } from 'models/Task/types';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({

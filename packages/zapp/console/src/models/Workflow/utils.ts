@@ -1,9 +1,11 @@
 import { Admin } from '@flyteconsole/flyteidl';
-import { createPaginationTransformer } from 'models/AdminEntity/utils';
-import { endpointPrefixes } from 'models/Common/constants';
-import { IdentifierScope } from 'models/Common/types';
+import {
+  createPaginationTransformer,
+  IdentifierScope,
+  Workflow,
+  endpointPrefixes,
+} from '@flyteconsole/components';
 import { makeIdentifierPath } from 'models/Common/utils';
-import { Workflow } from './types';
 
 export function makeWorkflowPath(scope: IdentifierScope) {
   return makeIdentifierPath(endpointPrefixes.workflow, scope);

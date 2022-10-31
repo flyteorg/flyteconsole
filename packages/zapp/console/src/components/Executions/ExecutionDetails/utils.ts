@@ -1,6 +1,10 @@
-import { Identifier, ResourceType } from 'models/Common/types';
-import { Execution, TaskExecution } from 'models/Execution/types';
-import { Routes } from 'routes/routes';
+import {
+  Identifier,
+  ResourceType,
+  Execution,
+  TaskExecution,
+  Routes,
+} from '@flyteconsole/components';
 import { PaginatedEntityResponse } from '@flyteconsole/flyteidl';
 
 export function isSingleTaskExecution(execution: Execution) {

@@ -1,4 +1,4 @@
-import { Error } from 'models/Common/types';
+import { Error } from '@flyteconsole/components';
 import * as React from 'react';
 import { PrintValue } from '../PrintValue';
 import { useLiteralStyles } from '../styles';

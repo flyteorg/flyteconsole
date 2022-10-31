@@ -1,7 +1,7 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext, APIContextValue } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { StatusString, SystemStatus } from 'models/Common/types';
+import { StatusString, SystemStatus } from '@flyteconsole/components';
 import * as React from 'react';
 import { pendingPromise } from 'test/utils';
 import { SystemStatusBanner } from '../SystemStatusBanner';
@@ -74,7 +74,7 @@ describe('SystemStatusBanner', () => {
     expect(getByRole('banner')).toBeInTheDocument();
 
     const closeButton = getByRole('button');
-    fireEvent.click(closeButton);
+    await fireEvent.click(closeButton);
     await waitFor(() => {});
 
     expect(queryByRole('banner')).toBeNull();

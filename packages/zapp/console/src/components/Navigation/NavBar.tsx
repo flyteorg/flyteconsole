@@ -2,8 +2,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { navBarContentId } from 'common/constants';
 import * as React from 'react';
-import { env, FlyteNavigation, useAdminVersion, VersionInfo, DefaultAppBarContent } from '@flyteconsole/components';
-import { Routes } from 'routes/routes';
+import {
+  env,
+  FlyteNavigation,
+  useAdminVersion,
+  VersionInfo,
+  DefaultAppBarContent,
+  Routes,
+} from '@flyteconsole/components';
 import { getFlyteNavigationData } from './utils';
 import t, { patternKey } from './strings';
 
@@ -14,9 +20,7 @@ export interface NavBarProps {
   navigationData?: FlyteNavigation;
 }
 
-export interface DefaultAppBarContentWrapperProps extends NavBarProps {
-
-}
+export interface DefaultAppBarContentWrapperProps extends NavBarProps {}
 export const DefaultAppBarContentWrapper = (props: DefaultAppBarContentWrapperProps) => {
   const navData = props.navigationData;
   const { adminVersion } = useAdminVersion();
@@ -45,12 +49,16 @@ export const DefaultAppBarContentWrapper = (props: DefaultAppBarContentWrapperPr
   const content = props.useCustomContent ? (
     <div id={navBarContentId} />
   ) : (
-    <DefaultAppBarContent routes={Routes} versions={versions} items={navData?.items ?? []} console={navData?.console} />
+    <DefaultAppBarContent
+      routes={Routes}
+      versions={versions}
+      items={navData?.items ?? []}
+      console={navData?.console}
+    />
   );
 
   return content;
-}
-
+};
 
 /** Contains all content in the top navbar of the application. */
 export const NavBar = (props: NavBarProps) => {
@@ -64,7 +72,9 @@ export const NavBar = (props: NavBarProps) => {
       position="fixed"
       style={{ color: navData?.color, background: navData?.background }}
     >
-      <Toolbar id={navBarContentId}><DefaultAppBarContentWrapper {...props} /></Toolbar>
+      <Toolbar id={navBarContentId}>
+        <DefaultAppBarContentWrapper {...props} />
+      </Toolbar>
     </AppBar>
   );
 };

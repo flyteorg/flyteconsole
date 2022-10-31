@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react';
-import { ProtobufListValue, ProtobufStruct } from 'models/Common/types';
+import { ProtobufListValue, ProtobufStruct } from '@flyteconsole/components';
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
 import { protobufValues } from './protobufValues';

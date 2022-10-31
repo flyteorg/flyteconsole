@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { contentMarginGridUnits } from 'common/layout';
-import { WaitForData, isLoadingState } from '@flyteconsole/components';
+import {
+  contentMarginGridUnits,
+  WaitForData,
+  isLoadingState,
+  ResourceIdentifier,
+} from '@flyteconsole/components';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from '@flyteconsole/flyteidl';
-import { ResourceIdentifier } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { compact } from 'lodash';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';

@@ -6,14 +6,13 @@ import Info from '@material-ui/icons/Info';
 import Warning from '@material-ui/icons/Warning';
 import { Empty } from 'components/common/Empty';
 import { LinkifiedText } from 'components/common/LinkifiedText';
-import { WaitForData } from '@flyteconsole/components';
+import { WaitForData, StatusString, SystemStatus } from '@flyteconsole/components';
 import {
   infoIconColor,
   mutedButtonColor,
   mutedButtonHoverColor,
   warningIconColor,
 } from '@flyteconsole/ui-atoms';
-import { StatusString, SystemStatus } from 'models/Common/types';
 import * as React from 'react';
 import { useSystemStatus } from './useSystemStatus';
 

@@ -1,8 +1,8 @@
 // tslint:disable:no-var-requires
 // tslint:disable:no-console
 import chalk from 'chalk';
-import * as path from 'path';
-import * as webpack from 'webpack';
+import path from 'path';
+import webpack from 'webpack';
 import { processEnv as env, ASSETS_PATH as publicPath } from './env';
 
 const { StatsWriterPlugin } = require('webpack-stats-plugin');

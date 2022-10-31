@@ -1,10 +1,8 @@
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { WorkflowExecutionIdentifier, Routes, history } from '@flyteconsole/components';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Routes } from 'routes/routes';
-import { history } from 'routes/history';
 
 /** A simple component to render a link to a specific WorkflowExecution */
 export const WorkflowExecutionLink: React.FC<{

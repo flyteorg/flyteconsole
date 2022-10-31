@@ -4,17 +4,20 @@ import CachedOutlined from '@material-ui/icons/CachedOutlined';
 import ErrorOutlined from '@material-ui/icons/ErrorOutlined';
 import InfoOutlined from '@material-ui/icons/InfoOutlined';
 import classnames from 'classnames';
-import { assertNever } from 'common/utils';
+import {
+  assertNever,
+  CatalogCacheStatus,
+  NodeExecution,
+  TaskExecutionIdentifier,
+  Routes,
+} from '@flyteconsole/components';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
 import { useCommonStyles, MapCacheIcon } from '@flyteconsole/ui-atoms';
 import { NodeExecutionDetails } from 'components/Executions/types';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { CatalogCacheStatus } from 'models/Execution/enums';
-import { NodeExecution, TaskExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
 import { isMapTaskType } from 'models/Task/utils';
 import { Link as RouterLink } from 'react-router-dom';
-import { Routes } from 'routes/routes';
 import {
   cacheStatusMessages,
   unknownCacheStatusString,

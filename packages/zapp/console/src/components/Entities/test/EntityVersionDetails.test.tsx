@@ -1,10 +1,9 @@
 import { render, waitFor, screen } from '@testing-library/react';
 import { ThemeProvider } from '@material-ui/styles';
 import { muiTheme } from '@flyteconsole/ui-atoms';
-import { ResourceIdentifier } from 'models/Common/types';
+import { ResourceIdentifier, Task } from '@flyteconsole/components';
 import * as React from 'react';
 import { createMockTask } from 'models/__mocks__/taskData';
-import { Task } from 'models/Task/types';
 import { getTask } from 'models/Task/api';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';

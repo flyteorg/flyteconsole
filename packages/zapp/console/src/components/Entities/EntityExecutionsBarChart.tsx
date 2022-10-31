@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { formatDateUTC, millisecondsToHMS } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
+import {
+  timestampToDate,
+  WaitForData,
+  ResourceIdentifier,
+  Execution,
+} from '@flyteconsole/components';
 import { BarChart } from 'components/common/BarChart';
-import { WaitForData } from '@flyteconsole/components';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { SortDirection } from '@flyteconsole/flyteidl';
-import { ResourceIdentifier } from 'models/Common/types';
-import { Execution } from 'models/Execution/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator } from './generators';
 import {

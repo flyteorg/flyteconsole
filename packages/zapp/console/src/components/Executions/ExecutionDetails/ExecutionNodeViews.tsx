@@ -2,10 +2,16 @@ import * as React from 'react';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { DataError, LargeLoadingSpinner } from '@flyteconsole/components';
+import {
+  DataError,
+  LargeLoadingSpinner,
+  Execution,
+  ExternalResource,
+  LogsByPhase,
+  NodeExecution,
+} from '@flyteconsole/components';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from '@flyteconsole/ui-atoms';
-import { Execution, ExternalResource, LogsByPhase, NodeExecution } from 'models/Execution/types';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { keyBy } from 'lodash';
 import { isMapTaskV1 } from 'models/Task/utils';

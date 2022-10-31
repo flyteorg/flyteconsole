@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { contentMarginGridUnits } from 'common/layout';
-import { WaitForData } from '@flyteconsole/components';
+import {
+  contentMarginGridUnits,
+  WaitForData,
+  ResourceIdentifier,
+  Identifier,
+} from '@flyteconsole/components';
 import { useTaskTemplate } from 'components/hooks/useTask';
-import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { DumpJSON } from 'components/common/DumpJSON';
 import { Row } from '../Row';
 import EnvVarsTable from './EnvVarsTable';

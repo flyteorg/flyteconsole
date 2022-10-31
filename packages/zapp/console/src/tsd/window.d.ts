@@ -1,4 +1,5 @@
 import { Env } from '@flyteconsole/components';
+
 type Dictionary<T> = { [k: string]: T };
 
 declare global {

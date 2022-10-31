@@ -1,13 +1,16 @@
 import { Core, Protobuf } from '@flyteconsole/flyteidl';
-import * as Long from 'long';
-import { LiteralMap, LiteralMapBlob } from 'models/Common/types';
+import Long from 'long';
 import {
+  LiteralMap,
+  LiteralMapBlob,
+  ExecutionMode,
+  ExecutionState,
+  WorkflowExecutionPhase,
   Execution,
   ExecutionClosure,
   ExecutionMetadata,
   ExecutionSpec,
-} from 'models/Execution/types';
-import { ExecutionMode, ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
+} from '@flyteconsole/components';
 
 export const MOCK_LAUNCH_PLAN_ID = {
   resourceType: Core.ResourceType.LAUNCH_PLAN,

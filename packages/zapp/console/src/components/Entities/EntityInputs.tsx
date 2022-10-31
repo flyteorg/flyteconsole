@@ -13,7 +13,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { useLaunchPlans } from 'components/hooks/useLaunchPlans';
 import { formatType, getInputDefintionForLiteralType } from 'components/Launch/LaunchForm/utils';
 import { FilterOperationName } from '@flyteconsole/flyteidl';
-import { ResourceIdentifier } from 'models/Common/types';
+import { ResourceIdentifier } from '@flyteconsole/components';
 import { LaunchPlanClosure, LaunchPlanSpec } from 'models/Launch/types';
 import * as React from 'react';
 import t from './strings';

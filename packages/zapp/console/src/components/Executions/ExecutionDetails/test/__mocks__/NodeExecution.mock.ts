@@ -1,4 +1,4 @@
-import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
+import { CatalogCacheStatus, NodeExecutionPhase } from '@flyteconsole/components';
 
 const dNodeBasicExecution = {
   id: 'other-root-n0',

@@ -1,8 +1,8 @@
 import { storiesOf } from '@storybook/react';
 import { resolveAfter } from 'common/promiseUtils';
 import { createMockWorkflow, createMockWorkflowVersions } from 'models/__mocks__/workflowData';
-import { WorkflowId } from 'models/Workflow/types';
-import * as moment from 'moment';
+import { WorkflowId } from '@flyteconsole/components';
+import moment from 'moment';
 import * as React from 'react';
 import { SearchableSelector, SearchableSelectorOption } from '../SearchableSelector';
 

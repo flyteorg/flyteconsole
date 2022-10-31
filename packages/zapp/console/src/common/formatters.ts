@@ -1,9 +1,9 @@
 import cronstrue from 'cronstrue';
 import { Admin, Protobuf } from '@flyteconsole/flyteidl';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
+import { durationToMilliseconds, isValidDate } from '@flyteconsole/components';
 import { unknownValueString, zeroSecondsString } from './constants';
 import { timezone } from './timezone';
-import { durationToMilliseconds, isValidDate } from './utils';
 
 /** Formats a date into a standard string with a moment-style "from now" hint
  * ex. 12/21/2017 8:19:36 PM (18 days ago)

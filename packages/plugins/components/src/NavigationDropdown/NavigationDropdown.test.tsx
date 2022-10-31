@@ -33,7 +33,7 @@ describe('NavigationDopdown', () => {
 
     expect(defaultButton.textContent).toEqual(menuItems[0].title);
 
-    fireEvent.mouseDown(defaultButton);
+    await fireEvent.mouseDown(defaultButton);
     const listbox = within(getByRole('listbox'));
     await waitFor(() => {
       expect(listbox.getAllByRole('option').length).toEqual(2);

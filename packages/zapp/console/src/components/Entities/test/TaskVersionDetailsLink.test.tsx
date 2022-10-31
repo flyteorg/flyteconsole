@@ -1,8 +1,7 @@
 import { render, waitFor, screen } from '@testing-library/react';
 import * as React from 'react';
 import { createMockTask } from 'models/__mocks__/taskData';
-import { Task } from 'models/Task/types';
-import { Identifier } from 'models/Common/types';
+import { Task, Identifier } from '@flyteconsole/components';
 import { versionDetailsUrlGenerator } from 'components/Entities/generators';
 import { TaskVersionDetailsLink } from '../VersionDetails/VersionDetailsLink';
 

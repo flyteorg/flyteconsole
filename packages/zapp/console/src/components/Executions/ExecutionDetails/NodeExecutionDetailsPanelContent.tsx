@@ -12,26 +12,27 @@ import { LocationState } from 'components/hooks/useLocationState';
 import { useTabState } from 'components/hooks/useTabState';
 import { LocationDescriptor } from 'history';
 import { PaginatedEntityResponse } from '@flyteconsole/flyteidl';
-import { Workflow } from 'models/Workflow/types';
 import {
+  Workflow,
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  Identifier,
   MapTaskExecution,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
-} from 'models/Execution/types';
+  Routes,
+} from '@flyteconsole/components';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery, useQueryClient } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
-import { Routes } from 'routes/routes';
 import { NoDataIsAvailable } from 'components/Literals/LiteralMapViewer';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { PanelSection } from 'components/common/PanelSection';
 import { DumpJSON } from 'components/common/DumpJSON';
 import { dNode } from 'models/Graph/types';
-import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/WorkflowGraph/utils';
 import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
-import { Identifier } from 'models/Common/types';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionDetails } from '../types';

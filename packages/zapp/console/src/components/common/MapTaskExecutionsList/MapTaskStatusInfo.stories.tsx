@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import { MapTaskStatusInfo } from './MapTaskStatusInfo';
 import { PanelViewDecorator } from '../__stories__/Decorators';

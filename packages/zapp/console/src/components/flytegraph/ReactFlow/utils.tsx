@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase, TaskExecutionPhase } from '@flyteconsole/components';
 import { dTypes } from 'models/Graph/types';
 import { CSSProperties } from 'react';
 import { RFBackgroundProps } from './types';

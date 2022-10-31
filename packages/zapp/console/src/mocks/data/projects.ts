@@ -1,4 +1,4 @@
-import { Project } from 'models/Project/types';
+import { Project } from '@flyteconsole/components';
 import { testDomain, testProject } from './constants';
 
 export function emptyProject(id: string, name?: string) {

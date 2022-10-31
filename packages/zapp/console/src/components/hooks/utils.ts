@@ -1,6 +1,4 @@
-import { GloballyUniqueNode } from 'models/Node/types';
-import { TaskTemplate } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
+import { GloballyUniqueNode, TaskTemplate, Workflow } from '@flyteconsole/components';
 
 export function extractTaskTemplates(workflow: Workflow): TaskTemplate[] {
   if (!workflow.closure || !workflow.closure.compiledWorkflow) {

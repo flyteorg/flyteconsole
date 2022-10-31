@@ -1,7 +1,6 @@
 import { emptyProject } from 'mocks/data/projects';
 import { mockServer } from 'mocks/server';
-import { listProjects } from '../api';
-import { Project } from '../types';
+import { Project, listProjects } from '@flyteconsole/components';
 
 describe('Project.api', () => {
   let projects: Project[];

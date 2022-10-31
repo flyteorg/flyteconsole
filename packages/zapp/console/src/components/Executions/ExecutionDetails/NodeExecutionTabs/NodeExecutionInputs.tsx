@@ -1,8 +1,7 @@
 import { PanelSection } from 'components/common/PanelSection';
-import { WaitForData } from '@flyteconsole/components';
+import { WaitForData, NodeExecution } from '@flyteconsole/components';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
-import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 
 /** Fetches and renders the input data for a given `NodeExecution` */

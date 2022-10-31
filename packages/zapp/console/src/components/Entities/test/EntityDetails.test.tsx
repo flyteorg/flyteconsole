@@ -1,16 +1,23 @@
-import { render, waitFor, screen } from '@testing-library/react';
-import { ResourceIdentifier } from 'models/Common/types';
+import { render, waitFor, screen, within } from '@testing-library/react';
+import { ResourceIdentifier, Task, Workflow } from '@flyteconsole/components';
 import * as React from 'react';
 import { createMockTask } from 'models/__mocks__/taskData';
 import { createMockWorkflow } from 'models/__mocks__/workflowData';
-import { Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
 import { projects } from 'mocks/data/projects';
-import * as projectApi from 'models/Project/api';
+import * as projectApi from '@flyteconsole/components';
 import { MemoryRouter } from 'react-router';
 import { EntityDetails } from '../EntityDetails';
 
-jest.mock('models/Project/api');
+jest.mock('@flyteconsole/components');
+jest.mock('@flyteconsole/components', () => {
+  const originalModule = jest.requireActual('@flyteconsole/components');
+
+  return {
+    __esModule: true,
+    ...originalModule,
+    getProjectDomainAttributes: jest.fn(),
+  };
+});
 
 describe('EntityDetails', () => {
   let mockWorkflow: Workflow;
@@ -43,19 +50,15 @@ describe('EntityDetails', () => {
     executionsString: string,
   ) => {
     // check text for header
-    await waitFor(() => {
-      expect(screen.getByText(`${id.domain} / ${id.name}`)).toBeInTheDocument();
-    });
+    await waitFor(() =>
+      expect(within(screen.getByText(`${id.domain} / ${id.name}`))).toBeInTheDocument(),
+    );
 
     // check text for versions
-    await waitFor(() => {
-      expect(screen.getByText(versionsString)).toBeInTheDocument();
-    });
+    await waitFor(() => expect(within(screen.getByText(versionsString))).toBeInTheDocument());
 
     // check text for executions
-    await waitFor(() => {
-      expect(screen.getByText(executionsString)).toBeInTheDocument();
-    });
+    await waitFor(() => expect(within(screen.getByText(executionsString))).toBeInTheDocument());
   };
 
   it('renders Task Details Page', async () => {

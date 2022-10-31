@@ -1,4 +1,4 @@
-import * as contrast from 'contrast';
+import contrast from 'contrast';
 import * as React from 'react';
 import { textColors } from './theme';
 import { NodeTextRendererProps } from './types';

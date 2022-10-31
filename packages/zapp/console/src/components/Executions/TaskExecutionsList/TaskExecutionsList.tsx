@@ -1,10 +1,15 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { noExecutionsFoundString } from 'common/constants';
-import { NonIdealState, WaitForData } from '@flyteconsole/components';
-import { MapTaskExecution, NodeExecution, TaskExecution } from 'models/Execution/types';
+import {
+  NonIdealState,
+  WaitForData,
+  TaskExecutionPhase,
+  MapTaskExecution,
+  NodeExecution,
+  TaskExecution,
+} from '@flyteconsole/components';
 import { isMapTaskV1 } from 'models/Task/utils';
-import { TaskExecutionPhase } from 'models/Execution/enums';
 import { useTaskExecutions, useTaskExecutionsRefresher } from '../useTaskExecutions';
 import { MapTaskExecutionsListItem } from './MapTaskExecutionListItem';
 import { TaskExecutionsListItem } from './TaskExecutionsListItem';

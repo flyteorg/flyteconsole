@@ -2,20 +2,17 @@ import { Typography, IconButton, Button, CircularProgress } from '@material-ui/c
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
-import { SearchResult } from 'components/common/SearchableList';
+import { SearchResult, WaitForData, NamedEntity, Routes } from '@flyteconsole/components';
 import {
   SearchableNamedEntityListProps,
   useNamedEntityListStyles,
 } from 'components/common/SearchableNamedEntityList';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { WaitForData } from '@flyteconsole/components';
-import { NamedEntity } from 'models/Common/types';
 import * as React from 'react';
 import { useState } from 'react';
 import { IntersectionOptions, useInView } from 'react-intersection-observer';
 import reactLoadingSkeleton from 'react-loading-skeleton';
 import { Link } from 'react-router-dom';
-import { Routes } from 'routes/routes';
 import UnarchiveOutline from '@material-ui/icons/UnarchiveOutlined';
 import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
 import { useSnackbar } from 'notistack';

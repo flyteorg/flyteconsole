@@ -1,14 +1,17 @@
 import { Button, Dialog, IconButton } from '@material-ui/core';
 import * as React from 'react';
-import { ResourceIdentifier, Identifier } from 'models/Common/types';
+import {
+  ResourceIdentifier,
+  Identifier,
+  NodeExecutionPhase,
+  NodeExecutionIdentifier,
+} from '@flyteconsole/components';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { useNodeExecution, useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
 import Close from '@material-ui/icons/Close';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';

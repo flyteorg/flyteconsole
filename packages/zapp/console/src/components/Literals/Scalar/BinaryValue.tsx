@@ -1,4 +1,4 @@
-import { Binary } from 'models/Common/types';
+import { Binary } from '@flyteconsole/components';
 import * as React from 'react';
 import { PrintValue } from '../PrintValue';
 import { useLiteralStyles } from '../styles';

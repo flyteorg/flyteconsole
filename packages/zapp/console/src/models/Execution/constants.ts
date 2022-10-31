@@ -1,4 +1,8 @@
-import { NodeExecutionPhase, TaskExecutionPhase, WorkflowExecutionPhase } from './enums';
+import {
+  NodeExecutionPhase,
+  TaskExecutionPhase,
+  WorkflowExecutionPhase,
+} from '@flyteconsole/components';
 
 export const terminalNodeExecutionStates: NodeExecutionPhase[] = [
   NodeExecutionPhase.ABORTED,

@@ -1,13 +1,15 @@
 import { makeStyles } from '@material-ui/core';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { WaitForQuery } from 'components/common/WaitForQuery';
-import { DataError } from '@flyteconsole/components';
+import {
+  DataError,
+  TaskExecutionPhase,
+  Workflow,
+  NodeExecutionIdentifier,
+} from '@flyteconsole/components';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
-import { TaskExecutionPhase } from 'models/Execution/enums';
-import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
-import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';

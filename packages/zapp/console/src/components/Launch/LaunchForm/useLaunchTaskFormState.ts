@@ -1,12 +1,14 @@
 import { useMachine } from '@xstate/react';
-import { defaultStateMachineConfig } from '@flyteconsole/components';
+import {
+  defaultStateMachineConfig,
+  Identifier,
+  Task,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { isEqual, partial, uniqBy } from 'lodash';
 import { FilterOperationName, SortDirection } from '@flyteconsole/flyteidl';
-import { Identifier } from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
-import { Task } from 'models/Task/types';
 import { RefObject, useEffect, useMemo, useRef } from 'react';
 import { correctInputErrors } from './constants';
 import { getInputsForTask } from './getInputs';

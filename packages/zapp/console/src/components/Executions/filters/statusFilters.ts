@@ -1,4 +1,4 @@
-import { NodeExecutionPhase, WorkflowExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase, WorkflowExecutionPhase } from '@flyteconsole/components';
 import { FilterMap } from './types';
 
 export type WorkflowExecutionStatusFilterKey =

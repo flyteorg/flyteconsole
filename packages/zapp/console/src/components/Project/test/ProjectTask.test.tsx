@@ -1,16 +1,18 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
-import { useUserProfile, FetchableData, UserProfile } from '@flyteconsole/components';
-import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { FilterOperationName } from '@flyteconsole/flyteidl';
-import { listNamedEntities } from 'models/Common/api';
 import {
+  useUserProfile,
+  FetchableData,
+  UserProfile,
   NamedEntity,
   NamedEntityIdentifier,
   NamedEntityMetadata,
   ResourceType,
-} from 'models/Common/types';
+} from '@flyteconsole/components';
+import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
+import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
+import { FilterOperationName } from '@flyteconsole/flyteidl';
+import { listNamedEntities } from 'models/Common/api';
 import { NamedEntityState } from 'models/enums';
 import { updateTaskState } from 'models/Task/api';
 import * as React from 'react';
@@ -68,14 +70,15 @@ describe('ProjectTasks', () => {
 
   const renderComponent = () =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <APIContext.Provider
-          value={mockAPIContextValue({ listNamedEntities: mockListNamedEntities })}
-        >
-          <ProjectTasks projectId={project} domainId={domain} />
-        </APIContext.Provider>
-      </QueryClientProvider>,
-      { wrapper: MemoryRouter },
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <APIContext.Provider
+            value={mockAPIContextValue({ listNamedEntities: mockListNamedEntities })}
+          >
+            <ProjectTasks projectId={project} domainId={domain} />
+          </APIContext.Provider>
+        </QueryClientProvider>
+      </MemoryRouter>,
     );
 
   it('does not show archived tasks', async () => {
@@ -116,12 +119,12 @@ describe('ProjectTasks', () => {
     expect(task).toBeTruthy();
 
     const parent = task?.parentElement?.parentElement?.parentElement!;
-    fireEvent.mouseOver(parent);
+    await fireEvent.mouseOver(parent);
 
     const archiveButton = getAllByTitle('Archive');
     expect(archiveButton[0]).toBeTruthy();
 
-    fireEvent.click(archiveButton[0]);
+    await fireEvent.click(archiveButton[0]);
 
     const cancelButton = await findAllByText('Cancel');
     await waitFor(() => expect(cancelButton.length).toEqual(1));
@@ -129,7 +132,7 @@ describe('ProjectTasks', () => {
 
     expect(confirmArchiveButton).toBeTruthy();
 
-    fireEvent.click(confirmArchiveButton!);
+    await fireEvent.click(confirmArchiveButton!);
 
     await waitFor(() => {
       expect(updateTaskState).toHaveBeenCalledTimes(1);
@@ -148,7 +151,7 @@ describe('ProjectTasks', () => {
 
     // check that my task is in document
     await waitFor(() => expect(getByText('MyTask')));
-    fireEvent.click(checkboxes[0]);
+    await fireEvent.click(checkboxes[0]);
 
     // when user selects checkbox, table should have no tasks to display
     await waitFor(() => expect(queryByText('MyTask')).not.toBeInTheDocument());

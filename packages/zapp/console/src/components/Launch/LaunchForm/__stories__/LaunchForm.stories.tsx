@@ -1,14 +1,19 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
 import { resolveAfter } from 'common/promiseUtils';
-import { WaitForData } from '@flyteconsole/components';
+import {
+  WaitForData,
+  Literal,
+  LiteralMap,
+  Variable,
+  Workflow,
+  Execution,
+  ExecutionData,
+} from '@flyteconsole/components';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { mapValues } from 'lodash';
-import { Literal, LiteralMap, Variable } from 'models/Common/types';
-import { Execution, ExecutionData } from 'models/Execution/types';
 import { mockWorkflowExecutionResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
-import { Workflow } from 'models/Workflow/types';
 import { createMockLaunchPlan } from 'models/__mocks__/launchPlanData';
 import {
   createMockWorkflow,

@@ -1,7 +1,6 @@
 import { RequestConfig } from '@flyteconsole/flyteidl';
-import { IdentifierScope } from 'models/Common/types';
+import { IdentifierScope, Execution } from '@flyteconsole/components';
 import { listExecutions } from 'models/Execution/api';
-import { Execution } from 'models/Execution/types';
 import { usePagination } from './usePagination';
 
 /** A hook for fetching a paginated list of workflow executions */

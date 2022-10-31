@@ -1,4 +1,4 @@
-import * as objectHash from 'object-hash';
+import objectHash from 'object-hash';
 
 export type KeyableType = any[] | object | string | symbol;
 

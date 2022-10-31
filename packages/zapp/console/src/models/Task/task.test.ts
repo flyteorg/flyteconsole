@@ -15,7 +15,7 @@ describe('models/Task', () => {
     expect(isMapTaskType(TaskType.PYTHON)).toBeFalsy();
   });
 
-  it('isMapTaskV1 propely identifies mapped task events above version 1', () => {
+  describe('isMapTaskV1 propely identifies mapped task events above version 1', () => {
     const eventVersionZero = 0;
     const eventVersionN = 3;
     const resourcesLengthZero = 0;

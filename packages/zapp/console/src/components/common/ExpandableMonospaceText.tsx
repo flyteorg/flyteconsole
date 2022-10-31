@@ -10,7 +10,7 @@ import {
   separatorColor,
   smallFontSize,
 } from '@flyteconsole/ui-atoms';
-import * as copyToClipboard from 'copy-to-clipboard';
+import copyToClipboard from 'copy-to-clipboard';
 import * as React from 'react';
 
 const expandedClass = 'expanded';

@@ -1,16 +1,17 @@
-import { env } from '@flyteconsole/components';
-import { Admin, Core, PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
-import { getAxiosApiCall } from '@flyteconsole/flyte-api';
-import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { defaultSystemStatus, identifierPrefixes } from './constants';
 import {
+  env,
   IdentifierScope,
   NamedEntity,
   NamedEntityIdentifier,
   ResourceType,
   SystemStatus,
-} from './types';
+  getAdminEntity,
+  defaultPaginationConfig,
+  defaultSystemStatus,
+  identifierPrefixes,
+} from '@flyteconsole/components';
+import { Admin, Core, PaginatedEntityResponse, RequestConfig } from '@flyteconsole/flyteidl';
+import { getAxiosApiCall } from '@flyteconsole/flyte-api';
 import { makeIdentifierPath, makeNamedEntityPath } from './utils';
 
 interface ListIdentifiersConfig {

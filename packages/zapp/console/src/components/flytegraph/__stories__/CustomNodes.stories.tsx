@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { NodeExecutionDisplayType } from 'components/Executions/types';
 import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
-import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
+import { CatalogCacheStatus, NodeExecutionPhase } from '@flyteconsole/components';
 import { TaskType } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
 import { ReactFlowProvider } from 'react-flow-renderer';

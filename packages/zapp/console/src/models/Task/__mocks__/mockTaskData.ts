@@ -1,5 +1,5 @@
 import { TaskType } from '@flyteconsole/ui-atoms';
-import { CompiledTask } from '../types';
+import { CompiledTask } from '@flyteconsole/components';
 
 export const mockTasks: CompiledTask[] = [
   {

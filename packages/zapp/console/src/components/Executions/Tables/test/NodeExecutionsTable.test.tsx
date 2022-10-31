@@ -34,9 +34,14 @@ import { notFoundError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
 import { FilterOperationName, RequestConfig } from '@flyteconsole/flyteidl';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
-import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
-import { Execution, NodeExecution, TaskNodeMetadata } from 'models/Execution/types';
-import { ResourceType } from 'models/Common/types';
+import {
+  CatalogCacheStatus,
+  NodeExecutionPhase,
+  ResourceType,
+  Execution,
+  NodeExecution,
+  TaskNodeMetadata,
+} from '@flyteconsole/components';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider, useQueryClient } from 'react-query';
 import { makeIdentifier } from 'test/modelUtils';
@@ -69,7 +74,7 @@ describe('NodeExecutionsTable', () => {
 
   const selectNode = async (container: HTMLElement, truncatedName: string, nodeId: string) => {
     const nodeNameAnchor = await waitFor(() => getByText(container, truncatedName));
-    fireEvent.click(nodeNameAnchor);
+    await fireEvent.click(nodeNameAnchor);
     // Wait for Details Panel to render and then for the nodeId header
     const detailsPanel = await waitFor(() => screen.getByTestId('details-panel'));
     await waitFor(() => getByText(detailsPanel, nodeId));
@@ -78,7 +83,7 @@ describe('NodeExecutionsTable', () => {
 
   const expandParentNode = async (rowContainer: HTMLElement) => {
     const expander = await waitFor(() => getByTitle(rowContainer, titleStrings.expandRow));
-    fireEvent.click(expander);
+    await fireEvent.click(expander);
     return await waitFor(() => getAllByRole(rowContainer, 'list'));
   };
 
@@ -324,7 +329,7 @@ describe('NodeExecutionsTable', () => {
           // restore proper handler for node execution children
           insertFixture(mockServer, fixture);
           // click error icon
-          await fireEvent.click(errorIconButton);
+          await await fireEvent.click(errorIconButton);
 
           // wait for expander and open it to verify children loaded correctly
           const nodeNameEl = await waitFor(() =>

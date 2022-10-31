@@ -1,7 +1,7 @@
 import { Dialog } from '@material-ui/core';
 import * as React from 'react';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
-import { ResourceIdentifier, ResourceType } from 'models/Common/types';
+import { ResourceIdentifier, ResourceType } from '@flyteconsole/components';
 import {
   TaskInitialLaunchParameters,
   WorkflowInitialLaunchParameters,

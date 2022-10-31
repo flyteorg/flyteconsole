@@ -1,9 +1,8 @@
-import { createDebugLogger } from '@flyteconsole/components';
+import { createDebugLogger, CompiledWorkflowClosure } from '@flyteconsole/components';
 import { createTimer } from 'common/timer';
 import { cloneDeep, keyBy, values } from 'lodash';
 import { identifierToString } from 'models/Common/utils';
 import { startNodeId } from 'models/Node/constants';
-import { CompiledWorkflowClosure } from 'models/Workflow/types';
 import { DAGNode } from './types';
 
 const log = createDebugLogger('models/Workflow');

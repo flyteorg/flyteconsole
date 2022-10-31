@@ -1,9 +1,8 @@
 import { IconButton, Tooltip } from '@material-ui/core';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution, Identifier, ResourceIdentifier } from '@flyteconsole/components';
 import * as React from 'react';
 import InputsAndOutputsIcon from '@material-ui/icons/Tv';
 import { RerunIcon } from '@flyteconsole/ui-atoms';
-import { Identifier, ResourceIdentifier } from 'models/Common/types';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';

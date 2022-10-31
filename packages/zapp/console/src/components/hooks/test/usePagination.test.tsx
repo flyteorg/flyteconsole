@@ -84,7 +84,7 @@ describe('usePagination', () => {
 
     expect(doFetch).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ token: '' }));
 
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
     await waitForLastItemRendered(container);
     expect(doFetch).toHaveBeenCalledWith(
       expect.anything(),

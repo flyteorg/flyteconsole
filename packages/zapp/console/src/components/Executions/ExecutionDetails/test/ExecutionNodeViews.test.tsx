@@ -4,7 +4,7 @@ import { nodeExecutionStatusFilters } from 'components/Executions/filters/status
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
-import { Execution } from 'models/Execution/types';
+import { Execution } from '@flyteconsole/components';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
@@ -69,29 +69,29 @@ describe('ExecutionNodeViews', () => {
     const graphTab = await waitFor(() => getByText(tabs.graph.label));
 
     // Ensure we are on Nodes tab
-    fireEvent.click(nodesTab);
+    await fireEvent.click(nodesTab);
     await waitFor(() => getByText(succeededNodeName));
 
     const statusButton = await waitFor(() => getByText(filterLabels.status));
 
     // Apply 'Failed' filter and wait for list to include only the failed item
-    fireEvent.click(statusButton);
+    await fireEvent.click(statusButton);
     const failedFilter = await waitFor(() =>
       screen.getByLabelText(nodeExecutionStatusFilters.failed.label),
     );
 
     // Wait for succeeded task to disappear and ensure failed task remains
-    fireEvent.click(failedFilter);
+    await fireEvent.click(failedFilter);
     await waitFor(() => queryByText(succeededNodeName) == null);
     await waitFor(() => expect(getByText(failedNodeName)).toBeInTheDocument());
 
     // Switch to the Graph tab
-    fireEvent.click(statusButton);
-    fireEvent.click(graphTab);
+    await fireEvent.click(statusButton);
+    await fireEvent.click(graphTab);
     await waitFor(() => queryByText(failedNodeName) == null);
 
     // Switch back to Nodes Tab and verify filter still applied
-    fireEvent.click(nodesTab);
+    await fireEvent.click(nodesTab);
     await waitFor(() => getByText(failedNodeName));
     expect(queryByText(succeededNodeName)).toBeNull();
   });

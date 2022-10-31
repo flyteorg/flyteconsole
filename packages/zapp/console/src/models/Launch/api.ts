@@ -1,8 +1,11 @@
 import { Admin, RequestConfig } from '@flyteconsole/flyteidl';
-import { getAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { endpointPrefixes } from 'models/Common/constants';
-import { Identifier, IdentifierScope } from 'models/Common/types';
+import {
+  getAdminEntity,
+  defaultPaginationConfig,
+  Identifier,
+  IdentifierScope,
+  endpointPrefixes,
+} from '@flyteconsole/components';
 import { makeIdentifierPath } from 'models/Common/utils';
 import { LaunchPlan } from './types';
 import { launchPlanListTransformer } from './utils';

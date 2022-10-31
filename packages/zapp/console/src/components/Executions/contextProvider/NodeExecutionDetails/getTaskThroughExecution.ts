@@ -2,8 +2,7 @@ import { getTaskDisplayType } from 'components/Executions/utils';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
 import { NodeExecutionDetails } from 'components/Executions/types';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';
-import { NodeExecution } from 'models/Execution/types';
-import { TaskTemplate } from 'models/Task/types';
+import { NodeExecution, TaskTemplate } from '@flyteconsole/components';
 import { QueryClient } from 'react-query/types/core/queryClient';
 
 export const getTaskThroughExecution = async (

@@ -1,11 +1,15 @@
-import { timestampToDate } from 'common/utils';
+import {
+  timestampToDate,
+  Identifier,
+  LiteralType,
+  Variable,
+  Task,
+  Workflow,
+} from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
 import { isObject } from 'lodash';
-import { Identifier, LiteralType, Variable } from 'models/Common/types';
 import { LaunchPlan } from 'models/Launch/types';
-import { Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
-import * as moment from 'moment';
+import moment from 'moment';
 import { LiteralValueMap } from 'components/Launch/LaunchForm/types';
 import { simpleTypeToInputType, typeLabels } from './constants';
 import { inputToLiteral } from './inputHelpers/inputHelpers';
@@ -20,7 +24,6 @@ import {
   InputTypeDefinition,
   ParsedInput,
   SearchableVersion,
-  InputValue,
 } from './types';
 
 /** Creates a unique cache key for an input based on its name and type.

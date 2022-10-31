@@ -4,18 +4,22 @@ import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow
 import { insertFixture } from 'mocks/data/insertFixture';
 import { unexpectedError } from 'mocks/errors';
 import { mockServer } from 'mocks/server';
-import { sortQueryKeys } from 'models/AdminEntity/constants';
+import {
+  sortQueryKeys,
+  DomainIdentifierScope,
+  useUserProfile,
+  UserProfile,
+  FetchableData,
+  Execution,
+  getProjectDomainAttributes,
+} from '@flyteconsole/components';
 import { SortDirection, Admin } from '@flyteconsole/flyteidl';
-import { DomainIdentifierScope } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
-import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient, disableQueryLogger, enableQueryLogger } from 'test/utils';
-import { useUserProfile, UserProfile, FetchableData } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { getProjectDomainAttributes } from 'models/Project/api';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
@@ -26,30 +30,27 @@ jest.mock('@flyteconsole/components', () => {
     __esModule: true,
     ...originalModule,
     useUserProfile: jest.fn(),
+    getProjectDomainAttributes: jest.fn().mockResolvedValue(() => {
+      const projectDomainAttributesMock: Admin.ProjectDomainAttributesDeleteResponse = {
+        attributes: {
+          matchingAttributes: {
+            workflowExecutionConfig: {
+              maxParallelism: 5,
+              securityContext: { runAs: { k8sServiceAccount: 'default' } },
+              rawOutputDataConfig: { outputLocationPrefix: 'cliOutputLocationPrefix' },
+              annotations: { values: { cliAnnotationKey: 'cliAnnotationValue' } },
+              labels: { values: { cliLabelKey: 'cliLabelValue' } },
+            },
+          },
+        },
+      };
+      return projectDomainAttributesMock;
+    }),
   };
 });
 jest.mock('components/Executions/Tables/WorkflowExecutionsTable');
 jest.mock('notistack', () => ({
   useSnackbar: () => ({ enqueueSnackbar: jest.fn() }),
-}));
-
-jest.mock('models/Project/api', () => ({
-  getProjectDomainAttributes: jest.fn().mockResolvedValue(() => {
-    const projectDomainAttributesMock: Admin.ProjectDomainAttributesDeleteResponse = {
-      attributes: {
-        matchingAttributes: {
-          workflowExecutionConfig: {
-            maxParallelism: 5,
-            securityContext: { runAs: { k8sServiceAccount: 'default' } },
-            rawOutputDataConfig: { outputLocationPrefix: 'cliOutputLocationPrefix' },
-            annotations: { values: { cliAnnotationKey: 'cliAnnotationValue' } },
-            labels: { values: { cliLabelKey: 'cliLabelValue' } },
-          },
-        },
-      },
-    };
-    return projectDomainAttributesMock;
-  }),
 }));
 
 describe('ProjectDashboard', () => {
@@ -100,10 +101,11 @@ describe('ProjectDashboard', () => {
 
   const renderView = () =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <ProjectDashboard projectId={scope.project} domainId={scope.domain} />
-      </QueryClientProvider>,
-      { wrapper: MemoryRouter },
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <ProjectDashboard projectId={scope.project} domainId={scope.domain} />
+        </QueryClientProvider>
+      </MemoryRouter>,
     );
 
   it('should display domain attributes section when config was provided', async () => {
@@ -161,7 +163,7 @@ describe('ProjectDashboard', () => {
     expect(checkboxes[0]).toBeTruthy();
     expect(checkboxes[0]?.checked).toEqual(false);
     await waitFor(() => expect(getByText(executions1[0].closure.workflowId.name)));
-    fireEvent.click(checkboxes[0]);
+    await fireEvent.click(checkboxes[0]);
 
     // when user selects checkbox, table should have no executions to display
     await waitFor(() => expect(queryByText(executions1[0].closure.workflowId.name)).toBeNull());

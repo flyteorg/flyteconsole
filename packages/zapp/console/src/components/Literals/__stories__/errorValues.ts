@@ -1,4 +1,4 @@
-import { Error } from 'models/Common/types';
+import { Error } from '@flyteconsole/components';
 
 export const errorValues: Dictionary<Error> = {
   basic: {

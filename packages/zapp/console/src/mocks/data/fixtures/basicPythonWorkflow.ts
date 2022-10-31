@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { SimpleType } from 'models/Common/types';
+import { SimpleType } from '@flyteconsole/components';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { variableNames } from '../constants';
 import {

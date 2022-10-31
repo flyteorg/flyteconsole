@@ -17,7 +17,7 @@
         "target": "esnext",
         "module": "commonjs",
         "moduleResolution": "node",
-        // "esModuleInterop": true
+        "esModuleInterop": true,
 
         "isolatedModules": true,
         "declaration": true,

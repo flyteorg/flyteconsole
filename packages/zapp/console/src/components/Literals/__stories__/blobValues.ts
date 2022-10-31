@@ -1,4 +1,4 @@
-import { Blob, BlobDimensionality } from 'models/Common/types';
+import { Blob, BlobDimensionality } from '@flyteconsole/components';
 
 export const blobValues: Dictionary<Blob> = {
   singleBlobValue: {

@@ -1,16 +1,16 @@
 import { Admin } from '@flyteconsole/flyteidl';
-import { createPaginationTransformer } from 'models/AdminEntity/utils';
-import { endpointPrefixes } from 'models/Common/constants';
-import { NameIdentifierScope } from 'models/Common/types';
-import { makeIdentifierPath } from 'models/Common/utils';
 import {
+  createPaginationTransformer,
+  NameIdentifierScope,
   Execution,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
-} from './types';
+  endpointPrefixes,
+} from '@flyteconsole/components';
+import { makeIdentifierPath } from 'models/Common/utils';
 
 /** Generates the API endpoint for a given `WorkflowExecutionIdentifier` */
 export const makeExecutionPath = ({ project, domain, name }: WorkflowExecutionIdentifier) =>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Core } from '@flyteconsole/flyteidl';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import { PanelViewDecorator } from 'components/common/__stories__/Decorators';
 import { TaskType } from '@flyteconsole/ui-atoms';
 import { TaskExecutionsListContent } from './TaskExecutionsList';

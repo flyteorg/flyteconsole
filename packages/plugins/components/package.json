@@ -32,6 +32,7 @@
     "devDependencies": {
         "@types/react": "^16.9.34",
         "@types/react-dom": "^16.9.7",
+        "fuzzysort": "^1.1.1",
         "react": "^16.13.1",
         "react-dom": "^16.13.1"
     }

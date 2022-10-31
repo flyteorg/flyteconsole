@@ -1,4 +1,4 @@
-import * as LinkifyIt from 'linkify-it';
+import LinkifyIt from 'linkify-it';
 
 export const linkify = new LinkifyIt();
 

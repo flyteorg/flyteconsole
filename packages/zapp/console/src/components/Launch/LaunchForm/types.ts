@@ -4,11 +4,12 @@ import {
   Identifier,
   LiteralType,
   NamedEntityIdentifier,
-} from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+  Task,
+  Workflow,
+  WorkflowId,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
-import { Task } from 'models/Task/types';
-import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { Interpreter, State } from 'xstate';
 import {
   BaseLaunchContext,
@@ -181,7 +182,7 @@ export interface UnionValue {
   typeDefinition: InputTypeDefinition;
 }
 
-export interface NoneValue { }
+export interface NoneValue {}
 
 export type InputValue = string | number | boolean | Date | BlobValue | UnionValue | NoneValue;
 export type InputChangeHandler = (newValue: InputValue) => void;

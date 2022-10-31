@@ -1,6 +1,6 @@
 import { WorkflowListStructureItem } from 'components/Workflow/types';
 import { NamedEntityState } from 'models/enums';
-import { WorkflowId } from 'models/Workflow/types';
+import { WorkflowId } from '@flyteconsole/components';
 
 export const sampleWorkflowIds: WorkflowId[] = [
   'batch_workflow.BatchTasksWorkflow',

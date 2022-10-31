@@ -6,7 +6,7 @@ import {
   ParameterMap,
   Schedule,
   VariableMap,
-} from 'models/Common/types';
+} from '@flyteconsole/components';
 
 export interface LaunchPlanMetadata extends Admin.ILaunchPlanMetadata {
   notifications: Notification[];

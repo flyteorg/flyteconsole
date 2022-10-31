@@ -1,10 +1,12 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { contentMarginGridUnits } from 'common/layout';
-import { WaitForData } from '@flyteconsole/components';
+import {
+  contentMarginGridUnits,
+  WaitForData,
+  ResourceIdentifier,
+  useProject,
+} from '@flyteconsole/components';
 import { EntityDescription } from 'components/Entities/EntityDescription';
-import { useProject } from 'components/hooks/useProjects';
 import { useChartState } from 'components/hooks/useChartState';
-import { ResourceIdentifier } from 'models/Common/types';
 import * as React from 'react';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';

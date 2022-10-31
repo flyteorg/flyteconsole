@@ -6,3 +6,4 @@ export * from './NotFound';
 export * from './NonIdealState';
 export * from './DataError';
 export * from './ErrorBoundary';
+export * from './NoResults';

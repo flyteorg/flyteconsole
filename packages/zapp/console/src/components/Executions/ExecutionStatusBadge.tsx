@@ -5,7 +5,7 @@ import {
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,
-} from 'models/Execution/enums';
+} from '@flyteconsole/components';
 import * as React from 'react';
 import {
   getNodeExecutionPhaseConstants,

@@ -1,4 +1,4 @@
-import { IdentifierScope, ResourceIdentifier } from 'models/Common/types';
+import { IdentifierScope, ResourceIdentifier } from '@flyteconsole/components';
 import { RequestConfig } from '@flyteconsole/flyteidl';
 import { usePagination } from '../usePagination';
 import { EntityType, entityFunctions } from './constants';

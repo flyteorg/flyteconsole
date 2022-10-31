@@ -1,5 +1,4 @@
-import { NodeExecution } from 'models/Execution/types';
-import { TaskTemplate } from 'models/Task/types';
+import { NodeExecution, TaskTemplate } from '@flyteconsole/components';
 
 /**
  * @TODO Deprecate this type once new graphUX is complete

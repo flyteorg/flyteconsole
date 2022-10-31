@@ -5,11 +5,14 @@ import UnarchiveOutline from '@material-ui/icons/UnarchiveOutlined';
 import LaunchPlanIcon from '@material-ui/icons/AssignmentOutlined';
 import InputOutputIcon from '@material-ui/icons/Tv';
 import { formatDateLocalTimezone, formatDateUTC, millisecondsToHMS } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
+import {
+  timestampToDate,
+  Execution,
+  ExecutionState,
+  WorkflowExecutionPhase,
+} from '@flyteconsole/components';
 
 import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge';
-import { Execution } from 'models/Execution/types';
-import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';

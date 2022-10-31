@@ -1,10 +1,13 @@
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
+import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  CompiledNode,
+  NodeExecutionPhase,
+  NodeExecution,
+} from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep, random, sample } from 'lodash';
-import { CompiledNode } from 'models/Node/types';
 import { mockNodes } from 'models/Node/__mocks__/mockNodeData';
-import { NodeExecutionPhase } from '../enums';
-import { NodeExecution } from '../types';
 import { mockWorkflowExecutionId } from './constants';
 import { sampleError } from './sampleExecutionError';
 
@@ -58,10 +61,10 @@ export const createMockNodeExecutions = (length: number) => {
     const error =
       phase === NodeExecutionPhase.FAILED
         ? {
-          code: 'user_error',
-          errorUri: '',
-          message: sampleError,
-        }
+            code: 'user_error',
+            errorUri: '',
+            message: sampleError,
+          }
         : undefined;
 
     Object.assign(execution.closure, {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { Identifier } from 'models/Common/types';
+import { Identifier } from '@flyteconsole/components';
 import { NewTargetLink } from 'components/common/NewTargetLink';
 import { versionDetailsUrlGenerator } from 'components/Entities/generators';
 import t from '../strings';

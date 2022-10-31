@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ReactJsonView, { ReactJsonViewProps } from 'react-json-view';
-import * as copyToClipboard from 'copy-to-clipboard';
+import copyToClipboard from 'copy-to-clipboard';
 import { primaryTextColor } from '@flyteconsole/ui-atoms';
 
 const useStyles = makeStyles((theme: Theme) => ({

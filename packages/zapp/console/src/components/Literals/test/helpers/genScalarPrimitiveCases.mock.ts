@@ -1,5 +1,5 @@
 import { Core } from '@flyteconsole/flyteidl';
-import * as Long from 'long';
+import Long from 'long';
 import { long } from 'test/utils';
 import { getPrimitive } from './literalHelpers';
 import { TestCaseList } from '../types';

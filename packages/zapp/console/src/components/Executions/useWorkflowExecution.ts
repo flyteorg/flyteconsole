@@ -1,11 +1,16 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { QueryInput, QueryType } from 'components/data/types';
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { LiteralMap } from 'models/Common/types';
+import {
+  LiteralMap,
+  FetchableData,
+  useFetchableData,
+  Execution,
+  ExecutionData,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { getExecution } from 'models/Execution/api';
-import { Execution, ExecutionData, WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { QueryClient } from 'react-query';
-import { FetchableData, useFetchableData } from '@flyteconsole/components';
 import { executionRefreshIntervalMs } from './constants';
 import { executionIsTerminal } from './utils';
 

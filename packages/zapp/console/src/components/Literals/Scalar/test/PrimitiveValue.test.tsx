@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { Primitive } from 'models/Common/types';
+import { Primitive } from '@flyteconsole/components';
 import * as React from 'react';
 import { long } from 'test/utils';
 import { PrimitiveValue } from '../PrimitiveValue';

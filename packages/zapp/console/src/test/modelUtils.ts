@@ -5,7 +5,7 @@ import {
   NamedEntityIdentifier,
   NamedEntityMetadata,
   ResourceType,
-} from 'models/Common/types';
+} from '@flyteconsole/components';
 import { NamedEntityState } from 'models/enums';
 
 const defaultMetadata = {

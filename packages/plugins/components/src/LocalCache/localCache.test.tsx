@@ -46,14 +46,14 @@ describe('LocalCache', () => {
     expect(screen.getByText(HIDDEN_TEXT)).toBeTruthy();
 
     // change value
-    act(() => {
-      fireEvent.click(show);
+    act(async () => {
+      await fireEvent.click(show);
     });
     expect(screen.getByText(SHOW_TEXT)).toBeTruthy();
 
     // reset to default
-    act(() => {
-      fireEvent.click(clear);
+    act(async () => {
+      await fireEvent.click(clear);
     });
     expect(screen.getByText(HIDDEN_TEXT)).toBeTruthy();
   });

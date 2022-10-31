@@ -1,5 +1,9 @@
-import { CompiledNode } from 'models/Node/types';
-import { WorkflowTemplate, CompiledWorkflow, CompiledWorkflowClosure } from 'models/Workflow/types';
+import {
+  CompiledNode,
+  WorkflowTemplate,
+  CompiledWorkflow,
+  CompiledWorkflowClosure,
+} from '@flyteconsole/components';
 
 export const workflowData = require('models/__mocks__/simpleWorkflowClosure.json');
 

@@ -39,7 +39,7 @@ describe('useDebouncedValue', () => {
 
     const inputBox = await waitFor(() => getByLabelText(inputLabel));
     const newValue = 'abcdefg';
-    fireEvent.change(inputBox, { target: { value: newValue } });
+    await fireEvent.change(inputBox, { target: { value: newValue } });
     expect(queryByText(newValue)).toBeNull();
     act(() => {
       jest.advanceTimersByTime(debounceDelayMs);

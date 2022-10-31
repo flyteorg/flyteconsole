@@ -1,9 +1,13 @@
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
+import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  TaskLog,
+  TaskExecutionPhase,
+  TaskExecution,
+  TaskExecutionClosure,
+} from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
-import { TaskLog } from 'models/Common/types';
-import { TaskExecutionPhase } from '../enums';
-import { TaskExecution, TaskExecutionClosure } from '../types';
 import { sampleError } from './sampleExecutionError';
 
 const sampleLogs: TaskLog[] = [
@@ -67,10 +71,10 @@ export const createMockTaskExecutionsListResponse = (length: number) => {
       const error =
         phase === TaskExecutionPhase.FAILED
           ? {
-            code: 'user_error',
-            errorUri: '',
-            message: sampleError,
-          }
+              code: 'user_error',
+              errorUri: '',
+              message: sampleError,
+            }
           : undefined;
 
       Object.assign(execution.closure, {

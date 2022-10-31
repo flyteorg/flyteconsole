@@ -1,17 +1,18 @@
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { useDataRefresher } from 'components/hooks/useDataRefresher';
 import { every } from 'lodash';
-import { limits } from 'models/AdminEntity/constants';
-import { SortDirection } from '@flyteconsole/flyteidl';
 import {
+  limits,
   ExecutionData,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
-} from 'models/Execution/types';
+  useFetchableData,
+  FetchableData,
+} from '@flyteconsole/components';
+import { SortDirection } from '@flyteconsole/flyteidl';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
-import { useFetchableData, FetchableData } from '@flyteconsole/components';
 import { executionRefreshIntervalMs } from './constants';
 import { nodeExecutionIsTerminal, taskExecutionIsTerminal } from './utils';
 

@@ -1,6 +1,6 @@
 import { ContentContainer, ContentContainerProps } from 'components/common/ContentContainer';
 import * as React from 'react';
-import { SideNavigation } from './SideNavigation';
+import { SideNavigation } from '@flyteconsole/components';
 
 export function withSideNavigation<P>(
   WrappedComponent: React.ComponentType<P>,

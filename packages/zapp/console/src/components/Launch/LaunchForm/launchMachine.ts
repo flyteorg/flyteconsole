@@ -1,9 +1,13 @@
 import { Admin, Core, Protobuf } from '@flyteconsole/flyteidl';
-import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import {
+  Identifier,
+  NamedEntityIdentifier,
+  Task,
+  Workflow,
+  WorkflowId,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
-import { Task } from 'models/Task/types';
-import { Workflow, WorkflowId } from 'models/Workflow/types';
 import {
   assign,
   DoneInvokeEvent,
@@ -156,51 +160,51 @@ interface WorkflowLaunchSchema extends BaseLaunchSchema {
  */
 export type BaseLaunchTypestate =
   | {
-    value: LaunchState;
-    context: BaseLaunchContext;
-  }
+      value: LaunchState;
+      context: BaseLaunchContext;
+    }
   | {
-    value: LaunchState.UNSUPPORTED_INPUTS;
-    context: BaseLaunchContext & {
-      parsedInputs: [];
-      unsupportedRequiredInputs: [];
-    };
-  }
+      value: LaunchState.UNSUPPORTED_INPUTS;
+      context: BaseLaunchContext & {
+        parsedInputs: [];
+        unsupportedRequiredInputs: [];
+      };
+    }
   | {
-    value:
-    | LaunchState.ENTER_INPUTS
-    | LaunchState.VALIDATING_INPUTS
-    | LaunchState.INVALID_INPUTS
-    | LaunchState.SUBMIT_VALIDATING
-    | LaunchState.SUBMITTING
-    | LaunchState.SUBMIT_SUCCEEDED;
-    context: BaseLaunchContext & {
-      parsedInputs: [];
-    };
-  }
+      value:
+        | LaunchState.ENTER_INPUTS
+        | LaunchState.VALIDATING_INPUTS
+        | LaunchState.INVALID_INPUTS
+        | LaunchState.SUBMIT_VALIDATING
+        | LaunchState.SUBMITTING
+        | LaunchState.SUBMIT_SUCCEEDED;
+      context: BaseLaunchContext & {
+        parsedInputs: [];
+      };
+    }
   | {
-    value: LaunchState.SUBMIT_SUCCEEDED;
-    context: BaseLaunchContext & {
-      resultExecutionId: WorkflowExecutionIdentifier;
-    };
-  }
+      value: LaunchState.SUBMIT_SUCCEEDED;
+      context: BaseLaunchContext & {
+        resultExecutionId: WorkflowExecutionIdentifier;
+      };
+    }
   | {
-    value: LaunchState.SUBMIT_FAILED;
-    context: BaseLaunchContext & {
-      parsedInputs: ParsedInput[];
-      error: Error;
-    };
-  }
+      value: LaunchState.SUBMIT_FAILED;
+      context: BaseLaunchContext & {
+        parsedInputs: ParsedInput[];
+        error: Error;
+      };
+    }
   | {
-    value:
-    | LaunchState.FAILED_LOADING_INPUTS
-    | LaunchState.FAILED_LOADING_LAUNCH_PLANS
-    | LaunchState.FAILED_LOADING_TASK_VERSIONS
-    | LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS;
-    context: BaseLaunchContext & {
-      error: Error;
+      value:
+        | LaunchState.FAILED_LOADING_INPUTS
+        | LaunchState.FAILED_LOADING_LAUNCH_PLANS
+        | LaunchState.FAILED_LOADING_TASK_VERSIONS
+        | LaunchState.FAILED_LOADING_WORKFLOW_VERSIONS;
+      context: BaseLaunchContext & {
+        error: Error;
+      };
     };
-  };
 
 export type WorkflowLaunchContextExtended = WorkflowLaunchContext & {
   sourceId: NamedEntityIdentifier;
@@ -215,13 +219,13 @@ export type LaunchPlanLaunchContextExtended = WorkflowLaunchContext & {
 export type WorkflowLaunchTypestate =
   | BaseLaunchTypestate
   | {
-    value: LaunchState.SELECT_WORKFLOW_VERSION;
-    context: WorkflowLaunchContextExtended;
-  }
+      value: LaunchState.SELECT_WORKFLOW_VERSION;
+      context: WorkflowLaunchContextExtended;
+    }
   | {
-    value: LaunchState.SELECT_LAUNCH_PLAN;
-    context: LaunchPlanLaunchContextExtended;
-  };
+      value: LaunchState.SELECT_LAUNCH_PLAN;
+      context: LaunchPlanLaunchContextExtended;
+    };
 
 export type TaskLaunchContextExtended = TaskLaunchContext & {
   sourceId: NamedEntityIdentifier;
@@ -230,9 +234,9 @@ export type TaskLaunchContextExtended = TaskLaunchContext & {
 export type TaskLaunchTypestate =
   | BaseLaunchTypestate
   | {
-    value: LaunchState.SELECT_TASK_VERSION;
-    context: TaskLaunchContextExtended;
-  };
+      value: LaunchState.SELECT_TASK_VERSION;
+      context: TaskLaunchContextExtended;
+    };
 
 const defaultBaseContext: BaseLaunchContext = {
   parsedInputs: [],

@@ -1,7 +1,6 @@
 import classnames from 'classnames';
-import { sortedObjectEntries } from 'common/utils';
+import { sortedObjectEntries, Literal, LiteralMap } from '@flyteconsole/components';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { Literal, LiteralMap } from 'models/Common/types';
 import * as React from 'react';
 import { htmlEntities } from './constants';
 import { LiteralValue } from './LiteralValue';

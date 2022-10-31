@@ -1,9 +1,13 @@
 import { Typography } from '@material-ui/core';
 import { formatDateUTC } from 'common/formatters';
-import { padExecutionPaths, padExecutions, timestampToDate } from 'common/utils';
-import { WaitForData } from '@flyteconsole/components';
+import {
+  padExecutionPaths,
+  padExecutions,
+  timestampToDate,
+  WaitForData,
+} from '@flyteconsole/components';
 import ProjectStatusBar from 'components/Project/ProjectStatusBar';
-import * as moment from 'moment';
+import moment from 'moment';
 import * as React from 'react';
 import { useWorkflowVersionsColumnStyles } from './styles';
 import { WorkflowVersionColumnDefinition } from './types';

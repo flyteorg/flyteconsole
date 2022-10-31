@@ -1,6 +1,6 @@
-import { millisecondsToDuration } from 'common/utils';
+import { millisecondsToDuration } from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { unknownValueString, zeroSecondsString } from '../constants';
 import {
   dateDiffString,

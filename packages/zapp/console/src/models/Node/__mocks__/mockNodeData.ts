@@ -1,5 +1,5 @@
 import { mockTasks } from 'models/Task/__mocks__/mockTaskData';
-import { CompiledNode } from '../types';
+import { CompiledNode } from '@flyteconsole/components';
 
 export const mockNodes: CompiledNode[] = mockTasks.map<CompiledNode>(({ template }) => {
   const { id } = template;

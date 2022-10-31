@@ -1,6 +1,5 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
-import { Primitive } from 'models/Common/types';
+import { timestampToDate, Primitive } from '@flyteconsole/components';
 import * as React from 'react';
 
 /** Stringifies a Primitive, handling any necessary formatting */

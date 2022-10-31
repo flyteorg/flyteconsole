@@ -1,6 +1,5 @@
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
-import * as Long from 'long';
-import { Primitive } from 'models/Common/types';
+import { dateToTimestamp, millisecondsToDuration, Primitive } from '@flyteconsole/components';
+import Long from 'long';
 
 export const primitiveValues: Dictionary<Partial<Primitive>> = {
   booleanTrue: {

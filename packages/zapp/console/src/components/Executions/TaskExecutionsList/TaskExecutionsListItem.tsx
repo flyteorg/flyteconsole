@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PanelSection } from 'components/common/PanelSection';
-import { TaskExecution } from 'models/Execution/types';
+import { TaskExecution } from '@flyteconsole/components';
 import { formatRetryAttempt } from './utils';
 import { TaskExecutionLogsCard } from './TaskExecutionLogsCard';
 

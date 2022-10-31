@@ -1,19 +1,22 @@
 import { Admin, EncodableType } from '@flyteconsole/flyteidl';
-import { limits } from 'models/AdminEntity/constants';
-import { adminApiUrl, encodeProtoPayload } from 'models/AdminEntity/utils';
-import { DomainIdentifierScope, Identifier, ResourceType } from 'models/Common/types';
 import {
+  limits,
+  adminApiUrl,
+  encodeProtoPayload,
+  DomainIdentifierScope,
+  Identifier,
+  ResourceType,
+  Project,
+  Task,
+  Workflow,
   Execution,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
-} from 'models/Execution/types';
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
-import { Project } from 'models/Project/types';
-import { Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
 import { MockedRequest, RequestParams, ResponseResolver, rest } from 'msw';
 import { RestContext } from 'msw/lib/types/rest';
 import { RequestHandlersList } from 'msw/lib/types/setupWorker/glossary';

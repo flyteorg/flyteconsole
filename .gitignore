@@ -46,6 +46,7 @@ venv/
 .awcache/
 .dist/
 npm-debug.log
+ts-jest.log
 jest
 jest_0
 yarn-error.log

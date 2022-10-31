@@ -1,5 +1,5 @@
 import { RequestConfig } from '@flyteconsole/flyteidl';
-import { Execution, NodeExecution } from 'models/Execution/types';
+import { Execution, NodeExecution } from '@flyteconsole/components';
 import * as React from 'react';
 
 export interface ExecutionContextData {

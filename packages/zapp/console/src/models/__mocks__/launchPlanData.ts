@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { FixedRateUnit, Identifier } from '../Common/types';
+import { FixedRateUnit, Identifier } from '@flyteconsole/components';
 import { LaunchPlan, LaunchPlanClosure, LaunchPlanSpec, LaunchPlanState } from '../Launch/types';
 
 const basicLaunchPlanClosure: LaunchPlanClosure = {

@@ -1,4 +1,4 @@
-import { Workflow } from 'models/Workflow/types';
+import { Workflow } from '@flyteconsole/components';
 import { long } from 'test/utils';
 
 export const workflow: Workflow = {

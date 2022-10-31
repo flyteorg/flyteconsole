@@ -1,6 +1,6 @@
 import { RequestConfig } from '@flyteconsole/flyteidl';
 import { listIdentifiers } from 'models/Common/api';
-import { IdentifierScope, NamedEntityIdentifier, ResourceType } from 'models/Common/types';
+import { IdentifierScope, NamedEntityIdentifier, ResourceType } from '@flyteconsole/components';
 import { listLaunchPlans } from 'models/Launch/api';
 import { LaunchPlan } from 'models/Launch/types';
 import { usePagination } from './usePagination';

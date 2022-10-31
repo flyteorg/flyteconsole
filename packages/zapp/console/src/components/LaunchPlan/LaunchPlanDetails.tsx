@@ -1,6 +1,5 @@
-import { withRouteParams } from 'components/common/withRouteParams';
+import { withRouteParams, ResourceIdentifier, ResourceType } from '@flyteconsole/components';
 import { EntityDetails } from 'components/Entities/EntityDetails';
-import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import * as React from 'react';
 
 export interface LaunchPlanDetailsRouteParams {

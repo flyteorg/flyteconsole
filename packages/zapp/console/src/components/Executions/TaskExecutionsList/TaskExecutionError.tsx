@@ -1,6 +1,6 @@
 import { ExpandableContentLink } from 'components/common/ExpandableContentLink';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { ExecutionError } from 'models/Execution/types';
+import { ExecutionError } from '@flyteconsole/components';
 import * as React from 'react';
 
 /** Renders an expandable error for a `TaskExecution` */

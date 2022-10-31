@@ -91,7 +91,7 @@ describe('useFetchableData', () => {
     const firstValue = 'new value';
     resolveValue(firstValue);
     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
 
     const error = 'something went wrong';
     rejectValue(new Error(error));
@@ -107,7 +107,7 @@ describe('useFetchableData', () => {
     const error = 'something went wrong';
     rejectValue(new Error(error));
     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
 
     await waitFor(() => expect(errorEl.textContent).not.toContain(error));
   });
@@ -120,13 +120,13 @@ describe('useFetchableData', () => {
     const firstValue = 'new value';
     resolveValue(firstValue);
     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
 
     const error = 'something went wrong';
     rejectValue(new Error(error));
 
     await waitFor(() => expect(errorEl.textContent).toContain(error));
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
     await waitFor(() => expect(errorEl.textContent).not.toContain(error));
   });
 
@@ -154,7 +154,7 @@ describe('useFetchableData', () => {
     resolveValue(firstValue);
     await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
 
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
 
     const secondValue = 'second new value';
     resolveValue(secondValue);
@@ -177,7 +177,7 @@ describe('useFetchableData', () => {
     const { fetchButton } = await getElements(container);
     expect(doFetch).not.toHaveBeenCalled();
 
-    fireEvent.click(fetchButton);
+    await fireEvent.click(fetchButton);
     expect(doFetch).toHaveBeenCalled();
   });
 });

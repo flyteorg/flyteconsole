@@ -12,14 +12,19 @@ import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { muiTheme } from '@flyteconsole/ui-atoms';
 import { cloneDeep, get } from 'lodash';
-import * as Long from 'long';
+import Long from 'long';
 import { RequestConfig, Core, Protobuf } from '@flyteconsole/flyteidl';
-import { Identifier, Literal, NamedEntityIdentifier, Variable } from 'models/Common/types';
+import {
+  Identifier,
+  Literal,
+  NamedEntityIdentifier,
+  Variable,
+  Workflow,
+} from '@flyteconsole/components';
 import { createWorkflowExecution, CreateWorkflowExecutionArguments } from 'models/Execution/api';
 import { listLaunchPlans } from 'models/Launch/api';
 import { LaunchPlan } from 'models/Launch/types';
 import { getWorkflow, listWorkflows } from 'models/Workflow/api';
-import { Workflow } from 'models/Workflow/types';
 import { createMockWorkflowClosure } from 'models/__mocks__/workflowData';
 import * as React from 'react';
 import { delayedPromise, pendingPromise } from 'test/utils';
@@ -268,10 +273,10 @@ describe('LaunchForm: Workflow', () => {
         exact: false,
       });
       const submitButton = getSubmitButton(container);
-      fireEvent.change(integerInput, { target: { value: 'abc' } });
+      await fireEvent.change(integerInput, { target: { value: 'abc' } });
       await waitFor(() => expect(submitButton).toBeDisabled());
 
-      fireEvent.change(integerInput, { target: { value: '123' } });
+      await fireEvent.change(integerInput, { target: { value: '123' } });
       act(() => {
         jest.runAllTimers();
       });
@@ -288,12 +293,12 @@ describe('LaunchForm: Workflow', () => {
         }),
       );
       const submitButton = getSubmitButton(container);
-      fireEvent.change(integerInput, { target: { value: 'abc' } });
+      await fireEvent.change(integerInput, { target: { value: 'abc' } });
       await waitFor(() => expect(submitButton).toBeDisabled());
 
-      fireEvent.change(integerInput, { target: { value: '123' } });
+      await fireEvent.change(integerInput, { target: { value: '123' } });
       await waitFor(() => expect(submitButton).toBeEnabled());
-      fireEvent.click(submitButton);
+      await fireEvent.click(submitButton);
       await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalled());
     });
 
@@ -306,9 +311,9 @@ describe('LaunchForm: Workflow', () => {
       // Click the expander for the workflow, select the second item
       const workflowDiv = getByTitle(formStrings.workflowVersion);
       const expander = getByRole(workflowDiv, 'button');
-      fireEvent.click(expander);
+      await fireEvent.click(expander);
       const items = await waitFor(() => getAllByRole(workflowDiv, 'menuitem'));
-      fireEvent.click(items[1]);
+      await fireEvent.click(items[1]);
 
       await waitFor(() => getByTitle(formStrings.launchPlan));
       expect(mockListLaunchPlans).toHaveBeenCalled();
@@ -323,9 +328,9 @@ describe('LaunchForm: Workflow', () => {
       // Click the expander for the workflow, select the second item
       const workflowDiv = getByTitle(formStrings.workflowVersion);
       const expander = getByRole(workflowDiv, 'button');
-      fireEvent.click(expander);
+      await fireEvent.click(expander);
       const items = await waitFor(() => getAllByRole(workflowDiv, 'menuitem'));
-      fireEvent.click(items[0]);
+      await fireEvent.click(items[0]);
 
       await waitFor(() => {});
       expect(mockListLaunchPlans).not.toHaveBeenCalled();
@@ -342,9 +347,9 @@ describe('LaunchForm: Workflow', () => {
 
       // Click the expander for the launch plan, select the second item
       const expander = getByRole(launchPlanDiv, 'button');
-      fireEvent.click(expander);
+      await fireEvent.click(expander);
       const items = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
-      fireEvent.click(items[1]);
+      await fireEvent.click(items[1]);
 
       await waitFor(() => getByTitle(formStrings.inputs));
       expect(
@@ -362,15 +367,15 @@ describe('LaunchForm: Workflow', () => {
       const integerInput = getByLabelText(integerInputName, {
         exact: false,
       });
-      fireEvent.change(integerInput, { target: { value: '10' } });
+      await fireEvent.change(integerInput, { target: { value: '10' } });
       await waitFor(() => {});
 
       // Click the expander for the launch plan, select the second item
       const launchPlanDiv = getByTitle(formStrings.launchPlan);
       const expander = getByRole(launchPlanDiv, 'button');
-      fireEvent.click(expander);
+      await fireEvent.click(expander);
       const items = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
-      fireEvent.click(items[1]);
+      await fireEvent.click(items[1]);
       await waitFor(() => {});
 
       expect(
@@ -387,7 +392,7 @@ describe('LaunchForm: Workflow', () => {
       const { container, getByText, getByTitle, queryByText } = renderForm();
       await waitFor(() => {});
 
-      fireEvent.click(getSubmitButton(container));
+      await fireEvent.click(getSubmitButton(container));
       await waitFor(() => {});
 
       expect(getByText(errorString)).toBeInTheDocument();
@@ -396,9 +401,9 @@ describe('LaunchForm: Workflow', () => {
       // Click the expander for the launch plan, select the second item
       const launchPlanDiv = getByTitle(formStrings.launchPlan);
       const expander = getByRole(launchPlanDiv, 'button');
-      fireEvent.click(expander);
+      await fireEvent.click(expander);
       const items = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
-      fireEvent.click(items[1]);
+      await fireEvent.click(items[1]);
       await waitFor(() => {});
       expect(queryByText(errorString)).not.toBeInTheDocument();
     });
@@ -416,7 +421,7 @@ describe('LaunchForm: Workflow', () => {
         const { container } = renderForm();
         await waitFor(() => {});
 
-        fireEvent.click(getSubmitButton(container));
+        await fireEvent.click(getSubmitButton(container));
         await waitFor(() => {});
 
         expect(mockCreateWorkflowExecution).toHaveBeenCalled();
@@ -434,7 +439,7 @@ describe('LaunchForm: Workflow', () => {
         } as Literal;
         parameters[integerInputName].default = {
           scalar: { primitive: { integer: Long.fromNumber(10000) } },
-        } as Literal;
+        } as any as Literal;
 
         const { getByLabelText } = renderForm();
         await waitFor(() => {});
@@ -481,7 +486,7 @@ describe('LaunchForm: Workflow', () => {
         // Click the expander for the workflow, select the second item
         const versionDiv = getByTitle(formStrings.workflowVersion);
         const expander = getByRole(versionDiv, 'button');
-        fireEvent.click(expander);
+        await fireEvent.click(expander);
         const items = await waitFor(() => getAllByRole(versionDiv, 'menuitem'));
 
         const expectedVersion = mockWorkflowVersions[2].id.version;
@@ -530,7 +535,7 @@ describe('LaunchForm: Workflow', () => {
         // Click the expander for the LaunchPlan, select the second item
         const launchPlanDiv = getByTitle(formStrings.launchPlan);
         const expander = getByRole(launchPlanDiv, 'button');
-        fireEvent.click(expander);
+        await fireEvent.click(expander);
         const items = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
 
         const expectedName = mockLaunchPlans[1].id.name;
@@ -565,17 +570,17 @@ describe('LaunchForm: Workflow', () => {
         // Click the expander for the launch plan, select the second item
         const launchPlanDiv = getByTitle(formStrings.launchPlan);
         const launchPlanExpander = getByRole(launchPlanDiv, 'button');
-        fireEvent.click(launchPlanExpander);
+        await fireEvent.click(launchPlanExpander);
         const launchPlanItems = await waitFor(() => getAllByRole(launchPlanDiv, 'menuitem'));
-        fireEvent.click(launchPlanItems[1]);
+        await fireEvent.click(launchPlanItems[1]);
         await waitFor(() => {});
 
         // Click the expander for the workflow, select the second item
         const workflowDiv = getByTitle(formStrings.workflowVersion);
         const expander = getByRole(workflowDiv, 'button');
-        fireEvent.click(expander);
+        await fireEvent.click(expander);
         const items = await waitFor(() => getAllByRole(workflowDiv, 'menuitem'));
-        fireEvent.click(items[1]);
+        await fireEvent.click(items[1]);
 
         await waitFor(() => {});
         expect(getByLabelText(formStrings.launchPlan)).toHaveValue(mockLaunchPlans[1].id.name);
@@ -629,7 +634,7 @@ describe('LaunchForm: Workflow', () => {
 
         // Focus the workflow version input
         const workflowInput = getByLabelText(formStrings.workflowVersion);
-        fireEvent.focus(workflowInput);
+        await fireEvent.focus(workflowInput);
 
         act(() => {
           jest.runAllTimers();
@@ -653,7 +658,7 @@ describe('LaunchForm: Workflow', () => {
         mockListWorkflows.mockClear();
 
         const versionInput = getByLabelText(formStrings.workflowVersion);
-        fireEvent.change(versionInput, {
+        await fireEvent.change(versionInput, {
           target: { value: inputString },
         });
 
@@ -766,7 +771,7 @@ describe('LaunchForm: Workflow', () => {
         expect(inputElement).not.toBeChecked();
         expect(inputElement).toHaveAttribute('data-indeterminate', 'true');
 
-        fireEvent.click(inputElement);
+        await fireEvent.click(inputElement);
         inputElement = await waitFor(() =>
           getByLabelText(`${formStrings.interruptible} (enabled)`, { exact: true }),
         );
@@ -774,7 +779,7 @@ describe('LaunchForm: Workflow', () => {
         expect(inputElement).toBeChecked();
         expect(inputElement).toHaveAttribute('data-indeterminate', 'false');
 
-        fireEvent.click(inputElement);
+        await fireEvent.click(inputElement);
         inputElement = await waitFor(() =>
           getByLabelText(`${formStrings.interruptible} (disabled)`, { exact: true }),
         );
@@ -782,7 +787,7 @@ describe('LaunchForm: Workflow', () => {
         expect(inputElement).not.toBeChecked();
         expect(inputElement).toHaveAttribute('data-indeterminate', 'false');
 
-        fireEvent.click(inputElement);
+        await fireEvent.click(inputElement);
         inputElement = await waitFor(() =>
           getByLabelText(`${formStrings.interruptible} (no override)`, { exact: true }),
         );
@@ -804,9 +809,9 @@ describe('LaunchForm: Workflow', () => {
         const integerInput = getByLabelText(integerInputName, {
           exact: false,
         });
-        fireEvent.change(integerInput, { target: { value: '123' } });
+        await fireEvent.change(integerInput, { target: { value: '123' } });
         await waitFor(() => expect(integerInput).toBeValid());
-        fireEvent.click(getSubmitButton(container));
+        await fireEvent.click(getSubmitButton(container));
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -833,8 +838,8 @@ describe('LaunchForm: Workflow', () => {
         const integerInput = getByLabelText(integerInputName, {
           exact: false,
         });
-        fireEvent.change(integerInput, { target: { value: '123' } });
-        fireEvent.click(getSubmitButton(container));
+        await fireEvent.change(integerInput, { target: { value: '123' } });
+        await fireEvent.click(getSubmitButton(container));
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -861,8 +866,8 @@ describe('LaunchForm: Workflow', () => {
         const integerInput = getByLabelText(integerInputName, {
           exact: false,
         });
-        fireEvent.change(integerInput, { target: { value: '123' } });
-        fireEvent.click(getSubmitButton(container));
+        await fireEvent.change(integerInput, { target: { value: '123' } });
+        await fireEvent.click(getSubmitButton(container));
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(

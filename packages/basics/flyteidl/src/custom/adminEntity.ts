@@ -1,4 +1,4 @@
-import * as $protobuf from 'protobufjs';
+import $protobuf from 'protobufjs';
 import { Admin } from '../index';
 
 type RequireFields<T, FieldTypes extends keyof T> = T & { [K in FieldTypes]-?: NonNullable<T[K]> };

@@ -5,14 +5,17 @@ import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
-import { ResourceType } from 'models/Common/types';
-import { CatalogCacheStatus } from 'models/Execution/enums';
-import { NodeExecution, TaskNodeMetadata } from 'models/Execution/types';
+import {
+  ResourceType,
+  CatalogCacheStatus,
+  NodeExecution,
+  TaskNodeMetadata,
+  Routes,
+} from '@flyteconsole/components';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
-import { Routes } from 'routes/routes';
 import { makeIdentifier } from 'test/modelUtils';
 import { createTestQueryClient } from 'test/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';

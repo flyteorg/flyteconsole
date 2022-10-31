@@ -1,9 +1,8 @@
-import { log } from '@flyteconsole/components';
+import { log, Workflow, WorkflowId } from '@flyteconsole/components';
 import { QueryInput, QueryType } from 'components/data/types';
 import { extractTaskTemplates } from 'components/hooks/utils';
 import { getNodeExecutionData } from 'models/Execution/api';
 import { getWorkflow } from 'models/Workflow/api';
-import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { QueryClient } from 'react-query';
 
 export function makeWorkflowQuery(queryClient: QueryClient, id: WorkflowId): QueryInput<Workflow> {

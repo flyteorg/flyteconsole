@@ -1,20 +1,25 @@
 import { DeepPartial } from 'common/types';
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
-import { Admin, Core } from '@flyteconsole/flyteidl';
-import { merge } from 'lodash';
-import { timeStampOffset } from 'mocks/utils';
-import { Identifier, ResourceType } from 'models/Common/types';
 import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  Identifier,
+  ResourceType,
   ExecutionState,
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,
-} from 'models/Execution/enums';
-import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+  CompiledTask,
+  Task,
+  Workflow,
+  Execution,
+  NodeExecution,
+  TaskExecution,
+} from '@flyteconsole/components';
+import { Admin, Core } from '@flyteconsole/flyteidl';
+import { merge } from 'lodash';
+import { timeStampOffset } from 'mocks/utils';
 import { LaunchPlan } from 'models/Launch/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { CompiledTask, Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
 import {
   defaultExecutionDuration,
   emptyInputUri,

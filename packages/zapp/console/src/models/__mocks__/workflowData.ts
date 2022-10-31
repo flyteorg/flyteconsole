@@ -1,8 +1,12 @@
-import { getCacheKey } from '@flyteconsole/components';
+import {
+  getCacheKey,
+  Identifier,
+  ResourceType,
+  Workflow,
+  WorkflowClosure,
+} from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
-import { Identifier, ResourceType } from 'models/Common/types';
-import { Workflow, WorkflowClosure } from 'models/Workflow/types';
 import { testDomain, testProject } from 'mocks/data/constants';
 import * as simpleClosure from './simpleWorkflowClosure.json';
 

@@ -1,6 +1,6 @@
-import * as webpack from 'webpack';
-import * as HTMLWebpackPlugin from 'html-webpack-plugin';
-import * as path from 'path';
+import webpack from 'webpack';
+import HTMLWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
 import chalk from 'chalk';
 import {
   LOCAL_DEV_HOST,

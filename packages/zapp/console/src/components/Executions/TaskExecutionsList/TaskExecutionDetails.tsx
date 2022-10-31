@@ -1,6 +1,6 @@
 import { unknownValueString } from 'common/constants';
 import { dateWithFromNow, protobufDurationToHMS } from 'common/formatters';
-import { timestampToDate } from 'common/utils';
+import { timestampToDate } from '@flyteconsole/components';
 import { DetailsGroup } from 'components/common/DetailsGroup';
 import * as React from 'react';
 import { Protobuf } from '@flyteconsole/flyteidl';

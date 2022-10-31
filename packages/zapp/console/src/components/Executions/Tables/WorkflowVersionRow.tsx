@@ -3,13 +3,12 @@ import Radio from '@material-ui/core/Radio';
 import classnames from 'classnames';
 import * as React from 'react';
 import { ListRowProps } from 'react-virtualized';
-import { Workflow } from 'models/Workflow/types';
+import { Workflow, ResourceIdentifier } from '@flyteconsole/components';
 import TableRow from '@material-ui/core/TableRow';
 import { useWorkflowExecutions } from 'components/hooks/useWorkflowExecutions';
 import { executionSortFields } from 'models/Execution/constants';
 import { SortDirection } from '@flyteconsole/flyteidl';
 import { executionFilterGenerator } from 'components/Entities/generators';
-import { ResourceIdentifier } from 'models/Common/types';
 import { useWorkflowVersionsColumnStyles } from './styles';
 import { WorkflowExecutionsTableState, WorkflowVersionColumnDefinition } from './types';
 
@@ -65,9 +64,9 @@ export const WorkflowVersionRow: React.FC<WorkflowVersionRowProps> = ({
     () =>
       workflow.id.resourceType
         ? executionFilterGenerator[workflow.id.resourceType](
-          workflow.id as ResourceIdentifier,
-          workflow.id.version,
-        )
+            workflow.id as ResourceIdentifier,
+            workflow.id.version,
+          )
         : [],
     [workflow.id],
   );

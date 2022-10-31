@@ -1,4 +1,4 @@
-import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecutionIdentifier } from '@flyteconsole/components';
 import * as React from 'react';
 
 export interface NodeExecutionsTimelineContextData {

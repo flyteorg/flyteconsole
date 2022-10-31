@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import * as React from 'react';
 
-import { SearchableList, SearchableListProps, SearchResult } from '../SearchableList';
+import { SearchableList, SearchableListProps, SearchResult } from '@flyteconsole/components';
 
 const listStringItems: string[] = ['A Workflow', 'BetterWorkflow', 'ZZLastItemz'];
 
@@ -60,9 +60,9 @@ describe('SearchableList', () => {
         ? `should match ${expectedValues} with input ${input}`
         : `should have no matches for input ${input}`;
 
-      it(expectString, () => {
+      it(expectString, async () => {
         const { getByRole, getByLabelText, queryAllByRole } = renderList();
-        fireEvent.change(getByRole('search'), {
+        await fireEvent.change(getByRole('search'), {
           target: { value: input },
         });
 
@@ -71,20 +71,20 @@ describe('SearchableList', () => {
       });
     });
 
-    it('should accept a string propertyGetter', () => {
+    it('should accept a string propertyGetter', async () => {
       props.propertyGetter = 'id';
       const { getByRole, getByLabelText } = renderList();
-      fireEvent.change(getByRole('search'), {
+      await fireEvent.change(getByRole('search'), {
         target: { value: 'A W' },
       });
 
       expect(getByLabelText('A Workflow')).toBeTruthy();
     });
 
-    it('should accept a function propertyGetter', () => {
+    it('should accept a function propertyGetter', async () => {
       props.propertyGetter = (item) => item.id;
       const { getByRole, getByLabelText } = renderList();
-      fireEvent.change(getByRole('search'), {
+      await fireEvent.change(getByRole('search'), {
         target: { value: 'A W' },
       });
 

@@ -18,7 +18,7 @@
         "test": "NODE_ENV=test jest"
     },
     "dependencies": {
-        "@flyteorg/flyteidl": "1.1.6",
+        "@flyteorg/flyteidl": "^1.2.2",
         "protobufjs": "6.11.3"
     }
 }

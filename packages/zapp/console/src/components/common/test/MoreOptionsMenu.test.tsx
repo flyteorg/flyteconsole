@@ -30,7 +30,7 @@ describe('MoreOptionsMenu', () => {
   const getMenu = async (renderResult: RenderResult) => {
     const { getByLabelText } = renderResult;
     const buttonEl = await waitFor(() => getByLabelText(labels.moreOptionsButton));
-    fireEvent.click(buttonEl);
+    await fireEvent.click(buttonEl);
     return waitFor(() => getByLabelText(labels.moreOptionsMenu));
   };
 
@@ -50,7 +50,7 @@ describe('MoreOptionsMenu', () => {
     const result = renderMenu();
     const menuEl = await getMenu(result);
     const itemEl = getByText(menuEl, options[0].label);
-    fireEvent.click(itemEl);
+    await fireEvent.click(itemEl);
     expect(options[0].onClick).toHaveBeenCalled();
   });
 
@@ -60,7 +60,7 @@ describe('MoreOptionsMenu', () => {
     expect(getByText(menuEl, options[0].label)).toBeInTheDocument();
 
     const itemEl = getByText(menuEl, options[0].label);
-    fireEvent.click(itemEl);
+    await fireEvent.click(itemEl);
     await waitForElementToBeRemoved(menuEl);
     expect(getByText(menuEl, options[0].label)).not.toBeInTheDocument();
   });
@@ -70,7 +70,7 @@ describe('MoreOptionsMenu', () => {
     const menuEl = await getMenu(result);
     expect(getByText(menuEl, options[0].label)).toBeInTheDocument();
 
-    fireEvent.keyDown(menuEl, { key: 'Escape', code: 'Escape' });
+    await fireEvent.keyDown(menuEl, { key: 'Escape', code: 'Escape' });
     await waitForElementToBeRemoved(menuEl);
     expect(getByText(menuEl, options[0].label)).not.toBeInTheDocument();
   });

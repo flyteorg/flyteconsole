@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { Execution } from 'models/Execution/types';
+import { Execution } from '@flyteconsole/components';
 import * as React from 'react';
 import { getLaunchPlan } from 'models/Launch/api';
 import { LaunchPlanSpec } from 'models/Launch/types';

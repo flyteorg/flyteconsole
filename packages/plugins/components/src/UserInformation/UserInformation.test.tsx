@@ -7,15 +7,6 @@ import { loadedFetchable } from '../hooks/__mocks__/fetchableData';
 import { UserInformation } from './UserInformation';
 
 jest.mock('../hooks/useUserProfile');
-// jest.mock('@flyteconsole/components', () => {
-//   const originalModule = jest.requireActual('@flyteconsole/components');
-
-//   return {
-//     __esModule: true,
-//     ...originalModule,
-//     useUserProfile: jest.fn(),
-//   };
-// });
 
 describe('UserInformation', () => {
   const sampleUserProfile: UserProfile = {

@@ -1,15 +1,13 @@
 import { Admin, Core, Protobuf, Service, RequestConfig } from '@flyteconsole/flyteidl';
-import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
 import {
+  getAdminEntity,
+  postAdminEntity,
   defaultListExecutionChildrenConfig,
   defaultPaginationConfig,
-} from 'models/AdminEntity/constants';
-import { endpointPrefixes } from 'models/Common/constants';
-import { Identifier, IdentifierScope, NameIdentifierScope } from 'models/Common/types';
-import { makeIdentifierPath } from 'models/Common/utils';
-import { defaultExecutionPrincipal } from './constants';
-import { ExecutionState } from './enums';
-import {
+  Identifier,
+  IdentifierScope,
+  NameIdentifierScope,
+  ExecutionState,
   DownloadLocation,
   Execution,
   ExecutionData,
@@ -19,7 +17,10 @@ import {
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
-} from './types';
+  endpointPrefixes,
+} from '@flyteconsole/components';
+import { makeIdentifierPath } from 'models/Common/utils';
+import { defaultExecutionPrincipal } from './constants';
 import {
   executionListTransformer,
   makeCreateDownloadLocationPath,

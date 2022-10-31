@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import * as React from 'react';
 import { mockExecution as mockTaskExecution } from 'models/Execution/__mocks__/mockTaskExecutionsData';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { getPhaseConstants } from 'components/Executions/ExecutionStatusBadge';
 import { TaskExecutionLogsCard } from '../TaskExecutionLogsCard';

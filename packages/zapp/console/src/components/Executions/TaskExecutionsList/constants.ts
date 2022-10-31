@@ -1,4 +1,4 @@
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 
 export const RENDER_ORDER: TaskExecutionPhase[] = [
   TaskExecutionPhase.UNDEFINED,

@@ -1,8 +1,6 @@
-import { getCacheKey } from '@flyteconsole/components';
+import { getCacheKey, Identifier, ResourceType, Task, TaskClosure } from '@flyteconsole/components';
 import { Admin } from '@flyteconsole/flyteidl';
 import { cloneDeep } from 'lodash';
-import { Identifier, ResourceType } from 'models/Common/types';
-import { Task, TaskClosure } from 'models/Task/types';
 import { testDomain, testProject } from 'mocks/data/constants';
 import * as simpleClosure from './simpleTaskClosure.json';
 

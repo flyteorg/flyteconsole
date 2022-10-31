@@ -1,6 +1,10 @@
-import { PaginatedFetchableData } from '@flyteconsole/components';
-import { Execution, NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
-import { Workflow } from 'models/Workflow/types';
+import {
+  PaginatedFetchableData,
+  Workflow,
+  Execution,
+  NodeExecution,
+  NodeExecutionIdentifier,
+} from '@flyteconsole/components';
 
 export interface WorkflowExecutionsTableState {
   selectedIOExecution: Execution | null;

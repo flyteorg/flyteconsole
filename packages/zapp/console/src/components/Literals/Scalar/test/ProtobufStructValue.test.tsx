@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { ProtobufStruct } from 'models/Common/types';
+import { ProtobufStruct } from '@flyteconsole/components';
 import * as React from 'react';
 import { ProtobufStructValue } from '../ProtobufStructValue';
 

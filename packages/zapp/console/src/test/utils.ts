@@ -1,6 +1,6 @@
 import { prettyDOM } from '@testing-library/react';
 import { createQueryClient } from 'components/data/queryCache';
-import * as Long from 'long';
+import Long from 'long';
 import { Logger, setLogger } from 'react-query';
 
 /** Shorthand for creating a `Long` from a `Number`. */

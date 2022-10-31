@@ -1,9 +1,13 @@
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { CacheContext, createCache } from '@flyteconsole/components';
+import {
+  CacheContext,
+  createCache,
+  CompiledWorkflowClosure,
+  Workflow,
+} from '@flyteconsole/components';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { extractTaskTemplates } from 'components/hooks/utils';
-import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
 import * as React from 'react';
 import { WorkflowGraph } from '../WorkflowGraph';
 import * as graphData from './rich.json';

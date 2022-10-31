@@ -7,8 +7,8 @@ import {
   maxContainerGridWidth,
   navbarGridHeight,
   sideNavGridWidth,
-} from 'common/layout';
-import { ErrorBoundary } from '@flyteconsole/components';
+  ErrorBoundary,
+} from '@flyteconsole/components';
 
 enum ContainerClasses {
   Centered = 'centered',

@@ -1,5 +1,5 @@
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
-import { LiteralMap } from 'models/Common/types';
+import { LiteralMap } from '@flyteconsole/components';
 import * as React from 'react';
 import { transformLiterals } from './helpers';
 import { NoneTypeValue } from './Scalar/NoneTypeValue';

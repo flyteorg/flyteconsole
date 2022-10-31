@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import { set } from 'lodash';
-import { SimpleType, TypedInterface, Variable } from 'models/Common/types';
-import { Task } from 'models/Task/types';
+import { SimpleType, TypedInterface, Variable, Task } from '@flyteconsole/components';
 import * as React from 'react';
 import { SimpleTaskInterface } from '../SimpleTaskInterface';
 

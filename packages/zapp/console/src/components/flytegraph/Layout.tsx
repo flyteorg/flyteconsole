@@ -1,7 +1,7 @@
 import { isEqual } from 'lodash';
 import memoizeOne, { EqualityFn } from 'memoize-one';
 import * as React from 'react';
-import * as shallowEqual from 'shallowequal';
+import shallowEqual from 'shallowequal';
 
 import { layoutGraph } from './layoutUtils';
 import { LayoutProps } from './types';

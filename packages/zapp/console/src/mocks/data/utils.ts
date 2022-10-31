@@ -1,14 +1,16 @@
-import { Binding, ResourceType, TaskLog } from 'models/Common/types';
 import {
+  Binding,
+  ResourceType,
+  TaskLog,
+  Task,
+  TaskNode,
+  Workflow,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
-} from 'models/Execution/types';
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
-import { TaskNode } from 'models/Node/types';
-import { Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
 import { dataUriPrefix, testDomain, testProject } from './constants';
 
 interface TaskNodeIdsResult {

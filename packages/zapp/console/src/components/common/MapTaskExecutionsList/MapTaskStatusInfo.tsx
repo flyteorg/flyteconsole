@@ -3,10 +3,9 @@ import { useEffect, useState } from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase, MapTaskExecution, TaskExecution } from '@flyteconsole/components';
 import { getTaskExecutionPhaseConstants } from 'components/Executions/utils';
 import { Core } from '@flyteconsole/flyteidl';
-import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { TaskNameList } from './TaskNameList';
 
 const useStyles = makeStyles((_theme: Theme) => ({

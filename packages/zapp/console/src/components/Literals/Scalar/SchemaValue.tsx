@@ -1,4 +1,4 @@
-import { Schema, SchemaColumn, SchemaColumnType } from 'models/Common/types';
+import { Schema, SchemaColumn, SchemaColumnType } from '@flyteconsole/components';
 import * as React from 'react';
 import { PrintList } from '../PrintList';
 import { PrintValue } from '../PrintValue';

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { LiteralMap } from 'models/Common/types';
+import { LiteralMap } from '@flyteconsole/components';
 import * as React from 'react';
 import { LiteralMapViewer } from '../LiteralMapViewer';
 

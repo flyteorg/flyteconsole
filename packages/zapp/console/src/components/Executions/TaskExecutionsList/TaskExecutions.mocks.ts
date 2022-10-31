@@ -1,9 +1,13 @@
 import { Protobuf, Event } from '@flyteconsole/flyteidl';
-import { MessageFormat, ResourceType, TaskLog } from 'models/Common/types';
-import { TaskExecutionPhase } from 'models/Execution/enums';
-import { TaskExecution } from 'models/Execution/types';
+import {
+  MessageFormat,
+  ResourceType,
+  TaskLog,
+  TaskExecutionPhase,
+  TaskExecution,
+} from '@flyteconsole/components';
 
-import * as Long from 'long';
+import Long from 'long';
 import { TaskType } from '@flyteconsole/ui-atoms';
 
 // we probably will create a new helper function in future, to make testing/storybooks closer to what we see in API Json responses

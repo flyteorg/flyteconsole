@@ -1,7 +1,9 @@
-import { WorkflowId } from 'models/Workflow/types';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
-import { NamedEntityIdentifier } from 'models/Common/types';
+import {
+  WorkflowId,
+  WorkflowExecutionPhase,
+  NamedEntityIdentifier,
+  WorkflowExecutionIdentifier,
+} from '@flyteconsole/components';
 import { NamedEntityState } from 'models/enums';
 
 export type WorkflowListItem = {

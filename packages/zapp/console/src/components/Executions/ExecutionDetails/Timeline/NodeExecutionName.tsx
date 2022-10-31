@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { SelectNodeExecutionLink } from 'components/Executions/Tables/SelectNodeExecutionLink';
 import { isEqual } from 'lodash';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution } from '@flyteconsole/components';
 import * as React from 'react';
 import { useContext } from 'react';
 import { NodeExecutionsTimelineContext } from './context';

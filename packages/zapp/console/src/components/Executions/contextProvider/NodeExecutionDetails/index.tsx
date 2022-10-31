@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { log } from '@flyteconsole/components';
-import { Identifier } from 'models/Common/types';
-import { NodeExecution } from 'models/Execution/types';
-import { CompiledWorkflowClosure } from 'models/Workflow/types';
+import { log, Identifier, CompiledWorkflowClosure, NodeExecution } from '@flyteconsole/components';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { NodeExecutionDetails } from '../../types';

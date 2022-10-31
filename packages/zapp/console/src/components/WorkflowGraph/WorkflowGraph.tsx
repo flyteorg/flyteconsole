@@ -1,14 +1,18 @@
 import { dNode } from 'models/Graph/types';
-import { Workflow } from 'models/Workflow/types';
+import {
+  Workflow,
+  Error,
+  NonIdealState,
+  DataError,
+  createDebugLogger,
+  TaskExecutionPhase,
+  CompiledNode,
+} from '@flyteconsole/components';
 import * as React from 'react';
 import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
-import { Error } from 'models/Common/types';
-import { NonIdealState, DataError, createDebugLogger } from '@flyteconsole/components';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { useQuery } from 'react-query';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
-import { CompiledNode } from 'models/Node/types';
-import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useContext } from 'react';
 import { checkForDynamicExecutions } from 'components/common/utils';

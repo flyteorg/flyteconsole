@@ -13,14 +13,17 @@ import {
   ErrorBoundary,
   LargeLoadingSpinner,
   WaitForData,
+  Execution,
+  Routes,
+  limits,
+  getProjectDomainAttributes,
+  history,
 } from '@flyteconsole/components';
-import { limits } from 'models/AdminEntity/constants';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
 import { useWorkflowExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import { WorkflowExecutionsTable } from 'components/Executions/Tables/WorkflowExecutionsTable';
 import { makeWorkflowExecutionListQuery } from 'components/Executions/workflowExecutionQueries';
 import { executionSortFields } from 'models/Execution/constants';
-import { Execution } from 'models/Execution/types';
 import { BarChart } from 'components/common/BarChart';
 import {
   getExecutionTimeData,
@@ -28,10 +31,7 @@ import {
 } from 'components/Entities/EntityExecutionsBarChart';
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';
-import { history } from 'routes/history';
-import { Routes } from 'routes/routes';
 import { compact } from 'lodash';
-import { getProjectDomainAttributes } from 'models/Project/api';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 

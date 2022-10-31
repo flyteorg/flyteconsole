@@ -1,7 +1,12 @@
-import { dateToTimestamp, millisecondsToDuration, stringifyValue } from 'common/utils';
+import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  stringifyValue,
+  BlobDimensionality,
+  SchemaColumnType,
+} from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
-import * as Long from 'long';
-import { BlobDimensionality, SchemaColumnType } from 'models/Common/types';
+import Long from 'long';
 import { InputType, InputTypeDefinition, InputValue } from '../../types';
 import { blobLiteral, primitiveLiteral } from '../../__mocks__/utils';
 import { literalNone } from '../constants';

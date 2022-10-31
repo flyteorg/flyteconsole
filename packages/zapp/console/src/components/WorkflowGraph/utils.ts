@@ -1,8 +1,13 @@
-import { Identifier } from 'models/Common/types';
+import {
+  Identifier,
+  CompiledTask,
+  TaskTemplate,
+  CompiledNode,
+  TaskNode,
+  CompiledWorkflow,
+  Workflow,
+} from '@flyteconsole/components';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
-import { CompiledNode, TaskNode } from 'models/Node/types';
-import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**

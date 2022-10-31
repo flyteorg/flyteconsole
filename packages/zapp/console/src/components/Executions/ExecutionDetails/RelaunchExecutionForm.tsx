@@ -1,4 +1,4 @@
-import { WaitForData, fetchStates, useFetchableData } from '@flyteconsole/components';
+import { WaitForData, fetchStates, useFetchableData, Execution } from '@flyteconsole/components';
 import { useAPIContext } from 'components/data/apiContext';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import {
@@ -7,7 +7,6 @@ import {
 } from 'components/Launch/LaunchForm/types';
 import { fetchAndMapExecutionInputValues } from 'components/Launch/LaunchForm/useMappedExecutionInputValues';
 import { getTaskInputs, getWorkflowInputs } from 'components/Launch/LaunchForm/utils';
-import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { isSingleTaskExecution } from './utils';
 

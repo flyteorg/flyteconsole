@@ -2,16 +2,20 @@ import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { WaitForData } from '@flyteconsole/components';
+import {
+  WaitForData,
+  NamedEntityMetadata,
+  ResourceIdentifier,
+  Variable,
+  TaskClosure,
+} from '@flyteconsole/components';
 import { useNamedEntity } from 'components/hooks/useNamedEntity';
-import { NamedEntityMetadata, ResourceIdentifier, Variable } from 'models/Common/types';
 import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { executionSortFields } from 'models/Execution/constants';
 import { SortDirection } from '@flyteconsole/flyteidl';
-import { TaskClosure } from 'models/Task/types';
 import { executionFilterGenerator } from './generators';
 import { Row } from './Row';
 import t, { patternKey } from './strings';

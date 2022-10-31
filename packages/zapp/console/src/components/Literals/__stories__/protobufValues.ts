@@ -1,4 +1,4 @@
-import { ProtobufValue } from 'models/Common/types';
+import { ProtobufValue } from '@flyteconsole/components';
 
 export const protobufValues: Dictionary<ProtobufValue> = {
   booleanFalse: {

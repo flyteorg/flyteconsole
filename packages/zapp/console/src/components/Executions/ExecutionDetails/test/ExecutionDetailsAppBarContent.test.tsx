@@ -1,13 +1,16 @@
 import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
-import { labels as commonLabels } from '@flyteconsole/components';
+import {
+  labels as commonLabels,
+  Identifier,
+  ResourceType,
+  WorkflowExecutionPhase,
+  Execution,
+  Routes,
+} from '@flyteconsole/components';
 import { ExecutionContext, ExecutionContextData } from 'components/Executions/contexts';
-import { Identifier, ResourceType } from 'models/Common/types';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
-import { Execution } from 'models/Execution/types';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router';
-import { Routes } from 'routes/routes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
 import { backLinkTitle, executionActionStrings } from '../constants';
@@ -63,7 +66,7 @@ describe('ExecutionDetailsAppBarContent', () => {
         renderResult = renderContent();
         const { getByLabelText } = renderResult;
         buttonEl = await waitFor(() => getByLabelText(commonLabels.moreOptionsButton));
-        fireEvent.click(buttonEl);
+        await fireEvent.click(buttonEl);
         await waitFor(() => getByLabelText(commonLabels.moreOptionsMenu));
       });
 

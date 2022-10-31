@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { BlobDimensionality } from 'models/Common/types';
+import { BlobDimensionality } from '@flyteconsole/components';
 import * as React from 'react';
 import { blobFormatHelperText, blobUriHelperText } from './constants';
 import { InputProps } from './types';

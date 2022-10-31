@@ -3,9 +3,12 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { ResourceIdentifier, ResourceType } from 'models/Common/types';
-import { Project } from 'models/Project/types';
-import { getProjectDomain } from 'models/Project/utils';
+import {
+  ResourceIdentifier,
+  ResourceType,
+  Project,
+  getProjectDomain,
+} from '@flyteconsole/components';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';

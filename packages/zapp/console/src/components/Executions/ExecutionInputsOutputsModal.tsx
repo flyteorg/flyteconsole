@@ -1,10 +1,8 @@
 import { Dialog, DialogContent, Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ClosableDialogTitle } from 'components/common/ClosableDialogTitle';
-import { WaitForData } from '@flyteconsole/components';
+import { WaitForData, Execution, emptyLiteralMapBlob } from '@flyteconsole/components';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
-import { emptyLiteralMapBlob } from 'models/Common/constants';
-import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { useWorkflowExecutionData } from './useWorkflowExecution';
 

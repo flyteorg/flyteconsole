@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { MapTaskExecution } from 'models/Execution/types';
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { MapTaskExecution, TaskExecutionPhase } from '@flyteconsole/components';
 import { PanelSection } from 'components/common/PanelSection';
 import { formatRetryAttempt, getTaskRetryAtemptsForIndex } from './utils';
 import { TaskExecutionLogsCard } from './TaskExecutionLogsCard';

@@ -1,4 +1,4 @@
-import { TaskExecutionPhase } from 'models/Execution/enums';
+import { TaskExecutionPhase } from '@flyteconsole/components';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { nodeIds } from '../constants';
 import {

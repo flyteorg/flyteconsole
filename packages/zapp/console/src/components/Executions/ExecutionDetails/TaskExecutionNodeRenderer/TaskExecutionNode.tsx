@@ -1,7 +1,7 @@
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { NodeRendererProps, Point } from 'components/flytegraph/types';
 import { TaskNodeRenderer } from 'components/WorkflowGraph/TaskNodeRenderer';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase } from '@flyteconsole/components';
 import { DAGNode } from 'models/Graph/types';
 import * as React from 'react';
 import { useContext } from 'react';

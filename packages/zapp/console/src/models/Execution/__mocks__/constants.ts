@@ -1,4 +1,4 @@
-import { WorkflowExecutionIdentifier } from '../types';
+import { WorkflowExecutionIdentifier } from '@flyteconsole/components';
 
 export const mockWorkflowExecutionId: WorkflowExecutionIdentifier = {
   project: 'flytekit',

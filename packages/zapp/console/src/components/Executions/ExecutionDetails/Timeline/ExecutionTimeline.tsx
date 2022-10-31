@@ -5,7 +5,7 @@ import { useNodeExecutionContext } from 'components/Executions/contextProvider/N
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { isEndNode, isStartNode, isExpanded } from 'components/WorkflowGraph/utils';
 import { tableHeaderColor } from '@flyteconsole/ui-atoms';
-import { timestampToDate } from 'common/utils';
+import { timestampToDate } from '@flyteconsole/components';
 import { dNode } from 'models/Graph/types';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { useQuery } from 'react-query';

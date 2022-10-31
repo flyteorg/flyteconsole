@@ -1,7 +1,6 @@
 import { FilterOperationName } from '@flyteconsole/flyteidl';
-import { NamedEntityIdentifier } from 'models/Common/types';
+import { NamedEntityIdentifier, FetchableData } from '@flyteconsole/components';
 import { LaunchPlan, LaunchPlanState } from 'models/Launch/types';
-import { FetchableData } from '@flyteconsole/components';
 import { useLaunchPlans } from './useLaunchPlans';
 
 function activeLaunchPlansForWorkflowIdFilter(workflowId: NamedEntityIdentifier) {

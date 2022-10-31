@@ -1,8 +1,12 @@
-import { Execution, NodeExecution, TaskExecution } from 'models/Execution/types';
+import {
+  Execution,
+  NodeExecution,
+  TaskExecution,
+  Task,
+  Identifier,
+  Workflow,
+} from '@flyteconsole/components';
 import { LaunchPlan } from 'models/Launch/types';
-import { Task } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
-import { Identifier } from 'models/Common/types';
 
 export const mockWorkflowId: Identifier = {
   project: 'project',

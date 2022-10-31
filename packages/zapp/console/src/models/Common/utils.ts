@@ -1,6 +1,5 @@
 import { takeWhile } from 'lodash';
-import { endpointPrefixes } from './constants';
-import { Identifier } from './types';
+import { Identifier, endpointPrefixes } from '@flyteconsole/components';
 
 /** Concatenates string fields of an Identifier (excluding resourceType) into a
  * predictable output suitable for use as a key.

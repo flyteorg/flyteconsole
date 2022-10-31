@@ -2,18 +2,20 @@ import { Button, Dialog, Link, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import classnames from 'classnames';
-import { navbarGridHeight } from 'common/layout';
+import {
+  navbarGridHeight,
+  Execution,
+  WorkflowExecutionPhase,
+  Routes,
+  history,
+} from '@flyteconsole/components';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles, interactiveTextDisabledColor } from '@flyteconsole/ui-atoms';
 import { useLocationState } from 'components/hooks/useLocationState';
 import { NavBarContent } from 'components/Navigation/NavBarContent';
-import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { history } from 'routes/history';
-import { Routes } from 'routes/routes';
-import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';

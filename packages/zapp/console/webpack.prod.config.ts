@@ -1,6 +1,6 @@
-import * as webpack from 'webpack';
-import * as CompressionWebpackPlugin from 'compression-webpack-plugin';
-import * as HTMLWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
+import CompressionWebpackPlugin from 'compression-webpack-plugin';
+import HTMLWebpackPlugin from 'html-webpack-plugin';
 import { ASSETS_PATH as publicPath } from './env';
 
 const { merge } = require('webpack-merge');

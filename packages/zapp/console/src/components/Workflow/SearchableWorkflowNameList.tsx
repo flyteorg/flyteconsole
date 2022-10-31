@@ -11,7 +11,13 @@ import {
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Routes } from 'routes/routes';
+import {
+  Routes,
+  padExecutionPaths,
+  padExecutions,
+  SearchableInput,
+  useSearchableListState,
+} from '@flyteconsole/components';
 import { Shimmer } from 'components/common/Shimmer';
 import { debounce } from 'lodash';
 import {
@@ -29,12 +35,9 @@ import { useMutation } from 'react-query';
 import { NamedEntityState } from 'models/enums';
 import { updateWorkflowState } from 'models/Workflow/api';
 import { useSnackbar } from 'notistack';
-import { padExecutionPaths, padExecutions } from 'common/utils';
 import { WorkflowListStructureItem } from './types';
 import ProjectStatusBar from '../Project/ProjectStatusBar';
 import { workflowNoInputsString } from '../Launch/LaunchForm/constants';
-import { SearchableInput } from '../common/SearchableList';
-import { useSearchableListState } from '../common/useSearchableListState';
 import { useWorkflowInfoItem } from './useWorkflowInfoItem';
 import t from '../Executions/Tables/WorkflowExecutionTable/strings';
 import { isWorkflowArchived } from './utils';

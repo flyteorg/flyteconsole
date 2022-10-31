@@ -1,7 +1,7 @@
 import { pickBy } from 'lodash';
 import { parse, ParsedQuery, stringify } from 'query-string';
 import { useEffect, useState } from 'react';
-import { history } from 'routes/history';
+import { history } from '@flyteconsole/components';
 
 /** A hook which allows reading/setting of the current query string params
  * It will attach a listener to history so that components using query params

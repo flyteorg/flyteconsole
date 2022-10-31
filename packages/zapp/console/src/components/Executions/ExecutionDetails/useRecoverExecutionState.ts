@@ -1,7 +1,7 @@
 import { useAPIContext } from 'components/data/apiContext';
 import { useContext } from 'react';
 import { useMutation } from 'react-query';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import { WorkflowExecutionIdentifier } from '@flyteconsole/components';
 import { ExecutionContext } from '../contexts';
 
 export function useRecoverExecutionState() {

@@ -4,7 +4,7 @@ import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
 import { SortDirection } from '@flyteconsole/flyteidl';
 import { listTaskExecutions } from 'models/Execution/api';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution } from '@flyteconsole/components';
 import { mockNodeExecutionResponse } from 'models/Execution/__mocks__/mockNodeExecutionsData';
 import { taskSortFields } from '@flyteconsole/ui-atoms';
 import * as React from 'react';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/react';
-import { ExecutionState } from 'models/Execution/enums';
+import { ExecutionState } from '@flyteconsole/components';
 import { createMockWorkflowExecutionsListResponse } from 'models/Execution/__mocks__/mockWorkflowExecutionsData';
 import { WorkflowExecutionsTable, WorkflowExecutionsTableProps } from '../WorkflowExecutionsTable';
 

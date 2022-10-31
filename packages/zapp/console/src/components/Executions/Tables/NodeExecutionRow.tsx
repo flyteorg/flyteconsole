@@ -4,7 +4,7 @@ import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import classnames from 'classnames';
 import { useTheme } from '@flyteconsole/ui-atoms';
 import { isEqual } from 'lodash';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution } from '@flyteconsole/components';
 import * as React from 'react';
 import { NodeExecutionsRequestConfigContext } from '../contexts';
 import { useChildNodeExecutionGroupsQuery } from '../nodeExecutionQueries';

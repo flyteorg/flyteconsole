@@ -1,10 +1,14 @@
 import { Admin, Core, RequestConfig } from '@flyteconsole/flyteidl';
-import { getAdminEntity, postAdminEntity } from 'models/AdminEntity/AdminEntity';
-import { defaultPaginationConfig } from 'models/AdminEntity/constants';
-import { Identifier, IdentifierScope } from 'models/Common/types';
+import {
+  getAdminEntity,
+  postAdminEntity,
+  defaultPaginationConfig,
+  Identifier,
+  IdentifierScope,
+  Workflow,
+} from '@flyteconsole/components';
 import { makeNamedEntityPath } from 'models/Common/utils';
 import { NamedEntityState } from 'models/enums';
-import { Workflow } from './types';
 import { makeWorkflowPath, workflowListTransformer } from './utils';
 
 /** Fetches a list of `Workflow` records matching the provided `scope` */

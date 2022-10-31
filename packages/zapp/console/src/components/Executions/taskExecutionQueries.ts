@@ -5,7 +5,7 @@ import {
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
-} from 'models/Execution/types';
+} from '@flyteconsole/components';
 import { QueryClient } from 'react-query';
 
 /** A query for fetching a single `TaskExecution` by id. */

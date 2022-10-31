@@ -1,6 +1,10 @@
 import { getTaskExecution } from 'models/Execution/api';
-import { TaskExecution, TaskExecutionIdentifier } from 'models/Execution/types';
-import { useFetchableData, FetchableData } from '@flyteconsole/components';
+import {
+  TaskExecution,
+  TaskExecutionIdentifier,
+  useFetchableData,
+  FetchableData,
+} from '@flyteconsole/components';
 
 /** A hook for fetching a TaskExecution */
 export function useTaskExecution(id: TaskExecutionIdentifier): FetchableData<TaskExecution> {

@@ -1,5 +1,5 @@
 import { Link } from '@material-ui/core';
-import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from '@flyteconsole/components';
 import * as React from 'react';
 
 /** Renders a link that, when clicked, will trigger selection of the

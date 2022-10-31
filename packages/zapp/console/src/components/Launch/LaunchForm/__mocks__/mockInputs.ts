@@ -1,8 +1,14 @@
-import { dateToTimestamp, millisecondsToDuration } from 'common/utils';
+import {
+  dateToTimestamp,
+  millisecondsToDuration,
+  BlobDimensionality,
+  SimpleType,
+  TypedInterface,
+  Variable,
+} from '@flyteconsole/components';
 import { Core } from '@flyteconsole/flyteidl';
 import { cloneDeep, mapValues } from 'lodash';
-import * as Long from 'long';
-import { BlobDimensionality, SimpleType, TypedInterface, Variable } from 'models/Common/types';
+import Long from 'long';
 import { literalNone } from '../inputHelpers/constants';
 import { primitiveLiteral } from './utils';
 

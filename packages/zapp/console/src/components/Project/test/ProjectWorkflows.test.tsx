@@ -1,11 +1,10 @@
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import { APIContext } from 'components/data/apiContext';
 import { mockAPIContextValue } from 'components/data/__mocks__/apiContext';
-import { FetchableData, useUserProfile, UserProfile } from '@flyteconsole/components';
+import { FetchableData, useUserProfile, UserProfile, NamedEntity } from '@flyteconsole/components';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
 import { FilterOperationName } from '@flyteconsole/flyteidl';
 import { listNamedEntities } from 'models/Common/api';
-import { NamedEntity } from 'models/Common/types';
 import { NamedEntityState } from 'models/enums';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -51,14 +50,15 @@ describe('ProjectWorkflows', () => {
 
   const renderComponent = () =>
     render(
-      <QueryClientProvider client={queryClient}>
-        <APIContext.Provider
-          value={mockAPIContextValue({ listNamedEntities: mockListNamedEntities })}
-        >
-          <ProjectWorkflows projectId={project} domainId={domain} />
-        </APIContext.Provider>
-      </QueryClientProvider>,
-      { wrapper: MemoryRouter },
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <APIContext.Provider
+            value={mockAPIContextValue({ listNamedEntities: mockListNamedEntities })}
+          >
+            <ProjectWorkflows projectId={project} domainId={domain} />
+          </APIContext.Provider>
+        </QueryClientProvider>
+      </MemoryRouter>,
     );
 
   it('does not show archived workflows', async () => {
@@ -98,7 +98,7 @@ describe('ProjectWorkflows', () => {
     expect(checkboxes[0]).toBeTruthy();
     expect(checkboxes[0]?.checked).toEqual(false);
     await waitFor(() => expect(getByText('MyWorkflow')));
-    fireEvent.click(checkboxes[0]);
+    await fireEvent.click(checkboxes[0]);
     // when user selects checkbox, table should have no workflows to display
     await waitFor(() => expect(queryByText('MyWorkflow')).not.toBeInTheDocument());
   });

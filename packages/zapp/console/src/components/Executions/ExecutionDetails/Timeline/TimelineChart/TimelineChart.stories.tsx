@@ -1,6 +1,6 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import * as React from 'react';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase } from '@flyteconsole/components';
 import { TimelineChart } from '.';
 
 const barItems = [

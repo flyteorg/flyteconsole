@@ -1,7 +1,7 @@
 import * as CommonAPI from 'models/Common/api';
 import * as ExecutionAPI from 'models/Execution/api';
 import * as LaunchAPI from 'models/Launch/api';
-import * as ProjectAPI from 'models/Project/api';
+import * as ProjectAPI from '@flyteconsole/components';
 import * as TaskAPI from 'models/Task/api';
 import * as WorkflowAPI from 'models/Workflow/api';
 import * as React from 'react';

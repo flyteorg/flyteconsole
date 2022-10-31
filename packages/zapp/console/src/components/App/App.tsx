@@ -10,6 +10,7 @@ import {
   FeatureFlagsProvider,
   LocalCacheProvider,
   ErrorBoundary,
+  history,
 } from '@flyteconsole/components';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { QueryAuthorizationObserver } from 'components/data/QueryAuthorizationObserver';
@@ -22,7 +23,6 @@ import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
-import { history } from 'routes/history';
 import { NavBarRouter } from 'routes/NavBarRouter';
 
 const queryClient = createQueryClient();

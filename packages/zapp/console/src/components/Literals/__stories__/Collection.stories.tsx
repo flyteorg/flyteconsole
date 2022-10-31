@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/react';
-import { LiteralCollection } from 'models/Common/types';
+import { LiteralCollection } from '@flyteconsole/components';
 import * as React from 'react';
 import { Card, CardContent } from '@material-ui/core';
 import { LiteralMapViewer } from '../LiteralMapViewer';

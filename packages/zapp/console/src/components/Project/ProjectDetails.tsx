@@ -1,13 +1,15 @@
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from '@flyteconsole/components';
-import { withRouteParams } from 'components/common/withRouteParams';
-import { useProject } from 'components/hooks/useProjects';
+import {
+  WaitForData,
+  withRouteParams,
+  Project,
+  Routes,
+  useProject,
+} from '@flyteconsole/components';
 import { useQueryState } from 'components/hooks/useQueryState';
-import { Project } from 'models/Project/types';
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
-import { Routes } from 'routes/routes';
 import { ProjectDashboard } from './ProjectDashboard';
 import { ProjectTasks } from './ProjectTasks';
 import { ProjectWorkflows } from './ProjectWorkflows';

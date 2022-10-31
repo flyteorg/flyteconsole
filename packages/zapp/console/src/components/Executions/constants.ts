@@ -10,7 +10,7 @@ import {
   NodeExecutionPhase,
   TaskExecutionPhase,
   WorkflowExecutionPhase,
-} from 'models/Execution/enums';
+} from '@flyteconsole/components';
 import t from './strings';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 

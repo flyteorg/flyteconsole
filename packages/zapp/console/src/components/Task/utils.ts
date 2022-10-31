@@ -1,4 +1,4 @@
-import { NamedEntity } from 'models/Common/types';
+import { NamedEntity } from '@flyteconsole/components';
 import { NamedEntityState } from 'models/enums';
 
 function isTaskStateArchive(task: NamedEntity): boolean {

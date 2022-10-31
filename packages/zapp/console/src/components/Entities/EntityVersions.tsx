@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { history } from 'routes/history';
-import Typography from '@material-ui/core/Typography';
-import { IconButton, makeStyles, Theme } from '@material-ui/core';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import {
+  history,
   LocalCacheItem,
   useLocalCache,
   isLoadingState,
   WaitForData,
+  Identifier,
+  ResourceIdentifier,
+  ResourceType,
 } from '@flyteconsole/components';
+import Typography from '@material-ui/core/Typography';
+import { IconButton, makeStyles, Theme } from '@material-ui/core';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersionsTable';
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from '@flyteconsole/ui-atoms';
 import { SortDirection } from '@flyteconsole/flyteidl';
-import { Identifier, ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { executionFilterGenerator, versionDetailsUrlGenerator } from './generators';
 import { WorkflowVersionsTablePageSize, entityStrings } from './constants';
