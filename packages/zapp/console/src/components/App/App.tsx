@@ -22,8 +22,7 @@ import { SkeletonTheme } from 'react-loading-skeleton';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
-import { ApplicationRouter } from 'routes/ApplicationRouter';
-import { NavBarRouter } from 'routes/NavBarRouter';
+import { AppFrame } from 'routes';
 
 const queryClient = createQueryClient();
 
@@ -51,8 +50,7 @@ export const AppComponent: React.FC = () => {
                     <CssBaseline />
                     <Router history={history}>
                       <ErrorBoundary fixed={true}>
-                        <NavBarRouter />
-                        <ApplicationRouter />
+                        <AppFrame />
                       </ErrorBoundary>
                     </Router>
                     <SystemStatusBanner />

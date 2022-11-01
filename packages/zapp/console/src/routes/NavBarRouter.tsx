@@ -1,16 +1,24 @@
 import { NavBar } from 'components/Navigation/NavBar';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Routes } from '@flyteconsole/components';
+import { AppRoute } from '@flyteconsole/components';
 
-const CustomNavBar = () => <NavBar useCustomContent={true} />;
+export const CustomNavBar = () => <NavBar useCustomContent={true} />;
 
+interface NavBarRouterProps {
+  routes: AppRoute[];
+}
 /** Handles the routing for content displayed in the NavBar */
-export const NavBarRouter: React.FC<{}> = () => (
+export const NavBarRouter: React.FC<NavBarRouterProps> = (props: NavBarRouterProps) => (
   <>
     <Switch>
-      <Route path={Routes.ExecutionDetails.path} component={CustomNavBar} />
-      <Route component={NavBar} />
+      {props.routes.map((route) => (
+        <Route
+          {...(route.path ? { path: route.path } : {})}
+          {...(route.exact ? { exact: route.exact } : {})}
+          component={route.component}
+        />
+      ))}
     </Switch>
   </>
 );
