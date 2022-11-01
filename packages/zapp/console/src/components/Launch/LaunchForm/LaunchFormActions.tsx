@@ -1,7 +1,8 @@
 import { Button, DialogActions, FormHelperText } from '@material-ui/core';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import * as React from 'react';
-import { history, Routes } from '@flyteconsole/components';
+import { Routes } from '@flyteconsole/components';
+import { useHistory } from 'react-router-dom';
 import { formStrings } from './constants';
 import { LaunchState } from './launchMachine';
 import { useStyles } from './styles';
@@ -20,6 +21,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
   onClose,
   isError,
 }) => {
+  const history = useHistory();
   const styles = useStyles();
   const submissionInFlight = state.matches(LaunchState.SUBMITTING);
   const canSubmit = [

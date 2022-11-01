@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
-import { WorkflowExecutionIdentifier, Routes, history } from '@flyteconsole/components';
+import { WorkflowExecutionIdentifier, Routes } from '@flyteconsole/components';
 import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 
 /** A simple component to render a link to a specific WorkflowExecution */
 export const WorkflowExecutionLink: React.FC<{
@@ -10,6 +10,7 @@ export const WorkflowExecutionLink: React.FC<{
   color?: 'primary' | 'disabled';
   id: WorkflowExecutionIdentifier;
 }> = ({ className, color = 'primary', id }) => {
+  const history = useHistory();
   const commonStyles = useCommonStyles();
   const {
     location: { pathname },

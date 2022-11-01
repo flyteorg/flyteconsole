@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  history,
   LocalCacheItem,
   useLocalCache,
   isLoadingState,
@@ -18,6 +17,7 @@ import { EntityVersionsTable } from 'components/Executions/Tables/EntityVersions
 import { useEntityVersions } from 'components/hooks/Entity/useEntityVersions';
 import { interactiveTextColor } from '@flyteconsole/ui-atoms';
 import { executionSortFields } from 'models/Execution/constants';
+import { useHistory } from 'react-router-dom';
 import { executionFilterGenerator, versionDetailsUrlGenerator } from './generators';
 import { WorkflowVersionsTablePageSize, entityStrings } from './constants';
 import t, { patternKey } from './strings';
@@ -56,6 +56,7 @@ export interface EntityVersionsProps {
  * @param showAll - shows all available entity versions
  */
 export const EntityVersions: React.FC<EntityVersionsProps> = ({ id, showAll = false }) => {
+  const history = useHistory();
   const { domain, project, resourceType, name } = id;
   const [showTable, setShowTable] = useLocalCache(LocalCacheItem.ShowWorkflowVersions);
   const styles = useStyles();

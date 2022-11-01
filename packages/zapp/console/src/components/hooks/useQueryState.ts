@@ -1,13 +1,14 @@
 import { pickBy } from 'lodash';
 import { parse, ParsedQuery, stringify } from 'query-string';
 import { useEffect, useState } from 'react';
-import { history } from '@flyteconsole/components';
+import { useHistory } from 'react-router-dom';
 
 /** A hook which allows reading/setting of the current query string params
  * It will attach a listener to history so that components using query params
  * are updated whenever the path/query changes.
  */
 export const useQueryState = <T extends ParsedQuery>() => {
+  const history = useHistory();
   const [params, setParams] = useState<Partial<T>>(parse(history.location.search) as Partial<T>);
 
   const setQueryState = (newState: T) => {

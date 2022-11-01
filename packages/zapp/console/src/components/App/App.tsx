@@ -10,7 +10,6 @@ import {
   FeatureFlagsProvider,
   LocalCacheProvider,
   ErrorBoundary,
-  history,
 } from '@flyteconsole/components';
 import { APIContext, useAPIState } from 'components/data/apiContext';
 import { QueryAuthorizationObserver } from 'components/data/QueryAuthorizationObserver';
@@ -21,7 +20,7 @@ import { hot } from 'react-hot-loader';
 import { SkeletonTheme } from 'react-loading-skeleton';
 import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query-devtools';
-import { Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { AppFrame } from 'routes';
 
 const queryClient = createQueryClient();
@@ -48,11 +47,11 @@ export const AppComponent: React.FC = () => {
                   <QueryAuthorizationObserver />
                   <SkeletonTheme color={skeletonColor} highlightColor={skeletonHighlightColor}>
                     <CssBaseline />
-                    <Router history={history}>
+                    <BrowserRouter>
                       <ErrorBoundary fixed={true}>
                         <AppFrame />
                       </ErrorBoundary>
-                    </Router>
+                    </BrowserRouter>
                     <SystemStatusBanner />
                   </SkeletonTheme>
                 </APIContext.Provider>

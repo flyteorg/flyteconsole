@@ -17,7 +17,6 @@ import {
   Routes,
   limits,
   getProjectDomainAttributes,
-  history,
 } from '@flyteconsole/components';
 import { DomainSettingsSection } from 'components/common/DomainSettingsSection';
 import { ExecutionFilters } from 'components/Executions/ExecutionFilters';
@@ -33,6 +32,7 @@ import {
 import { useExecutionShowArchivedState } from 'components/Executions/filters/useExecutionArchiveState';
 import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/useOnlyMyExecutionsFilterState';
 import { compact } from 'lodash';
+import { useHistory } from 'react-router-dom';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 
@@ -73,6 +73,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   domainId: domain,
   projectId: project,
 }) => {
+  const history = useHistory();
   const styles = useStyles();
   const archivedFilter = useExecutionShowArchivedState();
   const filtersState = useWorkflowExecutionFiltersState();

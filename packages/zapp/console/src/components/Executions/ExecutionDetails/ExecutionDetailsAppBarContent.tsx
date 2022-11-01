@@ -7,7 +7,6 @@ import {
   Execution,
   WorkflowExecutionPhase,
   Routes,
-  history,
 } from '@flyteconsole/components';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
@@ -15,7 +14,7 @@ import { useCommonStyles, interactiveTextDisabledColor } from '@flyteconsole/ui-
 import { useLocationState } from 'components/hooks/useLocationState';
 import { NavBarContent } from 'components/Navigation/NavBarContent';
 import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -78,6 +77,7 @@ const useStyles = makeStyles((theme: Theme) => {
 export const ExecutionDetailsAppBarContent: React.FC<{
   execution: Execution;
 }> = ({ execution }) => {
+  const history = useHistory();
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const [showInputsOutputs, setShowInputsOutputs] = React.useState(false);

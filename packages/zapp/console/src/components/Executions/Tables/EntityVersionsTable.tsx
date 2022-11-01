@@ -3,9 +3,9 @@ import { noVersionsFoundString } from 'common/constants';
 import { useCommonStyles } from '@flyteconsole/ui-atoms';
 import { ListProps } from 'components/common/types';
 import PaginatedDataList from 'components/Tables/PaginatedDataList';
-import { Workflow, Identifier, ResourceType, Routes, history } from '@flyteconsole/components';
+import { Workflow, Identifier, ResourceType, Routes } from '@flyteconsole/components';
 import * as React from 'react';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router-dom';
 import { entityStrings } from 'components/Entities/constants';
 import { useExecutionTableStyles } from './styles';
 import { useWorkflowExecutionsTableState } from './useWorkflowExecutionTableState';
@@ -27,6 +27,7 @@ interface EntityVersionRouteParams {
  * @constructor
  */
 export const EntityVersionsTable: React.FC<EntityVersionsTableProps> = (props) => {
+  const history = useHistory();
   const { value: versions, versionView, resourceType } = props;
   const state = useWorkflowExecutionsTableState();
   const commonStyles = useCommonStyles();

@@ -7,10 +7,10 @@ import Dashboard from '@material-ui/icons/Dashboard';
 import classnames from 'classnames';
 import { useCommonStyles, MuiLaunchPlanIcon } from '@flyteconsole/ui-atoms';
 import * as React from 'react';
-import { matchPath, NavLink, NavLinkProps } from 'react-router-dom';
+import { matchPath, NavLink, NavLinkProps, useHistory } from 'react-router-dom';
 import { useProject, useProjects, withRouteParams } from '../hooks';
 import { Project } from '../models';
-import { Routes, history } from '../Utils';
+import { Routes } from '../Utils';
 import { ProjectSelector } from './ProjectSelector';
 
 interface ProjectNavigationRouteParams {
@@ -61,6 +61,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   projectId,
   section,
 }) => {
+  const history = useHistory();
   const styles = useStyles();
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
