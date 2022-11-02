@@ -240,8 +240,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const queryClient = useQueryClient();
-  const { getNodeExecutionDetails } = useNodeExecutionContext();
-  const { compiledWorkflowClosure } = useNodeExecutionContext();
+  const { getNodeExecutionDetails, compiledWorkflowClosure } = useNodeExecutionContext();
   const isGateNode = isNodeGateNode(
     compiledWorkflowClosure?.primary.template.nodes ?? [],
     nodeExecutionId,
