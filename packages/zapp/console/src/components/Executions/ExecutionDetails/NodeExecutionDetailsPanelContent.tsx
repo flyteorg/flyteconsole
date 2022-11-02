@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { IconButton, Typography, Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
@@ -34,7 +34,7 @@ import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/Work
 import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
 import { Identifier } from 'models/Common/types';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
-import { makeListTaskExecutionsQuery } from '../nodeExecutionQueries';
+import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionDetails } from '../types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { getTaskExecutionDetailReasons } from './utils';
@@ -42,7 +42,6 @@ import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
 import { ExecutionDetailsActions } from './ExecutionDetailsActions';
-import { NodeExecutionsByIdContext } from '../contexts';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -242,20 +241,25 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
   const styles = useStyles();
   const queryClient = useQueryClient();
   const { getNodeExecutionDetails } = useNodeExecutionContext();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const isGateNode = isNodeGateNode(
     compiledWorkflowClosure?.primary.template.nodes ?? [],
     nodeExecutionId,
   );
 
+  const nodeExecutionQuery = useQuery<NodeExecution, Error>({
+    ...makeNodeExecutionQuery(nodeExecutionId),
+    // The selected NodeExecution has been fetched at this point, we don't want to
+    // issue an additional fetch.
+    staleTime: Infinity,
+  });
+
+  const nodeExecution = nodeExecutionQuery.data;
+
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
   const [selectedTaskExecution, setSelectedTaskExecution] = useState<MapTaskExecution | null>(null);
-  const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
-    nodeExecutionsById[nodeExecutionId.nodeId],
-  );
   const [nodePhase, setNodePhase] = useState<NodeExecutionPhase>(
     nodeExecution?.closure.phase ?? NodeExecutionPhase.UNDEFINED,
   );
@@ -283,9 +287,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<NodeExecutionDetailsProp
 
   useEffect(() => {
     setReasonsVisible(false);
-    const newNodeExecution = nodeExecutionsById[nodeExecutionId.nodeId];
-    setNodeExecution(newNodeExecution);
-    setNodePhase(newNodeExecution?.closure.phase ?? NodeExecutionPhase.UNDEFINED);
+    setNodePhase(nodeExecution?.closure.phase ?? NodeExecutionPhase.UNDEFINED);
   }, [nodeExecutionId]);
 
   useEffect(() => {
