@@ -41,7 +41,7 @@ export function dateToTimestamp(date: Date): Protobuf.Timestamp {
 /** Converts a Protobuf Duration object to its equivalent value in milliseconds */
 export function durationToMilliseconds(duration: Protobuf.IDuration): number {
   const nanos = duration.nanos || 0;
-  return (duration.seconds as Long).toNumber() * 1000 + nanos / 1e6;
+  return Long.fromNumber(duration.seconds as any as number).toNumber() * 1000 + nanos / 1e6;
 }
 
 /** Converts a (possibly fractional) value in milliseconds to a Protobuf Duration object */

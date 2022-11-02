@@ -1,4 +1,4 @@
-export {};
+import { FeatureFlag } from '@flyteconsole/components';
 
 declare global {
   export interface Window {
@@ -6,5 +6,10 @@ declare global {
       config?: Dictionary<object>;
     };
     env: Env;
+    setFeatureFlag: (flag: FeatureFlag, newValue: boolean) => void;
+    getFeatureFlag: (flag: FeatureFlag) => boolean;
+    clearRuntimeConfig: () => void;
   }
 }
+
+export {};
