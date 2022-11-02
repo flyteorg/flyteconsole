@@ -9,6 +9,7 @@
     },
     "main": "index.js",
     "workspaces": [
+        "packages/approot/**",
         "packages/basics/**",
         "packages/composites/**",
         "packages/plugins/**",

@@ -41,6 +41,7 @@
         "baseUrl": ".",
         "paths": {
             "@flyteconsole/*": [
+                "./packages/approot/*/src",
                 "./packages/basics/*/src",
                 "./packages/composites/*/src",
                 "./packages/plugins/*/src",

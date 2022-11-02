@@ -5,12 +5,12 @@
         "outDir": "./dist",
         "paths": {
             "@flyteconsole/*": [
+                "../../../approot/*/src",
                 "../../../basics/*/src",
                 "../../../composites/*/src",
                 "../../../plugins/*/src"
             ]
         },
-
         // TODO: this items should be removed when violations are fixed:
         "noUnusedLocals": false,
         "noUnusedParameters": false,
@@ -18,10 +18,21 @@
         "noImplicitOverride": false
     },
     "references": [
-        { "path": "../../basics/locale" },
-        { "path": "../../composites/ui-atoms" },
-        { "path": "../../plugins/components" },
-        { "path": "../../plugins/flyte-api" }
+        {
+            "path": "../../approot/console"
+        },
+        {
+            "path": "../../basics/locale"
+        },
+        {
+            "path": "../../composites/ui-atoms"
+        },
+        {
+            "path": "../../plugins/components"
+        },
+        {
+            "path": "../../plugins/flyte-api"
+        }
     ],
     "include": ["src/**/*"]
 }

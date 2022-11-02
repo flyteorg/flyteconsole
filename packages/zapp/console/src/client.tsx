@@ -4,13 +4,14 @@ import 'protobuf';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReactGA from 'react-ga4';
+import { App } from '@flyteconsole/console';
 
 const render = (Component: React.FC) => {
   ReactDOM.render(<Component />, document.getElementById('react-app'));
 };
 
 const initializeApp = () => {
-  const App = require('./components/App/App').App;
+  // const App = require('@flyteconsole/console').App;
 
   const { ENABLE_GA, GA_TRACKING_ID } = env;
 

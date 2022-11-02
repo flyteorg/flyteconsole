@@ -1,0 +1,35 @@
+{
+    "extends": "../../../tsconfig.base.json",
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "baseUrl": "./src",
+        "paths": {
+            "assets": ["./src/assets/*"],
+            "components": ["./src/components/*"],
+            "routes": ["./src/routes/*"],
+            "common": ["./src/common/*"],
+            "models": ["./src/models/*"]
+        },
+        // TODO: this items should be removed when violations are fixed:
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitAny": false,
+        "noImplicitOverride": false
+    },
+    "references": [
+        {
+            "path": "../../plugins/components/tsconfig.build.json"
+        },
+        {
+            "path": "../../plugins/flyte-api/tsconfig.build.json"
+        },
+        {
+            "path": "../../basics/locale/tsconfig.build.json"
+        },
+        {
+            "path": "../../composites/ui-atoms/tsconfig.build.json"
+        }
+    ],
+    "include": ["src/**/*"]
+}

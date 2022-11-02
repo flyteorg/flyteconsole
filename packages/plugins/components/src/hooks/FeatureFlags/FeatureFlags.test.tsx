@@ -25,6 +25,14 @@ function TestPage() {
   );
 }
 
+declare global {
+  interface Window {
+    setFeatureFlag: (flag: FeatureFlag, newValue: boolean) => void;
+    getFeatureFlag: (flag: FeatureFlag) => boolean;
+    clearRuntimeConfig: () => void;
+  }
+}
+
 describe('FeatureFlags', () => {
   beforeEach(() => {
     render(<TestPage />);

@@ -14,19 +14,16 @@
     ],
     "references": [
         {
-            "path": "../../approot/console/tsconfig.build.json"
+            "path": "../../plugins/components/tsconfig.build.json"
+        },
+        {
+            "path": "../../plugins/flyte-api/tsconfig.build.json"
         },
         {
             "path": "../../basics/locale/tsconfig.build.json"
         },
         {
             "path": "../../composites/ui-atoms/tsconfig.build.json"
-        },
-        {
-            "path": "../../plugins/components/tsconfig.build.json"
-        },
-        {
-            "path": "../../plugins/flyte-api/tsconfig.build.json"
         }
     ]
 }

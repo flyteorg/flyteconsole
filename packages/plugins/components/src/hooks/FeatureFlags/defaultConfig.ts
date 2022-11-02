@@ -1,13 +1,6 @@
 /**
  * Default Feature Flag config - used for features in developement.
  */
-declare global {
-  interface Window {
-    setFeatureFlag: (flag: FeatureFlag, newValue: boolean) => void;
-    getFeatureFlag: (flag: FeatureFlag) => boolean;
-    clearRuntimeConfig: () => void;
-  }
-}
 
 export enum FeatureFlag {
   // Test flag is created only for unit-tests

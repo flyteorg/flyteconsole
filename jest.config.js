@@ -8,6 +8,7 @@ module.exports = {
 
   setupFilesAfterEnv: ['./script/test/jest-setup.ts'],
   projects: [
+    '<rootDir>/packages/approot/*',
     '<rootDir>/packages/basics/*',
     '<rootDir>/packages/composites/*',
     '<rootDir>/packages/plugins/*',
