@@ -24,8 +24,12 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppFrame } from '../../routes';
 
 const queryClient = createQueryClient();
-
-export const AppComponent: React.FC = () => {
+interface AppComponentProps {
+  registry: {
+    customNavbar: {};
+  };
+}
+export const AppComponent: React.FC<AppComponentProps> = (props: AppComponentProps) => {
   if (env.NODE_ENV === 'development') {
     debug.enable(`${debugPrefix}*:*`);
   }
@@ -49,7 +53,7 @@ export const AppComponent: React.FC = () => {
                     <CssBaseline />
                     <BrowserRouter>
                       <ErrorBoundary fixed={true}>
-                        <AppFrame />
+                        <AppFrame registy={props.registry} />
                       </ErrorBoundary>
                     </BrowserRouter>
                     <SystemStatusBanner />

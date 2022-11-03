@@ -1,4 +1,4 @@
-import { env } from '@flyteconsole/components';
+import { env, TestNavBar } from '@flyteconsole/components';
 import 'intersection-observer';
 import 'protobuf';
 import * as React from 'react';
@@ -8,6 +8,18 @@ import { App } from '@flyteconsole/console';
 
 const render = (Component: React.FC) => {
   ReactDOM.render(<Component />, document.getElementById('react-app'));
+};
+
+const WrappedApp = () => {
+  const navBar = TestNavBar;
+
+  return (
+    <App
+      registry={{
+        customNavbar: navBar,
+      }}
+    />
+  );
 };
 
 const initializeApp = () => {
@@ -22,9 +34,9 @@ const initializeApp = () => {
   if (env.NODE_ENV === 'development') {
     // We use style-loader in dev mode, but it causes a FOUC and some initial styling issues
     // so we'll give it time to add the styles before initial render.
-    setTimeout(() => render(App), 500);
+    setTimeout(() => render(WrappedApp), 500);
   } else {
-    render(App);
+    render(WrappedApp);
   }
 };
 

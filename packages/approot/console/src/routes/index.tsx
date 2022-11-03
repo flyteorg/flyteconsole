@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppRoute, Routes } from '@flyteconsole/components';
+import { AppRoute, env, Routes } from '@flyteconsole/components';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { CustomNavBar, NavBarRouter } from 'routes/NavBarRouter';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
@@ -18,14 +18,19 @@ function withContentContainer<P>(
   );
 }
 
-export const AppFrame: React.FC = () => {
+interface AppComponentProps {
+  registry: {
+    customNavbar: {};
+  };
+}
+export const AppFrame: React.FC<AppComponentProps> = (props: AppComponentProps) => {
   const navBarRoutes: AppRoute[] = [
     {
       path: Routes.ExecutionDetails.path,
       component: CustomNavBar,
     },
     {
-      component: NavBar,
+      component: props.registry.customNavbar ? props.registry.customNavbar : NavBar,
     },
   ];
 
