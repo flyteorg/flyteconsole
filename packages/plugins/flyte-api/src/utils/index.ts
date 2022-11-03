@@ -3,8 +3,8 @@ import axios, {
   AxiosRequestTransformer,
   AxiosResponseTransformer,
 } from 'axios';
-import * as snakecaseKeys from 'snakecase-keys';
-import * as camelcaseKeys from 'camelcase-keys';
+import snakecaseKeys from 'snakecase-keys';
+import camelcaseKeys from 'camelcase-keys';
 import { AdminEndpoint, adminApiPrefix, RawEndpoint } from './constants';
 import { isObject } from './nodeChecks';
 import { transformRequestError } from './errors';

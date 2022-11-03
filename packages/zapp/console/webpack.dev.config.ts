@@ -1,5 +1,5 @@
 import * as webpack from 'webpack';
-import * as HTMLWebpackPlugin from 'html-webpack-plugin';
+import HTMLWebpackPlugin from 'html-webpack-plugin';
 import * as path from 'path';
 import chalk from 'chalk';
 import {

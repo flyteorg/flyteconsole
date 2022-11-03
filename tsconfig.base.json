@@ -11,14 +11,12 @@
         "removeComments": false,
         "importHelpers": true,
         "forceConsistentCasingInFileNames": false,
-
         "jsx": "react",
         "lib": ["dom", "dom.iterable", "es6", "es2021"],
         "target": "esnext",
         "module": "commonjs",
         "moduleResolution": "node",
-        // "esModuleInterop": true
-
+        "esModuleInterop": true,
         "isolatedModules": true,
         "declaration": true,
         "declarationMap": true,
@@ -29,18 +27,17 @@
         "noUnusedParameters": true,
         "useDefineForClassFields": true,
         "useUnknownInCatchVariables": false,
-
         // More strict rules
         "noUncheckedIndexedAccess": false,
         "noPropertyAccessFromIndexSignature": false,
         "noImplicitOverride": true,
         "noFallthroughCasesInSwitch": true,
-
         "sourceMap": true,
         "composite": true,
         "baseUrl": ".",
         "paths": {
             "@flyteconsole/*": [
+                "./packages/approot/*/src",
                 "./packages/basics/*/src",
                 "./packages/composites/*/src",
                 "./packages/plugins/*/src",

@@ -4,14 +4,23 @@ import 'protobuf';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReactGA from 'react-ga4';
+import { App } from '@flyteconsole/console';
 
 const render = (Component: React.FC) => {
   ReactDOM.render(<Component />, document.getElementById('react-app'));
 };
 
-const initializeApp = () => {
-  const App = require('./components/App/App').App;
+const WrappedApp = () => {
+  return (
+    <App
+    // registry={{
+    //   customNavbar: navBar,
+    // }}
+    />
+  );
+};
 
+const initializeApp = () => {
   const { ENABLE_GA, GA_TRACKING_ID } = env;
 
   if (ENABLE_GA !== 'false') {
@@ -21,9 +30,9 @@ const initializeApp = () => {
   if (env.NODE_ENV === 'development') {
     // We use style-loader in dev mode, but it causes a FOUC and some initial styling issues
     // so we'll give it time to add the styles before initial render.
-    setTimeout(() => render(App), 500);
+    setTimeout(() => render(WrappedApp), 500);
   } else {
-    render(App);
+    render(WrappedApp);
   }
 };
 

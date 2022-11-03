@@ -13,14 +13,14 @@ describe('appInfo', () => {
 
     // click on the icon to open modal
     const infoIcon = getByTestId('infoIcon');
-    fireEvent.click(infoIcon);
+    await fireEvent.click(infoIcon);
     await waitFor(() => {
       expect(queryByText(title)).toBeInTheDocument();
     });
 
     // click on close button should close modal
     const closeButton = getByTestId('closeButton');
-    fireEvent.click(closeButton);
+    await fireEvent.click(closeButton);
     await waitFor(() => expect(queryByText(title)).not.toBeInTheDocument());
   });
 

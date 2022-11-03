@@ -49,6 +49,7 @@ npm-debug.log
 jest
 jest_0
 yarn-error.log
+ts-jest.log
 .coverage/
 
 # Certs
