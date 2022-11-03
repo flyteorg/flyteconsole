@@ -39,7 +39,7 @@ export const ExecutionMetadataExtra: React.FC<{
     rawOutputDataConfig,
     securityContext,
     interruptible,
-    skipCache,
+    overwriteCache,
   } = execution.spec;
 
   const [launchPlanSpec, setLaunchPlanSpec] = React.useState<Partial<LaunchPlanSpec>>({});
@@ -73,8 +73,8 @@ export const ExecutionMetadataExtra: React.FC<{
       value: interruptible ? (interruptible.value ? 'true' : 'false') : dashedValueString,
     },
     {
-      label: ExecutionMetadataLabels.skipCache,
-      value: skipCache ? 'true' : 'false',
+      label: ExecutionMetadataLabels.overwriteCache,
+      value: overwriteCache ? 'true' : 'false',
     },
   ];
 

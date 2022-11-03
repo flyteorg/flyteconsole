@@ -189,35 +189,35 @@ describe('RelaunchExecutionForm', () => {
       });
     });
 
-    it('should not set cache skip value if not provided', async () => {
-      delete execution.spec.skipCache;
+    it('should not set cache overwrite value if not provided', async () => {
+      delete execution.spec.overwriteCache;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: undefined,
+          overwriteCache: undefined,
         }),
       });
     });
 
-    it('should have correct cache skip value if override is enabled', async () => {
-      execution.spec.skipCache = true;
+    it('should have correct cache overwrite value if override is enabled', async () => {
+      execution.spec.overwriteCache = true;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: true,
+          overwriteCache: true,
         }),
       });
     });
 
-    it('should have correct interruptible value if override is disabled', async () => {
-      execution.spec.interruptible = Protobuf.BoolValue.create({ value: false });
+    it('should have correct cache overwrite value if override is disabled', async () => {
+      execution.spec.overwriteCache = false;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: undefined,
+          overwriteCache: undefined,
         }),
       });
     });
@@ -356,35 +356,35 @@ describe('RelaunchExecutionForm', () => {
       });
     });
 
-    it('should not set cache skip value if not provided', async () => {
-      delete execution.spec.skipCache;
+    it('should not set cache overwrite value if not provided', async () => {
+      delete execution.spec.overwriteCache;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: undefined,
+          overwriteCache: undefined,
         }),
       });
     });
 
-    it('should have correct cache skip value if override is enabled', async () => {
-      execution.spec.skipCache = true;
+    it('should have correct cache overwrite value if override is enabled', async () => {
+      execution.spec.overwriteCache = true;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: true,
+          overwriteCache: true,
         }),
       });
     });
 
-    it('should have correct cache skip value if override is disabled', async () => {
-      execution.spec.skipCache = false;
+    it('should have correct cache overwrite value if override is disabled', async () => {
+      execution.spec.overwriteCache = false;
       const { getByText } = renderForm();
       await waitFor(() => expect(getByText(mockContentString)));
       checkLaunchFormProps({
         initialParameters: expect.objectContaining({
-          skipCache: false,
+          overwriteCache: false,
         }),
       });
     });

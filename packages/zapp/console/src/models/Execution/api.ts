@@ -109,7 +109,7 @@ export interface CreateWorkflowExecutionArguments {
   project: string;
   referenceExecutionId?: WorkflowExecutionIdentifier;
   interruptible?: Protobuf.IBoolValue | null;
-  skipCache?: boolean | null;
+  overwriteCache?: boolean | null;
 }
 
 /** Submits a request to create a new `WorkflowExecution` using the provided
@@ -129,7 +129,7 @@ export const createWorkflowExecution = (
     project,
     referenceExecutionId: referenceExecution,
     interruptible,
-    skipCache,
+    overwriteCache,
   }: CreateWorkflowExecutionArguments,
   config?: RequestConfig,
 ) => {
@@ -164,8 +164,8 @@ export const createWorkflowExecution = (
     spec.interruptible = interruptible;
   }
 
-  if (skipCache) {
-    spec.skipCache = skipCache;
+  if (overwriteCache) {
+    spec.overwriteCache = overwriteCache;
   }
 
   return postAdminEntity<Admin.IExecutionCreateRequest, Admin.ExecutionCreateResponse>(

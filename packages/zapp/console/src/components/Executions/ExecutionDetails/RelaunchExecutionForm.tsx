@@ -36,7 +36,7 @@ function useRelaunchWorkflowFormState({ execution }: RelaunchExecutionFormProps)
             authRole,
             securityContext,
             interruptible,
-            skipCache,
+            overwriteCache,
           },
         } = execution;
 
@@ -62,7 +62,7 @@ function useRelaunchWorkflowFormState({ execution }: RelaunchExecutionFormProps)
           authRole,
           securityContext,
           interruptible,
-          skipCache,
+          overwriteCache,
         };
       },
     },
@@ -78,7 +78,7 @@ function useRelaunchTaskFormState({ execution }: RelaunchExecutionFormProps) {
       defaultValue: {} as TaskInitialLaunchParameters,
       doFetch: async (execution) => {
         const {
-          spec: { authRole, launchPlan: taskId, interruptible, skipCache },
+          spec: { authRole, launchPlan: taskId, interruptible, overwriteCache },
         } = execution;
         const task = await apiContext.getTask(taskId);
         const inputDefinitions = getTaskInputs(task);
@@ -89,7 +89,7 @@ function useRelaunchTaskFormState({ execution }: RelaunchExecutionFormProps) {
           },
           apiContext,
         );
-        return { authRole, values, taskId, interruptible, skipCache };
+        return { authRole, values, taskId, interruptible, overwriteCache };
       },
     },
     execution,

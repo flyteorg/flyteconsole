@@ -84,7 +84,7 @@ export interface WorkflowLaunchContext extends BaseLaunchContext {
   annotations?: Admin.IAnnotations | null;
   securityContext?: Core.ISecurityContext | null;
   interruptible?: Protobuf.IBoolValue | null;
-  skipCache?: boolean | null;
+  overwriteCache?: boolean | null;
 }
 
 export interface TaskLaunchContext extends BaseLaunchContext {
@@ -93,7 +93,7 @@ export interface TaskLaunchContext extends BaseLaunchContext {
   taskVersion?: Identifier;
   taskVersionOptions?: Task[];
   interruptible?: Protobuf.IBoolValue | null;
-  skipCache?: boolean | null;
+  overwriteCache?: boolean | null;
 }
 
 export interface TaskResumeContext extends BaseLaunchContext {

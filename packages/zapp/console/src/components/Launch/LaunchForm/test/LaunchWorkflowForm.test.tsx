@@ -868,10 +868,12 @@ describe('LaunchForm: Workflow', () => {
       });
     });
 
-    describe('skip cache', () => {
+    describe('overwrite cache', () => {
       it('should render checkbox', async () => {
         const { getByLabelText } = renderForm();
-        const inputElement = await waitFor(() => getByLabelText(t('skipCache'), { exact: false }));
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
         expect(inputElement).toBeInTheDocument();
         expect(inputElement).not.toBeChecked();
       });
@@ -879,14 +881,16 @@ describe('LaunchForm: Workflow', () => {
       it('should use initial values when provided', async () => {
         const initialParameters: WorkflowInitialLaunchParameters = {
           workflowId: mockWorkflowVersions[2].id,
-          skipCache: true,
+          overwriteCache: true,
         };
 
         const { getByLabelText } = renderForm({
           initialParameters,
         });
 
-        const inputElement = await waitFor(() => getByLabelText(t('skipCache'), { exact: false }));
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
         expect(inputElement).toBeInTheDocument();
         expect(inputElement).toBeChecked();
       });
@@ -894,7 +898,9 @@ describe('LaunchForm: Workflow', () => {
       it('should submit without cache skip override set', async () => {
         const { container, getByLabelText } = renderForm();
 
-        const inputElement = await waitFor(() => getByLabelText(t('skipCache'), { exact: false }));
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
         expect(inputElement).toBeInTheDocument();
         expect(inputElement).not.toBeChecked();
 
@@ -908,7 +914,7 @@ describe('LaunchForm: Workflow', () => {
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
             expect.objectContaining({
-              skipCache: false,
+              overwriteCache: false,
             }),
           ),
         );
@@ -916,11 +922,13 @@ describe('LaunchForm: Workflow', () => {
 
       it('should submit with cache skip override enabled', async () => {
         const initialParameters: WorkflowInitialLaunchParameters = {
-          skipCache: true,
+          overwriteCache: true,
         };
         const { container, getByLabelText } = renderForm({ initialParameters });
 
-        const inputElement = await waitFor(() => getByLabelText(t('skipCache'), { exact: false }));
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
         expect(inputElement).toBeInTheDocument();
         expect(inputElement).toBeChecked();
 
@@ -933,7 +941,7 @@ describe('LaunchForm: Workflow', () => {
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
             expect.objectContaining({
-              skipCache: true,
+              overwriteCache: true,
             }),
           ),
         );
@@ -941,11 +949,13 @@ describe('LaunchForm: Workflow', () => {
 
       it('should submit with cache skip override disabled', async () => {
         const initialParameters: WorkflowInitialLaunchParameters = {
-          skipCache: false,
+          overwriteCache: false,
         };
         const { container, getByLabelText } = renderForm({ initialParameters });
 
-        const inputElement = await waitFor(() => getByLabelText(t('skipCache'), { exact: false }));
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
         expect(inputElement).toBeInTheDocument();
         expect(inputElement).not.toBeChecked();
 
@@ -958,7 +968,7 @@ describe('LaunchForm: Workflow', () => {
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
             expect.objectContaining({
-              skipCache: false,
+              overwriteCache: false,
             }),
           ),
         );

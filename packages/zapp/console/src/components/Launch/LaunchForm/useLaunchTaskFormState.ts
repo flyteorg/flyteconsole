@@ -22,7 +22,7 @@ import {
   LaunchFormInputsRef,
   LaunchInterruptibleInputRef,
   LaunchRoleInputRef,
-  LaunchSkipCacheInputRef,
+  LaunchOverwriteCacheInputRef,
   LaunchTaskFormProps,
   LaunchTaskFormState,
   ParsedInput,
@@ -95,7 +95,7 @@ async function validate(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   _interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
-  _skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
+  _overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
@@ -112,7 +112,7 @@ async function submit(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
-  skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
   { referenceExecutionId, taskVersion }: TaskLaunchContext,
 ) {
   if (!taskVersion) {
@@ -128,7 +128,7 @@ async function submit(
   const { securityContext } = roleInputRef.current?.getValue();
   const literals = formInputsRef.current.getValues();
   const interruptible = interruptibleInputRef.current?.getValue();
-  const skipCache = skipCacheInputRef.current?.getValue();
+  const overwriteCache = overwriteCacheInputRef.current?.getValue();
   const launchPlanId = taskVersion;
   const { domain, project } = taskVersion;
 
@@ -140,7 +140,7 @@ async function submit(
     referenceExecutionId,
     inputs: { literals },
     interruptible,
-    skipCache,
+    overwriteCache,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -155,7 +155,7 @@ function getServices(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
-  skipCacheInputRef: RefObject<LaunchSkipCacheInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   return {
     loadTaskVersions: partial(loadTaskVersions, apiContext),
@@ -166,7 +166,7 @@ function getServices(
         formInputsRef,
         roleInputRef,
         interruptibleInputRef,
-        skipCacheInputRef,
+        overwriteCacheInputRef,
         launchContext,
       ),
     validate: partial(
@@ -174,7 +174,7 @@ function getServices(
       formInputsRef,
       roleInputRef,
       interruptibleInputRef,
-      skipCacheInputRef,
+      overwriteCacheInputRef,
     ),
   };
 }
@@ -194,14 +194,14 @@ export function useLaunchTaskFormState({
     taskId: preferredTaskId,
     values: defaultInputValues,
     interruptible,
-    skipCache,
+    overwriteCache,
   } = initialParameters;
 
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
-  const skipCacheInputRef = useRef<LaunchSkipCacheInputRef>(null);
+  const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
 
   const services = useMemo(
     () =>
@@ -210,9 +210,9 @@ export function useLaunchTaskFormState({
         formInputsRef,
         roleInputRef,
         interruptibleInputRef,
-        skipCacheInputRef,
+        overwriteCacheInputRef,
       ),
-    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, skipCacheInputRef],
+    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, overwriteCacheInputRef],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -229,7 +229,7 @@ export function useLaunchTaskFormState({
       referenceExecutionId,
       sourceId,
       interruptible,
-      skipCache,
+      overwriteCache,
     },
   });
 
@@ -279,7 +279,7 @@ export function useLaunchTaskFormState({
     formInputsRef,
     roleInputRef,
     interruptibleInputRef,
-    skipCacheInputRef,
+    overwriteCacheInputRef: overwriteCacheInputRef,
     state,
     service,
     taskSourceSelectorState,

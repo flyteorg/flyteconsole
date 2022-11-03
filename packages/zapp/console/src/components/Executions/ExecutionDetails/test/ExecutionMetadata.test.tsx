@@ -13,7 +13,7 @@ const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
 const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
-const skipCacheTestId = `metadata-${ExecutionMetadataLabels.skipCache}`;
+const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
 
 jest.mock('models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -97,21 +97,21 @@ describe('ExecutionMetadata', () => {
     expect(getByTestId(interruptibleTestId)).toHaveTextContent(dashedValueString);
   });
 
-  it('shows true if cache was skipped for execution', () => {
-    execution.spec.skipCache = true;
+  it('shows true if cache was overwritten for execution', () => {
+    execution.spec.overwriteCache = true;
     const { getByTestId } = renderMetadata();
-    expect(getByTestId(skipCacheTestId)).toHaveTextContent('true');
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('true');
   });
 
-  it('shows false if cache was not skipped for execution', () => {
-    execution.spec.skipCache = false;
+  it('shows false if cache was not overwritten for execution', () => {
+    execution.spec.overwriteCache = false;
     const { getByTestId } = renderMetadata();
-    expect(getByTestId(skipCacheTestId)).toHaveTextContent('false');
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
   });
 
-  it('shows false if no cache skip value is found in execution spec', () => {
-    delete execution.spec.skipCache;
+  it('shows false if no cache overwrite value is found in execution spec', () => {
+    delete execution.spec.overwriteCache;
     const { getByTestId } = renderMetadata();
-    expect(getByTestId(skipCacheTestId)).toHaveTextContent('false');
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
   });
 });
