@@ -11,13 +11,29 @@
         "access": "public",
         "registry": "https://registry.npmjs.org/"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flyteorg/flyteconsole.git",
+        "directory": "packages/approot/console"
+    },
+    "files": [
+        "README.md",
+        "LICENSE",
+        "lib/",
+        "dist/",
+        "!dist/tsconfig.build.tsbuildinfo",
+        "!dist/tsconfig.tsbuildinfo"
+    ],
     "scripts": {
+        "clean": "rm -rf dist && rm -rf lib",
+        "clean:all": "rm -rf node_modules && yarn clean",
         "build": "yarn build:esm && yarn build:cjs",
         "build:esm": "tsc --module esnext --outDir lib --project ./tsconfig.build.json",
         "build:cjs": "tsc --project ./tsconfig.build.json",
         "test": "NODE_ENV=test jest"
     },
     "dependencies": {
+        "@flyteorg/flyteidl": "^1.2.2",
         "@rjsf/core": "^3.2.1",
         "@rjsf/material-ui": "^3.2.1",
         "chalk": "^2.0.1",
@@ -27,17 +43,17 @@
         "cookie-parser": "^1.4.3",
         "dagre-d3": "^0.6.4",
         "dotenv": "^5.0.1",
-        "express": "^4.14.0",
-        "express-static-gzip": "^0.3.2",
         "fuzzysort": "^1.1.1",
         "js-yaml": "^3.13.1",
         "lodash": "^4.17.21",
         "long": "^5.2.0",
         "morgan": "^1.8.2",
-        "react-chartjs-2": "^4.0.0",
+        "react-chartjs-2": "^4.3.1",
         "react-flow-renderer": "10.3.8",
         "react-ga4": "^1.4.1",
         "react-json-view": "^1.21.3",
+        "react-query": "3.3.0",
+        "react-query-devtools": "3.0.0-beta.1",
         "react-transition-group": "^2.3.1",
         "serve-static": "^1.12.3",
         "tslib": "^1.9.0"
@@ -125,8 +141,8 @@
         "react-dom": "^16.13.1",
         "react-intersection-observer": "^8.25.1",
         "react-loading-skeleton": "^1.1.2",
-        "react-query": "^3.3.0",
-        "react-query-devtools": "^2.6.3",
+        "react-query": "3.3.0",
+        "react-query-devtools": "3.0.0-beta.1",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
         "react-virtualized": "^9.21.1",
@@ -156,6 +172,9 @@
         "@types/react": "^16.9.34",
         "react-router-dom": "^5.2.0",
         "@types/react-dom": "^16.9.7",
-        "@types/react-router-dom": "^5.3.3"
+        "@types/react-router-dom": "^5.3.3",
+        "@flyteorg/flyteidl": "^1.2.2",
+        "react-chartjs-2": "^4.0.0",
+        "react-flow-renderer": "10.3.8"
     }
 }

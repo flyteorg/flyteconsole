@@ -2,8 +2,21 @@
     "extends": "../../../tsconfig.base.json",
     "compilerOptions": {
         "rootDir": "./src",
-        "outDir": "./dist"
+        "outDir": "./dist",
+        // typings
+        // "declaration": true,
+        // "declarationDir": "./tdist",
+        // "emitDeclarationOnly": true,
     },
-    "references": [{ "path": "../../basics/locale" }, { "path": "../../composites/ui-atoms" }],
-    "include": ["src/**/*"]
+    "references": [
+        {
+            "path": "../../basics/locale"
+        },
+        {
+            "path": "../../composites/ui-atoms"
+        }
+    ],
+    "include": [
+        "src/**/*"
+    ]
 }

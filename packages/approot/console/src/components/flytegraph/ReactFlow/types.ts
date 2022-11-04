@@ -16,6 +16,7 @@ export interface RFWrapperProps {
 /* Note: extending to allow applying styles directly to handle */
 export interface RFHandleProps extends HandleProps {
   style: any;
+  id?: string;
 }
 
 export enum RFGraphTypes {

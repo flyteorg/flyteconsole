@@ -13,6 +13,7 @@
     },
     "scripts": {
         "clean": "rm -rf dist && rm -rf lib",
+        "clean:all": "rm -rf node_modules && yarn clean",
         "build": "yarn build:esm && yarn build:cjs",
         "build:esm": "tsc --module esnext --outDir lib --project ./tsconfig.build.json",
         "build:cjs": "tsc --project ./tsconfig.build.json",

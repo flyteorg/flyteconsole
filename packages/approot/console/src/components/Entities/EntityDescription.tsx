@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WaitForData } from 'components/common/WaitForData';
 import { useNamedEntity } from 'components/hooks/useNamedEntity';
-import { NamedEntityMetadata, ResourceIdentifier, Variable } from 'models/Common/types';
+import { IdentifierScope, NamedEntityMetadata, ResourceIdentifier, Variable } from 'models/Common/types';
 import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
 import { ReactJsonViewWrapper } from 'components/common/ReactJsonView';
@@ -45,7 +45,7 @@ const InputsAndOuputs: React.FC<{
   // to render the input and output,
   // need to fetch the latest version and get the input and ouptut data
   const versions = useEntityVersions(
-    { ...id, version: '' },
+    { ...id, version: '' } as IdentifierScope,
     {
       sort,
       filter: baseFilters,

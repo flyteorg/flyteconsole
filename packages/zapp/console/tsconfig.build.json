@@ -14,19 +14,19 @@
     ],
     "references": [
         {
-            "path": "../../approot/console/tsconfig.build.json"
+            "path": "../../plugins/flyte-api"
         },
         {
-            "path": "../../basics/locale/tsconfig.build.json"
+            "path": "../../basics/locale"
         },
         {
-            "path": "../../composites/ui-atoms/tsconfig.build.json"
+            "path": "../../composites/ui-atoms"
         },
         {
-            "path": "../../plugins/components/tsconfig.build.json"
+            "path": "../../plugins/components"
         },
         {
-            "path": "../../plugins/flyte-api/tsconfig.build.json"
+            "path": "../../approot/console"
         }
-    ]
+    ],
 }

@@ -9,6 +9,7 @@ import {
   IdentifierScope,
   NamedEntity,
   NamedEntityIdentifier,
+  ResourceIdentifier,
   ResourceType,
   SystemStatus,
 } from './types';
@@ -59,7 +60,7 @@ export interface GetNamedEntityInput {
  * name of the entity to fetch. All fields are _required_
  * @param requestConfig A standard `RequestConfig` object
  */
-export const getNamedEntity = (input: GetNamedEntityInput, requestConfig?: RequestConfig) => {
+export const getNamedEntity = (input: ResourceIdentifier, requestConfig?: RequestConfig) => {
   return getAdminEntity<Admin.NamedEntity, NamedEntity>(
     {
       path: makeNamedEntityPath(input),
