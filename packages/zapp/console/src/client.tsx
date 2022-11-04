@@ -1,10 +1,9 @@
-import { env } from 'common/env';
 import 'intersection-observer';
 import 'protobuf';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import ReactGA from 'react-ga4';
-import { App } from '@flyteconsole/console';
+import { App, env } from '@flyteconsole/console';
 
 const render = (Component: React.FC) => {
   ReactDOM.render(<Component />, document.getElementById('react-app'));
