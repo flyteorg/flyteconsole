@@ -6,11 +6,6 @@ import * as React from 'react';
 import { InputProps } from './types';
 import { getLaunchInputId } from './utils';
 
-/* This module imports differently in tests and causes errors.
- * The long-term solution is to enable `esmModuleInterop` and change all of
- * our `import` to be normal default imports. But as this is the only
- * module currently exhibiting the problem, this is a less impactful change.
- */
 const momentDateUtils = momentUtils.default ? momentUtils.default : momentUtils;
 
 /** A form field for selecting a date/time from a picker or entering it via
