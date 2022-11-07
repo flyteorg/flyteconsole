@@ -28,11 +28,7 @@
     "author": "Lyft <flyte-eng@lyft.com>",
     "license": "Apache-2.0",
     "dependencies": {
-        "@flyteoss/components": "^0.0.2",
         "@flyteoss/console": "^0.0.9",
-        "@flyteoss/flyte-api": "^0.0.1",
-        "@flyteoss/locale": "^0.0.1",
-        "@flyteoss/ui-atoms": "^0.0.1",
         "@rjsf/core": "^3.2.1",
         "@rjsf/material-ui": "^3.2.1",
         "chalk": "^2.0.1",
