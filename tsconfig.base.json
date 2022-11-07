@@ -34,16 +34,7 @@
         "noFallthroughCasesInSwitch": true,
         "sourceMap": true,
         "composite": true,
-        "baseUrl": ".",
-        "paths": {
-            "@flyteconsole/*": [
-                "./packages/approot/*/src",
-                "./packages/basics/*/src",
-                "./packages/composites/*/src",
-                "./packages/plugins/*/src",
-                "./packages/zapp/*/src"
-            ]
-        }
+        "baseUrl": "."
     },
     "exclude": ["**/node_modules", "**/dist", "**/lib"]
 }

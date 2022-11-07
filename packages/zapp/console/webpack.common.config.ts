@@ -51,12 +51,12 @@ export const getDefinePlugin = (isServer: boolean) =>
     'process.env': isServer
       ? 'process.env'
       : Object.keys(env).reduce(
-          (result, key: string) => ({
-            ...result,
-            [key]: JSON.stringify((env as any)[key]),
-          }),
-          {},
-        ),
+        (result, key: string) => ({
+          ...result,
+          [key]: JSON.stringify((env as any)[key]),
+        }),
+        {},
+      ),
     __isServer: isServer,
   });
 
@@ -84,13 +84,6 @@ const resolve = {
   /** "main" fields in package.json files to resolve a CommonJS module for */
   mainFields: ['browser', 'module', 'main'],
   /** allow to resolve local packages to it's source code */
-  alias: {
-    '@flyteconsole/console': path.resolve(__dirname, '../../approot/console/src'),
-    '@flyteconsole/locale': path.resolve(__dirname, '../../basics/locale/src'),
-    '@flyteconsole/ui-atoms': path.resolve(__dirname, '../../composites/ui-atoms/src'),
-    '@flyteconsole/components': path.resolve(__dirname, '../../plugins/components/src'),
-    '@flyteconsole/flyte-api': path.resolve(__dirname, '../../plugins/flyte-api/src'),
-  },
 };
 
 /**

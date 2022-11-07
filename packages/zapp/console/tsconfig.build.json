@@ -13,20 +13,5 @@
         "**/*.stories.*"
     ],
     "references": [
-        {
-            "path": "../../plugins/flyte-api"
-        },
-        {
-            "path": "../../basics/locale"
-        },
-        {
-            "path": "../../composites/ui-atoms"
-        },
-        {
-            "path": "../../plugins/components"
-        },
-        {
-            "path": "../../approot/console"
-        }
     ],
 }
