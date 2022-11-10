@@ -30,7 +30,20 @@ console.log(chalk.yellow('TSconfig file used for build:'), chalk.green(configFil
 export const sourceMapRule: webpack.RuleSetRule = {
   test: /\.js$/,
   enforce: 'pre',
-  use: ['source-map-loader'],
+  use: [
+    {
+      loader: 'source-map-loader',
+      options: {
+        filterSourceMappingUrl: (url, resourcePath) => {
+          if (resourcePath.indexOf('node_modules') > -1) {
+            return false;
+          }
+
+          return true;
+        },
+      },
+    },
+  ],
 };
 
 /** Rule for images, icons and fonts */
@@ -51,12 +64,12 @@ export const getDefinePlugin = (isServer: boolean) =>
     'process.env': isServer
       ? 'process.env'
       : Object.keys(env).reduce(
-        (result, key: string) => ({
-          ...result,
-          [key]: JSON.stringify((env as any)[key]),
-        }),
-        {},
-      ),
+          (result, key: string) => ({
+            ...result,
+            [key]: JSON.stringify((env as any)[key]),
+          }),
+          {},
+        ),
     __isServer: isServer,
   });
 
