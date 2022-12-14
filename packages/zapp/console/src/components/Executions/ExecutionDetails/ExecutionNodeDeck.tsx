@@ -3,7 +3,7 @@ import { WaitForData } from 'components/common/WaitForData';
 import * as React from 'react';
 import { Core } from 'flyteidl';
 
-/** Fetches and renders the deck data for a given `deckUri` */
+/** Fetches and renders the deck data for a given `nodeExecutionId` */
 export const ExecutionNodeDeck: React.FC<{ nodeExecutionId: Core.NodeExecutionIdentifier }> = ({
   nodeExecutionId,
 }) => {

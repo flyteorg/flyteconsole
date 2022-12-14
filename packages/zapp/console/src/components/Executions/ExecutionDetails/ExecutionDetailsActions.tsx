@@ -77,8 +77,6 @@ export const ExecutionDetailsActions = ({
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
-  console.log('ExecutionDetailsActions');
-
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
