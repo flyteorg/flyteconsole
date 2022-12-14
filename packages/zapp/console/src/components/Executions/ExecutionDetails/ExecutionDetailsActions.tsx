@@ -77,6 +77,7 @@ export const ExecutionDetailsActions = ({
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
+  console.log('ExecutionDetailsActions');
 
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
@@ -168,7 +169,7 @@ export const ExecutionDetailsActions = ({
               <Close />
             </IconButton>
           </div>
-          <ExecutionNodeDeck deckUri={execution.value.closure.deckUri} />
+          <ExecutionNodeDeck nodeExecutionId={nodeExecutionId} />
         </Dialog>
       )}
     </>
