@@ -22,6 +22,7 @@ import { fetchTaskExecutionList } from '../taskExecutionQueries';
 import { getGroupedLogs } from '../TaskExecutionsList/utils';
 import { useAllTreeNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { ExecutionTab } from './ExecutionTab';
+import { useNodeExecutionsById } from '../useNodeExecutionsById';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filters: {
@@ -64,21 +65,17 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   const styles = useStyles();
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
-  const queryClient = useQueryClient();
-  const [nodeExecutionsLoading, setNodeExecutionsLoading] = useState<boolean>(true);
+  // const queryClient = useQueryClient();
+  // const [nodeExecutionsLoading, setNodeExecutionsLoading] = useState<boolean>(true);
 
   const {
     closure: { workflowId },
   } = execution;
 
-  const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
-  const [nodeExecutionsWithResources, setNodeExecutionsWithResources] = useState<
-    WorkflowNodeExecution[]
-  >([]);
-
-  const nodeExecutionsById = useMemo(() => {
-    return keyBy(nodeExecutionsWithResources, 'scopedId');
-  }, [nodeExecutionsWithResources]);
+  // const [nodeExecutions, setNodeExecutions] = useState<NodeExecution[]>([]);
+  // const [nodeExecutionsWithResources, setNodeExecutionsWithResources] = useState<
+  //   WorkflowNodeExecution[]
+  // >([]);
 
   // query to get all data to build Graph and Timeline
   const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution);
@@ -87,64 +84,75 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
     nodeExecutionsQuery: { data: filteredNodeExecutions },
   } = useExecutionNodeViewsState(execution, filterState.appliedFilters);
 
-  useEffect(() => {
-    let isCurrent = true;
+  // const nodeExecutionsById = useMemo(() => {
+  //   return keyBy(nodeExecutionsQuery.data, 'scopedId');
+  // }, [nodeExecutionsQuery.data]);
 
-    async function fetchData(baseNodeExecutions, queryClient) {
-      setNodeExecutionsLoading(true);
-      const newValue = await Promise.all(
-        baseNodeExecutions.map(async (baseNodeExecution) => {
-          const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
-
-          const useNewMapTaskView = taskExecutions.every((taskExecution) => {
-            const {
-              closure: { taskType, metadata, eventVersion = 0 },
-            } = taskExecution;
-            return isMapTaskV1(
-              eventVersion,
-              metadata?.externalResources?.length ?? 0,
-              taskType ?? undefined,
-            );
-          });
-          const externalResources: ExternalResource[] = taskExecutions
-            .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
-            .flat()
-            .filter((resource): resource is ExternalResource => !!resource);
-
-          const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
-
-          return {
-            ...baseNodeExecution,
-            ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
-          };
-        }),
-      );
-
-      if (isCurrent) {
-        setNodeExecutionsWithResources(newValue);
-        setNodeExecutionsLoading(false);
-      }
-    }
-
-    if (nodeExecutions.length > 0) {
-      fetchData(nodeExecutions, queryClient);
-    } else {
-      if (isCurrent) {
-        setNodeExecutionsLoading(false);
-      }
-    }
-    return () => {
-      isCurrent = false;
-    };
-  }, [nodeExecutions]);
-
-  const childGroupsQuery = useAllTreeNodeExecutionGroupsQuery(nodeExecutionsQuery.data ?? [], {});
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useNodeExecutionsById();
 
   useEffect(() => {
-    if (!childGroupsQuery.isLoading && childGroupsQuery.data) {
-      setNodeExecutions(childGroupsQuery.data);
-    }
-  }, [childGroupsQuery.data]);
+    const currentNodeExecutionsById = keyBy(nodeExecutionsQuery.data, 'scopedId');
+    setCurrentNodeExecutionsById(currentNodeExecutionsById);
+  }, [nodeExecutionsQuery.data]);
+
+  // useEffect(() => {
+  //   let isCurrent = true;
+
+  //   async function fetchData(baseNodeExecutions, queryClient) {
+  //     setNodeExecutionsLoading(true);
+  //     const newValue = await Promise.all(
+  //       baseNodeExecutions.map(async (baseNodeExecution) => {
+  //         const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
+
+  //         const useNewMapTaskView = taskExecutions.every((taskExecution) => {
+  //           const {
+  //             closure: { taskType, metadata, eventVersion = 0 },
+  //           } = taskExecution;
+  //           return isMapTaskV1(
+  //             eventVersion,
+  //             metadata?.externalResources?.length ?? 0,
+  //             taskType ?? undefined,
+  //           );
+  //         });
+  //         const externalResources: ExternalResource[] = taskExecutions
+  //           .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
+  //           .flat()
+  //           .filter((resource): resource is ExternalResource => !!resource);
+
+  //         const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+  //         return {
+  //           ...baseNodeExecution,
+  //           ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+  //         };
+  //       }),
+  //     );
+
+  //     if (isCurrent) {
+  //       setNodeExecutionsWithResources(newValue);
+  //       setNodeExecutionsLoading(false);
+  //     }
+  //   }
+
+  //   if (nodeExecutions.length > 0) {
+  //     fetchData(nodeExecutions, queryClient);
+  //   } else {
+  //     if (isCurrent) {
+  //       setNodeExecutionsLoading(false);
+  //     }
+  //   }
+  //   return () => {
+  //     isCurrent = false;
+  //   };
+  // }, [nodeExecutions]);
+
+  // const childGroupsQuery = useAllTreeNodeExecutionGroupsQuery(nodeExecutionsQuery.data ?? [], {});
+
+  // useEffect(() => {
+  //   if (!childGroupsQuery.isLoading && childGroupsQuery.data) {
+  //     setNodeExecutions(childGroupsQuery.data);
+  //   }
+  // }, [childGroupsQuery.data]);
 
   const LoadingComponent = () => {
     return (
@@ -155,25 +163,25 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
   };
 
   const renderTab = (tabType) => {
-    if (nodeExecutionsLoading) {
-      return <LoadingComponent />;
-    }
+    // if (nodeExecutionsLoading) {
+    //   return <LoadingComponent />;
+    // }
     return (
-      <WaitForQuery
-        errorComponent={DataError}
-        query={childGroupsQuery}
-        loadingComponent={LoadingComponent}
-      >
-        {() => (
-          <ExecutionTab
-            tabType={tabType}
-            // if only phase filter was applied, ignore request response, and filter out nodes via frontend filter
-            filteredNodeExecutions={
-              isPhaseFilter(filterState.appliedFilters) ? undefined : filteredNodeExecutions
-            }
-          />
-        )}
-      </WaitForQuery>
+      // <WaitForQuery
+      //   errorComponent={DataError}
+      //   query={childGroupsQuery}
+      //   loadingComponent={LoadingComponent}
+      // >
+      //   {() => (
+      <ExecutionTab
+        tabType={tabType}
+        // if only phase filter was applied, ignore request response, and filter out nodes via frontend filter
+        filteredNodeExecutions={
+          isPhaseFilter(filterState.appliedFilters) ? undefined : filteredNodeExecutions
+        }
+      />
+      //   )}
+      // </WaitForQuery>
     );
   };
 
@@ -185,7 +193,9 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({ executio
         <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
       <NodeExecutionDetailsContextProvider workflowId={workflowId}>
-        <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+        <NodeExecutionsByIdContext.Provider
+          value={{ nodeExecutionsById, setCurrentNodeExecutionsById }}
+        >
           <div className={styles.nodesContainer}>
             {tabState.value === tabs.nodes.id && (
               <div className={styles.filters}>

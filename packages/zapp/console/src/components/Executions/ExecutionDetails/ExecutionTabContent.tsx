@@ -69,14 +69,17 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
+  console.log('CLO ~ compiledWorkflowClosure', compiledWorkflowClosure);
   const { appliedFilters } = useNodeExecutionFiltersState();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
 
   const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : { dag: {}, staticExecutionIdsMap: {}, error: null };
-  const dynamicParents = checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap);
-  const { data: dynamicWorkflows } = useQuery(
+  const [dynamicParents, setDynamicParents] = useState(
+    checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap),
+  );
+  const { data: dynamicWorkflows, refetch } = useQuery(
     makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
   );
   const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
@@ -84,6 +87,22 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const [mergedDag, setMergedDag] = useState(null);
   const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
   const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
+  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
+
+  // useEffect(() => {
+  //   console.log('CLO ~ useEffect ~ shouldUpdate');
+  //   if (shouldUpdate) {
+  //     console.log('CLO ~ nodeExecutionsById', nodeExecutionsById);
+  //     const newDynamicParents = checkForDynamicExecutions(
+  //       nodeExecutionsById,
+  //       staticExecutionIdsMap,
+  //     );
+  //     setDynamicParents(newDynamicParents);
+  //     console.log('CLO ~ useEffect ~ newDynamicParents', newDynamicParents);
+  //     refetch();
+  //     setShouldUpdate(false);
+  //   }
+  // }, [shouldUpdate]);
 
   useEffect(() => {
     const nodes: dNode[] = compiledWorkflowClosure
@@ -107,7 +126,8 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     }
     setMergedDag(newMergedDag);
     setInitialNodes(plainNodes);
-  }, [compiledWorkflowClosure, dynamicWorkflows]);
+    console.log('CLO ~ useEffect ~ plainNodes', plainNodes);
+  }, [compiledWorkflowClosure, dynamicWorkflows, dynamicParents]);
 
   useEffect(() => {
     if (!isEqual(filters, appliedFilters)) {
@@ -138,110 +158,115 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     }
   }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
 
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  // const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   // Note: flytegraph allows multiple selection, but we only support showing
   // a single item in the details panel
-  const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(
-    selectedNodes.length
-      ? nodeExecutionsById[selectedNodes[0]]
-        ? nodeExecutionsById[selectedNodes[0]].id
-        : {
-            nodeId: selectedNodes[0],
-            executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
-          }
-      : null,
-  );
+  // const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(
+  //   selectedNodes.length
+  //     ? nodeExecutionsById[selectedNodes[0]]
+  //       ? nodeExecutionsById[selectedNodes[0]].id
+  //       : {
+  //           nodeId: selectedNodes[0],
+  //           executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
+  //         }
+  //     : null,
+  // );
 
-  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
-  const [isDetailsTabClosed, setIsDetailsTabClosed] = useState<boolean>(!selectedExecution);
+  // const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
+  // const [isDetailsTabClosed, setIsDetailsTabClosed] = useState<boolean>(!selectedExecution);
 
-  useEffect(() => {
-    setIsDetailsTabClosed(!selectedExecution);
-  }, [selectedExecution]);
+  // useEffect(() => {
+  //   setIsDetailsTabClosed(!selectedExecution);
+  // }, [selectedExecution]);
 
-  const onCloseDetailsPanel = () => {
-    setSelectedExecution(null);
-    setSelectedPhase(undefined);
-    setSelectedNodes([]);
-  };
+  // const onCloseDetailsPanel = () => {
+  //   setSelectedExecution(null);
+  //   setSelectedPhase(undefined);
+  //   setSelectedNodes([]);
+  // };
 
-  const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
+  // const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
 
-  const handleTimezoneChange = (tz) => setChartTimezone(tz);
+  // const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
-  const detailsPanelContext = useMemo(
-    () => ({ selectedExecution, setSelectedExecution }),
-    [selectedExecution, setSelectedExecution],
-  );
+  // const detailsPanelContext = useMemo(
+  //   () => ({ selectedExecution, setSelectedExecution }),
+  //   [selectedExecution, setSelectedExecution],
+  // );
 
-  const onNodeSelectionChanged = (newSelection: string[]) => {
-    const validSelection = newSelection.filter((nodeId) => {
-      if (nodeId === startNodeId || nodeId === endNodeId) {
-        return false;
-      }
-      return true;
-    });
-    setSelectedNodes(validSelection);
-    const newSelectedExecution = validSelection.length
-      ? nodeExecutionsById[validSelection[0]]
-        ? nodeExecutionsById[validSelection[0]].id
-        : {
-            nodeId: validSelection[0],
-            executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
-          }
-      : null;
-    setSelectedExecution(newSelectedExecution);
-  };
+  // const onNodeSelectionChanged = (newSelection: string[]) => {
+  //   const validSelection = newSelection.filter((nodeId) => {
+  //     if (nodeId === startNodeId || nodeId === endNodeId) {
+  //       return false;
+  //     }
+  //     return true;
+  //   });
+  //   setSelectedNodes(validSelection);
+  //   const newSelectedExecution = validSelection.length
+  //     ? nodeExecutionsById[validSelection[0]]
+  //       ? nodeExecutionsById[validSelection[0]].id
+  //       : {
+  //           nodeId: validSelection[0],
+  //           executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
+  //         }
+  //     : null;
+  //   setSelectedExecution(newSelectedExecution);
+  // };
 
-  const renderContent = () => {
-    switch (tabType) {
-      case tabs.nodes.id:
-        return (
-          <NodeExecutionsTable initialNodes={initialNodes} filteredNodes={initialFilteredNodes} />
-        );
-      case tabs.graph.id:
-        return (
-          <WorkflowGraph
-            mergedDag={mergedDag}
-            error={error}
-            dynamicWorkflows={dynamicWorkflows}
-            initialNodes={initialNodes}
-            onNodeSelectionChanged={onNodeSelectionChanged}
-            selectedPhase={selectedPhase}
-            onPhaseSelectionChanged={setSelectedPhase}
-            isDetailsTabClosed={isDetailsTabClosed}
-          />
-        );
-      case tabs.timeline.id:
-        return (
-          <div className={styles.wrapper}>
-            <div className={styles.container}>
-              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
-            </div>
-            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+  // const renderContent = () => {
+  //   switch (tabType) {
+  //     case tabs.nodes.id:
+  //       return (
+  //         <NodeExecutionsTable initialNodes={initialNodes} filteredNodes={initialFilteredNodes} />
+  //       );
+  //     case tabs.graph.id:
+  //       return (
+  //         <WorkflowGraph
+  //           mergedDag={mergedDag}
+  //           error={error}
+  //           dynamicWorkflows={dynamicWorkflows}
+  //           initialNodes={initialNodes}
+  //           onNodeSelectionChanged={onNodeSelectionChanged}
+  //           selectedPhase={selectedPhase}
+  //           onPhaseSelectionChanged={setSelectedPhase}
+  //           isDetailsTabClosed={isDetailsTabClosed}
+  //         />
+  //       );
+  //     case tabs.timeline.id:
+  //       return (
+  //         <div className={styles.wrapper}>
+  //           <div className={styles.container}>
+  //             <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
+  //           </div>
+  //           <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
+  //         </div>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   return (
-    <>
-      <DetailsPanelContext.Provider value={detailsPanelContext}>
-        {renderContent()}
-      </DetailsPanelContext.Provider>
-      {/* Side panel, shows information for specific node */}
-      <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
-        {!isDetailsTabClosed && selectedExecution && (
-          <NodeExecutionDetailsPanelContent
-            onClose={onCloseDetailsPanel}
-            taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
-            nodeExecutionId={selectedExecution}
-          />
-        )}
-      </DetailsPanel>
-    </>
+    // <>
+    //   <DetailsPanelContext.Provider value={detailsPanelContext}>
+    //     {renderContent()}
+    //   </DetailsPanelContext.Provider>
+    //   {/* Side panel, shows information for specific node */}
+    //   <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
+    //     {!isDetailsTabClosed && selectedExecution && (
+    //       <NodeExecutionDetailsPanelContent
+    //         onClose={onCloseDetailsPanel}
+    //         taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
+    //         nodeExecutionId={selectedExecution}
+    //       />
+    //     )}
+    //   </DetailsPanel>
+    // </>
+    <NodeExecutionsTable
+      initialNodes={initialNodes}
+      filteredNodes={initialFilteredNodes}
+      setShouldUpdate={setShouldUpdate}
+    />
   );
 };

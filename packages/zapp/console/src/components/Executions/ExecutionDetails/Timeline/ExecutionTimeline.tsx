@@ -80,7 +80,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {

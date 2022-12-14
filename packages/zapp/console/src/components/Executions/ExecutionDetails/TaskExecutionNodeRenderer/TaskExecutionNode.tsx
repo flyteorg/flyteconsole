@@ -13,7 +13,7 @@ import { StatusIndicator } from './StatusIndicator';
  */
 export const TaskExecutionNode: React.FC<NodeRendererProps<DAGNode>> = (props) => {
   const { node, config, selected } = props;
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const nodeExecution = nodeExecutionsById[node.id];
 
   const phase = nodeExecution ? nodeExecution.closure.phase : NodeExecutionPhase.UNDEFINED;

@@ -7,4 +7,12 @@ export interface ExecutionContextData {
 
 export const ExecutionContext = createContext<ExecutionContextData>({} as ExecutionContextData);
 
-export const NodeExecutionsByIdContext = createContext<Dictionary<NodeExecution>>({});
+export interface INodeExecutionsByIdContext {
+  nodeExecutionsById: Dictionary<NodeExecution>;
+  setCurrentNodeExecutionsById: (currentNodeExecutionsById: Dictionary<NodeExecution>) => void;
+}
+
+export const NodeExecutionsByIdContext = createContext<INodeExecutionsByIdContext>({
+  nodeExecutionsById: {},
+  setCurrentNodeExecutionsById: () => {},
+});

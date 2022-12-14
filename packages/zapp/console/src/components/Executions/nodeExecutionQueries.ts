@@ -257,7 +257,7 @@ async function fetchGroupsForParentNodeExecution(
   return Array.from(groupsByName.values());
 }
 
-function fetchChildNodeExecutionGroups(
+export function fetchChildNodeExecutionGroups(
   queryClient: QueryClient,
   nodeExecution: NodeExecution,
   config: RequestConfig,

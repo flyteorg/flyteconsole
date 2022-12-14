@@ -9,6 +9,8 @@ import { dateToTimestamp } from 'common/utils';
 import * as React from 'react';
 import { useMemo, useEffect, useState, useContext } from 'react';
 import { isEndNode, isExpanded, isStartNode } from 'components/WorkflowGraph/utils';
+import { useQueryClient } from 'react-query';
+import { isEqual, keyBy, merge } from 'lodash';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -18,10 +20,12 @@ import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { fetchChildNodeExecutionGroups } from '../nodeExecutionQueries';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -39,10 +43,13 @@ const scrollbarPadding = scrollbarSize();
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
+  setShouldUpdate,
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useContext(NodeExecutionsByIdContext);
   const { appliedFilters } = useNodeExecutionFiltersState();
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(
     appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
@@ -71,7 +78,27 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
-  const toggleNode = (id: string, scopeId: string, level: number) => {
+  const toggleNode = async (id: string, scopeId: string, level: number) => {
+    const childGroups = await fetchChildNodeExecutionGroups(
+      queryClient,
+      nodeExecutionsById[id],
+      {},
+    );
+
+    let childGroupsExecutionsById;
+    childGroups.forEach((group) => {
+      childGroupsExecutionsById = merge(
+        childGroupsExecutionsById,
+        keyBy(group.nodeExecutions, 'scopedId'),
+      );
+    });
+    const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+    // if (!isEqual(nodeExecutionsById, currentNodeExecutionsById)) {
+    setShouldUpdate(true);
+    // }
+
+    setCurrentNodeExecutionsById(currentNodeExecutionsById);
+
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
         return;

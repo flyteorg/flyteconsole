@@ -13,6 +13,7 @@ import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { isParentNode } from '../utils';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -62,7 +63,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   const expanderContent = (
     <div className={styles.namesContainerExpander}>
-      {node.nodes?.length ? (
+      {isParentNode(nodeExecution) ? (
         <RowExpander
           expanded={expanded}
           onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}

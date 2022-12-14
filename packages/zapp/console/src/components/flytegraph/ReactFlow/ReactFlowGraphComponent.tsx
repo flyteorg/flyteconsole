@@ -58,7 +58,7 @@ const ReactFlowGraphComponent = ({
   dynamicWorkflows,
   initialNodes,
 }) => {
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);

@@ -35,7 +35,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   onClose,
 }) => {
   const { formInputsRef, state, service } = useResumeFormState({ compiledNode, nodeId, onClose });
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(nodeExecutionsById[nodeId]);
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;

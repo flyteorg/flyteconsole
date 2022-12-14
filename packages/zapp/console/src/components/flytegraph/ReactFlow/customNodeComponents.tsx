@@ -215,7 +215,7 @@ const TaskPhaseItem = ({
 
 export const ReactFlowGateNode = ({ data }: RFNode) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { nodeType, nodeExecutionStatus, text, scopedId, onNodeSelectionChanged } = data;
   const phase = getNodeFrontendPhase(nodeExecutionStatus, true);
   const styles = getGraphNodeStyle(nodeType, phase);

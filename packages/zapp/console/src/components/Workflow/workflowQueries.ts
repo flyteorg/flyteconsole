@@ -58,6 +58,7 @@ export function makeNodeExecutionDynamicWorkflowQuery(
         return output;
       });
     },
+    enabled: false,
   };
 }
 
