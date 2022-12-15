@@ -158,27 +158,27 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     }
   }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
 
-  // const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
 
   // Note: flytegraph allows multiple selection, but we only support showing
   // a single item in the details panel
-  // const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(
-  //   selectedNodes.length
-  //     ? nodeExecutionsById[selectedNodes[0]]
-  //       ? nodeExecutionsById[selectedNodes[0]].id
-  //       : {
-  //           nodeId: selectedNodes[0],
-  //           executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
-  //         }
-  //     : null,
-  // );
+  const [selectedExecution, setSelectedExecution] = useState<NodeExecutionIdentifier | null>(
+    selectedNodes.length
+      ? nodeExecutionsById[selectedNodes[0]]
+        ? nodeExecutionsById[selectedNodes[0]].id
+        : {
+            nodeId: selectedNodes[0],
+            executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
+          }
+      : null,
+  );
 
-  // const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
-  // const [isDetailsTabClosed, setIsDetailsTabClosed] = useState<boolean>(!selectedExecution);
+  const [selectedPhase, setSelectedPhase] = useState<TaskExecutionPhase | undefined>(undefined);
+  const [isDetailsTabClosed, setIsDetailsTabClosed] = useState<boolean>(!selectedExecution);
 
-  // useEffect(() => {
-  //   setIsDetailsTabClosed(!selectedExecution);
-  // }, [selectedExecution]);
+  useEffect(() => {
+    setIsDetailsTabClosed(!selectedExecution);
+  }, [selectedExecution]);
 
   // const onCloseDetailsPanel = () => {
   //   setSelectedExecution(null);
@@ -186,71 +186,75 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   //   setSelectedNodes([]);
   // };
 
-  // const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
+  const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
 
-  // const handleTimezoneChange = (tz) => setChartTimezone(tz);
+  const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
   // const detailsPanelContext = useMemo(
   //   () => ({ selectedExecution, setSelectedExecution }),
   //   [selectedExecution, setSelectedExecution],
   // );
 
-  // const onNodeSelectionChanged = (newSelection: string[]) => {
-  //   const validSelection = newSelection.filter((nodeId) => {
-  //     if (nodeId === startNodeId || nodeId === endNodeId) {
-  //       return false;
-  //     }
-  //     return true;
-  //   });
-  //   setSelectedNodes(validSelection);
-  //   const newSelectedExecution = validSelection.length
-  //     ? nodeExecutionsById[validSelection[0]]
-  //       ? nodeExecutionsById[validSelection[0]].id
-  //       : {
-  //           nodeId: validSelection[0],
-  //           executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
-  //         }
-  //     : null;
-  //   setSelectedExecution(newSelectedExecution);
-  // };
+  const onNodeSelectionChanged = (newSelection: string[]) => {
+    const validSelection = newSelection.filter((nodeId) => {
+      if (nodeId === startNodeId || nodeId === endNodeId) {
+        return false;
+      }
+      return true;
+    });
+    setSelectedNodes(validSelection);
+    const newSelectedExecution = validSelection.length
+      ? nodeExecutionsById[validSelection[0]]
+        ? nodeExecutionsById[validSelection[0]].id
+        : {
+            nodeId: validSelection[0],
+            executionId: nodeExecutionsById[Object.keys(nodeExecutionsById)[0]].id.executionId,
+          }
+      : null;
+    setSelectedExecution(newSelectedExecution);
+  };
 
-  // const renderContent = () => {
-  //   switch (tabType) {
-  //     case tabs.nodes.id:
-  //       return (
-  //         <NodeExecutionsTable initialNodes={initialNodes} filteredNodes={initialFilteredNodes} />
-  //       );
-  //     case tabs.graph.id:
-  //       return (
-  //         <WorkflowGraph
-  //           mergedDag={mergedDag}
-  //           error={error}
-  //           dynamicWorkflows={dynamicWorkflows}
-  //           initialNodes={initialNodes}
-  //           onNodeSelectionChanged={onNodeSelectionChanged}
-  //           selectedPhase={selectedPhase}
-  //           onPhaseSelectionChanged={setSelectedPhase}
-  //           isDetailsTabClosed={isDetailsTabClosed}
-  //         />
-  //       );
-  //     case tabs.timeline.id:
-  //       return (
-  //         <div className={styles.wrapper}>
-  //           <div className={styles.container}>
-  //             <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
-  //           </div>
-  //           <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-  //         </div>
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
+  const renderContent = () => {
+    switch (tabType) {
+      case tabs.nodes.id:
+        return (
+          <NodeExecutionsTable
+            initialNodes={initialNodes}
+            filteredNodes={initialFilteredNodes}
+            setShouldUpdate={setShouldUpdate}
+          />
+        );
+      case tabs.graph.id:
+        return (
+          <WorkflowGraph
+            mergedDag={mergedDag}
+            error={error}
+            dynamicWorkflows={dynamicWorkflows}
+            initialNodes={initialNodes}
+            onNodeSelectionChanged={onNodeSelectionChanged}
+            selectedPhase={selectedPhase}
+            onPhaseSelectionChanged={setSelectedPhase}
+            isDetailsTabClosed={isDetailsTabClosed}
+          />
+        );
+      case tabs.timeline.id:
+        return (
+          <div className={styles.wrapper}>
+            <div className={styles.container}>
+              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
+            </div>
+            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     // <>
     //   <DetailsPanelContext.Provider value={detailsPanelContext}>
-    //     {renderContent()}
+    renderContent()
     //   </DetailsPanelContext.Provider>
     //   {/* Side panel, shows information for specific node */}
     //   <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
@@ -263,10 +267,5 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     //     )}
     //   </DetailsPanel>
     // </>
-    <NodeExecutionsTable
-      initialNodes={initialNodes}
-      filteredNodes={initialFilteredNodes}
-      setShouldUpdate={setShouldUpdate}
-    />
   );
 };
