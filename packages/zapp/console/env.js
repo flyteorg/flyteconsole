@@ -36,7 +36,7 @@ const PLUGINS_MODULE = process.env.PLUGINS_MODULE;
 const STATUS_URL = process.env.STATUS_URL;
 
 // Configure Google Analytics
-const ENABLE_GA = process.env.ENABLE_GA || false;
+const ENABLE_GA = process.env.ENABLE_GA || 'false';
 const GA_TRACKING_ID = process.env.GA_TRACKING_ID || '';
 
 const FLYTE_NAVIGATION = process.env.FLYTE_NAVIGATION || '';
