@@ -9,6 +9,7 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from 'common/env';
+import ReactGA from 'react-ga4';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
@@ -52,7 +53,7 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     },
     {
       name: t('versionGoogleAnalytics'),
-      version: t(patternKey('gaDisable', env.DISABLE_GA)),
+      version: t(patternKey('gaEnable', ReactGA.isInitialized.toString())),
       url: 'https://github.com/flyteorg/flyteconsole#google-analytics',
     },
   ];
