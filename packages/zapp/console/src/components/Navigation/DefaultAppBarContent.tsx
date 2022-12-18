@@ -53,7 +53,7 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     },
     {
       name: t('versionGoogleAnalytics'),
-      version: t(patternKey('gaEnable', ReactGA.isInitialized.toString())),
+      version: t(patternKey('gaActive', ReactGA.isInitialized.toString())),
       url: 'https://github.com/flyteorg/flyteconsole#google-analytics',
     },
   ];
