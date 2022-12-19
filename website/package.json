@@ -1,0 +1,63 @@
+{
+    "name": "@flyteconsole/client-app",
+    "version": "0.0.0-develop",
+    "description": "The web UI for the Flyte platform",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flyteorg/flyteconsole.git",
+        "directory": "website"
+    },
+    "main": "./src/client.tsx",
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' run -T webpack --config webpack.dev.config.ts --mode=development",
+        "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production run -T webpack --config webpack.prod.config.ts --mode=production --progress",
+        "start": "run -T webpack serve --config webpack.dev.config.ts",
+        "start:prod": "NODE_ENV=production node -r dotenv/config index.js",
+        "lint": "run -T eslint . --ext .js,.jsx,.ts,.tsx",
+        "format": "run -T prettier --ignore-path .eslintignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
+        "fix": "yarn lint --fix && yarn format",
+        "mockApi": "node ./mockApi",
+        "tdd": "yarn run test --watch --verbose false",
+        "test": "NODE_ENV=test jest"
+    },
+    "keywords": [
+        "react",
+        "flyte",
+        "flyteconsole"
+    ],
+    "author": "Lyft <flyte-eng@lyft.com>",
+    "license": "Apache-2.0",
+    "peerDependencies": {
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "react-router": "^5.3.4",
+        "react-router-dom": "^5.3.4"
+    },
+    "dependencies": {
+        "@flyteoss/common": "^0.0.7",
+        "@flyteoss/console": "^0.0.32",
+        "dotenv": "^5.0.1",
+        "lodash": "^4.17.21",
+        "long": "^5.2.1",
+        "protobufjs": "~6.11.3",
+        "react-ga4": "^1.4.1"
+    },
+    "devDependencies": {
+        "@material-ui/core": "^4.0.0",
+        "@material-ui/icons": "^4.0.0",
+        "@material-ui/pickers": "^3.2.2",
+        "@types/long": "^3.0.32",
+        "@types/node": "^14.18.12",
+        "camelcase-keys": "^7.0.2",
+        "react-hot-loader": "^4.1.2"
+    },
+    "resolutions": {
+        "micromatch": "^4.0.0"
+    },
+    "engines": {
+        "node": "18.1.0"
+    },
+    "packageManager": "yarn@3.2.1"
+}

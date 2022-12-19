@@ -1,0 +1,33 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@flyteoss/*": ["../*/src"],
+            "assets": ["./src/assets/**"],
+            "components": ["./src/components/**"],
+            "routes": ["./src/routes/**"],
+            "common": ["./src/common/**"],
+            "models": ["./src/models/**"]
+        }
+    },
+    "references": [
+        {
+            "path": "../common/tsconfig.dev.json"
+        },
+        {
+            "path": "../components/tsconfig.dev.json"
+        },
+        {
+            "path": "../flyte-api/tsconfig.dev.json"
+        },
+        {
+            "path": "../flyteidl/tsconfig.dev.json"
+        },
+        {
+            "path": "../locale/tsconfig.dev.json"
+        },
+        {
+            "path": "../ui-atoms/tsconfig.dev.json"
+        }
+    ]
+}

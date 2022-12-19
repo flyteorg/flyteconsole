@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@flyteoss/*": ["../*/src"]
+        }
+    },
+    "references": [
+        {
+            "path": "../locale/tsconfig.dev.json"
+        },
+        {
+            "path": "../ui-atoms/tsconfig.dev.json"
+        }
+    ]
+}

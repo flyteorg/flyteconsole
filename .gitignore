@@ -48,8 +48,22 @@ venv/
 npm-debug.log
 jest
 jest_0
-yarn-error.log
 .coverage/
+
+# yarn related
+node_modules
+.pnp.*
+*.yalc
+yalc.lock
+**/.yarn/*
+yarn-error.log
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
+# patches contain the patchfiles which have been generated with the `yarn patch-commit` command.
+# We always want them in repository, since they are necessary to install dependencies.
+!.yarn/patches
 
 # Certs
 .srl

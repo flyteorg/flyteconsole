@@ -6,11 +6,11 @@ import { QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 
-import { ErrorBoundary } from '../packages/zapp/console/src/components/common/ErrorBoundary';
-import { createQueryClient } from '../packages/zapp/console/src/components/data/queryCache';
-import { muiTheme } from '../packages/zapp/console/src/components/Theme/muiTheme';
-import { LocalCacheProvider } from '../packages/zapp/console/src/basics/LocalCache/ContextProvider';
-import { FeatureFlagsProvider } from '../packages/zapp/console/src/basics/FeatureFlags';
+import { ErrorBoundary } from '../packages/console/src/components/common/ErrorBoundary';
+import { createQueryClient } from '../packages/console/src/components/data/queryCache';
+import { muiTheme } from '../packages/console/src/components/Theme/muiTheme';
+import { LocalCacheProvider } from '../packages/console/src/basics/LocalCache/ContextProvider';
+import { FeatureFlagsProvider } from '../packages/console/src/basics/FeatureFlags';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {

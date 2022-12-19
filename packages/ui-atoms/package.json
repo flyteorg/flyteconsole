@@ -1,0 +1,51 @@
+{
+    "name": "@flyteoss/ui-atoms",
+    "version": "0.0.7",
+    "description": "Flyteconsole UI atoms, which didn't plan to be published and would be consumed as is internally",
+    "main": "./dist/index.js",
+    "module": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "license": "Apache-2.0",
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flyteorg/flyteconsole.git",
+        "directory": "packages/ui-atoms"
+    },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "dist",
+        "lib",
+        "node_modules",
+        "tsconfig.build.tsbuildinfo"
+    ],
+    "scripts": {
+        "clean": "rm -rf dist && rm -rf lib && rm -rf node_modules && rm -rf tsconfig.build.tsbuildinfo",
+        "clean:all": "rm -rf node_modules && yarn clean",
+        "build": "yarn build:esm && yarn build:cjs",
+        "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+        "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+        "test": "NODE_ENV=test jest"
+    },
+    "installConfig": {
+        "hoistingLimits": "workspaces"
+    },
+    "dependencies": {
+        "@emotion/core": "10.1.1",
+        "@material-ui/core": "^4.0.0",
+        "@material-ui/icons": "^4.0.0",
+        "classnames": "^2.3.1"
+    },
+    "peerDependencies": {
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+    },
+    "devDependencies": {
+        "@types/react": "^16.9.34",
+        "@types/react-dom": "^16.9.7"
+    }
+}

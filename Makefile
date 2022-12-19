@@ -19,6 +19,18 @@ build_prod:
 	yarn run clean
 	BASE_URL=/console yarn run build:prod
 
+.PHONY: pack
+pack:
+	yarn workspaces focus --production --all
+
+	yarn workspace @flyteoss/flyteidl build
+	yarn workspace @flyteoss/common build
+	yarn workspace @flyteoss/locale build
+	yarn workspace @flyteoss/ui-atoms build
+	yarn workspace @flyteoss/flyte-api build
+	yarn workspace @flyteoss/components build
+	yarn workspace @flyteoss/console build
+
 # test_unit runs all unit tests
 .PHONY: test_unit
 test_unit:

@@ -26,10 +26,11 @@ module.exports = {
 
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@flyteconsole/locale': path.resolve(__dirname, '../packages/basics/locale/src'),
-      '@flyteconsole/ui-atoms': path.resolve(__dirname, '../packages/composites/ui-atoms/src'),
-      '@flyteconsole/components': path.resolve(__dirname, '../packages/plugins/components/src'),
-      '@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src'),
+      '@flyteoss/console': path.resolve(__dirname, '../packages/console/src'),
+      '@flyteoss/locale': path.resolve(__dirname, '../packages/locale/src'),
+      '@flyteoss/ui-atoms': path.resolve(__dirname, '../packages/ui-atoms/src'),
+      '@flyteoss/components': path.resolve(__dirname, '../packages/components/src'),
+      '@flyteoss/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src'),
     };
 
     return config;

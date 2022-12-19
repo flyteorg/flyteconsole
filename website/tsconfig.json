@@ -1,0 +1,13 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "outDir": "./dist",
+        // TODO: this items should be removed when violations are fixed:
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "noImplicitAny": false,
+        "noImplicitOverride": false
+    },
+    "include": ["src/**/*"]
+}

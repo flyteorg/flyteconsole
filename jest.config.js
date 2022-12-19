@@ -7,12 +7,8 @@ module.exports = {
   verbose: false,
 
   setupFilesAfterEnv: ['./script/test/jest-setup.ts'],
-  projects: [
-    '<rootDir>/packages/basics/*',
-    '<rootDir>/packages/composites/*',
-    '<rootDir>/packages/plugins/*',
-    '<rootDir>/packages/zapp/*',
-  ],
+
+  projects: ['<rootDir>/packages/*', '<rootDir>/website'],
 
   coverageDirectory: '<rootDir>/.coverage',
   collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*/*.stories.{ts,tsx}', '!**/*/*.mocks.{ts,tsx}'],

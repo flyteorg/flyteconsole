@@ -18,7 +18,7 @@ async function editPackageJSON(options) {
     /* If no package.json, this will be skipped  */
     if (!err) {
       jsonFile = JSON.parse(data);
-      jsonFile.name = `@flyteconsole/${options.name}`;
+      jsonFile.name = `@flyteoss/${options.name}`;
       jsonFile.description = options.description;
 
       jsonFile.scripts.test = jsonFile.scripts.test.replace('folder-path', options.testPath);

@@ -1,0 +1,41 @@
+{
+    "name": "@flyteoss/locale",
+    "version": "0.0.4",
+    "description": "Flyteconsole basics locale setup",
+    "main": "./dist/index.js",
+    "module": "./lib/index.js",
+    "types": "./lib/index.d.ts",
+    "license": "Apache-2.0",
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/flyteorg/flyteconsole.git",
+        "directory": "packages/locale"
+    },
+    "files": [
+        "LICENSE",
+        "README.md",
+        "dist",
+        "lib",
+        "node_modules",
+        "tsconfig.build.tsbuildinfo"
+    ],
+    "installConfig": {
+        "hoistingLimits": "workspaces"
+    },
+    "scripts": {
+        "clean": "rm -rf dist && rm -rf lib && rm -rf node_modules && rm -rf tsconfig.build.tsbuildinfo",
+        "clean:all": "rm -rf node_modules && yarn clean",
+        "build": "yarn build:esm && yarn build:cjs",
+        "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+        "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+        "test": "NODE_ENV=test jest"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.2.1",
+        "@types/mocha": "^10.0.0"
+    }
+}

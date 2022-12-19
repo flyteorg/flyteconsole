@@ -1,25 +1,23 @@
-# Use node:17 to docker build on M1
-FROM node:16 as builder
+# syntax=docker/dockerfile:experimental
+FROM node:18.1.0 as builder
+
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
-WORKDIR /code/flyteconsole
-COPY ./packages/zapp/console/package*.json yarn.lock ./
+WORKDIR /my-project/
+COPY . /my-project/
+
 RUN : \
+  --mount=type=cache,target=/root/.yarn \
   # install production dependencies
-  && yarn install --production \
-  # move the production dependencies to the /app folder
+  && yarn workspaces focus --all --production \
+  && rm -rf node_modules/@flyteconsole \
+  && BASE_URL=/console yarn run build:prod \
+   # move the production dependencies to the /app folder
   && mkdir /app \
   && mv node_modules /app \
-  # install development dependencies so we can build
-  && yarn install
+  && mv ./website/dist /app \
+  && mv ./website/index.js ./website/env.js ./website/plugins.js /app
 
-COPY . .
-RUN : \
-  # build
-  && make build_prod \
-  # place the runtime application in /app
-  && mv ./packages/zapp/console/dist /app \
-  && mv ./packages/zapp/console/index.js ./packages/zapp/console/env.js ./packages/zapp/console/plugins.js /app
 
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole

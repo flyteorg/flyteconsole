@@ -1,0 +1,32 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "paths": {
+            "@flyteoss/*": ["../*/src"]
+        }
+    },
+    "references": [
+        {
+            "path": "../locale/tsconfig.build.json"
+        },
+        {
+            "path": "../ui-atoms/tsconfig.build.json"
+        }
+    ],
+    "exclude": [
+        // files excluded from the build, we can not put it inro default tsconfig
+        // as it will screw VSCode IntelliSence
+        "node_modules",
+        "dist",
+        "lib",
+        "build",
+        "**/test",
+        "**/mocks",
+        "**/__mocks__",
+        "**/__stories__",
+        "**/*.spec.*",
+        "**/*.test.*",
+        "**/*.mock.*",
+        "**/*.stories.*"
+    ]
+}
