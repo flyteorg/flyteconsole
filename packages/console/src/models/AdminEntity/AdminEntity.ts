@@ -36,7 +36,7 @@ async function request(
     ADMIN_REQUEST_HEADERS.split(';')?.map((str) => {
       const [key, value] = str.split(':');
       if (key && value && options.headers) {
-        options.headers[key] = value[0] === "'" ? value.substring(0, -1) : value;
+        options.headers[key] = value[0] === "'" ? value.substring(1, -1) : value;
       }
     });
   }
