@@ -7,6 +7,7 @@ export interface Env extends NodeJS.ProcessEnv {
   DISABLE_ANALYTICS?: string;
   NODE_ENV?: 'development' | 'production' | 'test';
   STATUS_URL?: string;
+  ADMIN_REQUEST_HEADERS?: string;
 }
 
 /** Represents a plain object where string keys map to values of the same type */

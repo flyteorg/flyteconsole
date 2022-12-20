@@ -15,6 +15,7 @@ async function request(
   /** Admin API options to use for the request */
   config: RequestConfig = {},
 ) {
+  const { ADMIN_REQUEST_HEADERS } = process.env;
   const options: AxiosRequestConfig = {
     method,
     data: config.data,
@@ -25,9 +26,19 @@ async function request(
   /* For protobuf responses, we need special accept/content headers and
     responseType */
   options.headers = { Accept: 'application/octet-stream' };
+
   options.responseType = 'arraybuffer';
   if (config.data) {
     options.headers['Content-Type'] = 'application/octet-stream';
+  }
+
+  if (ADMIN_REQUEST_HEADERS) {
+    ADMIN_REQUEST_HEADERS.split(';')?.map((str) => {
+      const [key, value] = str.split(':');
+      if (key && value && options.headers) {
+        options.headers[key] = value[0] === "'" ? value.substring(0, -1) : value;
+      }
+    });
   }
 
   const finalOptions = {
