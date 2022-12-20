@@ -1,3 +1,4 @@
+import { env } from '@flyteoss/common';
 import { flyteNavigation } from 'components/Theme/constants';
 
 export interface FlyteNavItem {
@@ -13,5 +14,7 @@ export interface FlyteNavigation {
 }
 
 export const getFlyteNavigationData = (): FlyteNavigation | undefined => {
-  return flyteNavigation;
+  if (flyteNavigation) return flyteNavigation;
+
+  return env.FLYTE_NAVIGATION ? JSON.parse(env.FLYTE_NAVIGATION) : undefined;
 };
