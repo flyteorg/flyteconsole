@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 
-import { VersionDisplay } from './versionDisplay';
-import { AppInfo } from '.';
-import t from './strings';
-import { generateVersionInfo } from './appInfo.mock';
+import { VersionDisplay } from '../versionDisplay';
+import { AppInfo } from '..';
+import t from '../strings';
+import { generateVersionInfo } from '../__mocks__/appInfo.mock';
 
 describe('appInfo', () => {
   it('Info icon opens VersionDisplay on click', async () => {

@@ -1,4 +1,4 @@
-import { VersionInfo } from './versionDisplay';
+import { VersionInfo } from '../versionDisplay';
 
 export const generateVersionInfo = (name: string, version: string): VersionInfo => {
   return {

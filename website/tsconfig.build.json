@@ -5,10 +5,10 @@
     },
     "references": [
         {
-            "path": "../console/tsconfig.build.json"
+            "path": "../packages/console/tsconfig.build.json"
         },
         {
-            "path": "../common/tsconfig.build.json"
+            "path": "../packages/common/tsconfig.build.json"
         }
     ],
     "exclude": [

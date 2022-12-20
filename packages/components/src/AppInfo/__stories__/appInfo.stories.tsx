@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { Card, CardContent } from '@material-ui/core';
-import { AppInfo, INFO_WINDOW_WIDTH } from '.';
-import { generateVersionInfo } from './appInfo.mock';
-import { VersionDisplay } from './versionDisplay';
+import { AppInfo, INFO_WINDOW_WIDTH } from '..';
+import { generateVersionInfo } from '../__mocks__/appInfo.mock';
+import { VersionDisplay } from '../versionDisplay';
 
 export default {
   title: 'Components/AppInfo',

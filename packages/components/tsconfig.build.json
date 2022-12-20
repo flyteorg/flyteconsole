@@ -17,6 +17,7 @@
         // files excluded from the build, we can not put it inro default tsconfig
         // as it will screw VSCode IntelliSence
         "node_modules",
+        "src/Sample",
         "dist",
         "lib",
         "build",

@@ -51,7 +51,7 @@ export interface VersionDisplayProps {
   documentationUrl: string;
 }
 
-export const VersionDisplay = (props: VersionDisplayProps): JSX.Element => {
+export const VersionDisplay = (props?: VersionDisplayProps): JSX.Element => {
   const styles = useStyles();
 
   const VersionItem = (info: VersionInfo) => {
@@ -68,7 +68,7 @@ export const VersionDisplay = (props: VersionDisplayProps): JSX.Element => {
     );
   };
 
-  const versionsList = props.versions.map((info) => VersionItem(info));
+  const versionsList = props?.versions?.map((info) => VersionItem(info));
 
   return (
     <>
@@ -80,8 +80,8 @@ export const VersionDisplay = (props: VersionDisplayProps): JSX.Element => {
       <div className={styles.versionsContainer}>{versionsList}</div>
 
       <div className={styles.versionName}>{t('docsLink')}</div>
-      <Link href={props.documentationUrl} className={styles.versionLink} target="_blank">
-        {props.documentationUrl}
+      <Link href={props?.documentationUrl} className={styles.versionLink} target="_blank">
+        {props?.documentationUrl}
       </Link>
     </>
   );

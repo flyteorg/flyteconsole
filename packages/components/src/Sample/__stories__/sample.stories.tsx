@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import { SampleComponent } from '.';
+import { SampleComponent } from '..';
 
 export default {
   title: 'Components/Sample',
