@@ -9,7 +9,6 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from 'common/env';
-import ReactGA from 'react-ga4';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
