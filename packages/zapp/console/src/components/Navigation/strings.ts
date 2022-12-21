@@ -5,9 +5,9 @@ const str = {
   versionConsoleUi: 'UI Version',
   versionAdmin: 'Admin Version',
   versionGoogleAnalytics: 'Google Analytics',
-  gaDisable_: 'Active',
-  gaDisable_true: 'Active',
-  gaDisable_false: 'Inactive',
+  gaActive_: 'Active',
+  gaActive_true: 'Active',
+  gaActive_false: 'Inactive',
 };
 
 export { patternKey } from '@flyteconsole/locale';
