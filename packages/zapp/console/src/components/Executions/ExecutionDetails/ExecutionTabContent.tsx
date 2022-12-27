@@ -6,7 +6,8 @@ import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import * as React from 'react';
-import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
+// import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/updateDagWithNodeExecutions';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { dNode } from 'models/Graph/types';
 import { useContext, useEffect, useMemo, useState } from 'react';
@@ -69,12 +70,14 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  console.log('CLO ~ compiledWorkflowClosure', compiledWorkflowClosure);
   const { appliedFilters } = useNodeExecutionFiltersState();
   const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
 
+  // const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
+  //   ? transformerWorkflowToDag(compiledWorkflowClosure)
+  //   : { dag: {}, staticExecutionIdsMap: {}, error: null };
   const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
-    ? transformerWorkflowToDag(compiledWorkflowClosure)
+    ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById)
     : { dag: {}, staticExecutionIdsMap: {}, error: null };
   const [dynamicParents, setDynamicParents] = useState(
     checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap),
@@ -89,24 +92,25 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
   const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   console.log('CLO ~ useEffect ~ shouldUpdate');
-  //   if (shouldUpdate) {
-  //     console.log('CLO ~ nodeExecutionsById', nodeExecutionsById);
-  //     const newDynamicParents = checkForDynamicExecutions(
-  //       nodeExecutionsById,
-  //       staticExecutionIdsMap,
-  //     );
-  //     setDynamicParents(newDynamicParents);
-  //     console.log('CLO ~ useEffect ~ newDynamicParents', newDynamicParents);
-  //     refetch();
-  //     setShouldUpdate(false);
-  //   }
-  // }, [shouldUpdate]);
+  useEffect(() => {
+    // console.log('CLO ~ useEffect ~ shouldUpdate');
+    if (shouldUpdate) {
+      // console.log('CLO ~ nodeExecutionsById', nodeExecutionsById);
+      const newDynamicParents = checkForDynamicExecutions(
+        nodeExecutionsById,
+        staticExecutionIdsMap,
+      );
+      setDynamicParents(newDynamicParents);
+      // console.log('CLO ~ useEffect ~ newDynamicParents', newDynamicParents);
+      refetch();
+      setShouldUpdate(false);
+    }
+  }, [shouldUpdate]);
 
   useEffect(() => {
     const nodes: dNode[] = compiledWorkflowClosure
-      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows).dag.nodes
+      ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById, dynamicWorkflows).dag
+          .nodes
       : [];
     // we remove start/end node info in the root dNode list during first assignment
     const plainNodes = convertToPlainNodes(nodes);
@@ -118,6 +122,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         if (compiledWorkflowClosure) {
           const dynamicWorkflow = transformerWorkflowToDag(
             compiledWorkflowClosure,
+            nodeExecutionsById,
             dynamicWorkflows,
           );
           newMergedDag = dynamicWorkflow.dag;
@@ -126,8 +131,8 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     }
     setMergedDag(newMergedDag);
     setInitialNodes(plainNodes);
-    console.log('CLO ~ useEffect ~ plainNodes', plainNodes);
-  }, [compiledWorkflowClosure, dynamicWorkflows, dynamicParents]);
+    // console.log('CLO ~ useEffect ~ plainNodes', plainNodes);
+  }, [compiledWorkflowClosure, dynamicWorkflows, dynamicParents, nodeExecutionsById]);
 
   useEffect(() => {
     if (!isEqual(filters, appliedFilters)) {
