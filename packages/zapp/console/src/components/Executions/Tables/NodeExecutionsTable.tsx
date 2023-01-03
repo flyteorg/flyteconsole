@@ -10,7 +10,7 @@ import * as React from 'react';
 import { useMemo, useEffect, useState, useContext } from 'react';
 import { isEndNode, isExpanded, isStartNode } from 'components/WorkflowGraph/utils';
 import { useQueryClient } from 'react-query';
-import { isEqual, keyBy, merge } from 'lodash';
+import { clone, isEqual, keyBy, merge } from 'lodash';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -21,6 +21,7 @@ import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { fetchChildNodeExecutionGroups } from '../nodeExecutionQueries';
+import { isChildGroupsFetched } from '../ExecutionDetails/utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
@@ -78,26 +79,29 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
-  const toggleNode = async (id: string, scopeId: string, level: number) => {
-    const childGroups = await fetchChildNodeExecutionGroups(
-      queryClient,
-      nodeExecutionsById[id],
-      {},
-    );
-
-    let childGroupsExecutionsById;
-    childGroups.forEach((group) => {
-      childGroupsExecutionsById = merge(
-        childGroupsExecutionsById,
-        keyBy(group.nodeExecutions, 'scopedId'),
+  const toggleNode = async (id: string, scopedId: string, level: number) => {
+    if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+      const childGroups = await fetchChildNodeExecutionGroups(
+        queryClient,
+        nodeExecutionsById[id],
+        {},
       );
-    });
-    const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
-    // if (!isEqual(nodeExecutionsById, currentNodeExecutionsById)) {
-    setShouldUpdate(true);
-    // }
 
-    setCurrentNodeExecutionsById(currentNodeExecutionsById);
+      let childGroupsExecutionsById;
+      childGroups.forEach((group) => {
+        childGroupsExecutionsById = merge(
+          childGroupsExecutionsById,
+          keyBy(group.nodeExecutions, 'scopedId'),
+        );
+      });
+      const prevNodeExecutionsById = clone(nodeExecutionsById);
+      const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+      if (!isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
+        setShouldUpdate(true);
+      }
+
+      setCurrentNodeExecutionsById(currentNodeExecutionsById);
+    }
 
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
@@ -108,7 +112,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
         if (isStartNode(node) || isEndNode(node)) {
           continue;
         }
-        if (node.id === id && node.scopedId === scopeId && nodeLevel === level) {
+        if (node.id === id && node.scopedId === scopedId && nodeLevel === level) {
           nodes[i].expanded = !nodes[i].expanded;
           return;
         }

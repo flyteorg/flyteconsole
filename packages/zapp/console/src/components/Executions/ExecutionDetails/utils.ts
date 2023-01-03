@@ -1,5 +1,5 @@
 import { Identifier, ResourceType } from 'models/Common/types';
-import { Execution, TaskExecution } from 'models/Execution/types';
+import { Execution, TaskExecution, NodeExecution } from 'models/Execution/types';
 import { Routes } from 'routes/routes';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 
@@ -24,4 +24,13 @@ export function getTaskExecutionDetailReasons(
   taskExecutionDetails?: PaginatedEntityResponse<TaskExecution>,
 ): (string | null | undefined)[] {
   return taskExecutionDetails?.entities.map((taskExecution) => taskExecution.closure.reason) || [];
+}
+
+export function isChildGroupsFetched(
+  scopedId: string,
+  nodeExecutionsById: Dictionary<NodeExecution>,
+): boolean {
+  return Object.values(nodeExecutionsById).find((exe) => exe.fromUniqueParentId === scopedId)
+    ? true
+    : false;
 }

@@ -6,8 +6,8 @@ import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import * as React from 'react';
-// import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { transformerWorkflowToDag } from 'components/WorkflowGraph/updateDagWithNodeExecutions';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
+// import { transformerWorkflowToDag } from 'components/WorkflowGraph/updateDagWithNodeExecutions';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { dNode } from 'models/Graph/types';
 import { useContext, useEffect, useMemo, useState } from 'react';
@@ -72,46 +72,47 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { appliedFilters } = useNodeExecutionFiltersState();
   const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
-
-  // const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
-  //   ? transformerWorkflowToDag(compiledWorkflowClosure)
-  //   : { dag: {}, staticExecutionIdsMap: {}, error: null };
-  const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
-    ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById)
-    : { dag: {}, staticExecutionIdsMap: {}, error: null };
+  const { staticExecutionIdsMap } = compiledWorkflowClosure
+    ? transformerWorkflowToDag(compiledWorkflowClosure)
+    : { staticExecutionIdsMap: {} };
   const [dynamicParents, setDynamicParents] = useState(
     checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap),
   );
   const { data: dynamicWorkflows, refetch } = useQuery(
     makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
   );
+
   const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
   const [initialFilteredNodes, setInitialFilteredNodes] = useState<dNode[] | undefined>(undefined);
+  const [dagError, setDagError] = useState(null);
   const [mergedDag, setMergedDag] = useState(null);
   const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
   const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
   const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   useEffect(() => {
-    // console.log('CLO ~ useEffect ~ shouldUpdate');
     if (shouldUpdate) {
-      // console.log('CLO ~ nodeExecutionsById', nodeExecutionsById);
       const newDynamicParents = checkForDynamicExecutions(
         nodeExecutionsById,
         staticExecutionIdsMap,
       );
       setDynamicParents(newDynamicParents);
-      // console.log('CLO ~ useEffect ~ newDynamicParents', newDynamicParents);
       refetch();
       setShouldUpdate(false);
     }
   }, [shouldUpdate]);
 
   useEffect(() => {
-    const nodes: dNode[] = compiledWorkflowClosure
-      ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById, dynamicWorkflows).dag
-          .nodes
-      : [];
+    // const nodes: dNode[] = compiledWorkflowClosure
+    //   ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById, dynamicWorkflows).dag
+    //       .nodes
+    //   : [];
+    const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
+      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows)
+      : { dag: {}, staticExecutionIdsMap: {}, error: null };
+
+    const nodes = dag.nodes ?? [];
+
     // we remove start/end node info in the root dNode list during first assignment
     const plainNodes = convertToPlainNodes(nodes);
 
@@ -122,16 +123,16 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         if (compiledWorkflowClosure) {
           const dynamicWorkflow = transformerWorkflowToDag(
             compiledWorkflowClosure,
-            nodeExecutionsById,
             dynamicWorkflows,
           );
           newMergedDag = dynamicWorkflow.dag;
         }
       }
     }
+    setDagError(error);
     setMergedDag(newMergedDag);
+    // TODO keep toggled nodes open
     setInitialNodes(plainNodes);
-    // console.log('CLO ~ useEffect ~ plainNodes', plainNodes);
   }, [compiledWorkflowClosure, dynamicWorkflows, dynamicParents, nodeExecutionsById]);
 
   useEffect(() => {
@@ -233,7 +234,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         return (
           <WorkflowGraph
             mergedDag={mergedDag}
-            error={error}
+            error={dagError}
             dynamicWorkflows={dynamicWorkflows}
             initialNodes={initialNodes}
             onNodeSelectionChanged={onNodeSelectionChanged}

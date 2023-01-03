@@ -89,7 +89,8 @@ export const transformerWorkflowToDag = (
       value: nodeValue,
       type: type,
       name: getDisplayName(compiledNode),
-      nodes: childrenNodes,
+      nodes: [],
+      // nodes: childrenNodes,
       edges: [],
       gateNode: compiledNode.gateNode,
     } as dNode;
@@ -183,7 +184,7 @@ export const transformerWorkflowToDag = (
   const parseNodeFromExecution = (execution, level): dNode => {
     const scopedId = execution.scopedId;
     const id = execution.id.nodeId;
-    const type = dTypes.task; // ???
+    const type = execution.isParentNode ? dTypes.subworkflow : dTypes.task; // ???
     const name = ''; // ???
     const dNode: dNode = { id, scopedId, type, name, nodes: [], edges: [], level, execution };
     return dNode;
@@ -231,27 +232,15 @@ export const transformerWorkflowToDag = (
         parentDNode: root,
         childrenNodes,
       });
-      buildDAG(dNode, node, dTypes.subworkflow);
-    } else if (node.branchNode) {
-      dNode = createDNode({
-        compiledNode: node,
-        parentDNode: root,
-      });
-      buildDAG(dNode, node, dTypes.branch);
-    } else if (node.workflowNode) {
-      if (node.workflowNode.launchplanRef) {
-        dNode = createDNode({
-          compiledNode: node,
-          parentDNode: root,
-        });
-      } else {
-        const id = node.workflowNode.subWorkflowRef;
-        const subworkflow = getSubWorkflowFromId(id, workflow);
-        dNode = createDNode({
-          compiledNode: node,
-          parentDNode: root,
-        });
-        buildDAG(dNode, subworkflow, dTypes.subworkflow);
+
+      if (node.branchNode) {
+        buildDAG(dNode, node, dTypes.branch);
+      } else if (node.workflowNode) {
+        if (!node.workflowNode.launchplanRef) {
+          const id = node.workflowNode.subWorkflowRef;
+          const subworkflow = getSubWorkflowFromId(id, workflow);
+          buildDAG(dNode, subworkflow, dTypes.subworkflow);
+        }
       }
     } else if (node.taskNode) {
       const taskNode = node.taskNode as TaskNode;
@@ -327,8 +316,6 @@ export const transformerWorkflowToDag = (
     root.nodes.push(endNode);
   };
 
-  // createDNodeFromExecution (execution) -> dNodes[]
-
   /**
    * Builds node's list of children
    *
@@ -338,18 +325,6 @@ export const transformerWorkflowToDag = (
     const children: NodeExecution[] = [];
     Object.values(nodeExecutionsById).forEach((nodeExecution) => {
       if (nodeExecution.fromUniqueParentId === node.id) {
-        // const compiledNode = {
-        //   // branchNode: ,
-        //   id: nodeExecution.metadata?.specNodeId,
-        //   inputs?: Binding[];
-        //   metadata?: CompiledNodeMetadata;
-        //   outputAliases?: Alias[];
-        //   taskNode?: TaskNode;
-        //   upstreamNodeIds?: string[];
-        //   workflowNode?: WorkflowNode;
-        //   gateNode?: Core.IGateNode;
-        // }
-        // const newNode = createDNode({compiledNode, parentDNode: node});
         children.push(nodeExecution);
       }
     });
@@ -363,7 +338,6 @@ export const transformerWorkflowToDag = (
    * @param context       The current workflow being parsed
    */
   const parseWorkflow = (root: dNode, context: CompiledWorkflow) => {
-    // const children = getNodeChildren(root);
     if (!context?.template?.nodes) {
       return root;
     }
@@ -411,6 +385,8 @@ export const transformerWorkflowToDag = (
         break;
       case dTypes.primary:
         return parseWorkflow(root, context);
+      default:
+        return parseBranch({ root, context });
     }
   };
   const primaryWorkflowRoot = createDNode({
@@ -418,7 +394,7 @@ export const transformerWorkflowToDag = (
       id: startNodeId,
     } as CompiledNode,
   });
-  const dag: dNode | undefined = buildDAG(primaryWorkflowRoot, primary, dTypes.primary);
+  const dag: dNode | void = buildDAG(primaryWorkflowRoot, primary, dTypes.primary);
   debug('output:', dag);
   return { dag, staticExecutionIdsMap };
 };

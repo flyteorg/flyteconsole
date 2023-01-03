@@ -144,7 +144,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
     }
   };
 
-  const toggleNode = (id: string, scopeId: string, level: number) => {
+  const toggleNode = (id: string, scopedId: string, level: number) => {
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
         return;
@@ -154,7 +154,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
         if (isStartNode(node) || isEndNode(node)) {
           continue;
         }
-        if (node.id === id && node.scopedId === scopeId && nodeLevel === level) {
+        if (node.id === id && node.scopedId === scopedId && nodeLevel === level) {
           nodes[i].expanded = !nodes[i].expanded;
           return;
         }
