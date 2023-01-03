@@ -38,7 +38,7 @@
         "cookie-parser": "^1.4.3",
         "dagre-d3": "^0.6.4",
         "dotenv": "^5.0.1",
-        "express": "^4.14.0",
+        "express": "^4.17.3",
         "express-static-gzip": "^0.3.2",
         "fuzzysort": "^1.1.1",
         "js-yaml": "^3.13.1",
