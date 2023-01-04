@@ -131,7 +131,12 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     }
     setDagError(error);
     setMergedDag(newMergedDag);
-    // TODO keep toggled nodes open
+    plainNodes.map((node) => {
+      const initialNode = initialNodes.find((n) => n.scopedId === node.scopedId);
+      if (initialNode) {
+        node.expanded = initialNode.expanded;
+      }
+    });
     setInitialNodes(plainNodes);
   }, [compiledWorkflowClosure, dynamicWorkflows, dynamicParents, nodeExecutionsById]);
 
