@@ -284,7 +284,7 @@ export function fetchChildNodeExecutionGroups(
 /**
  * Query returns all children (not only direct childs) for a list of `nodeExecutions`
  */
-async function fetchAllTreeNodeExecutions(
+async function fetchAllTreeNodeExecutions( // TODO remove
   queryClient: QueryClient,
   nodeExecutions: NodeExecution[],
   config: RequestConfig,
@@ -327,7 +327,7 @@ async function fetchAllTreeNodeExecutions(
  * @param config
  * @returns
  */
-export function useAllTreeNodeExecutionGroupsQuery(
+export function useAllTreeNodeExecutionGroupsQuery( // TODO remove
   nodeExecutions: NodeExecution[],
   config: RequestConfig,
 ): QueryObserverResult<NodeExecution[], Error> {

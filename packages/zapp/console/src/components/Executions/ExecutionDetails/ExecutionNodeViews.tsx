@@ -20,7 +20,7 @@ import { tabs } from './constants';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 import { fetchTaskExecutionList } from '../taskExecutionQueries';
 import { getGroupedLogs } from '../TaskExecutionsList/utils';
-import { useAllTreeNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
+// import { useAllTreeNodeExecutionGroupsQuery } from '../nodeExecutionQueries';
 import { ExecutionTab } from './ExecutionTab';
 import { useNodeExecutionsById } from '../useNodeExecutionsById';
 

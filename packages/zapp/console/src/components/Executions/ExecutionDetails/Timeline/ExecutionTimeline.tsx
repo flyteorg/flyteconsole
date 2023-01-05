@@ -6,6 +6,9 @@ import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
 import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { fetchChildNodeExecutionGroups } from 'components/Executions/nodeExecutionQueries';
+import { clone, isEqual, keyBy, merge } from 'lodash';
+import { useQueryClient } from 'react-query';
 import { convertToPlainNodes } from './helpers';
 import { ChartHeader } from './ChartHeader';
 import { useScaleContext } from './scaleContext';
@@ -13,6 +16,7 @@ import { TaskNames } from './TaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 import t from '../strings';
+import { isChildGroupsFetched } from '../utils';
 
 interface StyleProps {
   chartWidth: number;
@@ -68,9 +72,15 @@ const INTERVAL_LENGTH = 110;
 interface ExProps {
   chartTimezone: string;
   initialNodes: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 
-export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNodes }) => {
+export const ExecutionTimeline: React.FC<ExProps> = ({
+  chartTimezone,
+  initialNodes,
+  setShouldUpdate,
+}) => {
+  const queryClient = useQueryClient();
   const [chartWidth, setChartWidth] = useState(0);
   const [labelInterval, setLabelInterval] = useState(INTERVAL_LENGTH);
   const durationsRef = useRef<HTMLDivElement>(null);
@@ -80,7 +90,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useContext(NodeExecutionsByIdContext);
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {
@@ -144,7 +155,30 @@ export const ExecutionTimeline: React.FC<ExProps> = ({ chartTimezone, initialNod
     }
   };
 
-  const toggleNode = (id: string, scopedId: string, level: number) => {
+  const toggleNode = async (id: string, scopedId: string, level: number) => {
+    if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+      const childGroups = await fetchChildNodeExecutionGroups(
+        queryClient,
+        nodeExecutionsById[id],
+        {},
+      );
+
+      let childGroupsExecutionsById;
+      childGroups.forEach((group) => {
+        childGroupsExecutionsById = merge(
+          childGroupsExecutionsById,
+          keyBy(group.nodeExecutions, 'scopedId'),
+        );
+      });
+      const prevNodeExecutionsById = clone(nodeExecutionsById);
+      const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+      if (!isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
+        setShouldUpdate(true);
+      }
+
+      setCurrentNodeExecutionsById(currentNodeExecutionsById);
+    }
+
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
         return;

@@ -103,6 +103,7 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
   }, [queryClient, resourceType, project, domain, name, version]);
 
   const checkForDynamicTasks = async (nodeExecution: NodeExecution) => {
+    console.log('CLO ~ checkForDynamicTasks ~ nodeExecution', nodeExecution);
     const taskDetails = await getTaskThroughExecution(queryClient, nodeExecution);
 
     const tasksMap = tasks;

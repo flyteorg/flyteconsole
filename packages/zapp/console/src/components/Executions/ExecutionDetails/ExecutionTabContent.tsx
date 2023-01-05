@@ -7,7 +7,6 @@ import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
 import * as React from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-// import { transformerWorkflowToDag } from 'components/WorkflowGraph/updateDagWithNodeExecutions';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { dNode } from 'models/Graph/types';
 import { useContext, useEffect, useMemo, useState } from 'react';
@@ -252,7 +251,11 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         return (
           <div className={styles.wrapper}>
             <div className={styles.container}>
-              <ExecutionTimeline chartTimezone={chartTimezone} initialNodes={initialNodes} />
+              <ExecutionTimeline
+                chartTimezone={chartTimezone}
+                initialNodes={initialNodes}
+                setShouldUpdate={setShouldUpdate}
+              />
             </div>
             <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
           </div>
