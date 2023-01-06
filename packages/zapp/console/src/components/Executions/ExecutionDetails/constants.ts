@@ -11,6 +11,7 @@ export enum ExecutionMetadataLabels {
   parallelism = 'Parallelism',
   securityContextDefault = 'default',
   interruptible = 'Interruptible override',
+  overwriteCache = 'Overwrite cached outputs',
 }
 
 export const tabs = {

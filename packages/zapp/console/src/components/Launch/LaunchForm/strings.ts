@@ -26,6 +26,7 @@ const str = {
   launchPlan: 'Launch Plan',
   interruptible: 'Interruptible',
   viewNodeInputs: 'View node inputs',
+  overwriteCache: 'Overwrite cached outputs',
 };
 
 export { patternKey } from '@flyteconsole/locale';

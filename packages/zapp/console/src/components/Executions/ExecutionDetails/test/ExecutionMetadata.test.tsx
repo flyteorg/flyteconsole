@@ -13,6 +13,7 @@ const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
 const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
+const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
 
 jest.mock('models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -94,5 +95,23 @@ describe('ExecutionMetadata', () => {
     delete execution.spec.interruptible;
     const { getByTestId } = renderMetadata();
     expect(getByTestId(interruptibleTestId)).toHaveTextContent(dashedValueString);
+  });
+
+  it('shows true if cache was overwritten for execution', () => {
+    execution.spec.overwriteCache = true;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('true');
+  });
+
+  it('shows false if cache was not overwritten for execution', () => {
+    execution.spec.overwriteCache = false;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
+  });
+
+  it('shows false if no cache overwrite value is found in execution spec', () => {
+    delete execution.spec.overwriteCache;
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
   });
 });

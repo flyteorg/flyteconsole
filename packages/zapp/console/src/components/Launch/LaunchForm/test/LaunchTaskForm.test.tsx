@@ -703,5 +703,102 @@ describe('LaunchForm: Task', () => {
         );
       });
     });
+
+    describe('overwrite cache', () => {
+      it('should render checkbox', async () => {
+        const { getByLabelText } = renderForm();
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).not.toBeChecked();
+      });
+
+      it('should use initial values when provided', async () => {
+        const initialParameters: TaskInitialLaunchParameters = {
+          taskId: mockTask.id,
+          overwriteCache: true,
+        };
+
+        const { getByLabelText } = renderForm({
+          initialParameters,
+        });
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).toBeChecked();
+      });
+
+      it('should submit without cache skip override set', async () => {
+        const { container, getByLabelText } = renderForm();
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).not.toBeChecked();
+
+        await fillInputs(container);
+        fireEvent.click(getSubmitButton(container));
+
+        await waitFor(() =>
+          expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
+            expect.objectContaining({
+              overwriteCache: false,
+            }),
+          ),
+        );
+      });
+
+      it('should submit with cache skip override enabled', async () => {
+        const initialParameters: TaskInitialLaunchParameters = {
+          overwriteCache: true,
+        };
+        const { container, getByLabelText } = renderForm({ initialParameters });
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).toBeChecked();
+
+        await fillInputs(container);
+        fireEvent.click(getSubmitButton(container));
+
+        await waitFor(() =>
+          expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
+            expect.objectContaining({
+              overwriteCache: true,
+            }),
+          ),
+        );
+      });
+
+      it('should submit with cache skip override disabled', async () => {
+        const initialParameters: TaskInitialLaunchParameters = {
+          overwriteCache: false,
+        };
+        const { container, getByLabelText } = renderForm({ initialParameters });
+
+        const inputElement = await waitFor(() =>
+          getByLabelText(t('overwriteCache'), { exact: false }),
+        );
+        expect(inputElement).toBeInTheDocument();
+        expect(inputElement).not.toBeChecked();
+
+        await fillInputs(container);
+        fireEvent.click(getSubmitButton(container));
+
+        await waitFor(() =>
+          expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
+            expect.objectContaining({
+              overwriteCache: false,
+            }),
+          ),
+        );
+      });
+    });
   });
 });

@@ -1,5 +1,7 @@
 .env
 *.swp
+# direnv
+.envrc
 
 # C extensions
 *.so

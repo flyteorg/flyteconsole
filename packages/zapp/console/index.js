@@ -64,8 +64,8 @@ if (env.ADMIN_API_USE_SSL === 'https') {
   });
 }
 
-process.on('SIGTERM', () => {
-  console.info('SIGTERM signal received. Shutting down.');
+function shutdown(signal) {
+  console.info(`${signal} signal received. Shutting down.`);
   server.close((error) => {
     if (error) {
       console.error('Failed to close server:', error);
@@ -74,4 +74,7 @@ process.on('SIGTERM', () => {
     console.log('Server closed');
     process.exit(0);
   });
-});
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

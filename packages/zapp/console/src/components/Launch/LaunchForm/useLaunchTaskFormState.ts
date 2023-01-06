@@ -22,6 +22,7 @@ import {
   LaunchFormInputsRef,
   LaunchInterruptibleInputRef,
   LaunchRoleInputRef,
+  LaunchOverwriteCacheInputRef,
   LaunchTaskFormProps,
   LaunchTaskFormState,
   ParsedInput,
@@ -94,6 +95,7 @@ async function validate(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   _interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  _overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
@@ -110,6 +112,7 @@ async function submit(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
   { referenceExecutionId, taskVersion }: TaskLaunchContext,
 ) {
   if (!taskVersion) {
@@ -125,6 +128,7 @@ async function submit(
   const { securityContext } = roleInputRef.current?.getValue();
   const literals = formInputsRef.current.getValues();
   const interruptible = interruptibleInputRef.current?.getValue();
+  const overwriteCache = overwriteCacheInputRef.current?.getValue();
   const launchPlanId = taskVersion;
   const { domain, project } = taskVersion;
 
@@ -136,6 +140,7 @@ async function submit(
     referenceExecutionId,
     inputs: { literals },
     interruptible,
+    overwriteCache,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -150,12 +155,27 @@ function getServices(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   return {
     loadTaskVersions: partial(loadTaskVersions, apiContext),
     loadInputs: partial(loadInputs, apiContext),
-    submit: partial(submit, apiContext, formInputsRef, roleInputRef, interruptibleInputRef),
-    validate: partial(validate, formInputsRef, roleInputRef, interruptibleInputRef),
+    submit: (launchContext: TaskLaunchContext) =>
+      submit(
+        apiContext,
+        formInputsRef,
+        roleInputRef,
+        interruptibleInputRef,
+        overwriteCacheInputRef,
+        launchContext,
+      ),
+    validate: partial(
+      validate,
+      formInputsRef,
+      roleInputRef,
+      interruptibleInputRef,
+      overwriteCacheInputRef,
+    ),
   };
 }
 
@@ -174,16 +194,25 @@ export function useLaunchTaskFormState({
     taskId: preferredTaskId,
     values: defaultInputValues,
     interruptible,
+    overwriteCache,
   } = initialParameters;
 
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
+  const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
 
   const services = useMemo(
-    () => getServices(apiContext, formInputsRef, roleInputRef, interruptibleInputRef),
-    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef],
+    () =>
+      getServices(
+        apiContext,
+        formInputsRef,
+        roleInputRef,
+        interruptibleInputRef,
+        overwriteCacheInputRef,
+      ),
+    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, overwriteCacheInputRef],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -200,6 +229,7 @@ export function useLaunchTaskFormState({
       referenceExecutionId,
       sourceId,
       interruptible,
+      overwriteCache,
     },
   });
 
@@ -248,7 +278,8 @@ export function useLaunchTaskFormState({
   return {
     formInputsRef,
     roleInputRef,
-    interruptibleInputRef: interruptibleInputRef,
+    interruptibleInputRef,
+    overwriteCacheInputRef: overwriteCacheInputRef,
     state,
     service,
     taskSourceSelectorState,

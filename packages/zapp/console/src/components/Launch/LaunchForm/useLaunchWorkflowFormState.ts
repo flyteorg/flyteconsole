@@ -26,6 +26,7 @@ import {
   ParsedInput,
   LaunchRoles,
   LaunchInterruptibleInputRef,
+  LaunchOverwriteCacheInputRef,
 } from './types';
 import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
 import { getUnsupportedRequiredInputs } from './utils';
@@ -156,6 +157,7 @@ async function submit(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
   { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext,
 ) {
   if (!launchPlan) {
@@ -173,6 +175,7 @@ async function submit(
   const { disableAll, labels, annotations, maxParallelism, rawOutputDataConfig } =
     advancedOptionsRef.current?.getValues() || {};
   const interruptible = interruptibleInputRef.current?.getValue();
+  const overwriteCache = overwriteCacheInputRef.current?.getValue();
   const launchPlanId = launchPlan.id;
   const { domain, project } = workflowVersion;
 
@@ -189,6 +192,7 @@ async function submit(
     referenceExecutionId,
     inputs: { literals },
     interruptible,
+    overwriteCache,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -203,6 +207,7 @@ async function validate(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   _advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   _interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  _overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   if (roleInputRef.current === null) {
     throw new Error('Unexpected empty role input ref');
@@ -220,6 +225,7 @@ function getServices(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
+  overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
   return {
     loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
@@ -235,15 +241,17 @@ function getServices(
         roleInputRef,
         advancedOptionsRef,
         interruptibleInputRef,
+        overwriteCacheInputRef,
         launchContext,
       ),
-    validate: partial(
-      validate,
-      formInputsRef,
-      roleInputRef,
-      advancedOptionsRef,
-      interruptibleInputRef,
-    ),
+    validate: () =>
+      validate(
+        formInputsRef,
+        roleInputRef,
+        advancedOptionsRef,
+        interruptibleInputRef,
+        overwriteCacheInputRef,
+      ),
   };
 }
 
@@ -269,6 +277,7 @@ export function useLaunchWorkflowFormState({
     annotations,
     securityContext,
     interruptible,
+    overwriteCache,
   } = initialParameters;
 
   const apiContext = useAPIContext();
@@ -276,6 +285,7 @@ export function useLaunchWorkflowFormState({
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
+  const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
 
   const services = useMemo(
     () =>
@@ -285,8 +295,16 @@ export function useLaunchWorkflowFormState({
         roleInputRef,
         advancedOptionsRef,
         interruptibleInputRef,
+        overwriteCacheInputRef,
       ),
-    [apiContext, formInputsRef, roleInputRef, advancedOptionsRef, interruptibleInputRef],
+    [
+      apiContext,
+      formInputsRef,
+      roleInputRef,
+      advancedOptionsRef,
+      interruptibleInputRef,
+      overwriteCacheInputRef,
+    ],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -310,6 +328,7 @@ export function useLaunchWorkflowFormState({
       labels,
       annotations,
       interruptible,
+      overwriteCache,
     },
   });
 
@@ -420,7 +439,8 @@ export function useLaunchWorkflowFormState({
     advancedOptionsRef,
     formInputsRef,
     roleInputRef,
-    interruptibleInputRef: interruptibleInputRef,
+    interruptibleInputRef,
+    overwriteCacheInputRef: overwriteCacheInputRef,
     state,
     service,
     workflowSourceSelectorState,
