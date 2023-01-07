@@ -1,6 +1,11 @@
 # Use node:17 to docker build on M1
-FROM node:16 as builder
+FROM --platform=${BUILDPLATFORM} node:16 as builder
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
+
+ARG TARGETARCH
+ENV npm_config_target_arch "${TARGETARCH}"
+ENV npm_config_target_platform linux
+ENV npm_config_target_libc glibc
 
 WORKDIR /code/flyteconsole
 COPY ./packages/zapp/console/package*.json yarn.lock ./
