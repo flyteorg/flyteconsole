@@ -104,11 +104,10 @@ jobs:
     uses: flyteorg/flytetools/.github/workflows/publish.yml@jeev/multiarch-builds
     # if: ${{ needs.check_for_tag.outputs.currentTag != '' }}
     with:
-      # before-build: |
-      #   TAG=${{ needs.check_for_tag.outputs.currentTag }}
-      #   make update_npmversion VERSION=${TAG:1}
+      before-build: |
+        echo running before build
       dockerfile: Dockerfile
-      push: true
+      push: false
       repository: ${{ github.repository }}
       # version: ${{ needs.check_for_tag.outputs.currentTag }}
       version: test-tag
