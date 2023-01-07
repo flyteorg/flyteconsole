@@ -99,27 +99,19 @@ jobs:
   #         echo "::set-output name=currentTag::$CURRENT_TAG"
 
   push_docker_image:
-    name: Push to Github Registry
-    # needs: [check_for_tag]
-    runs-on: ubuntu-latest
+    name: Build & Push FlyteConsole Image
+    # needs: [ check_for_tag ]
+    uses: flyteorg/flytetools/.github/workflows/publish.yml@jeev/multiarch-builds
     # if: ${{ needs.check_for_tag.outputs.currentTag != '' }}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: '0'
-      # - name: Autobump version
-      #   env:
-      #     TAG: ${{ needs.check_for_tag.outputs.currentTag }}
-      #   run: |
-      #     VERSION=${TAG:1} make update_npmversion
-      - name: Build & Push Flyteconsole Image
-        uses: flyteorg/flytetools/.github/workflows/publish.yml@jeev/multiarch-builds
-        with:
-          dockerfile: Dockerfile
-          push: true
-          repository: ${{ github.repository }}
-          # version: ${{ needs.check_for_tag.outputs.currentTag }}
-          version: test-tag
-        secrets:
-          FLYTE_BOT_PAT: ${{ secrets.FLYTE_BOT_PAT }}
-          FLYTE_BOT_USERNAME: ${{ secrets.FLYTE_BOT_USERNAME }}
+    with:
+      # before-build: |
+      #   TAG=${{ needs.check_for_tag.outputs.currentTag }}
+      #   make update_npmversion VERSION=${TAG:1}
+      dockerfile: Dockerfile
+      push: true
+      repository: ${{ github.repository }}
+      # version: ${{ needs.check_for_tag.outputs.currentTag }}
+      version: test-tag
+    secrets:
+      FLYTE_BOT_PAT: ${{ secrets.FLYTE_BOT_PAT }}
+      FLYTE_BOT_USERNAME: ${{ secrets.FLYTE_BOT_USERNAME }}
