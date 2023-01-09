@@ -98,6 +98,30 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   };
 
   const onNodeClick = () => {
+    // TODO if isParent fetch children
+    // if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+    //   const childGroups = await fetchChildNodeExecutionGroups(
+    //     queryClient,
+    //     nodeExecutionsById[id],
+    //     {},
+    //   );
+
+    //   let childGroupsExecutionsById;
+    //   childGroups.forEach((group) => {
+    //     childGroupsExecutionsById = merge(
+    //       childGroupsExecutionsById,
+    //       keyBy(group.nodeExecutions, 'scopedId'),
+    //     );
+    //   });
+    //   const prevNodeExecutionsById = clone(nodeExecutionsById);
+    //   const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+    //   if (!isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
+    //     setShouldUpdate(true);
+    //   }
+
+    //   setCurrentNodeExecutionsById(currentNodeExecutionsById);
+    // }
+
     setState((state) => ({ ...state, needFitView: false }));
   };
 

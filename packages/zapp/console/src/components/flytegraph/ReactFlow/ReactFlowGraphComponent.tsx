@@ -6,6 +6,13 @@ import { useNodeExecutionContext } from 'components/Executions/contextProvider/N
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
+import { useQueryClient } from 'react-query';
+import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
+import { isMapTaskV1 } from 'models/Task/utils';
+import { ExternalResource, LogsByPhase } from 'models/Execution/types';
+import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
+import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
+import { keyBy, merge } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -58,9 +65,12 @@ const ReactFlowGraphComponent = ({
   dynamicWorkflows,
   initialNodes,
 }) => {
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
 
   const [state, setState] = useState({
@@ -73,6 +83,67 @@ const ReactFlowGraphComponent = ({
     onPhaseSelectionChanged,
     rfGraphJson: null,
   });
+
+  useEffect(() => {
+    // fetch map tasks data for all available node executions to display graph nodes properly
+    let isCurrent = true;
+
+    async function fetchData(baseNodeExecutions, queryClient) {
+      setLoading(true);
+      const nodeExecutionsWithResources = await Promise.all(
+        baseNodeExecutions.map(async (baseNodeExecution) => {
+          const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
+
+          const useNewMapTaskView = taskExecutions.every((taskExecution) => {
+            const {
+              closure: { taskType, metadata, eventVersion = 0 },
+            } = taskExecution;
+            return isMapTaskV1(
+              eventVersion,
+              metadata?.externalResources?.length ?? 0,
+              taskType ?? undefined,
+            );
+          });
+          const externalResources: ExternalResource[] = taskExecutions
+            .map((taskExecution) => taskExecution.closure.metadata?.externalResources)
+            .flat()
+            .filter((resource): resource is ExternalResource => !!resource);
+
+          const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+          return {
+            ...baseNodeExecution,
+            ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+          };
+        }),
+      );
+
+      if (isCurrent) {
+        const nodeExecutionsWithResourcesMap = keyBy(nodeExecutionsWithResources, 'scopedId');
+        const newNodeExecutionsById = merge(nodeExecutionsById, nodeExecutionsWithResourcesMap);
+        setCurrentNodeExecutionsById(newNodeExecutionsById);
+        const newRFGraphData = buildReactFlowGraphData();
+        setState((state) => ({
+          ...state,
+          nodeExecutionsById: newNodeExecutionsById,
+          rfGraphJson: newRFGraphData,
+        }));
+        setLoading(false);
+      }
+    }
+
+    const nodeExecutions = Object.values(nodeExecutionsById);
+    if (nodeExecutions.length > 0) {
+      fetchData(nodeExecutions, queryClient);
+    } else {
+      if (isCurrent) {
+        setLoading(false);
+      }
+    }
+    return () => {
+      isCurrent = false;
+    };
+  }, [initialNodes]);
 
   const onAddNestedView = (view) => {
     const currentView = state.currentNestedView[view.parent] || [];
@@ -173,6 +244,14 @@ const ReactFlowGraphComponent = ({
     });
     setPausedNodes(nodesWithExecutions);
   }, [initialNodes]);
+
+  if (loading) {
+    return (
+      <div style={{ margin: 'auto' }}>
+        <LargeLoadingSpinner />
+      </div>
+    );
+  }
 
   const containerStyle: React.CSSProperties = {
     display: 'flex',

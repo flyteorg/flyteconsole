@@ -190,20 +190,20 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     setIsDetailsTabClosed(!selectedExecution);
   }, [selectedExecution]);
 
-  // const onCloseDetailsPanel = () => {
-  //   setSelectedExecution(null);
-  //   setSelectedPhase(undefined);
-  //   setSelectedNodes([]);
-  // };
+  const onCloseDetailsPanel = () => {
+    setSelectedExecution(null);
+    setSelectedPhase(undefined);
+    setSelectedNodes([]);
+  };
 
   const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
 
   const handleTimezoneChange = (tz) => setChartTimezone(tz);
 
-  // const detailsPanelContext = useMemo(
-  //   () => ({ selectedExecution, setSelectedExecution }),
-  //   [selectedExecution, setSelectedExecution],
-  // );
+  const detailsPanelContext = useMemo(
+    () => ({ selectedExecution, setSelectedExecution }),
+    [selectedExecution, setSelectedExecution],
+  );
 
   const onNodeSelectionChanged = (newSelection: string[]) => {
     const validSelection = newSelection.filter((nodeId) => {
@@ -266,20 +266,20 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   };
 
   return (
-    // <>
-    //   <DetailsPanelContext.Provider value={detailsPanelContext}>
-    renderContent()
-    //   </DetailsPanelContext.Provider>
-    //   {/* Side panel, shows information for specific node */}
-    //   <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
-    //     {!isDetailsTabClosed && selectedExecution && (
-    //       <NodeExecutionDetailsPanelContent
-    //         onClose={onCloseDetailsPanel}
-    //         taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
-    //         nodeExecutionId={selectedExecution}
-    //       />
-    //     )}
-    //   </DetailsPanel>
-    // </>
+    <>
+      <DetailsPanelContext.Provider value={detailsPanelContext}>
+        {renderContent()}
+      </DetailsPanelContext.Provider>
+      {/* Side panel, shows information for specific node */}
+      <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
+        {!isDetailsTabClosed && selectedExecution && (
+          <NodeExecutionDetailsPanelContent
+            onClose={onCloseDetailsPanel}
+            taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
+            nodeExecutionId={selectedExecution}
+          />
+        )}
+      </DetailsPanel>
+    </>
   );
 };
