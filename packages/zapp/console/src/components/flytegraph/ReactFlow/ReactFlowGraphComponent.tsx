@@ -92,6 +92,9 @@ const ReactFlowGraphComponent = ({
       setLoading(true);
       const nodeExecutionsWithResources = await Promise.all(
         baseNodeExecutions.map(async (baseNodeExecution) => {
+          if (!nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched) {
+            return;
+          }
           const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
 
           const useNewMapTaskView = taskExecutions.every((taskExecution) => {
