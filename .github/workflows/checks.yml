@@ -51,6 +51,18 @@ jobs:
       - name: Run linter
         run: make lint
 
+  build_docker_image:
+    name: Build Flyteconsole Image
+    uses: flyteorg/flytetools/.github/workflows/publish.yml@master
+    with:
+      version: v1
+      dockerfile: Dockerfile
+      push: false
+      repository: ${{ github.repository }}
+    secrets:
+      FLYTE_BOT_PAT: ${{ secrets.FLYTE_BOT_PAT }}
+      FLYTE_BOT_USERNAME: ${{ secrets.FLYTE_BOT_USERNAME }}
+
   release:
     name: Generate Release
     if: ${{ (github.event_name != 'pull_request') && (needs.extract_branch.outputs.branch == 'master') }}
