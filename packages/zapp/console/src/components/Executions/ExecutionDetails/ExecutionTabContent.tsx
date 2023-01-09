@@ -102,10 +102,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   }, [shouldUpdate]);
 
   useEffect(() => {
-    // const nodes: dNode[] = compiledWorkflowClosure
-    //   ? transformerWorkflowToDag(compiledWorkflowClosure, nodeExecutionsById, dynamicWorkflows).dag
-    //       .nodes
-    //   : [];
     const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
       ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows)
       : { dag: {}, staticExecutionIdsMap: {}, error: null };
