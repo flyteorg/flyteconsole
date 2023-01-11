@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { Shimmer } from 'components/common/Shimmer';
-import { debounce } from 'lodash';
+import { debounce, StringNullableChain } from 'lodash';
 import {
   IconButton,
   Typography,
@@ -52,6 +52,8 @@ interface SearchableWorkflowNameListProps {
   workflows: WorkflowListStructureItem[];
   onArchiveFilterChange: (showArchievedItems: boolean) => void;
   showArchived: boolean;
+  search: string;
+  setSearch: (search: string) => void;
 }
 
 export const showOnHoverClass = 'showOnHover';
@@ -148,109 +150,111 @@ const useStyles = makeStyles((theme: Theme) => ({
 const getArchiveIcon = (isArchived: boolean) =>
   isArchived ? <UnarchiveOutline /> : <ArchiveOutlined />;
 
-const SearchableWorkflowNameItemActions: React.FC<
-  SearchableWorkflowNameItemActionsProps
-> = ({ item, setHideItem }) => {
-  const styles = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
-  const { id } = item;
-  const isArchived = isWorkflowArchived(item);
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+const SearchableWorkflowNameItemActions: React.FC<SearchableWorkflowNameItemActionsProps> =
+  ({ item, setHideItem }) => {
+    const styles = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
+    const { id } = item;
+    const isArchived = isWorkflowArchived(item);
+    const [isUpdating, setIsUpdating] = useState<boolean>(false);
+    const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
 
-  const mutation = useMutation(
-    (newState: NamedEntityState) => updateWorkflowState(id, newState),
-    {
-      onMutate: () => setIsUpdating(true),
-      onSuccess: () => {
-        enqueueSnackbar(t('archiveSuccess', !isArchived), {
-          variant: 'success',
-        });
-        setHideItem(true);
+    const mutation = useMutation(
+      (newState: NamedEntityState) => updateWorkflowState(id, newState),
+      {
+        onMutate: () => setIsUpdating(true),
+        onSuccess: () => {
+          enqueueSnackbar(t('archiveSuccess', !isArchived), {
+            variant: 'success',
+          });
+          setHideItem(true);
+        },
+        onError: () => {
+          enqueueSnackbar(
+            `${mutation.error ?? t('archiveError', !isArchived)}`,
+            {
+              variant: 'error',
+            },
+          );
+        },
+        onSettled: () => {
+          setShowConfirmation(false);
+          setIsUpdating(false);
+        },
       },
-      onError: () => {
-        enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, {
-          variant: 'error',
-        });
-      },
-      onSettled: () => {
-        setShowConfirmation(false);
-        setIsUpdating(false);
-      },
-    },
-  );
+    );
 
-  const onArchiveClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setShowConfirmation(true);
-  };
+    const onArchiveClick = (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      setShowConfirmation(true);
+    };
 
-  const onConfirmArchiveClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    mutation.mutate(
-      isWorkflowArchived(item)
-        ? NamedEntityState.NAMED_ENTITY_ACTIVE
-        : NamedEntityState.NAMED_ENTITY_ARCHIVED,
+    const onConfirmArchiveClick = (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      mutation.mutate(
+        isWorkflowArchived(item)
+          ? NamedEntityState.NAMED_ENTITY_ACTIVE
+          : NamedEntityState.NAMED_ENTITY_ARCHIVED,
+      );
+    };
+
+    const onCancelClick = (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+      setShowConfirmation(false);
+    };
+
+    const singleItemStyle =
+      isUpdating || !showConfirmation ? styles.centeredChild : '';
+    return (
+      <div
+        className={classNames(
+          styles.actionContainer,
+          showOnHoverClass,
+          singleItemStyle,
+        )}
+      >
+        {isUpdating ? (
+          <IconButton size="small">
+            <CircularProgress size={24} />
+          </IconButton>
+        ) : showConfirmation ? (
+          <>
+            <Button
+              size="medium"
+              variant="contained"
+              color="primary"
+              className={styles.confirmationButton}
+              disableElevation
+              onClick={onConfirmArchiveClick}
+            >
+              {t('archiveAction', isArchived)}
+            </Button>
+            <Button
+              size="medium"
+              variant="contained"
+              color="inherit"
+              className={styles.confirmationButton}
+              disableElevation
+              onClick={onCancelClick}
+            >
+              {t('cancelAction')}
+            </Button>
+          </>
+        ) : (
+          <IconButton
+            size="small"
+            title={t('archiveAction', isArchived)}
+            onClick={onArchiveClick}
+          >
+            {getArchiveIcon(isArchived)}
+          </IconButton>
+        )}
+      </div>
     );
   };
-
-  const onCancelClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-    event.preventDefault();
-    setShowConfirmation(false);
-  };
-
-  const singleItemStyle =
-    isUpdating || !showConfirmation ? styles.centeredChild : '';
-  return (
-    <div
-      className={classNames(
-        styles.actionContainer,
-        showOnHoverClass,
-        singleItemStyle,
-      )}
-    >
-      {isUpdating ? (
-        <IconButton size="small">
-          <CircularProgress size={24} />
-        </IconButton>
-      ) : showConfirmation ? (
-        <>
-          <Button
-            size="medium"
-            variant="contained"
-            color="primary"
-            className={styles.confirmationButton}
-            disableElevation
-            onClick={onConfirmArchiveClick}
-          >
-            {t('archiveAction', isArchived)}
-          </Button>
-          <Button
-            size="medium"
-            variant="contained"
-            color="inherit"
-            className={styles.confirmationButton}
-            disableElevation
-            onClick={onCancelClick}
-          >
-            {t('cancelAction')}
-          </Button>
-        </>
-      ) : (
-        <IconButton
-          size="small"
-          title={t('archiveAction', isArchived)}
-          onClick={onArchiveClick}
-        >
-          {getArchiveIcon(isArchived)}
-        </IconButton>
-      )}
-    </div>
-  );
-};
 
 /**
  * Renders individual searchable workflow item
@@ -345,58 +349,57 @@ const SearchableWorkflowNameItem: React.FC<SearchableWorkflowNameItemProps> =
  * @param workflows
  * @constructor
  */
-export const SearchableWorkflowNameList: React.FC<
-  SearchableWorkflowNameListProps
-> = ({ workflows, onArchiveFilterChange, showArchived }) => {
-  const styles = useStyles();
-  const [search, setSearch] = useState('');
-  const { results, setSearchString } = useSearchableListState({
-    items: workflows,
-    propertyGetter: ({ id }) => id.name,
-  });
+export const SearchableWorkflowNameList: React.FC<SearchableWorkflowNameListProps> =
+  ({ workflows, onArchiveFilterChange, showArchived, search, setSearch }) => {
+    const styles = useStyles();
 
-  useEffect(() => {
-    const debouncedSearch = debounce(() => setSearchString(search), 1000);
-    debouncedSearch();
-  }, [search]);
+    const { results, setSearchString } = useSearchableListState({
+      items: workflows,
+      propertyGetter: ({ id }) => id.name,
+    });
 
-  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const searchString = event.target.value;
-    setSearch(searchString);
-  };
+    useEffect(() => {
+      const debouncedSearch = debounce(() => setSearchString(search), 1000);
+      debouncedSearch();
+    }, [search]);
 
-  const onClear = () => setSearch('');
+    const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const searchString = event.target.value;
+      setSearch(searchString);
+    };
 
-  return (
-    <>
-      <FormGroup className={styles.filterGroup}>
-        <SearchableInput
-          onClear={onClear}
-          onSearchChange={onSearchChange}
-          variant="normal"
-          value={search}
-          className={styles.searchInputContainer}
-          placeholder="Search Workflow Name"
-        />
-        <FormControlLabel
-          className={styles.archiveCheckbox}
-          control={
-            <Checkbox
-              checked={showArchived}
-              onChange={(_, checked) => onArchiveFilterChange(checked)}
-            />
-          }
-          label="Show Only Archived Workflows"
-        />
-      </FormGroup>
-      <div className={styles.container}>
-        {results.map(({ value }) => (
-          <SearchableWorkflowNameItem
-            item={value}
-            key={`workflow-name-item-${value.id.domain}-${value.id.name}-${value.id.project}`}
+    const onClear = () => setSearch('');
+
+    return (
+      <>
+        <FormGroup className={styles.filterGroup}>
+          <SearchableInput
+            onClear={onClear}
+            onSearchChange={onSearchChange}
+            variant="normal"
+            value={search}
+            className={styles.searchInputContainer}
+            placeholder="Search Workflow Name"
           />
-        ))}
-      </div>
-    </>
-  );
-};
+          <FormControlLabel
+            className={styles.archiveCheckbox}
+            control={
+              <Checkbox
+                checked={showArchived}
+                onChange={(_, checked) => onArchiveFilterChange(checked)}
+              />
+            }
+            label="Show Only Archived Workflows"
+          />
+        </FormGroup>
+        <div className={styles.container}>
+          {results.map(({ value }) => (
+            <SearchableWorkflowNameItem
+              item={value}
+              key={`workflow-name-item-${value.id.domain}-${value.id.name}-${value.id.project}`}
+            />
+          ))}
+        </div>
+      </>
+    );
+  };

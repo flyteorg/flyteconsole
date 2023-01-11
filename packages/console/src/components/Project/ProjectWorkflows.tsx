@@ -23,6 +23,7 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
   projectId: project,
 }) => {
   const archivedFilter = useWorkflowShowArchivedState();
+  const [search, setSearch] = React.useState('');
   const workflows = useWorkflowInfoList(
     { domain, project },
     {
@@ -38,6 +39,8 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
         workflows={workflows.value}
         showArchived={archivedFilter.showArchived}
         onArchiveFilterChange={archivedFilter.setShowArchived}
+        search={search}
+        setSearch={setSearch}
       />
     </WaitForData>
   );

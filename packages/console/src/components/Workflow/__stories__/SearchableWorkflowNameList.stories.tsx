@@ -12,6 +12,8 @@ stories.add('basic', () => (
   <SearchableWorkflowNameList
     showArchived={false}
     onArchiveFilterChange={action('onArchiveFilterChange')}
+    search=""
+    setSearch={action('setSearch')}
     {...baseProps}
   />
 ));
