@@ -24,7 +24,13 @@ module.exports = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/../../script/test/assetsTransformer.js',
     '\\.svg': 'jest-transformer-svg',
-    '@flyteorg/(.*)': ['<rootDir>/../../packages/$1/src'],
+    '@flyteorg/common': ['<rootDir>/../../packages/common/src'],
+    '@flyteorg/components': ['<rootDir>/../../packages/components/src'],
+    '@flyteorg/console': ['<rootDir>/../../packages/console/src'],
+    '@flyteorg/flyte-api': ['<rootDir>/../../packages/flyte-api/src'],
+    '@flyteorg/flyteidl-types': ['<rootDir>/../../packages/flyteidl-types/src'],
+    '@flyteorg/locale': ['<rootDir>/../../packages/locale/src'],
+    '@flyteorg/ui-atoms': ['<rootDir>/../../packages/ui-atoms/src'],
   },
 
   globals: {

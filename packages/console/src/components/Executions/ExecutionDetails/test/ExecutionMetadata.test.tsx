@@ -75,8 +75,8 @@ describe('ExecutionMetadata', () => {
     };
     execution.spec.metadata.referenceExecution = referenceExecution;
     const { getByText } = renderMetadata();
-    const linkEl = getByText(referenceExecution.name);
-    expect(linkEl.getAttribute('href')).toEqual(
+    expect(getByText(referenceExecution.name)).toHaveAttribute(
+      'href',
       Routes.ExecutionDetails.makeUrl(referenceExecution),
     );
   });
@@ -99,24 +99,6 @@ describe('ExecutionMetadata', () => {
     expect(getByTestId(interruptibleTestId)).toHaveTextContent(
       dashedValueString,
     );
-  });
-
-  it('shows true if cache was overwritten for execution', () => {
-    execution.spec.overwriteCache = true;
-    const { getByTestId } = renderMetadata();
-    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('true');
-  });
-
-  it('shows false if cache was not overwritten for execution', () => {
-    execution.spec.overwriteCache = false;
-    const { getByTestId } = renderMetadata();
-    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
-  });
-
-  it('shows false if no cache overwrite value is found in execution spec', () => {
-    delete execution.spec.overwriteCache;
-    const { getByTestId } = renderMetadata();
-    expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
   });
 
   it('shows true if cache was overwritten for execution', () => {

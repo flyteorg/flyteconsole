@@ -85,10 +85,6 @@ export const ExecutionMetadataExtra: React.FC<{
       label: ExecutionMetadataLabels.overwriteCache,
       value: overwriteCache ? 'true' : 'false',
     },
-    {
-      label: ExecutionMetadataLabels.overwriteCache,
-      value: overwriteCache ? 'true' : 'false',
-    },
   ];
 
   return (
