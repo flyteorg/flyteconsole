@@ -1,12 +1,21 @@
 singleQuote: true
-tabWidth: 4
-printWidth: 100
+tabWidth: 2
+printWidth: 80
 trailingComma: "all"
+useTabs: false
+semi: true
+
+arrowParens: "avoid"
+bracketSpacing: true
+htmlWhitespaceSensitivity: "css"
+
 overrides:
-  - files: ["*.js", "*.jsx", "*.ts", "*.tsx"]
-    options:
-      tabWidth: 2
   - files: ["*.yml", "*.yaml"]
     options:
       singleQuote: false
-      tabWidth: 2
+  - files: ["*.html"]
+    options:
+      tabWidth: 4
+  - files: ["dockerfile"]
+    options:
+      useTabs: true

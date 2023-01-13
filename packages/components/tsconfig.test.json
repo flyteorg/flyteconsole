@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "references": [
+    {
+      "path": "../locale/tsconfig.test.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.test.json"
+    }
+  ]
+}

@@ -1,30 +1,28 @@
-# Use node:17 to docker build on M1
-FROM --platform=${BUILDPLATFORM} node:16 as builder
+# syntax=docker/dockerfile:experimental
+FROM node:18.1.0 as builder
+
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
-ARG TARGETARCH
-ENV npm_config_target_arch "${TARGETARCH}"
-ENV npm_config_target_platform linux
-ENV npm_config_target_libc glibc
+WORKDIR /my-project/
+COPY . /my-project/
 
-WORKDIR /code/flyteconsole
-COPY ./packages/zapp/console/package*.json yarn.lock ./
 RUN : \
+  --mount=type=cache,target=/root/.yarn \
   # install production dependencies
-  && yarn install --production \
+  && yarn workspaces focus @flyteconsole/client-app --production \
   # move the production dependencies to the /app folder
   && mkdir /app \
-  && mv node_modules /app \
-  # install development dependencies so we can build
-  && yarn install
+  && rm -rf node_modules/@flyteorg \
+  && cp -R node_modules /app
 
-COPY . .
+WORKDIR /my-project/
 RUN : \
-  # build
-  && make build_prod \
-  # place the runtime application in /app
-  && mv ./packages/zapp/console/dist /app \
-  && mv ./packages/zapp/console/index.js ./packages/zapp/console/env.js ./packages/zapp/console/plugins.js /app
+  --mount=type=cache,target=/root/.yarn \
+  # install all dependencies so we can build
+  && yarn workspaces focus --all --production \
+  && yarn build:pack \
+  && BASE_URL=/console yarn run build:prod \
+  && cp -R ./website/dist/* /app
 
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
@@ -36,4 +34,5 @@ EXPOSE 8080
 
 USER 1000
 
-CMD ["index.js"]
+CMD ["server.js"]
+
