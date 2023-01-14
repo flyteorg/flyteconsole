@@ -10,7 +10,7 @@ export const endpointPrefixes = {
   projectDomainAtributes: '/project_domain_attributes',
   relaunchExecution: '/executions/relaunch',
   recoverExecution: '/executions/recover',
-  setSignal: '/signal/set',
+  setSignal: '/signals',
   task: '/tasks',
   taskExecution: '/task_executions',
   taskExecutionChildren: '/children/task_executions',

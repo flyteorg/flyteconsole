@@ -6,6 +6,9 @@
 # C extensions
 *.so
 
+# Snyk
+.dccache
+
 # Packages
 bin/
 build/
