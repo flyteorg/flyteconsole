@@ -1,3 +1,4 @@
+import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import * as React from 'react';
 import { useState } from 'react';
@@ -8,7 +9,7 @@ import { BaseLaunchFormProps, TaskInitialLaunchParameters } from './types';
 interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
-  nodeId: string;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 /** Renders the form for requesting a resume request on a gate node */

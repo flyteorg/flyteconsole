@@ -49,11 +49,20 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
       // id and navigate to the Execution Details page.
       // if (state.matches({ submit: 'succeeded' })) {
       if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
-        if (newState.context.resultExecutionId) {
-          history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId));
-        }
         if ((newState.context as TaskResumeContext).compiledNode) {
-          onCancel();
+          // only for resume
+          if (newState.context.nodeExecutionId) {
+            // this cancels the modal
+            onCancel();
+            // this reloads the page
+            history.push(
+              Routes.ExecutionDetails.makeUrl(newState.context.nodeExecutionId.executionId),
+            );
+          }
+        } else {
+          if (newState.context.resultExecutionId) {
+            history.push(Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId));
+          }
         }
       }
     });
