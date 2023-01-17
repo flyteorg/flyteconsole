@@ -162,7 +162,7 @@ export const ExecutionDetailsActions = ({
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={initialParameters}
-          nodeId={nodeExecutionId.nodeId}
+          nodeExecutionId={nodeExecutionId}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />

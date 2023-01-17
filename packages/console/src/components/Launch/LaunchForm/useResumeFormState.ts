@@ -1,8 +1,8 @@
 import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { Core } from '@flyteorg/flyteidl-types';
 import { partial } from 'lodash';
+import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
 import {
@@ -27,7 +27,7 @@ import {
 interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
-  nodeId: string;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 async function loadInputs({ compiledNode }: TaskResumeContext) {
@@ -63,7 +63,7 @@ async function validate(formInputsRef: RefObject<LaunchFormInputsRef>) {
 async function submit(
   { resumeSignalNode }: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
-  { compiledNode }: TaskResumeContext,
+  { compiledNode, nodeExecutionId }: TaskResumeContext,
 ) {
   if (!compiledNode?.gateNode?.signal?.signalId) {
     throw new Error('SignalId is empty');
@@ -75,8 +75,10 @@ async function submit(
   const literals = formInputsRef.current.getValues();
 
   const response = await resumeSignalNode({
-    id: compiledNode?.gateNode?.signal
-      ?.signalId as unknown as Core.SignalIdentifier,
+    id: {
+      signalId: compiledNode?.gateNode?.signal?.signalId,
+      executionId: nodeExecutionId?.executionId,
+    },
     value: literals['signal'],
   });
 
@@ -99,6 +101,7 @@ function getServices(
  */
 export function useResumeFormState({
   compiledNode,
+  nodeExecutionId,
 }: ResumeFormProps): ResumeFormState {
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
@@ -117,6 +120,7 @@ export function useResumeFormState({
     services,
     context: {
       compiledNode,
+      nodeExecutionId,
     },
   });
 
