@@ -1,8 +1,9 @@
 import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
-import { Core } from 'flyteidl';
 import { partial } from 'lodash';
+import { SimpleType } from 'models/Common/types';
+import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
 import {
@@ -24,7 +25,7 @@ import { getInputDefintionForLiteralType, getUnsupportedRequiredInputs } from '.
 interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
-  nodeId: string;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 async function loadInputs({ compiledNode }: TaskResumeContext) {
@@ -33,6 +34,14 @@ async function loadInputs({ compiledNode }: TaskResumeContext) {
   }
   const signalType = compiledNode.gateNode?.signal?.type;
   if (!signalType) {
+    if (compiledNode.gateNode?.approve?.signalId) {
+      // for approvedCondition
+
+      return {
+        parsedInputs: [],
+        unsupportedRequiredInputs: [],
+      };
+    }
     throw new Error('Failed to load inputs: missing signal.type');
   }
   const parsedInputs: ParsedInput[] = [
@@ -58,9 +67,12 @@ async function validate(formInputsRef: RefObject<LaunchFormInputsRef>) {
 async function submit(
   { resumeSignalNode }: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
-  { compiledNode }: TaskResumeContext,
+  { compiledNode, nodeExecutionId }: TaskResumeContext,
 ) {
-  if (!compiledNode?.gateNode?.signal?.signalId) {
+  const signalId =
+    compiledNode?.gateNode?.signal?.signalId || compiledNode?.gateNode?.approve?.signalId;
+  const isApprovedCondition = !!compiledNode?.gateNode?.approve?.signalId;
+  if (!signalId) {
     throw new Error('SignalId is empty');
   }
   if (formInputsRef.current === null) {
@@ -70,8 +82,11 @@ async function submit(
   const literals = formInputsRef.current.getValues();
 
   const response = await resumeSignalNode({
-    id: compiledNode?.gateNode?.signal?.signalId as unknown as Core.SignalIdentifier,
-    value: literals['signal'],
+    id: {
+      signalId,
+      executionId: nodeExecutionId?.executionId,
+    },
+    value: isApprovedCondition ? { scalar: { primitive: { boolean: true } } } : literals['signal'],
   });
 
   return response;
@@ -88,7 +103,10 @@ function getServices(apiContext: APIContextValue, formInputsRef: RefObject<Launc
 /** Contains all of the form state for a LaunchTaskForm, including input
  * definitions, current input values, and errors.
  */
-export function useResumeFormState({ compiledNode }: ResumeFormProps): ResumeFormState {
+export function useResumeFormState({
+  compiledNode,
+  nodeExecutionId,
+}: ResumeFormProps): ResumeFormState {
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
 
@@ -104,6 +122,7 @@ export function useResumeFormState({ compiledNode }: ResumeFormProps): ResumeFor
       services,
       context: {
         compiledNode,
+        nodeExecutionId,
       },
     },
   );

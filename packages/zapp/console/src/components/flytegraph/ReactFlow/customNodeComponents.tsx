@@ -258,7 +258,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeId={scopedId}
+          nodeExecutionId={nodeExecutionsById[scopedId].id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />
