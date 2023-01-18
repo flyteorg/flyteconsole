@@ -2,6 +2,7 @@ import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { partial } from 'lodash';
+import { SimpleType } from 'models/Common/types';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
@@ -36,6 +37,14 @@ async function loadInputs({ compiledNode }: TaskResumeContext) {
   }
   const signalType = compiledNode.gateNode?.signal?.type;
   if (!signalType) {
+    if (compiledNode.gateNode?.approve?.signalId) {
+      // for approvedCondition
+
+      return {
+        parsedInputs: [],
+        unsupportedRequiredInputs: [],
+      };
+    }
     throw new Error('Failed to load inputs: missing signal.type');
   }
   const parsedInputs: ParsedInput[] = [
@@ -65,7 +74,10 @@ async function submit(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   { compiledNode, nodeExecutionId }: TaskResumeContext,
 ) {
-  if (!compiledNode?.gateNode?.signal?.signalId) {
+  const signalId =
+    compiledNode?.gateNode?.signal?.signalId || compiledNode?.gateNode?.approve?.signalId;
+  const isApprovedCondition = !!compiledNode?.gateNode?.approve?.signalId;
+  if (!signalId) {
     throw new Error('SignalId is empty');
   }
   if (formInputsRef.current === null) {
@@ -76,10 +88,10 @@ async function submit(
 
   const response = await resumeSignalNode({
     id: {
-      signalId: compiledNode?.gateNode?.signal?.signalId,
+      signalId,
       executionId: nodeExecutionId?.executionId,
     },
-    value: literals['signal'],
+    value: isApprovedCondition ? { scalar: { primitive: { boolean: true } } } : literals['signal'],
   });
 
   return response;
