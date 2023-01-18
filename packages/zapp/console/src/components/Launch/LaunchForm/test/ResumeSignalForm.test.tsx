@@ -19,22 +19,27 @@ import { NodeExecutionDetailsContext } from 'components/Executions/contextProvid
 import { signalInputName } from './constants';
 import { ResumeSignalForm } from '../ResumeSignalForm';
 
-const mockNodeExecutionId = 'n0';
+const mockScopeId = 'n0';
 const mockNodeId = 'node0';
+const mockExecutionId = { domain: 'domain', name: 'name', project: 'project' };
+const mockNodeExecutionId = {
+  nodeId: mockScopeId,
+  executionId: mockExecutionId,
+};
 
 const mockNodeExecutionsById = {
-  [mockNodeExecutionId]: {
+  [mockScopeId]: {
     closure: {
       createdAt: dateToTimestamp(new Date()),
       outputUri: '',
       phase: NodeExecutionPhase.UNDEFINED,
     },
     id: {
-      executionId: { domain: 'domain', name: 'name', project: 'project' },
+      executionId: mockExecutionId,
       nodeId: mockNodeId,
     },
     inputUri: '',
-    scopedId: mockNodeExecutionId,
+    scopedId: mockScopeId,
   },
 };
 
@@ -53,7 +58,7 @@ const createMockCompiledWorkflowClosure = (nodes: CompiledNode[]): CompiledWorkf
 });
 
 const createMockCompiledNode = (type?: Core.ILiteralType): CompiledNode => ({
-  id: mockNodeExecutionId,
+  id: mockScopeId,
   metadata: {
     name: 'my-signal-name',
     timeout: '3600s',
@@ -101,7 +106,7 @@ describe('ResumeSignalForm', () => {
                 <ResumeSignalForm
                   onClose={onClose}
                   compiledNode={mockCompiledNode}
-                  nodeId={mockNodeExecutionId}
+                  nodeExecutionId={mockNodeExecutionId}
                 />
               </NodeExecutionsByIdContext.Provider>
             </NodeExecutionDetailsContext.Provider>
