@@ -30,7 +30,7 @@ export function isChildGroupsFetched(
   scopedId: string,
   nodeExecutionsById: Dictionary<NodeExecution>,
 ): boolean {
-  return Object.values(nodeExecutionsById).find((exe) => exe.fromUniqueParentId === scopedId)
+  return Object.values(nodeExecutionsById).find((exe) => exe?.fromUniqueParentId === scopedId)
     ? true
     : false;
 }

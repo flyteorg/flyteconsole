@@ -103,7 +103,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
 
   useEffect(() => {
     const { dag, staticExecutionIdsMap, error } = compiledWorkflowClosure
-      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows)
+      ? transformerWorkflowToDag(compiledWorkflowClosure, dynamicWorkflows, nodeExecutionsById)
       : { dag: {}, staticExecutionIdsMap: {}, error: null };
 
     const nodes = dag.nodes ?? [];
@@ -119,6 +119,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           const dynamicWorkflow = transformerWorkflowToDag(
             compiledWorkflowClosure,
             dynamicWorkflows,
+            nodeExecutionsById,
           );
           newMergedDag = dynamicWorkflow.dag;
         }
@@ -241,6 +242,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}
             isDetailsTabClosed={isDetailsTabClosed}
+            setShouldUpdate={setShouldUpdate}
           />
         );
       case tabs.timeline.id:

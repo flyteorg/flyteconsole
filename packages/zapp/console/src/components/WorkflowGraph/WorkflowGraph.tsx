@@ -16,6 +16,7 @@ export interface WorkflowGraphProps {
   error: Error | null;
   dynamicWorkflows: any;
   initialNodes: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 export interface DynamicWorkflowMapping {
   rootGraphNodeId: CompiledNode;
@@ -31,6 +32,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   error,
   dynamicWorkflows,
   initialNodes,
+  setShouldUpdate,
 }) => {
   if (error) {
     return <NonIdealState title={t('graphErrorTitle')} description={error.message} />;
@@ -50,6 +52,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
       selectedPhase={selectedPhase}
       isDetailsTabClosed={isDetailsTabClosed}
       initialNodes={initialNodes}
+      setShouldUpdate={setShouldUpdate}
     />
   );
 };

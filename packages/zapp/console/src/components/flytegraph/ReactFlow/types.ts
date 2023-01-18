@@ -11,6 +11,7 @@ export interface RFWrapperProps {
   onNodeSelectionChanged?: any;
   nodeExecutionsById?: any;
   version?: string;
+  setShouldUpdate?: (val: boolean) => void;
 }
 
 /* Note: extending to allow applying styles directly to handle */
@@ -74,6 +75,7 @@ interface RFCustomData {
   dag: any;
   taskType: dTypes;
   cacheStatus: CatalogCacheStatus;
+  isParentNode: boolean;
   nodeLogsByPhase: LogsByPhase;
   selectedPhase: TaskExecutionPhase;
   currentNestedView: string[];

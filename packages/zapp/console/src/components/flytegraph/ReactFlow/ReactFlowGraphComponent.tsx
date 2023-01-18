@@ -64,6 +64,7 @@ const ReactFlowGraphComponent = ({
   isDetailsTabClosed,
   dynamicWorkflows,
   initialNodes,
+  setShouldUpdate,
 }) => {
   const queryClient = useQueryClient();
   const { nodeExecutionsById, setCurrentNodeExecutionsById } =
@@ -92,7 +93,7 @@ const ReactFlowGraphComponent = ({
       setLoading(true);
       const nodeExecutionsWithResources = await Promise.all(
         baseNodeExecutions.map(async (baseNodeExecution) => {
-          if (!nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched) {
+          if (!baseNodeExecution && !nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched) {
             return;
           }
           const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
@@ -272,6 +273,7 @@ const ReactFlowGraphComponent = ({
       type: RFGraphTypes.main,
       nodeExecutionsById,
       currentNestedView: state.currentNestedView,
+      setShouldUpdate,
     };
     return (
       <div style={containerStyle}>

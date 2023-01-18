@@ -36,7 +36,7 @@ import { transformWorkflowToKeyedDag, getNodeNameFromDag } from 'components/Work
 import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
 import { Identifier } from 'models/Common/types';
 import { isMapTaskV1 } from 'models/Task/utils';
-import { assign, keyBy, merge } from 'lodash';
+import { merge } from 'lodash';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import { makeListTaskExecutionsQuery, makeNodeExecutionQuery } from '../nodeExecutionQueries';
 import { NodeExecutionDetails } from '../types';

@@ -1,7 +1,12 @@
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
-import { RFWrapperProps } from './types';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { isChildGroupsFetched } from 'components/Executions/ExecutionDetails/utils';
+import { fetchChildNodeExecutionGroups } from 'components/Executions/nodeExecutionQueries';
+import { clone, isEqual, keyBy, merge } from 'lodash';
+import { useQueryClient } from 'react-query';
+import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,
   ReactFlowCustomNestedPoint,
@@ -13,7 +18,7 @@ import {
   ReactFlowStaticNode,
   ReactFlowGateNode,
 } from './customNodeComponents';
-import { getPositionedNodes, ReactFlowIdHash } from './utils';
+import { RFWrapperProps } from './types';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -36,7 +41,11 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   backgroundStyle,
   currentNestedView,
   version,
+  setShouldUpdate,
 }) => {
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useContext(NodeExecutionsByIdContext);
   const [state, setState] = useState({
     shouldUpdate: true,
     nodes: rfGraphJson.nodes,
@@ -97,31 +106,30 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     flexDirection: 'column',
   };
 
-  const onNodeClick = () => {
-    // TODO if isParent fetch children
-    // if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
-    //   const childGroups = await fetchChildNodeExecutionGroups(
-    //     queryClient,
-    //     nodeExecutionsById[id],
-    //     {},
-    //   );
+  const onNodeClick = async (_event, node) => {
+    // TODO make sure undefined is not pushed to nodeExecutionsById
+    const scopedId = node.data.scopedId;
+    const nodeExecution = nodeExecutionsById[scopedId];
+    if (node.data.isParentNode) {
+      if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+        const childGroups = await fetchChildNodeExecutionGroups(queryClient, nodeExecution, {});
 
-    //   let childGroupsExecutionsById;
-    //   childGroups.forEach((group) => {
-    //     childGroupsExecutionsById = merge(
-    //       childGroupsExecutionsById,
-    //       keyBy(group.nodeExecutions, 'scopedId'),
-    //     );
-    //   });
-    //   const prevNodeExecutionsById = clone(nodeExecutionsById);
-    //   const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
-    //   if (!isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
-    //     setShouldUpdate(true);
-    //   }
+        let childGroupsExecutionsById;
+        childGroups.forEach((group) => {
+          childGroupsExecutionsById = merge(
+            childGroupsExecutionsById,
+            keyBy(group.nodeExecutions, 'scopedId'),
+          );
+        });
+        const prevNodeExecutionsById = clone(nodeExecutionsById);
+        const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+        if (setShouldUpdate && !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
+          setShouldUpdate(true);
+        }
 
-    //   setCurrentNodeExecutionsById(currentNodeExecutionsById);
-    // }
-
+        setCurrentNodeExecutionsById(currentNodeExecutionsById);
+      }
+    }
     setState((state) => ({ ...state, needFitView: false }));
   };
 
