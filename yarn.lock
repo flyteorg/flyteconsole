@@ -2139,16 +2139,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@flyteorg/flyteidl-types@workspace:packages/flyteidl-types"
   dependencies:
-    "@flyteorg/flyteidl": ^1.3.0
+    "@flyteorg/flyteidl": 1.3.4
   peerDependencies:
     protobufjs: ~6.11.3
   languageName: unknown
   linkType: soft
 
-"@flyteorg/flyteidl@npm:^1.3.0":
-  version: 1.4.0
-  resolution: "@flyteorg/flyteidl@npm:1.4.0"
-  checksum: 9494f633cbc7e67d8f3a76e976772ddd7facf2256fab55008a87fe0ac6870ea9a9d8a15f7cad6e6b0a91312deff9a837c8f1006f31cc8d4e6fa48276c1abb61b
+"@flyteorg/flyteidl@npm:1.3.4":
+  version: 1.3.4
+  resolution: "@flyteorg/flyteidl@npm:1.3.4"
+  checksum: 8674f2dce839e544861f728c4b617fcc61f1ce9d9f37711d211ee9a000766cf84e9c7703f0fb7ffdbb7f66a5617bbb250f66d9099b4ad4c220532ec9ccab88ac
   languageName: node
   linkType: hard
 
