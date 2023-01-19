@@ -31,7 +31,7 @@ stories.add('Workflow executions - all', () => (
     {...useWorkflowExecutionFiltersState()}
     chartIds={['chart0']}
     clearCharts={action('clearCharts')}
-    showArchived={false}
+    includeArchived={false}
     onArchiveFilterChange={action('onArchiveFilterChange')}
     onlyMyExecutionsFilterState={{
       isFilterDisabled: false,

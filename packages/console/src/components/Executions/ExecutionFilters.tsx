@@ -41,7 +41,7 @@ export interface ExecutionFiltersProps {
   filters: (FilterState | BooleanFilterState)[];
   chartIds?: string[];
   clearCharts?: () => void;
-  showArchived?: boolean;
+  includeArchived?: boolean;
   onArchiveFilterChange?: (showArchievedItems: boolean) => void;
   onlyMyExecutionsFilterState?: OnlyMyExecutionsFilterState;
 }
@@ -75,7 +75,7 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
   filters,
   chartIds,
   clearCharts,
-  showArchived,
+  includeArchived,
   onArchiveFilterChange,
   onlyMyExecutionsFilterState,
 }) => {
@@ -165,12 +165,12 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
           <FormControlLabel
             control={
               <Checkbox
-                checked={showArchived}
+                checked={includeArchived}
                 onChange={(_, checked) => onArchiveFilterChange(checked)}
               />
             }
             className={styles.checkbox}
-            label="Show archived executions"
+            label="Include archived executions"
           />
         </FormGroup>
       )}

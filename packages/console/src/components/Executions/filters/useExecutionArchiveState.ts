@@ -3,8 +3,8 @@ import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
 import { ExecutionState } from 'models/Execution/enums';
 
 interface ArchiveFilterState {
-  showArchived: boolean;
-  setShowArchived: (newValue: boolean) => void;
+  includeArchived: boolean;
+  setIncludeArchived: (newValue: boolean) => void;
   getFilter: () => FilterOperation | null;
 }
 
@@ -12,25 +12,25 @@ interface ArchiveFilterState {
  *  Allows to filter by Archive state
  */
 export function useExecutionShowArchivedState(): ArchiveFilterState {
-  const [showArchived, setShowArchived] = useState(false);
+  const [includeArchived, setIncludeArchived] = useState(false);
 
   // By default all values are returned with EXECUTION_ACTIVE state,
   // so filter need to be applied only for ARCHIVED executions
   const getFilter = (): FilterOperation | null => {
-    if (!showArchived) {
+    if (!includeArchived) {
       return null;
     }
 
     return {
       key: 'state',
-      operation: FilterOperationName.EQ,
-      value: ExecutionState.EXECUTION_ARCHIVED,
+      operation: FilterOperationName.VALUE_IN,
+      value: [ExecutionState.EXECUTION_ARCHIVED, ExecutionState.EXECUTION_ACTIVE],
     };
   };
 
   return {
-    showArchived,
-    setShowArchived,
+    includeArchived,
+    setIncludeArchived,
     getFilter,
   };
 }

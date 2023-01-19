@@ -39,7 +39,7 @@ interface SearchResultsProps {
 export interface FilterableNamedEntityListProps {
   names: NamedEntity[];
   onArchiveFilterChange: (showArchievedItems: boolean) => void;
-  showArchived: boolean;
+  includeArchived: boolean;
   placeholder: string;
   archiveCheckboxLabel: string;
   renderItem: ItemRenderer;
@@ -64,7 +64,7 @@ export const FilterableNamedEntityList: React.FC<
   FilterableNamedEntityListProps
 > = ({
   names,
-  showArchived,
+  includeArchived,
   renderItem,
   onArchiveFilterChange,
   placeholder,
@@ -108,7 +108,7 @@ export const FilterableNamedEntityList: React.FC<
           className={styles.archiveCheckbox}
           control={
             <Checkbox
-              checked={showArchived}
+              checked={includeArchived}
               onChange={(_, checked) => onArchiveFilterChange(checked)}
             />
           }

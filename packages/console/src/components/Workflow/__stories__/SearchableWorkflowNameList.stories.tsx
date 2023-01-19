@@ -10,7 +10,7 @@ const stories = storiesOf('Workflow/SearchableWorkflowNameList', module);
 stories.addDecorator(story => <div style={{ width: '650px' }}>{story()}</div>);
 stories.add('basic', () => (
   <SearchableWorkflowNameList
-    showArchived={false}
+    includeArchived={false}
     onArchiveFilterChange={action('onArchiveFilterChange')}
     search=""
     setSearch={action('setSearch')}

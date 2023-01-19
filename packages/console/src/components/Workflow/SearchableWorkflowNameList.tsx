@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { Shimmer } from 'components/common/Shimmer';
-import { debounce, StringNullableChain } from 'lodash';
+import { debounce } from 'lodash';
 import {
   IconButton,
   Typography,
@@ -51,7 +51,7 @@ interface SearchableWorkflowNameItemActionsProps {
 interface SearchableWorkflowNameListProps {
   workflows: WorkflowListStructureItem[];
   onArchiveFilterChange: (showArchievedItems: boolean) => void;
-  showArchived: boolean;
+  includeArchived: boolean;
   search: string;
   setSearch: (search: string) => void;
 }
@@ -350,7 +350,13 @@ const SearchableWorkflowNameItem: React.FC<SearchableWorkflowNameItemProps> =
  * @constructor
  */
 export const SearchableWorkflowNameList: React.FC<SearchableWorkflowNameListProps> =
-  ({ workflows, onArchiveFilterChange, showArchived, search, setSearch }) => {
+  ({
+    workflows,
+    onArchiveFilterChange,
+    includeArchived,
+    search,
+    setSearch,
+  }) => {
     const styles = useStyles();
 
     const { results, setSearchString } = useSearchableListState({
@@ -385,7 +391,7 @@ export const SearchableWorkflowNameList: React.FC<SearchableWorkflowNameListProp
             className={styles.archiveCheckbox}
             control={
               <Checkbox
-                checked={showArchived}
+                checked={includeArchived}
                 onChange={(_, checked) => onArchiveFilterChange(checked)}
               />
             }

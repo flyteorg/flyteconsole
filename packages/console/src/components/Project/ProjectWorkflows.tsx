@@ -37,8 +37,8 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     <WaitForData {...workflows}>
       <SearchableWorkflowNameList
         workflows={workflows.value}
-        showArchived={archivedFilter.showArchived}
-        onArchiveFilterChange={archivedFilter.setShowArchived}
+        includeArchived={archivedFilter.includeArchived}
+        onArchiveFilterChange={archivedFilter.setIncludeArchived}
         search={search}
         setSearch={setSearch}
       />

@@ -250,8 +250,8 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
         </Typography>
         <ExecutionFilters
           {...filtersState}
-          showArchived={archivedFilter.showArchived}
-          onArchiveFilterChange={archivedFilter.setShowArchived}
+          includeArchived={archivedFilter.includeArchived}
+          onArchiveFilterChange={archivedFilter.setIncludeArchived}
           onlyMyExecutionsFilterState={onlyMyExecutionsFilterState}
         />
         <ErrorBoundary>{content}</ErrorBoundary>

@@ -82,8 +82,8 @@ export const EntityExecutions: React.FC<EntityExecutionsProps> = ({
           {...filtersState}
           chartIds={chartIds}
           clearCharts={clearCharts}
-          showArchived={archivedFilter.showArchived}
-          onArchiveFilterChange={archivedFilter.setShowArchived}
+          includeArchived={archivedFilter.includeArchived}
+          onArchiveFilterChange={archivedFilter.setIncludeArchived}
           onlyMyExecutionsFilterState={onlyMyExecutionsFilterState}
         />
       </div>

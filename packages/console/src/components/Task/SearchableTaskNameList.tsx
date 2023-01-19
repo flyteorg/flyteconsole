@@ -92,7 +92,7 @@ interface TaskNameRowProps {
 interface SearchableTaskNameListProps {
   names: NamedEntity[];
   onArchiveFilterChange: (showArchievedItems: boolean) => void;
-  showArchived: boolean;
+  includeArchived: boolean;
 }
 
 const intersectionOptions: IntersectionOptions = {
