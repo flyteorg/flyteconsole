@@ -11,7 +11,7 @@ interface ArchiveFilterState {
 /**
  *  Allows to filter by Archive state
  */
-export function useTaskShowArchivedState(): ArchiveFilterState {
+export function useWorkflowIncludeArchivedState(): ArchiveFilterState {
   const [includeArchived, setIncludeArchived] = useState(false);
 
   // By default all values are returned with NAMED_ENTITY_ACTIVE state

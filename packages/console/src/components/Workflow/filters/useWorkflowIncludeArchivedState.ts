@@ -11,17 +11,22 @@ interface ArchiveFilterState {
 /**
  *  Allows to filter by Archive state
  */
-export function useWorkflowShowArchivedState(): ArchiveFilterState {
+export function useWorkflowIncludeArchivedState(): ArchiveFilterState {
   const [includeArchived, setIncludeArchived] = useState(false);
 
   // By default all values are returned with NAMED_ENTITY_ACTIVE state
   const getFilter = (): FilterOperation => {
+    if (!includeArchived) {
+      return {
+        key: 'state',
+        operation: FilterOperationName.EQ,
+        value: NamedEntityState.NAMED_ENTITY_ACTIVE,
+      };
+    }
     return {
       key: 'state',
-      operation: FilterOperationName.EQ,
-      value: includeArchived
-        ? NamedEntityState.NAMED_ENTITY_ARCHIVED
-        : NamedEntityState.NAMED_ENTITY_ACTIVE,
+      operation: FilterOperationName.VALUE_IN,
+      value: [NamedEntityState.NAMED_ENTITY_ARCHIVED, NamedEntityState.NAMED_ENTITY_ACTIVE],
     };
   };
 
