@@ -1,0 +1,25 @@
+{
+  // VsCode automatically looks for a tsconfig.json file so paths need to be specified here
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+
+    "paths": {
+      "@flyteorg/*": ["../packages/*/src"]
+    },
+
+    // TODO: this items should be removed when violations are fixed:
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noImplicitOverride": false
+  },
+
+  "include": ["src/**/*", "env.js"],
+
+  "references": [
+    { "path": "../packages/common" },
+    { "path": "../packages/console" }
+  ]
+}

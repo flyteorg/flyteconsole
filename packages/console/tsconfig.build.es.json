@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "outDir": "./lib"
+  },
+
+  "references": [
+    {
+      "path": "../common/tsconfig.build.es.json"
+    },
+    {
+      "path": "../flyte-api/tsconfig.build.es.json"
+    },
+    {
+      "path": "../flyteidl-types/tsconfig.build.es.json"
+    },
+    {
+      "path": "../locale/tsconfig.build.es.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.build.es.json"
+    },
+    {
+      "path": "../components/tsconfig.build.es.json"
+    }
+  ]
+}

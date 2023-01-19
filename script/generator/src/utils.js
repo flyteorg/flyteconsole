@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const checkPathExists = (pathToCheck) => {
+const checkPathExists = pathToCheck => {
   try {
     return fs.existsSync(pathToCheck);
   } catch (err) {
@@ -18,16 +18,23 @@ async function editPackageJSON(options) {
     /* If no package.json, this will be skipped  */
     if (!err) {
       jsonFile = JSON.parse(data);
-      jsonFile.name = `@flyteconsole/${options.name}`;
+      jsonFile.name = `@flyteorg/${options.name}`;
       jsonFile.description = options.description;
 
-      jsonFile.scripts.test = jsonFile.scripts.test.replace('folder-path', options.testPath);
+      jsonFile.scripts.test = jsonFile.scripts.test.replace(
+        'folder-path',
+        options.testPath,
+      );
 
-      fs.writeFile(`${targetDir}/package.json`, JSON.stringify(jsonFile, null, '\t'), (err2) => {
-        if (err2) {
-          throw new Error('Unable to update package.json');
-        }
-      });
+      fs.writeFile(
+        `${targetDir}/package.json`,
+        JSON.stringify(jsonFile, null, '\t'),
+        err2 => {
+          if (err2) {
+            throw new Error('Unable to update package.json');
+          }
+        },
+      );
     }
   });
 }

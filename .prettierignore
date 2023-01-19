@@ -1,0 +1,73 @@
+.env
+*.swp
+LICENSE
+
+# C extensions
+*.so
+
+# Packages
+bin/
+build/
+dist/
+downloads/
+env/
+lib/
+lib64/
+parts/
+sdist/
+var/
+
+# Translations
+*.mo
+
+# build packages or files that shouldn't be in repo
+node_modules
+bower_components
+.sass-cache
+.tmp
+app/public/dist
+app/public/styles/*.css
+
+# Mr Developer (mac, editor, IDEs, etc)
+.mr.developer.cfg
+.project
+.pydevproject
+.vagrant
+.ropeproject
+.tmp
+.sass-cache
+.DS_Store
+.zedstate
+.idea
+.cache/
+venv/
+*.tsbuildinfo
+*.log
+**.orig
+
+# Frontend
+.awcache/
+.dist/
+npm-debug.log
+jest
+jest_0
+.coverage/
+
+# yarn related
+node_modules
+.pnp.*
+*.yalc
+yalc.lock
+**/.yarn/*
+yarn-error.log
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
+# patches contain the patchfiles which have been generated with the `yarn patch-commit` command.
+# We always want them in repository, since they are necessary to install dependencies.
+!.yarn/patches
+
+# Certs
+.srl
+certificate/

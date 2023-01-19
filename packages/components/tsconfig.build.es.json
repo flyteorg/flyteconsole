@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "outDir": "./lib"
+  },
+
+  "references": [
+    {
+      "path": "../locale/tsconfig.build.es.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.build.es.json"
+    }
+  ]
+}

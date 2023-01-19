@@ -6,9 +6,9 @@ distinguished_name = dn
 
 [dn]
 C=US
-ST=RandomState
-L=RandomCity
-O=RandomOrganization
-OU=RandomOrganizationUnit
-emailAddress=hello@example.com
-CN = localhost
+ST=WA
+L=Bellevue
+O=Flyte
+OU=FE
+emailAddress=flyte-bot@union.ai
+CN=union.ai

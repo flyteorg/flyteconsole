@@ -1,8 +1,12 @@
-.git
-.env
-node_modules
-Dockerfile
+
+# *
+# !package.json
+# !yarn.lock
+# !packages/
+# !node_modules/
+# !jes
+.storybook/
+stories-intro/
+Dockerfile*
 .dockerignore
-npm-debug.log
-.storybook
-.vscode
+README*

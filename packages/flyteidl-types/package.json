@@ -1,0 +1,47 @@
+{
+  "name": "@flyteorg/flyteidl-types",
+  "version": "0.0.3",
+  "description": "Flyteconsole basics flyteidl types",
+  "main": "./dist/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flyteorg/flyteconsole.git",
+    "directory": "packages/flyteidl-types"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist",
+    "lib",
+    "node_modules"
+  ],
+  "keywords": [
+    "flyteorg",
+    "flyteconsole",
+    "react",
+    "flyteidl-types"
+  ],
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
+  "scripts": {
+    "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && run -T tsc-alias  -p ./tsconfig.build.es.json",
+    "build:cjs": "run -T tsc --project ./tsconfig.build.json && run -T  tsc-alias -p ./tsconfig.build.json",
+    "test": "NODE_ENV=test jest"
+  },
+  "peerDependencies": {
+    "protobufjs": "~6.11.3"
+  },
+  "dependencies": {
+    "@flyteorg/flyteidl": "^1.3.0"
+  }
+}

@@ -17,7 +17,13 @@ lint: #lints the package for common code smells
 .PHONY: build_prod
 build_prod:
 	yarn run clean
+	make pack
 	BASE_URL=/console yarn run build:prod
+
+.PHONY: pack
+pack:
+	yarn workspaces focus --production --all
+	yarn run build:pack
 
 # test_unit runs all unit tests
 .PHONY: test_unit

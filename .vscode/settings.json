@@ -1,12 +1,32 @@
 {
-    "[html][json]": {
-        "editor.detectIndentation": false,
-        "editor.tabSize": 4
-    },
-    "[javascript][javascriptreact][typescript][typescriptreact]": {
-        "editor.detectIndentation": false,
-        "editor.tabSize": 2
-    },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+  "explorer.autoReveal": "focusNoScroll",
+  "explorer.enableUndo": true,
+  "explorer.excludeGitIgnore": false,
+
+  "files.autoSave": "afterDelay",
+
+  "problems.autoReveal": true,
+
+  // editor
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "all",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // typescript
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  "[javascript][javascriptreact][typescript][typescriptreact][json]": {
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2
+  },
+
+  "[html]": {
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  }
 }

@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "references": [
+    {
+      "path": "../common/tsconfig.test.json"
+    },
+    {
+      "path": "../components/tsconfig.test.json"
+    },
+    {
+      "path": "../flyte-api/tsconfig.test.json"
+    },
+    {
+      "path": "../flyteidl-types/tsconfig.test.json"
+    },
+    {
+      "path": "../locale/tsconfig.test.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.test.json"
+    }
+  ]
+}

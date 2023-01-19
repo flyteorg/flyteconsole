@@ -34,17 +34,20 @@ After new package is generated, you will need to update some values to be able t
 For example in case if package plan to be used in `console` app
 
 Ensure to add proper webpack alias path resolutions into:
-* ./storybook/main.js -  as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
-* packages/zapp/console/webpack.common.config.ts to alias section -  as `'@flyteconsole/flyte-api': path.resolve(__dirname, '../packages/plugins/flyte-api/src’),`
+
+- ./storybook/main.js - as `'@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src’),`
+- packages/zapp/console/webpack.common.config.ts to alias section - as `'@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src’),`
 
 To add child package usage to other package, in parent package ->
-* Add `{ "path": “../../${type}/${package-name}" }` to tsconfig.json
-* Add `{ "path": “../../${type}/${package-name}/tsconfig.build.json" }` to tsconfig.build.json (if exists)
-- Then you can import your changes as `import { getLoginUrl } from '@flyteconsole/flyte-api’;`
 
-> If you see `yarn lint` package not defined issues update `.\eslintrc.js` by adding your package to 
+- Add `{ "path": “../${package-name}" }` to tsconfig.json
+- Add `{ "path": “../${package-name}/tsconfig.json" }` to tsconfig.json (if exists)
+
+* Then you can import your changes as `import { getLoginUrl } from '@flyteorg/flyte-api’;`
+
+> If you see `yarn lint` package not defined issues update `.\eslintrc.js` by adding your package to
+
     'import/core-modules': ['@clients/locale', '@clients/primitives', '@clients/theme'],
-
 
 ## Storybook
 
@@ -59,8 +62,8 @@ You can run storybook with `yarn run storybook`, and view the stories at http://
 We are using our internal feature flag solution to allow continuos integration,
 while features are in development. There are two types of flags:
 
--   **FeatureFlag**: boolean flags which indicate if feature is enabled.
--   **AdminFlag**: the minimal version of flyteadmin in which feature supported.
+- **FeatureFlag**: boolean flags which indicate if feature is enabled.
+- **AdminFlag**: the minimal version of flyteadmin in which feature supported.
 
 All flags currently available could be found in [/FeatureFlags/defaultConfig.ts](./src/basics/FeatureFlags/defaultConfig.ts)
 file. Most of them under active development, which means we don't guarantee it will work as you expect.
@@ -127,19 +130,19 @@ Running flyteconsole locally requires [NodeJS](https://nodejs.org) and
 [yarn](https://yarnpkg.com). We recommend for you to use **asdf** to manage NodeJS version.
 You can find currently used versions in `.tool-versions` file.
 
--   Install asdf through homebrew
+- Install asdf through homebrew
 
 ```bash
 brew install asdf
 ```
 
--   (Optional) If you are using **M1 MacBook**, you will need to install `vips` for proper build experience
+- (Optional) If you are using **M1 MacBook**, you will need to install `vips` for proper build experience
 
 ```bash
 brew install vips
 ```
 
--   Add Yarn and NodeJs plugins to asdf, to manage versions
+- Add Yarn and NodeJs plugins to asdf, to manage versions
 
 ```bash
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
@@ -147,13 +150,13 @@ asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
 brew install gpg
 ```
 
--   From flyteconsole directory - install proper NodeJS and yarn versions:
+- From flyteconsole directory - install proper NodeJS and yarn versions:
 
 ```bash
 asdf install
 ```
 
--   Install nodepackages
+- Install nodepackages
 
 ```bash
 yarn install
@@ -161,48 +164,50 @@ yarn install
 
 1. Set `ADMIN_API_URL` and `ADMIN_API_USE_SSL`
 
-    ```
-      export ADMIN_API_URL=https://different.admin.service.com
-      export ADMIN_API_USE_SSL="https"
-      export LOCAL_DEV_HOST=localhost.different.admin.service.com
-    ```
+   ```
+     export ADMIN_API_URL=https://different.admin.service.com
+     export ADMIN_API_USE_SSL="https"
+     export LOCAL_DEV_HOST=localhost.different.admin.service.com
+   ```
 
-    _NOTE:_ Add these to your local profile (e.g., `./profile`) to prevent having to do this step each time
+   _NOTE:_ Add these to your local profile (e.g., `./profile`) to prevent having to do this step each time
 
 2. Generate SSL certificate
 
-    Run the following command from your `flyteconsole` directory
+   Run the following command from your `flyteconsole` directory
 
-    ```bash
-      make generate_ssl
-    ```
+   ```bash
+     make generate_ssl
+   ```
 
 3. Add new record to hosts file
 
-    ```bash
-      sudo vim /etc/hosts
-    ```
+   ```bash
+     sudo vim /etc/hosts
+   ```
 
-    Add the following record
+   Add the following record
 
-    ```
-      127.0.0.1 localhost.different.admin.service.com
-    ```
+   ```
+     127.0.0.1 localhost.different.admin.service.com
+   ```
 
 4. Install Chrome plugin: [Moesif Origin & CORS Changer](https://chrome.google.com/webstore/detail/moesif-origin-cors-change/digfbfaphojjndkpccljibejjbppifbc)
 
-    > _NOTE:_
-    > 1. Activate plugin (toggle to "on")
-    > 1. Open 'Advanced Settings':
-    > - set `Access-Control-Allow-Credentials`: `true`
-    > - set `Domain List`: `your.localhost.com`
+   > _NOTE:_
+   >
+   > 1. Activate plugin (toggle to "on")
+   > 1. Open 'Advanced Settings':
+   >
+   > - set `Access-Control-Allow-Credentials`: `true`
+   > - set `Domain List`: `your.localhost.com`
 
 5. Start `flyteconsole`
 
-    ```bash
-      yarn start
-    ```
+   ```bash
+     yarn start
+   ```
 
-    Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
+   Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
 
 > Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (e.g., in your `/.profile`.)

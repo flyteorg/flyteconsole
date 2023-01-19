@@ -6,7 +6,9 @@ import { projectTypeSoSettingsMap } from './constants.js';
 
 const askQuestions = async () => {
   console.log(
-    chalk.hex('#e7c99a')('Use the up and down arrow keys to navigate multi-choice questions'),
+    chalk.hex('#e7c99a')(
+      'Use the up and down arrow keys to navigate multi-choice questions',
+    ),
   );
 
   const questionsSetProjectType = [
@@ -38,7 +40,7 @@ const askQuestions = async () => {
       name: 'name',
       type: 'input',
       message: 'Project name(folder): ',
-      validate: (projectName) => {
+      validate: projectName => {
         let valid = true;
 
         /* Reg ex to ensure that project name starts with a letter, includes letters, numbers, underscores and hashes */
@@ -74,10 +76,16 @@ const askQuestions = async () => {
 
     const projectType = answersA.type;
 
-    const { targetDirectoryPartialPath, templateDirectory, packagePartialPath } =
-      projectTypeSoSettingsMap[projectType];
+    const {
+      targetDirectoryPartialPath,
+      templateDirectory,
+      packagePartialPath,
+    } = projectTypeSoSettingsMap[projectType];
 
-    const questionsB = getQuestionsSetFolderName(templateDirectory, targetDirectoryPartialPath);
+    const questionsB = getQuestionsSetFolderName(
+      templateDirectory,
+      targetDirectoryPartialPath,
+    );
     const answersB = await inquirer.prompt(questionsB);
 
     const projectName = answersB.name;

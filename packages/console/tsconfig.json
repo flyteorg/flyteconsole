@@ -1,0 +1,43 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./src",
+
+    "composite": true,
+
+    // TODO: this items should be removed when violations are fixed:
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noImplicitOverride": false,
+
+    "paths": {
+      "@flyteorg/*": ["../packages/*/src"]
+    }
+  },
+
+  "include": ["src/**/*"],
+
+  "references": [
+    {
+      "path": "../common"
+    },
+    {
+      "path": "../flyte-api"
+    },
+    {
+      "path": "../flyteidl-types"
+    },
+    {
+      "path": "../locale"
+    },
+    {
+      "path": "../ui-atoms"
+    },
+    {
+      "path": "../components"
+    }
+  ]
+}

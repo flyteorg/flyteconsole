@@ -39,13 +39,20 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/jsx-boolean-value': 'off',
     'react/jsx-filename-extension': [2, { extensions: ['.jsx', '.tsx'] }],
-    'lines-between-class-members': ['error', 'always', { exceptAfterSingleLine: true }],
+    'lines-between-class-members': [
+      'error',
+      'always',
+      { exceptAfterSingleLine: true },
+    ],
 
     // disabled to let "@typescript-eslint/*" rules do it's job
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'no-redeclare': 'off',
-    '@typescript-eslint/no-redeclare': ['warn', { ignoreDeclarationMerge: true }], // still will warn on exporting enums :(
+    '@typescript-eslint/no-redeclare': [
+      'warn',
+      { ignoreDeclarationMerge: true },
+    ], // still will warn on exporting enums :(
 
     /**
      * Up for discussion
@@ -133,7 +140,13 @@ module.exports = {
   overrides: [
     {
       // overrides for test files
-      files: ['*.spec.*', '*.test.*', '*.stories.*', 'src/**/test/*', 'src/**/mocks/*'],
+      files: [
+        '*.spec.*',
+        '*.test.*',
+        '*.stories.*',
+        'src/**/test/*',
+        'src/**/mocks/*',
+      ],
       rules: {
         camelcase: 'off',
         '@typescript-eslint/no-explicit-any': 'off',
