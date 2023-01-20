@@ -26,7 +26,10 @@ export function useTaskShowArchivedState(): ArchiveFilterState {
     return {
       key: 'state',
       operation: FilterOperationName.VALUE_IN,
-      value: [NamedEntityState.NAMED_ENTITY_ARCHIVED, NamedEntityState.NAMED_ENTITY_ACTIVE],
+      value: [
+        NamedEntityState.NAMED_ENTITY_ARCHIVED,
+        NamedEntityState.NAMED_ENTITY_ACTIVE,
+      ],
     };
   };
 

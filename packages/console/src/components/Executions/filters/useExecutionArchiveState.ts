@@ -24,7 +24,10 @@ export function useExecutionShowArchivedState(): ArchiveFilterState {
     return {
       key: 'state',
       operation: FilterOperationName.VALUE_IN,
-      value: [ExecutionState.EXECUTION_ARCHIVED, ExecutionState.EXECUTION_ACTIVE],
+      value: [
+        ExecutionState.EXECUTION_ARCHIVED,
+        ExecutionState.EXECUTION_ACTIVE,
+      ],
     };
   };
 
