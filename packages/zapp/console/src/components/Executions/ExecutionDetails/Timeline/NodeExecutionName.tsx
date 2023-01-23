@@ -44,7 +44,7 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
     let isCurrent = true;
     getNodeExecutionDetails(execution).then((res) => {
       if (isCurrent) {
-        setDisplayName(res.displayName);
+        setDisplayName(res?.displayName);
       }
     });
     return () => {

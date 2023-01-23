@@ -107,7 +107,6 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   };
 
   const onNodeClick = async (_event, node) => {
-    // TODO make sure undefined is not pushed to nodeExecutionsById
     const scopedId = node.data.scopedId;
     const nodeExecution = nodeExecutionsById[scopedId];
     if (node.data.isParentNode) {
@@ -121,13 +120,15 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
             keyBy(group.nodeExecutions, 'scopedId'),
           );
         });
-        const prevNodeExecutionsById = clone(nodeExecutionsById);
-        const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
-        if (setShouldUpdate && !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
-          setShouldUpdate(true);
-        }
+        if (childGroupsExecutionsById) {
+          const prevNodeExecutionsById = clone(nodeExecutionsById);
+          const currentNodeExecutionsById = merge(nodeExecutionsById, childGroupsExecutionsById);
+          if (setShouldUpdate && !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)) {
+            setShouldUpdate(true);
+          }
 
-        setCurrentNodeExecutionsById(currentNodeExecutionsById);
+          setCurrentNodeExecutionsById(currentNodeExecutionsById);
+        }
       }
     }
     setState((state) => ({ ...state, needFitView: false }));

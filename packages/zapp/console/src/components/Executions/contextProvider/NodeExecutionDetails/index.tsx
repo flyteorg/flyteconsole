@@ -12,7 +12,9 @@ import { createExecutionDetails, CurrentExecutionDetails } from './createExecuti
 import { getTaskThroughExecution } from './getTaskThroughExecution';
 
 interface NodeExecutionDetailsState {
-  getNodeExecutionDetails: (nodeExecution?: NodeExecution) => Promise<NodeExecutionDetails>;
+  getNodeExecutionDetails: (
+    nodeExecution?: NodeExecution,
+  ) => Promise<NodeExecutionDetails | undefined>;
   workflowId: Identifier;
   compiledWorkflowClosure: CompiledWorkflowClosure | null;
 }
@@ -102,8 +104,7 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     };
   }, [queryClient, resourceType, project, domain, name, version]);
 
-  // TODO refactor to check `is_dynamic` field instead of fetching task details
-  const checkForDynamicTasks = async (nodeExecution: NodeExecution) => {
+  const getDynamicTasks = async (nodeExecution: NodeExecution) => {
     const taskDetails = await getTaskThroughExecution(queryClient, nodeExecution);
 
     const tasksMap = tasks;
@@ -115,7 +116,9 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     return taskDetails;
   };
 
-  const getDetails = async (nodeExecution?: NodeExecution): Promise<NodeExecutionDetails> => {
+  const getDetails = async (
+    nodeExecution?: NodeExecution,
+  ): Promise<NodeExecutionDetails | undefined> => {
     if (!executionTree || !nodeExecution) {
       return UNKNOWN_DETAILS;
     }
@@ -131,7 +134,9 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
       }
 
       // look for specific task by nodeId in current execution
-      details = await checkForDynamicTasks(nodeExecution);
+      if (nodeExecution.metadata?.isDynamic) {
+        details = await getDynamicTasks(nodeExecution);
+      }
       return details;
     }
 

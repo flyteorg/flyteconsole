@@ -64,6 +64,7 @@ const ReactFlowGraphComponent = ({
   isDetailsTabClosed,
   dynamicWorkflows,
   initialNodes,
+  shouldUpdate,
   setShouldUpdate,
 }) => {
   const queryClient = useQueryClient();
@@ -93,7 +94,7 @@ const ReactFlowGraphComponent = ({
       setLoading(true);
       const nodeExecutionsWithResources = await Promise.all(
         baseNodeExecutions.map(async (baseNodeExecution) => {
-          if (!baseNodeExecution && !nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched) {
+          if (!baseNodeExecution || nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched) {
             return;
           }
           const taskExecutions = await fetchTaskExecutionList(queryClient, baseNodeExecution.id);
@@ -118,6 +119,7 @@ const ReactFlowGraphComponent = ({
           return {
             ...baseNodeExecution,
             ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+            tasksFetched: true,
           };
         }),
       );
@@ -154,10 +156,7 @@ const ReactFlowGraphComponent = ({
     const newView = {
       [view.parent]: [...currentView, view.view],
     };
-    setState((state) => ({
-      ...state,
-      currentNestedView: { ...newView },
-    }));
+    setState((state) => ({ ...state, currentNestedView: { ...newView } }));
   };
 
   const onRemoveNestedView = (viewParent, viewIndex) => {
@@ -168,10 +167,7 @@ const ReactFlowGraphComponent = ({
     if (currentNestedView[viewParent]?.length < 1) {
       delete currentNestedView[viewParent];
     }
-    setState((state) => ({
-      ...state,
-      currentNestedView,
-    }));
+    setState((state) => ({ ...state, currentNestedView }));
   };
 
   const buildReactFlowGraphData = () => {
@@ -190,27 +186,18 @@ const ReactFlowGraphComponent = ({
 
   useEffect(() => {
     const newRFGraphData = buildReactFlowGraphData();
-    setState((state) => ({
-      ...state,
-      rfGraphJson: newRFGraphData,
-    }));
-  }, [state.currentNestedView, state.nodeExecutionsById, isDetailsTabClosed]);
+    setState((state) => ({ ...state, rfGraphJson: newRFGraphData }));
+  }, [state.currentNestedView, state.nodeExecutionsById, isDetailsTabClosed, shouldUpdate]);
 
   useEffect(() => {
     if (graphNodeCountChanged(state.data, data)) {
-      setState((state) => ({
-        ...state,
-        data: data,
-      }));
+      setState((state) => ({ ...state, data: data }));
     }
     if (
       nodeExecutionStatusChanged(state.nodeExecutionsById, nodeExecutionsById) ||
       nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
     ) {
-      setState((state) => ({
-        ...state,
-        nodeExecutionsById,
-      }));
+      setState((state) => ({ ...state, nodeExecutionsById }));
     }
   }, [data, nodeExecutionsById]);
 

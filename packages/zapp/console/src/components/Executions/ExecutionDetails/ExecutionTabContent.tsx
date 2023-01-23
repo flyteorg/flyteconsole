@@ -242,6 +242,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}
             isDetailsTabClosed={isDetailsTabClosed}
+            shouldUpdate={shouldUpdate}
             setShouldUpdate={setShouldUpdate}
           />
         );
