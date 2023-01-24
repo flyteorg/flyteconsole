@@ -83,7 +83,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
       const childGroups = await fetchChildNodeExecutionGroups(
         queryClient,
-        nodeExecutionsById[id],
+        nodeExecutionsById[scopedId],
         {},
       );
 

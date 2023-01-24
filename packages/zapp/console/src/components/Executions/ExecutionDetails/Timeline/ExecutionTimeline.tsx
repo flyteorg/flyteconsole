@@ -159,7 +159,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
       const childGroups = await fetchChildNodeExecutionGroups(
         queryClient,
-        nodeExecutionsById[id],
+        nodeExecutionsById[scopedId],
         {},
       );
 
