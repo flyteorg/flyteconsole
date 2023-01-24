@@ -75,3 +75,7 @@ yarn-error.log
 # Certs
 .srl
 certificate/
+
+# misc
+.dccache
+

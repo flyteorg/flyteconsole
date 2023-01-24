@@ -2023,8 +2023,8 @@ __metadata:
   dependencies:
     "@flyteorg/locale": ^0.0.2
     "@flyteorg/ui-atoms": ^0.0.3
-    "@material-ui/core": ^4.0.0
-    "@material-ui/icons": ^4.0.0
+    "@material-ui/core": ^4.2.0
+    "@material-ui/icons": ^4.11.3
     "@types/react": ^16.9.34
     "@types/react-dom": ^16.9.7
     classnames: ^2.3.1
@@ -2046,7 +2046,7 @@ __metadata:
     "@flyteorg/flyteidl-types": ^0.0.3
     "@flyteorg/locale": ^0.0.2
     "@flyteorg/ui-atoms": ^0.0.3
-    "@material-ui/core": ^4.12.4
+    "@material-ui/core": ^4.2.0
     "@material-ui/icons": ^4.11.3
     "@material-ui/pickers": ^3.2.2
     "@rjsf/core": 3.2.1
@@ -2166,8 +2166,8 @@ __metadata:
   resolution: "@flyteorg/ui-atoms@workspace:packages/ui-atoms"
   dependencies:
     "@emotion/core": 10.1.1
-    "@material-ui/core": ^4.0.0
-    "@material-ui/icons": ^4.0.0
+    "@material-ui/core": ^4.2.0
+    "@material-ui/icons": ^4.11.3
     "@types/react": ^16.9.34
     "@types/react-dom": ^16.9.7
     classnames: ^2.3.1
@@ -2561,7 +2561,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@material-ui/core@npm:^4.0.0, @material-ui/core@npm:^4.12.4, @material-ui/core@npm:^4.2.0":
+"@material-ui/core@npm:^4.2.0":
   version: 4.12.4
   resolution: "@material-ui/core@npm:4.12.4"
   dependencies:
@@ -2588,7 +2588,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@material-ui/icons@npm:^4.0.0, @material-ui/icons@npm:^4.11.3, @material-ui/icons@npm:^4.2.1":
+"@material-ui/icons@npm:^4.11.3":
   version: 4.11.3
   resolution: "@material-ui/icons@npm:4.11.3"
   dependencies:
@@ -11483,7 +11483,7 @@ __metadata:
     "@commitlint/cli": ^17.3.0
     "@commitlint/config-conventional": ^17.3.0
     "@material-ui/core": ^4.2.0
-    "@material-ui/icons": ^4.2.1
+    "@material-ui/icons": ^4.11.3
     "@semantic-release/changelog": ^5.0.1
     "@semantic-release/commit-analyzer": ^8.0.1
     "@semantic-release/git": ^9.0.0
