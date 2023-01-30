@@ -60,4 +60,5 @@ export interface dNode {
   expanded?: boolean;
   level?: number;
   execution?: NodeExecution;
+  isParentNode?: boolean;
 }

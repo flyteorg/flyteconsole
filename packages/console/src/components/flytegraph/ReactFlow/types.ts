@@ -15,12 +15,12 @@ export interface RFWrapperProps {
   onNodeSelectionChanged?: any;
   nodeExecutionsById?: any;
   version?: string;
+  setShouldUpdate?: (val: boolean) => void;
 }
 
 /* Note: extending to allow applying styles directly to handle */
 export interface RFHandleProps extends HandleProps {
   style: any;
-  id?: string;
 }
 
 export enum RFGraphTypes {
@@ -79,6 +79,7 @@ interface RFCustomData {
   dag: any;
   taskType: dTypes;
   cacheStatus: CatalogCacheStatus;
+  isParentNode: boolean;
   nodeLogsByPhase: LogsByPhase;
   selectedPhase: TaskExecutionPhase;
   currentNestedView: string[];

@@ -6,13 +6,13 @@ import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
-import * as React from 'react';
-import { useMemo, useEffect, useState, useContext } from 'react';
+import React, { useMemo, useEffect, useState, useContext } from 'react';
 import {
   isEndNode,
   isExpanded,
   isStartNode,
 } from 'components/WorkflowGraph/utils';
+import { useQueryClient } from 'react-query';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -22,10 +22,12 @@ import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { fetchChildrenExecutions } from '../utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -43,10 +45,14 @@ const scrollbarPadding = scrollbarSize();
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
+  setShouldUpdate,
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const { appliedFilters } = useNodeExecutionFiltersState();
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(
     appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
@@ -81,7 +87,15 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
-  const toggleNode = (id: string, scopeId: string, level: number) => {
+  const toggleNode = async (id: string, scopedId: string, level: number) => {
+    fetchChildrenExecutions(
+      queryClient,
+      scopedId,
+      nodeExecutionsById,
+      setCurrentNodeExecutionsById,
+      setShouldUpdate,
+    );
+
     const searchNode = (nodes: dNode[], nodeLevel: number) => {
       if (!nodes || nodes.length === 0) {
         return;
@@ -93,7 +107,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
         }
         if (
           node.id === id &&
-          node.scopedId === scopeId &&
+          node.scopedId === scopedId &&
           nodeLevel === level
         ) {
           nodes[i].expanded = !nodes[i].expanded;

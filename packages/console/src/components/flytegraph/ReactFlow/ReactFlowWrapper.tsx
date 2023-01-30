@@ -1,7 +1,9 @@
-import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
-import { RFWrapperProps } from './types';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { useQueryClient } from 'react-query';
+import { fetchChildrenExecutions } from 'components/Executions/utils';
+import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,
   ReactFlowCustomNestedPoint,
@@ -13,7 +15,7 @@ import {
   ReactFlowStaticNode,
   ReactFlowGateNode,
 } from './customNodeComponents';
-import { getPositionedNodes, ReactFlowIdHash } from './utils';
+import { RFWrapperProps } from './types';
 
 /**
  * Mapping for using custom nodes inside ReactFlow
@@ -36,7 +38,12 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   backgroundStyle,
   currentNestedView,
   version,
+  setShouldUpdate,
 }) => {
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const [state, setState] = useState({
     shouldUpdate: true,
     nodes: rfGraphJson.nodes,
@@ -104,7 +111,17 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     flexDirection: 'column',
   };
 
-  const onNodeClick = () => {
+  const onNodeClick = async (_event, node) => {
+    const scopedId = node.data.scopedId;
+    if (node.data.isParentNode) {
+      fetchChildrenExecutions(
+        queryClient,
+        scopedId,
+        nodeExecutionsById,
+        setCurrentNodeExecutionsById,
+        setShouldUpdate,
+      );
+    }
     setState(state => ({ ...state, needFitView: false }));
   };
 

@@ -1,4 +1,5 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
+import { clone, isEqual, keyBy, merge } from 'lodash';
 import {
   runningExecutionStates,
   terminalExecutionStates,
@@ -19,12 +20,16 @@ import {
   TaskExecution,
 } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
+import { QueryClient } from 'react-query';
 import {
   nodeExecutionPhaseConstants,
   taskExecutionPhaseConstants,
   taskTypeToNodeExecutionDisplayType,
   workflowExecutionPhaseConstants,
 } from './constants';
+import { WorkflowNodeExecution } from './contexts';
+import { isChildGroupsFetched } from './ExecutionDetails/utils';
+import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
   ExecutionPhaseConstants,
   NodeExecutionDisplayType,
@@ -208,4 +213,45 @@ export function getNodeFrontendPhase(
   return isGateNode && phase === NodeExecutionPhase.RUNNING
     ? NodeExecutionPhase.PAUSED
     : phase;
+}
+
+export async function fetchChildrenExecutions(
+  queryClient: QueryClient,
+  scopedId: string,
+  nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
+  setCurrentNodeExecutionsById: (
+    currentNodeExecutionsById: Dictionary<NodeExecution>,
+  ) => void,
+  setShouldUpdate?: (val: boolean) => void,
+) {
+  if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+    const childGroups = await fetchChildNodeExecutionGroups(
+      queryClient,
+      nodeExecutionsById[scopedId],
+      {},
+    );
+
+    let childGroupsExecutionsById;
+    childGroups.forEach(group => {
+      childGroupsExecutionsById = merge(
+        childGroupsExecutionsById,
+        keyBy(group.nodeExecutions, 'scopedId'),
+      );
+    });
+    if (childGroupsExecutionsById) {
+      const prevNodeExecutionsById = clone(nodeExecutionsById);
+      const currentNodeExecutionsById = merge(
+        nodeExecutionsById,
+        childGroupsExecutionsById,
+      );
+      if (
+        setShouldUpdate &&
+        !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)
+      ) {
+        setShouldUpdate(true);
+      }
+
+      setCurrentNodeExecutionsById(currentNodeExecutionsById);
+    }
+  }
 }

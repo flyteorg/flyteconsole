@@ -2,8 +2,7 @@ import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import * as React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
@@ -13,6 +12,7 @@ import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { isParentNode } from '../utils';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -68,7 +68,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   const expanderContent = (
     <div className={styles.namesContainerExpander}>
-      {node.nodes?.length ? (
+      {isParentNode(nodeExecution) ? (
         <RowExpander
           expanded={expanded}
           onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
