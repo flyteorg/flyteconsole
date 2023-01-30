@@ -37,7 +37,7 @@ const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
     let isCurrent = true;
     getNodeExecutionDetails(execution).then(res => {
       if (isCurrent) {
-        setDisplayId(res.displayId);
+        setDisplayId(res?.displayId);
       }
     });
     return () => {
@@ -63,7 +63,7 @@ const DisplayType: React.FC<NodeExecutionCellRendererData> = ({
     let isCurrent = true;
     getNodeExecutionDetails(execution).then(res => {
       if (isCurrent) {
-        setType(res.displayType);
+        setType(res?.displayType);
       }
     });
     return () => {

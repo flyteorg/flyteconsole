@@ -11,6 +11,7 @@ import {
   CompiledWorkflow,
   CompiledWorkflowClosure,
 } from 'models/Workflow/types';
+import { isParentNode } from 'components/Executions/utils';
 import {
   isStartOrEndNode,
   getDisplayName,
@@ -33,6 +34,7 @@ const debug = createDebugLogger('@transformerWorkflowToDag');
 export const transformerWorkflowToDag = (
   workflow: CompiledWorkflowClosure,
   dynamicToMerge: any | null = null,
+  nodeExecutionsById = {},
 ): any => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
@@ -57,8 +59,12 @@ export const transformerWorkflowToDag = (
     taskTemplate?: CompiledTask;
     typeOverride?: dTypes;
   }
-  const createDNode = (props: CreateDNodeProps): dNode => {
-    const { compiledNode, parentDNode, taskTemplate, typeOverride } = props;
+  const createDNode = ({
+    compiledNode,
+    parentDNode,
+    taskTemplate,
+    typeOverride,
+  }: CreateDNodeProps): dNode => {
     const nodeValue =
       taskTemplate == null
         ? compiledNode
@@ -99,6 +105,9 @@ export const transformerWorkflowToDag = (
         ? getNodeTypeFromCompiledNode(compiledNode)
         : typeOverride;
 
+    const nodeExecution = nodeExecutionsById[scopedId];
+    const isParent = nodeExecution && isParentNode(nodeExecution);
+
     const output = {
       id: compiledNode.id,
       scopedId: scopedId,
@@ -108,6 +117,7 @@ export const transformerWorkflowToDag = (
       nodes: [],
       edges: [],
       gateNode: compiledNode.gateNode,
+      isParentNode: isParent,
     } as dNode;
 
     staticExecutionIdsMap[output.scopedId] = compiledNode;

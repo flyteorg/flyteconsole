@@ -1,11 +1,17 @@
-import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
+import { useQueryClient } from 'react-query';
+import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
+import { isMapTaskV1 } from 'models/Task/utils';
+import { ExternalResource, LogsByPhase } from 'models/Execution/types';
+import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
+import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
+import { keyBy, merge } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -49,7 +55,7 @@ const graphNodeCountChanged = (previous, data) => {
   }
 };
 
-const ReactFlowGraphComponent = ({
+export const ReactFlowGraphComponent = ({
   data,
   onNodeSelectionChanged,
   onPhaseSelectionChanged,
@@ -57,10 +63,16 @@ const ReactFlowGraphComponent = ({
   isDetailsTabClosed,
   dynamicWorkflows,
   initialNodes,
+  shouldUpdate,
+  setShouldUpdate,
 }) => {
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
+  const [loading, setLoading] = useState<boolean>(true);
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
 
   const [state, setState] = useState({
@@ -74,15 +86,92 @@ const ReactFlowGraphComponent = ({
     rfGraphJson: null,
   });
 
+  useEffect(() => {
+    // fetch map tasks data for all available node executions to display graph nodes properly
+    let isCurrent = true;
+
+    async function fetchData(baseNodeExecutions, queryClient) {
+      setLoading(true);
+      const nodeExecutionsWithResources = await Promise.all(
+        baseNodeExecutions.map(async baseNodeExecution => {
+          if (
+            !baseNodeExecution ||
+            nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched
+          ) {
+            return;
+          }
+          const taskExecutions = await fetchTaskExecutionList(
+            queryClient,
+            baseNodeExecution.id,
+          );
+
+          const useNewMapTaskView = taskExecutions.every(taskExecution => {
+            const {
+              closure: { taskType, metadata, eventVersion = 0 },
+            } = taskExecution;
+            return isMapTaskV1(
+              eventVersion,
+              metadata?.externalResources?.length ?? 0,
+              taskType ?? undefined,
+            );
+          });
+          const externalResources: ExternalResource[] = taskExecutions
+            .map(
+              taskExecution =>
+                taskExecution.closure.metadata?.externalResources,
+            )
+            .flat()
+            .filter((resource): resource is ExternalResource => !!resource);
+
+          const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+          return {
+            ...baseNodeExecution,
+            ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+            tasksFetched: true,
+          };
+        }),
+      );
+
+      if (isCurrent) {
+        const nodeExecutionsWithResourcesMap = keyBy(
+          nodeExecutionsWithResources,
+          'scopedId',
+        );
+        const newNodeExecutionsById = merge(
+          nodeExecutionsById,
+          nodeExecutionsWithResourcesMap,
+        );
+        setCurrentNodeExecutionsById(newNodeExecutionsById);
+        const newRFGraphData = buildReactFlowGraphData();
+        setState(state => ({
+          ...state,
+          nodeExecutionsById: newNodeExecutionsById,
+          rfGraphJson: newRFGraphData,
+        }));
+        setLoading(false);
+      }
+    }
+
+    const nodeExecutions = Object.values(nodeExecutionsById);
+    if (nodeExecutions.length > 0) {
+      fetchData(nodeExecutions, queryClient);
+    } else {
+      if (isCurrent) {
+        setLoading(false);
+      }
+    }
+    return () => {
+      isCurrent = false;
+    };
+  }, [initialNodes]);
+
   const onAddNestedView = view => {
     const currentView = state.currentNestedView[view.parent] || [];
     const newView = {
       [view.parent]: [...currentView, view.view],
     };
-    setState(state => ({
-      ...state,
-      currentNestedView: { ...newView },
-    }));
+    setState(state => ({ ...state, currentNestedView: { ...newView } }));
   };
 
   const onRemoveNestedView = (viewParent, viewIndex) => {
@@ -93,10 +182,7 @@ const ReactFlowGraphComponent = ({
     if (currentNestedView[viewParent]?.length < 1) {
       delete currentNestedView[viewParent];
     }
-    setState(state => ({
-      ...state,
-      currentNestedView,
-    }));
+    setState(state => ({ ...state, currentNestedView }));
   };
 
   const buildReactFlowGraphData = () => {
@@ -115,18 +201,17 @@ const ReactFlowGraphComponent = ({
 
   useEffect(() => {
     const newRFGraphData = buildReactFlowGraphData();
-    setState(state => ({
-      ...state,
-      rfGraphJson: newRFGraphData,
-    }));
-  }, [state.currentNestedView, state.nodeExecutionsById, isDetailsTabClosed]);
+    setState(state => ({ ...state, rfGraphJson: newRFGraphData }));
+  }, [
+    state.currentNestedView,
+    state.nodeExecutionsById,
+    isDetailsTabClosed,
+    shouldUpdate,
+  ]);
 
   useEffect(() => {
     if (graphNodeCountChanged(state.data, data)) {
-      setState(state => ({
-        ...state,
-        data: data,
-      }));
+      setState(state => ({ ...state, data: data }));
     }
     if (
       nodeExecutionStatusChanged(
@@ -135,10 +220,7 @@ const ReactFlowGraphComponent = ({
       ) ||
       nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
     ) {
-      setState(state => ({
-        ...state,
-        nodeExecutionsById,
-      }));
+      setState(state => ({ ...state, nodeExecutionsById }));
     }
   }, [data, nodeExecutionsById]);
 
@@ -177,6 +259,14 @@ const ReactFlowGraphComponent = ({
     setPausedNodes(nodesWithExecutions);
   }, [initialNodes]);
 
+  if (loading) {
+    return (
+      <div style={{ margin: 'auto' }}>
+        <LargeLoadingSpinner />
+      </div>
+    );
+  }
+
   const containerStyle: React.CSSProperties = {
     display: 'flex',
     flex: `1 1 100%`,
@@ -193,6 +283,7 @@ const ReactFlowGraphComponent = ({
       type: RFGraphTypes.main,
       nodeExecutionsById,
       currentNestedView: state.currentNestedView,
+      setShouldUpdate,
     };
     return (
       <div style={containerStyle}>
@@ -207,5 +298,3 @@ const ReactFlowGraphComponent = ({
 
   return state.rfGraphJson ? renderGraph() : <></>;
 };
-
-export default ReactFlowGraphComponent;

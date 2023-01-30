@@ -1,7 +1,5 @@
-import { compareTimestampsAscending } from 'common/utils';
 import { QueryInput, QueryType } from 'components/data/types';
 import { retriesToZero } from 'components/flytegraph/ReactFlow/utils';
-import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { isEqual } from 'lodash';
 import {
   PaginatedEntityResponse,
@@ -22,12 +20,11 @@ import {
   WorkflowExecutionIdentifier,
 } from 'models/Execution/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { QueryClient, QueryObserverResult, useQueryClient } from 'react-query';
-import { executionRefreshIntervalMs } from './constants';
+import { QueryClient } from 'react-query';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
-import { isParentNode, nodeExecutionIsTerminal } from './utils';
+import { isParentNode } from './utils';
 
 const ignoredNodeIds = [startNodeId, endNodeId];
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
@@ -296,7 +293,7 @@ async function fetchGroupsForParentNodeExecution(
   return Array.from(groupsByName.values());
 }
 
-function fetchChildNodeExecutionGroups(
+export function fetchChildNodeExecutionGroups(
   queryClient: QueryClient,
   nodeExecution: NodeExecution,
   config: RequestConfig,
@@ -326,98 +323,4 @@ function fetchChildNodeExecutionGroups(
     );
   }
   return fetchGroupsForTaskExecutionNode(queryClient, nodeExecution, config);
-}
-
-/**
- * Query returns all children (not only direct childs) for a list of `nodeExecutions`
- */
-async function fetchAllTreeNodeExecutions(
-  queryClient: QueryClient,
-  nodeExecutions: NodeExecution[],
-  config: RequestConfig,
-): Promise<NodeExecution[]> {
-  const queue: NodeExecution[] = [...nodeExecutions];
-  let left = 0;
-  let right = queue.length;
-
-  while (left < right) {
-    const top: NodeExecution = queue[left++];
-    const executionGroups: NodeExecutionGroup[] =
-      await fetchChildNodeExecutionGroups(queryClient, top, config);
-    for (let i = 0; i < executionGroups.length; i++) {
-      for (let j = 0; j < executionGroups[i].nodeExecutions.length; j++) {
-        queue.push(executionGroups[i].nodeExecutions[j]);
-        right++;
-      }
-    }
-  }
-
-  const sorted: NodeExecution[] = queue.sort(
-    (na: NodeExecution, nb: NodeExecution) => {
-      if (!na.closure.startedAt) {
-        return 1;
-      }
-      if (!nb.closure.startedAt) {
-        return -1;
-      }
-      return compareTimestampsAscending(
-        na.closure.startedAt,
-        nb.closure.startedAt,
-      );
-    },
-  );
-
-  return sorted;
-}
-
-/**
- *
- * @param nodeExecutions list of parent node executionId's
- * @param config
- * @returns
- */
-export function useAllTreeNodeExecutionGroupsQuery(
-  nodeExecutions: NodeExecution[],
-  config: RequestConfig,
-): QueryObserverResult<NodeExecution[], Error> {
-  const queryClient = useQueryClient();
-  const shouldEnableFn = groups => {
-    if (groups.length > 0) {
-      return groups.some(group => {
-        // non-empty groups are wrapped in array
-        const unwrappedGroup = Array.isArray(group) ? group[0] : group;
-        if (unwrappedGroup?.nodeExecutions?.length > 0) {
-          /* Return true is any executions are not yet terminal (ie, they can change) */
-          return unwrappedGroup.nodeExecutions.some(ne => {
-            return !nodeExecutionIsTerminal(ne);
-          });
-        } else {
-          return false;
-        }
-      });
-    } else {
-      return false;
-    }
-  };
-
-  const n = nodeExecutions.length - 1;
-  let key = '';
-  if (n >= 0) {
-    const keyP1 = `${nodeExecutions[0]?.scopedId}-${nodeExecutions[0].closure.phase}-${nodeExecutions[0].closure?.startedAt?.nanos}`;
-    key = keyP1;
-    if (n >= 1) {
-      const keyP2 = `${nodeExecutions[n]?.scopedId}-${nodeExecutions[n].closure.phase}-${nodeExecutions[n].closure?.startedAt?.nanos}`;
-      key = keyP1 + '-' + keyP2;
-    }
-  }
-
-  return useConditionalQuery<NodeExecution[]>(
-    {
-      queryKey: [QueryType.NodeExecutionTreeList, key, config],
-      queryFn: () =>
-        fetchAllTreeNodeExecutions(queryClient, nodeExecutions, config),
-      refetchInterval: executionRefreshIntervalMs,
-    },
-    shouldEnableFn,
-  );
 }

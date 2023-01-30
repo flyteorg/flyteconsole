@@ -58,24 +58,23 @@ interface BuildDataProps {
   rootParentNode: dNode;
   currentNestedView: string[];
 }
-const buildReactFlowDataProps = (props: BuildDataProps) => {
-  const {
-    node,
-    nodeExecutionsById,
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    onAddNestedView,
-    onRemoveNestedView,
-    rootParentNode,
-    currentNestedView,
-  } = props;
-
+const buildReactFlowDataProps = ({
+  node,
+  nodeExecutionsById,
+  onNodeSelectionChanged,
+  onPhaseSelectionChanged,
+  selectedPhase,
+  onAddNestedView,
+  onRemoveNestedView,
+  rootParentNode,
+  currentNestedView,
+}: BuildDataProps) => {
   const {
     value: nodeValue,
     name: displayName,
     scopedId,
     type: nodeType,
+    isParentNode,
   } = node;
   const taskType = nodeValue?.template?.type ?? null;
 
@@ -111,6 +110,7 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
     scopedId,
     taskType,
     nodeLogsByPhase,
+    isParentNode,
     cacheStatus,
     selectedPhase,
     onNodeSelectionChanged: () => {

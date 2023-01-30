@@ -30,14 +30,16 @@ export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   for (const executionId in allExecutions) {
     if (!staticExecutions[executionId]) {
       const dynamicExecution = allExecutions[executionId];
-      const dynamicExecutionId =
-        dynamicExecution.metadata.specNodeId || dynamicExecution.id;
-      const uniqueParentId = dynamicExecution.fromUniqueParentId;
-      if (uniqueParentId) {
-        if (parentsToFetch[uniqueParentId]) {
-          parentsToFetch[uniqueParentId].push(dynamicExecutionId);
-        } else {
-          parentsToFetch[uniqueParentId] = [dynamicExecutionId];
+      if (dynamicExecution) {
+        const dynamicExecutionId =
+          dynamicExecution.metadata?.specNodeId || dynamicExecution.id;
+        const uniqueParentId = dynamicExecution.fromUniqueParentId;
+        if (uniqueParentId) {
+          if (parentsToFetch[uniqueParentId]) {
+            parentsToFetch[uniqueParentId].push(dynamicExecutionId);
+          } else {
+            parentsToFetch[uniqueParentId] = [dynamicExecutionId];
+          }
         }
       }
     }

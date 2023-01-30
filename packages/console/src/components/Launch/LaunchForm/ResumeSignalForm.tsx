@@ -1,7 +1,6 @@
 import { DialogContent, Typography } from '@material-ui/core';
 import { getCacheKey } from 'components/Cache/utils';
-import * as React from 'react';
-import { useState, useContext, useEffect, useMemo } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import { NodeExecution } from 'models/Execution/types';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
@@ -39,7 +38,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
     nodeId,
     onClose,
   });
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
     nodeExecutionsById[nodeId],
   );

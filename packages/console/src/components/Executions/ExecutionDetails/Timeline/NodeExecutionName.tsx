@@ -6,8 +6,7 @@ import { SelectNodeExecutionLink } from 'components/Executions/Tables/SelectNode
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution } from 'models/Execution/types';
-import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { DetailsPanelContext } from '../DetailsPanelContext';
 
 interface NodeExecutionTimelineNameData {
@@ -45,7 +44,7 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
     let isCurrent = true;
     getNodeExecutionDetails(execution).then(res => {
       if (isCurrent) {
-        setDisplayName(res.displayName);
+        setDisplayName(res?.displayName);
       }
     });
     return () => {

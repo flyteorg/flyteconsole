@@ -1,9 +1,7 @@
-import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { IconButton, Typography, Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import Close from '@material-ui/icons/Close';
-import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
+import { ArrowBackIos, Close } from '@material-ui/icons';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { InfoIcon } from 'components/common/Icons/InfoIcon';
@@ -15,6 +13,8 @@ import { LocationDescriptor } from 'history';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 import { Workflow } from 'models/Workflow/types';
 import {
+  ExternalResource,
+  LogsByPhase,
   MapTaskExecution,
   NodeExecution,
   NodeExecutionIdentifier,
@@ -36,6 +36,8 @@ import {
 } from 'components/WorkflowGraph/utils';
 import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
 import { Identifier } from 'models/Common/types';
+import { isMapTaskV1 } from 'models/Task/utils';
+import { merge } from 'lodash';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import {
   makeListTaskExecutionsQuery,
@@ -49,6 +51,9 @@ import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
 import { ExecutionDetailsActions } from './ExecutionDetailsActions';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
+import { fetchTaskExecutionList } from '../taskExecutionQueries';
+import { getGroupedLogs } from '../TaskExecutionsList/utils';
+import { NodeExecutionsByIdContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   const paddingVertical = `${theme.spacing(2)}px`;
@@ -255,19 +260,80 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   const queryClient = useQueryClient();
   const { getNodeExecutionDetails, compiledWorkflowClosure } =
     useNodeExecutionContext();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const isGateNode = isNodeGateNode(
     compiledWorkflowClosure?.primary.template.nodes ?? [],
     nodeExecutionId,
   );
+  const [nodeExecutionLoading, setNodeExecutionLoading] =
+    useState<boolean>(false);
 
-  const nodeExecutionQuery = useQuery<NodeExecution, Error>({
+  const { data: nodeExecution } = useQuery<NodeExecution, Error>({
     ...makeNodeExecutionQuery(nodeExecutionId),
     // The selected NodeExecution has been fetched at this point, we don't want to
     // issue an additional fetch.
     staleTime: Infinity,
   });
 
-  const nodeExecution = nodeExecutionQuery.data;
+  useEffect(() => {
+    let isCurrent = true;
+
+    async function fetchTasksData(exe, queryClient) {
+      setNodeExecutionLoading(true);
+      const taskExecutions = await fetchTaskExecutionList(queryClient, exe.id);
+
+      const useNewMapTaskView = taskExecutions.every(taskExecution => {
+        const {
+          closure: { taskType, metadata, eventVersion = 0 },
+        } = taskExecution;
+        return isMapTaskV1(
+          eventVersion,
+          metadata?.externalResources?.length ?? 0,
+          taskType ?? undefined,
+        );
+      });
+      const externalResources: ExternalResource[] = taskExecutions
+        .map(taskExecution => taskExecution.closure.metadata?.externalResources)
+        .flat()
+        .filter((resource): resource is ExternalResource => !!resource);
+
+      const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+      const exeWithResources = {
+        [exe.scopedId]: {
+          ...exe,
+          ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+          tasksFetched: true,
+        },
+      };
+
+      if (isCurrent) {
+        const newNodeExecutionsById = merge(
+          nodeExecutionsById,
+          exeWithResources,
+        );
+        setCurrentNodeExecutionsById(newNodeExecutionsById);
+        setNodeExecutionLoading(false);
+      }
+    }
+
+    if (nodeExecution) {
+      if (
+        nodeExecution.scopedId &&
+        !nodeExecutionsById[nodeExecution.scopedId].tasksFetched
+      )
+        fetchTasksData(nodeExecution, queryClient);
+    } else {
+      if (isCurrent) {
+        setNodeExecutionLoading(false);
+      }
+    }
+    return () => {
+      isCurrent = false;
+    };
+  }, [nodeExecution]);
 
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
@@ -458,7 +524,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
           />
         </div>
       </header>
-      {dag ? (
+      {!nodeExecutionLoading && dag ? (
         <WorkflowTabs nodeId={nodeExecutionId.nodeId} dagData={dag} />
       ) : (
         tabsContent
