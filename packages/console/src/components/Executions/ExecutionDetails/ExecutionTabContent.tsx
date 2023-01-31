@@ -53,8 +53,8 @@ const executionMatchesPhaseFilter = (
   if (key === 'phase' && operation === FilterOperationName.VALUE_IN) {
     // default to UNKNOWN phase if the field does not exist on a closure
     const itemValue =
-      nodeExecutionPhaseConstants[nodeExecution?.closure[key]]?.value ??
-      nodeExecutionPhaseConstants[0].value;
+      nodeExecutionPhaseConstants()[nodeExecution?.closure[key]]?.value ??
+      nodeExecutionPhaseConstants()[0].value;
     // phase check filters always return values in an array
     const valuesArray = value as FilterOperationValueList;
     return valuesArray.includes(itemValue);
