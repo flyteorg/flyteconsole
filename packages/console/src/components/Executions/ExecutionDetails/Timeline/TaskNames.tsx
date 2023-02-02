@@ -56,6 +56,8 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
     const styles = useStyles();
     const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
 
+    const expanderRef = React.useRef<HTMLButtonElement>();
+
     return (
       <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
         {nodes.map(node => {
@@ -84,6 +86,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                 <div className={styles.namesContainerExpander}>
                   {nodeExecution && isParentNode(nodeExecution) ? (
                     <RowExpander
+                      ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
                       expanded={node.expanded || false}
                       onClick={() =>
                         onToggle(node.id, node.scopedId, nodeLevel)

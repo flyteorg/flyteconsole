@@ -172,7 +172,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   };
 
   const toggleNode = async (id: string, scopedId: string, level: number) => {
-    fetchChildrenExecutions(
+    await fetchChildrenExecutions(
       queryClient,
       scopedId,
       nodeExecutionsById,

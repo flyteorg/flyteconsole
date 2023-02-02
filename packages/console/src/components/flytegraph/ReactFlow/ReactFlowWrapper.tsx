@@ -114,7 +114,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   const onNodeClick = async (_event, node) => {
     const scopedId = node.data.scopedId;
     if (node.data.isParentNode) {
-      fetchChildrenExecutions(
+      await fetchChildrenExecutions(
         queryClient,
         scopedId,
         nodeExecutionsById,
