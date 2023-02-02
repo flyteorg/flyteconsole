@@ -44,12 +44,13 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 }) => {
   const styles = useStyles();
   const theme = useTheme();
+  const ref = React.useRef<HTMLButtonElement>();
+
   const tableStyles = useExecutionTableStyles();
   const { selectedExecution, setSelectedExecution } =
     useContext(DetailsPanelContext);
 
   const nodeLevel = node?.level ?? 0;
-  const expanded = isExpanded(node);
 
   // For the first level, we want the borders to span the entire table,
   // so we'll use padding to space the content. For nested rows, we want the
@@ -66,18 +67,20 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     ? isEqual(selectedExecution, nodeExecution)
     : false;
 
-  const expanderContent = (
-    <div className={styles.namesContainerExpander}>
-      {isParentNode(nodeExecution) ? (
-        <RowExpander
-          expanded={expanded}
-          onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
-        />
-      ) : (
-        <div className={styles.leaf} />
-      )}
-    </div>
-  );
+  const expanderContent = React.useMemo(() => {
+    return isParentNode(nodeExecution) ? (
+      <RowExpander
+        ref={ref as React.ForwardedRef<HTMLButtonElement>}
+        key={node.scopedId}
+        expanded={isExpanded(node)}
+        onClick={() => {
+          onToggle(node.id, node.scopedId, nodeLevel);
+        }}
+      />
+    ) : (
+      <div className={styles.leaf} />
+    );
+  }, [node, nodeLevel]);
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
@@ -99,7 +102,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
           <div
             className={classnames(tableStyles.rowColumn, tableStyles.expander)}
           >
-            {expanderContent}
+            <div className={styles.namesContainerExpander}>
+              {expanderContent}
+            </div>
           </div>
           {columns.map(({ className, key: columnKey, cellRenderer }) => (
             <div

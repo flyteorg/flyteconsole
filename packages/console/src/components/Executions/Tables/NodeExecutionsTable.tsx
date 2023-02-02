@@ -13,6 +13,7 @@ import {
   isStartNode,
 } from 'components/WorkflowGraph/utils';
 import { useQueryClient } from 'react-query';
+import { merge, eq } from 'lodash';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -72,9 +73,19 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   );
 
   useEffect(() => {
-    setOriginalNodes(
-      appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
-    );
+    setOriginalNodes(ogn => {
+      const newNodes =
+        appliedFilters.length > 0 && filteredNodes
+          ? filteredNodes
+          : merge(initialNodes, ogn);
+
+      if (!eq(newNodes, ogn)) {
+        return newNodes;
+      }
+
+      return ogn;
+    });
+
     const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map(node => {
       const execution = nodeExecutionsById[node.scopedId];
@@ -88,7 +99,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
   const toggleNode = async (id: string, scopedId: string, level: number) => {
-    fetchChildrenExecutions(
+    await fetchChildrenExecutions(
       queryClient,
       scopedId,
       nodeExecutionsById,
