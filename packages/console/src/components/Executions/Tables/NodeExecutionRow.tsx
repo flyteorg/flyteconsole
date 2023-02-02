@@ -44,7 +44,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 }) => {
   const styles = useStyles();
   const theme = useTheme();
-  const ref = React.useRef<HTMLButtonElement>();
+  const expanderRef = React.useRef<HTMLButtonElement>();
 
   const tableStyles = useExecutionTableStyles();
   const { selectedExecution, setSelectedExecution } =
@@ -70,7 +70,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const expanderContent = React.useMemo(() => {
     return isParentNode(nodeExecution) ? (
       <RowExpander
-        ref={ref as React.ForwardedRef<HTMLButtonElement>}
+        ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
         key={node.scopedId}
         expanded={isExpanded(node)}
         onClick={() => {
