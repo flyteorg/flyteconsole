@@ -1,7 +1,10 @@
 import React, { useContext } from 'react';
 import { IconButton, makeStyles, Theme, Tooltip } from '@material-ui/core';
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
-import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
+import {
+  getNodeTemplateName,
+  isExpanded,
+} from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
 import { PlayCircleOutline } from '@material-ui/icons';
 import { isParentNode } from 'components/Executions/utils';
@@ -87,7 +90,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                   {nodeExecution && isParentNode(nodeExecution) ? (
                     <RowExpander
                       ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
-                      expanded={node.expanded || false}
+                      expanded={isExpanded(node)}
                       onClick={() =>
                         onToggle(node.id, node.scopedId, nodeLevel)
                       }
