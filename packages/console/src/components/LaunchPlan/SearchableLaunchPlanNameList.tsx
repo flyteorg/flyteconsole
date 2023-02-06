@@ -12,21 +12,42 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';
-import { FormGroup } from '@material-ui/core';
+import {
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+} from '@material-ui/core';
 import { ResourceType } from 'models/Common/types';
 import { MuiLaunchPlanIcon } from '@flyteorg/ui-atoms';
+import UnarchiveOutlined from '@material-ui/icons/UnarchiveOutlined';
+import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
+import { useSnackbar } from 'notistack';
+import { useMutation } from 'react-query';
+import { NamedEntityState } from 'models/enums';
+import { updateLaunchPlanState } from 'models/Launch/api';
 import { LaunchPlanListStructureItem } from './types';
 import { SearchableInput } from '../common/SearchableList';
 import { useSearchableListState } from '../common/useSearchableListState';
 import t, { patternKey } from '../Entities/strings';
 import { entityStrings } from '../Entities/constants';
+import { isLaunchPlanArchived } from './utils';
 
 interface SearchableLaunchPlanNameItemProps {
   item: LaunchPlanListStructureItem;
 }
 
+interface SearchableLaunchPlanNameItemActionsProps {
+  item: LaunchPlanListStructureItem;
+  setHideItem: (hide: boolean) => void;
+}
+
 interface SearchableLaunchPlanNameListProps {
   launchPlans: LaunchPlanListStructureItem[];
+  onArchiveFilterChange: (showArchievedItems: boolean) => void;
+  showArchived: boolean;
 }
 
 export const showOnHoverClass = 'showOnHover';
@@ -35,6 +56,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     padding: theme.spacing(2),
     paddingRight: theme.spacing(5),
+  },
+  actionContainer: {
+    display: 'flex',
+    right: 0,
+    top: 0,
+    position: 'absolute',
+    height: '100%',
+  },
+  archiveCheckbox: {
+    whiteSpace: 'nowrap',
+  },
+  centeredChild: {
+    alignItems: 'center',
+    marginRight: 24,
+  },
+  confirmationButton: {
+    borderRadius: 0,
+    minWidth: '100px',
+    minHeight: '53px',
+    '&:last-child': {
+      borderRadius: '0px 16px 16px 0px', // to ensure that cancel button will have rounded corners on the right side
+    },
   },
   filterGroup: {
     display: 'flex',
@@ -85,8 +128,116 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   searchInputContainer: {
     padding: 0,
+    paddingRight: theme.spacing(3),
   },
 }));
+
+const getArchiveIcon = (isArchived: boolean) =>
+  isArchived ? <UnarchiveOutlined /> : <ArchiveOutlined />;
+
+const SearchableLaunchPlanNameItemActions: React.FC<
+  SearchableLaunchPlanNameItemActionsProps
+> = ({ item, setHideItem }) => {
+  const styles = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
+  const { id } = item;
+  const isArchived = isLaunchPlanArchived(item);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+
+  const mutation = useMutation(
+    (newState: NamedEntityState) => updateLaunchPlanState(id, newState),
+    {
+      onMutate: () => setIsUpdating(true),
+      onSuccess: () => {
+        enqueueSnackbar(t('archiveSuccess', !isArchived), {
+          variant: 'success',
+        });
+        setHideItem(true);
+      },
+      onError: () => {
+        enqueueSnackbar(`${mutation.error ?? t('archiveError', !isArchived)}`, {
+          variant: 'error',
+        });
+      },
+      onSettled: () => {
+        setShowConfirmation(false);
+        setIsUpdating(false);
+      },
+    },
+  );
+
+  const onArchiveClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setShowConfirmation(true);
+  };
+
+  const onConfirmArchiveClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    mutation.mutate(
+      isLaunchPlanArchived(item)
+        ? NamedEntityState.NAMED_ENTITY_ACTIVE
+        : NamedEntityState.NAMED_ENTITY_ARCHIVED,
+    );
+  };
+
+  const onCancelClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setShowConfirmation(false);
+  };
+
+  const singleItemStyle =
+    isUpdating || !showConfirmation ? styles.centeredChild : '';
+  return (
+    <div
+      className={classNames(
+        styles.actionContainer,
+        showOnHoverClass,
+        singleItemStyle,
+      )}
+    >
+      {isUpdating ? (
+        <IconButton size="small">
+          <CircularProgress size={24} />
+        </IconButton>
+      ) : showConfirmation ? (
+        <>
+          <Button
+            size="medium"
+            variant="contained"
+            color="primary"
+            className={styles.confirmationButton}
+            disableElevation
+            onClick={onConfirmArchiveClick}
+          >
+            {t('archiveAction', isArchived)}
+          </Button>
+          <Button
+            size="medium"
+            variant="contained"
+            color="inherit"
+            className={styles.confirmationButton}
+            disableElevation
+            onClick={onCancelClick}
+          >
+            {t('cancelAction')}
+          </Button>
+        </>
+      ) : (
+        <IconButton
+          size="small"
+          title={t('archiveAction', isArchived)}
+          onClick={onArchiveClick}
+        >
+          {getArchiveIcon(isArchived)}
+        </IconButton>
+      )}
+    </div>
+  );
+};
 
 /**
  * Renders individual searchable launchPlan item
@@ -100,6 +251,12 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
     const styles = useStyles();
     const { id } = item;
 
+    const [hideItem, setHideItem] = useState<boolean>(false);
+
+    if (hideItem) {
+      return null;
+    }
+
     return (
       <Link
         className={commonStyles.linkUnstyled}
@@ -112,6 +269,10 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
             <MuiLaunchPlanIcon width={16} height={16} />
             <div>{id.name}</div>
           </div>
+          <SearchableLaunchPlanNameItemActions
+            item={item}
+            setHideItem={setHideItem}
+          />
         </div>
       </Link>
     );
@@ -124,7 +285,7 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
  */
 export const SearchableLaunchPlanNameList: React.FC<
   SearchableLaunchPlanNameListProps
-> = ({ launchPlans }) => {
+> = ({ launchPlans, onArchiveFilterChange, showArchived }) => {
   const styles = useStyles();
   const [search, setSearch] = useState('');
   const { results, setSearchString } = useSearchableListState({
@@ -156,6 +317,16 @@ export const SearchableLaunchPlanNameList: React.FC<
           placeholder={t(
             patternKey('searchName', entityStrings[ResourceType.LAUNCH_PLAN]),
           )}
+        />
+        <FormControlLabel
+          className={styles.archiveCheckbox}
+          control={
+            <Checkbox
+              checked={showArchived}
+              onChange={(_, checked) => onArchiveFilterChange(checked)}
+            />
+          }
+          label="Include Archived LaunchPlans"
         />
       </FormGroup>
       <div className={styles.container}>
