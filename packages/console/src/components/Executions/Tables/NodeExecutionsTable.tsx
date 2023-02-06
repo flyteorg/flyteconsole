@@ -7,11 +7,6 @@ import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
-import {
-  isEndNode,
-  isExpanded,
-  isStartNode,
-} from 'components/WorkflowGraph/utils';
 import { useQueryClient } from 'react-query';
 import { merge, eq } from 'lodash';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
@@ -23,7 +18,7 @@ import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { fetchChildrenExecutions } from '../utils';
+import { fetchChildrenExecutions, searchNode } from '../utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
@@ -106,30 +101,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       setCurrentNodeExecutionsById,
       setShouldUpdate,
     );
-
-    const searchNode = (nodes: dNode[], nodeLevel: number) => {
-      if (!nodes || nodes.length === 0) {
-        return;
-      }
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        if (isStartNode(node) || isEndNode(node)) {
-          continue;
-        }
-        if (
-          node.id === id &&
-          node.scopedId === scopedId &&
-          nodeLevel === level
-        ) {
-          nodes[i].expanded = !nodes[i].expanded;
-          return;
-        }
-        if (node.nodes.length > 0 && isExpanded(node)) {
-          searchNode(node.nodes, nodeLevel + 1);
-        }
-      }
-    };
-    searchNode(originalNodes, 0);
+    searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);
   };
 

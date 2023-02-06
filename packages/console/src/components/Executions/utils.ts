@@ -1,4 +1,9 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
+import {
+  isEndNode,
+  isExpanded,
+  isStartNode,
+} from 'components/WorkflowGraph/utils';
 import { clone, isEqual, keyBy, merge } from 'lodash';
 import {
   runningExecutionStates,
@@ -19,6 +24,7 @@ import {
   NodeExecutionIdentifier,
   TaskExecution,
 } from 'models/Execution/types';
+import { dNode } from 'models/Graph/types';
 import { CompiledNode } from 'models/Node/types';
 import { QueryClient } from 'react-query';
 import {
@@ -213,6 +219,31 @@ export function getNodeFrontendPhase(
   return isGateNode && phase === NodeExecutionPhase.RUNNING
     ? NodeExecutionPhase.PAUSED
     : phase;
+}
+
+export function searchNode(
+  nodes: dNode[],
+  nodeLevel: number,
+  id: string,
+  scopedId: string,
+  level: number,
+) {
+  if (!nodes || nodes.length === 0) {
+    return;
+  }
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (isStartNode(node) || isEndNode(node)) {
+      continue;
+    }
+    if (node.id === id && node.scopedId === scopedId && nodeLevel === level) {
+      nodes[i].expanded = !nodes[i].expanded;
+      return;
+    }
+    if (node.nodes.length > 0 && isExpanded(node)) {
+      searchNode(node.nodes, nodeLevel + 1, id, scopedId, level);
+    }
+  }
 }
 
 export async function fetchChildrenExecutions(
