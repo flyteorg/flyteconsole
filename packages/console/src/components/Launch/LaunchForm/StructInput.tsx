@@ -1,14 +1,12 @@
-import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
 import * as React from 'react';
+import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
 import { useState } from 'react';
-// import Form from '@rjsf/material-ui';
+import Form from '@rjsf/material-ui';
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import { makeStringChangeHandler } from './handlers';
 import { InputProps } from './types';
 import { getLaunchInputId } from './utils';
 import { protobufValueToPrimitive, PrimitiveType } from './inputHelpers/struct';
-
-const Form = require('@rjsf/material-ui');
 
 const muiTheme = createTheme({
   props: {
