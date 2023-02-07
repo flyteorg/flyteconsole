@@ -27,15 +27,13 @@ export function measureText(fontDefinition: string, text: string) {
  */
 export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   const parentsToFetch = {};
-  const executionsByNodeId = {};
   for (const executionId in allExecutions) {
-    const execution = allExecutions[executionId];
-    executionsByNodeId[execution.id.nodeId] = execution;
     if (!staticExecutions[executionId]) {
-      if (execution) {
+      const dynamicExecution = allExecutions[executionId];
+      if (dynamicExecution) {
         const dynamicExecutionId =
-          execution.metadata?.specNodeId || execution.id;
-        const uniqueParentId = execution.fromUniqueParentId;
+          dynamicExecution.metadata?.specNodeId || dynamicExecution.id;
+        const uniqueParentId = dynamicExecution.fromUniqueParentId;
         if (uniqueParentId) {
           if (parentsToFetch[uniqueParentId]) {
             parentsToFetch[uniqueParentId].push(dynamicExecutionId);
@@ -48,8 +46,7 @@ export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   }
   const result = {};
   for (const parentId in parentsToFetch) {
-    const execution = executionsByNodeId[parentId];
-    result[execution.scopedId] = execution;
+    result[parentId] = allExecutions[parentId];
   }
   return result;
 };
