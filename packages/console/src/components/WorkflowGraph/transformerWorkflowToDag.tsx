@@ -100,13 +100,13 @@ export const transformerWorkflowToDag = (
       /* Case: primary workflow nodes won't have parents */
       scopedId = compiledNode.id;
     }
+
+    const nodeExecution = nodeExecutionsById[scopedId];
+    const isParent = nodeExecution && isParentNode(nodeExecution);
     const type =
       typeOverride == null
         ? getNodeTypeFromCompiledNode(compiledNode)
         : typeOverride;
-
-    const nodeExecution = nodeExecutionsById[scopedId];
-    const isParent = nodeExecution && isParentNode(nodeExecution);
 
     const output = {
       id: compiledNode.id,

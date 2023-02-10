@@ -8,7 +8,7 @@ import {
 import { createDebugLogger } from 'common/log';
 import { LogsByPhase } from 'models/Execution/types';
 import { isMapTaskType } from 'models/Task/utils';
-import { ReactFlowGraphConfig } from './utils';
+import { isUnFetchedDynamicNode, ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
 interface rfNode extends Node {
@@ -123,11 +123,33 @@ const buildReactFlowDataProps = ({
         onPhaseSelectionChanged(phase);
       }
     },
-    onAddNestedView: () => {
+    onAddNestedView: async () => {
+      console.log('\n\n...........................................');
+      console.log('[1] @DagToReact:');
+      console.log('\t-rootParentNode:', rootParentNode);
+      console.log('\t-scopedId:', scopedId);
+      console.log(
+        '\t-isUnFetchedDynamicNode(node):',
+        isUnFetchedDynamicNode(node),
+      );
       onAddNestedView({
-        parent: rootParentNode.scopedId,
+        parent: rootParentNode?.scopedId,
         view: scopedId,
       });
+      // if (rootParentNode === undefined && isUnFetchedDynamicNode(node)) {
+      //   console.log('### making subworkflow', node);
+      //   rootParentNode = node;
+      // } else {
+      //   console.log('### did not make subworkflow');
+      // }
+
+      // onAddNestedView(
+      //   {
+      //     parent: rootParentNode.scopedId,
+      //     view: scopedId,
+      //   },
+      //   node,
+      // );
     },
     onRemoveNestedView,
   };
@@ -277,6 +299,18 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
           }
         }
 
+        /*
+         * Because dyanmic nodes are now fetched on demand we need to check
+         * for nodes that are parents without children; in which case we want
+         * to override the type to mimic unopened subworkflow (nestedMaxDepth)
+         */
+        const type =
+          isStaticGraph === true
+            ? dTypes.staticNode
+            : isUnFetchedDynamicNode(node)
+            ? dTypes.nestedMaxDepth
+            : undefined;
+
         if (rootParentNode) {
           const rootParentId = rootParentNode.scopedId;
           const contextParentId = contextParent?.scopedId;
@@ -295,16 +329,14 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
             dataProps: nodeDataProps,
             rootParentNode: rootParentNode,
             parentNode: contextParent,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: type,
           });
           context.nodes[reactFlowNode.id] = reactFlowNode;
         } else {
           const reactFlowNode = buildReactFlowNode({
             node: node,
             dataProps: nodeDataProps,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: type,
           });
           root.nodes[reactFlowNode.id] = reactFlowNode;
         }

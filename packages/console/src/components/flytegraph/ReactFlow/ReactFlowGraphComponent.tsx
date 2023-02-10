@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { isNodeGateNode } from 'components/Executions/utils';
+import {
+  fetchChildrenExecutions,
+  isNodeGateNode,
+} from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
 import { useQueryClient } from 'react-query';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
@@ -13,7 +16,7 @@ import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { keyBy, merge } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
-import { getRFBackground } from './utils';
+import { getRFBackground, isUnFetchedDynamicNode } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
 import { PausedTasksComponent } from './PausedTasksComponent';
@@ -61,7 +64,6 @@ export const ReactFlowGraphComponent = ({
   onPhaseSelectionChanged,
   selectedPhase,
   isDetailsTabClosed,
-  dynamicWorkflows,
   initialNodes,
   shouldUpdate,
   setShouldUpdate,
@@ -77,7 +79,6 @@ export const ReactFlowGraphComponent = ({
 
   const [state, setState] = useState({
     data,
-    dynamicWorkflows,
     currentNestedView: {},
     nodeExecutionsById,
     selectedPhase,
@@ -87,6 +88,7 @@ export const ReactFlowGraphComponent = ({
   });
 
   useEffect(() => {
+    console.log('########## USE EFFECT [DATA] 1');
     // fetch map tasks data for all available node executions to display graph nodes properly
     let isCurrent = true;
 
@@ -166,12 +168,108 @@ export const ReactFlowGraphComponent = ({
     };
   }, [initialNodes]);
 
-  const onAddNestedView = view => {
-    const currentView = state.currentNestedView[view.parent] || [];
-    const newView = {
-      [view.parent]: [...currentView, view.view],
-    };
-    setState(state => ({ ...state, currentNestedView: { ...newView } }));
+  useEffect(() => {
+    console.log(
+      '########## USE EFFECT [DATA] 2 (buildReactFlowGraphData:stale)',
+    );
+    const newRFGraphData = buildReactFlowGraphData();
+    setState(state => ({ ...state, data: data, rfGraphJson: newRFGraphData }));
+  }, [
+    state.currentNestedView,
+    state.nodeExecutionsById,
+    isDetailsTabClosed,
+    shouldUpdate,
+    setState,
+  ]);
+
+  /* Support for node phase updates */
+  useEffect(() => {
+    console.log('########## USE EFFECT [DATA] 3 (data)');
+    console.log('\tdata:', data);
+    if (graphNodeCountChanged(state.data, data)) {
+      setState(state => ({ ...state, data: data }));
+    }
+    if (
+      nodeExecutionStatusChanged(
+        state.nodeExecutionsById,
+        nodeExecutionsById,
+      ) ||
+      nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
+    ) {
+      setState(state => ({ ...state, nodeExecutionsById }));
+    }
+  }, [data, nodeExecutionsById]);
+
+  useEffect(() => {
+    console.log('########## USE EFFECT [DATA] 4 (ignore)');
+    setState(state => ({
+      ...state,
+      onNodeSelectionChanged,
+      onPhaseSelectionChanged,
+      selectedPhase,
+    }));
+  }, [onNodeSelectionChanged, onPhaseSelectionChanged, selectedPhase]);
+
+  /* Support for gate nodes */
+  useEffect(() => {
+    console.log('########## USE EFFECT [DATA] 5 (ignore)');
+    const updatedPausedNodes: dNode[] = initialNodes.filter(node => {
+      const nodeExecution = nodeExecutionsById[node.id];
+      if (nodeExecution) {
+        const phase = nodeExecution?.closure.phase;
+        const isGateNode = isNodeGateNode(
+          compiledWorkflowClosure?.primary.template.nodes ?? [],
+          nodeExecution.id,
+        );
+        return isGateNode && phase === NodeExecutionPhase.RUNNING;
+      }
+      return false;
+    });
+    const nodesWithExecutions = updatedPausedNodes.map(node => {
+      const execution = nodeExecutionsById[node.scopedId];
+      return {
+        ...node,
+        startedAt: execution?.closure.startedAt,
+        execution,
+      };
+    });
+    setPausedNodes(nodesWithExecutions);
+  }, [initialNodes]);
+
+  useEffect(() => {
+    console.log('########## USE EFFECT [DATA] 6 (target)');
+    const newRFGraphData = buildReactFlowGraphDataFromProps(
+      data,
+      nodeExecutionsById,
+    );
+    console.log('\tnewRFGraphData:', newRFGraphData);
+    setState(state => ({ ...state, data: data, rfGraphJson: newRFGraphData }));
+  }, [data, setState]);
+
+  const onAddNestedView = async (view, sourceNode: any = null) => {
+    console.log('\n\n--------------------------------------------------------');
+    console.log('[1] @ReactflowGraph:');
+    if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
+      console.log('[2] @ReactflowGraph: await fetch');
+      await fetchChildrenExecutions(
+        queryClient,
+        sourceNode.scopedId,
+        nodeExecutionsById,
+        setCurrentNodeExecutionsById,
+        setShouldUpdate,
+      );
+      console.log('[3] @ReactflowGraph: await complete');
+      //setShouldUpdate(true);
+    } else {
+      console.log('[4] @ReactflowGraph: await complete2');
+      const currentView = state.currentNestedView[view.parent] || [];
+      console.log('[5] @ReactflowGraph: currentView:', currentView);
+      const newView = {
+        [view.parent]: [...currentView, view.view],
+      };
+      console.log('[5] @ReactflowGraph: newView:', newView);
+      setState(state => ({ ...state, currentNestedView: { ...newView } }));
+    }
   };
 
   const onRemoveNestedView = (viewParent, viewIndex) => {
@@ -199,65 +297,21 @@ export const ReactFlowGraphComponent = ({
     } as ConvertDagProps);
   };
 
-  useEffect(() => {
-    const newRFGraphData = buildReactFlowGraphData();
-    setState(state => ({ ...state, rfGraphJson: newRFGraphData }));
-  }, [
-    state.currentNestedView,
-    state.nodeExecutionsById,
-    isDetailsTabClosed,
-    shouldUpdate,
-  ]);
-
-  useEffect(() => {
-    if (graphNodeCountChanged(state.data, data)) {
-      setState(state => ({ ...state, data: data }));
-    }
-    if (
-      nodeExecutionStatusChanged(
-        state.nodeExecutionsById,
-        nodeExecutionsById,
-      ) ||
-      nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
-    ) {
-      setState(state => ({ ...state, nodeExecutionsById }));
-    }
-  }, [data, nodeExecutionsById]);
-
-  useEffect(() => {
-    setState(state => ({
-      ...state,
-      onNodeSelectionChanged,
-      onPhaseSelectionChanged,
+  const buildReactFlowGraphDataFromProps = (data, nodeExecutionsById) => {
+    return ConvertFlyteDagToReactFlows({
+      root: data,
+      nodeExecutionsById: nodeExecutionsById,
+      onNodeSelectionChanged: state.onNodeSelectionChanged,
+      onPhaseSelectionChanged: state.onPhaseSelectionChanged,
       selectedPhase,
-    }));
-  }, [onNodeSelectionChanged, onPhaseSelectionChanged, selectedPhase]);
+      onAddNestedView,
+      onRemoveNestedView,
+      currentNestedView: state.currentNestedView,
+      maxRenderDepth: 1,
+    } as ConvertDagProps);
+  };
 
   const backgroundStyle = getRFBackground().nested;
-
-  useEffect(() => {
-    const updatedPausedNodes: dNode[] = initialNodes.filter(node => {
-      const nodeExecution = nodeExecutionsById[node.id];
-      if (nodeExecution) {
-        const phase = nodeExecution?.closure.phase;
-        const isGateNode = isNodeGateNode(
-          compiledWorkflowClosure?.primary.template.nodes ?? [],
-          nodeExecution.id,
-        );
-        return isGateNode && phase === NodeExecutionPhase.RUNNING;
-      }
-      return false;
-    });
-    const nodesWithExecutions = updatedPausedNodes.map(node => {
-      const execution = nodeExecutionsById[node.scopedId];
-      return {
-        ...node,
-        startedAt: execution?.closure.startedAt,
-        execution,
-      };
-    });
-    setPausedNodes(nodesWithExecutions);
-  }, [initialNodes]);
 
   if (loading) {
     return (
@@ -276,7 +330,11 @@ export const ReactFlowGraphComponent = ({
     height: '100%',
   };
 
-  const renderGraph = () => {
+  const renderGraph = useMemo(() => {
+    console.log('RENDER GRAPH');
+    console.log('initialNodes:', initialNodes);
+    console.log('state.rfGraphJson', state.rfGraphJson);
+
     const ReactFlowProps: RFWrapperProps = {
       backgroundStyle,
       rfGraphJson: state.rfGraphJson,
@@ -285,6 +343,8 @@ export const ReactFlowGraphComponent = ({
       currentNestedView: state.currentNestedView,
       setShouldUpdate,
     };
+    console.log('\tnewRFGraphData[[[2]]]:', state.rfGraphJson);
+
     return (
       <div style={containerStyle}>
         {pausedNodes && pausedNodes.length > 0 && (
@@ -294,7 +354,7 @@ export const ReactFlowGraphComponent = ({
         <ReactFlowWrapper {...ReactFlowProps} />
       </div>
     );
-  };
+  }, [state]);
 
-  return state.rfGraphJson ? renderGraph() : <></>;
+  return state.rfGraphJson ? renderGraph : <></>;
 };

@@ -8,7 +8,7 @@ import { startNodeId, endNodeId } from 'models/Node/constants';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { checkForDynamicExecutions } from 'components/common/utils';
-import { dNode } from 'models/Graph/types';
+import { dNode, dTypes } from 'models/Graph/types';
 import { useQuery } from 'react-query';
 import {
   FilterOperation,
@@ -111,11 +111,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         )
       : { dag: {}, staticExecutionIdsMap: {}, error: null };
 
-    const nodes = dag.nodes ?? [];
-
-    // we remove start/end node info in the root dNode list during first assignment
-    const plainNodes = convertToPlainNodes(nodes);
-
     let newMergedDag = dag;
 
     for (const dynamicId in dynamicWorkflows) {
@@ -130,8 +125,11 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         }
       }
     }
-    setDagError(error);
-    setMergedDag(newMergedDag);
+
+    // we remove start/end node info in the root dNode list during first assignment
+    const nodes = newMergedDag.nodes ?? [];
+    const plainNodes = convertToPlainNodes(nodes);
+
     plainNodes.map(node => {
       const initialNode = initialNodes.find(n => n.scopedId === node.scopedId);
       if (initialNode) {
@@ -139,6 +137,8 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
       }
     });
     setInitialNodes(plainNodes);
+    setDagError(error);
+    setMergedDag(newMergedDag);
   }, [
     compiledWorkflowClosure,
     dynamicWorkflows,
@@ -244,6 +244,10 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   };
 
   const renderContent = () => {
+    console.log('\n\n@ExecutionTabContent:');
+    console.log('\tintialNodes:', initialNodes);
+    console.log('\tmergedDag:', mergedDag);
+
     switch (tabType) {
       case tabs.nodes.id:
         return (
@@ -258,7 +262,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           <WorkflowGraph
             mergedDag={mergedDag}
             error={dagError}
-            dynamicWorkflows={dynamicWorkflows}
+            // dynamicWorkflows={dynamicWorkflows}
             initialNodes={initialNodes}
             onNodeSelectionChanged={onNodeSelectionChanged}
             selectedPhase={selectedPhase}

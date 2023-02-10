@@ -14,7 +14,7 @@ export interface WorkflowGraphProps {
   isDetailsTabClosed: boolean;
   mergedDag: any;
   error: Error | null;
-  dynamicWorkflows: any;
+  // dynamicWorkflows: any;
   initialNodes: dNode[];
   shouldUpdate: boolean;
   setShouldUpdate: (val: boolean) => void;
@@ -31,7 +31,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   isDetailsTabClosed,
   mergedDag,
   error,
-  dynamicWorkflows,
+  // dynamicWorkflows,
   initialNodes,
   shouldUpdate,
   setShouldUpdate,
@@ -54,7 +54,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
   return (
     <ReactFlowGraphComponent
-      dynamicWorkflows={dynamicWorkflows}
+      // dynamicWorkflows={dynamicWorkflows}
       data={mergedDag}
       onNodeSelectionChanged={onNodeSelectionChanged}
       onPhaseSelectionChanged={onPhaseSelectionChanged}
