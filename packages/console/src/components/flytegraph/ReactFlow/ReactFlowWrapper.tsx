@@ -46,8 +46,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   );
   const [state, setState] = useState({
     shouldUpdate: true,
-    nodes: rfGraphJson.nodes,
-    edges: rfGraphJson.edges,
+    nodes: rfGraphJson?.nodes,
+    edges: rfGraphJson?.edges,
     version: version,
     reactFlowInstance: null,
     needFitView: false,
@@ -57,8 +57,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     setState(state => ({
       ...state,
       shouldUpdate: true,
-      nodes: rfGraphJson.nodes,
-      edges: rfGraphJson.edges.map(edge => ({ ...edge, zIndex: 0 })),
+      nodes: rfGraphJson?.nodes,
+      edges: rfGraphJson?.edges?.map(edge => ({ ...edge, zIndex: 0 })),
     }));
   }, [rfGraphJson]);
 

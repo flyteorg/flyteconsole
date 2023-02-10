@@ -54,7 +54,6 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
   return (
     <ReactFlowGraphComponent
-      dynamicWorkflows={dynamicWorkflows}
       data={mergedDag}
       onNodeSelectionChanged={onNodeSelectionChanged}
       onPhaseSelectionChanged={onPhaseSelectionChanged}

@@ -30,7 +30,7 @@ export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   const executionsByNodeId = {};
   for (const executionId in allExecutions) {
     const execution = allExecutions[executionId];
-    executionsByNodeId[execution.id.nodeId] = execution;
+    executionsByNodeId[execution?.id.nodeId] = execution;
     if (!staticExecutions[executionId]) {
       if (execution) {
         const dynamicExecutionId =

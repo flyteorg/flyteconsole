@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
@@ -18,50 +18,12 @@ import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
 import { PausedTasksComponent } from './PausedTasksComponent';
 
-const nodeExecutionStatusChanged = (previous, nodeExecutionsById) => {
-  for (const exe in nodeExecutionsById) {
-    const oldStatus = previous[exe]?.closure.phase;
-    const newStatus = nodeExecutionsById[exe]?.closure.phase;
-    if (oldStatus !== newStatus) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const nodeExecutionLogsChanged = (previous, nodeExecutionsById) => {
-  for (const exe in nodeExecutionsById) {
-    const oldLogs = previous[exe]?.logsByPhase ?? new Map();
-    const newLogs = nodeExecutionsById[exe]?.logsByPhase ?? new Map();
-    if (oldLogs.size !== newLogs.size) {
-      return true;
-    }
-    for (const phase in newLogs) {
-      const oldNumOfLogs = oldLogs.get(phase)?.length ?? 0;
-      const newNumOfLogs = newLogs.get(phase)?.length ?? 0;
-      if (oldNumOfLogs !== newNumOfLogs) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
-const graphNodeCountChanged = (previous, data) => {
-  if (previous.nodes.length !== data.nodes.length) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
 export const ReactFlowGraphComponent = ({
   data,
   onNodeSelectionChanged,
   onPhaseSelectionChanged,
   selectedPhase,
   isDetailsTabClosed,
-  dynamicWorkflows,
   initialNodes,
   shouldUpdate,
   setShouldUpdate,
@@ -74,17 +36,51 @@ export const ReactFlowGraphComponent = ({
 
   const [loading, setLoading] = useState<boolean>(true);
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
+  const [currentNestedView, setcurrentNestedView] = useState({});
 
-  const [state, setState] = useState({
+  const onAddNestedView = view => {
+    const currentView = currentNestedView[view.parent] || [];
+    const newView = {
+      [view.parent]: [...currentView, view.view],
+    };
+    setcurrentNestedView(newView);
+  };
+
+  const onRemoveNestedView = (viewParent, viewIndex) => {
+    const newcurrentNestedView: any = { ...currentNestedView };
+    newcurrentNestedView[viewParent] = newcurrentNestedView[viewParent]?.filter(
+      (_item, i) => i <= viewIndex,
+    );
+    if (newcurrentNestedView[viewParent]?.length < 1) {
+      delete newcurrentNestedView[viewParent];
+    }
+    setcurrentNestedView(newcurrentNestedView);
+  };
+
+  const rfGraphJson = useMemo(() => {
+    return ConvertFlyteDagToReactFlows({
+      root: data,
+      nodeExecutionsById,
+      onNodeSelectionChanged,
+      onPhaseSelectionChanged,
+      selectedPhase,
+      onAddNestedView,
+      onRemoveNestedView,
+      currentNestedView,
+      maxRenderDepth: 1,
+    } as ConvertDagProps);
+  }, [
     data,
-    dynamicWorkflows,
-    currentNestedView: {},
+    isDetailsTabClosed,
+    shouldUpdate,
     nodeExecutionsById,
-    selectedPhase,
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
-    rfGraphJson: null,
-  });
+    selectedPhase,
+    onAddNestedView,
+    onRemoveNestedView,
+    currentNestedView,
+  ]);
 
   useEffect(() => {
     // fetch map tasks data for all available node executions to display graph nodes properly
@@ -143,12 +139,6 @@ export const ReactFlowGraphComponent = ({
           nodeExecutionsWithResourcesMap,
         );
         setCurrentNodeExecutionsById(newNodeExecutionsById);
-        const newRFGraphData = buildReactFlowGraphData();
-        setState(state => ({
-          ...state,
-          nodeExecutionsById: newNodeExecutionsById,
-          rfGraphJson: newRFGraphData,
-        }));
         setLoading(false);
       }
     }
@@ -165,73 +155,6 @@ export const ReactFlowGraphComponent = ({
       isCurrent = false;
     };
   }, [initialNodes]);
-
-  const onAddNestedView = view => {
-    const currentView = state.currentNestedView[view.parent] || [];
-    const newView = {
-      [view.parent]: [...currentView, view.view],
-    };
-    setState(state => ({ ...state, currentNestedView: { ...newView } }));
-  };
-
-  const onRemoveNestedView = (viewParent, viewIndex) => {
-    const currentNestedView: any = { ...state.currentNestedView };
-    currentNestedView[viewParent] = currentNestedView[viewParent]?.filter(
-      (_item, i) => i <= viewIndex,
-    );
-    if (currentNestedView[viewParent]?.length < 1) {
-      delete currentNestedView[viewParent];
-    }
-    setState(state => ({ ...state, currentNestedView }));
-  };
-
-  const buildReactFlowGraphData = () => {
-    return ConvertFlyteDagToReactFlows({
-      root: state.data,
-      nodeExecutionsById: state.nodeExecutionsById,
-      onNodeSelectionChanged: state.onNodeSelectionChanged,
-      onPhaseSelectionChanged: state.onPhaseSelectionChanged,
-      selectedPhase,
-      onAddNestedView,
-      onRemoveNestedView,
-      currentNestedView: state.currentNestedView,
-      maxRenderDepth: 1,
-    } as ConvertDagProps);
-  };
-
-  useEffect(() => {
-    const newRFGraphData = buildReactFlowGraphData();
-    setState(state => ({ ...state, rfGraphJson: newRFGraphData }));
-  }, [
-    state.currentNestedView,
-    state.nodeExecutionsById,
-    isDetailsTabClosed,
-    shouldUpdate,
-  ]);
-
-  useEffect(() => {
-    if (graphNodeCountChanged(state.data, data)) {
-      setState(state => ({ ...state, data: data }));
-    }
-    if (
-      nodeExecutionStatusChanged(
-        state.nodeExecutionsById,
-        nodeExecutionsById,
-      ) ||
-      nodeExecutionLogsChanged(state.nodeExecutionsById, nodeExecutionsById)
-    ) {
-      setState(state => ({ ...state, nodeExecutionsById }));
-    }
-  }, [data, nodeExecutionsById]);
-
-  useEffect(() => {
-    setState(state => ({
-      ...state,
-      onNodeSelectionChanged,
-      onPhaseSelectionChanged,
-      selectedPhase,
-    }));
-  }, [onNodeSelectionChanged, onPhaseSelectionChanged, selectedPhase]);
 
   const backgroundStyle = getRFBackground().nested;
 
@@ -279,10 +202,10 @@ export const ReactFlowGraphComponent = ({
   const renderGraph = () => {
     const ReactFlowProps: RFWrapperProps = {
       backgroundStyle,
-      rfGraphJson: state.rfGraphJson,
+      rfGraphJson,
       type: RFGraphTypes.main,
       nodeExecutionsById,
-      currentNestedView: state.currentNestedView,
+      currentNestedView: currentNestedView,
       setShouldUpdate,
     };
     return (
@@ -296,5 +219,5 @@ export const ReactFlowGraphComponent = ({
     );
   };
 
-  return state.rfGraphJson ? renderGraph() : <></>;
+  return rfGraphJson ? renderGraph() : <></>;
 };
