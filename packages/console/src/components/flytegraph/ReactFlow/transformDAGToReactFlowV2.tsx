@@ -8,7 +8,7 @@ import {
 import { createDebugLogger } from 'common/log';
 import { LogsByPhase } from 'models/Execution/types';
 import { isMapTaskType } from 'models/Task/utils';
-import { ReactFlowGraphConfig } from './utils';
+import { isUnFetchedDynamicNode, ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
 interface rfNode extends Node {
@@ -276,6 +276,18 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
             });
           }
         }
+
+        /*
+         * Because dyanmic nodes are now fetched on demand we need to check
+         * for nodes that are parents without children; in which case we want
+         * to override the type to mimic unopened subworkflow (nestedMaxDepth)
+         */
+        const type =
+          isStaticGraph === true
+            ? dTypes.staticNode
+            : isUnFetchedDynamicNode(node)
+            ? dTypes.nestedMaxDepth
+            : undefined;
 
         if (rootParentNode) {
           const rootParentId = rootParentNode.scopedId;
