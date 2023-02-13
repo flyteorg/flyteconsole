@@ -124,10 +124,13 @@ const buildReactFlowDataProps = ({
       }
     },
     onAddNestedView: () => {
-      onAddNestedView({
-        parent: rootParentNode.scopedId,
-        view: scopedId,
-      });
+      onAddNestedView(
+        {
+          parent: rootParentNode ? rootParentNode.scopedId : scopedId,
+          view: scopedId,
+        },
+        node,
+      );
     },
     onRemoveNestedView,
   };
@@ -278,11 +281,14 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
         }
 
         /*
-         * Because dyanmic nodes are now fetched on demand we need to check
-         * for nodes that are parents without children; in which case we want
-         * to override the type to mimic unopened subworkflow (nestedMaxDepth)
+         * case: isUnfetcedDyanmic
+         * dyanmic nodes are now fetched on demand; thse will be nodes that are
+         * parents without children; in which case we override the type nestedMaxDepth
+         *
+         * case dTypes.nestedMaxDepth
+         * for nodes that subworkflows; this is the unexpanded view
          */
-        const type =
+        const typeOVerride =
           isStaticGraph === true
             ? dTypes.staticNode
             : isUnFetchedDynamicNode(node)
@@ -307,16 +313,14 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
             dataProps: nodeDataProps,
             rootParentNode: rootParentNode,
             parentNode: contextParent,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: typeOVerride,
           });
           context.nodes[reactFlowNode.id] = reactFlowNode;
         } else {
           const reactFlowNode = buildReactFlowNode({
             node: node,
             dataProps: nodeDataProps,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: typeOVerride,
           });
           root.nodes[reactFlowNode.id] = reactFlowNode;
         }

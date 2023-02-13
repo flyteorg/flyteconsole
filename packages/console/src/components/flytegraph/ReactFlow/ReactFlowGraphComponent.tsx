@@ -3,7 +3,10 @@ import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/tra
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { isNodeGateNode } from 'components/Executions/utils';
+import {
+  fetchChildrenExecutions,
+  isNodeGateNode,
+} from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
 import { useQueryClient } from 'react-query';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
@@ -13,7 +16,7 @@ import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { keyBy, merge } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
-import { getRFBackground } from './utils';
+import { getRFBackground, isUnFetchedDynamicNode } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
 import { PausedTasksComponent } from './PausedTasksComponent';
@@ -38,12 +41,22 @@ export const ReactFlowGraphComponent = ({
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
   const [currentNestedView, setcurrentNestedView] = useState({});
 
-  const onAddNestedView = view => {
-    const currentView = currentNestedView[view.parent] || [];
-    const newView = {
-      [view.parent]: [...currentView, view.view],
-    };
-    setcurrentNestedView(newView);
+  const onAddNestedView = async (view, sourceNode: any = null) => {
+    if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
+      await fetchChildrenExecutions(
+        queryClient,
+        sourceNode.scopedId,
+        nodeExecutionsById,
+        setCurrentNodeExecutionsById,
+        setShouldUpdate,
+      );
+    } else {
+      const currentView = currentNestedView[view.parent] || [];
+      const newView = {
+        [view.parent]: [...currentView, view.view],
+      };
+      setcurrentNestedView(newView);
+    }
   };
 
   const onRemoveNestedView = (viewParent, viewIndex) => {

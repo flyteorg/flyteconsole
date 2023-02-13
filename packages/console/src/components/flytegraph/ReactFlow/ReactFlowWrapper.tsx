@@ -38,12 +38,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
   backgroundStyle,
   currentNestedView,
   version,
-  setShouldUpdate,
 }) => {
-  const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
-  );
   const [state, setState] = useState({
     shouldUpdate: true,
     nodes: rfGraphJson?.nodes,
@@ -111,17 +106,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     flexDirection: 'column',
   };
 
-  const onNodeClick = async (_event, node) => {
-    const scopedId = node.data.scopedId;
-    if (node.data.isParentNode) {
-      await fetchChildrenExecutions(
-        queryClient,
-        scopedId,
-        nodeExecutionsById,
-        setCurrentNodeExecutionsById,
-        setShouldUpdate,
-      );
-    }
+  const onNodeClick = async _event => {
     setState(state => ({ ...state, needFitView: false }));
   };
 
