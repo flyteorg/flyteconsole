@@ -50,13 +50,13 @@ export const ReactFlowGraphComponent = ({
         setCurrentNodeExecutionsById,
         setShouldUpdate,
       );
-    } else {
-      const currentView = currentNestedView[view.parent] || [];
-      const newView = {
-        [view.parent]: [...currentView, view.view],
-      };
-      setcurrentNestedView(newView);
     }
+
+    const currentView = currentNestedView[view.parent] || [];
+    const newView = {
+      [view.parent]: [...currentView, view.view],
+    };
+    setcurrentNestedView(newView);
   };
 
   const onRemoveNestedView = (viewParent, viewIndex) => {
