@@ -71,7 +71,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     return isParentNode(nodeExecution) ? (
       <RowExpander
         ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
-        key={node.scopedId}
         expanded={isExpanded(node)}
         onClick={() => {
           onToggle(node.id, node.scopedId, nodeLevel);
