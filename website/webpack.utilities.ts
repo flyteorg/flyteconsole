@@ -76,7 +76,7 @@ export const getConfigFile = (mode: Mode): string =>
 // Determines whether to use CDN based on current development mode.
 export const getShouldLoadReactFromCDN = (mode: Mode) =>
   mode === 'production' ||
-  fs.existsSync(path.resolve(__dirname, '../node_modules/react'));
+  !fs.existsSync(path.resolve(__dirname, '../node_modules/react'));
 
 // Report current configuration
 export const logWebpackStats = (mode: Mode) => {
