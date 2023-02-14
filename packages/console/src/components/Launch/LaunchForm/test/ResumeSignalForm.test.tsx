@@ -107,7 +107,7 @@ describe('ResumeSignalForm', () => {
               }}
             >
               <NodeExecutionsByIdContext.Provider
-                value={mockNodeExecutionsById}
+                value={{ nodeExecutionsById: mockNodeExecutionsById }}
               >
                 <ResumeSignalForm
                   onClose={onClose}

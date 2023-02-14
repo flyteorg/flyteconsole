@@ -14,10 +14,6 @@ import { NodeExecutionRow } from '../NodeExecutionRow';
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
-jest.mock('components/Executions/Tables/RowExpander', () => ({
-  RowExpander: jest.fn(() => <div data-testid="expander"></div>),
-}));
-
 const columns = [];
 const node = {
   id: 'n1',
@@ -44,15 +40,15 @@ describe('Executions > Tables > NodeExecutionRow', () => {
     );
   });
 
-  const renderComponent = props =>
-    render(
+  const renderComponent = props => {
+    return render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
           <NodeExecutionRow {...props} />
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );
-
+  };
   it('should not render expander if node is a leaf', async () => {
     const { queryByRole, queryByTestId } = renderComponent({
       columns,
@@ -67,8 +63,14 @@ describe('Executions > Tables > NodeExecutionRow', () => {
   });
 
   it('should render expander if node contains list of nodes', async () => {
-    const mockNode = { ...node, nodes: [node, node] };
-    const { queryByRole, queryByTestId } = renderComponent({
+    const mockNode = {
+      ...node,
+      nodes: [node, node],
+    };
+
+    (execution.metadata as any).isParentNode = true;
+
+    const { queryByRole, queryByTitle } = renderComponent({
       columns,
       node: mockNode,
       nodeExecution: execution,
@@ -77,6 +79,6 @@ describe('Executions > Tables > NodeExecutionRow', () => {
     await waitFor(() => queryByRole('listitem'));
 
     expect(queryByRole('listitem')).toBeInTheDocument();
-    expect(queryByTestId('expander')).toBeInTheDocument();
+    expect(queryByTitle('Expand row')).toBeInTheDocument();
   });
 });
