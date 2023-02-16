@@ -153,23 +153,6 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
 
   const queryClient = useQueryClient();
 
-  const projectAttributesQuery = useQuery<
-    Admin.ProjectAttributesGetResponse,
-    Error
-  >({
-    queryKey: ['projectAttributes', project],
-    queryFn: async () => {
-      const projectAtributes = await getProjectAttributes({
-        project,
-      });
-      queryClient.setQueryData(
-        ['projectAttributes', project],
-        projectAtributes,
-      );
-      return projectAtributes;
-    },
-  });
-
   const projectDomainAttributesQuery = useQuery<
     Admin.ProjectDomainAttributesGetResponse,
     Error
@@ -186,7 +169,24 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
       );
       return projectDomainAtributes;
     },
-    enabled: !!projectAttributesQuery.data,
+  });
+
+  const projectAttributesQuery = useQuery<
+    Admin.ProjectAttributesGetResponse,
+    Error
+  >({
+    queryKey: ['projectAttributes', project],
+    queryFn: async () => {
+      const projectAtributes = await getProjectAttributes({
+        project,
+      });
+      queryClient.setQueryData(
+        ['projectAttributes', project],
+        projectAtributes,
+      );
+      return projectAtributes;
+    },
+    enabled: !projectDomainAttributesQuery.isFetching,
   });
 
   const content = executionsQuery.isLoadingError ? (
@@ -230,7 +230,9 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
         </Typography>
         <Typography variant="h5">{t('tasksTotal', numberOfTasks)}</Typography>
       </div>
-      {renderDomainSettingsSection()}
+      <WaitForQuery query={projectAttributesQuery}>
+        {renderDomainSettingsSection}
+      </WaitForQuery>
       <div className={styles.container}>
         <div className={styles.withPaddingX}>
           <WaitForData {...last100Executions}>
