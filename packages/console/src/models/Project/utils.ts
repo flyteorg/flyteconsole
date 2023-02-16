@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { Identifier } from 'models/Common/types';
 import { Project } from './types';
 
@@ -15,5 +16,5 @@ export function makeProjectDomainAttributesPath(
   prefix: string,
   { project, domain }: Partial<Identifier>,
 ) {
-  return [prefix, project, domain].join('/');
+  return _.compact([prefix, project, domain]).join('/');
 }

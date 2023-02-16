@@ -32,8 +32,11 @@ import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/us
 import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
-import { compact } from 'lodash';
-import { getProjectDomainAttributes } from 'models/Project/api';
+import _, { compact } from 'lodash';
+import {
+  getProjectAttributes,
+  getProjectDomainAttributes,
+} from 'models/Project/api';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 
@@ -150,6 +153,23 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
 
   const queryClient = useQueryClient();
 
+  const projectAttributesQuery = useQuery<
+    Admin.ProjectAttributesGetResponse,
+    Error
+  >({
+    queryKey: ['projectAttributes', project],
+    queryFn: async () => {
+      const projectAtributes = await getProjectAttributes({
+        project,
+      });
+      queryClient.setQueryData(
+        ['projectAttributes', project],
+        projectAtributes,
+      );
+      return projectAtributes;
+    },
+  });
+
   const projectDomainAttributesQuery = useQuery<
     Admin.ProjectDomainAttributesGetResponse,
     Error
@@ -166,7 +186,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
       );
       return projectDomainAtributes;
     },
-    staleTime: Infinity,
+    enabled: !!projectAttributesQuery.data,
   });
 
   const content = executionsQuery.isLoadingError ? (
@@ -191,8 +211,12 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   );
 
   const configData =
-    projectDomainAttributesQuery.data?.attributes?.matchingAttributes
-      ?.workflowExecutionConfig ?? undefined;
+    _.merge(
+      projectAttributesQuery.data?.attributes?.matchingAttributes
+        ?.workflowExecutionConfig,
+      projectDomainAttributesQuery.data?.attributes?.matchingAttributes
+        ?.workflowExecutionConfig,
+    ) ?? undefined;
 
   const renderDomainSettingsSection = () => (
     <DomainSettingsSection configData={configData} />
@@ -206,9 +230,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
         </Typography>
         <Typography variant="h5">{t('tasksTotal', numberOfTasks)}</Typography>
       </div>
-      <WaitForQuery query={projectDomainAttributesQuery}>
-        {renderDomainSettingsSection}
-      </WaitForQuery>
+      {renderDomainSettingsSection()}
       <div className={styles.container}>
         <div className={styles.withPaddingX}>
           <WaitForData {...last100Executions}>
