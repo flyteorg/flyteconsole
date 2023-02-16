@@ -32,7 +32,7 @@ import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/us
 import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
-import _, { compact } from 'lodash';
+import { compact, merge } from 'lodash';
 import {
   getProjectAttributes,
   getProjectDomainAttributes,
@@ -211,7 +211,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   );
 
   const configData =
-    _.merge(
+    merge(
       projectAttributesQuery.data?.attributes?.matchingAttributes
         ?.workflowExecutionConfig,
       projectDomainAttributesQuery.data?.attributes?.matchingAttributes
