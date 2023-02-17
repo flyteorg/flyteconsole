@@ -12,6 +12,7 @@ const str = {
   securityContextHeader: 'Security Context',
   serviceAccountHeader: 'Service Account',
   noMatchingResults: 'No matching results',
+  noValue: '-',
   missingUnionListOfSubType: 'Unexpected missing type for union',
   missingMapSubType: 'Unexpected missing subtype for map',
   mapMissingMapProperty: 'Map literal missing `map` property',
