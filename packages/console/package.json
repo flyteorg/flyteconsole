@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/console",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Flyteconsole main app module",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
