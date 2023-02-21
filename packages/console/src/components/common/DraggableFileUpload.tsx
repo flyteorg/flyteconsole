@@ -1,5 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core';
-import React from 'react';
+import { noop } from 'lodash';
+import React, { useEffect } from 'react';
 import { DropzoneProps, useDropzone } from 'react-dropzone';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -7,11 +8,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 'auto',
     maxWidth: '536px',
     color: theme.palette.grey[400],
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing(2),
     cursor: 'pointer',
   },
   uploadContainer: {
@@ -24,22 +20,28 @@ const useStyles = makeStyles((theme: Theme) => ({
     border: `0.5px dashed ${theme.palette.divider}`,
     borderRadius: '4px',
   },
-  underline: {
-    textDecoration: 'underline',
-  },
   highlight: {
-    color: theme.palette.text.primary,
+    color: theme.palette.primary.main,
   },
 }));
 
 interface Props {
   options?: DropzoneProps;
+  helpText?: React.ReactNode;
+  onChange?: (files: File[]) => void;
 }
 
-export function DraggableFileUpload({ options }: Props) {
-  const { acceptedFiles, fileRejections, getRootProps, getInputProps } =
-    useDropzone(options);
+export function DraggableFileUpload({
+  options,
+  helpText,
+  onChange = noop,
+}: Props) {
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone(options);
   const styles = useStyles();
+
+  useEffect(() => {
+    onChange(acceptedFiles);
+  }, [onChange, acceptedFiles]);
 
   const ctaText = acceptedFiles.length ? 'Replace file' : 'Upload a file';
 
@@ -50,10 +52,9 @@ export function DraggableFileUpload({ options }: Props) {
           <span className={styles.highlight}>{ctaText}</span> or drag and drop
           here
         </div>
-        <div>(File types: txt, doc, docx, rtf, pdf)</div>
+        {helpText}
         <input {...getInputProps()} />
       </div>
-      <div className={styles.underline}>Enter Manually</div>
     </div>
   );
 }
