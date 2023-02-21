@@ -3,6 +3,9 @@ import { fireEvent, render } from '@testing-library/react';
 import { NodeExecutionDetailsContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { dTypes } from 'models/Graph/types';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { NodeExecutionPhase } from 'models/Execution/enums';
+import { dateToTimestamp } from 'common/utils';
 import { PausedTasksComponent } from '../PausedTasksComponent';
 
 const pausedNodes = [
@@ -23,6 +26,22 @@ const pausedNodes = [
     edges: [],
   },
 ];
+
+const nodeExecutionsById = {
+  n1: {
+    closure: {
+      createdAt: dateToTimestamp(new Date()),
+      outputUri: '',
+      phase: NodeExecutionPhase.UNDEFINED,
+    },
+    id: {
+      executionId: { domain: 'domain', name: 'name', project: 'project' },
+      nodeId: 'n1',
+    },
+    inputUri: '',
+    scopedId: 'n1',
+  },
+};
 
 const compiledWorkflowClosure = {
   primary: {
@@ -77,7 +96,9 @@ describe('flytegraph > ReactFlow > PausedTasksComponent', () => {
           compiledWorkflowClosure,
         }}
       >
-        <PausedTasksComponent {...props} />
+        <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+          <PausedTasksComponent {...props} />
+        </NodeExecutionsByIdContext.Provider>
       </NodeExecutionDetailsContext.Provider>,
     );
 
