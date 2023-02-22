@@ -36,12 +36,7 @@ interface Props {
   helpText?: React.ReactNode;
 }
 
-export function DraggableFileUpload({
-  files,
-  setFiles,
-  options,
-  helpText,
-}: Props) {
+export function FileUpload({ files, setFiles, options, helpText }: Props) {
   const styles = useStyles();
   const { getRootProps, getInputProps } = useDropzone({
     ...options,
@@ -80,4 +75,4 @@ export function DraggableFileUpload({
   );
 }
 
-export default DraggableFileUpload;
+export default FileUpload;
