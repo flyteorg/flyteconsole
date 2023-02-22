@@ -1,7 +1,7 @@
 import { makeStyles, Theme } from '@material-ui/core';
-import { noop } from 'lodash';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { DropzoneProps, useDropzone } from 'react-dropzone';
+import FileItem from './FileItem';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -16,9 +16,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    gap: theme.spacing(0.5),
     padding: theme.spacing(4, 3),
     border: `0.5px dashed ${theme.palette.divider}`,
     borderRadius: '4px',
+  },
+  filesContainer: {
+    width: '100%',
   },
   highlight: {
     color: theme.palette.primary.main,
@@ -26,28 +30,45 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
   options?: DropzoneProps;
   helpText?: React.ReactNode;
-  onChange?: (files: File[]) => void;
 }
 
 export function DraggableFileUpload({
+  files,
+  setFiles,
   options,
   helpText,
-  onChange = noop,
 }: Props) {
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone(options);
   const styles = useStyles();
+  const { getRootProps, getInputProps } = useDropzone({
+    ...options,
+    onDrop: (acceptedFiles, fileRejections, event) => {
+      setFiles(acceptedFiles);
+      options?.onDrop?.(acceptedFiles, fileRejections, event);
+    },
+  });
 
-  useEffect(() => {
-    onChange(acceptedFiles);
-  }, [onChange, acceptedFiles]);
+  const removeFile = (fileIdx: number) => {
+    setFiles(files => files.filter((_, idx) => idx !== fileIdx));
+  };
 
-  const ctaText = acceptedFiles.length ? 'Replace file' : 'Upload a file';
+  const ctaText = files.length ? 'Replace file' : 'Upload a file';
 
   return (
     <div className={styles.container}>
-      <div className={styles.uploadContainer} {...getRootProps}>
+      <div {...getRootProps({ className: styles.uploadContainer })}>
+        <div className={styles.filesContainer}>
+          {files.map((file, idx) => (
+            <FileItem
+              file={file}
+              remove={() => removeFile(idx)}
+              key={file.name}
+            />
+          ))}
+        </div>
         <div>
           <span className={styles.highlight}>{ctaText}</span> or drag and drop
           here
