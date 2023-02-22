@@ -35,7 +35,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
   initialIsVisible = false,
 }) => {
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [isVisible, setIsVisible] = useState(initialIsVisible);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
@@ -77,6 +77,10 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     compiledWorkflowClosure?.primary.template.nodes ?? []
   ).find(node => node.id === selectedNodeId);
 
+  const selectedNode = (pausedNodes ?? []).find(
+    node => node.id === selectedNodeId,
+  );
+
   const renderPausedTasksBlock = () => (
     <div style={popupContainerStyle} data-testid="paused-tasks-table">
       <TaskNames
@@ -106,11 +110,11 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
           </CustomBadge>
         </div>
       </div>
-      {compiledNode && selectedNodeId ? (
+      {compiledNode && selectedNode ? (
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeExecutionId={nodeExecutionsById[selectedNodeId].id}
+          nodeExecutionId={nodeExecutionsById[selectedNode.scopedId].id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />
