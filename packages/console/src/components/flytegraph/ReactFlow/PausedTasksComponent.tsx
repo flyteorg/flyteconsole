@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Badge, Button, withStyles } from '@material-ui/core';
 import { TaskNames } from 'components/Executions/ExecutionDetails/Timeline/TaskNames';
 import { dNode } from 'models/Graph/types';
@@ -9,6 +9,7 @@ import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -34,6 +35,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
   initialIsVisible = false,
 }) => {
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [isVisible, setIsVisible] = useState(initialIsVisible);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
@@ -75,6 +77,10 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     compiledWorkflowClosure?.primary.template.nodes ?? []
   ).find(node => node.id === selectedNodeId);
 
+  const selectedNode = (pausedNodes ?? []).find(
+    node => node.id === selectedNodeId,
+  );
+
   const renderPausedTasksBlock = () => (
     <div style={popupContainerStyle} data-testid="paused-tasks-table">
       <TaskNames
@@ -104,11 +110,11 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
           </CustomBadge>
         </div>
       </div>
-      {compiledNode && selectedNodeId ? (
+      {compiledNode && selectedNode ? (
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeId={selectedNodeId}
+          nodeExecutionId={nodeExecutionsById[selectedNode.scopedId].id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />
