@@ -2138,6 +2138,7 @@ __metadata:
     "@types/pure-render-decorator": ^0.2.27
     "@types/react": ^16.9.34
     "@types/react-dom": ^16.9.7
+    "@types/react-dropzone": ^5.1.0
     "@types/react-virtualized": ^9.21.4
     "@types/serve-static": ^1.7.31
     "@types/shallowequal": ^0.2.3
@@ -5518,6 +5519,15 @@ __metadata:
   dependencies:
     "@types/react": ^16
   checksum: c9246eb4d35993463608de61111f2bdae5afbd22556c8b9918081516b67eafd1a9ef141c3ed459dd4c753dd7ea037b6a375a856e677c2586396c23732772831d
+  languageName: node
+  linkType: hard
+
+"@types/react-dropzone@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@types/react-dropzone@npm:5.1.0"
+  dependencies:
+    react-dropzone: "*"
+  checksum: 2b68fcf0153fb00e17088907490b823b6d81a29a02e615f820e347df2546f9318c5f025eeb33d575c648d01a14e55a19e528c32907608b5a7f727ff0e96b3923
   languageName: node
   linkType: hard
 
@@ -18533,7 +18543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dropzone@npm:^14.2.3":
+"react-dropzone@npm:*, react-dropzone@npm:^14.2.3":
   version: 14.2.3
   resolution: "react-dropzone@npm:14.2.3"
   dependencies:

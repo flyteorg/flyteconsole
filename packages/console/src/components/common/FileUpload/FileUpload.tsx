@@ -29,14 +29,18 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-interface Props {
+export interface FileUploadProps extends DropzoneProps {
   files: File[];
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  options?: DropzoneProps;
   helpText?: React.ReactNode;
 }
 
-export function FileUpload({ files, setFiles, options, helpText }: Props) {
+export function FileUpload({
+  files,
+  setFiles,
+  helpText,
+  ...options
+}: FileUploadProps) {
   const styles = useStyles();
   const { getRootProps, getInputProps } = useDropzone({
     ...options,
