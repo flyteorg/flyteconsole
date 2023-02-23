@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+/**
+ * For a list of available options, see https://react-dropzone.js.org/
+ */
 export interface FileUploadProps extends DropzoneProps {
   files: File[];
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
