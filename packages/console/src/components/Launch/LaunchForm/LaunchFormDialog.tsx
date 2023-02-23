@@ -7,6 +7,7 @@ import {
   WorkflowInitialLaunchParameters,
 } from 'components/Launch/LaunchForm/types';
 import { CompiledNode } from 'models/Node/types';
+import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { ResumeForm } from './ResumeForm';
 
 interface LaunchFormDialogProps {
@@ -17,7 +18,7 @@ interface LaunchFormDialogProps {
   showLaunchForm: boolean;
   setShowLaunchForm: React.Dispatch<React.SetStateAction<boolean>>;
   compiledNode?: CompiledNode;
-  nodeId?: string;
+  nodeExecutionId?: NodeExecutionIdentifier;
 }
 
 function getLaunchProps(id: ResourceIdentifier) {
@@ -35,7 +36,7 @@ export const LaunchFormDialog = ({
   showLaunchForm,
   setShowLaunchForm,
   compiledNode,
-  nodeId,
+  nodeExecutionId,
 }: LaunchFormDialogProps): JSX.Element => {
   const onCancelLaunch = () => setShowLaunchForm(false);
 
@@ -58,10 +59,10 @@ export const LaunchFormDialog = ({
           onClose={onCancelLaunch}
           {...getLaunchProps(id)}
         />
-      ) : compiledNode && nodeId ? (
+      ) : compiledNode && nodeExecutionId ? (
         <ResumeForm
           initialParameters={initialParameters}
-          nodeId={nodeId}
+          nodeExecutionId={nodeExecutionId}
           onClose={onCancelLaunch}
           compiledNode={compiledNode}
         />

@@ -54,8 +54,27 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
             Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId),
           );
         }
-        if ((newState.context as TaskResumeContext).compiledNode) {
-          onCancel();
+        const context = newState.context as TaskResumeContext;
+        if (context.compiledNode) {
+          // only for resume
+          if (context.nodeExecutionId) {
+            // this cancels the modal
+            onCancel();
+            // this reloads the page
+            history.push(
+              Routes.ExecutionDetails.makeUrl(
+                context.nodeExecutionId.executionId,
+              ),
+            );
+          }
+        } else {
+          if (newState.context.resultExecutionId) {
+            history.push(
+              Routes.ExecutionDetails.makeUrl(
+                newState.context.resultExecutionId,
+              ),
+            );
+          }
         }
       }
     });

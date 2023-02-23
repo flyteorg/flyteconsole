@@ -1,6 +1,9 @@
 import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
 import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
-import { WorkflowExecutionIdentifier } from 'models/Execution/types';
+import {
+  NodeExecutionIdentifier,
+  WorkflowExecutionIdentifier,
+} from 'models/Execution/types';
 import { LaunchPlan } from 'models/Launch/types';
 import { CompiledNode } from 'models/Node/types';
 import { Task } from 'models/Task/types';
@@ -99,6 +102,7 @@ export interface TaskLaunchContext extends BaseLaunchContext {
 
 export interface TaskResumeContext extends BaseLaunchContext {
   compiledNode?: CompiledNode;
+  nodeExecutionId?: NodeExecutionIdentifier;
 }
 
 export enum LaunchState {
@@ -190,6 +194,7 @@ export type BaseLaunchTypestate =
       value: LaunchState.SUBMIT_SUCCEEDED;
       context: BaseLaunchContext & {
         resultExecutionId: WorkflowExecutionIdentifier;
+        nodeExecutionId?: NodeExecutionIdentifier;
       };
     }
   | {
