@@ -75,7 +75,8 @@ async function submit(
   { compiledNode, nodeExecutionId }: TaskResumeContext,
 ) {
   const signalId =
-    compiledNode?.gateNode?.signal?.signalId || compiledNode?.gateNode?.approve?.signalId;
+    compiledNode?.gateNode?.signal?.signalId ||
+    compiledNode?.gateNode?.approve?.signalId;
   const isApprovedCondition = !!compiledNode?.gateNode?.approve?.signalId;
   if (!signalId) {
     throw new Error('SignalId is empty');
@@ -91,7 +92,9 @@ async function submit(
       signalId,
       executionId: nodeExecutionId?.executionId,
     },
-    value: isApprovedCondition ? { scalar: { primitive: { boolean: true } } } : literals['signal'],
+    value: isApprovedCondition
+      ? { scalar: { primitive: { boolean: true } } }
+      : literals['signal'],
   });
 
   return response;

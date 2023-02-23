@@ -96,7 +96,9 @@ describe('flytegraph > ReactFlow > PausedTasksComponent', () => {
           compiledWorkflowClosure,
         }}
       >
-        <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+        <NodeExecutionsByIdContext.Provider
+          value={{ nodeExecutionsById, setCurrentNodeExecutionsById: () => {} }}
+        >
           <PausedTasksComponent {...props} />
         </NodeExecutionsByIdContext.Provider>
       </NodeExecutionDetailsContext.Provider>,
