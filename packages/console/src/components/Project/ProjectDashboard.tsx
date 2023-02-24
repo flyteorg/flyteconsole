@@ -32,8 +32,11 @@ import { useOnlyMyExecutionsFilterState } from 'components/Executions/filters/us
 import { WaitForData } from 'components/common/WaitForData';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
-import { compact } from 'lodash';
-import { getProjectDomainAttributes } from 'models/Project/api';
+import { compact, merge } from 'lodash';
+import {
+  getProjectAttributes,
+  getProjectDomainAttributes,
+} from 'models/Project/api';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 
@@ -166,7 +169,24 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
       );
       return projectDomainAtributes;
     },
-    staleTime: Infinity,
+  });
+
+  const projectAttributesQuery = useQuery<
+    Admin.ProjectAttributesGetResponse,
+    Error
+  >({
+    queryKey: ['projectAttributes', project],
+    queryFn: async () => {
+      const projectAtributes = await getProjectAttributes({
+        project,
+      });
+      queryClient.setQueryData(
+        ['projectAttributes', project],
+        projectAtributes,
+      );
+      return projectAtributes;
+    },
+    enabled: !projectDomainAttributesQuery.isFetching,
   });
 
   const content = executionsQuery.isLoadingError ? (
@@ -191,8 +211,12 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   );
 
   const configData =
-    projectDomainAttributesQuery.data?.attributes?.matchingAttributes
-      ?.workflowExecutionConfig ?? undefined;
+    merge(
+      projectAttributesQuery.data?.attributes?.matchingAttributes
+        ?.workflowExecutionConfig,
+      projectDomainAttributesQuery.data?.attributes?.matchingAttributes
+        ?.workflowExecutionConfig,
+    ) ?? undefined;
 
   const renderDomainSettingsSection = () => (
     <DomainSettingsSection configData={configData} />
@@ -206,7 +230,7 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
         </Typography>
         <Typography variant="h5">{t('tasksTotal', numberOfTasks)}</Typography>
       </div>
-      <WaitForQuery query={projectDomainAttributesQuery}>
+      <WaitForQuery query={projectAttributesQuery}>
         {renderDomainSettingsSection}
       </WaitForQuery>
       <div className={styles.container}>

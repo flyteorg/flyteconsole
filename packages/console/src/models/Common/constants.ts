@@ -7,6 +7,7 @@ export const endpointPrefixes = {
   nodeExecution: '/node_executions',
   dynamicWorkflowExecution: '/data/node_executions',
   project: '/projects',
+  projectAttributes: '/project_attributes',
   projectDomainAtributes: '/project_domain_attributes',
   relaunchExecution: '/executions/relaunch',
   recoverExecution: '/executions/recover',
