@@ -55,7 +55,7 @@ describe('DomainSettingsSection', () => {
     const tables = queryAllByRole('table');
     expect(tables).toHaveLength(2);
     // should display a placeholder text, as role was not passed
-    const emptyRole = queryByText('Inherits from project level values');
+    const emptyRole = queryByText('-');
     expect(emptyRole).toBeInTheDocument();
   });
 
@@ -76,9 +76,7 @@ describe('DomainSettingsSection', () => {
     const tables = queryAllByRole('table');
     expect(tables).toHaveLength(1);
     // should display two placeholder text, as role and labels were not passed
-    const inheritedPlaceholders = queryAllByText(
-      'Inherits from project level values',
-    );
+    const inheritedPlaceholders = queryAllByText('-');
     expect(inheritedPlaceholders).toHaveLength(2);
   });
 
@@ -101,9 +99,7 @@ describe('DomainSettingsSection', () => {
     const tables = queryByRole('table');
     expect(tables).not.toBeInTheDocument();
     // should display three placeholder text, as role, labels, annotations were not passed
-    const inheritedPlaceholders = queryAllByText(
-      'Inherits from project level values',
-    );
+    const inheritedPlaceholders = queryAllByText('-');
     expect(inheritedPlaceholders).toHaveLength(3);
   });
 });

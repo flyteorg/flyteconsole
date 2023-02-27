@@ -1,15 +1,21 @@
-import * as React from 'react';
+import React, {
+  createRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
-import {
-  isEndNode,
-  isStartNode,
-  isExpanded,
-} from 'components/WorkflowGraph/utils';
 import { tableHeaderColor } from 'components/Theme/constants';
 import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
-import { createRef, useContext, useEffect, useRef, useState } from 'react';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import {
+  fetchChildrenExecutions,
+  searchNode,
+} from 'components/Executions/utils';
+import { useQueryClient } from 'react-query';
+import { eq, merge } from 'lodash';
 import { convertToPlainNodes } from './helpers';
 import { ChartHeader } from './ChartHeader';
 import { useScaleContext } from './scaleContext';
@@ -72,11 +78,13 @@ const INTERVAL_LENGTH = 110;
 interface ExProps {
   chartTimezone: string;
   initialNodes: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 
 export const ExecutionTimeline: React.FC<ExProps> = ({
   chartTimezone,
   initialNodes,
+  setShouldUpdate,
 }) => {
   const [chartWidth, setChartWidth] = useState(0);
   const [labelInterval, setLabelInterval] = useState(INTERVAL_LENGTH);
@@ -87,14 +95,23 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(initialNodes);
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {
-    setOriginalNodes(initialNodes);
-  }, [initialNodes]);
+    setOriginalNodes(ogn => {
+      const newNodes = merge(initialNodes, ogn);
 
-  useEffect(() => {
+      if (!eq(newNodes, ogn)) {
+        return newNodes;
+      }
+
+      return ogn;
+    });
+
     const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map(node => {
       const execution = nodeExecutionsById[node.scopedId];
@@ -111,7 +128,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     if (firstStartedAt) {
       setStartedAt(timestampToDate(firstStartedAt));
     }
-  }, [originalNodes, nodeExecutionsById]);
+  }, [initialNodes, originalNodes, nodeExecutionsById]);
 
   const { items: barItemsData, totalDurationSec } = getChartDurationData(
     showNodes,
@@ -159,30 +176,15 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     }
   };
 
-  const toggleNode = (id: string, scopeId: string, level: number) => {
-    const searchNode = (nodes: dNode[], nodeLevel: number) => {
-      if (!nodes || nodes.length === 0) {
-        return;
-      }
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        if (isStartNode(node) || isEndNode(node)) {
-          continue;
-        }
-        if (
-          node.id === id &&
-          node.scopedId === scopeId &&
-          nodeLevel === level
-        ) {
-          nodes[i].expanded = !nodes[i].expanded;
-          return;
-        }
-        if (node.nodes.length > 0 && isExpanded(node)) {
-          searchNode(node.nodes, nodeLevel + 1);
-        }
-      }
-    };
-    searchNode(originalNodes, 0);
+  const toggleNode = async (id: string, scopedId: string, level: number) => {
+    await fetchChildrenExecutions(
+      queryClient,
+      scopedId,
+      nodeExecutionsById,
+      setCurrentNodeExecutionsById,
+      setShouldUpdate,
+    );
+    searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);
   };
 

@@ -8,7 +8,7 @@ import {
 import { createDebugLogger } from 'common/log';
 import { LogsByPhase } from 'models/Execution/types';
 import { isMapTaskType } from 'models/Task/utils';
-import { ReactFlowGraphConfig } from './utils';
+import { isUnFetchedDynamicNode, ReactFlowGraphConfig } from './utils';
 import { ConvertDagProps } from './types';
 
 interface rfNode extends Node {
@@ -58,24 +58,23 @@ interface BuildDataProps {
   rootParentNode: dNode;
   currentNestedView: string[];
 }
-const buildReactFlowDataProps = (props: BuildDataProps) => {
-  const {
-    node,
-    nodeExecutionsById,
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    onAddNestedView,
-    onRemoveNestedView,
-    rootParentNode,
-    currentNestedView,
-  } = props;
-
+const buildReactFlowDataProps = ({
+  node,
+  nodeExecutionsById,
+  onNodeSelectionChanged,
+  onPhaseSelectionChanged,
+  selectedPhase,
+  onAddNestedView,
+  onRemoveNestedView,
+  rootParentNode,
+  currentNestedView,
+}: BuildDataProps) => {
   const {
     value: nodeValue,
     name: displayName,
     scopedId,
     type: nodeType,
+    isParentNode,
   } = node;
   const taskType = nodeValue?.template?.type ?? null;
 
@@ -111,6 +110,7 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
     scopedId,
     taskType,
     nodeLogsByPhase,
+    isParentNode,
     cacheStatus,
     selectedPhase,
     onNodeSelectionChanged: () => {
@@ -124,10 +124,13 @@ const buildReactFlowDataProps = (props: BuildDataProps) => {
       }
     },
     onAddNestedView: () => {
-      onAddNestedView({
-        parent: rootParentNode.scopedId,
-        view: scopedId,
-      });
+      onAddNestedView(
+        {
+          parent: rootParentNode ? rootParentNode.scopedId : scopedId,
+          view: scopedId,
+        },
+        node,
+      );
     },
     onRemoveNestedView,
   };
@@ -277,6 +280,21 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
           }
         }
 
+        /*
+         * case: isUnfetcedDyanmic
+         * dyanmic nodes are now fetched on demand; thse will be nodes that are
+         * parents without children; in which case we override the type nestedMaxDepth
+         *
+         * case dTypes.nestedMaxDepth
+         * for nodes that subworkflows; this is the unexpanded view
+         */
+        const typeOVerride =
+          isStaticGraph === true
+            ? dTypes.staticNode
+            : isUnFetchedDynamicNode(node)
+            ? dTypes.nestedMaxDepth
+            : undefined;
+
         if (rootParentNode) {
           const rootParentId = rootParentNode.scopedId;
           const contextParentId = contextParent?.scopedId;
@@ -295,16 +313,14 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
             dataProps: nodeDataProps,
             rootParentNode: rootParentNode,
             parentNode: contextParent,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: typeOVerride,
           });
           context.nodes[reactFlowNode.id] = reactFlowNode;
         } else {
           const reactFlowNode = buildReactFlowNode({
             node: node,
             dataProps: nodeDataProps,
-            typeOverride:
-              isStaticGraph === true ? dTypes.staticNode : undefined,
+            typeOverride: typeOVerride,
           });
           root.nodes[reactFlowNode.id] = reactFlowNode;
         }

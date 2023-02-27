@@ -3,8 +3,7 @@ import { NodeRendererProps, Point } from 'components/flytegraph/types';
 import { TaskNodeRenderer } from 'components/WorkflowGraph/TaskNodeRenderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { DAGNode } from 'models/Graph/types';
-import * as React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { NodeExecutionsByIdContext } from '../../contexts';
 import { StatusIndicator } from './StatusIndicator';
 
@@ -15,7 +14,7 @@ export const TaskExecutionNode: React.FC<
   NodeRendererProps<DAGNode>
 > = props => {
   const { node, config, selected } = props;
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const nodeExecution = nodeExecutionsById[node.id];
 
   const phase = nodeExecution

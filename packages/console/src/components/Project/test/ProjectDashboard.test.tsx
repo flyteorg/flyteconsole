@@ -20,7 +20,10 @@ import {
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import { FetchableData } from 'components/hooks/types';
 import { loadedFetchable } from 'components/hooks/__mocks__/fetchableData';
-import { getProjectDomainAttributes } from 'models/Project/api';
+import {
+  getProjectAttributes,
+  getProjectDomainAttributes,
+} from 'models/Project/api';
 import { Admin } from '@flyteorg/flyteidl-types';
 import * as LocalCache from 'basics/LocalCache';
 import { ProjectDashboard } from '../ProjectDashboard';
@@ -33,6 +36,31 @@ jest.mock('notistack', () => ({
 }));
 
 jest.mock('models/Project/api', () => ({
+  getProjectAttributes: jest.fn().mockResolvedValue(() => {
+    const projectAttributesMock: Admin.ProjectAttributesGetResponse = {
+      attributes: {
+        matchingAttributes: {
+          workflowExecutionConfig: {
+            maxParallelism: 1,
+            securityContext: { runAs: { k8sServiceAccount: 'default' } },
+            rawOutputDataConfig: {
+              outputLocationPrefix:
+                'cliOutputLocationPrefixFromProjectAttributes',
+            },
+            annotations: {
+              values: {
+                cliAnnotationKey: 'cliAnnotationValueFromProjectAttributes',
+              },
+            },
+            labels: {
+              values: { cliLabelKey: 'cliLabelValueFromProjectAttributes' },
+            },
+          },
+        },
+      },
+    };
+    return projectAttributesMock;
+  }),
   getProjectDomainAttributes: jest.fn().mockResolvedValue(() => {
     const projectDomainAttributesMock: Admin.ProjectDomainAttributesDeleteResponse =
       {
@@ -41,9 +69,6 @@ jest.mock('models/Project/api', () => ({
             workflowExecutionConfig: {
               maxParallelism: 5,
               securityContext: { runAs: { k8sServiceAccount: 'default' } },
-              rawOutputDataConfig: {
-                outputLocationPrefix: 'cliOutputLocationPrefix',
-              },
               annotations: {
                 values: { cliAnnotationKey: 'cliAnnotationValue' },
               },
@@ -123,9 +148,17 @@ describe('ProjectDashboard', () => {
 
   it('should display domain attributes section when config was provided', async () => {
     const { getByText } = renderView();
+    expect(getProjectAttributes).toHaveBeenCalled();
     expect(getProjectDomainAttributes).toHaveBeenCalled();
     await waitFor(() => {
       expect(getByText('Domain Settings')).toBeInTheDocument();
+      expect(
+        getByText('cliOutputLocationPrefixFromProjectAttributes'),
+      ).toBeInTheDocument();
+      expect(getByText('cliAnnotationKey')).toBeInTheDocument();
+      expect(
+        getByText('cliAnnotationValueFromProjectAttributes'),
+      ).not.toBeInTheDocument();
     });
   });
 

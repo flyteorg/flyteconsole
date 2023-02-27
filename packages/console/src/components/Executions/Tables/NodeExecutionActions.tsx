@@ -1,5 +1,5 @@
 import { IconButton, Tooltip } from '@material-ui/core';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import * as React from 'react';
 import InputsAndOutputsIcon from '@material-ui/icons/Tv';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
@@ -137,7 +137,7 @@ export const NodeExecutionActions = ({
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={initialParameters}
-          nodeId={execution.id.nodeId}
+          nodeExecutionId={execution.id as NodeExecutionIdentifier}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />

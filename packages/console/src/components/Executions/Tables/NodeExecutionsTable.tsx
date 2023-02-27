@@ -6,13 +6,9 @@ import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
-import * as React from 'react';
-import { useMemo, useEffect, useState, useContext } from 'react';
-import {
-  isEndNode,
-  isExpanded,
-  isStartNode,
-} from 'components/WorkflowGraph/utils';
+import React, { useMemo, useEffect, useState, useContext } from 'react';
+import { useQueryClient } from 'react-query';
+import { merge, eq } from 'lodash';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -22,10 +18,12 @@ import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { fetchChildrenExecutions, searchNode } from '../utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
+  setShouldUpdate: (val: boolean) => void;
 }
 
 const scrollbarPadding = scrollbarSize();
@@ -43,10 +41,14 @@ const scrollbarPadding = scrollbarSize();
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
+  setShouldUpdate,
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const queryClient = useQueryClient();
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
   const { appliedFilters } = useNodeExecutionFiltersState();
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(
     appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
@@ -66,9 +68,19 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   );
 
   useEffect(() => {
-    setOriginalNodes(
-      appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
-    );
+    setOriginalNodes(ogn => {
+      const newNodes =
+        appliedFilters.length > 0 && filteredNodes
+          ? filteredNodes
+          : merge(initialNodes, ogn);
+
+      if (!eq(newNodes, ogn)) {
+        return newNodes;
+      }
+
+      return ogn;
+    });
+
     const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map(node => {
       const execution = nodeExecutionsById[node.scopedId];
@@ -81,30 +93,15 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
-  const toggleNode = (id: string, scopeId: string, level: number) => {
-    const searchNode = (nodes: dNode[], nodeLevel: number) => {
-      if (!nodes || nodes.length === 0) {
-        return;
-      }
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        if (isStartNode(node) || isEndNode(node)) {
-          continue;
-        }
-        if (
-          node.id === id &&
-          node.scopedId === scopeId &&
-          nodeLevel === level
-        ) {
-          nodes[i].expanded = !nodes[i].expanded;
-          return;
-        }
-        if (node.nodes.length > 0 && isExpanded(node)) {
-          searchNode(node.nodes, nodeLevel + 1);
-        }
-      }
-    };
-    searchNode(originalNodes, 0);
+  const toggleNode = async (id: string, scopedId: string, level: number) => {
+    await fetchChildrenExecutions(
+      queryClient,
+      scopedId,
+      nodeExecutionsById,
+      setCurrentNodeExecutionsById,
+      setShouldUpdate,
+    );
+    searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);
   };
 

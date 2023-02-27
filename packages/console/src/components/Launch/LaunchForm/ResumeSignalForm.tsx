@@ -2,7 +2,7 @@ import { DialogContent, Typography } from '@material-ui/core';
 import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
 import { useState, useContext, useEffect, useMemo } from 'react';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
@@ -25,23 +25,23 @@ import { LaunchFormActions } from './LaunchFormActions';
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
-  nodeId: string;
+  nodeExecutionId: NodeExecutionIdentifier;
 }
 
 /** Renders the form for requesting a resume request on a gate node */
 export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   compiledNode,
-  nodeId,
+  nodeExecutionId,
   onClose,
 }) => {
   const { formInputsRef, state, service } = useResumeFormState({
     compiledNode,
-    nodeId,
+    nodeExecutionId,
     onClose,
   });
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
-    nodeExecutionsById[nodeId],
+    nodeExecutionsById[nodeExecutionId.nodeId],
   );
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
@@ -56,9 +56,9 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   }, [state.context.parsedInputs]);
 
   useEffect(() => {
-    const newNodeExecution = nodeExecutionsById[nodeId];
+    const newNodeExecution = nodeExecutionsById[nodeExecutionId.nodeId];
     setNodeExecution(newNodeExecution);
-  }, [nodeId]);
+  }, [nodeExecutionId.nodeId]);
 
   return (
     <>

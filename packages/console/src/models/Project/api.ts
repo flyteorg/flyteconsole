@@ -18,6 +18,25 @@ export const listProjects = () =>
       sortBy(projects, project => `${project.name}`.toLowerCase()) as Project[],
   });
 
+export const getProjectAttributes = (scope: IdentifierScope) =>
+  getAdminEntity<
+    Admin.ProjectAttributesGetResponse,
+    Admin.ProjectAttributesGetResponse
+  >(
+    {
+      path: makeProjectDomainAttributesPath(
+        endpointPrefixes.projectAttributes,
+        scope,
+      ),
+      messageType: Admin.ProjectAttributesGetResponse,
+    },
+    {
+      params: {
+        resource_type: Admin.MatchableResource.WORKFLOW_EXECUTION_CONFIG,
+      },
+    },
+  );
+
 export const getProjectDomainAttributes = (scope: IdentifierScope) =>
   getAdminEntity<
     Admin.ProjectDomainAttributesGetResponse,
@@ -32,7 +51,7 @@ export const getProjectDomainAttributes = (scope: IdentifierScope) =>
     },
     {
       params: {
-        resource_type: 'WORKFLOW_EXECUTION_CONFIG',
+        resource_type: Admin.MatchableResource.WORKFLOW_EXECUTION_CONFIG,
       },
     },
   );
