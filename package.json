@@ -76,7 +76,7 @@
     "lint-staged": "^13.1.0",
     "morgan": "^1.10.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
-    "prettier": "^2.5.1",
+    "prettier": "^2.8.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "ts-loader": "^9.2.6",
