@@ -51,11 +51,11 @@
     ]
   },
   "dependencies": {
-    "@types/morgan": "^1.9.3",
+    "@types/morgan": "^1.9.4",
     "@types/react": "^16.14.35",
     "@types/react-dom": "^16.9.7",
-    "@typescript-eslint/eslint-plugin": "^5.47.0",
-    "@typescript-eslint/parser": "^5.47.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
     "chalk": "^2.0.1",
     "compression-webpack-plugin": "^9.2.0",
     "cookie-parser": "^1.4.3",
@@ -76,7 +76,7 @@
     "lint-staged": "^13.1.0",
     "morgan": "^1.10.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
-    "prettier": "^2.5.1",
+    "prettier": "^2.8.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "ts-loader": "^9.2.6",

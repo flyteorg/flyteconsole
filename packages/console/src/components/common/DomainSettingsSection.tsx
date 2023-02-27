@@ -55,11 +55,11 @@ export const DomainSettingsSection = ({
     return null;
   }
 
-  const role = configData.securityContext?.runAs?.iamRole || t('inherited');
+  const role = configData.securityContext?.runAs?.iamRole || t('noValue');
   const serviceAccount =
-    configData.securityContext?.runAs?.k8sServiceAccount || t('inherited');
+    configData.securityContext?.runAs?.k8sServiceAccount || t('noValue');
   const rawData =
-    configData.rawOutputDataConfig?.outputLocationPrefix || t('inherited');
+    configData.rawOutputDataConfig?.outputLocationPrefix || t('noValue');
   const maxParallelism = configData.maxParallelism || undefined;
 
   return (
@@ -101,7 +101,7 @@ export const DomainSettingsSection = ({
             {configData.labels?.values ? (
               <DataTable data={configData.labels.values} />
             ) : (
-              t('inherited')
+              t('noValue')
             )}
           </div>
           <div>
@@ -109,7 +109,7 @@ export const DomainSettingsSection = ({
             {configData.annotations?.values ? (
               <DataTable data={configData.annotations.values} />
             ) : (
-              t('inherited')
+              t('noValue')
             )}
           </div>
           <div>
@@ -122,7 +122,7 @@ export const DomainSettingsSection = ({
                 {t('maxParallelismHeader')}
               </p>
               <Typography variant="body2">
-                {maxParallelism ?? t('inherited')}
+                {maxParallelism ?? t('noValue')}
               </Typography>
             </div>
           </div>

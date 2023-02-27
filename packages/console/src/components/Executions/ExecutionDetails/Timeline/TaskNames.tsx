@@ -1,10 +1,14 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import { IconButton, makeStyles, Theme, Tooltip } from '@material-ui/core';
-
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
-import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
+import {
+  getNodeTemplateName,
+  isExpanded,
+} from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import { PlayCircleOutline } from '@material-ui/icons';
+import { isParentNode } from 'components/Executions/utils';
+import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { NodeExecutionName } from './NodeExecutionName';
 import t from '../strings';
 
@@ -53,11 +57,16 @@ interface TaskNamesProps {
 export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
   ({ nodes, onScroll, onToggle, onAction }, ref) => {
     const styles = useStyles();
+    const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+
+    const expanderRef = React.useRef<HTMLButtonElement>();
 
     return (
       <div className={styles.taskNamesList} ref={ref} onScroll={onScroll}>
         {nodes.map(node => {
           const nodeLevel = node?.level ?? 0;
+          const nodeExecution = nodeExecutionsById[node.scopedId];
+
           return (
             <div
               className={styles.namesContainer}
@@ -78,9 +87,10 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                 }}
               >
                 <div className={styles.namesContainerExpander}>
-                  {node.nodes?.length ? (
+                  {nodeExecution && isParentNode(nodeExecution) ? (
                     <RowExpander
-                      expanded={node.expanded || false}
+                      ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
+                      expanded={isExpanded(node)}
                       onClick={() =>
                         onToggle(node.id, node.scopedId, nodeLevel)
                       }
@@ -104,7 +114,7 @@ export const TaskNames = React.forwardRef<HTMLDivElement, TaskNamesProps>(
                     onClick={() => onAction(node.id)}
                     data-testid={`resume-gate-node-${node.id}`}
                   >
-                    <PlayCircleOutlineIcon />
+                    <PlayCircleOutline />
                   </IconButton>
                 </Tooltip>
               )}

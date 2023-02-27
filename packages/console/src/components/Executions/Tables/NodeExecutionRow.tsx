@@ -2,8 +2,7 @@ import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import * as React from 'react';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
@@ -13,6 +12,7 @@ import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
+import { isParentNode } from '../utils';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -44,12 +44,13 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 }) => {
   const styles = useStyles();
   const theme = useTheme();
+  const expanderRef = React.useRef<HTMLButtonElement>();
+
   const tableStyles = useExecutionTableStyles();
   const { selectedExecution, setSelectedExecution } =
     useContext(DetailsPanelContext);
 
   const nodeLevel = node?.level ?? 0;
-  const expanded = isExpanded(node);
 
   // For the first level, we want the borders to span the entire table,
   // so we'll use padding to space the content. For nested rows, we want the
@@ -66,18 +67,19 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     ? isEqual(selectedExecution, nodeExecution)
     : false;
 
-  const expanderContent = (
-    <div className={styles.namesContainerExpander}>
-      {node.nodes?.length ? (
-        <RowExpander
-          expanded={expanded}
-          onClick={() => onToggle(node.id, node.scopedId, nodeLevel)}
-        />
-      ) : (
-        <div className={styles.leaf} />
-      )}
-    </div>
-  );
+  const expanderContent = React.useMemo(() => {
+    return isParentNode(nodeExecution) ? (
+      <RowExpander
+        ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
+        expanded={isExpanded(node)}
+        onClick={() => {
+          onToggle(node.id, node.scopedId, nodeLevel);
+        }}
+      />
+    ) : (
+      <div className={styles.leaf} />
+    );
+  }, [node, nodeLevel]);
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
@@ -99,7 +101,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
           <div
             className={classnames(tableStyles.rowColumn, tableStyles.expander)}
           >
-            {expanderContent}
+            <div className={styles.namesContainerExpander}>
+              {expanderContent}
+            </div>
           </div>
           {columns.map(({ className, key: columnKey, cellRenderer }) => (
             <div

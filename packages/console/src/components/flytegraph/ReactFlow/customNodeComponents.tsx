@@ -1,11 +1,10 @@
-import * as React from 'react';
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from 'components/Theme/constants';
-import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import { PlayCircleOutline } from '@material-ui/icons';
 import { Tooltip } from '@material-ui/core';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
@@ -223,7 +222,7 @@ const TaskPhaseItem = ({
 
 export const ReactFlowGateNode = ({ data }: RFNode) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const nodeExecutionsById = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const {
     nodeType,
     nodeExecutionStatus,
@@ -263,7 +262,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         {text}
         {phase === NodeExecutionPhase.PAUSED && (
           <Tooltip title={t('resumeTooltip')}>
-            <PlayCircleOutlineIcon onClick={onResumeClick} style={iconStyles} />
+            <PlayCircleOutline onClick={onResumeClick} style={iconStyles} />
           </Tooltip>
         )}
       </div>
@@ -276,7 +275,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeId={scopedId}
+          nodeExecutionId={nodeExecutionsById[scopedId].id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />

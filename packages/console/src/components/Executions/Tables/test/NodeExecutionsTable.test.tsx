@@ -91,7 +91,12 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+          <NodeExecutionsByIdContext.Provider
+            value={{
+              nodeExecutionsById,
+              setCurrentNodeExecutionsById: () => {},
+            }}
+          >
             <NodeExecutionsTable
               initialNodes={initialNodes}
               filteredNodes={filteredNodes}

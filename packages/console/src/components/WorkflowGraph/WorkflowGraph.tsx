@@ -1,5 +1,5 @@
-import * as React from 'react';
-import ReactFlowGraphComponent from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
+import React from 'react';
+import { ReactFlowGraphComponent } from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
 import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { CompiledNode } from 'models/Node/types';
@@ -16,6 +16,8 @@ export interface WorkflowGraphProps {
   error: Error | null;
   dynamicWorkflows: any;
   initialNodes: dNode[];
+  shouldUpdate: boolean;
+  setShouldUpdate: (val: boolean) => void;
 }
 export interface DynamicWorkflowMapping {
   rootGraphNodeId: CompiledNode;
@@ -31,6 +33,8 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   error,
   dynamicWorkflows,
   initialNodes,
+  shouldUpdate,
+  setShouldUpdate,
 }) => {
   if (error) {
     return (
@@ -50,13 +54,14 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
 
   return (
     <ReactFlowGraphComponent
-      dynamicWorkflows={dynamicWorkflows}
       data={mergedDag}
       onNodeSelectionChanged={onNodeSelectionChanged}
       onPhaseSelectionChanged={onPhaseSelectionChanged}
       selectedPhase={selectedPhase}
       isDetailsTabClosed={isDetailsTabClosed}
       initialNodes={initialNodes}
+      shouldUpdate={shouldUpdate}
+      setShouldUpdate={setShouldUpdate}
     />
   );
 };

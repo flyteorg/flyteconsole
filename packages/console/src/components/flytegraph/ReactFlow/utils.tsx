@@ -123,6 +123,10 @@ export const getStatusColor: (
   }
 };
 
+export const isUnFetchedDynamicNode = node => {
+  return node.isParentNode && node.nodes.length === 0;
+};
+
 export const getNestedGraphContainerStyle = overwrite => {
   let width = overwrite.width;
   let height = overwrite.height;

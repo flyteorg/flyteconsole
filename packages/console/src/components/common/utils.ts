@@ -27,24 +27,29 @@ export function measureText(fontDefinition: string, text: string) {
  */
 export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   const parentsToFetch = {};
+  const executionsByNodeId = {};
   for (const executionId in allExecutions) {
+    const execution = allExecutions[executionId];
+    executionsByNodeId[execution?.id.nodeId] = execution;
     if (!staticExecutions[executionId]) {
-      const dynamicExecution = allExecutions[executionId];
-      const dynamicExecutionId =
-        dynamicExecution.metadata.specNodeId || dynamicExecution.id;
-      const uniqueParentId = dynamicExecution.fromUniqueParentId;
-      if (uniqueParentId) {
-        if (parentsToFetch[uniqueParentId]) {
-          parentsToFetch[uniqueParentId].push(dynamicExecutionId);
-        } else {
-          parentsToFetch[uniqueParentId] = [dynamicExecutionId];
+      if (execution) {
+        const dynamicExecutionId =
+          execution.metadata?.specNodeId || execution.id;
+        const uniqueParentId = execution.fromUniqueParentId;
+        if (uniqueParentId) {
+          if (parentsToFetch[uniqueParentId]) {
+            parentsToFetch[uniqueParentId].push(dynamicExecutionId);
+          } else {
+            parentsToFetch[uniqueParentId] = [dynamicExecutionId];
+          }
         }
       }
     }
   }
   const result = {};
   for (const parentId in parentsToFetch) {
-    result[parentId] = allExecutions[parentId];
+    const execution = executionsByNodeId[parentId];
+    result[execution.scopedId] = execution;
   }
   return result;
 };
