@@ -3,6 +3,7 @@ import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
 import { useState } from 'react';
 import Form from '@rjsf/material-ui';
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import validator from '@rjsf/validator-ajv8';
 import { makeStringChangeHandler } from './handlers';
 import { InputProps } from './types';
 import { getLaunchInputId } from './utils';
@@ -86,9 +87,9 @@ export const StructInput: React.FC<InputProps> = props => {
     jsonFormRenderable && value ? JSON.parse(value as string) : {},
   );
 
-  const onFormChange = ({ formData }, _e) => {
-    onChange(JSON.stringify(formData));
-    setParamData(formData);
+  const onFormChange = (_e, newVal) => {
+    // onChange(JSON.stringify(formData));
+    // setParamData(formData);
   };
 
   return jsonFormRenderable ? (
@@ -98,6 +99,7 @@ export const StructInput: React.FC<InputProps> = props => {
         <CardContent>
           <Form
             schema={JSON.parse(JSON.stringify(parsedJson))}
+            validator={validator}
             formData={paramData}
             onChange={onFormChange}
           >

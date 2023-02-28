@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Form from '@rjsf/material-ui';
+import validator from '@rjsf/validator-ajv8';
 import { State } from 'xstate';
 import { LaunchAdvancedOptionsRef } from './types';
 import {
@@ -80,68 +81,68 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
     const [maxParallelism, setMaxParallelism] = React.useState('');
     const [rawOutputDataConfig, setRawOutputDataConfig] = React.useState('');
 
-    React.useEffect(() => {
-      if (isValueValid(other.disableAll)) {
-        setDisableAll(other.disableAll!);
-      }
-      if (isValueValid(other.maxParallelism)) {
-        setMaxParallelism(`${other.maxParallelism}`);
-      }
-      if (
-        other?.rawOutputDataConfig?.outputLocationPrefix !== undefined &&
-        other.rawOutputDataConfig.outputLocationPrefix !== null
-      ) {
-        setRawOutputDataConfig(other.rawOutputDataConfig.outputLocationPrefix);
-      }
-      const newLabels = {
-        ...(other.labels?.values || {}),
-        ...(launchPlan?.spec?.labels?.values || {}),
-      };
-      const newAnnotations = {
-        ...(other.annotations?.values || {}),
-        ...(launchPlan?.spec?.annotations?.values || {}),
-      };
-      setLabelsParamData(newLabels);
-      setAnnotationsParamData(newAnnotations);
-    }, [
-      other.disableAll,
-      other.maxParallelism,
-      other.rawOutputDataConfig,
-      other.labels,
-      other.annotations,
-      launchPlan?.spec,
-    ]);
+    // React.useEffect(() => {
+    //   if (isValueValid(other.disableAll)) {
+    //     setDisableAll(other.disableAll!);
+    //   }
+    //   if (isValueValid(other.maxParallelism)) {
+    //     setMaxParallelism(`${other.maxParallelism}`);
+    //   }
+    //   if (
+    //     other?.rawOutputDataConfig?.outputLocationPrefix !== undefined &&
+    //     other.rawOutputDataConfig.outputLocationPrefix !== null
+    //   ) {
+    //     setRawOutputDataConfig(other.rawOutputDataConfig.outputLocationPrefix);
+    //   }
+    //   const newLabels = {
+    //     ...(other.labels?.values || {}),
+    //     ...(launchPlan?.spec?.labels?.values || {}),
+    //   };
+    //   const newAnnotations = {
+    //     ...(other.annotations?.values || {}),
+    //     ...(launchPlan?.spec?.annotations?.values || {}),
+    //   };
+    //   setLabelsParamData(newLabels);
+    //   setAnnotationsParamData(newAnnotations);
+    // }, [
+    //   other.disableAll,
+    //   other.maxParallelism,
+    //   other.rawOutputDataConfig,
+    //   other.labels,
+    //   other.annotations,
+    //   launchPlan?.spec,
+    // ]);
 
-    React.useImperativeHandle(
-      ref,
-      () => ({
-        getValues: () => {
-          return {
-            disableAll,
-            rawOutputDataConfig: {
-              outputLocationPrefix: rawOutputDataConfig,
-            },
-            maxParallelism: parseInt(maxParallelism || '', 10),
-            labels: {
-              values: labelsParamData,
-            },
-            annotations: {
-              values: annotationsParamData,
-            },
-          } as Admin.IExecutionSpec;
-        },
-        validate: () => {
-          return true;
-        },
-      }),
-      [
-        disableAll,
-        maxParallelism,
-        rawOutputDataConfig,
-        labelsParamData,
-        annotationsParamData,
-      ],
-    );
+    // React.useImperativeHandle(
+    //   ref,
+    //   () => ({
+    //     getValues: () => {
+    //       return {
+    //         disableAll,
+    //         rawOutputDataConfig: {
+    //           outputLocationPrefix: rawOutputDataConfig,
+    //         },
+    //         maxParallelism: parseInt(maxParallelism || '', 10),
+    //         labels: {
+    //           values: labelsParamData,
+    //         },
+    //         annotations: {
+    //           values: annotationsParamData,
+    //         },
+    //       } as Admin.IExecutionSpec;
+    //     },
+    //     validate: () => {
+    //       return true;
+    //     },
+    //   }),
+    //   [
+    //     disableAll,
+    //     maxParallelism,
+    //     rawOutputDataConfig,
+    //     labelsParamData,
+    //     annotationsParamData,
+    //   ],
+    // );
 
     const handleDisableAllChange = React.useCallback(() => {
       setDisableAll(prevState => !prevState);
@@ -169,6 +170,8 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
       [],
     );
 
+    console.log('MYLOG', { annotationsParamData, labelsParamData });
+
     return (
       <>
         <section title="Labels" className={styles.collapsibleSection}>
@@ -194,6 +197,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
                       }}
                       formData={labelsParamData}
                       onChange={handleLabelsChange}
+                      validator={validator}
                     >
                       <div />
                     </Form>
@@ -226,6 +230,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
                       }}
                       formData={annotationsParamData}
                       onChange={handleAnnotationsParamData}
+                      validator={validator}
                     >
                       <div />
                     </Form>
