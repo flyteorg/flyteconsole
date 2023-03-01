@@ -87,10 +87,10 @@ export const StructInput: React.FC<InputProps> = props => {
     jsonFormRenderable && value ? JSON.parse(value as string) : {},
   );
 
-  const onFormChange = (_e, newVal) => {
-    // onChange(JSON.stringify(formData));
-    // setParamData(formData);
-  };
+  const onFormChange = React.useCallback(({ target: { value } }) => {
+    onChange(JSON.stringify(value));
+    setParamData(value);
+  }, []);
 
   return jsonFormRenderable ? (
     <MuiThemeProvider theme={muiTheme}>
