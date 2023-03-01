@@ -303,8 +303,11 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
   } = data;
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { getNodeExecutionDetails } = useNodeExecutionContext();
   const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
   const [selectedNode, setSelectedNode] = useState<boolean>(false);
+  const [displayId, setDisplayId] = useState<string | undefined>();
   const [selectedPhase, setSelectedPhase] = useState<
     TaskExecutionPhase | undefined
   >(initialPhase);
@@ -322,6 +325,29 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
     selectedPhase,
     onPhaseSelectionChanged,
   ]);
+
+  useEffect(() => {
+    const execution = nodeExecutionsById[scopedId];
+
+    if (!execution) {
+      return;
+    }
+
+    let isCurrent = true;
+    getNodeExecutionDetails(execution)
+      .then(res => {
+        if (isCurrent) {
+          setDisplayId(res?.displayId);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to get node execution details', err);
+      });
+
+    return () => {
+      isCurrent = false;
+    };
+  });
 
   const mapTaskContainerStyle: React.CSSProperties = {
     position: 'absolute',
@@ -397,7 +423,9 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
     <div onClick={handleNodeClick}>
       {nodeLogsByPhase ? renderTaskName() : renderTaskType(taskType)}
       <div style={styles}>
-        {nodeLogsByPhase ? renderTaskPhases(nodeLogsByPhase) : text}
+        {nodeLogsByPhase
+          ? renderTaskPhases(nodeLogsByPhase)
+          : displayId ?? text}
         <CacheStatus
           cacheStatus={cacheStatus}
           variant="iconOnly"
