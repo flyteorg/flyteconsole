@@ -40,7 +40,7 @@ const formatJson = data => {
   keys.forEach(key => {
     const item = data[`${key}`];
     if (typeof item === 'object') {
-      data = { ...data, [key]: formatJson(item) };
+      data = { ...data, [key]: formatJson(item ?? {}) };
     }
   });
 
