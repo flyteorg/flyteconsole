@@ -87,9 +87,9 @@ export const StructInput: React.FC<InputProps> = props => {
     jsonFormRenderable && value ? JSON.parse(value as string) : {},
   );
 
-  const onFormChange = React.useCallback(({ target: { value } }) => {
-    onChange(JSON.stringify(value));
-    setParamData(value);
+  const onFormChange = React.useCallback(({ formData }) => {
+    onChange(JSON.stringify(formData));
+    setParamData(formData);
   }, []);
 
   return jsonFormRenderable ? (
