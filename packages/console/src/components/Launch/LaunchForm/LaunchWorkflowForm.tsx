@@ -134,7 +134,12 @@ export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {
                 showErrors={state.context.showErrors}
               />
             ) : null}
-            <LaunchFormAdvancedInputs ref={advancedOptionsRef} state={state} />
+            {isEnterInputsState(baseState) ? (
+              <LaunchFormAdvancedInputs
+                ref={advancedOptionsRef}
+                state={state}
+              />
+            ) : null}
             <LaunchInterruptibleInput
               initialValue={state.context.interruptible}
               ref={interruptibleInputRef}

@@ -12,6 +12,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Form from '@rjsf/material-ui';
+import validator from '@rjsf/validator-ajv8';
 import { State } from 'xstate';
 import { LaunchAdvancedOptionsRef } from './types';
 import {
@@ -194,6 +195,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
                       }}
                       formData={labelsParamData}
                       onChange={handleLabelsChange}
+                      validator={validator}
                     >
                       <div />
                     </Form>
@@ -226,6 +228,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
                       }}
                       formData={annotationsParamData}
                       onChange={handleAnnotationsParamData}
+                      validator={validator}
                     >
                       <div />
                     </Form>
