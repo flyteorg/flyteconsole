@@ -155,11 +155,13 @@ describe('ProjectDashboard', () => {
   it('should display domain attributes section when config was provided', async () => {
     const { getByText } = renderView();
     expect(getProjectDomainAttributes).toHaveBeenCalled();
-    await waitFor(() => {});
-    expect(getProjectAttributes).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(getProjectAttributes).toHaveBeenCalled();
+    });
 
-    await waitFor(() => {});
-    expect(getByText('Domain Settings')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(getByText('Domain Settings')).toBeInTheDocument();
+    });
 
     expect(
       getByText('cliOutputLocationPrefixFromProjectAttributes'),
