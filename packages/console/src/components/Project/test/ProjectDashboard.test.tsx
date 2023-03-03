@@ -152,7 +152,7 @@ describe('ProjectDashboard', () => {
       </MemoryRouter>,
     );
 
-  it.only('should display domain attributes section when config was provided', async () => {
+  it('should display domain attributes section when config was provided', async () => {
     const { getByText } = renderView();
     expect(getProjectDomainAttributes).toHaveBeenCalled();
     await waitFor(() => {});
