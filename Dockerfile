@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM node:18.1.0 as builder
+FROM node:16 as builder
 
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
