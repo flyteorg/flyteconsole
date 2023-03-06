@@ -17,6 +17,7 @@
   "scripts": {
     "postinstall": "husky install",
     "build:pack": "yarn workspaces foreach -vit --include '{@flyteorg/flyteidl-types,@flyteorg/flyte-api,@flyteorg/ui-atoms,@flyteorg/common,@flyteorg/locale,@flyteorg/flyte-api,@flyteorg/components,@flyteorg/console}' run build",
+    "build:types": "yarn workspaces foreach -vit --include '{@flyteorg/flyteidl-types,@flyteorg/flyte-api,@flyteorg/ui-atoms,@flyteorg/common,@flyteorg/locale,@flyteorg/flyte-api,@flyteorg/components,@flyteorg/console}' run build:types",
     "clean": "git clean -fxd --exclude script",
     "gen:ssl": "make generate_ssl",
     "start": "yarn workspace @flyteconsole/client-app start",
