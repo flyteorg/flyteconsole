@@ -27,6 +27,9 @@ RUN : \
   && BASE_URL=/console yarn run build:prod \
   && cp -R ./website/dist/* /app
 
+RUN rm -rf /app/node_modules
+RUN rm -f /app/client-stats.json
+
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
