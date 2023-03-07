@@ -8,17 +8,19 @@ import { noLogsFoundString } from 'components/Executions/constants';
 import { CacheStatus } from 'components/Executions/CacheStatus';
 import { useCommonStyles } from '../styles';
 
-interface StyleProps {
-  isLink: boolean;
-}
-
 const useStyles = makeStyles((_theme: Theme) => ({
-  taskTitle: ({ isLink }: StyleProps) => ({
-    cursor: isLink ? 'pointer' : 'default',
+  taskTitle: {
+    cursor: 'default',
     '&:hover': {
-      textDecoration: isLink ? 'underline' : 'none',
+      textDecoration: 'none',
     },
-  }),
+  },
+  taskTitleLink: {
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
+  },
 }));
 
 interface TaskNameListProps {
@@ -33,6 +35,7 @@ export const TaskNameList = ({
   onTaskSelected,
 }: TaskNameListProps) => {
   const commonStyles = useCommonStyles();
+  const styles = useStyles();
 
   if (logs.length === 0) {
     return <span className={commonStyles.hintText}>{noLogsFoundString}</span>;
@@ -41,16 +44,17 @@ export const TaskNameList = ({
   return (
     <>
       {logs.map((log, taskIndex) => {
-        const styles = useStyles({ isLink: !!log.uri });
         const taskLogName = getTaskLogName(
           taskExecution.id.taskId.name,
           log.name ?? '',
         );
+
         const cacheStatus =
-          taskIndex != null
-            ? taskExecution.closure?.metadata?.externalResources?.[taskIndex]
-                ?.cacheStatus
-            : null;
+          taskExecution.closure?.metadata?.externalResources?.find(
+            item =>
+              item.externalId === log.name ||
+              !!item.logs?.find(l => l.name === log.name),
+          )?.cacheStatus;
 
         const handleClick = () => {
           onTaskSelected({ ...taskExecution, taskIndex });
@@ -68,7 +72,7 @@ export const TaskNameList = ({
               color={log.uri ? 'primary' : 'textPrimary'}
               onClick={log.uri ? handleClick : undefined}
               key={taskLogName}
-              className={styles.taskTitle}
+              className={log.uri ? styles.taskTitleLink : styles.taskTitle}
               data-testid="map-task-log"
             >
               {taskLogName}
