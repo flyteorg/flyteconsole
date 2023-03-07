@@ -49,9 +49,10 @@ test_unit_codecov:
 generate_ssl:
 	./script/generate_ssl.sh
 
-PLACEHOLDER_NPM := \"version\": \"0.0.0-develop\"
+PLACEHOLDER_NPM := "version": "0.0.0-develop"
 
 .PHONY: update_npmversion
 update_npmversion:
-	grep "$(PLACEHOLDER_NPM)" "website/package.json"
-	sed -i "s/$(PLACEHOLDER_NPM)/\"version\":  \"${VERSION}\"/g" "website/package.json"
+	echo "Updating client-app version to: $(VERSION)"
+	grep '$(PLACEHOLDER_NPM)' website/package.json
+	sed -i '' 's/$(PLACEHOLDER_NPM)/"version": "$(VERSION)"/g' website/package.json
