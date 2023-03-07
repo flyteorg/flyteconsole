@@ -32,7 +32,8 @@
     "storybook": "start-storybook -p 6006",
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
-    "test-coverage": "NODE_ENV=test BASE_URL=/console jest --coverage"
+    "test-coverage": "NODE_ENV=test BASE_URL=/console jest --coverage",
+    "test-release": "npx semantic-release --debug --no-ci --test-run"
   },
   "husky": {
     "hooks": {
@@ -57,7 +58,7 @@
     "@types/react-dom": "^16.9.7",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
-    "chalk": "^2.0.1",
+    "chalk": "^4",
     "compression-webpack-plugin": "^9.2.0",
     "cookie-parser": "^1.4.3",
     "copy-webpack-plugin": "^11.0.0",
@@ -135,7 +136,8 @@
     "@babel/preset-react": "~7.16.7",
     "@babel/preset-typescript": "~7.16.7",
     "minimist": "1.2.6",
-    "@types/react": "16.14.34"
+    "@types/react": "16.14.34",
+    "npm/chalk": "^4"
   },
   "packageManager": "yarn@3.2.1"
 }
