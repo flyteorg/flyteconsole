@@ -14,7 +14,7 @@
     "build": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=development run -T webpack --config webpack.config.ts --mode=development --progress",
     "build:prod": "TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\"}' NODE_ENV=production run -T webpack --config webpack.config.ts --mode=production --progress",
     "start": "NODE_ENV=development run -T webpack serve --config webpack.config.ts --mode=development",
-    "start:prod": "NODE_ENV=production node -r dotenv/config dist/server.js",
+    "start:prod": "NODE_ENV=production node dist/server.js",
     "lint": "run -T eslint . --ext .js,.jsx,.ts,.tsx",
     "format": "run -T prettier --ignore-path .eslintignore --write \"**/*.+(js|jsx|ts|tsx|json)\"",
     "fix": "yarn lint --fix && yarn format",

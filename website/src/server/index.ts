@@ -13,11 +13,12 @@ import { applyMiddleware } from './plugins';
 import env from '../../env';
 
 const expressStaticGzip = require('express-static-gzip');
+const dotenv = require('dotenv');
 
-console.log(env);
+// configure runtime env variables
+dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-
 const app = express();
 
 // Enable logging for HTTP access
@@ -44,6 +45,11 @@ const showEntryPointUrl = () => {
   const url = `${env.ADMIN_API_USE_SSL}://${
     env.LOCAL_DEV_HOST || env.ADMIN_API_URL?.replace('https', '')
   }:${PORT}${env.BASE_URL}`;
+
+  console.log(
+    chalk.green(`App started with the following config:`),
+    chalk.white(JSON.stringify(env, null, 2)),
+  );
 
   // Open a new browser tab if in development
   if (env.NODE_ENV === 'development') {
@@ -77,7 +83,6 @@ if (env.ADMIN_API_USE_SSL === 'https') {
       app,
     )
     .listen(PORT, showEntryPointUrl);
-  console.log(`Server started with SSL: https://localhost:${PORT}/`);
 } else {
   server = app.listen(PORT, showEntryPointUrl);
 }
