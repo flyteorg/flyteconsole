@@ -36,7 +36,7 @@ For example in case if package plan to be used in `console` app
 Ensure to add proper webpack alias path resolutions into:
 
 - ./storybook/main.js - as `'@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src’),`
-- packages/zapp/console/webpack.common.config.ts to alias section - as `'@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src’),`
+- website/webpack.utilities.ts to alias section - as `'@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src’),`
 
 To add child package usage to other package, in parent package ->
 
