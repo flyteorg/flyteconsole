@@ -53,5 +53,5 @@ PLACEHOLDER_NPM := \"version\": \"0.0.0-develop\"
 
 .PHONY: update_npmversion
 update_npmversion:
-	grep "$(PLACEHOLDER_NPM)" "packages/zapp/console/package.json"
-	sed -i "s/$(PLACEHOLDER_NPM)/\"version\":  \"${VERSION}\"/g" "packages/zapp/console/package.json"
+	grep "$(PLACEHOLDER_NPM)" "website/package.json"
+	sed -i "s/$(PLACEHOLDER_NPM)/\"version\":  \"${VERSION}\"/g" "website/package.json"
