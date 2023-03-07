@@ -66,12 +66,12 @@ export const TaskNameList = ({
               display: 'flex',
               alignItems: 'center',
             }}
+            key={taskLogName}
           >
             <Typography
               variant="body1"
               color={log.uri ? 'primary' : 'textPrimary'}
               onClick={log.uri ? handleClick : undefined}
-              key={taskLogName}
               className={log.uri ? styles.taskTitleLink : styles.taskTitle}
               data-testid="map-task-log"
             >
