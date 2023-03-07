@@ -13,22 +13,11 @@ COPY . /my-project/
 RUN : \
   --mount=type=cache,target=/root/.yarn \
   # install production dependencies
-  && yarn workspaces focus @flyteconsole/client-app --production \
-  # move the production dependencies to the /app folder
-  && mkdir /app \
-  && rm -rf node_modules/@flyteorg \
-  && cp -R node_modules /app
-
-RUN : \
-  --mount=type=cache,target=/root/.yarn \
-  # install all dependencies so we can build
   && yarn workspaces focus --all --production \
   && yarn build:types \
   && BASE_URL=/console yarn run build:prod \
+  && mkdir /app \
   && cp -R ./website/dist/* /app
-
-RUN rm -rf /app/node_modules
-RUN rm -f /app/client-stats.json
 
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole

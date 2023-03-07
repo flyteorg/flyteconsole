@@ -14,7 +14,6 @@ import {
 } from './env';
 
 const fs = require('fs');
-const { StatsWriterPlugin } = require('webpack-stats-plugin');
 
 export type Mode = 'development' | 'production';
 
@@ -112,7 +111,7 @@ export const logWebpackStats = (mode: Mode) => {
   );
   console.log(chalk.blue('Public path:'), chalk.green(publicPath));
   console.log(
-    chalk.yellow('TSconfig file used for build:'),
+    chalk.blue('TSconfig file used for build:'),
     chalk.green(getConfigFile(mode)),
   );
 };
@@ -134,18 +133,6 @@ export function absoluteVersion(version: string) {
  **************************************************************************************
  **************************************************************************************
  */
-/** Write client stats to a JSON file for production */
-export const statsWriterPlugin = new StatsWriterPlugin({
-  filename: 'client-stats.json',
-  fields: [
-    'chunks',
-    'publicPath',
-    'assets',
-    'assetsByChunkName',
-    'assetsByChunkId',
-  ],
-});
-
 /** Limit server chunks to be only one. No need to split code in server */
 export const LimitChunksPlugin = new webpack.optimize.LimitChunkCountPlugin({
   maxChunks: 1,
