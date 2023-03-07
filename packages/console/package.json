@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/console",
-  "version": "0.0.11",
+  "version": "0.0.10",
   "description": "Flyteconsole main app module",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -33,8 +33,9 @@
     "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
     "build:watch": "run -T tsc-watch --noClear -p ./tsconfig.es.build.json --onSuccess \"yarn build\"",
     "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "mkdir lib && cp -R src/assets ./lib && run -T tsc --module esnext --outDir ./lib --project ./tsconfig.build.es.json && run -T tsc-alias -p ./tsconfig.build.es.json",
+    "build:esm": "mkdir lib && cp -R src/assets ./lib && run -T tsc --module esnext --project ./tsconfig.build.es.json && run -T tsc-alias -p ./tsconfig.build.es.json",
     "build:cjs": "mkdir dist && cp -R src/assets ./dist && run -T wait-on ./dist/assets && run -T tsc --project ./tsconfig.build.json && run -T tsc-alias -p ./tsconfig.build.json",
+    "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
     "test": "NODE_ENV=test jest"
   },
   "installConfig": {
