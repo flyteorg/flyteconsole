@@ -60,4 +60,4 @@ PLACEHOLDER_NPM := "version": "0.0.0-develop"
 update_npmversion:
 	echo "Updating client-app version to: $(VERSION)"
 	grep '$(PLACEHOLDER_NPM)' website/package.json
-	sed -i '' 's/$(PLACEHOLDER_NPM)/"version": "$(VERSION)"/g' website/package.json
+	sed -i 's/$(PLACEHOLDER_NPM)/"version": "$(VERSION)"/g' website/package.json
