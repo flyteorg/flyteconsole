@@ -29,7 +29,7 @@ muiTheme.typography.h5 = {
   fontWeight: 400,
 };
 
-const formatJson = data => {
+const formatJson = (data) => {
   const keys = Object.keys(data);
 
   if (keys.includes('title')) {
@@ -69,7 +69,10 @@ export const StructInput: React.FC<InputProps> = props => {
       literalType?.metadata?.fields?.definitions?.structValue?.fields,
     );
 
-    if (keys[0]) {
+    if (keys.length > 1) {
+      // If there are multiple keys, we can't render a form because of not supporting nested structs
+      jsonFormRenderable = false;
+    } else if (keys[0]) {
       parsedJson = protobufValueToPrimitive(
         literalType.metadata.fields.definitions.structValue.fields[
           `${keys[0]}`
