@@ -24,7 +24,12 @@ export function makeIdentifierPath(
   prefix: string,
   { project, domain, name, version }: Partial<Identifier>,
 ) {
-  const path = takeWhile([project, domain, name, version]).join('/');
+  const path = takeWhile([
+    project,
+    domain,
+    name,
+    decodeURIComponent(version || ''),
+  ]).join('/');
   return `${prefix}/${path}`;
 }
 
