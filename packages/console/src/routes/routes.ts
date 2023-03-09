@@ -81,7 +81,7 @@ export class Routes {
   static WorkflowDetails = {
     makeUrl: (project: string, domain: string, workflowName: string) =>
       makeProjectDomainBoundPath(project, domain, `/workflows/${workflowName}`),
-    path: `${projectDomainBasePath}/workflows/:workflowName`,
+    path: `${projectDomainBasePath}/(workflows|workflow)/:workflowName`,
   };
 
   // LaunchPlans

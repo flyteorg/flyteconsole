@@ -115,7 +115,7 @@ const PaginatedDataListHeader = <C,>(
             className={column.className}
             key={column.key}
             align="left"
-            padding="default"
+            padding="normal"
             sortDirection={orderBy === column.key ? order : false}
           >
             <TableSortLabel
@@ -154,13 +154,12 @@ const PaginatedDataList = <T,>({
   totalRows,
   showRadioButton,
   fillEmptyRows = true,
-  noDataString,
 }: PropsWithChildren<PaginatedDataListProps<T>>) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState('calories');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page] = React.useState(0);
+  const [rowsPerPage] = React.useState(5);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -198,7 +197,7 @@ const PaginatedDataList = <T,>({
               showRadioButton={showRadioButton}
             />
             <TableBody>
-              {data.map((row, index) => {
+              {data.map((row, _index) => {
                 return rowRenderer(row);
               })}
               {fillEmptyRows && !showRadioButton && emptyRows > 0 && (
