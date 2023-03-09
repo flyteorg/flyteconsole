@@ -107,7 +107,7 @@ export class Routes {
       makeProjectDomainBoundPath(
         project,
         domain,
-        `/${entityType}/${entityName}/version/${version}`,
+        `/${entityType}/${entityName}/version/${encodeURIComponent(version)}`,
       ),
     path: `${projectDomainBasePath}/:entityType/:entityName/version/:entityVersion`,
   };
