@@ -1,9 +1,9 @@
+import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { AppInfo, VersionInfo } from '@flyteorg/components';
 import { FlyteLogo } from '@flyteorg/ui-atoms';
 import { useCommonStyles } from 'components/common/styles';
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
@@ -14,8 +14,6 @@ import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
 import { FlyteNavItem } from './utils';
 import t, { patternKey } from './strings';
-
-const { version: platformVersion } = require('../../../package.json');
 
 const useStyles = makeStyles((theme: Theme) => ({
   spacer: {
@@ -33,6 +31,8 @@ interface DefaultAppBarProps {
 
 /** Renders the default content for the app bar, which is the logo and help links */
 export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
+  const [platformVersion, setPlatformVersion] = React.useState('');
+  const [consoleVersion, setConsoleVersion] = React.useState('');
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
@@ -40,11 +40,27 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   const { adminVersion } = useAdminVersion();
   const isGAEnabled = env.ENABLE_GA === 'true' && env.GA_TRACKING_ID !== '';
 
+  React.useEffect(() => {
+    try {
+      const { version } = require('../../../../../website/package.json');
+      const { version: packageVersion } = require('../../../package.json');
+
+      setPlatformVersion(version);
+      setConsoleVersion(packageVersion);
+    } catch {
+      /* no-op */
+    }
+  }, []);
   const versions: VersionInfo[] = [
     {
       name: t('versionConsoleUi'),
       version: platformVersion,
       url: `https://github.com/flyteorg/flyteconsole/releases/tag/v${platformVersion}`,
+    },
+    {
+      name: t('versionConsolePackage'),
+      version: consoleVersion,
+      url: `https://github.com/flyteorg/flyteconsole/tree/master/packages/console`,
     },
     {
       name: t('versionAdmin'),
@@ -81,3 +97,5 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     </>
   );
 };
+
+export default DefaultAppBarContent;
