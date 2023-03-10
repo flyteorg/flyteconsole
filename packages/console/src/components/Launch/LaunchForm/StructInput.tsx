@@ -29,7 +29,7 @@ muiTheme.typography.h5 = {
   fontWeight: 400,
 };
 
-const formatJson = (data) => {
+const formatJson = data => {
   const keys = Object.keys(data);
 
   if (keys.includes('title')) {
