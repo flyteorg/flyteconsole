@@ -1,6 +1,11 @@
 import 'intersection-observer';
 import * as React from 'react';
-import { CssBaseline, Collapse } from '@material-ui/core';
+import {
+  CssBaseline,
+  Collapse,
+  StylesProvider,
+  createGenerateClassName,
+} from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { FlyteApiProvider } from '@flyteorg/flyte-api';
 import { SnackbarProvider } from 'notistack';
@@ -57,34 +62,40 @@ export const AppComponent: React.FC<AppComponentProps> = (
     <FeatureFlagsProvider>
       <LocalCacheProvider>
         <ThemeProvider theme={getMuiTheme(props.config)}>
-          <SnackbarProvider
-            // Notifications provider https://iamhosseindhv.com/notistack/demos
-            maxSnack={2}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            TransitionComponent={Collapse}
+          <StylesProvider
+            generateClassName={createGenerateClassName({
+              seed: 'c-',
+            })}
           >
-            <QueryClientProvider client={queryClient}>
-              <FlyteApiProvider flyteApiDomain={env.ADMIN_API_URL}>
-                <APIContext.Provider value={apiState}>
-                  <QueryAuthorizationObserver />
-                  <SkeletonTheme
-                    color={skeletonColor}
-                    highlightColor={skeletonHighlightColor}
-                  >
-                    <CssBaseline />
-                    <Router history={history}>
-                      <ErrorBoundary fixed={true}>
-                        <NavBarRouter registry={props?.registry} />
-                        <ApplicationRouter />
-                      </ErrorBoundary>
-                    </Router>
-                    <SystemStatusBanner />
-                  </SkeletonTheme>
-                </APIContext.Provider>
-              </FlyteApiProvider>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-          </SnackbarProvider>
+            <SnackbarProvider
+              // Notifications provider https://iamhosseindhv.com/notistack/demos
+              maxSnack={2}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              TransitionComponent={Collapse}
+            >
+              <QueryClientProvider client={queryClient}>
+                <FlyteApiProvider flyteApiDomain={env.ADMIN_API_URL}>
+                  <APIContext.Provider value={apiState}>
+                    <QueryAuthorizationObserver />
+                    <SkeletonTheme
+                      color={skeletonColor}
+                      highlightColor={skeletonHighlightColor}
+                    >
+                      <CssBaseline />
+                      <Router history={history}>
+                        <ErrorBoundary fixed={true}>
+                          <NavBarRouter registry={props?.registry} />
+                          <ApplicationRouter />
+                        </ErrorBoundary>
+                      </Router>
+                      <SystemStatusBanner />
+                    </SkeletonTheme>
+                  </APIContext.Provider>
+                </FlyteApiProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </QueryClientProvider>
+            </SnackbarProvider>
+          </StylesProvider>
         </ThemeProvider>
       </LocalCacheProvider>
     </FeatureFlagsProvider>
