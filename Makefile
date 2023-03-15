@@ -22,8 +22,7 @@ build_prod:
 
 .PHONY: pack
 pack:
-	yarn workspaces focus --production --all
-	yarn run build:pack
+ 	yarn run build:pack
 
 .PHONY: types
 types:
