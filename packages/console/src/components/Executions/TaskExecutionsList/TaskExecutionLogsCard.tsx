@@ -6,6 +6,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
 import { Core } from '@flyteorg/flyteidl-types';
+import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
@@ -20,6 +21,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     marginBottom: theme.spacing(1),
+
+    '& > svg': {
+      verticalAlign: 'middle',
+    },
   },
   showDetailsButton: {
     marginTop: theme.spacing(1),
@@ -44,22 +49,38 @@ export const TaskExecutionLogsCard: React.FC<TaskExecutionLogsCardProps> = ({
 }) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
+  const { registry } = useExternalConfigurationContext();
 
   const {
     closure: { error, startedAt, updatedAt, duration },
+    id: taskExecutionId,
   } = taskExecution;
+
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
+  const { LaunchAnchor } = registry?.taskObservability || {};
 
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
-          <Typography
-            variant="h6"
-            className={classnames(styles.title, commonStyles.textWrapped)}
-          >
-            {headerText}
-          </Typography>
+          {LaunchAnchor ? (
+            // Alternate path
+            <LaunchAnchor
+              classNames={classnames(styles.title, commonStyles.textWrapped)}
+              headerText={headerText}
+              taskId={taskExecutionId.taskId}
+              nodeExecutionId={taskExecutionId.nodeExecutionId}
+              retryAttempt={taskExecutionId.retryAttempt}
+            />
+          ) : (
+            // default path
+            <Typography
+              variant="h6"
+              className={classnames(styles.title, commonStyles.textWrapped)}
+            >
+              {headerText}
+            </Typography>
+          )}
         </header>
         <ExecutionStatusBadge phase={phase} type="task" variant="text" />
       </section>
