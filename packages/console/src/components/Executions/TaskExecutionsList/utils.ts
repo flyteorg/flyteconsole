@@ -38,6 +38,7 @@ export const getGroupedLogs = (
 ): LogsByPhase => {
   const logsByPhase: LogsByPhase = new Map();
 
+  // backfill the index as some resources come back without an index.
   resources = resources.map((r, i) => ({
     index: i,
     ...r,
@@ -70,7 +71,7 @@ export const getGroupedLogs = (
       // if there is no log with active url, just create an item with externalId,
       // for user to understand which array items are in this state
       const newLogs =
-        item.logs.length > 0 ? item.logs.map(l => ({...l, index:item.index})) : [{ name: item.externalId, index:item.index }];
+        item.logs.length > 0 ? item.logs.map(l => ({ ...l, index: item.index })) : [{ name: item.externalId, index: item.index }];
       logsByPhase.set(
         phase,
         currentValue ? [...currentValue, ...newLogs] : [...newLogs],

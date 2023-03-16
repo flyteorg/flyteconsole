@@ -43,7 +43,7 @@ export const TaskNameList = ({
 
   return (
     <>
-      {logs.map((log, taskIndex) => {
+      {logs.map((log, _taskIndex) => {
         const taskLogName = getTaskLogName(
           taskExecution.id.taskId.name,
           log.name ?? '',
@@ -57,6 +57,7 @@ export const TaskNameList = ({
           )?.cacheStatus;
 
         const handleClick = () => {
+          // Use the resource's index instead of the log index
           onTaskSelected({ ...taskExecution, taskIndex: (log as any).index });
         };
 
