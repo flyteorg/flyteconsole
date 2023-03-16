@@ -38,6 +38,11 @@ export const getGroupedLogs = (
 ): LogsByPhase => {
   const logsByPhase: LogsByPhase = new Map();
 
+  resources = resources.map((r, i) => ({
+    index: i,
+    ...r,
+  }));
+
   // sort output sample [0-2, 0-1, 0, 1, 2], where 0-1 means index = 0 retry = 1
   resources.sort((a, b) => {
     const aIndex = a.index ?? 0;
@@ -65,7 +70,7 @@ export const getGroupedLogs = (
       // if there is no log with active url, just create an item with externalId,
       // for user to understand which array items are in this state
       const newLogs =
-        item.logs.length > 0 ? item.logs : [{ name: item.externalId }];
+        item.logs.length > 0 ? item.logs.map(l => ({...l, index:item.index})) : [{ name: item.externalId, index:item.index }];
       logsByPhase.set(
         phase,
         currentValue ? [...currentValue, ...newLogs] : [...newLogs],

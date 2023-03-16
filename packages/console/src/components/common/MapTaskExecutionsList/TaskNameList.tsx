@@ -57,7 +57,7 @@ export const TaskNameList = ({
           )?.cacheStatus;
 
         const handleClick = () => {
-          onTaskSelected({ ...taskExecution, taskIndex });
+          onTaskSelected({ ...taskExecution, taskIndex: (log as any).index });
         };
 
         return (
