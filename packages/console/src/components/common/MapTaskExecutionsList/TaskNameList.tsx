@@ -58,7 +58,7 @@ export const TaskNameList = ({
 
         const handleClick = () => {
           // Use the resource's index instead of the log index
-          onTaskSelected({ ...taskExecution, taskIndex: (log as any).index });
+          onTaskSelected({ ...taskExecution, taskIndex: (log as any).index || 0 });
         };
 
         return (

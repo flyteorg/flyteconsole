@@ -38,12 +38,6 @@ export const getGroupedLogs = (
 ): LogsByPhase => {
   const logsByPhase: LogsByPhase = new Map();
 
-  // backfill the index as some resources come back without an index.
-  resources = resources.map((r, i) => ({
-    index: i,
-    ...r,
-  }));
-
   // sort output sample [0-2, 0-1, 0, 1, 2], where 0-1 means index = 0 retry = 1
   resources.sort((a, b) => {
     const aIndex = a.index ?? 0;
