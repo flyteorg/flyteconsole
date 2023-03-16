@@ -1,14 +1,10 @@
 import React, { PropsWithChildren, useContext } from 'react';
 import { AppConfig } from '@flyteorg/common';
 
-export interface TaskObservabilityProps {
-  LaunchAnchor: any;
-  additionalRoutes?: JSX.Element;
-}
 export interface ExternalConfigurationProviderProps {
   registry?: {
     nav?: React.FC<any>;
-    taskObservability?: TaskObservabilityProps;
+    taskExecutionAttemps?: React.FC<any>;
   };
   env?: any;
   config?: AppConfig;

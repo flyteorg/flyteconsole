@@ -6,6 +6,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
 import { Core } from '@flyteorg/flyteidl-types';
+import { ExternalConfigHoc } from 'basics/ExternalConfigHoc';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
@@ -41,36 +42,33 @@ interface TaskExecutionLogsCardProps {
   logs: Core.ITaskLog[];
 }
 
-export const TaskExecutionLogsCard: React.FC<TaskExecutionLogsCardProps> = ({
-  taskExecution,
-  headerText,
-  phase,
-  logs,
-}) => {
+export default React.createContext({
+  data: null,
+});
+
+export const TaskExecutionLogsCard: React.FC<
+  TaskExecutionLogsCardProps
+> = props => {
+  const { taskExecution, headerText, phase, logs } = props;
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const { registry } = useExternalConfigurationContext();
 
   const {
     closure: { error, startedAt, updatedAt, duration },
-    id: taskExecutionId,
   } = taskExecution;
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
-  const { LaunchAnchor } = registry?.taskObservability || {};
 
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
-          {LaunchAnchor ? (
+          {registry?.taskExecutionAttemps ? (
             // Alternate path
-            <LaunchAnchor
-              classNames={classnames(styles.title, commonStyles.textWrapped)}
-              headerText={headerText}
-              taskId={taskExecutionId.taskId}
-              nodeExecutionId={taskExecutionId.nodeExecutionId}
-              retryAttempt={taskExecutionId.retryAttempt}
+            <ExternalConfigHoc
+              ChildComponent={registry.taskExecutionAttemps}
+              data={props}
             />
           ) : (
             // default path

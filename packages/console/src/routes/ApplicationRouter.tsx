@@ -22,7 +22,7 @@ export function withContentContainer<P extends {}>(
 
 export const ApplicationRouter: React.FC = () => {
   const { additionalRoutes } =
-    useExternalConfigurationContext()?.registry?.taskObservability || {};
+    useExternalConfigurationContext()?.registry?.taskExecutionAttemps || {};
 
   return (
     <Switch>
