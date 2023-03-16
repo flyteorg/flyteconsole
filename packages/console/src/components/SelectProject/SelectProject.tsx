@@ -1,5 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import { DummyMultiChart } from 'components/common/MultiChart';
 import { SearchableList, SearchResult } from 'components/common/SearchableList';
 import { WaitForData } from 'components/common/WaitForData';
 import { useProjects } from 'components/hooks/useProjects';
@@ -35,6 +36,7 @@ export const SelectProject: React.FC = () => {
     <WaitForData {...projects}>
       <div className={styles.container}>
         <h1>Welcome to Flyte</h1>
+        <DummyMultiChart />
         <Typography variant="h6">
           <p>Select a project to get started...</p>
         </Typography>
