@@ -25,11 +25,11 @@ jobs:
   unit_tests_with_coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # We need history for codecov to work correctly
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
       - uses: bahmutov/npm-install@v1
@@ -43,8 +43,8 @@ jobs:
   lint_project:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
       - uses: bahmutov/npm-install@v1
@@ -76,13 +76,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 18
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.FLYTE_BOT_PAT }}
@@ -99,7 +99,7 @@ jobs:
     outputs:
       currentTag: ${{ steps.setTag.outputs.currentTag }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # Use the latest commit on the branch which triggered this workflow,
           # not the commit which triggered the workflow
