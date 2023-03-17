@@ -59,16 +59,17 @@ export const TaskExecutionLogsCard: React.FC<
   } = taskExecution;
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
-
+  const externalProps = { ...props, ...styles };
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
           {registry?.taskExecutionAttemps ? (
             // Alternate path
+
             <ExternalConfigHoc
               ChildComponent={registry.taskExecutionAttemps}
-              data={props}
+              data={externalProps}
             />
           ) : (
             // default path
