@@ -21,13 +21,11 @@ export function withContentContainer<P extends {}>(
 }
 
 export const ApplicationRouter: React.FC = () => {
-  const { additionalRoutes } =
-    useExternalConfigurationContext()?.registry?.taskExecutionAttemps || {};
-
+  const additionalRoutes =
+    useExternalConfigurationContext()?.registry?.additionalRoutes || null;
   return (
     <Switch>
       {additionalRoutes}
-
       <Route
         path={Routes.ExecutionDetails.path}
         component={withContentContainer(components.executionDetails, {

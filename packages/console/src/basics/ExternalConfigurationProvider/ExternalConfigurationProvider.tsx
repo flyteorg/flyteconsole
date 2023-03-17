@@ -5,6 +5,7 @@ export interface ExternalConfigurationProviderProps {
   registry?: {
     nav?: React.FC<any>;
     taskExecutionAttemps?: React.FC<any>;
+    additionalRoutes: any;
   };
   env?: any;
   config?: AppConfig;
