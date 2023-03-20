@@ -18,6 +18,7 @@ import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import classnames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 interface ExecutionDetailsActionsProps {
+  className?: string;
   details?: NodeExecutionDetails;
   nodeExecutionId: NodeExecutionIdentifier;
   phase: NodeExecutionPhase;
@@ -73,6 +75,7 @@ interface ExecutionDetailsActionsProps {
 }
 
 export const ExecutionDetailsActions = ({
+  className,
   details,
   nodeExecutionId,
   phase,
@@ -134,7 +137,7 @@ export const ExecutionDetailsActions = ({
 
   return (
     <>
-      <div className={styles.actionsContainer}>
+      <div className={classnames(styles.actionsContainer, className)}>
         {execution?.value?.closure?.deckUri && (
           <Button
             variant="outlined"
