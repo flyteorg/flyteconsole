@@ -85,7 +85,13 @@ export function getPhaseConstants(
  * a badge with the proper text and styling to indicate the status (succeeded/
  * failed etc.)
  */
-export const ExecutionStatusBadge: React.FC<ExecutionStatusBadgeProps & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>> = ({
+export const ExecutionStatusBadge: React.FC<
+  ExecutionStatusBadgeProps &
+    React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLDivElement>,
+      HTMLDivElement
+    >
+> = ({
   phase,
   type,
   variant = 'default',
@@ -107,7 +113,8 @@ export const ExecutionStatusBadge: React.FC<ExecutionStatusBadgeProps & React.De
     <div
       className={classnames(styles.root, styles[variant], className)}
       style={style}
-      {...htmlProps}>
+      {...htmlProps}
+    >
       {text}
     </div>
   );

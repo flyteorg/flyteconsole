@@ -14,11 +14,11 @@ import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types'
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import Close from '@material-ui/icons/Close';
 import { useEffect, useState } from 'react';
+import classnames from 'classnames';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
-import classnames from 'classnames';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
