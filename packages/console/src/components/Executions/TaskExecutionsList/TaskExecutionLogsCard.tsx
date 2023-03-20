@@ -59,7 +59,7 @@ export const TaskExecutionLogsCard: React.FC<
   } = taskExecution;
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
-  const externalProps = { ...props, ...styles };
+  const externalProps = { ...props, styles, commonStyles };
   return (
     <>
       <section className={styles.section}>
