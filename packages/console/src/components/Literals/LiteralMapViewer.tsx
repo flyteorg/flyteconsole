@@ -17,7 +17,8 @@ export const LiteralMapViewer: React.FC<{
   className?: string;
   map: LiteralMap | null;
   showBrackets?: boolean;
-}> = ({ map }) => {
+  mapTaskIndex?: number;
+}> = ({ map, mapTaskIndex }) => {
   if (!map) {
     return <NoDataIsAvailable />;
   }
@@ -30,5 +31,14 @@ export const LiteralMapViewer: React.FC<{
 
   const transformedLiterals = transformLiterals(literals);
 
-  return <ReactJsonViewWrapper src={transformedLiterals} />;
+  let transformedLiteralsFinal = {};
+  if (!isNaN(mapTaskIndex as number)) {
+    const keys = Object.keys(transformedLiterals);
+    transformedLiteralsFinal[keys?.[0]] =
+      transformedLiterals?.[keys?.[0]]?.[mapTaskIndex as number];
+  } else {
+    transformedLiteralsFinal = transformedLiterals;
+  }
+
+  return <ReactJsonViewWrapper src={transformedLiteralsFinal} />;
 };

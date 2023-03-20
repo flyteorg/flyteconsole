@@ -495,6 +495,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       phase={taskPhase}
       taskTemplate={details?.taskTemplate}
       onTaskSelected={setSelectedTaskExecution}
+      taskIndex={selectedTaskExecution?.taskIndex || undefined}
     />
   ) : null;
 
