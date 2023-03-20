@@ -49,7 +49,6 @@ export const MapTaskExecutionsListItem: React.FC<
     closure: { error, startedAt, updatedAt, duration, phase, logs, metadata },
     id: { retryAttempt },
   } = taskExecution;
-  debugger;
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
   const headerText = formatRetryAttempt(retryAttempt);
   const logsByPhase = getGroupedLogs(metadata?.externalResources ?? []);
