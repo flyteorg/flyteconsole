@@ -65,12 +65,18 @@ interface ExecutionDetailsActionsProps {
   details?: NodeExecutionDetails;
   nodeExecutionId: NodeExecutionIdentifier;
   phase: NodeExecutionPhase;
+  text?: {
+    flyteDeckText?: string;
+    rerunText?: string;
+    resumeText?: string;
+  };
 }
 
 export const ExecutionDetailsActions = ({
   details,
   nodeExecutionId,
   phase,
+  text,
 }: ExecutionDetailsActionsProps): JSX.Element => {
   const styles = useStyles();
 
@@ -136,17 +142,17 @@ export const ExecutionDetailsActions = ({
             onClick={() => setShowDeck(true)}
             disabled={phase !== NodeExecutionPhase.SUCCEEDED}
           >
-            {t('flyteDeck')}
+            {text?.flyteDeckText || t('flyteDeck')}
           </Button>
         )}
         {id && initialParameters && details && (
           <Button variant="outlined" color="primary" onClick={rerunOnClick}>
-            {t('rerun')}
+            {text?.rerunText || t('rerun')}
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
           <Button variant="outlined" color="primary" onClick={onResumeClick}>
-            {t('resume')}
+            {text?.resumeText || t('resume')}
           </Button>
         )}
       </div>
