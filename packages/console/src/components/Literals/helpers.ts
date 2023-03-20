@@ -146,7 +146,7 @@ function processUnionType(union?: Core.IUnionType | null, shortString = false) {
 }
 
 function processUnion(union: Core.IUnion) {
-  return processLiteral(union.value!);
+  return { union: processLiteral(union.value!) };
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
