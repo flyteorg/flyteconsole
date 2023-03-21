@@ -17,7 +17,8 @@ export const LiteralMapViewer: React.FC<{
   className?: string;
   map: LiteralMap | null;
   showBrackets?: boolean;
-}> = ({ map }) => {
+  mapTaskIndex?: number;
+}> = ({ map, mapTaskIndex }) => {
   if (!map) {
     return <NoDataIsAvailable />;
   }
@@ -28,7 +29,7 @@ export const LiteralMapViewer: React.FC<{
     return <NoneTypeValue />;
   }
 
-  const transformedLiterals = transformLiterals(literals);
+  const transformedLiterals = transformLiterals(literals, mapTaskIndex);
 
   return <ReactJsonViewWrapper src={transformedLiterals} />;
 };
