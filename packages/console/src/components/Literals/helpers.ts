@@ -351,27 +351,37 @@ function processScalar(
   }
 }
 
-function processCollection(collection?: Core.ILiteralCollection | null) {
-  const literals = collection?.literals;
+function processCollection(
+  collection?: Core.ILiteralCollection | null,
+  mapTaskIndex?: number,
+) {
+  let literals = collection?.literals;
 
   if (!literals) {
     return 'invalid collection';
   }
 
-  return literals?.map(literal => processLiteral(literal));
+  if (!isNaN(mapTaskIndex!)) {
+    literals = (literals || []).splice(mapTaskIndex!, 1);
+  }
+
+  return literals?.map(literal => processLiteral(literal, mapTaskIndex));
 }
 
-function processMap(map?: Core.ILiteralMap | null) {
+function processMap(map?: Core.ILiteralMap | null, mapTaskIndex?: number) {
   const literals = map?.literals;
 
   if (!literals) {
     return 'invalid map';
   }
 
-  return transformLiterals(literals);
+  return transformLiterals(literals, mapTaskIndex);
 }
 
-function processLiteral(literal?: Core.ILiteral & Pick<Core.Literal, 'value'>) {
+function processLiteral(
+  literal?: Core.ILiteral & Pick<Core.Literal, 'value'>,
+  mapTaskIndex?: number,
+) {
   const type = literal?.value;
 
   if (!literal) {
@@ -382,18 +392,21 @@ function processLiteral(literal?: Core.ILiteral & Pick<Core.Literal, 'value'>) {
     case 'scalar':
       return processScalar(literal.scalar);
     case 'collection':
-      return processCollection(literal.collection);
+      return processCollection(literal.collection, mapTaskIndex);
     case 'map':
-      return processMap(literal.map);
+      return processMap(literal.map, mapTaskIndex);
     default:
       return DEFAULT_UNSUPPORTED;
   }
 }
 
-export function transformLiterals(json: { [k: string]: Core.ILiteral }) {
+export function transformLiterals(
+  json: { [k: string]: Core.ILiteral },
+  mapTaskIndex?: number,
+) {
   const obj = Object.entries(json)
     .map(([key, literal]) => ({
-      [key]: processLiteral(literal),
+      [key]: processLiteral(literal, mapTaskIndex),
     }))
     .reduce(
       (acc, cur) => ({

@@ -29,16 +29,7 @@ export const LiteralMapViewer: React.FC<{
     return <NoneTypeValue />;
   }
 
-  const transformedLiterals = transformLiterals(literals);
+  const transformedLiterals = transformLiterals(literals, mapTaskIndex);
 
-  let transformedLiteralsFinal = {};
-  if (!isNaN(mapTaskIndex as number)) {
-    const keys = Object.keys(transformedLiterals);
-    transformedLiteralsFinal[keys?.[0]] =
-      transformedLiterals?.[keys?.[0]]?.[mapTaskIndex as number];
-  } else {
-    transformedLiteralsFinal = transformedLiterals;
-  }
-
-  return <ReactJsonViewWrapper src={transformedLiteralsFinal} />;
+  return <ReactJsonViewWrapper src={transformedLiterals} />;
 };
