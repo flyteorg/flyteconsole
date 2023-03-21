@@ -32,7 +32,9 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: bahmutov/npm-install@v1
+          cache: yarn
+      - name: Install deps
+        run: yarn install --frozen-lockfile
       - name: Run tests and generate coverage
         run: make test_unit_codecov
       - uses: codecov/codecov-action@v1
