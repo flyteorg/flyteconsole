@@ -6,14 +6,18 @@ import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 
 /** Fetches and renders the input data for a given `NodeExecution` */
-export const NodeExecutionInputs: React.FC<{ execution: NodeExecution }> = ({
-  execution,
-}) => {
+export const NodeExecutionInputs: React.FC<{
+  execution: NodeExecution;
+  taskIndex?: number;
+}> = ({ execution, taskIndex }) => {
   const executionData = useNodeExecutionData(execution.id);
   return (
     <WaitForData {...executionData}>
       <PanelSection>
-        <LiteralMapViewer map={executionData.value.fullInputs} />
+        <LiteralMapViewer
+          map={executionData.value.fullInputs}
+          mapTaskIndex={taskIndex}
+        />
       </PanelSection>
     </WaitForData>
   );

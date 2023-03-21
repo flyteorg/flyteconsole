@@ -66,8 +66,8 @@ export const getGroupedLogs = (
       // for user to understand which array items are in this state
       const newLogs =
         item.logs.length > 0
-          ? item.logs.map(l => ({ ...l, index: item.index }))
-          : [{ name: item.externalId, index: item.index }];
+          ? item.logs.map(l => ({ ...l, index: item.index || 0 }))
+          : [{ name: item.externalId }];
       logsByPhase.set(
         phase,
         currentValue ? [...currentValue, ...newLogs] : [...newLogs],
