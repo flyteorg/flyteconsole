@@ -12,6 +12,7 @@ import {
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
 import { useEffect, useState } from 'react';
 import { NodeExecutionDetails } from '../types';
@@ -85,9 +86,10 @@ export const ExecutionDetailsActions = ({
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === nodeExecutionId.nodeId);
+
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node => node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {

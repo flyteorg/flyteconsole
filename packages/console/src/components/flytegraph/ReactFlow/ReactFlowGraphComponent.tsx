@@ -11,6 +11,7 @@ import { dNode } from 'models/Graph/types';
 import { useQueryClient } from 'react-query';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
 import { isMapTaskV1 } from 'models/Task/utils';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import { ExternalResource, LogsByPhase } from 'models/Execution/types';
 import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
@@ -177,8 +178,8 @@ export const ReactFlowGraphComponent = ({
       if (nodeExecution) {
         const phase = nodeExecution?.closure.phase;
         const isGateNode = isNodeGateNode(
-          compiledWorkflowClosure?.primary.template.nodes ?? [],
-          nodeExecution.id,
+          extractCompiledNodes(compiledWorkflowClosure),
+          nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId,
         );
         return isGateNode && phase === NodeExecutionPhase.RUNNING;
       }
