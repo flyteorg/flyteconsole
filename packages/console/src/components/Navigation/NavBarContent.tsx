@@ -4,7 +4,9 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 
 /** Complements NavBar, allowing pages to inject custom content. */
-export const NavBarContent: React.FC<{}> = ({ children }) => {
+export const NavBarContent: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const navBar = document.getElementById(navBarContentId);
   if (navBar == null) {
     log.warn(`
