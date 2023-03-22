@@ -6,6 +6,8 @@ import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { TaskExecution } from 'models/Execution/types';
 import { Core } from '@flyteorg/flyteidl-types';
+import { ExternalConfigHoc } from 'basics/ExternalConfigHoc';
+import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
@@ -20,6 +22,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   title: {
     marginBottom: theme.spacing(1),
+
+    '& > svg': {
+      verticalAlign: 'middle',
+    },
   },
   showDetailsButton: {
     marginTop: theme.spacing(1),
@@ -36,30 +42,40 @@ interface TaskExecutionLogsCardProps {
   logs: Core.ITaskLog[];
 }
 
-export const TaskExecutionLogsCard: React.FC<TaskExecutionLogsCardProps> = ({
-  taskExecution,
-  headerText,
-  phase,
-  logs,
-}) => {
+export const TaskExecutionLogsCard: React.FC<
+  TaskExecutionLogsCardProps
+> = props => {
+  const { taskExecution, headerText, phase, logs } = props;
   const commonStyles = useCommonStyles();
   const styles = useStyles();
+  const { registry } = useExternalConfigurationContext();
 
   const {
     closure: { error, startedAt, updatedAt, duration },
   } = taskExecution;
-  const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
 
+  const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
+  const externalProps = { ...props, styles, commonStyles };
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
-          <Typography
-            variant="h6"
-            className={classnames(styles.title, commonStyles.textWrapped)}
-          >
-            {headerText}
-          </Typography>
+          {registry?.taskExecutionAttemps ? (
+            // Alternate path
+
+            <ExternalConfigHoc
+              ChildComponent={registry.taskExecutionAttemps}
+              data={externalProps}
+            />
+          ) : (
+            // default path
+            <Typography
+              variant="h6"
+              className={classnames(styles.title, commonStyles.textWrapped)}
+            >
+              {headerText}
+            </Typography>
+          )}
         </header>
         <ExecutionStatusBadge phase={phase} type="task" variant="text" />
       </section>

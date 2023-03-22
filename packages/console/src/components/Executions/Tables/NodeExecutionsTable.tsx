@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { getCacheKey } from 'components/Cache/utils';
 import { useCommonStyles } from 'components/common/styles';
-import scrollbarSize from 'dom-helpers/util/scrollbarSize';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';

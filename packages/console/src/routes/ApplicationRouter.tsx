@@ -5,10 +5,11 @@ import {
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { components } from './components';
 import { Routes } from './routes';
 
-function withContentContainer<P extends {}>(
+export function withContentContainer<P extends {}>(
   WrappedComponent: React.FC<P>,
   contentContainerProps?: ContentContainerProps,
 ) {
@@ -19,9 +20,12 @@ function withContentContainer<P extends {}>(
   );
 }
 
-export const ApplicationRouter: React.FC = () => (
-  <>
+export const ApplicationRouter: React.FC = () => {
+  const additionalRoutes =
+    useExternalConfigurationContext()?.registry?.additionalRoutes || null;
+  return (
     <Switch>
+      {additionalRoutes}
       <Route
         path={Routes.ExecutionDetails.path}
         component={withContentContainer(components.executionDetails, {
@@ -60,5 +64,5 @@ export const ApplicationRouter: React.FC = () => (
       />
       <Route component={withContentContainer(components.notFound)} />
     </Switch>
-  </>
-);
+  );
+};

@@ -14,6 +14,7 @@ import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types'
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import Close from '@material-ui/icons/Close';
 import { useEffect, useState } from 'react';
+import classnames from 'classnames';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
@@ -62,15 +63,23 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 interface ExecutionDetailsActionsProps {
+  className?: string;
   details?: NodeExecutionDetails;
   nodeExecutionId: NodeExecutionIdentifier;
   phase: NodeExecutionPhase;
+  text?: {
+    flyteDeckText?: string;
+    rerunText?: string;
+    resumeText?: string;
+  };
 }
 
 export const ExecutionDetailsActions = ({
+  className,
   details,
   nodeExecutionId,
   phase,
+  text,
 }: ExecutionDetailsActionsProps): JSX.Element => {
   const styles = useStyles();
 
@@ -128,7 +137,7 @@ export const ExecutionDetailsActions = ({
 
   return (
     <>
-      <div className={styles.actionsContainer}>
+      <div className={classnames(styles.actionsContainer, className)}>
         {execution?.value?.closure?.deckUri && (
           <Button
             variant="outlined"
@@ -136,17 +145,17 @@ export const ExecutionDetailsActions = ({
             onClick={() => setShowDeck(true)}
             disabled={phase !== NodeExecutionPhase.SUCCEEDED}
           >
-            {t('flyteDeck')}
+            {text?.flyteDeckText || t('flyteDeck')}
           </Button>
         )}
         {id && initialParameters && details && (
           <Button variant="outlined" color="primary" onClick={rerunOnClick}>
-            {t('rerun')}
+            {text?.rerunText || t('rerun')}
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
           <Button variant="outlined" color="primary" onClick={onResumeClick}>
-            {t('resume')}
+            {text?.resumeText || t('resume')}
           </Button>
         )}
       </div>
