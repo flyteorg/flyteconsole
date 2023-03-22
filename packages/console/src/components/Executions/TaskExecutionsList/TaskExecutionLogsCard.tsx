@@ -42,10 +42,6 @@ interface TaskExecutionLogsCardProps {
   logs: Core.ITaskLog[];
 }
 
-export default React.createContext({
-  data: null,
-});
-
 export const TaskExecutionLogsCard: React.FC<
   TaskExecutionLogsCardProps
 > = props => {
