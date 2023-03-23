@@ -85,6 +85,11 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
         onClose={onClose}
         isError={isError}
         submitTitle={launchFormStrings('resume')}
+        rejectTitle={
+          compiledNode.gateNode?.approve?.signalId
+            ? launchFormStrings('reject')
+            : null
+        }
       />
     </>
   );

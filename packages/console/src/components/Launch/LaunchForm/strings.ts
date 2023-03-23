@@ -21,6 +21,7 @@ const str = {
   role: 'Role',
   submit: 'Launch',
   resume: 'Resume',
+  reject: 'Reject',
   taskVersion: 'Task Version',
   title: 'Create New Execution',
   resumeTitle: 'Resume Paused Execution',

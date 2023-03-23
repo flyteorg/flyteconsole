@@ -15,6 +15,7 @@ export interface LaunchFormActionsProps {
   onClose(): void;
   isError: boolean;
   submitTitle: string;
+  rejectTitle?: string;
 }
 /** Renders the Submit/Cancel buttons for a LaunchForm */
 export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
@@ -23,6 +24,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
   onClose,
   isError,
   submitTitle,
+  rejectTitle,
 }) => {
   const styles = useStyles();
   const submissionInFlight = state.matches(LaunchState.SUBMITTING);
@@ -35,6 +37,13 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
 
   const submit: React.FormEventHandler = event => {
     event.preventDefault();
+    service.send({ type: 'SELECT_REJECT', value: false });
+    service.send({ type: 'SUBMIT' });
+  };
+
+  const reject: React.FormEventHandler = event => {
+    event.preventDefault();
+    service.send({ type: 'SELECT_REJECT', value: true });
     service.send({ type: 'SUBMIT' });
   };
 
@@ -110,6 +119,19 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
           {submitTitle}
           {submissionInFlight && <ButtonCircularProgress />}
         </Button>
+        {rejectTitle && (
+          <Button
+            color="primary"
+            disabled={!canSubmit || isError}
+            id="launch-workflow-reject"
+            onClick={reject}
+            type="submit"
+            variant="contained"
+          >
+            {rejectTitle}
+            {submissionInFlight && <ButtonCircularProgress />}
+          </Button>
+        )}
       </DialogActions>
     </div>
   );
