@@ -19,6 +19,7 @@ import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import { NodeExecutionsByIdContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -86,9 +87,13 @@ export const ExecutionDetailsActions = ({
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
+  const { nodeExecutionsById } = React.useContext(NodeExecutionsByIdContext);
 
   const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
-    node => node.id === nodeExecutionId.nodeId,
+    node =>
+      node.id ===
+        nodeExecutionsById[nodeExecutionId.nodeId]?.metadata?.specNodeId ||
+      node.id === nodeExecutionId.nodeId,
   );
 
   useEffect(() => {

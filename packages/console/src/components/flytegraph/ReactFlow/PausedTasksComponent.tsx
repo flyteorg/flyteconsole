@@ -75,7 +75,10 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   };
 
   const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
-    node => node.id === selectedNodeId,
+    node =>
+      (selectedNodeId &&
+        node.id === nodeExecutionsById[selectedNodeId]?.metadata?.specNodeId) ||
+      node.id === selectedNodeId,
   );
 
   const selectedNode = (pausedNodes ?? []).find(
