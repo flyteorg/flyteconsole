@@ -33,8 +33,11 @@
   },
   "scripts": {
     "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
+    "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
+    "build:watch:success": "yarn build:esm:alias && yalc push --force",
     "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && run -T tsc-alias  -p ./tsconfig.build.es.json",
+    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
+    "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",
     "build:cjs": "run -T tsc --project ./tsconfig.build.json && run -T  tsc-alias -p ./tsconfig.build.json",
     "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
     "test": "NODE_ENV=test jest"
