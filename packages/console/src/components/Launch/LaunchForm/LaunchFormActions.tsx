@@ -108,6 +108,19 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
         >
           {t('cancel')}
         </Button>
+        {rejectTitle && (
+          <Button
+            color="primary"
+            disabled={!canSubmit || isError}
+            id="launch-workflow-reject"
+            onClick={reject}
+            type="submit"
+            variant="outlined"
+          >
+            {rejectTitle}
+            {submissionInFlight && <ButtonCircularProgress />}
+          </Button>
+        )}
         <Button
           color="primary"
           disabled={!canSubmit || isError}
@@ -119,19 +132,6 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
           {submitTitle}
           {submissionInFlight && <ButtonCircularProgress />}
         </Button>
-        {rejectTitle && (
-          <Button
-            color="primary"
-            disabled={!canSubmit || isError}
-            id="launch-workflow-reject"
-            onClick={reject}
-            type="submit"
-            variant="contained"
-          >
-            {rejectTitle}
-            {submissionInFlight && <ButtonCircularProgress />}
-          </Button>
-        )}
       </DialogActions>
     </div>
   );

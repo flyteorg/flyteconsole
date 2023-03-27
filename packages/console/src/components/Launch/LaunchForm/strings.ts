@@ -21,6 +21,7 @@ const str = {
   role: 'Role',
   submit: 'Launch',
   resume: 'Resume',
+  approve: 'Approve',
   reject: 'Reject',
   taskVersion: 'Task Version',
   title: 'Create New Execution',
