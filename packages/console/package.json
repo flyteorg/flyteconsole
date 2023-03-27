@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/console",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Flyteconsole main app module",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -33,7 +33,7 @@
     "debug": "NM_DEBUG_LEVEL=2 yarn",
     "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
     "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
-    "build:watch:success": "yarn build:esm:alias && yalc push",
+    "build:watch:success": "yarn build:esm:alias && yalc push --force",
     "build": "yarn clean && yarn build:esm && yarn build:cjs",
     "build:esm": "mkdir lib && cp -R src/assets ./lib && run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
     "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",

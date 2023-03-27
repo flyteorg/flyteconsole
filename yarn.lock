@@ -1995,7 +1995,7 @@ __metadata:
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
     "@flyteorg/common": ^0.0.3
-    "@flyteorg/console": ^0.0.16
+    "@flyteorg/console": ^0.0.17
     "@types/long": ^3.0.32
     long: ^4.0.0
     protobufjs: ~6.11.3
@@ -2034,7 +2034,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/console@^0.0.16, @flyteorg/console@workspace:packages/console":
+"@flyteorg/console@^0.0.17, @flyteorg/console@workspace:packages/console":
   version: 0.0.0-use.local
   resolution: "@flyteorg/console@workspace:packages/console"
   dependencies:
@@ -6217,7 +6217,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abab@npm:^2.0.3, abab@npm:^2.0.5":
+"abab@npm:^2.0.3, abab@npm:^2.0.5, abab@npm:^2.0.6":
   version: 2.0.6
   resolution: "abab@npm:2.0.6"
   checksum: 6ffc1af4ff315066c62600123990d87551ceb0aafa01e6539da77b0f5987ac7019466780bf480f1787576d4385e3690c81ccc37cfda12819bf510b8ab47e5a3e
@@ -11580,7 +11580,7 @@ __metadata:
     react: ^16.13.1
     react-dom: ^16.13.1
     serve-static: ^1.12.3
-    source-map-loader: ^3.0.1
+    source-map-loader: ^4.0.1
     ts-jest: ^26.3.0
     ts-loader: ^9.2.6
     ts-node: ^8.0.2
@@ -20065,23 +20065,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-js@npm:^1.0.1, source-map-js@npm:^1.0.2":
+"source-map-js@npm:^1.0.2":
   version: 1.0.2
   resolution: "source-map-js@npm:1.0.2"
   checksum: c049a7fc4deb9a7e9b481ae3d424cc793cb4845daa690bc5a05d428bf41bf231ced49b4cf0c9e77f9d42fdb3d20d6187619fc586605f5eabe995a316da8d377c
   languageName: node
   linkType: hard
 
-"source-map-loader@npm:^3.0.1":
-  version: 3.0.2
-  resolution: "source-map-loader@npm:3.0.2"
+"source-map-loader@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "source-map-loader@npm:4.0.1"
   dependencies:
-    abab: ^2.0.5
+    abab: ^2.0.6
     iconv-lite: ^0.6.3
-    source-map-js: ^1.0.1
+    source-map-js: ^1.0.2
   peerDependencies:
-    webpack: ^5.0.0
-  checksum: d5a4e2ab190c93ae5cba68c247fbaa9fd560333c91060602b634c399a8a4b3205b8c07714c3bcdb0a11c6cc5476c06256bd8e824e71fbbb7981e8fad5cba4a00
+    webpack: ^5.72.1
+  checksum: 4ddca8b03dc61f406effd4bffe70de4b87fef48bae6f737017b2dabcbc7d609133325be1e73838e9265331de28039111d729fcbb8bce88a6018a816bef510eb1
   languageName: node
   linkType: hard
 
