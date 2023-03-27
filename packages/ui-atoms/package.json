@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/ui-atoms",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Flyteconsole UI atoms",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -20,6 +20,7 @@
     "README.md",
     "dist",
     "lib",
+    "src",
     "node_modules"
   ],
   "scripts": {

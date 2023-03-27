@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/flyte-api",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "FlyteConsole plugin to allow access FlyteAPI",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -20,6 +20,7 @@
     "README.md",
     "dist",
     "lib",
+    "src",
     "node_modules"
   ],
   "keywords": [

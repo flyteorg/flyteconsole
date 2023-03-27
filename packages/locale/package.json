@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/locale",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Flyteconsole basics locale setup",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -20,6 +20,7 @@
     "README.md",
     "dist",
     "lib",
+    "src",
     "node_modules"
   ],
   "keywords": [
