@@ -331,6 +331,16 @@ const SearchableWorkflowNameItem: React.FC<SearchableWorkflowNameItemProps> =
               )}
             </div>
           </div>
+          <div className={styles.itemRow}>
+            <div className={styles.itemLabel}>Description</div>
+            <div className={styles.w100}>
+              {isLoading ? (
+                <Shimmer />
+              ) : (
+                workflow?.description ?? <em>No description found.</em>
+              )}
+            </div>
+          </div>
           <SearchableWorkflowNameItemActions
             item={item}
             setHideItem={setHideItem}

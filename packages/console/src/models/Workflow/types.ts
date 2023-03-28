@@ -37,6 +37,7 @@ export interface WorkflowClosure extends Admin.IWorkflowClosure {
 export interface Workflow extends Admin.IWorkflow {
   closure?: WorkflowClosure;
   id: Identifier;
+  shortDescription: string;
 }
 
 export type WorkflowId = Identifier;

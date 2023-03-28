@@ -31,6 +31,7 @@ export interface LaunchPlan extends Admin.ILaunchPlan {
   closure?: LaunchPlanClosure;
   id: Identifier;
   spec: LaunchPlanSpec;
+  shortDescription: string;
 }
 
 export type LaunchPlanId = Identifier;

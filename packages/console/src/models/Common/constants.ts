@@ -13,6 +13,7 @@ export const endpointPrefixes = {
   recoverExecution: '/executions/recover',
   setSignal: '/signals',
   task: '/tasks',
+  descriptionEntity: 'description_entities',
   taskExecution: '/task_executions',
   taskExecutionChildren: '/children/task_executions',
   workflow: '/workflows',

@@ -22,6 +22,7 @@ const str = {
   details_task: 'Task Details',
   inputsFieldName: 'Inputs',
   outputsFieldName: 'Outputs',
+  githubLink: 'Git',
   imageFieldName: 'Image',
   envVarsFieldName: 'Env Vars',
   commandsFieldName: 'Commands',
