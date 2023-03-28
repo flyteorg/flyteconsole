@@ -7,6 +7,7 @@ import {useAPIContext} from "../data/apiContext";
 import {usePagination} from "./usePagination";
 
 
+/** A hook for fetching a description entity */
 export function useDescriptionEntity(id: Identifier): FetchableData<DescriptionEntity> {
   const { getDescriptionEntity } = useAPIContext();
   return useFetchableData<DescriptionEntity, Identifier>(

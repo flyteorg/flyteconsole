@@ -20,7 +20,7 @@ import { TaskClosure } from 'models/Task/types';
 import { executionFilterGenerator } from './generators';
 import { Row } from './Row';
 import t, { patternKey } from './strings';
-import {entityStrings, entitySections, WorkflowVersionsTablePageSize} from './constants';
+import {entityStrings, entitySections} from './constants';
 import {useDescriptionEntityList} from "../hooks/useDescription";
 
 const Skeleton = reactLoadingSkeleton;
@@ -117,9 +117,6 @@ export const EntityDescription: React.FC<{
       limit: 1,
     },
   );
-
-  console.log("descriptionEntities")
-  console.log(descriptionEntities?.value?.[0])
 
   const descriptionEntity = descriptionEntities?.value?.[0]
   const hasDescription = !!descriptionEntity?.longDescription;
