@@ -58,12 +58,12 @@ export const AppComponent: React.FC<AppComponentProps> = (
   return (
     <FeatureFlagsProvider>
       <LocalCacheProvider>
-        <ThemeProvider theme={getMuiTheme(props.config)}>
-          <StylesProvider
-            generateClassName={createGenerateClassName({
-              seed: 'c-',
-            })}
-          >
+        <StylesProvider
+          generateClassName={createGenerateClassName({
+            seed: 'c-',
+          })}
+        >
+          <ThemeProvider theme={getMuiTheme(props.config)}>
             <SnackbarProvider
               // Notifications provider https://iamhosseindhv.com/notistack/demos
               maxSnack={2}
@@ -94,8 +94,8 @@ export const AppComponent: React.FC<AppComponentProps> = (
                 <ReactQueryDevtools initialIsOpen={false} />
               </QueryClientProvider>
             </SnackbarProvider>
-          </StylesProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </StylesProvider>
       </LocalCacheProvider>
     </FeatureFlagsProvider>
   );

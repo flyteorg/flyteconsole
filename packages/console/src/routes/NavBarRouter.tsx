@@ -12,11 +12,17 @@ export const NavBarRouter: React.FC<NavBarRouterProps> = () => {
   const { registry } = useExternalConfigurationContext();
 
   const ExternalNav = registry?.nav;
+  const useSubNavigation = registry?.useSubNavigation;
+
+  const MainNavBar = ExternalNav || NavBar;
   return (
     <>
       <Switch>
-        <Route path={Routes.ExecutionDetails.path} component={CustomNavBar} />
-        <Route component={ExternalNav || NavBar} />
+        <Route
+          path={Routes.ExecutionDetails.path}
+          component={useSubNavigation ? MainNavBar : CustomNavBar}
+        />
+        <Route component={MainNavBar} />
       </Switch>
     </>
   );

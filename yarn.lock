@@ -1994,7 +1994,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
-    "@flyteorg/common": ^0.0.3
+    "@flyteorg/common": ^0.0.4
     "@flyteorg/console": ^0.0.17
     "@types/long": ^3.0.32
     long: ^4.0.0
@@ -2011,7 +2011,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/common@^0.0.3, @flyteorg/common@workspace:packages/common":
+"@flyteorg/common@^0.0.4, @flyteorg/common@workspace:packages/common":
   version: 0.0.0-use.local
   resolution: "@flyteorg/common@workspace:packages/common"
   languageName: unknown
@@ -2040,7 +2040,7 @@ __metadata:
   dependencies:
     "@date-io/moment": 1.3.9
     "@emotion/core": 10.1.1
-    "@flyteorg/common": ^0.0.3
+    "@flyteorg/common": ^0.0.4
     "@flyteorg/components": ^0.0.3
     "@flyteorg/flyte-api": ^0.0.2
     "@flyteorg/flyteidl-types": ^0.0.3

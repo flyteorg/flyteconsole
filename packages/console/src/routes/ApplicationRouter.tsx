@@ -6,8 +6,17 @@ import { withSideNavigation } from 'components/Navigation/withSideNavigation';
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import { Toolbar } from '@material-ui/core';
+import { styled } from '@material-ui/core/styles';
 import { components } from './components';
 import { Routes } from './routes';
+
+const StyledSubNavBarContent = styled(Toolbar)(() => ({
+  minHeight: 'auto',
+  '@media (min-width: 600px)': {
+    minHeight: 'auto',
+  },
+}));
 
 export function withContentContainer<P extends {}>(
   WrappedComponent: React.FC<P>,
@@ -15,6 +24,11 @@ export function withContentContainer<P extends {}>(
 ) {
   return (props: P) => (
     <ContentContainer center={true} {...contentContainerProps}>
+      <StyledSubNavBarContent
+        className="subnav"
+        id="subnav-bar-content"
+      ></StyledSubNavBarContent>
+
       <WrappedComponent {...props} />
     </ContentContainer>
   );

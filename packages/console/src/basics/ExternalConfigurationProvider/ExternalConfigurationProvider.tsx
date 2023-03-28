@@ -6,6 +6,7 @@ export interface ExternalConfigurationProviderProps {
     nav?: React.FC<any>;
     taskExecutionAttemps?: React.FC<any>;
     additionalRoutes?: any;
+    useSubNavigation?: boolean;
   };
   env?: any;
   config?: AppConfig;

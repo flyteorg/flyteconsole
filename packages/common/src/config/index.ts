@@ -1,3 +1,5 @@
+import { ThemeOptions } from '@material-ui/core/styles';
+
 type StatusColor = {
   FAILURE: string;
   RUNNING: string;
@@ -45,4 +47,5 @@ export type AppConfig = {
   statusColors?: StatusColor;
   graphStatusColors?: GraphStatusColor;
   flyteNavigation?: FlyteNavigation;
+  themeOptions?: ThemeOptions;
 };
