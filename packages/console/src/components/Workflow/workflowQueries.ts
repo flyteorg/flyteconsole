@@ -23,9 +23,6 @@ export function makeWorkflowQuery(
 
       return workflow;
     },
-    // `Workflow` objects (individual versions) are immutable and safe to
-    // cache indefinitely once retrieved in full
-    staleTime: Infinity,
   };
 }
 
