@@ -2,7 +2,6 @@ import { useMachine } from '@xstate/react';
 import { defaultStateMachineConfig } from 'components/common/constants';
 import { APIContextValue, useAPIContext } from 'components/data/apiContext';
 import { partial } from 'lodash';
-import { SimpleType } from 'models/Common/types';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
@@ -72,7 +71,7 @@ async function validate(formInputsRef: RefObject<LaunchFormInputsRef>) {
 async function submit(
   { resumeSignalNode }: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
-  { compiledNode, nodeExecutionId }: TaskResumeContext,
+  { compiledNode, nodeExecutionId, reject }: TaskResumeContext,
 ) {
   const signalId =
     compiledNode?.gateNode?.signal?.signalId ||
@@ -93,7 +92,7 @@ async function submit(
       executionId: nodeExecutionId?.executionId,
     },
     value: isApprovedCondition
-      ? { scalar: { primitive: { boolean: true } } }
+      ? { scalar: { primitive: { boolean: !reject } } }
       : literals['signal'],
   });
 
