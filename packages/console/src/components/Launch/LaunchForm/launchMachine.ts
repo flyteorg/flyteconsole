@@ -30,6 +30,10 @@ export type SelectLaunchPlanEvent = {
   type: 'SELECT_LAUNCH_PLAN';
   launchPlan: LaunchPlan;
 };
+export type SelectRejectEvent = {
+  type: 'SELECT_REJECT';
+  value: boolean;
+};
 export type WorkflowVersionOptionsLoadedEvent = DoneInvokeEvent<Workflow[]>;
 export type LaunchPlanOptionsLoadedEvent = DoneInvokeEvent<LaunchPlan[]>;
 export type TaskVersionOptionsLoadedEvent = DoneInvokeEvent<Task[]>;
@@ -49,7 +53,8 @@ export type BaseLaunchEvent =
   | SelectTaskVersionEvent
   | SelectLaunchPlanEvent
   | ExecutionCreatedEvent
-  | ErrorEvent;
+  | ErrorEvent
+  | SelectRejectEvent;
 
 export type TaskLaunchEvent =
   | BaseLaunchEvent
@@ -71,6 +76,7 @@ export interface BaseLaunchContext {
   showErrors: boolean;
   referenceExecutionId?: WorkflowExecutionIdentifier;
   unsupportedRequiredInputs: ParsedInput[];
+  reject?: boolean;
 }
 
 export interface WorkflowLaunchContext extends BaseLaunchContext {
@@ -402,7 +408,12 @@ export const taskResumeMachineConfig: MachineConfig<
   id: 'resumeTask',
   initial: LaunchState.LOADING_INPUTS,
   context: { ...defaultBaseContext },
-  on: defaultHandlers,
+  on: {
+    ...defaultHandlers,
+    SELECT_REJECT: {
+      actions: ['selectReject'],
+    },
+  },
   states: {
     ...(baseStateConfig as StatesConfig<
       TaskResumeContext,
@@ -502,6 +513,9 @@ const baseActions: BaseMachineOptions['actions'] = {
     error: (event as ErrorEvent).data,
   })),
   showErrors: assign(_ => ({ showErrors: true })),
+  selectReject: assign((_, event) => ({
+    reject: (event as SelectRejectEvent).value,
+  })),
 };
 
 const baseServices: BaseMachineOptions['services'] = {
