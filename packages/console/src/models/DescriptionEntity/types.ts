@@ -22,7 +22,7 @@ Documentation could provide insight into the algorithms, business use case, etc
 export interface DescriptionEntity extends Admin.IDescriptionEntity {
   id: Identifier;
   shortDescription: string;
-  longDescription?: LongDescription
+  longDescription: LongDescription
   sourceCode?: SourceCode
   tags?: string[]
 }
