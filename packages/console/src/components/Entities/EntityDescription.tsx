@@ -138,7 +138,7 @@ export const EntityDescription: React.FC<{
           loadingComponent={Skeleton}
         >
           <Row title={t('description')}>
-            <div
+            <span
               className={classnames({
                 [commonStyles.hintText]: !hasDescription,
               })}
@@ -148,7 +148,7 @@ export const EntityDescription: React.FC<{
                 : t(
                     patternKey('noDescription', entityStrings[id.resourceType]),
                   )}
-            </div>
+            </span>
           </Row>
           {hasLink && (<Row title={t('githubLink')}>
             <span>
