@@ -14,11 +14,13 @@ export const ExecutionContext = createContext<ExecutionContextData>(
   {} as ExecutionContextData,
 );
 
+export type NodeExecutionsById = Dictionary<WorkflowNodeExecution>;
+export type SetCurrentNodeExecutionsById = (
+  currentNodeExecutionsById: Dictionary<NodeExecution>,
+) => void;
 export interface INodeExecutionsByIdContext {
-  nodeExecutionsById: Dictionary<WorkflowNodeExecution>;
-  setCurrentNodeExecutionsById: (
-    currentNodeExecutionsById: Dictionary<NodeExecution>,
-  ) => void;
+  nodeExecutionsById: NodeExecutionsById;
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById;
 }
 
 export const NodeExecutionsByIdContext =

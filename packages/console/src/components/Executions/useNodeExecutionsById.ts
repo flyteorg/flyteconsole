@@ -1,3 +1,4 @@
+import { isEqual, merge } from 'lodash';
 import { NodeExecution } from 'models/Execution/types';
 import { useCallback, useState } from 'react';
 import { INodeExecutionsByIdContext } from './contexts';
@@ -11,7 +12,13 @@ export const useNodeExecutionsById = (
 
   const setCurrentNodeExecutionsById = useCallback(
     (currentNodeExecutionsById: Dictionary<NodeExecution>): void => {
-      setNodeExecutionsById(currentNodeExecutionsById);
+      setNodeExecutionsById(prev => {
+        const newNodes = merge({ ...prev }, currentNodeExecutionsById);
+        if (isEqual(prev, newNodes)) {
+          return prev;
+        }
+        return newNodes;
+      });
     },
     [],
   );

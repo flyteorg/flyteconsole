@@ -50,6 +50,27 @@ export function makeNodeExecutionQuery(
   };
 }
 
+/** A query for fetching a single `NodeExecution` by id. */
+export function makeNodeExecutionQuery2(
+  id: NodeExecutionIdentifier,
+  queryClient: QueryClient,
+): QueryInput<NodeExecution> {
+  return {
+    queryKey: [QueryType.NodeExecution, id],
+    queryFn: async () => {
+      const data = await getNodeExecution(id);
+      if (data.metadata?.specNodeId) {
+        data.scopedId = retriesToZero(data.metadata.specNodeId);
+      } else {
+        data.scopedId = retriesToZero(data.id.nodeId);
+      }
+      cacheNodeExecutions(queryClient, [data]);
+
+      return data;
+    },
+  };
+}
+
 export function makeListTaskExecutionsQuery(
   id: NodeExecutionIdentifier,
 ): QueryInput<PaginatedEntityResponse<TaskExecution>> {
@@ -69,7 +90,7 @@ export function fetchNodeExecution(
 
 // On successful node execution list queries, extract and store all
 // executions so they are individually fetchable from the cache.
-function cacheNodeExecutions(
+export function cacheNodeExecutions(
   queryClient: QueryClient,
   nodeExecutions: NodeExecution[],
 ) {

@@ -4,8 +4,6 @@ import { useCommonStyles } from 'components/common/styles';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
-import { dateToTimestamp } from 'common/utils';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useQueryClient } from 'react-query';
 import { merge, eq } from 'lodash';
@@ -23,6 +21,7 @@ import { fetchChildrenExecutions, searchNode } from '../utils';
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
+  shouldUpdate?: boolean;
   setShouldUpdate: (val: boolean) => void;
 }
 
@@ -93,7 +92,22 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
+  const transformedShowNodes = React.useMemo(() => {
+    return showNodes
+      ?.map(node => {
+        let nodeExecution: NodeExecution | null;
+        if (nodeExecutionsById[node.scopedId]) {
+          nodeExecution = nodeExecutionsById[node.scopedId];
+        } else {
+          nodeExecution = null;
+        }
+        return { nodeExecution, dNode: node };
+      })
+      .filter(v => !!v.nodeExecution);
+  }, [showNodes]);
+
   const toggleNode = async (id: string, scopedId: string, level: number) => {
+    // this fetches the sub nodes
     await fetchChildrenExecutions(
       queryClient,
       scopedId,
@@ -114,37 +128,17 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
         scrollbarPadding={scrollbarPadding}
       />
       <div className={tableStyles.scrollContainer}>
-        {showNodes.length > 0 ? (
-          showNodes.map(node => {
-            let nodeExecution: NodeExecution;
-            if (nodeExecutionsById[node.scopedId]) {
-              nodeExecution = nodeExecutionsById[node.scopedId];
-            } else {
-              nodeExecution = {
-                closure: {
-                  createdAt: dateToTimestamp(new Date()),
-                  outputUri: '',
-                  phase: NodeExecutionPhase.UNDEFINED,
-                },
-                id: {
-                  executionId: {
-                    domain: node.value?.taskNode?.referenceId?.domain,
-                    name: node.value?.taskNode?.referenceId?.name,
-                    project: node.value?.taskNode?.referenceId?.project,
-                  },
-                  nodeId: node.id,
-                },
-                inputUri: '',
-                scopedId: node.scopedId,
-              };
-            }
+        {transformedShowNodes.length > 0 ? (
+          transformedShowNodes.map(({ nodeExecution, dNode }) => {
             return (
               <NodeExecutionRow
                 columns={columns}
-                key={getCacheKey(nodeExecution.id)}
-                nodeExecution={nodeExecution}
-                node={node}
+                key={getCacheKey(nodeExecution!.id)}
+                nodeExecution={nodeExecution!}
+                node={dNode}
                 onToggle={toggleNode}
+                setShouldUpdate={setShouldUpdate}
+                setCurrentNodeExecutionsById={setCurrentNodeExecutionsById}
               />
             );
           })

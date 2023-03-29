@@ -33,7 +33,7 @@ import {
   taskTypeToNodeExecutionDisplayType,
   workflowExecutionPhaseConstants,
 } from './constants';
-import { WorkflowNodeExecution } from './contexts';
+import { NodeExecutionsById, SetCurrentNodeExecutionsById } from './contexts';
 import { isChildGroupsFetched } from './ExecutionDetails/utils';
 import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
@@ -249,10 +249,8 @@ export function searchNode(
 export async function fetchChildrenExecutions(
   queryClient: QueryClient,
   scopedId: string,
-  nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
-  setCurrentNodeExecutionsById: (
-    currentNodeExecutionsById: Dictionary<NodeExecution>,
-  ) => void,
+  nodeExecutionsById: NodeExecutionsById,
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById,
   setShouldUpdate?: (val: boolean) => void,
 ) {
   if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {

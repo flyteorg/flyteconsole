@@ -32,9 +32,10 @@ export function useExecutionNodeViewsState(
     limit: limits.NONE,
   };
 
-  const shouldEnableQuery = (executions: NodeExecution[]) =>
-    !executionIsTerminal(execution) ||
-    executions.some(ne => !nodeExecutionIsTerminal(ne));
+  const shouldEnableQuery = (executions: NodeExecution[]) => {
+    const isTerminal = executionIsTerminal(execution);
+    return !isTerminal || executions.some(ne => !nodeExecutionIsTerminal(ne));
+  };
 
   const nodeExecutionsQuery = useConditionalQuery(
     {
@@ -47,6 +48,5 @@ export function useExecutionNodeViewsState(
     },
     shouldEnableQuery,
   );
-
   return { nodeExecutionsQuery, nodeExecutionsRequestConfig };
 }

@@ -6,7 +6,7 @@ import { DataError } from 'components/Errors/DataError';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { Execution } from 'models/Execution/types';
-import { clone, keyBy, merge } from 'lodash';
+import { keyBy } from 'lodash';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { FilterOperation } from 'models/AdminEntity/types';
 import { NodeExecutionDetailsContextProvider } from '../contextProvider/NodeExecutionDetails';
@@ -73,17 +73,15 @@ export const ExecutionNodeViews: React.FC<ExecutionNodeViewsProps> = ({
     useNodeExecutionsById();
 
   useEffect(() => {
+    if (nodeExecutionsQuery.isFetching) {
+      return;
+    }
     const currentNodeExecutionsById = keyBy(
       nodeExecutionsQuery.data,
       'scopedId',
     );
-    const prevNodeExecutionsById = clone(nodeExecutionsById);
-    const newNodeExecutionsById = merge(
-      prevNodeExecutionsById,
-      currentNodeExecutionsById,
-    );
-    setCurrentNodeExecutionsById(newNodeExecutionsById);
-  }, [nodeExecutionsQuery.data]);
+    setCurrentNodeExecutionsById(currentNodeExecutionsById);
+  }, [nodeExecutionsQuery]);
 
   const LoadingComponent = () => {
     return (

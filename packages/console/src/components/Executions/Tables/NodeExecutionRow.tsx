@@ -2,17 +2,21 @@ import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
+import { LoadingSpinner } from 'components/common/LoadingSpinner';
+import { useInView } from 'react-intersection-observer';
 import { selectedClassName, useExecutionTableStyles } from './styles';
 import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
-import { isParentNode } from '../utils';
+import { isParentNode, nodeExecutionIsTerminal } from '../utils';
+import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
+import { SetCurrentNodeExecutionsById } from '../contexts';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -32,6 +36,8 @@ interface NodeExecutionRowProps {
   style?: React.CSSProperties;
   node: dNode;
   onToggle: (id: string, scopeId: string, level: number) => void;
+  setShouldUpdate: (val: boolean) => void;
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById;
 }
 
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
@@ -41,10 +47,28 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   node,
   style,
   onToggle,
+  setShouldUpdate,
+  setCurrentNodeExecutionsById,
 }) => {
   const styles = useStyles();
   const theme = useTheme();
   const expanderRef = React.useRef<HTMLButtonElement>();
+  const { ref, inView } = useInView();
+
+  const { nodeExecutionRowQuery } = useNodeExecutionRow(nodeExecution, inView);
+
+  useEffect(() => {
+    // don't update if still fetching
+    if (nodeExecutionRowQuery.isFetching) {
+      return;
+    }
+
+    const currentNodeExecutionsById = nodeExecutionRowQuery.data;
+    setShouldUpdate(true);
+    setCurrentNodeExecutionsById({
+      [nodeExecution.scopedId!]: currentNodeExecutionsById!,
+    });
+  }, [nodeExecutionRowQuery]);
 
   const tableStyles = useExecutionTableStyles();
   const { selectedExecution, setSelectedExecution } =
@@ -68,10 +92,14 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     : false;
 
   const expanderContent = React.useMemo(() => {
-    return isParentNode(nodeExecution) ? (
+    const isParent = isParentNode(nodeExecution);
+    const isExpandedVal = isExpanded(node);
+    return !isParent && !nodeExecutionIsTerminal(nodeExecution) ? (
+      <LoadingSpinner size="small" />
+    ) : isParent ? (
       <RowExpander
         ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
-        expanded={isExpanded(node)}
+        expanded={isExpandedVal}
         onClick={() => {
           onToggle(node.id, node.scopedId, nodeLevel);
         }}
@@ -95,6 +123,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
       })}
       style={style}
       onClick={onClickRow}
+      ref={ref}
     >
       <div className={tableStyles.borderBottom} style={rowContentStyle}>
         <div className={tableStyles.rowColumns}>
