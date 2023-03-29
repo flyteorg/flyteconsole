@@ -3,10 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WaitForData } from 'components/common/WaitForData';
-import { useNamedEntity } from 'components/hooks/useNamedEntity';
 import {
   IdentifierScope,
-  NamedEntityMetadata,
   ResourceIdentifier,
   Variable,
 } from 'models/Common/types';
@@ -140,17 +138,17 @@ export const EntityDescription: React.FC<{
           loadingComponent={Skeleton}
         >
           <Row title={t('description')}>
-            <span
+            <div
               className={classnames({
                 [commonStyles.hintText]: !hasDescription,
               })}
             >
               {hasDescription
-                ? descriptionEntity?.longDescription.value
+                ? descriptionEntity?.longDescription?.value
                 : t(
                     patternKey('noDescription', entityStrings[id.resourceType]),
                   )}
-            </span>
+            </div>
           </Row>
           {hasLink && (<Row title={t('githubLink')}>
             <span>

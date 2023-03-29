@@ -28,7 +28,7 @@ export interface TaskTemplate extends Core.ITaskTemplate {
   metadata?: TaskMetadata;
   closure?: TaskClosure;
   type: string;
-  shortDescription: string;
+  shortDescription?: string;
 }
 
 /** An instance of a task which has been serialized into a `TaskClosure` */
@@ -45,5 +45,5 @@ export interface TaskClosure extends Admin.ITaskClosure {
 export interface Task extends Admin.ITask {
   id: Identifier;
   closure: TaskClosure;
-  shortDescription: string;
+  shortDescription?: string;
 }

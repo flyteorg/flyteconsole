@@ -2,12 +2,12 @@ import { Admin } from '@flyteorg/flyteidl-types';
 import { Identifier } from 'models/Common/types';
 
 
-
+/** Optional link to source code used to define this entity */
 export interface SourceCode extends Admin.ISourceCode {
   link?: string
 }
 
-/** A serialized version of all information needed to execute a task */
+/** Full user description with formatting preserved */
 export interface LongDescription extends Admin.IDescription {
   value: string;
   uri: string;
@@ -15,10 +15,14 @@ export interface LongDescription extends Admin.IDescription {
   iconLink?: string
 }
 
+/*
+DescriptionEntity contains detailed description for the task/workflow.
+Documentation could provide insight into the algorithms, business use case, etc
+*/
 export interface DescriptionEntity extends Admin.IDescriptionEntity {
   id: Identifier;
   shortDescription: string;
-  longDescription: LongDescription
-  sourceCode: SourceCode
+  longDescription?: LongDescription
+  sourceCode?: SourceCode
   tags?: string[]
 }
