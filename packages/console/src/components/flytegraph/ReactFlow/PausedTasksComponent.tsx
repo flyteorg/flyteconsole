@@ -10,6 +10,7 @@ import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -73,9 +74,12 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     setShowResumeForm(true);
   };
 
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === selectedNodeId);
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      (selectedNodeId &&
+        node.id === nodeExecutionsById[selectedNodeId]?.metadata?.specNodeId) ||
+      node.id === selectedNodeId,
+  );
 
   const selectedNode = (pausedNodes ?? []).find(
     node => node.id === selectedNodeId,
