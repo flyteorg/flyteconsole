@@ -96,12 +96,12 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
         name,
         version,
       };
-      const workflow = await fetchWorkflow(queryClient, workflowId);
-      if (!workflow) {
+      const result = await fetchWorkflow(queryClient, workflowId);
+      if (!result) {
         resetState();
         return;
       }
-
+      const workflow = JSON.parse(JSON.stringify(result));
       const tree = createExecutionDetails(workflow);
       if (isCurrent) {
         setClosure(workflow.closure?.compiledWorkflow ?? null);
