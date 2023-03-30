@@ -12,6 +12,7 @@ import {
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
@@ -19,6 +20,7 @@ import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import { NodeExecutionsByIdContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -94,9 +96,14 @@ export const ExecutionDetailsActions = ({
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === nodeExecutionId.nodeId);
+  const { nodeExecutionsById } = React.useContext(NodeExecutionsByIdContext);
+
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      node.id ===
+        nodeExecutionsById[nodeExecutionId.nodeId]?.metadata?.specNodeId ||
+      node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {
