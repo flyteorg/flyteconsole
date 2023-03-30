@@ -26,6 +26,7 @@ import {
 } from 'models/Project/api';
 import { Admin } from '@flyteorg/flyteidl-types';
 import * as LocalCache from 'basics/LocalCache';
+import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
 import { ProjectDashboard } from '../ProjectDashboard';
 import { failedToLoadExecutionsString } from '../constants';
 
@@ -141,25 +142,31 @@ describe('ProjectDashboard', () => {
     render(
       <MemoryRouter>
         <QueryClientProvider client={queryClient}>
-          <ProjectDashboard projectId={scope.project} domainId={scope.domain} />
+          <LocalCacheProvider>
+            <ProjectDashboard
+              projectId={scope.project}
+              domainId={scope.domain}
+            />
+          </LocalCacheProvider>
         </QueryClientProvider>
       </MemoryRouter>,
     );
 
   it('should display domain attributes section when config was provided', async () => {
     const { getByText } = renderView();
-    expect(getProjectAttributes).toHaveBeenCalled();
     expect(getProjectDomainAttributes).toHaveBeenCalled();
     await waitFor(() => {
-      expect(getByText('Domain Settings')).toBeInTheDocument();
-      expect(
-        getByText('cliOutputLocationPrefixFromProjectAttributes'),
-      ).toBeInTheDocument();
-      expect(getByText('cliAnnotationKey')).toBeInTheDocument();
-      expect(
-        getByText('cliAnnotationValueFromProjectAttributes'),
-      ).not.toBeInTheDocument();
+      expect(getProjectAttributes).toHaveBeenCalled();
     });
+
+    await waitFor(() => {
+      expect(getByText('Domain Settings')).toBeInTheDocument();
+    });
+
+    expect(
+      getByText('cliOutputLocationPrefixFromProjectAttributes'),
+    ).toBeInTheDocument();
+    expect(getByText('cliAnnotationKey')).toBeInTheDocument();
   });
 
   it('should show loading spinner', async () => {

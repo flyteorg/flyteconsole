@@ -3,6 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
 import ErrorOutlined from '@material-ui/icons/ErrorOutlined';
 import InfoOutlined from '@material-ui/icons/InfoOutlined';
+import SmsFailedOutlinedIcon from '@material-ui/icons/SmsFailedOutlined';
 import classnames from 'classnames';
 import { assertNever } from 'common/utils';
 import { PublishedWithChangesOutlined } from 'components/common/PublishedWithChanges';
@@ -37,10 +38,14 @@ const NodeExecutionCacheStatusIcon: React.ComponentType<
   }
 > = React.forwardRef(({ status, ...props }, ref) => {
   switch (status) {
-    case CatalogCacheStatus.CACHE_DISABLED:
+    case CatalogCacheStatus.CACHE_DISABLED: {
+      return <InfoOutlined {...props} ref={ref} data-testid="cache-icon" />;
+    }
     case CatalogCacheStatus.CACHE_MISS:
     case CatalogCacheStatus.CACHE_SKIPPED: {
-      return <InfoOutlined {...props} ref={ref} data-testid="cache-icon" />;
+      return (
+        <SmsFailedOutlinedIcon {...props} ref={ref} data-testid="cache-icon" />
+      );
     }
     case CatalogCacheStatus.CACHE_HIT: {
       return <CachedOutlined {...props} ref={ref} data-testid="cache-icon" />;

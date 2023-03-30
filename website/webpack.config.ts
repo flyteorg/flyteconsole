@@ -14,7 +14,6 @@ import {
   WEBPACK_PATHS,
   getConfigFile,
   getDefinePlugin,
-  statsWriterPlugin,
   resolveOptions,
   getModuleOptions,
   getShouldLoadReactFromCDN,
@@ -89,7 +88,6 @@ module.exports = (_env: any, argv: { mode: Mode }) => {
       module: getModuleOptions(mode),
 
       plugins: [
-        statsWriterPlugin,
         getDefinePlugin(false),
         new NodePolyfillPlugin({
           includeAliases: ['http', 'https', 'stream', 'zlib'],

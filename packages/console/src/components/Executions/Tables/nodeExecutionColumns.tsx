@@ -105,7 +105,11 @@ export function generateColumns(
     },
     {
       cellRenderer: ({ execution }) => {
-        const isGateNode = isNodeGateNode(nodes, execution.id);
+        const isGateNode = isNodeGateNode(
+          nodes,
+          execution.metadata?.specNodeId || execution.id.nodeId,
+        );
+
         const phase = getNodeFrontendPhase(
           execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED,
           isGateNode,

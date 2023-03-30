@@ -17,13 +17,17 @@ lint: #lints the package for common code smells
 .PHONY: build_prod
 build_prod:
 	yarn run clean
-	make pack
+	make types
 	BASE_URL=/console yarn run build:prod
 
 .PHONY: pack
 pack:
+ 	yarn run build:pack
+
+.PHONY: types
+types:
 	yarn workspaces focus --production --all
-	yarn run build:pack
+	yarn run build:types
 
 # test_unit runs all unit tests
 .PHONY: test_unit
@@ -49,9 +53,10 @@ test_unit_codecov:
 generate_ssl:
 	./script/generate_ssl.sh
 
-PLACEHOLDER_NPM := \"version\": \"0.0.0-develop\"
+PLACEHOLDER_NPM := "version": "0.0.0-develop"
 
 .PHONY: update_npmversion
 update_npmversion:
-	grep "$(PLACEHOLDER_NPM)" "packages/zapp/console/package.json"
-	sed -i "s/$(PLACEHOLDER_NPM)/\"version\":  \"${VERSION}\"/g" "packages/zapp/console/package.json"
+	echo "Updating client-app version to: $(VERSION)"
+	grep '$(PLACEHOLDER_NPM)' website/package.json
+	sed -i 's/$(PLACEHOLDER_NPM)/"version": "$(VERSION)"/g' website/package.json

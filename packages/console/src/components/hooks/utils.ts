@@ -1,6 +1,19 @@
-import { GloballyUniqueNode } from 'models/Node/types';
+import { CompiledNode, GloballyUniqueNode } from 'models/Node/types';
 import { TaskTemplate } from 'models/Task/types';
-import { Workflow } from 'models/Workflow/types';
+import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
+
+export function extractCompiledNodes(
+  compiledWorkflowClosure: CompiledWorkflowClosure | null,
+): CompiledNode[] {
+  if (!compiledWorkflowClosure) return [];
+
+  const { primary, subWorkflows = [] } = compiledWorkflowClosure;
+
+  return subWorkflows.reduce(
+    (out, subWorkflow) => [...out, ...subWorkflow.template.nodes],
+    primary.template.nodes,
+  );
+}
 
 export function extractTaskTemplates(workflow: Workflow): TaskTemplate[] {
   if (!workflow.closure || !workflow.closure.compiledWorkflow) {
