@@ -10,6 +10,7 @@ const str = {
   noDescription_task: 'This task has no description.',
   noSchedules_workflow: 'This workflow has no schedules.',
   noSchedules_task: 'This task has no schedules.',
+  noDescription: 'No description found.',
   allExecutionsChartTitle_workflow: 'All Executions in the Workflow',
   allExecutionsChartTitle_task: 'All Executions in the Task',
   allExecutionsChartTitle_launch_plan: 'All Executions Using Launch Plan',

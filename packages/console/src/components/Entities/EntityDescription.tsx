@@ -117,7 +117,7 @@ export const EntityDescription: React.FC<{
   );
 
   const descriptionEntity = descriptionEntities?.value?.[0]
-  const hasDescription = !!descriptionEntity?.longDescription;
+  const hasDescription = descriptionEntity?.longDescription.value.length !== 0;
   const hasLink = !!descriptionEntity?.sourceCode?.link;
   const sections = entitySections[id.resourceType];
 
