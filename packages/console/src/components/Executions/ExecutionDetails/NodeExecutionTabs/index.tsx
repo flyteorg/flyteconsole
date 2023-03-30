@@ -47,12 +47,14 @@ export const NodeExecutionTabs: React.FC<{
   onTaskSelected: (val: MapTaskExecution) => void;
   phase?: TaskExecutionPhase;
   taskTemplate?: TaskTemplate | null;
+  taskIndex?: number;
 }> = ({
   nodeExecution,
   selectedTaskExecution,
   onTaskSelected,
   taskTemplate,
   phase,
+  taskIndex,
 }) => {
   const styles = useStyles();
   const tabState = useTabState(tabIds, defaultTab);
@@ -80,11 +82,15 @@ export const NodeExecutionTabs: React.FC<{
       break;
     }
     case tabIds.inputs: {
-      tabContent = <NodeExecutionInputs execution={nodeExecution} />;
+      tabContent = (
+        <NodeExecutionInputs execution={nodeExecution} taskIndex={taskIndex} />
+      );
       break;
     }
     case tabIds.outputs: {
-      tabContent = <NodeExecutionOutputs execution={nodeExecution} />;
+      tabContent = (
+        <NodeExecutionOutputs execution={nodeExecution} taskIndex={taskIndex} />
+      );
       break;
     }
     case tabIds.task: {

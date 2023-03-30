@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { getCacheKey } from 'components/Cache/utils';
 import { useCommonStyles } from 'components/common/styles';
-import scrollbarSize from 'dom-helpers/util/scrollbarSize';
+import scrollbarSize from 'dom-helpers/scrollbarSize';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
@@ -9,6 +9,7 @@ import { dateToTimestamp } from 'common/utils';
 import React, { useMemo, useEffect, useState, useContext } from 'react';
 import { useQueryClient } from 'react-query';
 import { merge, eq } from 'lodash';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -58,13 +59,10 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 
   const columnStyles = useColumnStyles();
   // Memoizing columns so they won't be re-generated unless the styles change
+  const compiledNodes = extractCompiledNodes(compiledWorkflowClosure);
   const columns = useMemo(
-    () =>
-      generateColumns(
-        columnStyles,
-        compiledWorkflowClosure?.primary.template.nodes ?? [],
-      ),
-    [columnStyles],
+    () => generateColumns(columnStyles, compiledNodes),
+    [columnStyles, compiledNodes],
   );
 
   useEffect(() => {

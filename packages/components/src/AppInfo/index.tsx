@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    overflowY: 'initial',
   },
   dialog: {
     width: `${INFO_WINDOW_WIDTH}px`,

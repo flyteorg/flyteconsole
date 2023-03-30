@@ -38,6 +38,7 @@ import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/Versi
 import { Identifier } from 'models/Common/types';
 import { isMapTaskV1 } from 'models/Task/utils';
 import { merge } from 'lodash';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 import {
   makeListTaskExecutionsQuery,
@@ -264,9 +265,11 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     NodeExecutionsByIdContext,
   );
   const isGateNode = isNodeGateNode(
-    compiledWorkflowClosure?.primary.template.nodes ?? [],
-    nodeExecutionId,
+    extractCompiledNodes(compiledWorkflowClosure),
+    nodeExecutionsById[nodeExecutionId.nodeId]?.metadata?.specNodeId ||
+      nodeExecutionId.nodeId,
   );
+
   const [nodeExecutionLoading, setNodeExecutionLoading] =
     useState<boolean>(false);
 
@@ -440,7 +443,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
 
   const frontendPhase = useMemo(
     () => getNodeFrontendPhase(nodePhase, isGateNode),
-    [nodePhase],
+    [nodePhase, isGateNode],
   );
 
   const isRunningPhase = useMemo(
@@ -495,6 +498,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       phase={taskPhase}
       taskTemplate={details?.taskTemplate}
       onTaskSelected={setSelectedTaskExecution}
+      taskIndex={selectedTaskExecution?.taskIndex!}
     />
   ) : null;
 
