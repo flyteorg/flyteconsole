@@ -55,7 +55,9 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const expanderRef = React.useRef<HTMLButtonElement>();
   const { ref, inView } = useInView();
 
-  const { nodeExecutionRowQuery } = useNodeExecutionRow(nodeExecution, inView);
+  const shouldPoll = isParentNode(nodeExecution) && isExpanded(node) && !!nodeExecution?.metadata?.isDynamic
+
+  const { nodeExecutionRowQuery } = useNodeExecutionRow(nodeExecution, shouldPoll);
 
   useEffect(() => {
     // don't update if still fetching
