@@ -12,6 +12,7 @@ import { CacheStatus } from 'components/Executions/CacheStatus';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
@@ -234,9 +235,11 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
   const styles = getGraphNodeStyle(nodeType, phase);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
 
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === nodeExecutionsById[scopedId]?.id?.nodeId);
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      node.id === nodeExecutionsById[scopedId]?.metadata?.specNodeId ||
+      node.id === nodeExecutionsById[scopedId]?.id?.nodeId,
+  );
 
   const iconStyles: React.CSSProperties = {
     width: '10px',

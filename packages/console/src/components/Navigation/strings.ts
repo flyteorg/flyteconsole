@@ -3,6 +3,7 @@ import { createLocalizedString } from '@flyteorg/locale';
 const str = {
   login: 'Login',
   versionConsoleUi: 'UI Version',
+  versionConsolePackage: 'Package Version',
   versionAdmin: 'Admin Version',
   versionGoogleAnalytics: 'Google Analytics',
   gaActive_: 'Active',

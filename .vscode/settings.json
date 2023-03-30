@@ -1,5 +1,5 @@
 {
-  "explorer.autoReveal": "focusNoScroll",
+  "explorer.autoReveal": true,
   "explorer.enableUndo": true,
   "explorer.excludeGitIgnore": false,
 

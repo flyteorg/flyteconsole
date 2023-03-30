@@ -12,12 +12,15 @@ import {
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
 import { useEffect, useState } from 'react';
+import classnames from 'classnames';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import { NodeExecutionsByIdContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -62,15 +65,23 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 interface ExecutionDetailsActionsProps {
+  className?: string;
   details?: NodeExecutionDetails;
   nodeExecutionId: NodeExecutionIdentifier;
   phase: NodeExecutionPhase;
+  text?: {
+    flyteDeckText?: string;
+    rerunText?: string;
+    resumeText?: string;
+  };
 }
 
 export const ExecutionDetailsActions = ({
+  className,
   details,
   nodeExecutionId,
   phase,
+  text,
 }: ExecutionDetailsActionsProps): JSX.Element => {
   const styles = useStyles();
 
@@ -85,9 +96,14 @@ export const ExecutionDetailsActions = ({
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === nodeExecutionId.nodeId);
+  const { nodeExecutionsById } = React.useContext(NodeExecutionsByIdContext);
+
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      node.id ===
+        nodeExecutionsById[nodeExecutionId.nodeId]?.metadata?.specNodeId ||
+      node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {
@@ -128,7 +144,7 @@ export const ExecutionDetailsActions = ({
 
   return (
     <>
-      <div className={styles.actionsContainer}>
+      <div className={classnames(styles.actionsContainer, className)}>
         {execution?.value?.closure?.deckUri && (
           <Button
             variant="outlined"
@@ -136,17 +152,17 @@ export const ExecutionDetailsActions = ({
             onClick={() => setShowDeck(true)}
             disabled={phase !== NodeExecutionPhase.SUCCEEDED}
           >
-            {t('flyteDeck')}
+            {text?.flyteDeckText || t('flyteDeck')}
           </Button>
         )}
         {id && initialParameters && details && (
           <Button variant="outlined" color="primary" onClick={rerunOnClick}>
-            {t('rerun')}
+            {text?.rerunText || t('rerun')}
           </Button>
         )}
         {phase === NodeExecutionPhase.PAUSED && (
           <Button variant="outlined" color="primary" onClick={onResumeClick}>
-            {t('resume')}
+            {text?.resumeText || t('resume')}
           </Button>
         )}
       </div>

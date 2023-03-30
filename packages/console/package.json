@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/console",
-  "version": "0.0.10",
+  "version": "0.0.17",
   "description": "Flyteconsole main app module",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -20,7 +20,8 @@
     "README.md",
     "dist",
     "lib",
-    "node_modules"
+    "node_modules",
+    "src"
   ],
   "keywords": [
     "flyteorg",
@@ -31,9 +32,11 @@
   "scripts": {
     "debug": "NM_DEBUG_LEVEL=2 yarn",
     "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
-    "build:watch": "run -T tsc-watch --noClear -p ./tsconfig.es.build.json --onSuccess \"yarn build\"",
+    "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
+    "build:watch:success": "yarn build:esm:alias && yalc push --force",
     "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "mkdir lib && cp -R src/assets ./lib && run -T tsc --module esnext --project ./tsconfig.build.es.json && run -T tsc-alias -p ./tsconfig.build.es.json",
+    "build:esm": "mkdir lib && cp -R src/assets ./lib && run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
+    "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",
     "build:cjs": "mkdir dist && cp -R src/assets ./dist && run -T wait-on ./dist/assets && run -T tsc --project ./tsconfig.build.json && run -T tsc-alias -p ./tsconfig.build.json",
     "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
     "test": "NODE_ENV=test jest"
@@ -79,7 +82,7 @@
     "dagre": "0.8.5",
     "dagre-d3": "^0.6.4",
     "debug": "2.6.9",
-    "dom-helpers": "^3.4.0",
+    "dom-helpers": "5.2.1",
     "fuzzysort": "^1.1.1",
     "intersection-observer": "^0.7.0",
     "js-yaml": "^3.13.1",
@@ -109,7 +112,7 @@
   },
   "devDependencies": {
     "@types/debug": "^0.0.30",
-    "@types/dom-helpers": "^3.4.1",
+    "@types/dom-helpers": "^5.0.1",
     "@types/js-yaml": "^3.10.1",
     "@types/linkify-it": "^2.1.0",
     "@types/lodash": "^4.14.68",
@@ -129,6 +132,7 @@
   },
   "resolutions": {
     "react": "^16.13.1",
+    "dom-helpers": "5.2.1",
     "react-dom": "^16.13.1",
     "micromatch": "^4.0.0",
     "@types/react": "^16.9.34",
