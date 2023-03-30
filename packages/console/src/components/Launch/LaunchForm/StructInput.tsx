@@ -70,7 +70,7 @@ export const StructInput: React.FC<InputProps> = props => {
     );
 
     if (keys.length > 1) {
-      // If there are multiple keys, we can't render a form because of not supporting nested structs
+      // If there are multiple keys, we can't render a form because of not supporting nested structs so render a text field
       jsonFormRenderable = false;
     } else if (keys[0]) {
       parsedJson = protobufValueToPrimitive(
