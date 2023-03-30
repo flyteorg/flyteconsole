@@ -69,7 +69,7 @@ export const EntityVersionsTable: React.FC<
       state={state}
       versionView={versionView}
       onClick={handleClickRow({ ...row.id, resourceType })}
-      isChecked={entityVersion === row.id.version}
+      isChecked={decodeURIComponent(entityVersion) === row.id.version}
       key={`workflow-version-row-${row.id.version}`}
     />
   );

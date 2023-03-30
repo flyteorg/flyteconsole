@@ -38,7 +38,9 @@ export const TaskLogList: React.FC<{ logs: Core.ITaskLog[] }> = ({ logs }) => {
           </NewTargetLink>
         ) : (
           // If there is no url, show item a a name string only, as it's not really clickable
-          <div className={styles.logName}>{name}</div>
+          <div key={name} className={styles.logName}>
+            {name}
+          </div>
         ),
       )}
     </>

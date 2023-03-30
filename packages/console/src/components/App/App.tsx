@@ -1,11 +1,16 @@
 import 'intersection-observer';
 import * as React from 'react';
-import { CssBaseline, Collapse } from '@material-ui/core';
+import {
+  CssBaseline,
+  Collapse,
+  StylesProvider,
+  createGenerateClassName,
+} from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { FlyteApiProvider } from '@flyteorg/flyte-api';
 import { SnackbarProvider } from 'notistack';
 import { FeatureFlagsProvider } from 'basics/FeatureFlags';
-import { env, updateEnv, AppConfig } from '@flyteorg/common';
+import { env, updateEnv } from '@flyteorg/common';
 import { debug, debugPrefix } from 'common/log';
 import { ErrorBoundary } from 'components/common/ErrorBoundary';
 import { APIContext, useAPIState } from 'components/data/apiContext';
@@ -26,17 +31,14 @@ import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
 import { NavBarRouter } from 'routes/NavBarRouter';
 import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
+import {
+  ExternalConfigurationProvider,
+  ExternalConfigurationProviderProps,
+} from 'basics/ExternalConfigurationProvider';
+
+export type AppComponentProps = ExternalConfigurationProviderProps;
 
 const queryClient = createQueryClient();
-
-interface AppComponentProps {
-  registry?: {
-    nav?: React.FC<any>;
-  };
-  env?: any;
-  config?: AppConfig;
-}
-
 let overrided = false;
 
 export const AppComponent: React.FC<AppComponentProps> = (
@@ -57,34 +59,42 @@ export const AppComponent: React.FC<AppComponentProps> = (
     <FeatureFlagsProvider>
       <LocalCacheProvider>
         <ThemeProvider theme={getMuiTheme(props.config)}>
-          <SnackbarProvider
-            // Notifications provider https://iamhosseindhv.com/notistack/demos
-            maxSnack={2}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            TransitionComponent={Collapse}
+          <StylesProvider
+            generateClassName={createGenerateClassName({
+              seed: 'c-',
+            })}
           >
-            <QueryClientProvider client={queryClient}>
-              <FlyteApiProvider flyteApiDomain={env.ADMIN_API_URL}>
-                <APIContext.Provider value={apiState}>
-                  <QueryAuthorizationObserver />
-                  <SkeletonTheme
-                    color={skeletonColor}
-                    highlightColor={skeletonHighlightColor}
-                  >
-                    <CssBaseline />
-                    <Router history={history}>
-                      <ErrorBoundary fixed={true}>
-                        <NavBarRouter registry={props?.registry} />
-                        <ApplicationRouter />
-                      </ErrorBoundary>
-                    </Router>
-                    <SystemStatusBanner />
-                  </SkeletonTheme>
-                </APIContext.Provider>
-              </FlyteApiProvider>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-          </SnackbarProvider>
+            <SnackbarProvider
+              // Notifications provider https://iamhosseindhv.com/notistack/demos
+              maxSnack={2}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              TransitionComponent={Collapse}
+            >
+              <QueryClientProvider client={queryClient}>
+                <FlyteApiProvider flyteApiDomain={env.ADMIN_API_URL}>
+                  <APIContext.Provider value={apiState}>
+                    <QueryAuthorizationObserver />
+                    <SkeletonTheme
+                      color={skeletonColor}
+                      highlightColor={skeletonHighlightColor}
+                    >
+                      <CssBaseline />
+                      <ExternalConfigurationProvider {...props}>
+                        <Router history={history}>
+                          <ErrorBoundary fixed={true}>
+                            <NavBarRouter />
+                            <ApplicationRouter />
+                          </ErrorBoundary>
+                        </Router>
+                      </ExternalConfigurationProvider>
+                      <SystemStatusBanner />
+                    </SkeletonTheme>
+                  </APIContext.Provider>
+                </FlyteApiProvider>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </QueryClientProvider>
+            </SnackbarProvider>
+          </StylesProvider>
         </ThemeProvider>
       </LocalCacheProvider>
     </FeatureFlagsProvider>
