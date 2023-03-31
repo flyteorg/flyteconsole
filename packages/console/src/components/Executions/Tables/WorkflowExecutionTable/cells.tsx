@@ -22,6 +22,7 @@ import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
+import { LaunchPlanLink } from '../LaunchPlanLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
 import { useStyles } from './styles';
 import t from './strings';
@@ -97,6 +98,13 @@ export function getDurationCell(execution: Execution): React.ReactNode {
       {timing !== null ? millisecondsToHMS(timing.duration) : ''}
     </Typography>
   );
+}
+
+export function getLaunchPlanName(execution: Execution): React.ReactNode {
+  const isArchived = isExecutionArchived(execution);
+  const lp = execution.spec.launchPlan;
+
+  return <LaunchPlanLink id={lp} color={isArchived ? 'disabled' : 'primary'} />;
 }
 
 export const showOnHoverClass = 'showOnHover';
