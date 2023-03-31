@@ -28,11 +28,6 @@ import { DetailsPanelContext } from './DetailsPanelContext';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { nodeExecutionPhaseConstants } from '../constants';
 
-interface ExecutionTabContentProps {
-  tabType: string;
-  filteredNodeExecutions?: NodeExecution[];
-}
-
 const useStyles = makeStyles(() => ({
   wrapper: {
     display: 'flex',
@@ -62,9 +57,17 @@ const executionMatchesPhaseFilter = (
   return false;
 };
 
+interface ExecutionTabContentProps {
+  tabType: string;
+  filteredNodeExecutions?: NodeExecution[];
+  setShouldUpdate: (boolean) => void;
+  shouldUpdate: boolean;
+}
 export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   tabType,
   filteredNodeExecutions,
+  setShouldUpdate,
+  shouldUpdate,
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
@@ -88,7 +91,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const [mergedDag, setMergedDag] = useState(null);
   const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
   const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
-  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     if (shouldUpdate) {

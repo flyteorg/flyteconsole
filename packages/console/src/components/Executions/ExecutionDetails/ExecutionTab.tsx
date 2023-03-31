@@ -13,10 +13,16 @@ import { ExecutionTabContent } from './ExecutionTabContent';
 
 interface ExecutionTabProps {
   tabType: string;
+  setShouldUpdate: (boolean) => void;
+  shouldUpdate: boolean;
 }
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
-export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
+export const ExecutionTab: React.FC<ExecutionTabProps> = ({
+  tabType,
+  setShouldUpdate,
+  shouldUpdate,
+}) => {
   const queryClient = useQueryClient();
   const { workflowId } = useNodeExecutionContext();
   const workflowQuery = useQuery<Workflow, Error>(
@@ -31,6 +37,8 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
           <ExecutionTabContent
             tabType={tabType}
             filteredNodeExecutions={filteredNodeExecutions}
+            setShouldUpdate={setShouldUpdate}
+            shouldUpdate={shouldUpdate}
           />
         )}
       </WaitForQuery>

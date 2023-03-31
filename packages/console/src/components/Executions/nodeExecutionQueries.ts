@@ -89,14 +89,11 @@ export function makeNodeExecutionQueryEnhanced(
 
         childExecutions = rawChildExecutions?.map(childExecution => {
           // TODO @jason: why are there two different wayt of generating these?
-          if (parentScopeId !== undefined) {
-            const scopedId = childExecution.metadata?.specNodeId
-              ? retriesToZero(childExecution?.metadata?.specNodeId)
-              : retriesToZero(childExecution?.id?.nodeId);
-            childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
-          } else {
-            childExecution['scopedId'] = childExecution.metadata?.specNodeId;
-          }
+          const scopedId = childExecution.metadata?.specNodeId
+            ? retriesToZero(childExecution?.metadata?.specNodeId)
+            : retriesToZero(childExecution?.id?.nodeId);
+          childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+
           // childExecution['scopedId'] = ;
           childExecution['fromUniqueParentId'] = parentNodeID;
 

@@ -32,12 +32,14 @@ const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
 export type NodeExecutionsByIdContextProviderProps = PropsWithChildren<{
   initialNodeExecutionsById?: NodeExecutionsById;
   filterState: ExecutionFiltersState;
+  setShouldUpdate: (boolean) => void;
 }>;
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionsByIdContextProvider = ({
   filterState,
   initialNodeExecutionsById,
+  setShouldUpdate,
   children,
 }: NodeExecutionsByIdContextProviderProps) => {
   const { execution } = useContext(ExecutionContext);
@@ -67,6 +69,7 @@ export const NodeExecutionsByIdContextProvider = ({
       prevNodeExecutionsById,
       currentNodeExecutionsById,
     );
+    setShouldUpdate(true);
     setCurrentNodeExecutionsById(newNodeExecutionsById);
   }, [nodeExecutionsQuery]);
 

@@ -87,7 +87,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     }
 
     const currentNodeExecutions = nodeExecutionRowQuery.data;
-    const currentNodeExecutionsById = keyBy(currentNodeExecutions, 'id.nodeId');
+    const currentNodeExecutionsById = keyBy(currentNodeExecutions, 'scopedId');
     // Forces ExecutionTabContent to recompute dynamic parents
     // TODO: move logic to provider.
     setShouldUpdate(true);

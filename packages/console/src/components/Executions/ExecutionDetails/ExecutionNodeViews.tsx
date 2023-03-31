@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useTabState } from 'components/hooks/useTabState';
@@ -37,6 +37,7 @@ export const ExecutionNodeViews: React.FC = () => {
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
   const { execution } = useContext(ExecutionContext);
+  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   const {
     closure: { workflowId },
@@ -50,14 +51,21 @@ export const ExecutionNodeViews: React.FC = () => {
         <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
       <NodeExecutionDetailsContextProvider workflowId={workflowId}>
-        <NodeExecutionsByIdContextProvider filterState={filterState}>
+        <NodeExecutionsByIdContextProvider
+          filterState={filterState}
+          setShouldUpdate={setShouldUpdate}
+        >
           <div className={styles.nodesContainer}>
             {tabState.value === tabs.nodes.id && (
               <div className={styles.filters}>
                 <ExecutionFilters {...filterState} />
               </div>
             )}
-            <ExecutionTab tabType={tabState.value} />
+            <ExecutionTab
+              tabType={tabState.value}
+              shouldUpdate={shouldUpdate}
+              setShouldUpdate={setShouldUpdate}
+            />
           </div>
         </NodeExecutionsByIdContextProvider>
       </NodeExecutionDetailsContextProvider>

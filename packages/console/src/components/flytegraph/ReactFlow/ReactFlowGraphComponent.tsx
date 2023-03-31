@@ -106,7 +106,7 @@ export const ReactFlowGraphComponent = ({
         baseNodeExecutions.map(async baseNodeExecution => {
           if (
             !baseNodeExecution ||
-            nodeExecutionsById[baseNodeExecution.scopedId].tasksFetched
+            nodeExecutionsById?.[baseNodeExecution.scopedId]?.tasksFetched
           ) {
             return;
           }
