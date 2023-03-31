@@ -21,7 +21,6 @@ import {
   BaseExecutionClosure,
   Execution,
   NodeExecution,
-  NodeExecutionIdentifier,
   TaskExecution,
 } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
@@ -254,11 +253,12 @@ export async function fetchChildrenExecutions(
   setShouldUpdate?: (val: boolean) => void,
   skipCache = false,
 ) {
+  const cachedParentNode = nodeExecutionsById[scopedId];
   const nodeExecutionsByIdAdapted = skipCache ? {} : nodeExecutionsById;
   if (!isChildGroupsFetched(scopedId, nodeExecutionsByIdAdapted)) {
     const childGroups = await fetchChildNodeExecutionGroups(
       queryClient,
-      nodeExecutionsByIdAdapted[scopedId],
+      cachedParentNode,
       {},
     );
 

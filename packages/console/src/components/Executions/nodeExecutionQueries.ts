@@ -52,21 +52,61 @@ export function makeNodeExecutionQuery(
 
 /** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQueryEnhanced(
-  id: NodeExecutionIdentifier,
+  nodeExecution: NodeExecution,
   queryClient: QueryClient,
-): QueryInput<NodeExecution> {
-  return {
-    queryKey: [QueryType.NodeExecution, id],
-    queryFn: async () => {
-      const data = await getNodeExecution(id);
-      if (data.metadata?.specNodeId) {
-        data.scopedId = retriesToZero(data.metadata.specNodeId);
-      } else {
-        data.scopedId = retriesToZero(data.id.nodeId);
-      }
-      cacheNodeExecutions(queryClient, [data]);
+): QueryInput<NodeExecution[]> {
+  const { id } = nodeExecution;
 
-      return data;
+  return {
+    queryKey: [QueryType.NodeExecutionAndChilList, id],
+    queryFn: async () => {
+      // const parentNode = await getNodeExecution(id);
+      // if (parentNode.metadata?.specNodeId) {
+      //   parentNode.scopedId = retriesToZero(parentNode.metadata.specNodeId);
+      // } else {
+      //   parentNode.scopedId = retriesToZero(parentNode.id.nodeId);
+      // }
+
+      const parentScopeId =
+        nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
+
+      nodeExecution.scopedId = parentScopeId;
+      const parentNodeID = nodeExecution.id.nodeId;
+      const isParent = isParentNode(nodeExecution);
+
+      let childExecutions: NodeExecution[] = [];
+
+      if (isParent) {
+        const rawChildExecutions = await fetchNodeExecutionList(
+          queryClient,
+          id.executionId,
+          {
+            params: {
+              [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+            },
+          },
+        );
+
+        childExecutions = rawChildExecutions?.map(childExecution => {
+          // TODO @jason: why are there two different wayt of generating these?
+          if (parentScopeId !== undefined) {
+            const scopedId = childExecution.metadata?.specNodeId
+              ? retriesToZero(childExecution?.metadata?.specNodeId)
+              : retriesToZero(childExecution?.id?.nodeId);
+            childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+          } else {
+            childExecution['scopedId'] = childExecution.metadata?.specNodeId;
+          }
+          // childExecution['scopedId'] = ;
+          childExecution['fromUniqueParentId'] = parentNodeID;
+
+          return childExecution;
+        });
+      }
+
+      const finalExecutions = [nodeExecution, ...childExecutions];
+      cacheNodeExecutions(queryClient, finalExecutions);
+      return finalExecutions;
     },
   };
 }

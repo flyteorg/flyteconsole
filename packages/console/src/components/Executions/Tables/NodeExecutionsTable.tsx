@@ -47,10 +47,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
-  );
+  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const { appliedFilters } = useNodeExecutionFiltersState();
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(
     appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
@@ -95,36 +92,8 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
   const toggleNode = async (id: string, scopedId: string, level: number) => {
-    await fetchChildrenExecutions(
-      queryClient,
-      scopedId,
-      nodeExecutionsById,
-      setCurrentNodeExecutionsById,
-      setShouldUpdate,
-    );
     searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);
-  };
-
-  const parentNodeCallback = async (
-    nodeExecution: NodeExecution,
-    node: dNode,
-  ) => {
-    if (!isParentNode(nodeExecution)) {
-      return;
-    }
-
-    const { scopedId } = node;
-    await fetchChildrenExecutions(
-      queryClient,
-      scopedId,
-      nodeExecutionsById,
-      setCurrentNodeExecutionsById,
-      // pass undefined to setShouldUpdate
-      undefined,
-      // force updates
-      true,
-    );
   };
 
   return (
@@ -167,7 +136,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
                 nodeExecution={nodeExecution}
                 node={node}
                 onToggle={toggleNode}
-                parentNodeCallback={parentNodeCallback}
+                setShouldUpdate={setShouldUpdate}
               />
             );
           })

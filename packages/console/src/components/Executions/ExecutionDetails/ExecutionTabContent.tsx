@@ -76,7 +76,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const [dynamicParents, setDynamicParents] = useState(
     checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap),
   );
-  const { data: dynamicWorkflows, refetch } = useQuery(
+  const { data: dynamicWorkflows } = useQuery(
     makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
   );
 
@@ -96,8 +96,12 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         nodeExecutionsById,
         staticExecutionIdsMap,
       );
-      setDynamicParents(newDynamicParents);
-      refetch();
+      setDynamicParents(prev => {
+        if (isEqual(prev, newDynamicParents)) {
+          return prev;
+        }
+        return newDynamicParents;
+      });
       setShouldUpdate(false);
     }
   }, [shouldUpdate]);

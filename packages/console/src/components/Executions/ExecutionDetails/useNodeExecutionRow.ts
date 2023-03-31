@@ -4,31 +4,28 @@ import { NodeExecution } from 'models/Execution/types';
 import { useQueryClient, UseQueryResult } from 'react-query';
 import { executionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionQueryEnhanced } from '../nodeExecutionQueries';
-import { isParentNode, nodeExecutionIsTerminal } from '../utils';
+import { nodeExecutionIsTerminal } from '../utils';
 
 export const useNodeExecutionRow = (
   execution: NodeExecution,
   isInView: boolean,
-  parentNodeCallback: (nodeExecution: NodeExecution) => void,
 ): {
-  nodeExecutionRowQuery: UseQueryResult<NodeExecution, Error>;
+  nodeExecutionRowQuery: UseQueryResult<NodeExecution[], Error>;
 } => {
   const shouldEnableQuery = () => {
     if (!isInView) {
       return false;
     }
+
+    // No need for isParent check in here, the conditionalQuery
+    // will gate the fetchChildExecutions call with a isParent check.
     const isTerminal = nodeExecutionIsTerminal(execution);
-    // const isParent = isParentNode(execution);
     return !isTerminal;
-    // return !isTerminal && isParent;
   };
 
   const nodeExecutionRowQuery = useConditionalQuery(
     {
-      ...makeNodeExecutionQueryEnhanced(execution.id, useQueryClient()),
-      onSettled: async nodeExecution => {
-        await parentNodeCallback(nodeExecution!);
-      },
+      ...makeNodeExecutionQueryEnhanced(execution, useQueryClient()),
       refetchInterval: executionRefreshIntervalMs,
     },
     shouldEnableQuery,

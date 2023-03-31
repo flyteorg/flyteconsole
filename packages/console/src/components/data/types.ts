@@ -8,6 +8,7 @@ export enum QueryType {
   DynamicWorkflowFromNodeExecution = 'DynamicWorkflowFromNodeExecution',
   NodeExecution = 'nodeExecution',
   NodeExecutionList = 'nodeExecutionList',
+  NodeExecutionAndChilList = 'nodeExecutionAndChilcList',
   NodeExecutionChildList = 'nodeExecutionChildList',
   NodeExecutionTreeList = 'nodeExecutionTreeList',
   TaskExecution = 'taskExecution',

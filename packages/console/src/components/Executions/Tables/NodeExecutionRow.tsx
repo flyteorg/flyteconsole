@@ -4,7 +4,7 @@ import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { isExpanded } from 'components/WorkflowGraph/utils';
-import { isEqual } from 'lodash';
+import { isEqual, keyBy } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common/LoadingSpinner';
@@ -16,10 +16,7 @@ import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
 import { isParentNode, nodeExecutionIsTerminal } from '../utils';
 import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
-import {
-  NodeExecutionsByIdContext,
-  SetCurrentNodeExecutionsById,
-} from '../contexts';
+import { NodeExecutionsByIdContext } from '../contexts';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -38,11 +35,7 @@ interface NodeExecutionRowProps {
   level?: number;
   style?: React.CSSProperties;
   node: dNode;
-  parentNodeCallback: (
-    nodeExecution: NodeExecution,
-    node: dNode,
-    level: number,
-  ) => void;
+  setShouldUpdate: (val: boolean) => void;
   onToggle: (id: string, scopeId: string, level: number) => void;
 }
 
@@ -52,8 +45,8 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   nodeExecution,
   node,
   style,
+  setShouldUpdate,
   onToggle,
-  parentNodeCallback,
 }) => {
   const styles = useStyles();
   const theme = useTheme();
@@ -81,13 +74,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   const { selectedExecution, setSelectedExecution } =
     useContext(DetailsPanelContext);
-  const { nodeExecutionRowQuery } = useNodeExecutionRow(
-    nodeExecution,
-    inView,
-    newNodeExecution => {
-      return parentNodeCallback(newNodeExecution, node, nodeLevel);
-    },
-  );
+  const { nodeExecutionRowQuery } = useNodeExecutionRow(nodeExecution, inView);
 
   const selected = selectedExecution
     ? isEqual(selectedExecution, nodeExecution)
@@ -99,10 +86,12 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
       return;
     }
 
-    const currentNodeExecutionsById = nodeExecutionRowQuery.data;
-    setCurrentNodeExecutionsById({
-      [nodeExecution.scopedId!]: currentNodeExecutionsById!,
-    });
+    const currentNodeExecutions = nodeExecutionRowQuery.data;
+    const currentNodeExecutionsById = keyBy(currentNodeExecutions, 'id.nodeId');
+    // Forces ExecutionTabContent to recompute dynamic parents
+    // TODO: move logic to provider.
+    setShouldUpdate(true);
+    setCurrentNodeExecutionsById(currentNodeExecutionsById);
   }, [nodeExecutionRowQuery]);
 
   const expanderContent = React.useMemo(() => {
