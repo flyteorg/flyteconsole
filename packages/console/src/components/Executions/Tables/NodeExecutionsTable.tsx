@@ -78,16 +78,14 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     });
 
     const plainNodes = convertToPlainNodes(originalNodes);
-    const updatedShownNodesMap = plainNodes
-      .map(node => {
-        const execution = nodeExecutionsById[node.scopedId];
-        return {
-          ...node,
-          startedAt: execution?.closure.startedAt,
-          execution,
-        };
-      })
-      .filter(n => !!n?.execution);
+    const updatedShownNodesMap = plainNodes.map(node => {
+      const execution = nodeExecutionsById[node.scopedId];
+      return {
+        ...node,
+        startedAt: execution?.closure.startedAt,
+        execution,
+      };
+    });
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
