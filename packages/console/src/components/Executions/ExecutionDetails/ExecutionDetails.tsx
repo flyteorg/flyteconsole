@@ -61,10 +61,10 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
 
   return (
     <ExecutionContext.Provider value={contextValue}>
-      <ExecutionDetailsAppBarContent execution={execution} />
+      <ExecutionDetailsAppBarContent />
       <div className={styles.metadataContainer}>
         <Collapse in={metadataExpanded}>
-          <ExecutionMetadata execution={execution} />
+          <ExecutionMetadata />
         </Collapse>
         <div className={styles.expandCollapseContainer}>
           <IconButton size="small" onClick={toggleMetadata}>
@@ -76,7 +76,7 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
           </IconButton>
         </div>
       </div>
-      <ExecutionNodeViews execution={execution} />
+      <ExecutionNodeViews />
     </ExecutionContext.Provider>
   );
 };

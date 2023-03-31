@@ -19,11 +19,12 @@ import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { fetchChildrenExecutions, searchNode } from '../utils';
+import { fetchChildrenExecutions, isParentNode, searchNode } from '../utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
   filteredNodes?: dNode[];
+  shouldUpdate?: boolean;
   setShouldUpdate: (val: boolean) => void;
 }
 
@@ -80,14 +81,16 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     });
 
     const plainNodes = convertToPlainNodes(originalNodes);
-    const updatedShownNodesMap = plainNodes.map(node => {
-      const execution = nodeExecutionsById[node.scopedId];
-      return {
-        ...node,
-        startedAt: execution?.closure.startedAt,
-        execution,
-      };
-    });
+    const updatedShownNodesMap = plainNodes
+      .map(node => {
+        const execution = nodeExecutionsById[node.scopedId];
+        return {
+          ...node,
+          startedAt: execution?.closure.startedAt,
+          execution,
+        };
+      })
+      .filter(n => !!n?.execution);
     setShowNodes(updatedShownNodesMap);
   }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
 
@@ -101,6 +104,27 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     );
     searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);
+  };
+
+  const parentNodeCallback = async (
+    nodeExecution: NodeExecution,
+    node: dNode,
+  ) => {
+    if (!isParentNode(nodeExecution)) {
+      return;
+    }
+
+    const { scopedId } = node;
+    await fetchChildrenExecutions(
+      queryClient,
+      scopedId,
+      nodeExecutionsById,
+      setCurrentNodeExecutionsById,
+      // pass undefined to setShouldUpdate
+      undefined,
+      // force updates
+      true,
+    );
   };
 
   return (
@@ -143,6 +167,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
                 nodeExecution={nodeExecution}
                 node={node}
                 onToggle={toggleNode}
+                parentNodeCallback={parentNodeCallback}
               />
             );
           })

@@ -3,16 +3,13 @@ import { limits } from 'models/AdminEntity/constants';
 import { FilterOperation, SortDirection } from 'models/AdminEntity/types';
 import { executionSortFields } from 'models/Execution/constants';
 import { Execution, NodeExecution } from 'models/Execution/types';
-import { useQueryClient } from 'react-query';
+import { useQueryClient, UseQueryResult } from 'react-query';
 import { executionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionListQuery } from '../nodeExecutionQueries';
 import { executionIsTerminal, nodeExecutionIsTerminal } from '../utils';
 
-export function useExecutionNodeViewsState(
-  execution: Execution,
-  filter: FilterOperation[] = [],
-): {
-  nodeExecutionsQuery: any;
+export interface UseExecutionNodeViewsState {
+  nodeExecutionsQuery: UseQueryResult<NodeExecution[], Error>;
   nodeExecutionsRequestConfig: {
     filter: FilterOperation[];
     sort: {
@@ -21,7 +18,11 @@ export function useExecutionNodeViewsState(
     };
     limit: number;
   };
-} {
+}
+export function useExecutionNodeViewsState(
+  execution: Execution,
+  filter: FilterOperation[] = [],
+): UseExecutionNodeViewsState {
   const sort = {
     key: executionSortFields.createdAt,
     direction: SortDirection.ASCENDING,

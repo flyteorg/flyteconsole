@@ -1,18 +1,25 @@
+import React, { useContext, useEffect } from 'react';
 import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import React, { useContext } from 'react';
 import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
+import { LoadingSpinner } from 'components/common/LoadingSpinner';
+import { useInView } from 'react-intersection-observer';
 import { selectedClassName, useExecutionTableStyles } from './styles';
 import { NodeExecutionColumnDefinition } from './types';
 import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
-import { isParentNode } from '../utils';
+import { isParentNode, nodeExecutionIsTerminal } from '../utils';
+import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
+import {
+  NodeExecutionsByIdContext,
+  SetCurrentNodeExecutionsById,
+} from '../contexts';
 
 const useStyles = makeStyles(() => ({
   namesContainerExpander: {
@@ -31,6 +38,11 @@ interface NodeExecutionRowProps {
   level?: number;
   style?: React.CSSProperties;
   node: dNode;
+  parentNodeCallback: (
+    nodeExecution: NodeExecution,
+    node: dNode,
+    level: number,
+  ) => void;
   onToggle: (id: string, scopeId: string, level: number) => void;
 }
 
@@ -41,14 +53,11 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   node,
   style,
   onToggle,
+  parentNodeCallback,
 }) => {
   const styles = useStyles();
   const theme = useTheme();
-  const expanderRef = React.useRef<HTMLButtonElement>();
-
   const tableStyles = useExecutionTableStyles();
-  const { selectedExecution, setSelectedExecution } =
-    useContext(DetailsPanelContext);
 
   const nodeLevel = node?.level ?? 0;
 
@@ -63,15 +72,48 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     )}px`,
   };
 
+  const { setCurrentNodeExecutionsById } = useContext(
+    NodeExecutionsByIdContext,
+  );
+
+  const expanderRef = React.useRef<HTMLButtonElement>();
+  const { ref, inView } = useInView();
+
+  const { selectedExecution, setSelectedExecution } =
+    useContext(DetailsPanelContext);
+  const { nodeExecutionRowQuery } = useNodeExecutionRow(
+    nodeExecution,
+    inView,
+    newNodeExecution => {
+      return parentNodeCallback(newNodeExecution, node, nodeLevel);
+    },
+  );
+
   const selected = selectedExecution
     ? isEqual(selectedExecution, nodeExecution)
     : false;
 
+  useEffect(() => {
+    // don't update if still fetching
+    if (nodeExecutionRowQuery.isFetching || !nodeExecutionRowQuery.data) {
+      return;
+    }
+
+    const currentNodeExecutionsById = nodeExecutionRowQuery.data;
+    setCurrentNodeExecutionsById({
+      [nodeExecution.scopedId!]: currentNodeExecutionsById!,
+    });
+  }, [nodeExecutionRowQuery]);
+
   const expanderContent = React.useMemo(() => {
-    return isParentNode(nodeExecution) ? (
+    const isParent = isParentNode(nodeExecution);
+    const isExpandedVal = isExpanded(node);
+    return !isParent && !nodeExecutionIsTerminal(nodeExecution) ? (
+      <LoadingSpinner size="small" />
+    ) : isParent ? (
       <RowExpander
         ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
-        expanded={isExpanded(node)}
+        expanded={isExpandedVal}
         onClick={() => {
           onToggle(node.id, node.scopedId, nodeLevel);
         }}
@@ -79,7 +121,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     ) : (
       <div className={styles.leaf} />
     );
-  }, [node, nodeLevel]);
+  }, [node, nodeLevel, nodeExecution]);
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
@@ -95,6 +137,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
       })}
       style={style}
       onClick={onClickRow}
+      ref={ref}
     >
       <div className={tableStyles.borderBottom} style={rowContentStyle}>
         <div className={tableStyles.rowColumns}>

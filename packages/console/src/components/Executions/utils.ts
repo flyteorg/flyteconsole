@@ -33,7 +33,10 @@ import {
   taskTypeToNodeExecutionDisplayType,
   workflowExecutionPhaseConstants,
 } from './constants';
-import { WorkflowNodeExecution } from './contexts';
+import {
+  SetCurrentNodeExecutionsById,
+  WorkflowNodeExecution,
+} from './contexts';
 import { isChildGroupsFetched } from './ExecutionDetails/utils';
 import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
@@ -247,15 +250,15 @@ export async function fetchChildrenExecutions(
   queryClient: QueryClient,
   scopedId: string,
   nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
-  setCurrentNodeExecutionsById: (
-    currentNodeExecutionsById: Dictionary<NodeExecution>,
-  ) => void,
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById,
   setShouldUpdate?: (val: boolean) => void,
+  skipCache = false,
 ) {
-  if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+  const nodeExecutionsByIdAdapted = skipCache ? {} : nodeExecutionsById;
+  if (!isChildGroupsFetched(scopedId, nodeExecutionsByIdAdapted)) {
     const childGroups = await fetchChildNodeExecutionGroups(
       queryClient,
-      nodeExecutionsById[scopedId],
+      nodeExecutionsByIdAdapted[scopedId],
       {},
     );
 
@@ -269,7 +272,7 @@ export async function fetchChildrenExecutions(
     if (childGroupsExecutionsById) {
       const prevNodeExecutionsById = clone(nodeExecutionsById);
       const currentNodeExecutionsById = merge(
-        nodeExecutionsById,
+        nodeExecutionsByIdAdapted,
         childGroupsExecutionsById,
       );
       if (

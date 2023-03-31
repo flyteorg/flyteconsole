@@ -8,7 +8,6 @@ import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
 import { useLocationState } from 'components/hooks/useLocationState';
-import { Execution } from 'models/Execution/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
@@ -22,6 +21,7 @@ import { backLinkTitle, executionActionStrings } from './constants';
 import { RelaunchExecutionForm } from './RelaunchExecutionForm';
 import { getExecutionBackLink, getExecutionSourceId } from './utils';
 import { useRecoverExecutionState } from './useRecoverExecutionState';
+import { ExecutionContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -73,11 +73,12 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 /** Renders information about a given Execution into the NavBar */
-export const ExecutionDetailsAppBarContentInner: React.FC<{
-  execution: Execution;
-}> = ({ execution }) => {
+export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
+
+  const { execution } = React.useContext(ExecutionContext);
+
   const [showInputsOutputs, setShowInputsOutputs] = React.useState(false);
   const [showRelaunchForm, setShowRelaunchForm] = React.useState(false);
   const { domain, name, project } = execution.id;
@@ -231,12 +232,10 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{
     </>
   );
 };
-export const ExecutionDetailsAppBarContent: React.FC<{
-  execution: Execution;
-}> = ({ execution }) => {
+export const ExecutionDetailsAppBarContent: React.FC<{}> = () => {
   return (
     <SubNavBarContent>
-      <ExecutionDetailsAppBarContentInner execution={execution} />
+      <ExecutionDetailsAppBarContentInner />
     </SubNavBarContent>
   );
 };
