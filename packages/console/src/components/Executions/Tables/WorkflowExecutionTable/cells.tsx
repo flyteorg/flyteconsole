@@ -100,11 +100,26 @@ export function getDurationCell(execution: Execution): React.ReactNode {
   );
 }
 
-export function getLaunchPlanName(execution: Execution): React.ReactNode {
+export function getLaunchPlan(
+  execution: Execution,
+  className: string,
+): React.ReactNode {
   const isArchived = isExecutionArchived(execution);
   const lp = execution.spec.launchPlan;
+  const version = execution.spec.launchPlan.version;
 
-  return <LaunchPlanLink id={lp} color={isArchived ? 'disabled' : 'primary'} />;
+  return (
+    <>
+      <LaunchPlanLink id={lp} color={isArchived ? 'disabled' : 'primary'} />
+      <Typography
+        className={className}
+        variant="subtitle1"
+        color="textSecondary"
+      >
+        {version}
+      </Typography>
+    </>
+  );
 }
 
 export const showOnHoverClass = 'showOnHover';

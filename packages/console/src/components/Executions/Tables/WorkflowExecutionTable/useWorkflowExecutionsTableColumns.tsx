@@ -11,7 +11,7 @@ import {
   getExecutionIdCell,
   getStartTimeCell,
   getStatusCell,
-  getLaunchPlanName,
+  getLaunchPlan,
 } from './cells';
 import { useStyles } from './styles';
 import t, { patternKey } from './strings';
@@ -46,7 +46,8 @@ export function useWorkflowExecutionsTableColumns(
         label: t(patternKey('tableLabel', 'name')),
       },
       {
-        cellRenderer: ({ execution }) => getLaunchPlanName(execution),
+        cellRenderer: ({ execution }) =>
+          getLaunchPlan(execution, commonStyles.textWrapped),
         className: styles.columnLaunchPlan,
         key: 'launchPlan',
         label: t(patternKey('tableLabel', 'launchPlan')),
