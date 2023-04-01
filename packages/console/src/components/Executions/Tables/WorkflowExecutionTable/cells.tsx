@@ -100,7 +100,7 @@ export function getDurationCell(execution: Execution): React.ReactNode {
   );
 }
 
-export function getLaunchPlan(
+export function getLaunchPlanCell(
   execution: Execution,
   className: string,
 ): React.ReactNode {
