@@ -20,9 +20,9 @@ import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge
 import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
+import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
-import { LaunchPlanLink } from '../LaunchPlanLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
 import { useStyles } from './styles';
 import t from './strings';
