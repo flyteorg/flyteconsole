@@ -55,7 +55,7 @@ jobs:
 
   build_docker_image:
     name: Build Flyteconsole Image
-    uses: flyteorg/flytetools/.github/workflows/publish.yml@master
+    uses: pingsutw/flytetools/.github/workflows/publish.yml@patch-2
     with:
       version: v1
       dockerfile: Dockerfile
