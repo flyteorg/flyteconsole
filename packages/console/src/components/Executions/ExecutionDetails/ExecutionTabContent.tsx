@@ -3,9 +3,13 @@ import { DetailsPanel } from 'components/common/DetailsPanel';
 import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
+import {
+  NodeExecution,
+  NodeExecutionIdentifier,
+  NodeExecutionsById,
+} from 'models/Execution/types';
 import { startNodeId, endNodeId } from 'models/Node/constants';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { dNode } from 'models/Graph/types';
@@ -15,9 +19,11 @@ import {
   FilterOperationName,
   FilterOperationValueList,
 } from 'models/AdminEntity/types';
-import { isEqual } from 'lodash';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from '../contexts';
+import { cloneDeep, isEqual } from 'lodash';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
@@ -57,6 +63,39 @@ const executionMatchesPhaseFilter = (
   return false;
 };
 
+const filterNodes = (
+  initialNodes: dNode[],
+  nodeExecutionsById: NodeExecutionsById,
+  appliedFilters: FilterOperation[],
+) => {
+  if (!initialNodes?.length) {
+    return [];
+  }
+
+  let initialClone = cloneDeep(initialNodes);
+
+  initialClone.forEach(n => {
+    n.nodes = filterNodes(n.nodes, nodeExecutionsById, appliedFilters);
+  });
+
+  initialClone = initialClone.filter(node => {
+    const hasFilteredChildren = node.nodes?.length;
+    const shouldBeIncluded = executionMatchesPhaseFilter(
+      nodeExecutionsById[node.scopedId],
+      appliedFilters[0],
+    );
+    const result = hasFilteredChildren || shouldBeIncluded;
+
+    if (hasFilteredChildren && !shouldBeIncluded) {
+      node.grayedOut = true;
+    }
+
+    return result;
+  });
+
+  return initialClone;
+};
+
 interface ExecutionTabContentProps {
   tabType: string;
   filteredNodeExecutions?: NodeExecution[];
@@ -72,7 +111,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { appliedFilters } = useNodeExecutionFiltersState();
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const { staticExecutionIdsMap } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : { staticExecutionIdsMap: {} };
@@ -102,6 +141,7 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
         if (isEqual(prev, newDynamicParents)) {
           return prev;
         }
+
         return newDynamicParents;
       });
       setShouldUpdate(false);
@@ -166,12 +206,13 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
       // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
       // and need to clear out items manually
       if (!filteredNodeExecutions) {
-        const filteredNodes = initialNodes.filter(node =>
-          executionMatchesPhaseFilter(
-            nodeExecutionsById[node.scopedId],
-            appliedFilters[0],
-          ),
+        // top level
+        const filteredNodes = filterNodes(
+          initialNodes,
+          nodeExecutionsById,
+          appliedFilters,
         );
+
         setInitialFilteredNodes(filteredNodes);
       } else {
         const filteredNodes = initialNodes.filter((node: dNode) =>

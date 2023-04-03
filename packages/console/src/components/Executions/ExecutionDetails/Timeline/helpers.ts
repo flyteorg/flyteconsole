@@ -9,7 +9,7 @@ export const TimeZone = {
 
 export function isTransitionNode(node: dNode) {
   // In case of bracnhNode childs, start and end nodes could be present as 'n0-start-node' etc.
-  return node.id.includes(startNodeId) || node.id.includes(endNodeId);
+  return node?.id?.includes(startNodeId) || node?.id?.includes(endNodeId);
 }
 
 export function convertToPlainNodes(nodes: dNode[], level = 0): dNode[] {
@@ -17,12 +17,12 @@ export function convertToPlainNodes(nodes: dNode[], level = 0): dNode[] {
   if (!nodes || nodes.length === 0) {
     return result;
   }
-  nodes.forEach(node => {
+  nodes?.forEach(node => {
     if (isTransitionNode(node)) {
       return;
     }
     result.push({ ...node, level });
-    if (node.nodes.length > 0 && isExpanded(node)) {
+    if (node?.nodes?.length > 0 && isExpanded(node)) {
       result.push(...convertToPlainNodes(node.nodes, level + 1));
     }
   });

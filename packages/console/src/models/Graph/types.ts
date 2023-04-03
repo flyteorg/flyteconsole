@@ -58,6 +58,7 @@ export interface dNode {
   nodes: Array<dNode>;
   edges: Array<dEdge>;
   expanded?: boolean;
+  grayedOut?: boolean;
   level?: number;
   execution?: NodeExecution;
   isParentNode?: boolean;

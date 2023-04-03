@@ -26,7 +26,7 @@ import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { isParentNode } from './utils';
 
-const ignoredNodeIds = [startNodeId, endNodeId];
+export const ignoredNodeIds = [startNodeId, endNodeId];
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
     if (ignoredNodeIds.includes(ne.id.nodeId)) {

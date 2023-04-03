@@ -18,8 +18,10 @@ import classnames from 'classnames';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from '../contexts';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -89,7 +91,7 @@ export const ExecutionDetailsActions = ({
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();

@@ -1,17 +1,24 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
+import { WaitForQuery } from 'components/common';
+import { DataError } from 'components/Errors/DataError';
+import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import {
   NodeExecutionDetailsContextProvider,
   NodeExecutionsByIdContextProvider,
 } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
-import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import {
+  ExecutionFiltersState,
+  useNodeExecutionFiltersState,
+} from '../filters/useExecutionFiltersState';
 import { tabs } from './constants';
 import { ExecutionTab } from './ExecutionTab';
+import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   filters: {
@@ -37,11 +44,16 @@ export const ExecutionNodeViews: React.FC = () => {
   const filterState = useNodeExecutionFiltersState();
   const tabState = useTabState(tabs, defaultTab);
   const { execution } = useContext(ExecutionContext);
-  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   const {
     closure: { workflowId },
   } = execution;
+
+  // query to get all data to build Graph and Timeline
+  const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution);
+  // query to get filtered data to narrow down Table outputs
+  const { nodeExecutionsQuery: filteredNodeExecutionsQuery } =
+    useExecutionNodeViewsState(execution, filterState?.appliedFilters);
 
   return (
     <>
@@ -50,25 +62,41 @@ export const ExecutionNodeViews: React.FC = () => {
         <Tab value={tabs.graph.id} label={tabs.graph.label} />
         <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
-      <NodeExecutionDetailsContextProvider workflowId={workflowId}>
-        <NodeExecutionsByIdContextProvider
-          filterState={filterState}
-          setShouldUpdate={setShouldUpdate}
-        >
-          <div className={styles.nodesContainer}>
-            {tabState.value === tabs.nodes.id && (
-              <div className={styles.filters}>
-                <ExecutionFilters {...filterState} />
-              </div>
-            )}
-            <ExecutionTab
-              tabType={tabState.value}
-              shouldUpdate={shouldUpdate}
-              setShouldUpdate={setShouldUpdate}
-            />
-          </div>
-        </NodeExecutionsByIdContextProvider>
-      </NodeExecutionDetailsContextProvider>
+
+      {filterState ? (
+        <NodeExecutionDetailsContextProvider workflowId={workflowId}>
+          <NodeExecutionsByIdContextProvider
+            filterState={filterState}
+            nodeExecutionsQuery={nodeExecutionsQuery}
+            filteredNodeExecutionsQuery={filteredNodeExecutionsQuery}
+          >
+            <div className={styles.nodesContainer}>
+              {tabState.value === tabs.nodes.id && (
+                <div className={styles.filters}>
+                  <ExecutionFilters {...filterState} />
+                </div>
+              )}
+              <WaitForQuery
+                errorComponent={DataError}
+                query={nodeExecutionsQuery}
+                loadingComponent={LoadingComponent}
+              >
+                {() => <ExecutionTab tabType={tabState.value} />}
+              </WaitForQuery>
+            </div>
+          </NodeExecutionsByIdContextProvider>
+        </NodeExecutionDetailsContextProvider>
+      ) : (
+        <LoadingComponent />
+      )}
     </>
+  );
+};
+
+const LoadingComponent = () => {
+  return (
+    <div style={{ margin: 'auto' }}>
+      <LargeLoadingSpinner />
+    </div>
   );
 };

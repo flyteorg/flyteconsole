@@ -9,6 +9,7 @@ import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { WaitForData } from 'components/common/WaitForData';
 import t from 'components/common/strings';
 import { CompiledNode } from 'models/Node/types';
+import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { useStyles } from './styles';
 import {
   BaseInterpretedLaunchState,
@@ -39,7 +40,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
     nodeExecutionId,
     onClose,
   });
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
     nodeExecutionsById[nodeExecutionId.nodeId],
   );

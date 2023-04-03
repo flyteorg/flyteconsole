@@ -325,7 +325,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     if (nodeExecution) {
       if (
         nodeExecution.scopedId &&
-        !nodeExecutionsById[nodeExecution.scopedId].tasksFetched
+        !nodeExecutionsById?.[nodeExecution.scopedId]?.tasksFetched
       )
         fetchTasksData(nodeExecution, queryClient);
     } else {

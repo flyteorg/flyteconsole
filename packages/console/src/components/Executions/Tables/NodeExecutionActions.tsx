@@ -21,10 +21,12 @@ import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
 
 interface NodeExecutionActionsProps {
   execution: NodeExecution;
+  className?: string;
 }
 
 export const NodeExecutionActions = ({
   execution,
+  className,
 }: NodeExecutionActionsProps): JSX.Element => {
   const { compiledWorkflowClosure, getNodeExecutionDetails } =
     useNodeExecutionContext();
@@ -111,20 +113,20 @@ export const NodeExecutionActions = ({
   return (
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
-        <Tooltip title={t('resumeTooltip')}>
+        <Tooltip title={t('resumeTooltip')} className={className}>
           <IconButton onClick={onResumeClick}>
             <PlayCircleOutlineIcon />
           </IconButton>
         </Tooltip>
       )}
-      <Tooltip title={t('inputsAndOutputsTooltip')}>
+      <Tooltip title={t('inputsAndOutputsTooltip')} className={className}>
         <IconButton onClick={inputsAndOutputsIconOnClick}>
           <InputsAndOutputsIcon />
         </IconButton>
       </Tooltip>
       {id && initialParameters ? (
         <>
-          <Tooltip title={t('rerunTooltip')}>
+          <Tooltip title={t('rerunTooltip')} className={className}>
             <IconButton onClick={rerunIconOnClick}>
               <RerunIcon />
             </IconButton>

@@ -6,20 +6,21 @@ import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
-import React, { useMemo, useEffect, useState, useContext } from 'react';
-import { useQueryClient } from 'react-query';
-import { merge, eq } from 'lodash';
+import React, { useMemo, useEffect, useState } from 'react';
+import { merge, isEqual, cloneDeep } from 'lodash';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
 import { useColumnStyles, useExecutionTableStyles } from './styles';
-import { NodeExecutionsByIdContext } from '../contexts';
 import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { fetchChildrenExecutions, isParentNode, searchNode } from '../utils';
+import { searchNode } from '../utils';
 
 interface NodeExecutionsTableProps {
   initialNodes: dNode[];
@@ -30,11 +31,24 @@ interface NodeExecutionsTableProps {
 
 const scrollbarPadding = scrollbarSize();
 
-/**
- * TODO
- * Refactor to avoid code duplication here and in ExecutionTimeline, ie toggleNode, the insides of the effect
- */
+const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
+  if (!target?.length) {
+    return target;
+  }
+  const newTarget = cloneDeep(target);
+  newTarget?.forEach(value => {
+    const originalNode = origin.find(
+      og => og.id === value.id && og.scopedId === value.scopedId,
+    );
+    const newNodes = mergeOriginIntoNodes(value.nodes, origin);
 
+    value = merge(value, originalNode);
+    value.nodes = newNodes;
+    return value;
+  });
+
+  return newTarget;
+};
 /** Renders a table of NodeExecution records. Executions with errors will
  * have an expanadable container rendered as part of the table row.
  * NodeExecutions are expandable and will potentially render a list of child
@@ -43,11 +57,10 @@ const scrollbarPadding = scrollbarSize();
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
   filteredNodes,
-  setShouldUpdate,
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const { appliedFilters } = useNodeExecutionFiltersState();
   const [originalNodes, setOriginalNodes] = useState<dNode[]>(
     appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
@@ -64,20 +77,20 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   );
 
   useEffect(() => {
+    const plainNodes = convertToPlainNodes(originalNodes || []);
     setOriginalNodes(ogn => {
       const newNodes =
         appliedFilters.length > 0 && filteredNodes
-          ? filteredNodes
+          ? mergeOriginIntoNodes(filteredNodes, plainNodes)
           : merge(initialNodes, ogn);
 
-      if (!eq(newNodes, ogn)) {
+      if (!isEqual(newNodes, ogn)) {
         return newNodes;
       }
 
       return ogn;
     });
 
-    const plainNodes = convertToPlainNodes(originalNodes);
     const updatedShownNodesMap = plainNodes.map(node => {
       const execution = nodeExecutionsById[node.scopedId];
       return {
@@ -134,7 +147,6 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
                 nodeExecution={nodeExecution}
                 node={node}
                 onToggle={toggleNode}
-                setShouldUpdate={setShouldUpdate}
               />
             );
           })

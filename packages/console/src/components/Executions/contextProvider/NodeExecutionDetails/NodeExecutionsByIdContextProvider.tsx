@@ -5,20 +5,16 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { NodeExecutionsById } from 'models/Execution/types';
-import { useExecutionNodeViewsState } from 'components/Executions/ExecutionDetails/useExecutionNodeViewsState';
+import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
 import { ExecutionFiltersState } from 'components/Executions/filters/useExecutionFiltersState';
 import {
-  ExecutionContext,
   FilteredNodeExecutions,
   INodeExecutionsByIdContext,
   NodeExecutionsByIdContext,
 } from 'components/Executions/contexts';
 import { clone, isEqual, keyBy, merge } from 'lodash';
 import { FilterOperation } from 'models';
-import { WaitForQuery } from 'components/common';
-import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
-import { DataError } from 'components/Errors/DataError';
+import { UseQueryResult } from 'react-query';
 
 const DEFAULT_FALUE = {};
 
@@ -32,29 +28,25 @@ const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
 export type NodeExecutionsByIdContextProviderProps = PropsWithChildren<{
   initialNodeExecutionsById?: NodeExecutionsById;
   filterState: ExecutionFiltersState;
-  setShouldUpdate: (boolean) => void;
+  nodeExecutionsQuery: UseQueryResult<NodeExecution[], Error>;
+  filteredNodeExecutionsQuery: UseQueryResult<NodeExecution[], Error>;
 }>;
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionsByIdContextProvider = ({
-  filterState,
   initialNodeExecutionsById,
-  setShouldUpdate,
+  filterState,
+  nodeExecutionsQuery,
+  filteredNodeExecutionsQuery,
   children,
 }: NodeExecutionsByIdContextProviderProps) => {
-  const { execution } = useContext(ExecutionContext);
+  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   const [nodeExecutionsById, setNodeExecutionsById] =
     useState<NodeExecutionsById>(initialNodeExecutionsById ?? DEFAULT_FALUE);
 
   const [filteredNodeExecutions, setFilteredNodeExecutions] =
     useState<FilteredNodeExecutions>();
-
-  // query to get all data to build Graph and Timeline
-  const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution);
-  // query to get filtered data to narrow down Table outputs
-  const { nodeExecutionsQuery: filteredNodeExecutionsQuery } =
-    useExecutionNodeViewsState(execution, filterState.appliedFilters);
 
   useEffect(() => {
     if (nodeExecutionsQuery.isFetching || !nodeExecutionsQuery.data) {
@@ -69,32 +61,43 @@ export const NodeExecutionsByIdContextProvider = ({
       prevNodeExecutionsById,
       currentNodeExecutionsById,
     );
-    setShouldUpdate(true);
+
     setCurrentNodeExecutionsById(newNodeExecutionsById);
   }, [nodeExecutionsQuery]);
 
   useEffect(() => {
-    if (
-      filteredNodeExecutionsQuery.isFetching ||
-      !filteredNodeExecutionsQuery.data
-    ) {
+    if (filteredNodeExecutionsQuery.isFetching) {
       return;
     }
+
     const newFilteredNodeExecutions = isPhaseFilter(filterState.appliedFilters)
       ? undefined
-      : filteredNodeExecutions;
+      : filteredNodeExecutionsQuery.data;
 
-    setFilteredNodeExecutions(newFilteredNodeExecutions);
+    setFilteredNodeExecutions(prev => {
+      if (isEqual(prev, newFilteredNodeExecutions)) {
+        return prev;
+      }
+
+      setShouldUpdate(true);
+      return newFilteredNodeExecutions;
+    });
   }, [filteredNodeExecutionsQuery]);
 
   const setCurrentNodeExecutionsById = useCallback(
-    (currentNodeExecutionsById: NodeExecutionsById): void => {
+    (
+      currentNodeExecutionsById: NodeExecutionsById,
+      checkForDynamicParents?: boolean,
+    ): void => {
       setNodeExecutionsById(prev => {
         const newNodes = merge({ ...prev }, currentNodeExecutionsById);
         if (isEqual(prev, newNodes)) {
           return prev;
         }
 
+        if (checkForDynamicParents) {
+          setShouldUpdate(true);
+        }
         return newNodes;
       });
     },
@@ -115,35 +118,15 @@ export const NodeExecutionsByIdContextProvider = ({
         filteredNodeExecutions,
         setCurrentNodeExecutionsById,
         resetCurrentNodeExecutionsById,
+        shouldUpdate,
+        setShouldUpdate,
       }}
     >
-      <WaitForQuery
-        errorComponent={DataError}
-        query={nodeExecutionsQuery}
-        loadingComponent={LoadingComponent}
-      >
-        {() => (
-          <WaitForQuery
-            errorComponent={DataError}
-            query={filteredNodeExecutionsQuery}
-            loadingComponent={LoadingComponent}
-          >
-            {() => children}
-          </WaitForQuery>
-        )}
-      </WaitForQuery>
+      {children}
     </NodeExecutionsByIdContext.Provider>
   );
 };
 
 export const useNodeExecutionsById = (): INodeExecutionsByIdContext => {
   return useContext(NodeExecutionsByIdContext);
-};
-
-const LoadingComponent = () => {
-  return (
-    <div style={{ margin: 'auto' }}>
-      <LargeLoadingSpinner />
-    </div>
-  );
 };

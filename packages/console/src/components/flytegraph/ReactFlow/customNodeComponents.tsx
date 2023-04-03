@@ -10,7 +10,10 @@ import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CacheStatus } from 'components/Executions/CacheStatus';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import {
@@ -223,7 +226,7 @@ const TaskPhaseItem = ({
 
 export const ReactFlowGateNode = ({ data }: RFNode) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const {
     nodeType,
     nodeExecutionStatus,

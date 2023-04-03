@@ -8,7 +8,10 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import {
@@ -36,7 +39,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
   initialIsVisible = false,
 }) => {
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [isVisible, setIsVisible] = useState(initialIsVisible);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);

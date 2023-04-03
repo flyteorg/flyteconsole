@@ -12,12 +12,16 @@ import {
 } from './constants';
 
 export const selectedClassName = 'selected';
+export const grayedClassName = 'grayed';
 
 // NOTE: The order of these `makeStyles` calls is important, as it determines
 // specificity in the browser. The execution table styles are overridden by
 // the columns styles in some cases. So the column styles should be defined
 // last.
 export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
+  [grayedClassName]: {
+    color: theme.palette.grey[300],
+  },
   borderBottom: {
     borderBottom: `1px solid ${theme.palette.divider}`,
   },
@@ -67,6 +71,9 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
     [`&.${selectedClassName}`]: {
       backgroundColor: listhoverColor,
     },
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[300],
+    },
   },
   clickableRow: {
     cursor: 'pointer',
@@ -97,6 +104,9 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
 
 export const nameColumnLeftMarginGridWidth = 6;
 export const useColumnStyles = makeStyles((theme: Theme) => ({
+  [`&.${grayedClassName}`]: {
+    color: theme.palette.grey[400],
+  },
   columnName: {
     flexGrow: 1,
     // We want this to fluidly expand into whatever available space,
@@ -106,13 +116,22 @@ export const useColumnStyles = makeStyles((theme: Theme) => ({
     '&:first-of-type': {
       marginLeft: theme.spacing(nameColumnLeftMarginGridWidth),
     },
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   columnNodeId: {
     flexBasis: nodeExecutionsTableColumnWidths.nodeId,
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   columnType: {
     flexBasis: nodeExecutionsTableColumnWidths.type,
     textTransform: 'capitalize',
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   columnStatus: {
     display: 'flex',
@@ -120,15 +139,24 @@ export const useColumnStyles = makeStyles((theme: Theme) => ({
   },
   columnStartedAt: {
     flexBasis: nodeExecutionsTableColumnWidths.startedAt,
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   columnDuration: {
     flexBasis: nodeExecutionsTableColumnWidths.duration,
     textAlign: 'right',
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   columnLogs: {
     flexBasis: nodeExecutionsTableColumnWidths.logs,
     marginLeft: theme.spacing(4),
     marginRight: theme.spacing(2),
+    [`&.${grayedClassName}`]: {
+      color: theme.palette.grey[400],
+    },
   },
   selectedExecutionName: {
     fontWeight: 'bold',
