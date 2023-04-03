@@ -10,8 +10,11 @@ import { tableHeaderColor } from 'components/Theme/constants';
 import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { extractCompiledNodes } from 'components/hooks/utils';
+import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   fetchChildrenExecutions,
+  isNodeGateNode,
   searchNode,
 } from 'components/Executions/utils';
 import { useQueryClient } from 'react-query';
@@ -99,6 +102,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
     NodeExecutionsByIdContext,
   );
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {
@@ -130,9 +134,17 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     }
   }, [initialNodes, originalNodes, nodeExecutionsById]);
 
+  const isGateNode = (scopedId: string) => {
+    return isNodeGateNode(
+      extractCompiledNodes(compiledWorkflowClosure),
+      nodeExecutionsById[scopedId]?.metadata?.specNodeId || '',
+    );
+  };
+
   const { items: barItemsData, totalDurationSec } = getChartDurationData(
     showNodes,
     startedAt,
+    isGateNode,
   );
   const styles = useStyles({
     chartWidth: chartWidth,

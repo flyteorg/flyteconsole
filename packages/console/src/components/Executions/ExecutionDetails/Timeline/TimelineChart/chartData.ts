@@ -1,4 +1,5 @@
 import { timestampToDate } from 'common/utils';
+import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CatalogCacheStatus, NodeExecutionPhase } from 'models/Execution/enums';
 import { dNode } from 'models/Graph/types';
 import { isMapTaskType } from 'models/Task/utils';
@@ -17,13 +18,14 @@ const EMPTY_BAR_ITEM: BarItemData = {
 export const getChartDurationData = (
   nodes: dNode[],
   startedAt: Date,
+  isGateNode: (scopedId: string) => boolean,
 ): { items: BarItemData[]; totalDurationSec: number } => {
   if (nodes.length === 0) return { items: [], totalDurationSec: 0 };
 
   let totalDurationSec = 0;
   const initialStartTime = startedAt.getTime();
 
-  const result: BarItemData[] = nodes.map(({ execution, value }) => {
+  const result: BarItemData[] = nodes.map(({ execution, value, scopedId }) => {
     if (!execution) {
       return EMPTY_BAR_ITEM;
     }
@@ -79,7 +81,14 @@ export const getChartDurationData = (
 
     const startOffsetSec = Math.trunc(startOffset / 1000);
     totalDurationSec = Math.max(totalDurationSec, startOffsetSec + durationSec);
-    return { phase, startOffsetSec, durationSec, isFromCache, isMapTaskCache };
+
+    return {
+      phase: getNodeFrontendPhase(phase, isGateNode(scopedId)),
+      startOffsetSec,
+      durationSec,
+      isFromCache,
+      isMapTaskCache,
+    };
   });
 
   // Do we want to get initialStartTime from different place, to avoid recalculating it.
