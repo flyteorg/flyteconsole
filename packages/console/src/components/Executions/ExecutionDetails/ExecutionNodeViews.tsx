@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useTabState } from 'components/hooks/useTabState';
@@ -6,16 +6,16 @@ import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { WaitForQuery } from 'components/common';
 import { DataError } from 'components/Errors/DataError';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
+import { useQuery, useQueryClient } from 'react-query';
+import { Workflow } from 'models/Workflow/types';
+import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import {
   NodeExecutionDetailsContextProvider,
   NodeExecutionsByIdContextProvider,
 } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionContext } from '../contexts';
 import { ExecutionFilters } from '../ExecutionFilters';
-import {
-  ExecutionFiltersState,
-  useNodeExecutionFiltersState,
-} from '../filters/useExecutionFiltersState';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { tabs } from './constants';
 import { ExecutionTab } from './ExecutionTab';
 import { useExecutionNodeViewsState } from './useExecutionNodeViewsState';
@@ -48,7 +48,9 @@ export const ExecutionNodeViews: React.FC = () => {
   const {
     closure: { workflowId },
   } = execution;
-
+  const workflowQuery = useQuery<Workflow, Error>(
+    makeWorkflowQuery(useQueryClient(), workflowId),
+  );
   // query to get all data to build Graph and Timeline
   const { nodeExecutionsQuery } = useExecutionNodeViewsState(execution);
   // query to get filtered data to narrow down Table outputs
@@ -63,32 +65,40 @@ export const ExecutionNodeViews: React.FC = () => {
         <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
 
-      {filterState ? (
-        <NodeExecutionDetailsContextProvider workflowId={workflowId}>
-          <div className={styles.nodesContainer}>
-            {tabState.value === tabs.nodes.id && (
-              <div className={styles.filters}>
-                <ExecutionFilters {...filterState} />
+      <WaitForQuery errorComponent={DataError} query={workflowQuery}>
+        {() =>
+          filterState ? (
+            <NodeExecutionDetailsContextProvider workflowId={workflowId}>
+              <div className={styles.nodesContainer}>
+                {tabState.value === tabs.nodes.id && (
+                  <div className={styles.filters}>
+                    <ExecutionFilters {...filterState} />
+                  </div>
+                )}
+                <NodeExecutionsByIdContextProvider
+                  filterState={filterState}
+                  nodeExecutionsQuery={nodeExecutionsQuery}
+                  filteredNodeExecutionsQuery={filteredNodeExecutionsQuery}
+                >
+                  <WaitForQuery
+                    errorComponent={DataError}
+                    query={nodeExecutionsQuery}
+                    loadingComponent={LoadingComponent}
+                  >
+                    {() => (
+                      <>
+                        <ExecutionTab tabType={tabState.value} />
+                      </>
+                    )}
+                  </WaitForQuery>
+                </NodeExecutionsByIdContextProvider>
               </div>
-            )}
-            <NodeExecutionsByIdContextProvider
-              filterState={filterState}
-              nodeExecutionsQuery={nodeExecutionsQuery}
-              filteredNodeExecutionsQuery={filteredNodeExecutionsQuery}
-            >
-              <WaitForQuery
-                errorComponent={DataError}
-                query={nodeExecutionsQuery}
-                loadingComponent={LoadingComponent}
-              >
-                {() => <ExecutionTab tabType={tabState.value} />}
-              </WaitForQuery>
-            </NodeExecutionsByIdContextProvider>
-          </div>
-        </NodeExecutionDetailsContextProvider>
-      ) : (
-        <LoadingComponent />
-      )}
+            </NodeExecutionDetailsContextProvider>
+          ) : (
+            <LoadingComponent />
+          )
+        }
+      </WaitForQuery>
     </>
   );
 };

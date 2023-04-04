@@ -1,21 +1,15 @@
-import React, {
-  createRef,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { tableHeaderColor } from 'components/Theme/constants';
 import { timestampToDate } from 'common/utils';
 import { dNode } from 'models/Graph/types';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import {
   fetchChildrenExecutions,
   searchNode,
 } from 'components/Executions/utils';
 import { useQueryClient } from 'react-query';
 import { eq, merge } from 'lodash';
+import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { convertToPlainNodes } from './helpers';
 import { ChartHeader } from './ChartHeader';
 import { useScaleContext } from './scaleContext';
@@ -78,13 +72,11 @@ const INTERVAL_LENGTH = 110;
 interface ExProps {
   chartTimezone: string;
   initialNodes: dNode[];
-  setShouldUpdate: (val: boolean) => void;
 }
 
 export const ExecutionTimeline: React.FC<ExProps> = ({
   chartTimezone,
   initialNodes,
-  setShouldUpdate,
 }) => {
   const [chartWidth, setChartWidth] = useState(0);
   const [labelInterval, setLabelInterval] = useState(INTERVAL_LENGTH);
@@ -96,9 +88,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
   const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
-  );
+  const { nodeExecutionsById, setCurrentNodeExecutionsById, setShouldUpdate } =
+    useNodeExecutionsById();
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
   useEffect(() => {

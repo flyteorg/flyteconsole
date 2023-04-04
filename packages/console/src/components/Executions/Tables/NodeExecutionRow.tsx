@@ -15,13 +15,17 @@ import {
   useExecutionTableStyles,
 } from './styles';
 import { NodeExecutionColumnDefinition } from './types';
-import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
+import {
+  DetailsPanelContext,
+  useDetailsPanel,
+} from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
 import { isParentNode, nodeExecutionIsTerminal } from '../utils';
 import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
 import { NodeExecutionsById, NodeExecutionsByIdContext } from '../contexts';
 import { ignoredNodeIds } from '../nodeExecutionQueries';
+import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles(theme => ({
   [`${grayedClassName}`]: {
@@ -101,9 +105,8 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     )}px`,
   };
 
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
-  );
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useNodeExecutionsById();
 
   const childExecutions = useMemo(() => {
     const children = node?.nodes?.reduce((accumulator, currentValue) => {
@@ -138,8 +141,7 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     shouldForceFetchChildren,
   );
 
-  const { selectedExecution, setSelectedExecution } =
-    useContext(DetailsPanelContext);
+  const { selectedExecution, setSelectedExecution } = useDetailsPanel();
 
   const selected = selectedExecution
     ? isEqual(selectedExecution, nodeExecution)

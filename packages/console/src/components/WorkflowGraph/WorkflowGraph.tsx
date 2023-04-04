@@ -3,39 +3,36 @@ import { ReactFlowGraphComponent } from 'components/flytegraph/ReactFlow/ReactFl
 import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { CompiledNode } from 'models/Node/types';
-import { TaskExecutionPhase } from 'models/Execution/enums';
 import { dNode } from 'models/Graph/types';
+import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import t from './strings';
 
-export interface WorkflowGraphProps {
-  onNodeSelectionChanged: (selectedNodes: string[]) => void;
-  onPhaseSelectionChanged: (phase: TaskExecutionPhase) => void;
-  selectedPhase?: TaskExecutionPhase;
-  isDetailsTabClosed: boolean;
-  mergedDag: any;
-  error: Error | null;
-  dynamicWorkflows: any;
-  initialNodes: dNode[];
-  shouldUpdate: boolean;
-  setShouldUpdate: (val: boolean) => void;
-}
 export interface DynamicWorkflowMapping {
   rootGraphNodeId: CompiledNode;
   dynamicWorkflow: any;
   dynamicExecutions: any[];
 }
+
+export interface WorkflowGraphProps {
+  mergedDag: any;
+  error?: Error;
+  initialNodes: dNode[];
+}
 export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
-  onNodeSelectionChanged,
-  onPhaseSelectionChanged,
-  selectedPhase,
-  isDetailsTabClosed,
   mergedDag,
   error,
-  dynamicWorkflows,
   initialNodes,
-  shouldUpdate,
-  setShouldUpdate,
 }) => {
+  const { shouldUpdate, setShouldUpdate } = useNodeExecutionsById();
+
+  const {
+    onNodeSelectionChanged,
+    selectedPhase,
+    setSelectedPhase,
+    isDetailsTabClosed,
+  } = useDetailsPanel();
+
   if (error) {
     return (
       <NonIdealState title={t('graphErrorTitle')} description={error.message} />
@@ -53,15 +50,17 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   }
 
   return (
-    <ReactFlowGraphComponent
-      data={mergedDag}
-      onNodeSelectionChanged={onNodeSelectionChanged}
-      onPhaseSelectionChanged={onPhaseSelectionChanged}
-      selectedPhase={selectedPhase}
-      isDetailsTabClosed={isDetailsTabClosed}
-      initialNodes={initialNodes}
-      shouldUpdate={shouldUpdate}
-      setShouldUpdate={setShouldUpdate}
-    />
+    <>
+      <ReactFlowGraphComponent
+        data={mergedDag}
+        onNodeSelectionChanged={onNodeSelectionChanged}
+        onPhaseSelectionChanged={setSelectedPhase}
+        selectedPhase={selectedPhase}
+        isDetailsTabClosed={isDetailsTabClosed}
+        initialNodes={initialNodes}
+        shouldUpdate={shouldUpdate}
+        setShouldUpdate={setShouldUpdate}
+      />
+    </>
   );
 };

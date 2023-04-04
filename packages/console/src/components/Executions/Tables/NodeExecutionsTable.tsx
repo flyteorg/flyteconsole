@@ -2,13 +2,18 @@ import classnames from 'classnames';
 import { getCacheKey } from 'components/Cache/utils';
 import { useCommonStyles } from 'components/common/styles';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
-import { NodeExecution } from 'models/Execution/types';
+import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import React, { useMemo, useEffect, useState } from 'react';
 import { merge, isEqual, cloneDeep } from 'lodash';
 import { extractCompiledNodes } from 'components/hooks/utils';
+import {
+  FilterOperation,
+  FilterOperationName,
+  FilterOperationValueList,
+} from 'models';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -21,13 +26,7 @@ import {
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { searchNode } from '../utils';
-
-interface NodeExecutionsTableProps {
-  initialNodes: dNode[];
-  filteredNodes?: dNode[];
-  shouldUpdate?: boolean;
-  setShouldUpdate: (val: boolean) => void;
-}
+import { nodeExecutionPhaseConstants } from '../constants';
 
 const scrollbarPadding = scrollbarSize();
 
@@ -49,6 +48,61 @@ const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
 
   return newTarget;
 };
+
+interface NodeExecutionsTableProps {
+  initialNodes: dNode[];
+  filteredNodes?: dNode[];
+}
+
+const executionMatchesPhaseFilter = (
+  nodeExecution: NodeExecution,
+  { key, value, operation }: FilterOperation,
+) => {
+  if (key === 'phase' && operation === FilterOperationName.VALUE_IN) {
+    // default to UNKNOWN phase if the field does not exist on a closure
+    const itemValue =
+      nodeExecutionPhaseConstants()[nodeExecution?.closure[key]]?.value ??
+      nodeExecutionPhaseConstants()[0].value;
+    // phase check filters always return values in an array
+    const valuesArray = value as FilterOperationValueList;
+    return valuesArray.includes(itemValue);
+  }
+  return false;
+};
+
+const filterNodes = (
+  initialNodes: dNode[],
+  nodeExecutionsById: NodeExecutionsById,
+  appliedFilters: FilterOperation[],
+) => {
+  if (!initialNodes?.length) {
+    return [];
+  }
+
+  let initialClone = cloneDeep(initialNodes);
+
+  initialClone.forEach(n => {
+    n.nodes = filterNodes(n.nodes, nodeExecutionsById, appliedFilters);
+  });
+
+  initialClone = initialClone.filter(node => {
+    const hasFilteredChildren = node.nodes?.length;
+    const shouldBeIncluded = executionMatchesPhaseFilter(
+      nodeExecutionsById[node.scopedId],
+      appliedFilters[0],
+    );
+    const result = hasFilteredChildren || shouldBeIncluded;
+
+    if (hasFilteredChildren && !shouldBeIncluded) {
+      node.grayedOut = true;
+    }
+
+    return result;
+  });
+
+  return initialClone;
+};
+
 /** Renders a table of NodeExecution records. Executions with errors will
  * have an expanadable container rendered as part of the table row.
  * NodeExecutions are expandable and will potentially render a list of child
@@ -56,16 +110,28 @@ const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
  */
 export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   initialNodes,
-  filteredNodes,
 }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const { nodeExecutionsById } = useNodeExecutionsById();
+  const { nodeExecutionsById, filteredNodeExecutions } =
+    useNodeExecutionsById();
   const { appliedFilters } = useNodeExecutionFiltersState();
-  const [originalNodes, setOriginalNodes] = useState<dNode[]>(
-    appliedFilters.length > 0 && filteredNodes ? filteredNodes : initialNodes,
-  );
+
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
+  const [initialFilteredNodes, setInitialFilteredNodes] = useState<
+    dNode[] | undefined
+  >(undefined);
+
+  const [originalNodes, setOriginalNodes] = useState<dNode[]>(
+    appliedFilters.length > 0 && initialFilteredNodes
+      ? initialFilteredNodes
+      : initialNodes,
+  );
+
+  const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
+
+  const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
+
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const columnStyles = useColumnStyles();
@@ -80,8 +146,8 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     const plainNodes = convertToPlainNodes(originalNodes || []);
     setOriginalNodes(ogn => {
       const newNodes =
-        appliedFilters.length > 0 && filteredNodes
-          ? mergeOriginIntoNodes(filteredNodes, plainNodes)
+        appliedFilters.length > 0 && initialFilteredNodes
+          ? mergeOriginIntoNodes(initialFilteredNodes, plainNodes)
           : merge(initialNodes, ogn);
 
       if (!isEqual(newNodes, ogn)) {
@@ -100,7 +166,40 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       };
     });
     setShowNodes(updatedShownNodesMap);
-  }, [initialNodes, filteredNodes, originalNodes, nodeExecutionsById]);
+  }, [initialNodes, initialFilteredNodes, originalNodes, nodeExecutionsById]);
+
+  useEffect(() => {
+    if (!isEqual(filters, appliedFilters)) {
+      setFilters(appliedFilters);
+      setIsFiltersChanged(true);
+    } else {
+      setIsFiltersChanged(false);
+    }
+  }, [appliedFilters]);
+
+  useEffect(() => {
+    if (appliedFilters.length > 0) {
+      // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
+      // and need to clear out items manually
+      if (!filteredNodeExecutions) {
+        // top level
+        const filteredNodes = filterNodes(
+          initialNodes,
+          nodeExecutionsById,
+          appliedFilters,
+        );
+
+        setInitialFilteredNodes(filteredNodes);
+      } else {
+        const filteredNodes = initialNodes.filter((node: dNode) =>
+          filteredNodeExecutions.find(
+            (execution: NodeExecution) => execution.scopedId === node.scopedId,
+          ),
+        );
+        setInitialFilteredNodes(filteredNodes);
+      }
+    }
+  }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
 
   const toggleNode = async (id: string, scopedId: string, level: number) => {
     searchNode(originalNodes, 0, id, scopedId, level);

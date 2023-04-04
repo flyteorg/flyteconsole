@@ -10,14 +10,14 @@ import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
-import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
+import { useDetailsPanel } from '../ExecutionDetails/DetailsPanelContext';
 
 interface NodeExecutionActionsProps {
   execution: NodeExecution;
@@ -30,7 +30,7 @@ export const NodeExecutionActions = ({
 }: NodeExecutionActionsProps): JSX.Element => {
   const { compiledWorkflowClosure, getNodeExecutionDetails } =
     useNodeExecutionContext();
-  const { setSelectedExecution } = useContext(DetailsPanelContext);
+  const { setSelectedExecution } = useDetailsPanel();
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);

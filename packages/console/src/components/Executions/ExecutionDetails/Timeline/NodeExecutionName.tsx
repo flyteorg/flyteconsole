@@ -8,7 +8,7 @@ import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution } from 'models/Execution/types';
 import React, { useContext, useEffect, useState } from 'react';
-import { DetailsPanelContext } from '../DetailsPanelContext';
+import { DetailsPanelContext, useDetailsPanel } from '../DetailsPanelContext';
 
 interface NodeExecutionTimelineNameData {
   name: string;
@@ -39,8 +39,7 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
   const styles = useStyles();
 
   const { getNodeExecutionDetails } = useNodeExecutionContext();
-  const { selectedExecution, setSelectedExecution } =
-    useContext(DetailsPanelContext);
+  const { selectedExecution, setSelectedExecution } = useDetailsPanel();
   const [displayName, setDisplayName] = useState<string | undefined>();
 
   useEffect(() => {

@@ -1,51 +1,40 @@
-import { makeStyles } from '@material-ui/core';
-import { DetailsPanel } from 'components/common/DetailsPanel';
-import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
-import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
-import { TaskExecutionPhase } from 'models/Execution/enums';
-import {
-  NodeExecution,
-  NodeExecutionIdentifier,
-  NodeExecutionsById,
-} from 'models/Execution/types';
-import { startNodeId, endNodeId } from 'models/Node/constants';
-import React, { useEffect, useMemo, useState } from 'react';
-import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
-import { checkForDynamicExecutions } from 'components/common/utils';
-import { dNode } from 'models/Graph/types';
-import { useQuery } from 'react-query';
+import * as React from 'react';
 import {
   FilterOperation,
   FilterOperationName,
   FilterOperationValueList,
-} from 'models/AdminEntity/types';
+  NodeExecution,
+  NodeExecutionIdentifier,
+  NodeExecutionsById,
+  TaskExecutionPhase,
+} from 'models';
+import { dNode } from 'models/Graph/types';
 import { cloneDeep, isEqual } from 'lodash';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
+import { useEffect, useMemo, useState } from 'react';
+import { checkForDynamicExecutions } from 'components/common/utils';
+import { useQuery } from 'react-query';
+import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
+import { endNodeId, startNodeId } from 'models/Node/constants';
+import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
+import { DetailsPanel } from 'components/common/DetailsPanel';
+import { convertToPlainNodes, TimeZone } from './Timeline/helpers';
+import { tabs } from './constants';
+import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
+import { DetailsPanelContext } from './DetailsPanelContext';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { nodeExecutionPhaseConstants } from '../constants';
+import { ScaleProvider } from './Timeline/scaleContext';
 import {
   useNodeExecutionContext,
   useNodeExecutionsById,
 } from '../contextProvider/NodeExecutionDetails';
-import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
-import { tabs } from './constants';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
-import { ExecutionTimeline } from './Timeline/ExecutionTimeline';
-import { ExecutionTimelineFooter } from './Timeline/ExecutionTimelineFooter';
-import { convertToPlainNodes, TimeZone } from './Timeline/helpers';
-import { DetailsPanelContext } from './DetailsPanelContext';
-import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { nodeExecutionPhaseConstants } from '../constants';
+import { ExecutionTimelineContainer } from './Timeline/ExecutionTimelineContainer';
 
-const useStyles = makeStyles(() => ({
-  wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    flex: '1 1 100%',
-  },
-  container: {
-    display: 'flex',
-    flex: '1 1 0',
-    overflowY: 'auto',
-  },
-}));
+interface ExecutionTabProps {
+  tabType: string;
+}
 
 const executionMatchesPhaseFilter = (
   nodeExecution: NodeExecution,
@@ -96,22 +85,15 @@ const filterNodes = (
   return initialClone;
 };
 
-interface ExecutionTabContentProps {
-  tabType: string;
-  filteredNodeExecutions?: NodeExecution[];
-  setShouldUpdate: (boolean) => void;
-  shouldUpdate: boolean;
-}
-export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
-  tabType,
-  setShouldUpdate,
-  shouldUpdate,
-}) => {
-  const styles = useStyles();
+export const useExecutionTabData = () => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { appliedFilters } = useNodeExecutionFiltersState();
-  const { nodeExecutionsById, filteredNodeExecutions } =
-    useNodeExecutionsById();
+  const {
+    nodeExecutionsById,
+    filteredNodeExecutions,
+    setShouldUpdate,
+    shouldUpdate,
+  } = useNodeExecutionsById();
   const { staticExecutionIdsMap } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : { staticExecutionIdsMap: {} };
@@ -260,10 +242,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     setSelectedNodes([]);
   };
 
-  const [chartTimezone, setChartTimezone] = useState(TimeZone.Local);
-
-  const handleTimezoneChange = tz => setChartTimezone(tz);
-
   const detailsPanelContext = useMemo(
     () => ({ selectedExecution, setSelectedExecution }),
     [selectedExecution, setSelectedExecution],
@@ -290,6 +268,38 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
     setSelectedExecution(newSelectedExecution);
   };
 
+  return {
+    dagError,
+    detailsPanelContext,
+    dynamicWorkflows,
+    initialFilteredNodes,
+    initialNodes,
+    isDetailsTabClosed,
+    mergedDag,
+    onCloseDetailsPanel,
+    onNodeSelectionChanged,
+    selectedExecution,
+    selectedPhase,
+    setSelectedPhase,
+  };
+};
+/** Contains the available ways to visualize the nodes of a WorkflowExecution */
+export const ExecutionTab2: React.FC<ExecutionTabProps> = ({ tabType }) => {
+  const {
+    dagError,
+    detailsPanelContext,
+    dynamicWorkflows,
+    initialFilteredNodes,
+    initialNodes,
+    isDetailsTabClosed,
+    mergedDag,
+    onCloseDetailsPanel,
+    onNodeSelectionChanged,
+    selectedExecution,
+    selectedPhase,
+    setSelectedPhase,
+  } = useExecutionTabData();
+
   const renderContent = () => {
     switch (tabType) {
       case tabs.nodes.id:
@@ -297,7 +307,6 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
           <NodeExecutionsTable
             initialNodes={initialNodes}
             filteredNodes={initialFilteredNodes}
-            setShouldUpdate={setShouldUpdate}
           />
         );
       case tabs.graph.id:
@@ -311,43 +320,30 @@ export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
             selectedPhase={selectedPhase}
             onPhaseSelectionChanged={setSelectedPhase}
             isDetailsTabClosed={isDetailsTabClosed}
-            shouldUpdate={shouldUpdate}
-            setShouldUpdate={setShouldUpdate}
           />
         );
       case tabs.timeline.id:
-        return (
-          <div className={styles.wrapper}>
-            <div className={styles.container}>
-              <ExecutionTimeline
-                chartTimezone={chartTimezone}
-                initialNodes={initialNodes}
-                setShouldUpdate={setShouldUpdate}
-              />
-            </div>
-            <ExecutionTimelineFooter onTimezoneChange={handleTimezoneChange} />
-          </div>
-        );
+        return <ExecutionTimelineContainer initialNodes={initialNodes} />;
       default:
         return null;
     }
   };
 
   return (
-    <>
+    <ScaleProvider>
       <DetailsPanelContext.Provider value={detailsPanelContext}>
         {renderContent()}
+        <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
+          {!isDetailsTabClosed && selectedExecution && (
+            <NodeExecutionDetailsPanelContent
+              onClose={onCloseDetailsPanel}
+              taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
+              nodeExecutionId={selectedExecution}
+            />
+          )}
+        </DetailsPanel>
       </DetailsPanelContext.Provider>
       {/* Side panel, shows information for specific node */}
-      <DetailsPanel open={!isDetailsTabClosed} onClose={onCloseDetailsPanel}>
-        {!isDetailsTabClosed && selectedExecution && (
-          <NodeExecutionDetailsPanelContent
-            onClose={onCloseDetailsPanel}
-            taskPhase={selectedPhase ?? TaskExecutionPhase.UNDEFINED}
-            nodeExecutionId={selectedExecution}
-          />
-        )}
-      </DetailsPanel>
-    </>
+    </ScaleProvider>
   );
 };

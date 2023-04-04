@@ -1,6 +1,7 @@
 import { log } from 'common/log';
 import { QueryInput, QueryType } from 'components/data/types';
 import { extractTaskTemplates } from 'components/hooks/utils';
+import { ExecutionData } from 'models';
 import { getNodeExecutionData } from 'models/Execution/api';
 import { getWorkflow } from 'models/Workflow/api';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
@@ -29,9 +30,12 @@ export function makeWorkflowQuery(
   };
 }
 
+export interface NodeExecutionDynamicWorkflowQueryResult {
+  [key: string]: ExecutionData;
+}
 export function makeNodeExecutionDynamicWorkflowQuery(
   parentsToFetch,
-): QueryInput<{ [key: string]: any }> {
+): QueryInput<NodeExecutionDynamicWorkflowQueryResult> {
   return {
     queryKey: [QueryType.DynamicWorkflowFromNodeExecution, parentsToFetch],
     queryFn: async () => {
