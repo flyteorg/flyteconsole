@@ -83,13 +83,8 @@ const filterNodes = (
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
 export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { appliedFilters } = useNodeExecutionFiltersState();
-  const {
-    nodeExecutionsById,
-    filteredNodeExecutions,
-    setShouldUpdate,
-    shouldUpdate,
-  } = useNodeExecutionsById();
+  const { nodeExecutionsById, setShouldUpdate, shouldUpdate } =
+    useNodeExecutionsById();
   const { staticExecutionIdsMap } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : { staticExecutionIdsMap: {} };
@@ -101,13 +96,8 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   );
 
   const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
-  const [initialFilteredNodes, setInitialFilteredNodes] = useState<
-    dNode[] | undefined
-  >(undefined);
   const [dagError, setDagError] = useState(null);
   const [mergedDag, setMergedDag] = useState(null);
-  const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
-  const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
 
   useEffect(() => {
     if (shouldUpdate) {
@@ -169,39 +159,6 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
     dynamicParents,
     nodeExecutionsById,
   ]);
-
-  useEffect(() => {
-    if (!isEqual(filters, appliedFilters)) {
-      setFilters(appliedFilters);
-      setIsFiltersChanged(true);
-    } else {
-      setIsFiltersChanged(false);
-    }
-  }, [appliedFilters]);
-
-  useEffect(() => {
-    if (appliedFilters.length > 0) {
-      // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
-      // and need to clear out items manually
-      if (!filteredNodeExecutions) {
-        // top level
-        const filteredNodes = filterNodes(
-          initialNodes,
-          nodeExecutionsById,
-          appliedFilters,
-        );
-
-        setInitialFilteredNodes(filteredNodes);
-      } else {
-        const filteredNodes = initialNodes.filter((node: dNode) =>
-          filteredNodeExecutions.find(
-            (execution: NodeExecution) => execution.scopedId === node.scopedId,
-          ),
-        );
-        setInitialFilteredNodes(filteredNodes);
-      }
-    }
-  }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
 
   const renderContent = () => {
     switch (tabType) {
