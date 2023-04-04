@@ -104,14 +104,14 @@ interface ExecutionTabContentProps {
 }
 export const ExecutionTabContent: React.FC<ExecutionTabContentProps> = ({
   tabType,
-  filteredNodeExecutions,
   setShouldUpdate,
   shouldUpdate,
 }) => {
   const styles = useStyles();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const { appliedFilters } = useNodeExecutionFiltersState();
-  const { nodeExecutionsById } = useNodeExecutionsById();
+  const { nodeExecutionsById, filteredNodeExecutions } =
+    useNodeExecutionsById();
   const { staticExecutionIdsMap } = compiledWorkflowClosure
     ? transformerWorkflowToDag(compiledWorkflowClosure)
     : { staticExecutionIdsMap: {} };

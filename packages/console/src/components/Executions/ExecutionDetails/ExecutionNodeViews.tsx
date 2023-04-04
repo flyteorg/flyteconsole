@@ -65,17 +65,17 @@ export const ExecutionNodeViews: React.FC = () => {
 
       {filterState ? (
         <NodeExecutionDetailsContextProvider workflowId={workflowId}>
-          <NodeExecutionsByIdContextProvider
-            filterState={filterState}
-            nodeExecutionsQuery={nodeExecutionsQuery}
-            filteredNodeExecutionsQuery={filteredNodeExecutionsQuery}
-          >
-            <div className={styles.nodesContainer}>
-              {tabState.value === tabs.nodes.id && (
-                <div className={styles.filters}>
-                  <ExecutionFilters {...filterState} />
-                </div>
-              )}
+          <div className={styles.nodesContainer}>
+            {tabState.value === tabs.nodes.id && (
+              <div className={styles.filters}>
+                <ExecutionFilters {...filterState} />
+              </div>
+            )}
+            <NodeExecutionsByIdContextProvider
+              filterState={filterState}
+              nodeExecutionsQuery={nodeExecutionsQuery}
+              filteredNodeExecutionsQuery={filteredNodeExecutionsQuery}
+            >
               <WaitForQuery
                 errorComponent={DataError}
                 query={nodeExecutionsQuery}
@@ -83,8 +83,8 @@ export const ExecutionNodeViews: React.FC = () => {
               >
                 {() => <ExecutionTab tabType={tabState.value} />}
               </WaitForQuery>
-            </div>
-          </NodeExecutionsByIdContextProvider>
+            </NodeExecutionsByIdContextProvider>
+          </div>
         </NodeExecutionDetailsContextProvider>
       ) : (
         <LoadingComponent />

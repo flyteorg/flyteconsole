@@ -24,7 +24,6 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   );
 
   const { setShouldUpdate, shouldUpdate } = useNodeExecutionsById();
-  const { filteredNodeExecutions } = useNodeExecutionsById();
 
   return (
     <ScaleProvider>
@@ -32,7 +31,6 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
         {() => (
           <ExecutionTabContent
             tabType={tabType}
-            filteredNodeExecutions={filteredNodeExecutions}
             setShouldUpdate={setShouldUpdate}
             shouldUpdate={shouldUpdate}
           />

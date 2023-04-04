@@ -1,5 +1,4 @@
 import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
-import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import { NodeExecution } from 'models/Execution/types';
 
 import { QueryClient, UseQueryResult } from 'react-query';
