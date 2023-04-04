@@ -1,13 +1,6 @@
 import * as React from 'react';
-import {
-  FilterOperation,
-  FilterOperationName,
-  FilterOperationValueList,
-  NodeExecution,
-  NodeExecutionsById,
-} from 'models';
 import { dNode } from 'models/Graph/types';
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { useEffect, useState } from 'react';
 import { checkForDynamicExecutions } from 'components/common/utils';
@@ -18,8 +11,6 @@ import { convertToPlainNodes } from './Timeline/helpers';
 import { tabs } from './constants';
 import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { DetailsPanelContextProvider } from './DetailsPanelContext';
-import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
-import { nodeExecutionPhaseConstants } from '../constants';
 import { ScaleProvider } from './Timeline/scaleContext';
 import {
   useNodeExecutionContext,
@@ -30,55 +21,6 @@ import { ExecutionTimelineContainer } from './Timeline/ExecutionTimelineContaine
 interface ExecutionTabProps {
   tabType: string;
 }
-
-const executionMatchesPhaseFilter = (
-  nodeExecution: NodeExecution,
-  { key, value, operation }: FilterOperation,
-) => {
-  if (key === 'phase' && operation === FilterOperationName.VALUE_IN) {
-    // default to UNKNOWN phase if the field does not exist on a closure
-    const itemValue =
-      nodeExecutionPhaseConstants()[nodeExecution?.closure[key]]?.value ??
-      nodeExecutionPhaseConstants()[0].value;
-    // phase check filters always return values in an array
-    const valuesArray = value as FilterOperationValueList;
-    return valuesArray.includes(itemValue);
-  }
-  return false;
-};
-
-const filterNodes = (
-  initialNodes: dNode[],
-  nodeExecutionsById: NodeExecutionsById,
-  appliedFilters: FilterOperation[],
-) => {
-  if (!initialNodes?.length) {
-    return [];
-  }
-
-  let initialClone = cloneDeep(initialNodes);
-
-  initialClone.forEach(n => {
-    n.nodes = filterNodes(n.nodes, nodeExecutionsById, appliedFilters);
-  });
-
-  initialClone = initialClone.filter(node => {
-    const hasFilteredChildren = node.nodes?.length;
-    const shouldBeIncluded = executionMatchesPhaseFilter(
-      nodeExecutionsById[node.scopedId],
-      appliedFilters[0],
-    );
-    const result = hasFilteredChildren || shouldBeIncluded;
-
-    if (hasFilteredChildren && !shouldBeIncluded) {
-      node.grayedOut = true;
-    }
-
-    return result;
-  });
-
-  return initialClone;
-};
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
 export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
@@ -127,9 +69,6 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
 
     const nodes = dag.nodes ?? [];
 
-    // we remove start/end node info in the root dNode list during first assignment
-    const plainNodes = convertToPlainNodes(nodes);
-
     let newMergedDag = dag;
 
     for (const dynamicId in dynamicWorkflows) {
@@ -145,14 +84,27 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
       }
     }
     setDagError(error);
-    setMergedDag(newMergedDag);
+    setMergedDag(prev => {
+      if (isEqual(prev, newMergedDag)) {
+        return prev;
+      }
+      return newMergedDag;
+    });
+
+    // we remove start/end node info in the root dNode list during first assignment
+    const plainNodes = convertToPlainNodes(nodes);
     plainNodes.map(node => {
       const initialNode = initialNodes.find(n => n.scopedId === node.scopedId);
       if (initialNode) {
         node.expanded = initialNode.expanded;
       }
     });
-    setInitialNodes(plainNodes);
+    setInitialNodes(prev => {
+      if (isEqual(prev, plainNodes)) {
+        return prev;
+      }
+      return plainNodes;
+    });
   }, [
     compiledWorkflowClosure,
     dynamicWorkflows,

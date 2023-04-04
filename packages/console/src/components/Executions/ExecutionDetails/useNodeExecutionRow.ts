@@ -8,7 +8,7 @@ import { makeNodeExecutionQueryEnhanced } from '../nodeExecutionQueries';
 export const useNodeExecutionRow = (
   queryClient: QueryClient,
   execution: NodeExecution,
-  shouldEnableQuery: () => boolean,
+  shouldEnableQuery: (data: NodeExecution[]) => boolean,
 ): {
   nodeExecutionRowQuery: UseQueryResult<NodeExecution[], Error>;
 } => {

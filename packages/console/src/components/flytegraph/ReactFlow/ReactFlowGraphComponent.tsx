@@ -104,11 +104,13 @@ export const ReactFlowGraphComponent = ({
       setLoading(true);
       const nodeExecutionsWithResources = await Promise.all(
         baseNodeExecutions.map(async baseNodeExecution => {
-          if (
-            !baseNodeExecution ||
-            nodeExecutionsById?.[baseNodeExecution.scopedId]?.tasksFetched
-          ) {
-            return;
+          const shouldFetchTaskList =
+            baseNodeExecution &&
+            baseNodeExecution.scopedId &&
+            !nodeExecutionsById?.[baseNodeExecution.scopedId]?.tasksFetched;
+
+          if (!shouldFetchTaskList) {
+            return Promise.resolve(baseNodeExecution);
           }
           const taskExecutions = await fetchTaskExecutionList(
             queryClient,
@@ -148,11 +150,7 @@ export const ReactFlowGraphComponent = ({
           nodeExecutionsWithResources,
           'scopedId',
         );
-        const newNodeExecutionsById = merge(
-          nodeExecutionsById,
-          nodeExecutionsWithResourcesMap,
-        );
-        setCurrentNodeExecutionsById(newNodeExecutionsById);
+        setCurrentNodeExecutionsById(nodeExecutionsWithResourcesMap, true);
         setLoading(false);
       }
     }
@@ -214,7 +212,7 @@ export const ReactFlowGraphComponent = ({
   };
 
   const renderGraph = () => {
-    const ReactFlowProps: RFWrapperProps = {
+    const reactFlowProps: RFWrapperProps = {
       backgroundStyle,
       rfGraphJson,
       type: RFGraphTypes.main,
@@ -228,7 +226,7 @@ export const ReactFlowGraphComponent = ({
           <PausedTasksComponent pausedNodes={pausedNodes} />
         )}
         <Legend />
-        <ReactFlowWrapper {...ReactFlowProps} />
+        <ReactFlowWrapper {...reactFlowProps} />
       </div>
     );
   };

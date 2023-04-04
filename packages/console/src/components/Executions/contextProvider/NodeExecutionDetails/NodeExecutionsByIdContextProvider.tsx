@@ -12,7 +12,7 @@ import {
   INodeExecutionsByIdContext,
   NodeExecutionsByIdContext,
 } from 'components/Executions/contexts';
-import { clone, isEqual, keyBy, merge } from 'lodash';
+import { cloneDeep, isEqual, keyBy, merge } from 'lodash';
 import { FilterOperation } from 'models';
 import { UseQueryResult } from 'react-query';
 
@@ -52,17 +52,12 @@ export const NodeExecutionsByIdContextProvider = ({
     if (nodeExecutionsQuery.isFetching || !nodeExecutionsQuery.data) {
       return;
     }
-    const currentNodeExecutionsById = keyBy(
+    const fetchedNodeExecutionsById = keyBy(
       nodeExecutionsQuery.data,
       'scopedId',
     );
-    const prevNodeExecutionsById = clone(nodeExecutionsById);
-    const newNodeExecutionsById = merge(
-      prevNodeExecutionsById,
-      currentNodeExecutionsById,
-    );
 
-    setCurrentNodeExecutionsById(newNodeExecutionsById);
+    setCurrentNodeExecutionsById(fetchedNodeExecutionsById);
   }, [nodeExecutionsQuery]);
 
   useEffect(() => {
@@ -90,7 +85,7 @@ export const NodeExecutionsByIdContextProvider = ({
       checkForDynamicParents?: boolean,
     ): void => {
       setNodeExecutionsById(prev => {
-        const newNodes = merge({ ...prev }, currentNodeExecutionsById);
+        const newNodes = merge(cloneDeep(prev), currentNodeExecutionsById);
         if (isEqual(prev, newNodes)) {
           return prev;
         }
@@ -98,15 +93,9 @@ export const NodeExecutionsByIdContextProvider = ({
         if (checkForDynamicParents) {
           setShouldUpdate(true);
         }
+
         return newNodes;
       });
-    },
-    [],
-  );
-
-  const resetCurrentNodeExecutionsById = useCallback(
-    (currentNodeExecutionsById?: NodeExecutionsById): void => {
-      setNodeExecutionsById(currentNodeExecutionsById || DEFAULT_FALUE);
     },
     [],
   );
@@ -117,7 +106,6 @@ export const NodeExecutionsByIdContextProvider = ({
         nodeExecutionsById,
         filteredNodeExecutions,
         setCurrentNodeExecutionsById,
-        resetCurrentNodeExecutionsById,
         shouldUpdate,
         setShouldUpdate,
       }}

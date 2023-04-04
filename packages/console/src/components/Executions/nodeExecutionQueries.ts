@@ -19,14 +19,13 @@ import {
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
 } from 'models/Execution/types';
-import { endNodeId, startNodeId } from 'models/Node/constants';
+import { ignoredNodeIds } from 'models/Node/constants';
 import { QueryClient } from 'react-query';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { isParentNode } from './utils';
 
-export const ignoredNodeIds = [startNodeId, endNodeId];
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
     if (ignoredNodeIds.includes(ne.id.nodeId)) {
@@ -101,8 +100,9 @@ export function makeNodeExecutionQueryEnhanced(
         });
       }
 
-      const finalExecutions = [nodeExecution, ...childExecutions];
+      const finalExecutions = [{ ...nodeExecution }, ...childExecutions];
       cacheNodeExecutions(queryClient, finalExecutions);
+
       return finalExecutions;
     },
   };

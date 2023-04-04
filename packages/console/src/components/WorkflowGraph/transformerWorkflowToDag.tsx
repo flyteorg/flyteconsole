@@ -12,8 +12,8 @@ import {
   CompiledWorkflowClosure,
 } from 'models/Workflow/types';
 import { isParentNode } from 'components/Executions/utils';
+import { isStartOrEndNode } from 'models/Node/utils';
 import {
-  isStartOrEndNode,
   getDisplayName,
   getSubWorkflowFromId,
   getNodeTypeFromCompiledNode,

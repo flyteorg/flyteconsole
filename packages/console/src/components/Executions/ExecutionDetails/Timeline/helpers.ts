@@ -1,6 +1,6 @@
 import { endNodeId, startNodeId } from 'models/Node/constants';
-import { isExpanded } from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
+import { isExpanded } from 'models/Node/utils';
 
 export const TimeZone = {
   Local: 'local',

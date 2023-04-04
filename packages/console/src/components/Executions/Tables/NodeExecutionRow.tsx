@@ -1,30 +1,26 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual, keyBy } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
+import { ignoredNodeIds } from 'models/Node/constants';
+import { isExpanded } from 'models/Node/utils';
 import {
   grayedClassName,
   selectedClassName,
   useExecutionTableStyles,
 } from './styles';
 import { NodeExecutionColumnDefinition } from './types';
-import {
-  DetailsPanelContext,
-  useDetailsPanel,
-} from '../ExecutionDetails/DetailsPanelContext';
+import { useDetailsPanel } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
 import { isParentNode, nodeExecutionIsTerminal } from '../utils';
 import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
-import { NodeExecutionsById, NodeExecutionsByIdContext } from '../contexts';
-import { ignoredNodeIds } from '../nodeExecutionQueries';
 import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles(theme => ({
@@ -41,34 +37,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const checkEnableChildQuery =
-  (
-    childExecutions: NodeExecution[],
-    nodeExecution: NodeExecution,
-    nodeExecutionsById: NodeExecutionsById,
-    node: dNode,
-    inView: boolean,
-  ) =>
-  () => {
-    // check that we fetched all children otherwise force fetch
-    const missingChildren =
-      isParentNode(nodeExecution) && !childExecutions.length;
+const checkEnableChildQuery = (
+  childExecutions: NodeExecution[],
+  nodeExecution: NodeExecution,
+  inView: boolean,
+) => {
+  // check that we fetched all children otherwise force fetch
+  const missingChildren =
+    isParentNode(nodeExecution) && !childExecutions.length;
 
-    const childrenStillRunning = childExecutions?.some(
-      c => !nodeExecutionIsTerminal(c),
-    );
+  const childrenStillRunning = childExecutions?.some(
+    c => !nodeExecutionIsTerminal(c),
+  );
 
-    const executionRunning = !nodeExecutionIsTerminal(nodeExecution);
+  const executionRunning = !nodeExecutionIsTerminal(nodeExecution);
 
-    const forceRefetch =
-      inView && (missingChildren || childrenStillRunning || executionRunning);
+  const forceRefetch =
+    inView && (missingChildren || childrenStillRunning || executionRunning);
 
-    // force fetch:
-    // if parent's children haven't been fetched
-    // if parent is still running or
-    // if any childExecutions are still running
-    return forceRefetch;
-  };
+  // force fetch:
+  // if parent's children haven't been fetched
+  // if parent is still running or
+  // if any childExecutions are still running
+  return forceRefetch;
+};
 
 interface NodeExecutionRowProps {
   columns: NodeExecutionColumnDefinition[];
@@ -123,22 +115,22 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
 
   const expanderRef = React.useRef<HTMLButtonElement>();
   const { ref, inView } = useInView();
-  const shouldForceFetchChildren = useMemo(
-    () =>
-      checkEnableChildQuery(
-        childExecutions,
-        nodeExecution,
-        nodeExecutionsById,
-        node,
-        inView,
-      ),
-    [nodeExecution, nodeExecutionsById, node, inView],
-  );
 
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
     queryClient,
     nodeExecution,
-    shouldForceFetchChildren,
+    nodeExecutionList => {
+      if (!nodeExecutionList?.length) {
+        return true;
+      }
+
+      const shouldRun = checkEnableChildQuery(
+        nodeExecutionList?.slice(1, nodeExecutionList.length - 1),
+        nodeExecution,
+        inView,
+      );
+      return shouldRun;
+    },
   );
 
   const { selectedExecution, setSelectedExecution } = useDetailsPanel();

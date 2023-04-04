@@ -1,14 +1,12 @@
 import React from 'react';
 import { IconButton, makeStyles, Theme, Tooltip } from '@material-ui/core';
 import { RowExpander } from 'components/Executions/Tables/RowExpander';
-import {
-  getNodeTemplateName,
-  isExpanded,
-} from 'components/WorkflowGraph/utils';
+import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
 import { dNode } from 'models/Graph/types';
 import { PlayCircleOutline } from '@material-ui/icons';
 import { isParentNode } from 'components/Executions/utils';
 import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { isExpanded } from 'models/Node/utils';
 import { NodeExecutionName } from './NodeExecutionName';
 import t from '../strings';
 

@@ -8,8 +8,8 @@ import React, {
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { DetailsPanel } from 'components/common/DetailsPanel';
 import { TaskExecutionPhase } from 'models';
-import { endNodeId, startNodeId } from 'models/Node/constants';
 import { Core } from '@flyteorg/flyteidl-types';
+import { isStartOrEndNode } from 'models/Node/utils';
 import { NodeExecutionDetailsPanelContent } from './NodeExecutionDetailsPanelContent';
 import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails';
 
@@ -70,7 +70,7 @@ export const DetailsPanelContextProvider = ({
 
   const onNodeSelectionChanged = (newSelection: string[]) => {
     const validSelection = newSelection.filter(nodeId => {
-      if (nodeId === startNodeId || nodeId === endNodeId) {
+      if (isStartOrEndNode(nodeId)) {
         return false;
       }
       return true;

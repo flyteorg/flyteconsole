@@ -21,15 +21,10 @@ export type SetCurrentNodeExecutionsById = (
   checkForDynamicParents?: boolean,
 ) => void;
 
-export type ResetCurrentNodeExecutionsById = (
-  currentNodeExecutionsById?: Dictionary<WorkflowNodeExecution>,
-  checkForDynamicParents?: boolean,
-) => void;
 export interface INodeExecutionsByIdContext {
   nodeExecutionsById: NodeExecutionsById;
   filteredNodeExecutions?: FilteredNodeExecutions;
   setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById;
-  resetCurrentNodeExecutionsById: ResetCurrentNodeExecutionsById;
   shouldUpdate: boolean;
   setShouldUpdate: (val: boolean) => void;
 }
@@ -38,9 +33,6 @@ export const NodeExecutionsByIdContext =
   createContext<INodeExecutionsByIdContext>({
     nodeExecutionsById: {},
     setCurrentNodeExecutionsById: () => {
-      throw new Error('Must use NodeExecutionsByIdContextProvider');
-    },
-    resetCurrentNodeExecutionsById: () => {
       throw new Error('Must use NodeExecutionsByIdContextProvider');
     },
     shouldUpdate: false,

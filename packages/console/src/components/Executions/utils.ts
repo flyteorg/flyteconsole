@@ -1,9 +1,4 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
-import {
-  isEndNode,
-  isExpanded,
-  isStartNode,
-} from 'components/WorkflowGraph/utils';
 import { clone, isEqual, keyBy, merge } from 'lodash';
 import {
   runningExecutionStates,
@@ -25,6 +20,7 @@ import {
 } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { CompiledNode } from 'models/Node/types';
+import { isEndNode, isExpanded, isStartNode } from 'models/Node/utils';
 import { QueryClient } from 'react-query';
 import {
   nodeExecutionPhaseConstants,

@@ -39,7 +39,10 @@ const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
     const originalNode = origin.find(
       og => og.id === value.id && og.scopedId === value.scopedId,
     );
-    const newNodes = mergeOriginIntoNodes(value.nodes, origin);
+    const newNodes = mergeOriginIntoNodes(
+      value.nodes,
+      originalNode?.nodes || [],
+    );
 
     value = merge(value, originalNode);
     value.nodes = newNodes;

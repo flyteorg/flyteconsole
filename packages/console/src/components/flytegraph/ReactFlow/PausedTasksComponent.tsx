@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Badge, Button, withStyles } from '@material-ui/core';
 import { TaskNames } from 'components/Executions/ExecutionDetails/Timeline/TaskNames';
 import { dNode } from 'models/Graph/types';
-import { isExpanded } from 'components/WorkflowGraph/utils';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
@@ -12,8 +11,8 @@ import {
   useNodeExecutionContext,
   useNodeExecutionsById,
 } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { extractCompiledNodes } from 'components/hooks/utils';
+import { isExpanded } from 'models/Node/utils';
 import {
   graphButtonContainer,
   graphButtonStyle,
