@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
-import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import {
   fetchChildrenExecutions,
@@ -15,7 +17,7 @@ import { extractCompiledNodes } from 'components/hooks/utils';
 import { ExternalResource, LogsByPhase } from 'models/Execution/types';
 import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
 import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
-import { keyBy, merge } from 'lodash';
+import { keyBy } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground, isUnFetchedDynamicNode } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -33,12 +35,11 @@ export const ReactFlowGraphComponent = ({
   setShouldUpdate,
 }) => {
   const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
-  );
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+    useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
   const [currentNestedView, setcurrentNestedView] = useState({});
 
@@ -95,78 +96,6 @@ export const ReactFlowGraphComponent = ({
     onRemoveNestedView,
     currentNestedView,
   ]);
-
-  useEffect(() => {
-    // fetch map tasks data for all available node executions to display graph nodes properly
-    let isCurrent = true;
-
-    async function fetchData(baseNodeExecutions, queryClient) {
-      setLoading(true);
-      const nodeExecutionsWithResources = await Promise.all(
-        baseNodeExecutions.map(async baseNodeExecution => {
-          const shouldFetchTaskList =
-            baseNodeExecution &&
-            baseNodeExecution.scopedId &&
-            !nodeExecutionsById?.[baseNodeExecution.scopedId]?.tasksFetched;
-
-          if (!shouldFetchTaskList) {
-            return Promise.resolve(baseNodeExecution);
-          }
-          const taskExecutions = await fetchTaskExecutionList(
-            queryClient,
-            baseNodeExecution.id,
-          );
-
-          const useNewMapTaskView = taskExecutions.every(taskExecution => {
-            const {
-              closure: { taskType, metadata, eventVersion = 0 },
-            } = taskExecution;
-            return isMapTaskV1(
-              eventVersion,
-              metadata?.externalResources?.length ?? 0,
-              taskType ?? undefined,
-            );
-          });
-          const externalResources: ExternalResource[] = taskExecutions
-            .map(
-              taskExecution =>
-                taskExecution.closure.metadata?.externalResources,
-            )
-            .flat()
-            .filter((resource): resource is ExternalResource => !!resource);
-
-          const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
-
-          return {
-            ...baseNodeExecution,
-            ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
-            tasksFetched: true,
-          };
-        }),
-      );
-
-      if (isCurrent) {
-        const nodeExecutionsWithResourcesMap = keyBy(
-          nodeExecutionsWithResources,
-          'scopedId',
-        );
-        setCurrentNodeExecutionsById(nodeExecutionsWithResourcesMap, true);
-        setLoading(false);
-      }
-    }
-
-    const nodeExecutions = Object.values(nodeExecutionsById);
-    if (nodeExecutions.length > 0) {
-      fetchData(nodeExecutions, queryClient);
-    } else {
-      if (isCurrent) {
-        setLoading(false);
-      }
-    }
-    return () => {
-      isCurrent = false;
-    };
-  }, [initialNodes]);
 
   const backgroundStyle = getRFBackground().nested;
 

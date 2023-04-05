@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { dNode } from 'models/Graph/types';
-import { isEqual } from 'lodash';
+import { isEqual, merge } from 'lodash';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { useEffect, useState } from 'react';
 import { checkForDynamicExecutions } from 'components/common/utils';
 import { useQuery } from 'react-query';
-import { makeNodeExecutionDynamicWorkflowQuery } from 'components/Workflow/workflowQueries';
+import {
+  makeNodeExecutionDynamicWorkflowQuery,
+  NodeExecutionDynamicWorkflowQueryResult,
+} from 'components/Workflow/workflowQueries';
 import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
 import { convertToPlainNodes } from './Timeline/helpers';
 import { tabs } from './constants';
@@ -33,13 +36,31 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   const [dynamicParents, setDynamicParents] = useState(
     checkForDynamicExecutions(nodeExecutionsById, staticExecutionIdsMap),
   );
-  const { data: dynamicWorkflows } = useQuery(
-    makeNodeExecutionDynamicWorkflowQuery(dynamicParents),
-  );
+  const [dynamicWorkflows, setDynamicWorkflows] =
+    useState<NodeExecutionDynamicWorkflowQueryResult>();
+  const { data: tempDynamicWorkflows, isFetching: isFetchingDynamicWorkflows } =
+    useQuery(makeNodeExecutionDynamicWorkflowQuery(dynamicParents));
 
   const [initialNodes, setInitialNodes] = useState<dNode[]>([]);
   const [dagError, setDagError] = useState(null);
   const [mergedDag, setMergedDag] = useState(null);
+
+  useEffect(() => {
+    if (isFetchingDynamicWorkflows) {
+      return;
+    }
+    setDynamicWorkflows(prev => {
+      const newDynamicWorkflows = merge(
+        { ...(prev || {}) },
+        tempDynamicWorkflows,
+      );
+      if (isEqual(prev, newDynamicWorkflows)) {
+        return prev;
+      }
+
+      return newDynamicWorkflows;
+    });
+  }, [tempDynamicWorkflows]);
 
   useEffect(() => {
     if (shouldUpdate) {

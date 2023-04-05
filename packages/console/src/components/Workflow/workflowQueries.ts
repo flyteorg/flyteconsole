@@ -49,10 +49,9 @@ export function makeNodeExecutionDynamicWorkflowQuery(
               // when Branch node support would be added
               log.error(`Graph missing info for ${id}`);
             }
-            const data = getNodeExecutionData(executionId.id).then(value => {
+            return getNodeExecutionData(executionId.id).then(value => {
               return { key: id, value: value };
             });
-            return data;
           }),
       ).then(values => {
         const output: { [key: string]: any } = {};

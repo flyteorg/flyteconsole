@@ -13,6 +13,8 @@ import {
 } from 'models/Execution/api';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import {
+  ExternalResource,
+  LogsByPhase,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
@@ -20,9 +22,11 @@ import {
   WorkflowExecutionIdentifier,
 } from 'models/Execution/types';
 import { ignoredNodeIds } from 'models/Node/constants';
+import { isMapTaskV1 } from 'models/Task/utils';
 import { QueryClient } from 'react-query';
+import { WorkflowNodeExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
-import { formatRetryAttempt } from './TaskExecutionsList/utils';
+import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { isParentNode } from './utils';
 
@@ -49,23 +53,61 @@ export function makeNodeExecutionQuery(
   };
 }
 
+const getNodeExecutionWithTaskExecutions = async (
+  nodeExecution: WorkflowNodeExecution,
+  queryClient,
+) => {
+  const taskExecutions = await fetchTaskExecutionList(
+    // request listTaskExecutions
+    queryClient,
+    nodeExecution.id as any,
+  );
+
+  const useNewMapTaskView = taskExecutions.every(taskExecution => {
+    const {
+      closure: { taskType, metadata, eventVersion = 0 },
+    } = taskExecution;
+    return isMapTaskV1(
+      eventVersion,
+      metadata?.externalResources?.length ?? 0,
+      taskType ?? undefined,
+    );
+  });
+
+  const externalResources: ExternalResource[] = taskExecutions
+    .map(taskExecution => taskExecution.closure.metadata?.externalResources)
+    .flat()
+    .filter((resource): resource is ExternalResource => !!resource);
+
+  const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+  return {
+    ...nodeExecution,
+    ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+    tasksFetched: true,
+  };
+};
 /** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQueryEnhanced(
   nodeExecution: NodeExecution,
   queryClient: QueryClient,
 ): QueryInput<NodeExecution[]> {
-  const { id } = nodeExecution;
+  const { id } = nodeExecution || {};
 
   return {
     queryKey: [QueryType.NodeExecutionAndChilList, id],
     queryFn: async () => {
-      // const parentNode = await getNodeExecution(id);
-      // if (parentNode.metadata?.specNodeId) {
-      //   parentNode.scopedId = retriesToZero(parentNode.metadata.specNodeId);
-      // } else {
-      //   parentNode.scopedId = retriesToZero(parentNode.id.nodeId);
-      // }
-
+      if (!nodeExecution) {
+        return [];
+      }
+      // complexity:
+      // +1 for parent node tasks
+      // +1 for node execution list
+      // +n= executionList.length
+      const parent = await getNodeExecutionWithTaskExecutions(
+        nodeExecution,
+        queryClient,
+      );
       const parentScopeId =
         nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
 
@@ -73,10 +115,13 @@ export function makeNodeExecutionQueryEnhanced(
       const parentNodeID = nodeExecution.id.nodeId;
       const isParent = isParentNode(nodeExecution);
 
-      let childExecutions: NodeExecution[] = [];
+      let childExecutions: WorkflowNodeExecution[] = await Promise.resolve([
+        parent,
+      ]);
 
       if (isParent) {
-        const rawChildExecutions = await fetchNodeExecutionList(
+        childExecutions = await fetchNodeExecutionList(
+          // requests listNodeExecutions
           queryClient,
           id.executionId,
           {
@@ -84,23 +129,30 @@ export function makeNodeExecutionQueryEnhanced(
               [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
             },
           },
-        );
+        )
+          .then(childExecutions => {
+            return childExecutions.map(childExecution => {
+              const scopedId = childExecution.metadata?.specNodeId
+                ? retriesToZero(childExecution?.metadata?.specNodeId)
+                : retriesToZero(childExecution?.id?.nodeId);
+              childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
 
-        childExecutions = rawChildExecutions?.map(childExecution => {
-          // TODO @jason: why are there two different wayt of generating these?
-          const scopedId = childExecution.metadata?.specNodeId
-            ? retriesToZero(childExecution?.metadata?.specNodeId)
-            : retriesToZero(childExecution?.id?.nodeId);
-          childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+              // childExecution['scopedId'] = ;
+              childExecution['fromUniqueParentId'] = parentNodeID;
 
-          // childExecution['scopedId'] = ;
-          childExecution['fromUniqueParentId'] = parentNodeID;
-
-          return childExecution;
-        });
+              return childExecution;
+            });
+          })
+          .then(rawChildExecutions => {
+            return Promise.all(
+              rawChildExecutions?.map(childExecution =>
+                getNodeExecutionWithTaskExecutions(childExecution, queryClient),
+              ),
+            );
+          });
       }
 
-      const finalExecutions = [{ ...nodeExecution }, ...childExecutions];
+      const finalExecutions = [parent, ...childExecutions];
       cacheNodeExecutions(queryClient, finalExecutions);
 
       return finalExecutions;

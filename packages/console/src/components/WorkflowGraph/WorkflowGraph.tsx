@@ -50,17 +50,15 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   }
 
   return (
-    <>
-      <ReactFlowGraphComponent
-        data={mergedDag}
-        onNodeSelectionChanged={onNodeSelectionChanged}
-        onPhaseSelectionChanged={setSelectedPhase}
-        selectedPhase={selectedPhase}
-        isDetailsTabClosed={isDetailsTabClosed}
-        initialNodes={initialNodes}
-        shouldUpdate={shouldUpdate}
-        setShouldUpdate={setShouldUpdate}
-      />
-    </>
+    <ReactFlowGraphComponent
+      data={mergedDag}
+      onNodeSelectionChanged={onNodeSelectionChanged}
+      onPhaseSelectionChanged={setSelectedPhase}
+      selectedPhase={selectedPhase}
+      isDetailsTabClosed={isDetailsTabClosed}
+      initialNodes={initialNodes}
+      shouldUpdate={shouldUpdate}
+      setShouldUpdate={setShouldUpdate}
+    />
   );
 };

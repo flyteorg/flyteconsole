@@ -153,7 +153,7 @@ export function isParentNode(
   nodeExecution: NodeExecution,
 ): nodeExecution is ParentNodeExecution {
   return (
-    nodeExecution.metadata != null && !!nodeExecution.metadata.isParentNode
+    !!nodeExecution?.metadata?.isParentNode
   );
 }
 

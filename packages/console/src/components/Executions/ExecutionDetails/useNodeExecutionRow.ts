@@ -2,7 +2,7 @@ import { useConditionalQuery } from 'components/hooks/useConditionalQuery';
 import { NodeExecution } from 'models/Execution/types';
 
 import { QueryClient, UseQueryResult } from 'react-query';
-import { executionRefreshIntervalMs } from '../constants';
+import { nodeExecutionRefreshIntervalMs } from '../constants';
 import { makeNodeExecutionQueryEnhanced } from '../nodeExecutionQueries';
 
 export const useNodeExecutionRow = (
@@ -15,7 +15,8 @@ export const useNodeExecutionRow = (
   const nodeExecutionRowQuery = useConditionalQuery(
     {
       ...makeNodeExecutionQueryEnhanced(execution, queryClient),
-      refetchInterval: executionRefreshIntervalMs,
+      refetchInterval: nodeExecutionRefreshIntervalMs,
+      enabled: !!execution
     },
     shouldEnableQuery,
   );

@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import { isEqual, keyBy } from 'lodash';
+import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
-import { useInView } from 'react-intersection-observer';
-import { useQueryClient } from 'react-query';
 import { ignoredNodeIds } from 'models/Node/constants';
 import { isExpanded } from 'models/Node/utils';
 import {
@@ -19,9 +17,9 @@ import { NodeExecutionColumnDefinition } from './types';
 import { useDetailsPanel } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
-import { isParentNode, nodeExecutionIsTerminal } from '../utils';
-import { useNodeExecutionRow } from '../ExecutionDetails/useNodeExecutionRow';
+import { isParentNode } from '../utils';
 import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails';
+import { useNodeExecutionDynamicContext } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 
 const useStyles = makeStyles(theme => ({
   [`${grayedClassName}`]: {
@@ -37,34 +35,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const checkEnableChildQuery = (
-  childExecutions: NodeExecution[],
-  nodeExecution: NodeExecution,
-  inView: boolean,
-) => {
-  // check that we fetched all children otherwise force fetch
-  const missingChildren =
-    isParentNode(nodeExecution) && !childExecutions.length;
-
-  const childrenStillRunning = childExecutions?.some(
-    c => !nodeExecutionIsTerminal(c),
-  );
-
-  const executionRunning = !nodeExecutionIsTerminal(nodeExecution);
-
-  const forceRefetch =
-    inView && (missingChildren || childrenStillRunning || executionRunning);
-
-  // force fetch:
-  // if parent's children haven't been fetched
-  // if parent is still running or
-  // if any childExecutions are still running
-  return forceRefetch;
-};
-
 interface NodeExecutionRowProps {
   columns: NodeExecutionColumnDefinition[];
-  nodeExecution: NodeExecution;
   level?: number;
   style?: React.CSSProperties;
   node: dNode;
@@ -74,16 +46,16 @@ interface NodeExecutionRowProps {
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   columns,
-  nodeExecution,
   node,
   style,
   onToggle,
 }) => {
-  const queryClient = useQueryClient();
   const styles = useStyles();
   const theme = useTheme();
   const tableStyles = useExecutionTableStyles();
-
+  const { childCount, nodeExecution, componentProps } =
+    useNodeExecutionDynamicContext();
+  // const key = getCacheKey(nodeExecution.id);
   const nodeLevel = node?.level ?? 0;
 
   // For the first level, we want the borders to span the entire table,
@@ -97,58 +69,13 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     )}px`,
   };
 
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
-    useNodeExecutionsById();
-
-  const childExecutions = useMemo(() => {
-    const children = node?.nodes?.reduce((accumulator, currentValue) => {
-      const potentialChild = nodeExecutionsById?.[currentValue?.scopedId];
-      if (!ignoredNodeIds.includes(currentValue?.id) && potentialChild) {
-        accumulator.push(potentialChild);
-      }
-
-      return accumulator;
-    }, [] as NodeExecution[]);
-
-    return children;
-  }, [nodeExecutionsById, node]);
-
   const expanderRef = React.useRef<HTMLButtonElement>();
-  const { ref, inView } = useInView();
-
-  const { nodeExecutionRowQuery } = useNodeExecutionRow(
-    queryClient,
-    nodeExecution,
-    nodeExecutionList => {
-      if (!nodeExecutionList?.length) {
-        return true;
-      }
-
-      const shouldRun = checkEnableChildQuery(
-        nodeExecutionList?.slice(1, nodeExecutionList.length - 1),
-        nodeExecution,
-        inView,
-      );
-      return shouldRun;
-    },
-  );
 
   const { selectedExecution, setSelectedExecution } = useDetailsPanel();
 
   const selected = selectedExecution
     ? isEqual(selectedExecution, nodeExecution)
     : false;
-
-  useEffect(() => {
-    // don't update if still fetching
-    if (nodeExecutionRowQuery.isFetching || !nodeExecutionRowQuery.data) {
-      return;
-    }
-
-    const currentNodeExecutions = nodeExecutionRowQuery.data;
-    const currentNodeExecutionsById = keyBy(currentNodeExecutions, 'scopedId');
-    setCurrentNodeExecutionsById(currentNodeExecutionsById, true);
-  }, [nodeExecutionRowQuery]);
 
   const expanderContent = React.useMemo(() => {
     const isParent = isParentNode(nodeExecution);
@@ -161,12 +88,12 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
         onClick={() => {
           onToggle(node.id, node.scopedId, nodeLevel);
         }}
-        disabled={!childExecutions?.length}
+        disabled={!childCount}
       />
     ) : (
       <div className={styles.leaf} />
     );
-  }, [node, nodeLevel, nodeExecution, childExecutions]);
+  }, [node, nodeLevel, nodeExecution, childCount]);
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
@@ -182,7 +109,8 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
       })}
       style={style}
       onClick={onClickRow}
-      ref={ref}
+      {...componentProps}
+      key={node.scopedId}
     >
       <div className={tableStyles.borderBottom} style={rowContentStyle}>
         <div className={tableStyles.rowColumns}>

@@ -12,11 +12,9 @@ import {
   INodeExecutionsByIdContext,
   NodeExecutionsByIdContext,
 } from 'components/Executions/contexts';
-import { cloneDeep, isEqual, keyBy, merge } from 'lodash';
+import { cloneDeep, isEqual, keyBy, keys, merge, mergeWith } from 'lodash';
 import { FilterOperation } from 'models';
 import { UseQueryResult } from 'react-query';
-
-const DEFAULT_FALUE = {};
 
 const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
   if (appliedFilters.length === 1 && appliedFilters[0].key === 'phase') {
@@ -34,7 +32,6 @@ export type NodeExecutionsByIdContextProviderProps = PropsWithChildren<{
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionsByIdContextProvider = ({
-  initialNodeExecutionsById,
   filterState,
   nodeExecutionsQuery,
   filteredNodeExecutionsQuery,
@@ -43,7 +40,7 @@ export const NodeExecutionsByIdContextProvider = ({
   const [shouldUpdate, setShouldUpdate] = useState<boolean>(false);
 
   const [nodeExecutionsById, setNodeExecutionsById] =
-    useState<NodeExecutionsById>(initialNodeExecutionsById ?? DEFAULT_FALUE);
+    useState<NodeExecutionsById>();
 
   const [filteredNodeExecutions, setFilteredNodeExecutions] =
     useState<FilteredNodeExecutions>();
@@ -85,7 +82,7 @@ export const NodeExecutionsByIdContextProvider = ({
       checkForDynamicParents?: boolean,
     ): void => {
       setNodeExecutionsById(prev => {
-        const newNodes = merge(cloneDeep(prev), currentNodeExecutionsById);
+        const newNodes = merge({ ...prev }, currentNodeExecutionsById);
         if (isEqual(prev, newNodes)) {
           return prev;
         }
@@ -93,6 +90,13 @@ export const NodeExecutionsByIdContextProvider = ({
         if (checkForDynamicParents) {
           setShouldUpdate(true);
         }
+
+        console.log({
+          oldCount: Object.keys(prev || {}).length,
+          newCount: Object.keys(newNodes).length,
+          old: prev,
+          new: newNodes,
+        });
 
         return newNodes;
       });
@@ -103,7 +107,7 @@ export const NodeExecutionsByIdContextProvider = ({
   return (
     <NodeExecutionsByIdContext.Provider
       value={{
-        nodeExecutionsById,
+        nodeExecutionsById: nodeExecutionsById!,
         filteredNodeExecutions,
         setCurrentNodeExecutionsById,
         shouldUpdate,

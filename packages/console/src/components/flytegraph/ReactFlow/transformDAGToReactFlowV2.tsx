@@ -103,6 +103,7 @@ const buildReactFlowDataProps = ({
     : nodeExecutionsById?.[scopedId]?.closure.taskNodeMetadata?.cacheStatus;
 
   const dataProps = {
+    node,
     nodeExecutionStatus,
     text: displayName,
     handles: [],

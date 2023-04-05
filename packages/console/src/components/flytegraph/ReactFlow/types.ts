@@ -71,6 +71,7 @@ export interface DagToReactFlowProps extends ConvertDagProps {
 }
 
 interface RFCustomData {
+  node: dNode;
   nodeExecutionStatus: NodeExecutionPhase;
   text: string;
   handles: [];

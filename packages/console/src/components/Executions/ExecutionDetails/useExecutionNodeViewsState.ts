@@ -37,10 +37,10 @@ export function useExecutionNodeViewsState(
   };
 
   const shouldEnableQuery = (executions: NodeExecution[]) => {
-    return (
+    const shouldEnable =
       !executionIsTerminal(execution) ||
-      executions.some(ne => !nodeExecutionIsTerminal(ne))
-    );
+      executions.some(ne => !nodeExecutionIsTerminal(ne));
+    return shouldEnable;
   };
 
   const nodeExecutionsQuery = useConditionalQuery(

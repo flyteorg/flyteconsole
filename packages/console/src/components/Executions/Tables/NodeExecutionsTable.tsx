@@ -1,11 +1,7 @@
 import classnames from 'classnames';
-import { getCacheKey } from 'components/Cache/utils';
 import { useCommonStyles } from 'components/common/styles';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
 import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
-import { dNode } from 'models/Graph/types';
-import { NodeExecutionPhase } from 'models/Execution/enums';
-import { dateToTimestamp } from 'common/utils';
 import React, { useMemo, useEffect, useState } from 'react';
 import { merge, isEqual, cloneDeep } from 'lodash';
 import { extractCompiledNodes } from 'components/hooks/utils';
@@ -14,6 +10,7 @@ import {
   FilterOperationName,
   FilterOperationValueList,
 } from 'models';
+import { dNode } from 'models/Graph/types';
 import { ExecutionsTableHeader } from './ExecutionsTableHeader';
 import { generateColumns } from './nodeExecutionColumns';
 import { NoExecutionsContent } from './NoExecutionsContent';
@@ -27,6 +24,7 @@ import { NodeExecutionRow } from './NodeExecutionRow';
 import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { searchNode } from '../utils';
 import { nodeExecutionPhaseConstants } from '../constants';
+import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 
 const scrollbarPadding = scrollbarSize();
 
@@ -161,7 +159,7 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     });
 
     const updatedShownNodesMap = plainNodes.map(node => {
-      const execution = nodeExecutionsById[node.scopedId];
+      const execution = nodeExecutionsById?.[node?.scopedId];
       return {
         ...node,
         startedAt: execution?.closure.startedAt,
@@ -220,36 +218,16 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       <div className={tableStyles.scrollContainer}>
         {showNodes.length > 0 ? (
           showNodes.map(node => {
-            let nodeExecution: NodeExecution;
-            if (nodeExecutionsById[node.scopedId]) {
-              nodeExecution = nodeExecutionsById[node.scopedId];
-            } else {
-              nodeExecution = {
-                closure: {
-                  createdAt: dateToTimestamp(new Date()),
-                  outputUri: '',
-                  phase: NodeExecutionPhase.UNDEFINED,
-                },
-                id: {
-                  executionId: {
-                    domain: node.value?.taskNode?.referenceId?.domain,
-                    name: node.value?.taskNode?.referenceId?.name,
-                    project: node.value?.taskNode?.referenceId?.project,
-                  },
-                  nodeId: node.id,
-                },
-                inputUri: '',
-                scopedId: node.scopedId,
-              };
-            }
-            return (
-              <NodeExecutionRow
-                columns={columns}
-                key={getCacheKey(nodeExecution.id)}
-                nodeExecution={nodeExecution}
-                node={node}
-                onToggle={toggleNode}
-              />
+            return node?.execution ? (
+              <NodeExecutionDynamicProvider node={node} context="listview">
+                <NodeExecutionRow
+                  columns={columns}
+                  node={node}
+                  onToggle={toggleNode}
+                />
+              </NodeExecutionDynamicProvider>
+            ) : (
+              <></>
             );
           })
         ) : (

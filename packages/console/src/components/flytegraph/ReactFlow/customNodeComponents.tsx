@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
+import React, { useState, useEffect } from 'react';
+import { Handle, Position, ReactFlowProps } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
@@ -14,8 +14,8 @@ import {
   useNodeExecutionContext,
   useNodeExecutionsById,
 } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { extractCompiledNodes } from 'components/hooks/utils';
+import { useNodeExecutionDynamicContext } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
@@ -57,9 +57,13 @@ const renderBasicNode = (
   scopedId: string,
   styles: React.CSSProperties,
   onClick?: () => void,
+  componentProps?: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >,
 ) => {
   return (
-    <div onClick={onClick}>
+    <div onClick={onClick} {...(componentProps || {})}>
       {renderTaskType(taskType)}
       <div style={styles}>{text}</div>
       {renderDefaultHandles(
@@ -149,12 +153,20 @@ export const ReactFlowCustomNestedPoint = ({ data }: RFNode) => {
 export const ReactFlowCustomMaxNested = ({ data }: RFNode) => {
   const { text, taskType, scopedId, onAddNestedView } = data;
   const styles = getGraphNodeStyle(dTypes.nestedMaxDepth);
+  const { componentProps } = useNodeExecutionDynamicContext();
 
   const onClick = () => {
     onAddNestedView();
   };
 
-  return renderBasicNode(taskType, text, scopedId, styles, onClick);
+  return renderBasicNode(
+    taskType,
+    text,
+    scopedId,
+    styles,
+    onClick,
+    componentProps,
+  );
 };
 
 export const ReactFlowStaticNested = ({ data }: RFNode) => {
@@ -295,8 +307,11 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-
-export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
+export type ReactFlowCustomTaskNodeProps = ReactFlowProps & RFNode;
+export const ReactFlowCustomTaskNode = (
+  props: ReactFlowCustomTaskNodeProps,
+) => {
+  const { data } = props;
   const {
     nodeType,
     nodeExecutionStatus,
@@ -314,6 +329,7 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
   const [selectedPhase, setSelectedPhase] = useState<
     TaskExecutionPhase | undefined
   >(initialPhase);
+  const { componentProps } = useNodeExecutionDynamicContext();
 
   useEffect(() => {
     if (selectedNode === true) {
@@ -400,7 +416,7 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
   };
 
   return (
-    <div onClick={handleNodeClick}>
+    <div onClick={handleNodeClick} {...componentProps}>
       {nodeLogsByPhase ? renderTaskName() : renderTaskType(taskType)}
       <div style={styles}>
         {nodeLogsByPhase ? renderTaskPhases(nodeLogsByPhase) : text}
