@@ -13,6 +13,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
   columnLaunchPlan: {
     flexGrow: 1,
     flexBasis: workflowExecutionsTableColumnWidths.launchPlan,
+    overflow: 'hidden',
   },
   columnLastRun: {
     flexBasis: workflowExecutionsTableColumnWidths.lastRun,
