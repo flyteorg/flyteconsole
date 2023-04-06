@@ -152,9 +152,7 @@ function getExecutionTimingMS({
 export function isParentNode(
   nodeExecution: NodeExecution,
 ): nodeExecution is ParentNodeExecution {
-  return (
-    !!nodeExecution?.metadata?.isParentNode
-  );
+  return !!nodeExecution?.metadata?.isParentNode;
 }
 
 export function flattenBranchNodes(node: CompiledNode): CompiledNode[] {
@@ -246,7 +244,6 @@ export async function fetchChildrenExecutions(
   scopedId: string,
   nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
   setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById,
-  setShouldUpdate?: (val: boolean) => void,
   skipCache = false,
 ) {
   const cachedParentNode = nodeExecutionsById[scopedId];
@@ -266,19 +263,12 @@ export async function fetchChildrenExecutions(
       );
     });
     if (childGroupsExecutionsById) {
-      const prevNodeExecutionsById = clone(nodeExecutionsById);
       const currentNodeExecutionsById = merge(
         nodeExecutionsByIdAdapted,
         childGroupsExecutionsById,
       );
-      if (
-        setShouldUpdate &&
-        !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)
-      ) {
-        setShouldUpdate(true);
-      }
 
-      setCurrentNodeExecutionsById(currentNodeExecutionsById);
+      setCurrentNodeExecutionsById(currentNodeExecutionsById, true);
     }
   }
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
 import { withNodeExecutionDynamicProvider } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
-import { isEqual } from 'lodash';
 import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,

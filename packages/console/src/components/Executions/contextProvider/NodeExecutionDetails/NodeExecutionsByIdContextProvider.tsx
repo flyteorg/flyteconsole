@@ -12,9 +12,10 @@ import {
   INodeExecutionsByIdContext,
   NodeExecutionsByIdContext,
 } from 'components/Executions/contexts';
-import { cloneDeep, isEqual, keyBy, keys, merge, mergeWith } from 'lodash';
+import { isEqual, keyBy, mergeWith } from 'lodash';
 import { FilterOperation } from 'models';
 import { UseQueryResult } from 'react-query';
+import { mapStringifyReplacer, mergeNodeExecutions } from './utils';
 
 const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
   if (appliedFilters.length === 1 && appliedFilters[0].key === 'phase') {
@@ -78,12 +79,19 @@ export const NodeExecutionsByIdContextProvider = ({
 
   const setCurrentNodeExecutionsById = useCallback(
     (
-      currentNodeExecutionsById: NodeExecutionsById,
+      newNodeExecutionsById: NodeExecutionsById,
       checkForDynamicParents?: boolean,
     ): void => {
       setNodeExecutionsById(prev => {
-        const newNodes = merge({ ...prev }, currentNodeExecutionsById);
-        if (isEqual(prev, newNodes)) {
+        const newNodes = mergeWith(
+          { ...prev },
+          newNodeExecutionsById,
+          mergeNodeExecutions,
+        );
+        if (
+          JSON.stringify(prev, mapStringifyReplacer) ===
+          JSON.stringify(newNodes, mapStringifyReplacer)
+        ) {
           return prev;
         }
 

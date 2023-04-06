@@ -6,8 +6,10 @@ import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { DataError } from 'components/Errors/DataError';
+import { isEqual } from 'lodash';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
+import { useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { ExecutionContext } from '../contexts';
 import { useWorkflowExecutionQuery } from '../useWorkflowExecution';
@@ -55,6 +57,18 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
   const styles = useStyles();
   const [metadataExpanded, setMetadataExpanded] = React.useState(true);
   const toggleMetadata = () => setMetadataExpanded(!metadataExpanded);
+
+  const [localExecution, setLocalExecution] = useState<Execution>();
+
+  React.useEffect(() => {
+    setLocalExecution(prev => {
+      if (isEqual(prev, execution)) {
+        return prev;
+      }
+
+      return execution;
+    });
+  }, [execution]);
   const contextValue = {
     execution,
   };

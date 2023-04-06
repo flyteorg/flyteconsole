@@ -11,35 +11,34 @@ import {
 } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
 import { useQueryClient } from 'react-query';
-import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
-import { isMapTaskV1 } from 'models/Task/utils';
 import { extractCompiledNodes } from 'components/hooks/utils';
-import { ExternalResource, LogsByPhase } from 'models/Execution/types';
-import { getGroupedLogs } from 'components/Executions/TaskExecutionsList/utils';
-import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
-import { keyBy } from 'lodash';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground, isUnFetchedDynamicNode } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
 import { PausedTasksComponent } from './PausedTasksComponent';
 
+const containerStyle: React.CSSProperties = {
+  display: 'flex',
+  flex: `1 1 100%`,
+  flexDirection: 'column',
+  minHeight: '100px',
+  minWidth: '200px',
+  height: '100%',
+};
+
 export const ReactFlowGraphComponent = ({
   data,
   onNodeSelectionChanged,
   onPhaseSelectionChanged,
   selectedPhase,
-  isDetailsTabClosed,
   initialNodes,
-  shouldUpdate,
-  setShouldUpdate,
 }) => {
   const queryClient = useQueryClient();
   const { nodeExecutionsById, setCurrentNodeExecutionsById } =
     useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
-  const [loading, setLoading] = useState<boolean>(false);
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
   const [currentNestedView, setcurrentNestedView] = useState({});
 
@@ -50,7 +49,6 @@ export const ReactFlowGraphComponent = ({
         sourceNode.scopedId,
         nodeExecutionsById,
         setCurrentNodeExecutionsById,
-        setShouldUpdate,
       );
     }
 
@@ -73,7 +71,7 @@ export const ReactFlowGraphComponent = ({
   };
 
   const rfGraphJson = useMemo(() => {
-    return ConvertFlyteDagToReactFlows({
+    const a = ConvertFlyteDagToReactFlows({
       root: data,
       nodeExecutionsById,
       onNodeSelectionChanged,
@@ -84,18 +82,8 @@ export const ReactFlowGraphComponent = ({
       currentNestedView,
       maxRenderDepth: 1,
     } as ConvertDagProps);
-  }, [
-    data,
-    isDetailsTabClosed,
-    shouldUpdate,
-    nodeExecutionsById,
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    onAddNestedView,
-    onRemoveNestedView,
-    currentNestedView,
-  ]);
+    return a;
+  }, [data, nodeExecutionsById, selectedPhase, currentNestedView]);
 
   const backgroundStyle = getRFBackground().nested;
 
@@ -121,24 +109,7 @@ export const ReactFlowGraphComponent = ({
       };
     });
     setPausedNodes(nodesWithExecutions);
-  }, [initialNodes]);
-
-  if (loading) {
-    return (
-      <div style={{ margin: 'auto' }}>
-        <LargeLoadingSpinner />
-      </div>
-    );
-  }
-
-  const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    flex: `1 1 100%`,
-    flexDirection: 'column',
-    minHeight: '100px',
-    minWidth: '200px',
-    height: '100%',
-  };
+  }, [initialNodes, nodeExecutionsById]);
 
   const renderGraph = () => {
     const reactFlowProps: RFWrapperProps = {
@@ -147,7 +118,6 @@ export const ReactFlowGraphComponent = ({
       type: RFGraphTypes.main,
       nodeExecutionsById,
       currentNestedView: currentNestedView,
-      setShouldUpdate,
     };
     return (
       <div style={containerStyle}>

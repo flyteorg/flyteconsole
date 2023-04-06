@@ -88,7 +88,7 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [startedAt, setStartedAt] = useState<Date>(new Date());
   const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById, setShouldUpdate } =
+  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
     useNodeExecutionsById();
   const { chartInterval: chartTimeInterval } = useScaleContext();
 
@@ -173,7 +173,6 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
       scopedId,
       nodeExecutionsById,
       setCurrentNodeExecutionsById,
-      setShouldUpdate,
     );
     searchNode(originalNodes, 0, id, scopedId, level);
     setOriginalNodes([...originalNodes]);

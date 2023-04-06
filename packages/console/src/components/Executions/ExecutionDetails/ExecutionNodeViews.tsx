@@ -86,11 +86,7 @@ export const ExecutionNodeViews: React.FC = () => {
                     query={nodeExecutionsQuery}
                     loadingComponent={LoadingComponent}
                   >
-                    {() => (
-                      <>
-                        <ExecutionTab tabType={tabState.value} />
-                      </>
-                    )}
+                    {() => <ExecutionTab tabType={tabState.value} />}
                   </WaitForQuery>
                 </div>
               </NodeExecutionsByIdContextProvider>

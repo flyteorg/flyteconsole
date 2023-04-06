@@ -8,7 +8,10 @@ import React, {
   useState,
 } from 'react';
 import { dateToTimestamp } from 'common/utils';
-import { WorkflowNodeExecution } from 'components/Executions/contexts';
+import {
+  ExecutionContext,
+  WorkflowNodeExecution,
+} from 'components/Executions/contexts';
 import { useNodeExecutionRow } from 'components/Executions/ExecutionDetails/useNodeExecutionRow';
 import {
   isParentNode,
@@ -33,6 +36,7 @@ export interface INodeExecutionDynamicContext {
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >;
+  // setSkipChildList: (childList: NodeExecution[]) => void;
 }
 
 export const NodeExecutionDynamicContext =
@@ -83,6 +87,7 @@ export const NodeExecutionDynamicProvider = ({
 }: NodeExecutionDynamicProviderProps) => {
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
+  const { execution } = useContext(ExecutionContext);
 
   const [fetchedChildCount, setFetchedChildCount] = useState(0);
   // get running data
@@ -91,11 +96,23 @@ export const NodeExecutionDynamicProvider = ({
 
   // get the node execution
   const nodeExecution: WorkflowNodeExecution | undefined = useMemo(() => {
-    if (nodeExecutionsById[node.scopedId]) {
+    if (nodeExecutionsById?.[node.scopedId]) {
       return nodeExecutionsById[node.scopedId];
     }
 
-    return;
+    return {
+      closure: {
+        createdAt: dateToTimestamp(new Date()),
+        outputUri: '',
+        phase: NodeExecutionPhase.UNDEFINED,
+      },
+      id: {
+        executionId: execution.id,
+        nodeId: node.scopedId,
+      },
+      inputUri: '',
+      scopedId: node.scopedId,
+    };
   }, [nodeExecutionsById, node]);
 
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
@@ -112,13 +129,6 @@ export const NodeExecutionDynamicProvider = ({
         inView,
       );
 
-      if (shouldRun) {
-        console.log(
-          `Fetching node execution data for context ${context} for node `,
-          nodeExecution?.id?.nodeId,
-        );
-      }
-
       return shouldRun;
     },
   );
@@ -129,28 +139,32 @@ export const NodeExecutionDynamicProvider = ({
       return;
     }
 
-    const currentNodeExecutions = nodeExecutionRowQuery.data;
-    const currentNodeExecutionsById = keyBy(currentNodeExecutions, 'scopedId');
-    const newChildCount = currentNodeExecutions?.filter(
-      e => e.fromUniqueParentId === nodeExecution?.scopedId,
-    )?.length;
+    const parentAndChildren = nodeExecutionRowQuery.data;
 
-    setCurrentNodeExecutionsById(currentNodeExecutionsById, true);
+    const executionChildren = parentAndChildren?.filter(
+      e => e.fromUniqueParentId === nodeExecution?.scopedId,
+    );
+    const newChildCount = executionChildren.length;
+    // update parent context with tnew executions data
+    const parentAndChildrenById = keyBy(parentAndChildren, 'scopedId');
+    setCurrentNodeExecutionsById(parentAndChildrenById, true);
+
+    // update known children count
     setFetchedChildCount(prev => {
       if (prev === newChildCount) {
         return prev;
       }
-
       return newChildCount;
     });
   }, [nodeExecutionRowQuery]);
 
   return (
     <NodeExecutionDynamicContext.Provider
+      key={node.scopedId}
       value={{
         inView,
-        nodeExecution: nodeExecution!,
         node,
+        nodeExecution: nodeExecution!,
         childCount: fetchedChildCount,
         componentProps: {
           ref,

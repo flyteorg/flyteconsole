@@ -16,7 +16,7 @@ export const useNodeExecutionRow = (
     {
       ...makeNodeExecutionQueryEnhanced(execution, queryClient),
       refetchInterval: nodeExecutionRefreshIntervalMs,
-      enabled: !!execution
+      enabled: !!execution,
     },
     shouldEnableQuery,
   );

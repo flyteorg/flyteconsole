@@ -53,7 +53,7 @@ export function makeNodeExecutionQuery(
   };
 }
 
-const getNodeExecutionWithTaskExecutions = async (
+export const getNodeExecutionWithTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
   queryClient,
 ) => {
@@ -89,7 +89,7 @@ const getNodeExecutionWithTaskExecutions = async (
 };
 /** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQueryEnhanced(
-  nodeExecution: NodeExecution,
+  nodeExecution: WorkflowNodeExecution,
   queryClient: QueryClient,
 ): QueryInput<NodeExecution[]> {
   const { id } = nodeExecution || {};
@@ -97,65 +97,54 @@ export function makeNodeExecutionQueryEnhanced(
   return {
     queryKey: [QueryType.NodeExecutionAndChilList, id],
     queryFn: async () => {
-      if (!nodeExecution) {
-        return [];
-      }
       // complexity:
       // +1 for parent node tasks
       // +1 for node execution list
       // +n= executionList.length
-      const parent = await getNodeExecutionWithTaskExecutions(
-        nodeExecution,
-        queryClient,
-      );
+      const isParent = isParentNode(nodeExecution);
+      const parentNodeID = nodeExecution.id.nodeId;
       const parentScopeId =
         nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
-
       nodeExecution.scopedId = parentScopeId;
-      const parentNodeID = nodeExecution.id.nodeId;
-      const isParent = isParentNode(nodeExecution);
 
-      let childExecutions: WorkflowNodeExecution[] = await Promise.resolve([
-        parent,
-      ]);
-
-      if (isParent) {
-        childExecutions = await fetchNodeExecutionList(
-          // requests listNodeExecutions
-          queryClient,
-          id.executionId,
-          {
-            params: {
-              [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+      // if the node is a parent, force refetch its children
+      const parentExecutionsPromise = isParent
+        ? fetchNodeExecutionList(
+            // requests listNodeExecutions
+            queryClient,
+            id.executionId,
+            {
+              params: {
+                [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+              },
             },
-          },
-        )
-          .then(childExecutions => {
-            return childExecutions.map(childExecution => {
-              const scopedId = childExecution.metadata?.specNodeId
-                ? retriesToZero(childExecution?.metadata?.specNodeId)
-                : retriesToZero(childExecution?.id?.nodeId);
-              childExecution['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+          )
+        : Promise.resolve([]);
 
-              // childExecution['scopedId'] = ;
-              childExecution['fromUniqueParentId'] = parentNodeID;
+      const result = await parentExecutionsPromise.then(childExecutions => {
+        const children = childExecutions.map(e => {
+          const scopedId = e.metadata?.specNodeId
+            ? retriesToZero(e?.metadata?.specNodeId)
+            : retriesToZero(e?.id?.nodeId);
+          e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+          e['fromUniqueParentId'] = parentNodeID;
 
-              return childExecution;
-            });
-          })
-          .then(rawChildExecutions => {
-            return Promise.all(
-              rawChildExecutions?.map(childExecution =>
-                getNodeExecutionWithTaskExecutions(childExecution, queryClient),
-              ),
-            );
-          });
-      }
+          return e;
+        });
 
-      const finalExecutions = [parent, ...childExecutions];
-      cacheNodeExecutions(queryClient, finalExecutions);
+        // we don't need to fetch the childrens task executions, this is handled separately
+        // by each row component
+        const childPromises = children.map(c => Promise.resolve(c));
 
-      return finalExecutions;
+        const parentAndChildren = [
+          getNodeExecutionWithTaskExecutions(nodeExecution, queryClient),
+          ...childPromises,
+        ];
+        // const childrenToSkip = nodeExecution.tasksFetched ? children.map(c => c.scopedId as string) : []
+        return Promise.all(parentAndChildren);
+      });
+
+      return result;
     },
   };
 }

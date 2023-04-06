@@ -21,15 +21,15 @@ export interface UseExecutionNodeViewsState {
     limit: number;
   };
 }
+const sort = {
+  key: executionSortFields.createdAt,
+  direction: SortDirection.ASCENDING,
+};
+
 export function useExecutionNodeViewsState(
   execution: Execution,
   filter: FilterOperation[] = [],
 ): UseExecutionNodeViewsState {
-  const sort = {
-    key: executionSortFields.createdAt,
-    direction: SortDirection.ASCENDING,
-  };
-
   const nodeExecutionsRequestConfig = {
     filter,
     sort,

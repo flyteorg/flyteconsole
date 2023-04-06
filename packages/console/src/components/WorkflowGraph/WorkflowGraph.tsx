@@ -4,7 +4,6 @@ import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { CompiledNode } from 'models/Node/types';
 import { dNode } from 'models/Graph/types';
-import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import t from './strings';
 
@@ -24,14 +23,8 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   error,
   initialNodes,
 }) => {
-  const { shouldUpdate, setShouldUpdate } = useNodeExecutionsById();
-
-  const {
-    onNodeSelectionChanged,
-    selectedPhase,
-    setSelectedPhase,
-    isDetailsTabClosed,
-  } = useDetailsPanel();
+  const { onNodeSelectionChanged, selectedPhase, setSelectedPhase } =
+    useDetailsPanel();
 
   if (error) {
     return (
@@ -55,10 +48,7 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
       onNodeSelectionChanged={onNodeSelectionChanged}
       onPhaseSelectionChanged={setSelectedPhase}
       selectedPhase={selectedPhase}
-      isDetailsTabClosed={isDetailsTabClosed}
       initialNodes={initialNodes}
-      shouldUpdate={shouldUpdate}
-      setShouldUpdate={setShouldUpdate}
     />
   );
 };

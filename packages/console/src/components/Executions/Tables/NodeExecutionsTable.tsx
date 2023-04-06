@@ -214,24 +214,28 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
       <ExecutionsTableHeader
         columns={columns}
         scrollbarPadding={scrollbarPadding}
+        key="header"
       />
-      <div className={tableStyles.scrollContainer}>
+      <div className={tableStyles.scrollContainer} key="scrollContainer">
         {showNodes.length > 0 ? (
           showNodes.map(node => {
-            return node?.execution ? (
-              <NodeExecutionDynamicProvider node={node} context="listview">
+            return (
+              <NodeExecutionDynamicProvider
+                node={node}
+                context="listview"
+                key={node.scopedId}
+              >
                 <NodeExecutionRow
                   columns={columns}
                   node={node}
                   onToggle={toggleNode}
+                  key={node.scopedId}
                 />
               </NodeExecutionDynamicProvider>
-            ) : (
-              <></>
             );
           })
         ) : (
-          <NoExecutionsContent size="large" />
+          <NoExecutionsContent size="large" key="nocontent" />
         )}
       </div>
     </div>

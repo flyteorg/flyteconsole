@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
