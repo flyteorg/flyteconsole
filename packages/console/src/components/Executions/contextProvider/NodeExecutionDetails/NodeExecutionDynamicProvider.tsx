@@ -6,6 +6,7 @@ import React, {
   useMemo,
   Ref,
   useState,
+  forwardRef,
 } from 'react';
 import { dateToTimestamp } from 'common/utils';
 import {
@@ -17,7 +18,7 @@ import {
   isParentNode,
   nodeExecutionIsTerminal,
 } from 'components/Executions/utils';
-import { keyBy } from 'lodash';
+import { keyBy, values } from 'lodash';
 import { NodeExecution, NodeExecutionPhase } from 'models';
 import { dNode } from 'models/Graph/types';
 
@@ -100,6 +101,16 @@ export const NodeExecutionDynamicProvider = ({
       return nodeExecutionsById[node.scopedId];
     }
 
+    const splitScope = node.scopedId.split('-');
+    const fromUniqueParentId =
+      splitScope.length > 2
+        ? {
+            fromUniqueParentId: splitScope
+              .slice(0, splitScope.length - 2)
+              .join('-'),
+          }
+        : {};
+
     return {
       closure: {
         createdAt: dateToTimestamp(new Date()),
@@ -112,8 +123,17 @@ export const NodeExecutionDynamicProvider = ({
       },
       inputUri: '',
       scopedId: node.scopedId,
+      ...fromUniqueParentId,
     };
   }, [nodeExecutionsById, node]);
+
+  const childExecutions = useMemo(() => {
+    const children = values(nodeExecutionsById).filter(execution => {
+      return execution.fromUniqueParentId === node.scopedId;
+    });
+
+    return children;
+  }, [nodeExecutionsById]);
 
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
     queryClient,
@@ -124,7 +144,7 @@ export const NodeExecutionDynamicProvider = ({
       }
 
       const shouldRun = checkEnableChildQuery(
-        nodeExecutionList?.slice(1, nodeExecutionList.length - 1),
+        childExecutions,
         nodeExecution!,
         inView,
       );
@@ -141,10 +161,7 @@ export const NodeExecutionDynamicProvider = ({
 
     const parentAndChildren = nodeExecutionRowQuery.data;
 
-    const executionChildren = parentAndChildren?.filter(
-      e => e.fromUniqueParentId === nodeExecution?.scopedId,
-    );
-    const newChildCount = executionChildren.length;
+    const newChildCount = childExecutions?.length;
     // update parent context with tnew executions data
     const parentAndChildrenById = keyBy(parentAndChildren, 'scopedId');
     setCurrentNodeExecutionsById(parentAndChildrenById, true);
@@ -185,11 +202,11 @@ export const withNodeExecutionDynamicProvider = (
   WrappedComponent: React.FC<RFNode>,
   context: string,
 ) => {
-  return (props: RFNode, ...rest: any) => {
+  return forwardRef((props: RFNode, ...rest: any) => {
     return (
       <NodeExecutionDynamicProvider node={props.data.node} context={context}>
         <WrappedComponent {...props} {...rest} />
       </NodeExecutionDynamicProvider>
     );
-  };
+  });
 };

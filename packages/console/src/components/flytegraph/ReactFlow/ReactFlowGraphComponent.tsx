@@ -12,6 +12,7 @@ import {
 import { dNode } from 'models/Graph/types';
 import { useQueryClient } from 'react-query';
 import { extractCompiledNodes } from 'components/hooks/utils';
+import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground, isUnFetchedDynamicNode } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
@@ -34,23 +35,24 @@ export const ReactFlowGraphComponent = ({
   selectedPhase,
   initialNodes,
 }) => {
-  const queryClient = useQueryClient();
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
+  const { nodeExecutionsById, shouldUpdate } =
     useNodeExecutionsById();
+  const { isDetailsTabClosed } = useDetailsPanel();
+
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
   const [currentNestedView, setcurrentNestedView] = useState({});
 
   const onAddNestedView = async (view, sourceNode: any = null) => {
-    if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
-      await fetchChildrenExecutions(
-        queryClient,
-        sourceNode.scopedId,
-        nodeExecutionsById,
-        setCurrentNodeExecutionsById,
-      );
-    }
+    // if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
+    //   await fetchChildrenExecutions(
+    //     queryClient,
+    //     sourceNode.scopedId,
+    //     nodeExecutionsById,
+    //     setCurrentNodeExecutionsById,
+    //   );
+    // }
 
     const currentView = currentNestedView[view.parent] || [];
     const newView = {
@@ -71,7 +73,7 @@ export const ReactFlowGraphComponent = ({
   };
 
   const rfGraphJson = useMemo(() => {
-    const a = ConvertFlyteDagToReactFlows({
+    return ConvertFlyteDagToReactFlows({
       root: data,
       nodeExecutionsById,
       onNodeSelectionChanged,
@@ -82,8 +84,18 @@ export const ReactFlowGraphComponent = ({
       currentNestedView,
       maxRenderDepth: 1,
     } as ConvertDagProps);
-    return a;
-  }, [data, nodeExecutionsById, selectedPhase, currentNestedView]);
+  }, [
+    data,
+    isDetailsTabClosed,
+    shouldUpdate,
+    nodeExecutionsById,
+    onNodeSelectionChanged,
+    onPhaseSelectionChanged,
+    selectedPhase,
+    onAddNestedView,
+    onRemoveNestedView,
+    currentNestedView,
+  ]);
 
   const backgroundStyle = getRFBackground().nested;
 

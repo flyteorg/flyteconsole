@@ -444,141 +444,139 @@ export const ReactFlowCustomTaskNode = (
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowSubWorkflowContainer = React.forwardRef(
-  ({ data }: RFNode, ref) => {
-    const {
-      nodeExecutionStatus,
-      text,
-      scopedId,
-      currentNestedView,
-      onRemoveNestedView,
-    } = data;
-    const BREAD_FONT_SIZE = '9px';
-    const BREAD_COLOR_ACTIVE = COLOR_SPECTRUM.purple60.color;
-    const BREAD_COLOR_INACTIVE = COLOR_SPECTRUM.black.color;
-    const borderStyle = getNestedContainerStyle(nodeExecutionStatus);
-    const { componentProps } = useNodeExecutionDynamicContext();
+export const ReactFlowSubWorkflowContainer = ({ data }: RFNode) => {
+  const {
+    nodeExecutionStatus,
+    text,
+    scopedId,
+    currentNestedView,
+    onRemoveNestedView,
+  } = data;
+  const BREAD_FONT_SIZE = '9px';
+  const BREAD_COLOR_ACTIVE = COLOR_SPECTRUM.purple60.color;
+  const BREAD_COLOR_INACTIVE = COLOR_SPECTRUM.black.color;
+  const borderStyle = getNestedContainerStyle(nodeExecutionStatus);
+  const { componentProps } = useNodeExecutionDynamicContext();
 
-    const handleNestedViewClick = e => {
-      const index = e.target.id.substr(
-        e.target.id.indexOf('_') + 1,
-        e.target.id.length,
-      );
-      onRemoveNestedView(scopedId, index);
-    };
-
-    const handleRootClick = () => {
-      onRemoveNestedView(scopedId, -1);
-    };
-
-    const currentNestedDepth = currentNestedView?.length || 0;
-
-    const BreadElement = ({ nestedView, index }) => {
-      const liStyles: React.CSSProperties = {
-        cursor: 'pointer',
-        fontSize: BREAD_FONT_SIZE,
-        color: BREAD_COLOR_ACTIVE,
-      };
-
-      const liStyleInactive: React.CSSProperties = { ...liStyles };
-      liStyleInactive['color'] = BREAD_COLOR_INACTIVE;
-
-      const beforeStyle: React.CSSProperties = {
-        cursor: 'pointer',
-        color: BREAD_COLOR_ACTIVE,
-        padding: '0 .2rem',
-        fontSize: BREAD_FONT_SIZE,
-      };
-      const onClick =
-        currentNestedDepth > index + 1 ? handleNestedViewClick : undefined;
-      return (
-        <li
-          onClick={onClick}
-          style={index === currentNestedDepth - 1 ? liStyleInactive : liStyles}
-          id={`${scopedId}_${index}`}
-        >
-          {index === 0 ? <span style={beforeStyle}>{'>'}</span> : null}
-          {nestedView}
-          {index < currentNestedDepth - 1 ? (
-            <span style={beforeStyle}>{'>'}</span>
-          ) : null}
-        </li>
-      );
-    };
-
-    const BorderElement = props => {
-      return (
-        <div style={borderStyle} {...componentProps}>
-          {props.children}
-        </div>
-      );
-    };
-
-    const BorderContainer = props => {
-      let output = BorderElement(props);
-      for (let i = 0; i < currentNestedDepth; i++) {
-        output = <BorderElement>{output}</BorderElement>;
-      }
-      return output;
-    };
-
-    const renderBreadCrumb = () => {
-      const breadContainerStyle: React.CSSProperties = {
-        position: 'absolute',
-        display: 'flex',
-        width: '100%',
-        marginTop: '-1rem',
-      };
-      const olStyles: React.CSSProperties = {
-        margin: 0,
-        padding: 0,
-        display: 'flex',
-        listStyle: 'none',
-        listStyleImage: 'none',
-        minWidth: '1rem',
-      };
-      const headerStyle: React.CSSProperties = {
-        color: BREAD_COLOR_ACTIVE,
-        fontSize: BREAD_FONT_SIZE,
-        margin: 0,
-        padding: 0,
-      };
-
-      const rootClick = currentNestedDepth > 0 ? handleRootClick : undefined;
-      return (
-        <div style={breadContainerStyle}>
-          <header style={headerStyle} onClick={rootClick}>
-            {text}
-          </header>
-          <ol style={olStyles}>
-            {currentNestedView?.map((nestedView, i) => {
-              return (
-                <BreadElement
-                  nestedView={nestedView}
-                  index={i}
-                  key={nestedView}
-                />
-              );
-            })}
-          </ol>
-        </div>
-      );
-    };
-
-    return (
-      <>
-        {renderBreadCrumb()}
-        <BorderContainer ref={ref}>
-          {renderDefaultHandles(
-            scopedId,
-            getGraphHandleStyle('source'),
-            getGraphHandleStyle('target'),
-          )}
-        </BorderContainer>
-      </>
+  const handleNestedViewClick = e => {
+    const index = e.target.id.substr(
+      e.target.id.indexOf('_') + 1,
+      e.target.id.length,
     );
-  },
-);
+    onRemoveNestedView(scopedId, index);
+  };
+
+  const handleRootClick = () => {
+    onRemoveNestedView(scopedId, -1);
+  };
+
+  const currentNestedDepth = currentNestedView?.length || 0;
+
+  const BreadElement = ({ nestedView, index }) => {
+    const liStyles: React.CSSProperties = {
+      cursor: 'pointer',
+      fontSize: BREAD_FONT_SIZE,
+      color: BREAD_COLOR_ACTIVE,
+    };
+
+    const liStyleInactive: React.CSSProperties = { ...liStyles };
+    liStyleInactive['color'] = BREAD_COLOR_INACTIVE;
+
+    const beforeStyle: React.CSSProperties = {
+      cursor: 'pointer',
+      color: BREAD_COLOR_ACTIVE,
+      padding: '0 .2rem',
+      fontSize: BREAD_FONT_SIZE,
+    };
+    // const onClick =
+    //   currentNestedDepth > index + 1 ? handleNestedViewClick : undefined;
+    return (
+      <li
+        onClick={handleNestedViewClick}
+        style={index === currentNestedDepth - 1 ? liStyleInactive : liStyles}
+        id={`${scopedId}_${index}`}
+      >
+        {index === 0 ? <span style={beforeStyle}>{'>'}</span> : null}
+        {nestedView}
+        {index < currentNestedDepth - 1 ? (
+          <span style={beforeStyle}>{'>'}</span>
+        ) : null}
+      </li>
+    );
+  };
+
+  const BorderElement = props => {
+    return (
+      <div style={borderStyle} {...componentProps}>
+        {props.children}
+      </div>
+    );
+  };
+
+  const BorderContainer = props => {
+    let output = BorderElement(props);
+    for (let i = 0; i < currentNestedDepth; i++) {
+      output = <BorderElement>{output}</BorderElement>;
+    }
+    return output;
+  };
+
+  const renderBreadCrumb = () => {
+    const breadContainerStyle: React.CSSProperties = {
+      position: 'absolute',
+      display: 'flex',
+      width: '100%',
+      marginTop: '-1rem',
+    };
+    const olStyles: React.CSSProperties = {
+      margin: 0,
+      padding: 0,
+      display: 'flex',
+      listStyle: 'none',
+      listStyleImage: 'none',
+      minWidth: '1rem',
+    };
+    const headerStyle: React.CSSProperties = {
+      color: BREAD_COLOR_ACTIVE,
+      fontSize: BREAD_FONT_SIZE,
+      margin: 0,
+      padding: 0,
+    };
+
+    const rootClick = currentNestedDepth > 0 ? handleRootClick : undefined;
+    return (
+      <div style={breadContainerStyle}>
+        <header style={headerStyle} onClick={rootClick}>
+          {text}
+        </header>
+        <ol style={olStyles}>
+          {currentNestedView?.map((nestedView, i) => {
+            return (
+              <BreadElement
+                nestedView={nestedView}
+                index={i}
+                key={nestedView}
+              />
+            );
+          })}
+        </ol>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {renderBreadCrumb()}
+      <BorderContainer>
+        {renderDefaultHandles(
+          scopedId,
+          getGraphHandleStyle('source'),
+          getGraphHandleStyle('target'),
+        )}
+      </BorderContainer>
+    </>
+  );
+};
 
 /**
  * Custom component renders start node
