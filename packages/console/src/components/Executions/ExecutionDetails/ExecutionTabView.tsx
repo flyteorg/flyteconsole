@@ -5,7 +5,6 @@ import { useTabState } from 'components/hooks/useTabState';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { tabs } from './constants';
 import { ExecutionTab } from './ExecutionTab';
-import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles((theme: Theme) => ({
   tabs: {
@@ -21,8 +20,6 @@ export const ExecutionTabView: React.FC<{}> = () => {
   const styles = useStyles();
   const tabState = useTabState(tabs, DEFAULT_TAB);
 
-  const executionsContext = useNodeExecutionsById();
-
   return (
     <>
       <Tabs className={styles.tabs} {...tabState}>
@@ -31,10 +28,7 @@ export const ExecutionTabView: React.FC<{}> = () => {
         <Tab value={tabs.timeline.id} label={tabs.timeline.label} />
       </Tabs>
 
-      <ExecutionTab
-        tabType={tabState.value}
-        executionsContext={executionsContext}
-      />
+      <ExecutionTab tabType={tabState.value} />
     </>
   );
 };

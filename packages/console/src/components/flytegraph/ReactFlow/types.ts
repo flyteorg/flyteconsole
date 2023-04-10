@@ -54,7 +54,6 @@ export interface BuildRFNodeProps {
 
 export interface ConvertDagProps {
   root: dNode;
-  nodeExecutionsById: any;
   onNodeSelectionChanged: any;
   currentNestedView?: any;
   maxRenderDepth: number;
@@ -66,7 +65,7 @@ export interface DagToReactFlowProps extends ConvertDagProps {
   parents: any;
 }
 
-interface RFCustomData {
+export interface RFCustomData {
   node: dNode;
   nodeExecutionStatus: NodeExecutionPhase;
   text: string;

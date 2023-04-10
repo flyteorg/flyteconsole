@@ -19,38 +19,22 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface ExecutionTabProps {
-  executionsContext: IWorkflowNodeExecutionsContext;
   tabType: string;
 }
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
-export const ExecutionTab: React.FC<ExecutionTabProps> = ({
-  tabType,
-  executionsContext,
-}) => {
+export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   const styles = useStyles();
-
-  const renderContent = (executionsContext: IWorkflowNodeExecutionsContext) => {
-    switch (tabType) {
-      case tabs.nodes.id:
-        return <NodeExecutionsTable />;
-      case tabs.graph.id:
-        return <WorkflowGraph executionsContext={executionsContext} />;
-      case tabs.timeline.id:
-        return <ExecutionTimelineContainer />;
-      default:
-        return null;
-    }
-  };
 
   return (
     <ScaleProvider>
       <DetailsPanelContextProvider>
         <div className={styles.nodesContainer}>
-          {renderContent(executionsContext)}
+          {tabType === tabs.nodes.id && <NodeExecutionsTable />}
+          {tabType === tabs.graph.id && <WorkflowGraph />}
+          {tabType === tabs.timeline.id && <ExecutionTimelineContainer />}
         </div>
       </DetailsPanelContextProvider>
-      {/* Side panel, shows information for specific node */}
     </ScaleProvider>
   );
 };

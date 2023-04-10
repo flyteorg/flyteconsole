@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ConvertFlyteDagToReactFlows } from 'components/flytegraph/ReactFlow/transformDAGToReactFlowV2';
 import {
   useNodeExecutionContext,
@@ -8,7 +8,9 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
 import { extractCompiledNodes } from 'components/hooks/utils';
-import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
+import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
+import { stringifyIsEqual } from 'components/Executions/contextProvider/NodeExecutionDetails/utils';
+import { RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
@@ -24,45 +26,55 @@ const containerStyle: React.CSSProperties = {
   height: '100%',
 };
 
-export const ReactFlowGraphComponent = ({
-  data,
-  onNodeSelectionChanged,
-  onPhaseSelectionChanged,
-  selectedPhase,
-  isDetailsTabClosed,
-  initialNodes,
-}) => {
-  const { nodeExecutionsById, shouldUpdate } = useNodeExecutionsById();
+export const ReactFlowGraphComponent = () => {
+  const {
+    selectedPhase,
+    isDetailsTabClosed,
+    onNodeSelectionChanged,
+    setSelectedPhase: onPhaseSelectionChanged,
+  } = useDetailsPanel();
+  const {
+    nodeExecutionsById,
+    initialDNodes,
+    dagData: { mergedDag },
+  } = useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
   const { currentNestedView } = useReactFlowBreadCrumbContext();
 
-  const rfGraphJson = useMemo(() => {
-    return ConvertFlyteDagToReactFlows({
-      root: data,
-      nodeExecutionsById,
+  const [rfGraphJson, setrfGraphJson] = useState<any>();
+
+  useEffect(() => {
+    const newrfGraphJson = ConvertFlyteDagToReactFlows({
+      root: mergedDag,
       onNodeSelectionChanged,
       onPhaseSelectionChanged,
       selectedPhase,
       maxRenderDepth: 1,
       currentNestedView,
     } as ConvertDagProps);
+    setrfGraphJson(prev => {
+      if (stringifyIsEqual(prev, newrfGraphJson)) {
+        return prev;
+      }
+
+      return newrfGraphJson;
+    });
   }, [
-    data,
+    initialDNodes,
+    mergedDag,
     isDetailsTabClosed,
-    nodeExecutionsById,
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
     selectedPhase,
     currentNestedView,
-    shouldUpdate,
   ]);
 
   const backgroundStyle = getRFBackground().nested;
 
   useEffect(() => {
-    const updatedPausedNodes: dNode[] = initialNodes.filter(node => {
+    const updatedPausedNodes: dNode[] = initialDNodes.filter(node => {
       const nodeExecution = nodeExecutionsById[node.id];
       if (nodeExecution) {
         const phase = nodeExecution?.closure.phase;
@@ -83,15 +95,7 @@ export const ReactFlowGraphComponent = ({
       };
     });
     setPausedNodes(nodesWithExecutions);
-  }, [initialNodes]);
-
-  const ReactFlowProps: RFWrapperProps = {
-    backgroundStyle,
-    rfGraphJson,
-    type: RFGraphTypes.main,
-    nodeExecutionsById,
-    currentNestedView: currentNestedView,
-  };
+  }, [initialDNodes]);
 
   return rfGraphJson ? (
     <div style={containerStyle}>
@@ -99,7 +103,12 @@ export const ReactFlowGraphComponent = ({
         <PausedTasksComponent pausedNodes={pausedNodes} />
       )}
       <Legend />
-      <ReactFlowWrapper {...ReactFlowProps} />
+      <ReactFlowWrapper
+        backgroundStyle={backgroundStyle}
+        rfGraphJson={rfGraphJson}
+        type={RFGraphTypes.main}
+        currentNestedView={currentNestedView}
+      />
     </div>
   ) : (
     <></>

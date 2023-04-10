@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Handle, Position, ReactFlowProps } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
@@ -9,10 +9,7 @@ import { Tooltip } from '@material-ui/core';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CacheStatus } from 'components/Executions/CacheStatus';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import {
-  useNodeExecutionContext,
-  useNodeExecutionsById,
-} from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import {
   NodeExecutionDynamicProvider,
@@ -158,7 +155,7 @@ export const ReactFlowCustomNestedPoint = ({ data }: RFNode) => {
  */
 export const ReactFlowCustomMaxNested = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowCustomMaxNestedInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -189,7 +186,7 @@ const ReactFlowCustomMaxNestedInner = ({ data }: RFNode) => {
 
 export const ReactFlowStaticNested = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowStaticNestedInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -202,7 +199,7 @@ const ReactFlowStaticNestedInner = ({ data }: RFNode) => {
 
 export const ReactFlowStaticNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowStaticNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -269,22 +266,23 @@ const TaskPhaseItem = ({
  */
 export const ReactFlowGateNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowGateNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
 };
 const ReactFlowGateNodeInner = ({ data }: RFNode) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { nodeExecutionsById } = useNodeExecutionsById();
   const {
+    node,
     nodeType,
     nodeExecutionStatus,
     text,
     scopedId,
     onNodeSelectionChanged,
   } = data;
-  const { componentProps, nodeExecution } = useNodeExecutionDynamicContext();
+  const { componentProps } = useNodeExecutionDynamicContext();
+  const nodeExecution = node.execution;
   const phase = getNodeFrontendPhase(
     nodeExecution?.closure?.phase || nodeExecutionStatus,
     true,
@@ -294,8 +292,8 @@ const ReactFlowGateNodeInner = ({ data }: RFNode) => {
 
   const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
     node =>
-      node.id === nodeExecutionsById[scopedId]?.metadata?.specNodeId ||
-      node.id === nodeExecutionsById[scopedId]?.id?.nodeId,
+      node.id === nodeExecution?.metadata?.specNodeId ||
+      node.id === nodeExecution?.id?.nodeId,
   );
 
   const iconStyles: React.CSSProperties = {
@@ -336,7 +334,7 @@ const ReactFlowGateNodeInner = ({ data }: RFNode) => {
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeExecutionId={nodeExecutionsById[scopedId].id}
+          nodeExecutionId={nodeExecution?.id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />
@@ -353,7 +351,7 @@ const ReactFlowGateNodeInner = ({ data }: RFNode) => {
 export type ReactFlowNodeProps = ReactFlowProps & RFNode;
 export const ReactFlowCustomTaskNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowCustomTaskNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -361,6 +359,7 @@ export const ReactFlowCustomTaskNode = (props: ReactFlowNodeProps) => {
 const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
   const { data } = props;
   const {
+    node,
     nodeType,
     nodeExecutionStatus: initialNodeExecutionStatus,
     selectedPhase: initialPhase,
@@ -377,7 +376,8 @@ const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
   const [selectedPhase, setSelectedPhase] = useState<
     TaskExecutionPhase | undefined
   >(initialPhase);
-  const { nodeExecution, componentProps } = useNodeExecutionDynamicContext();
+  const { componentProps } = useNodeExecutionDynamicContext();
+  const nodeExecution = node.execution;
   const nodeExecutionStatus =
     nodeExecution?.closure?.phase || initialNodeExecutionStatus;
   const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
@@ -495,29 +495,24 @@ const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
  */
 export const ReactFlowSubWorkflowContainer = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider node={props.data.node} context="graph">
+    <NodeExecutionDynamicProvider
+      node={props.data.node}
+      overrideInViewValue={true}
+    >
       <ReactFlowSubWorkflowContainerInner {...props} />
     </NodeExecutionDynamicProvider>
   );
 };
 export const ReactFlowSubWorkflowContainerInner = ({ data }: RFNode) => {
-  const {
-    nodeExecutionStatus: initialNodeExecutionStatus,
-    text,
-    scopedId,
-    currentNestedView,
-  } = data;
+  const { text, scopedId, currentNestedView } = data;
 
   const { onRemoveNestedView } = useReactFlowBreadCrumbContext();
-  const { nodeExecution } = useNodeExecutionDynamicContext();
 
   const handleRootClick = () => {
     onRemoveNestedView(scopedId, -1);
   };
 
   const currentNestedDepth = currentNestedView?.length || 0;
-  const nodeExecutionStatus =
-    nodeExecution?.closure?.phase || initialNodeExecutionStatus;
   return (
     <>
       <BreadCrumbContainer
@@ -541,10 +536,7 @@ export const ReactFlowSubWorkflowContainerInner = ({ data }: RFNode) => {
           );
         })}
       </BreadCrumbContainer>
-      <BorderContainer
-        currentNestedDepth={currentNestedDepth}
-        nodeExecutionStatus={nodeExecutionStatus}
-      >
+      <BorderContainer data={data}>
         {renderDefaultHandles(
           scopedId,
           getGraphHandleStyle('source'),

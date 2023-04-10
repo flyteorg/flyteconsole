@@ -57,8 +57,8 @@ export const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
   queryClient,
 ) => {
-  if (executionIsTerminal(nodeExecution as any) && nodeExecution.tasksFetched) {
-    return Promise.resolve(nodeExecution);
+  if (executionIsTerminal(nodeExecution as any)) {
+    return nodeExecution;
   }
   return await fetchTaskExecutionList(
     // request listTaskExecutions
@@ -90,6 +90,7 @@ export const getTaskExecutions = async (
     };
   });
 };
+
 /** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQueryEnhanced(
   nodeExecution: WorkflowNodeExecution,
@@ -111,40 +112,40 @@ export function makeNodeExecutionQueryEnhanced(
       nodeExecution.scopedId = parentScopeId;
 
       // if the node is a parent, force refetch its children
+      // called by NodeExecutionDynamicProvider
       const parentExecutionsPromise = isParent
-        ? fetchNodeExecutionList(
-            // requests listNodeExecutions
-            queryClient,
-            id.executionId,
-            {
-              params: {
-                [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+        ? () =>
+            fetchNodeExecutionList(
+              // requests listNodeExecutions
+              queryClient,
+              id.executionId,
+              {
+                params: {
+                  [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+                },
               },
-            },
-          )
-        : Promise.resolve([]);
+            ).then(childExecutions => {
+              const children = childExecutions.map(e => {
+                const scopedId = e.metadata?.specNodeId
+                  ? retriesToZero(e?.metadata?.specNodeId)
+                  : retriesToZero(e?.id?.nodeId);
+                e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+                e['fromUniqueParentId'] = parentNodeID;
 
-      const result = await parentExecutionsPromise.then(childExecutions => {
-        const children = childExecutions.map(e => {
-          const scopedId = e.metadata?.specNodeId
-            ? retriesToZero(e?.metadata?.specNodeId)
-            : retriesToZero(e?.id?.nodeId);
-          e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
-          e['fromUniqueParentId'] = parentNodeID;
+                return e;
+              });
+              return [nodeExecution, ...children];
+            })
+        : () => Promise.resolve([nodeExecution]);
 
-          return e;
-        });
-
+      const result = await parentExecutionsPromise().then(parentAndChildren => {
         // we don't need to fetch the childrens task executions, this is handled separately
         // by each row component
-        const childPromises = children.map(c => Promise.resolve(c));
+        const childPromises = parentAndChildren.map(c =>
+          getTaskExecutions(c, queryClient),
+        );
 
-        const parentAndChildren = [
-          getTaskExecutions(nodeExecution, queryClient),
-          ...childPromises,
-        ];
-        // const childrenToSkip = nodeExecution.tasksFetched ? children.map(c => c.scopedId as string) : []
-        return Promise.all(parentAndChildren);
+        return Promise.all(childPromises);
       });
 
       return result;
@@ -199,9 +200,9 @@ export function makeNodeExecutionListQuery(
   return {
     queryKey: [QueryType.NodeExecutionList, id, config],
     queryFn: async () => {
-      const nodeExecutions = removeSystemNodes(
-        (await listNodeExecutions(id, config)).entities,
-      );
+      // called by useExecutionNodeViewsStatePoll
+      const promise = (await listNodeExecutions(id, config)).entities;
+      const nodeExecutions = removeSystemNodes(promise);
       nodeExecutions.map(exe => {
         if (exe.metadata?.specNodeId) {
           return (exe.scopedId = retriesToZero(exe.metadata.specNodeId));
@@ -210,6 +211,7 @@ export function makeNodeExecutionListQuery(
         }
       });
       cacheNodeExecutions(queryClient, nodeExecutions);
+
       return nodeExecutions;
     },
   };

@@ -1,5 +1,3 @@
-import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { fetchChildrenExecutions } from 'components/Executions/utils';
 import React, {
   createContext,
   PropsWithChildren,
@@ -7,8 +5,6 @@ import React, {
   Ref,
   useState,
 } from 'react';
-import { useQueryClient } from 'react-query';
-import { isUnFetchedDynamicNode } from './utils';
 
 export type RefType = Ref<Element | null>;
 export interface IReactFlowBreadCrumbContext {
@@ -39,25 +35,12 @@ export interface BreadCrumbViews {
 export const ReactFlowBreadCrumbProvider = ({
   children,
 }: PropsWithChildren<{}>) => {
-  const queryClient = useQueryClient();
   const [currentNestedView, setCurrentNestedView] = useState<BreadCrumbViews>(
     {},
   );
   const currentNestedDepth = (currentNestedView?.length || 0) as any as number;
 
-  const { nodeExecutionsById, setCurrentNodeExecutionsById } =
-    useNodeExecutionsById();
-
-  const onAddNestedView = async (view, sourceNode: any = null) => {
-    if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
-      await fetchChildrenExecutions(
-        queryClient,
-        sourceNode.scopedId,
-        nodeExecutionsById,
-        setCurrentNodeExecutionsById,
-      );
-    }
-
+  const onAddNestedView = async view => {
     const currentView = currentNestedView[view.parent] || [];
     const newView = {
       [view.parent]: [...currentView, view.view],

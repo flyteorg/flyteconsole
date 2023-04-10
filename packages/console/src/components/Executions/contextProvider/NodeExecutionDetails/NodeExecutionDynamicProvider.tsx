@@ -7,18 +7,14 @@ import React, {
   Ref,
   useState,
 } from 'react';
-import { dateToTimestamp } from 'common/utils';
-import {
-  ExecutionContext,
-  WorkflowNodeExecution,
-} from 'components/Executions/contexts';
+import { WorkflowNodeExecution } from 'components/Executions/contexts';
 import { useNodeExecutionRow } from 'components/Executions/ExecutionDetails/useNodeExecutionRow';
 import {
   isParentNode,
   nodeExecutionIsTerminal,
 } from 'components/Executions/utils';
 import { keyBy, values } from 'lodash';
-import { NodeExecution, NodeExecutionPhase } from 'models';
+import { NodeExecution } from 'models';
 import { dNode } from 'models/Graph/types';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
@@ -28,7 +24,6 @@ export type RefType = Ref<Element | null>;
 export interface INodeExecutionDynamicContext {
   context: string;
   node: dNode;
-  nodeExecution: WorkflowNodeExecution;
   childExecutions: WorkflowNodeExecution[];
   childCount: number;
   inView: boolean;
@@ -43,7 +38,6 @@ export const NodeExecutionDynamicContext =
   createContext<INodeExecutionDynamicContext>({
     context: 'none',
     node: {} as dNode,
-    nodeExecution: undefined as any,
     childExecutions: [],
     childCount: 0,
     inView: false,
@@ -79,54 +73,38 @@ const checkEnableChildQuery = (
 
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
   node: dNode;
+  overrideInViewValue?: boolean;
   context?: string;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
   node,
   context,
+  overrideInViewValue,
   children,
 }: NodeExecutionDynamicProviderProps) => {
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
-  const { execution } = useContext(ExecutionContext);
+  const [overloadedInView, setOverloadedInView] = useState<boolean>(false);
   const [fetchedChildCount, setFetchedChildCount] = useState(0);
 
+  useEffect(() => {
+    setOverloadedInView(prev => {
+      const newVal =
+        overrideInViewValue === undefined ? inView : overrideInViewValue;
+      if (newVal === prev) {
+        return prev;
+      }
+
+      return newVal;
+    });
+  }, [inView, overrideInViewValue]);
   // get running data
   const { setCurrentNodeExecutionsById, nodeExecutionsById } =
     useNodeExecutionsById();
 
   // get the node execution
-  const nodeExecution: WorkflowNodeExecution | undefined = useMemo(() => {
-    if (nodeExecutionsById?.[node.scopedId]) {
-      return nodeExecutionsById[node.scopedId];
-    }
-
-    const splitScope = node.scopedId.split('-');
-    const fromUniqueParentId =
-      splitScope.length > 2
-        ? {
-            fromUniqueParentId: splitScope
-              .slice(0, splitScope.length - 2)
-              .join('-'),
-          }
-        : {};
-
-    return {
-      closure: {
-        createdAt: dateToTimestamp(new Date()),
-        outputUri: '',
-        phase: NodeExecutionPhase.UNDEFINED,
-      },
-      id: {
-        executionId: execution.id,
-        nodeId: node.scopedId,
-      },
-      inputUri: '',
-      scopedId: node.scopedId,
-      ...fromUniqueParentId,
-    };
-  }, [nodeExecutionsById, node]);
+  const nodeExecution = node.execution; // useMemo(() => node.execution, [node.execution]);
 
   const childExecutions = useMemo(() => {
     const children = values(nodeExecutionsById).filter(execution => {
@@ -139,15 +117,11 @@ export const NodeExecutionDynamicProvider = ({
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
     queryClient,
     nodeExecution!,
-    nodeExecutionList => {
-      if (!nodeExecutionList?.length) {
-        return true;
-      }
-
+    () => {
       const shouldRun = checkEnableChildQuery(
         childExecutions,
         nodeExecution!,
-        inView,
+        !!overloadedInView,
       );
 
       return shouldRun;
@@ -182,9 +156,8 @@ export const NodeExecutionDynamicProvider = ({
       key={node.scopedId}
       value={{
         context: context!,
-        inView,
+        inView: overloadedInView,
         node,
-        nodeExecution: nodeExecution!,
         childExecutions,
         childCount: fetchedChildCount,
         componentProps: {

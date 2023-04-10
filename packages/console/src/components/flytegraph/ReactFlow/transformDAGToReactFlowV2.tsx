@@ -49,7 +49,6 @@ export const isStartOrEndEdge = edge => {
 
 interface BuildDataProps {
   node: dNode;
-  nodeExecutionsById: any;
   onNodeSelectionChanged: any;
   onPhaseSelectionChanged: (phase: TaskExecutionPhase) => void;
   selectedPhase: TaskExecutionPhase;
@@ -58,7 +57,6 @@ interface BuildDataProps {
 }
 const buildReactFlowDataProps = ({
   node,
-  nodeExecutionsById,
   onNodeSelectionChanged,
   onPhaseSelectionChanged,
   selectedPhase,
@@ -71,24 +69,23 @@ const buildReactFlowDataProps = ({
     scopedId,
     type: nodeType,
     isParentNode,
+    execution,
   } = node;
   const taskType = nodeValue?.template?.type ?? null;
 
   const mapNodeExecutionStatus = () => {
-    if (nodeExecutionsById) {
-      if (nodeExecutionsById[scopedId]) {
-        return nodeExecutionsById[scopedId].closure.phase as NodeExecutionPhase;
-      } else {
-        return NodeExecutionPhase.SKIPPED;
-      }
+    if (execution) {
+      return (
+        (execution.closure.phase as NodeExecutionPhase) ||
+        NodeExecutionPhase.SKIPPED
+      );
     } else {
       return NodeExecutionPhase.UNDEFINED;
     }
   };
   const nodeExecutionStatus = mapNodeExecutionStatus();
 
-  const nodeLogsByPhase: LogsByPhase =
-    nodeExecutionsById?.[node.scopedId]?.logsByPhase;
+  const nodeLogsByPhase: LogsByPhase = (execution as any)?.logsByPhase;
 
   // get the cache status for mapped task
   const isMapCache =
@@ -96,7 +93,7 @@ const buildReactFlowDataProps = ({
 
   const cacheStatus: CatalogCacheStatus = isMapCache
     ? CatalogCacheStatus.MAP_CACHE
-    : nodeExecutionsById?.[scopedId]?.closure.taskNodeMetadata?.cacheStatus;
+    : (execution?.closure.taskNodeMetadata?.cacheStatus as CatalogCacheStatus);
 
   const dataProps = {
     node,
@@ -208,7 +205,6 @@ export const nodesToArray = nodes => {
 export const buildGraphMapping = (props): ReactFlowGraphMapping => {
   const dag: dNode = props.root;
   const {
-    nodeExecutionsById,
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
     selectedPhase,
@@ -216,7 +212,6 @@ export const buildGraphMapping = (props): ReactFlowGraphMapping => {
     isStaticGraph,
   } = props;
   const nodeDataProps = {
-    nodeExecutionsById,
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
     selectedPhase,

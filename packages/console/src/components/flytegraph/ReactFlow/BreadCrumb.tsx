@@ -1,8 +1,12 @@
 import React, { PropsWithChildren } from 'react';
-import { useNodeExecutionDynamicContext } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
+import {
+  NodeExecutionDynamicProvider,
+  useNodeExecutionDynamicContext,
+} from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
-import { NodeExecutionPhase } from 'models';
+import { dNode } from 'models/Graph/types';
 import { getNestedContainerStyle } from './utils';
+import { RFCustomData } from './types';
 
 const BREAD_FONT_SIZE = '9px';
 const BREAD_COLOR_ACTIVE = COLOR_SPECTRUM.purple60.color;
@@ -49,13 +53,13 @@ export const BreadElement = ({
 };
 
 const BorderElement = ({
-  nodeExecutionStatus,
+  node,
   children,
 }: PropsWithChildren<{
-  nodeExecutionStatus: NodeExecutionPhase;
+  node: dNode;
 }>) => {
   const { componentProps } = useNodeExecutionDynamicContext();
-
+  const nodeExecutionStatus = node.execution?.closure.phase;
   const borderStyle = getNestedContainerStyle(nodeExecutionStatus);
 
   return (
@@ -66,26 +70,26 @@ const BorderElement = ({
 };
 
 export const BorderContainer = ({
-  nodeExecutionStatus,
-  currentNestedDepth,
+  data,
   children,
 }: PropsWithChildren<{
-  currentNestedDepth: number;
-  nodeExecutionStatus: NodeExecutionPhase;
+  data: RFCustomData;
 }>) => {
-  let borders = (
-    <BorderElement nodeExecutionStatus={nodeExecutionStatus}>
-      {children}
-    </BorderElement>
-  );
-  for (let i = 0; i < currentNestedDepth; i++) {
+  const { node, currentNestedView } = data;
+
+  let contextNode = node;
+  let borders = <BorderElement node={node}>{children}</BorderElement>;
+  for (const view of currentNestedView || []) {
+    contextNode = contextNode?.nodes.find(n => n.scopedId === view)!;
     borders = (
-      <BorderElement nodeExecutionStatus={nodeExecutionStatus}>
-        {borders}
-      </BorderElement>
+      <NodeExecutionDynamicProvider
+        node={contextNode!}
+        overrideInViewValue={true}
+      >
+        <BorderElement node={contextNode!}>{borders}</BorderElement>
+      </NodeExecutionDynamicProvider>
     );
   }
-
   return borders;
 };
 

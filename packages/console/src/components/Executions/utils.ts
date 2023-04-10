@@ -1,5 +1,5 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
-import { clone, isEqual, keyBy, merge } from 'lodash';
+import { cloneDeep, keyBy, merge } from 'lodash';
 import {
   runningExecutionStates,
   terminalExecutionStates,
@@ -264,8 +264,8 @@ export async function fetchChildrenExecutions(
     });
     if (childGroupsExecutionsById) {
       const currentNodeExecutionsById = merge(
-        nodeExecutionsByIdAdapted,
-        childGroupsExecutionsById,
+        cloneDeep(nodeExecutionsByIdAdapted),
+        cloneDeep(childGroupsExecutionsById),
       );
 
       setCurrentNodeExecutionsById(currentNodeExecutionsById, true);

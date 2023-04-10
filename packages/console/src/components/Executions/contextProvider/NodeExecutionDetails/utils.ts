@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge, mergeWith } from 'lodash';
 
 export const mapStringifyReplacer = (key: string, value: any) => {
   if (value instanceof Map) {
@@ -11,7 +11,21 @@ export const mapStringifyReplacer = (key: string, value: any) => {
   }
 };
 
+export const stringifyIsEqual = (a: any, b: any) => {
+  return (
+    JSON.stringify(a, mapStringifyReplacer) ===
+    JSON.stringify(b, mapStringifyReplacer)
+  );
+};
+
 export const mergeNodeExecutions = (val, srcVal, _key) => {
-  const retVal = merge(val, srcVal);
+  const retVal = mergeWith(val, srcVal, (val, srcVal, _key, ...rest) => {
+    if (srcVal instanceof Map) {
+      return new Map([...(val || []), ...srcVal]);
+    }
+    const finaVal =
+      typeof srcVal === 'object' ? merge({ ...val }, { ...srcVal }) : srcVal;
+    return finaVal;
+  });
   return retVal;
 };

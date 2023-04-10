@@ -21,7 +21,11 @@ import { checkForDynamicExecutions } from 'components/common/utils';
 import { useQuery } from 'react-query';
 import { convertToPlainNodes } from 'components/Executions/ExecutionDetails/Timeline/helpers';
 import { useNodeExecutionContext } from './NodeExecutionDetailsContextProvider';
-import { mapStringifyReplacer, mergeNodeExecutions } from './utils';
+import {
+  mapStringifyReplacer,
+  mergeNodeExecutions,
+  stringifyIsEqual,
+} from './utils';
 
 export type WorkflowNodeExecutionsProviderProps = PropsWithChildren<{
   initialNodeExecutions?: NodeExecution[];
@@ -114,7 +118,7 @@ export const WorkflowNodeExecutionsProvider = ({
     }
     setDagError(error);
     setMergedDag(prev => {
-      if (isEqual(prev, newMergedDag)) {
+      if (stringifyIsEqual(prev, newMergedDag)) {
         return prev;
       }
       return newMergedDag;
@@ -129,7 +133,7 @@ export const WorkflowNodeExecutionsProvider = ({
       }
     });
     setInitialDNodes(prev => {
-      if (isEqual(prev, plainNodes)) {
+      if (stringifyIsEqual(prev, plainNodes)) {
         return prev;
       }
       return plainNodes;
