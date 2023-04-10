@@ -28,7 +28,7 @@ import { WorkflowNodeExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
-import { isParentNode } from './utils';
+import { executionIsTerminal, isParentNode } from './utils';
 
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
@@ -53,39 +53,42 @@ export function makeNodeExecutionQuery(
   };
 }
 
-export const getNodeExecutionWithTaskExecutions = async (
+export const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
   queryClient,
 ) => {
-  const taskExecutions = await fetchTaskExecutionList(
+  if (executionIsTerminal(nodeExecution as any) && nodeExecution.tasksFetched) {
+    return Promise.resolve(nodeExecution);
+  }
+  return await fetchTaskExecutionList(
     // request listTaskExecutions
     queryClient,
     nodeExecution.id as any,
-  );
+  ).then(taskExecutions => {
+    const useNewMapTaskView = taskExecutions.every(taskExecution => {
+      const {
+        closure: { taskType, metadata, eventVersion = 0 },
+      } = taskExecution;
+      return isMapTaskV1(
+        eventVersion,
+        metadata?.externalResources?.length ?? 0,
+        taskType ?? undefined,
+      );
+    });
 
-  const useNewMapTaskView = taskExecutions.every(taskExecution => {
-    const {
-      closure: { taskType, metadata, eventVersion = 0 },
-    } = taskExecution;
-    return isMapTaskV1(
-      eventVersion,
-      metadata?.externalResources?.length ?? 0,
-      taskType ?? undefined,
-    );
+    const externalResources: ExternalResource[] = taskExecutions
+      .map(taskExecution => taskExecution.closure.metadata?.externalResources)
+      .flat()
+      .filter((resource): resource is ExternalResource => !!resource);
+
+    const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+    return {
+      ...nodeExecution,
+      ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+      tasksFetched: true,
+    };
   });
-
-  const externalResources: ExternalResource[] = taskExecutions
-    .map(taskExecution => taskExecution.closure.metadata?.externalResources)
-    .flat()
-    .filter((resource): resource is ExternalResource => !!resource);
-
-  const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
-
-  return {
-    ...nodeExecution,
-    ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
-    tasksFetched: true,
-  };
 };
 /** A query for fetching a single `NodeExecution` by id. */
 export function makeNodeExecutionQueryEnhanced(
@@ -137,7 +140,7 @@ export function makeNodeExecutionQueryEnhanced(
         const childPromises = children.map(c => Promise.resolve(c));
 
         const parentAndChildren = [
-          getNodeExecutionWithTaskExecutions(nodeExecution, queryClient),
+          getTaskExecutions(nodeExecution, queryClient),
           ...childPromises,
         ];
         // const childrenToSkip = nodeExecution.tasksFetched ? children.map(c => c.scopedId as string) : []

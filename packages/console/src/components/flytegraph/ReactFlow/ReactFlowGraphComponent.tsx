@@ -5,19 +5,15 @@ import {
   useNodeExecutionsById,
 } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import {
-  fetchChildrenExecutions,
-  isNodeGateNode,
-} from 'components/Executions/utils';
+import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
-import { useQueryClient } from 'react-query';
 import { extractCompiledNodes } from 'components/hooks/utils';
-import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import { RFWrapperProps, RFGraphTypes, ConvertDagProps } from './types';
-import { getRFBackground, isUnFetchedDynamicNode } from './utils';
+import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Legend } from './NodeStatusLegend';
 import { PausedTasksComponent } from './PausedTasksComponent';
+import { useReactFlowBreadCrumbContext } from './ReactFlowBreadCrumbProvider';
 
 const containerStyle: React.CSSProperties = {
   display: 'flex',
@@ -33,44 +29,14 @@ export const ReactFlowGraphComponent = ({
   onNodeSelectionChanged,
   onPhaseSelectionChanged,
   selectedPhase,
+  isDetailsTabClosed,
   initialNodes,
 }) => {
-  const { nodeExecutionsById, shouldUpdate } =
-    useNodeExecutionsById();
-  const { isDetailsTabClosed } = useDetailsPanel();
-
+  const { nodeExecutionsById, shouldUpdate } = useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
 
   const [pausedNodes, setPausedNodes] = useState<dNode[]>([]);
-  const [currentNestedView, setcurrentNestedView] = useState({});
-
-  const onAddNestedView = async (view, sourceNode: any = null) => {
-    // if (sourceNode && isUnFetchedDynamicNode(sourceNode)) {
-    //   await fetchChildrenExecutions(
-    //     queryClient,
-    //     sourceNode.scopedId,
-    //     nodeExecutionsById,
-    //     setCurrentNodeExecutionsById,
-    //   );
-    // }
-
-    const currentView = currentNestedView[view.parent] || [];
-    const newView = {
-      [view.parent]: [...currentView, view.view],
-    };
-    setcurrentNestedView(newView);
-  };
-
-  const onRemoveNestedView = (viewParent, viewIndex) => {
-    const newcurrentNestedView: any = { ...currentNestedView };
-    newcurrentNestedView[viewParent] = newcurrentNestedView[viewParent]?.filter(
-      (_item, i) => i <= viewIndex,
-    );
-    if (newcurrentNestedView[viewParent]?.length < 1) {
-      delete newcurrentNestedView[viewParent];
-    }
-    setcurrentNestedView(newcurrentNestedView);
-  };
+  const { currentNestedView } = useReactFlowBreadCrumbContext();
 
   const rfGraphJson = useMemo(() => {
     return ConvertFlyteDagToReactFlows({
@@ -79,22 +45,18 @@ export const ReactFlowGraphComponent = ({
       onNodeSelectionChanged,
       onPhaseSelectionChanged,
       selectedPhase,
-      onAddNestedView,
-      onRemoveNestedView,
-      currentNestedView,
       maxRenderDepth: 1,
+      currentNestedView,
     } as ConvertDagProps);
   }, [
     data,
     isDetailsTabClosed,
-    shouldUpdate,
     nodeExecutionsById,
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
     selectedPhase,
-    onAddNestedView,
-    onRemoveNestedView,
     currentNestedView,
+    shouldUpdate,
   ]);
 
   const backgroundStyle = getRFBackground().nested;
@@ -121,26 +83,25 @@ export const ReactFlowGraphComponent = ({
       };
     });
     setPausedNodes(nodesWithExecutions);
-  }, [initialNodes, nodeExecutionsById]);
+  }, [initialNodes]);
 
-  const renderGraph = () => {
-    const reactFlowProps: RFWrapperProps = {
-      backgroundStyle,
-      rfGraphJson,
-      type: RFGraphTypes.main,
-      nodeExecutionsById,
-      currentNestedView: currentNestedView,
-    };
-    return (
-      <div style={containerStyle}>
-        {pausedNodes && pausedNodes.length > 0 && (
-          <PausedTasksComponent pausedNodes={pausedNodes} />
-        )}
-        <Legend />
-        <ReactFlowWrapper {...reactFlowProps} />
-      </div>
-    );
+  const ReactFlowProps: RFWrapperProps = {
+    backgroundStyle,
+    rfGraphJson,
+    type: RFGraphTypes.main,
+    nodeExecutionsById,
+    currentNestedView: currentNestedView,
   };
 
-  return rfGraphJson ? renderGraph() : <></>;
+  return rfGraphJson ? (
+    <div style={containerStyle}>
+      {pausedNodes && pausedNodes.length > 0 && (
+        <PausedTasksComponent pausedNodes={pausedNodes} />
+      )}
+      <Legend />
+      <ReactFlowWrapper {...ReactFlowProps} />
+    </div>
+  ) : (
+    <></>
+  );
 };

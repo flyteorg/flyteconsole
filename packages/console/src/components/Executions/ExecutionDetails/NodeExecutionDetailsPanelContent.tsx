@@ -54,7 +54,7 @@ import { ExecutionDetailsActions } from './ExecutionDetailsActions';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
 import { fetchTaskExecutionList } from '../taskExecutionQueries';
 import { getGroupedLogs } from '../TaskExecutionsList/utils';
-import { NodeExecutionsByIdContext } from '../contexts';
+import { WorkflowNodeExecutionsContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   const paddingVertical = `${theme.spacing(2)}px`;
@@ -262,7 +262,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   const { getNodeExecutionDetails, compiledWorkflowClosure } =
     useNodeExecutionContext();
   const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
+    WorkflowNodeExecutionsContext,
   );
   const isGateNode = isNodeGateNode(
     extractCompiledNodes(compiledWorkflowClosure),

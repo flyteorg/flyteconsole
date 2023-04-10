@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { insertFixture } from 'mocks/data/insertFixture';
@@ -64,12 +64,12 @@ describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
     return render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionsByIdContext.Provider value={nodeExecutionsById}>
+          <WorkflowNodeExecutionsContext.Provider value={nodeExecutionsById}>
             <ExecutionTabContent
               tabType={tabType}
               filteredNodeExecutions={[]}
             />
-          </NodeExecutionsByIdContext.Provider>
+          </WorkflowNodeExecutionsContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );

@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { noExecutionsFoundString } from 'common/constants';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
@@ -91,7 +91,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionsByIdContext.Provider
+          <WorkflowNodeExecutionsContext.Provider
             value={{
               nodeExecutionsById,
               setCurrentNodeExecutionsById: () => {},
@@ -101,7 +101,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
               initialNodes={initialNodes}
               filteredNodes={filteredNodes}
             />
-          </NodeExecutionsByIdContext.Provider>
+          </WorkflowNodeExecutionsContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );

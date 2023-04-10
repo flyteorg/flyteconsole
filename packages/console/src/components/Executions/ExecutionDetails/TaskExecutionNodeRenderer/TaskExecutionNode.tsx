@@ -4,8 +4,7 @@ import { NodeRendererProps, Point } from 'components/flytegraph/types';
 import { TaskNodeRenderer } from 'components/WorkflowGraph/TaskNodeRenderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { DAGNode } from 'models/Graph/types';
-import React, { useContext } from 'react';
-import { NodeExecutionsByIdContext } from '../../contexts';
+import React from 'react';
 import { StatusIndicator } from './StatusIndicator';
 
 /** Renders DAGNodes with colors based on their node type, as well as dots to

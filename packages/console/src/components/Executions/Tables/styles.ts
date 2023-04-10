@@ -19,6 +19,9 @@ export const grayedClassName = 'grayed';
 // the columns styles in some cases. So the column styles should be defined
 // last.
 export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
+  filters: {
+    paddingLeft: theme.spacing(3),
+  },
   [grayedClassName]: {
     color: theme.palette.grey[300],
   },

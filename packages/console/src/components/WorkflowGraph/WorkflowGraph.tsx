@@ -1,10 +1,10 @@
 import React from 'react';
 import { ReactFlowGraphComponent } from 'components/flytegraph/ReactFlow/ReactFlowGraphComponent';
-import { Error } from 'models/Common/types';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { CompiledNode } from 'models/Node/types';
-import { dNode } from 'models/Graph/types';
 import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
+import { ReactFlowBreadCrumbProvider } from 'components/flytegraph/ReactFlow/ReactFlowBreadCrumbProvider';
+import { IWorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import t from './strings';
 
 export interface DynamicWorkflowMapping {
@@ -13,22 +13,26 @@ export interface DynamicWorkflowMapping {
   dynamicExecutions: any[];
 }
 
-export interface WorkflowGraphProps {
-  mergedDag: any;
-  error?: Error;
-  initialNodes: dNode[];
-}
-export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
-  mergedDag,
-  error,
-  initialNodes,
-}) => {
-  const { onNodeSelectionChanged, selectedPhase, setSelectedPhase } =
-    useDetailsPanel();
+export const WorkflowGraph: React.FC<{
+  executionsContext: IWorkflowNodeExecutionsContext;
+}> = ({ executionsContext }) => {
+  const {
+    selectedPhase,
+    isDetailsTabClosed,
+    onNodeSelectionChanged,
+    setSelectedPhase: onPhaseSelectionChanged,
+  } = useDetailsPanel();
+  const {
+    initialDNodes: initialNodes,
+    dagData: { mergedDag, dagError },
+  } = executionsContext;
 
-  if (error) {
+  if (dagError) {
     return (
-      <NonIdealState title={t('graphErrorTitle')} description={error.message} />
+      <NonIdealState
+        title={t('graphErrorTitle')}
+        description={dagError.message}
+      />
     );
   }
 
@@ -43,12 +47,15 @@ export const WorkflowGraph: React.FC<WorkflowGraphProps> = ({
   }
 
   return (
-    <ReactFlowGraphComponent
-      data={mergedDag}
-      onNodeSelectionChanged={onNodeSelectionChanged}
-      onPhaseSelectionChanged={setSelectedPhase}
-      selectedPhase={selectedPhase}
-      initialNodes={initialNodes}
-    />
+    <ReactFlowBreadCrumbProvider>
+      <ReactFlowGraphComponent
+        data={mergedDag}
+        onNodeSelectionChanged={onNodeSelectionChanged}
+        onPhaseSelectionChanged={onPhaseSelectionChanged}
+        selectedPhase={selectedPhase}
+        isDetailsTabClosed={isDetailsTabClosed}
+        initialNodes={initialNodes}
+      />
+    </ReactFlowBreadCrumbProvider>
   );
 };

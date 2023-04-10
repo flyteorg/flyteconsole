@@ -1,2 +1,2 @@
 export * from './NodeExecutionDetailsContextProvider';
-export * from './NodeExecutionsByIdContextProvider';
+export * from './WorkflowNodeExecutionsProvider';

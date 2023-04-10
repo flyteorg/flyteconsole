@@ -11,7 +11,7 @@ import { getMuiTheme } from 'components/Theme/muiTheme';
 import { SimpleType } from 'models/Common/types';
 import { resumeSignalNode } from 'models/Execution/api';
 import * as React from 'react';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { dateToTimestamp } from 'common/utils';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { createTestQueryClient } from 'test/utils';
@@ -111,7 +111,7 @@ describe('ResumeSignalForm', () => {
                 compiledWorkflowClosure: mockCompiledWorkflowClosure,
               }}
             >
-              <NodeExecutionsByIdContext.Provider
+              <WorkflowNodeExecutionsContext.Provider
                 value={{ nodeExecutionsById: mockNodeExecutionsById }}
               >
                 <ResumeSignalForm
@@ -119,7 +119,7 @@ describe('ResumeSignalForm', () => {
                   compiledNode={mockCompiledNode}
                   nodeExecutionId={mockNodeExecutionId}
                 />
-              </NodeExecutionsByIdContext.Provider>
+              </WorkflowNodeExecutionsContext.Provider>
             </NodeExecutionDetailsContext.Provider>
           </APIContext.Provider>
         </QueryClientProvider>

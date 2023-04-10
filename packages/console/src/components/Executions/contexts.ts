@@ -1,4 +1,5 @@
 import { Execution, LogsByPhase, NodeExecution } from 'models/Execution/types';
+import { dNode } from 'models/Graph/types';
 import { createContext } from 'react';
 
 export interface ExecutionContextData {
@@ -21,16 +22,21 @@ export type SetCurrentNodeExecutionsById = (
   checkForDynamicParents?: boolean,
 ) => void;
 
-export interface INodeExecutionsByIdContext {
+export interface IWorkflowNodeExecutionsContext {
   nodeExecutionsById: NodeExecutionsById;
-  filteredNodeExecutions?: FilteredNodeExecutions;
   setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById;
   shouldUpdate: boolean;
   setShouldUpdate: (val: boolean) => void;
+  // Tabs
+  initialDNodes: dNode[];
+  dagData: {
+    mergedDag: any;
+    dagError: any;
+  };
 }
 
-export const NodeExecutionsByIdContext =
-  createContext<INodeExecutionsByIdContext>({
+export const WorkflowNodeExecutionsContext =
+  createContext<IWorkflowNodeExecutionsContext>({
     nodeExecutionsById: {},
     setCurrentNodeExecutionsById: () => {
       throw new Error('Must use NodeExecutionsByIdContextProvider');
@@ -38,5 +44,10 @@ export const NodeExecutionsByIdContext =
     shouldUpdate: false,
     setShouldUpdate: _val => {
       throw new Error('Must use NodeExecutionsByIdContextProvider');
+    },
+    initialDNodes: [],
+    dagData: {
+      mergedDag: {},
+      dagError: null,
     },
   });

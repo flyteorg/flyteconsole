@@ -1,4 +1,5 @@
 import React, {
+  PropsWithChildren,
   createContext,
   useContext,
   useEffect,
@@ -8,7 +9,7 @@ import React, {
 import { log } from 'common/log';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution } from 'models/Execution/types';
-import { CompiledWorkflowClosure } from 'models/Workflow/types';
+import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { NodeExecutionDetails } from '../../types';
@@ -57,24 +58,30 @@ export const useNodeExecutionDetails = (nodeExecution?: NodeExecution) =>
 export const useNodeExecutionContext = (): NodeExecutionDetailsState =>
   useContext(NodeExecutionDetailsContext);
 
-interface ProviderProps {
-  workflowId: Identifier;
-  children?: React.ReactNode;
-}
+export type ProviderProps = PropsWithChildren<{
+  workflow: Workflow;
+}>;
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
-export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
+export const NodeExecutionDetailsContextProvider = ({
+  workflow,
+  children,
+}: ProviderProps) => {
   // workflow Identifier - separated to parameters, to minimize re-render count
   // as useEffect doesn't know how to do deep comparison
-  const { resourceType, project, domain, name, version } = props.workflowId;
+  const { resourceType, project, domain, name, version } = workflow.id;
 
-  const [executionTree, setExecutionTree] =
-    useState<CurrentExecutionDetails | null>(null);
+  const [executionTree, setExecutionTree] = useState<CurrentExecutionDetails>(
+    {} as CurrentExecutionDetails,
+  );
   const [tasks, setTasks] = useState(new Map<string, NodeExecutionDetails>());
-  const [closure, setClosure] = useState<CompiledWorkflowClosure | null>(null);
+  const [closure, setClosure] = useState<CompiledWorkflowClosure>(
+    {} as CompiledWorkflowClosure,
+  );
 
   const resetState = () => {
-    setExecutionTree(null);
+    setExecutionTree({} as CurrentExecutionDetails);
+    setClosure({} as CompiledWorkflowClosure);
   };
 
   const queryClient = useQueryClient();
@@ -101,10 +108,10 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
         resetState();
         return;
       }
-      const workflow = JSON.parse(JSON.stringify(result));
-      const tree = createExecutionDetails(workflow);
+      const fetchedWorkflow = JSON.parse(JSON.stringify(result));
+      const tree = createExecutionDetails(fetchedWorkflow);
       if (isCurrent) {
-        setClosure(workflow.closure?.compiledWorkflow ?? null);
+        setClosure(fetchedWorkflow.closure?.compiledWorkflow ?? null);
         setExecutionTree(tree);
       }
     }
@@ -166,11 +173,17 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     <NodeExecutionDetailsContext.Provider
       value={{
         getNodeExecutionDetails: getDetails,
-        workflowId: props.workflowId,
+        workflowId: {
+          resourceType,
+          project,
+          domain,
+          name,
+          version,
+        },
         compiledWorkflowClosure: closure,
       }}
     >
-      {props.children}
+      {children}
     </NodeExecutionDetailsContext.Provider>
   );
 };

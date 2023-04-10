@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
-import { withNodeExecutionDynamicProvider } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,
@@ -19,29 +18,18 @@ import { RFWrapperProps } from './types';
  * Mapping for using custom nodes inside ReactFlow
  */
 const CustomNodeTypes = {
-  FlyteNode_task: withNodeExecutionDynamicProvider(
-    ReactFlowCustomTaskNode,
-    'graph',
-  ),
-  FlyteNode_subworkflow: withNodeExecutionDynamicProvider(
-    ReactFlowSubWorkflowContainer,
-    'graph',
-  ),
+  FlyteNode_task: ReactFlowCustomTaskNode,
+  FlyteNode_subworkflow: ReactFlowSubWorkflowContainer,
   FlyteNode_start: ReactFlowCustomStartNode,
   FlyteNode_end: ReactFlowCustomEndNode,
   FlyteNode_nestedStart: ReactFlowCustomNestedPoint,
 
   FlyteNode_nestedEnd: ReactFlowCustomNestedPoint,
-  FlyteNode_nestedMaxDepth: withNodeExecutionDynamicProvider(
-    ReactFlowCustomMaxNested,
-    'graph',
-  ),
+  FlyteNode_nestedMaxDepth: ReactFlowCustomMaxNested,
+
   FlyteNode_staticNode: ReactFlowStaticNode,
   FlyteNode_staticNestedNode: ReactFlowStaticNested,
-  FlyteNode_gateNode: withNodeExecutionDynamicProvider(
-    ReactFlowGateNode,
-    'graph',
-  ),
+  FlyteNode_gateNode: ReactFlowGateNode,
 };
 
 const reactFlowStyle: React.CSSProperties = {

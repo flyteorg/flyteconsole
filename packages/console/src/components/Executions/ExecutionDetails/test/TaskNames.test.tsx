@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { createTestQueryClient } from 'test/utils';
 import { dateToTimestamp } from 'common/utils';
@@ -74,14 +74,14 @@ describe('ExecutionDetails > Timeline > TaskNames', () => {
     return render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionsByIdContext.Provider
+          <WorkflowNodeExecutionsContext.Provider
             value={{
               nodeExecutionsById,
               setCurrentNodeExecutionsById: () => {},
             }}
           >
             <TaskNames {...props} />
-          </NodeExecutionsByIdContext.Provider>
+          </WorkflowNodeExecutionsContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );

@@ -6,7 +6,6 @@ import React, {
   useMemo,
   Ref,
   useState,
-  forwardRef,
 } from 'react';
 import { dateToTimestamp } from 'common/utils';
 import {
@@ -21,16 +20,16 @@ import {
 import { keyBy, values } from 'lodash';
 import { NodeExecution, NodeExecutionPhase } from 'models';
 import { dNode } from 'models/Graph/types';
-
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
-import { RFNode } from 'components/flytegraph/ReactFlow/types';
-import { useNodeExecutionsById } from './NodeExecutionsByIdContextProvider';
+import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
 
 export type RefType = Ref<Element | null>;
 export interface INodeExecutionDynamicContext {
+  context: string;
   node: dNode;
   nodeExecution: WorkflowNodeExecution;
+  childExecutions: WorkflowNodeExecution[];
   childCount: number;
   inView: boolean;
   componentProps: React.DetailedHTMLProps<
@@ -42,8 +41,10 @@ export interface INodeExecutionDynamicContext {
 
 export const NodeExecutionDynamicContext =
   createContext<INodeExecutionDynamicContext>({
+    context: 'none',
     node: {} as dNode,
     nodeExecution: undefined as any,
+    childExecutions: [],
     childCount: 0,
     inView: false,
     componentProps: {
@@ -89,8 +90,8 @@ export const NodeExecutionDynamicProvider = ({
   const queryClient = useQueryClient();
   const { ref, inView } = useInView();
   const { execution } = useContext(ExecutionContext);
-
   const [fetchedChildCount, setFetchedChildCount] = useState(0);
+
   // get running data
   const { setCurrentNodeExecutionsById, nodeExecutionsById } =
     useNodeExecutionsById();
@@ -161,10 +162,11 @@ export const NodeExecutionDynamicProvider = ({
 
     const parentAndChildren = nodeExecutionRowQuery.data;
 
-    const newChildCount = childExecutions?.length;
     // update parent context with tnew executions data
     const parentAndChildrenById = keyBy(parentAndChildren, 'scopedId');
     setCurrentNodeExecutionsById(parentAndChildrenById, true);
+
+    const newChildCount = (parentAndChildren?.length || 1) - 1;
 
     // update known children count
     setFetchedChildCount(prev => {
@@ -179,9 +181,11 @@ export const NodeExecutionDynamicProvider = ({
     <NodeExecutionDynamicContext.Provider
       key={node.scopedId}
       value={{
+        context: context!,
         inView,
         node,
         nodeExecution: nodeExecution!,
+        childExecutions,
         childCount: fetchedChildCount,
         componentProps: {
           ref,
@@ -197,16 +201,3 @@ export const useNodeExecutionDynamicContext =
   (): INodeExecutionDynamicContext => {
     return useContext(NodeExecutionDynamicContext);
   };
-
-export const withNodeExecutionDynamicProvider = (
-  WrappedComponent: React.FC<RFNode>,
-  context: string,
-) => {
-  return forwardRef((props: RFNode, ...rest: any) => {
-    return (
-      <NodeExecutionDynamicProvider node={props.data.node} context={context}>
-        <WrappedComponent {...props} {...rest} />
-      </NodeExecutionDynamicProvider>
-    );
-  });
-};

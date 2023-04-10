@@ -1,8 +1,8 @@
+import React, { useMemo, useEffect, useState, useContext } from 'react';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
 import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
-import React, { useMemo, useEffect, useState } from 'react';
 import { merge, isEqual, cloneDeep } from 'lodash';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import {
@@ -25,6 +25,9 @@ import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersStat
 import { searchNode } from '../utils';
 import { nodeExecutionPhaseConstants } from '../constants';
 import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
+import { ExecutionFilters } from '../ExecutionFilters';
+import { ExecutionContext, FilteredNodeExecutions } from '../contexts';
+import { useExecutionNodeViewsStatePoll } from '../ExecutionDetails/useExecutionNodeViewsState';
 
 const scrollbarPadding = scrollbarSize();
 
@@ -49,11 +52,6 @@ const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
 
   return newTarget;
 };
-
-interface NodeExecutionsTableProps {
-  initialNodes: dNode[];
-  filteredNodes?: dNode[];
-}
 
 const executionMatchesPhaseFilter = (
   nodeExecution: NodeExecution,
@@ -104,18 +102,30 @@ const filterNodes = (
   return initialClone;
 };
 
+const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
+  if (appliedFilters.length === 1 && appliedFilters[0].key === 'phase') {
+    return true;
+  }
+  return false;
+};
+
 /** Renders a table of NodeExecution records. Executions with errors will
  * have an expanadable container rendered as part of the table row.
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
-  initialNodes,
-}) => {
+export const NodeExecutionsTable: React.FC<{}> = () => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
-  const { nodeExecutionsById, filteredNodeExecutions } =
+  const { execution } = useContext(ExecutionContext);
+
+  const filterState = useNodeExecutionFiltersState();
+  const { nodeExecutionsById, initialDNodes: initialNodes } =
     useNodeExecutionsById();
+
+  // query to get filtered data to narrow down Table outputs
+  const { nodeExecutionsQuery: filteredNodeExecutionsQuery } =
+    useExecutionNodeViewsStatePoll(execution, filterState?.appliedFilters);
   const { appliedFilters } = useNodeExecutionFiltersState();
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
@@ -142,6 +152,27 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
     () => generateColumns(columnStyles, compiledNodes),
     [columnStyles, compiledNodes],
   );
+
+  const [filteredNodeExecutions, setFilteredNodeExecutions] =
+    useState<FilteredNodeExecutions>();
+
+  useEffect(() => {
+    if (filteredNodeExecutionsQuery.isFetching) {
+      return;
+    }
+
+    const newFilteredNodeExecutions = isPhaseFilter(filterState.appliedFilters)
+      ? undefined
+      : filteredNodeExecutionsQuery.data;
+
+    setFilteredNodeExecutions(prev => {
+      if (isEqual(prev, newFilteredNodeExecutions)) {
+        return prev;
+      }
+
+      return newFilteredNodeExecutions;
+    });
+  }, [filteredNodeExecutionsQuery]);
 
   useEffect(() => {
     const plainNodes = convertToPlainNodes(originalNodes || []);
@@ -208,36 +239,44 @@ export const NodeExecutionsTable: React.FC<NodeExecutionsTableProps> = ({
   };
 
   return (
-    <div
-      className={classnames(tableStyles.tableContainer, commonStyles.flexFill)}
-    >
-      <ExecutionsTableHeader
-        columns={columns}
-        scrollbarPadding={scrollbarPadding}
-        key="header"
-      />
-      <div className={tableStyles.scrollContainer} key="scrollContainer">
-        {showNodes.length > 0 ? (
-          showNodes.map(node => {
-            return (
-              <NodeExecutionDynamicProvider
-                node={node}
-                context="listview"
-                key={node.scopedId}
-              >
-                <NodeExecutionRow
-                  columns={columns}
-                  node={node}
-                  onToggle={toggleNode}
-                  key={node.scopedId}
-                />
-              </NodeExecutionDynamicProvider>
-            );
-          })
-        ) : (
-          <NoExecutionsContent size="large" key="nocontent" />
-        )}
+    <>
+      <div className={tableStyles.filters}>
+        <ExecutionFilters {...filterState} />
       </div>
-    </div>
+      <div
+        className={classnames(
+          tableStyles.tableContainer,
+          commonStyles.flexFill,
+        )}
+      >
+        <ExecutionsTableHeader
+          columns={columns}
+          scrollbarPadding={scrollbarPadding}
+          key="header"
+        />
+        <div className={tableStyles.scrollContainer} key="scrollContainer">
+          {showNodes.length > 0 ? (
+            showNodes.map(node => {
+              return (
+                <NodeExecutionDynamicProvider
+                  node={node}
+                  context="listview"
+                  key={node.scopedId}
+                >
+                  <NodeExecutionRow
+                    columns={columns}
+                    node={node}
+                    onToggle={toggleNode}
+                    key={node.scopedId}
+                  />
+                </NodeExecutionDynamicProvider>
+              );
+            })
+          ) : (
+            <NoExecutionsContent size="large" key="nocontent" />
+          )}
+        </div>
+      </div>
+    </>
   );
 };

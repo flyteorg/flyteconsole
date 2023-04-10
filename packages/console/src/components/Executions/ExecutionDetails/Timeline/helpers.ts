@@ -1,4 +1,4 @@
-import { endNodeId, startNodeId } from 'models/Node/constants';
+import { ignoredNodeIds } from 'models/Node/constants';
 import { dNode } from 'models/Graph/types';
 import { isExpanded } from 'models/Node/utils';
 
@@ -8,8 +8,8 @@ export const TimeZone = {
 };
 
 export function isTransitionNode(node: dNode) {
-  // In case of bracnhNode childs, start and end nodes could be present as 'n0-start-node' etc.
-  return node?.id?.includes(startNodeId) || node?.id?.includes(endNodeId);
+  // In case of branchNode childs, start and end nodes could be present as 'n0-start-node' etc.
+  return ignoredNodeIds.includes(node?.id);
 }
 
 export function convertToPlainNodes(nodes: dNode[], level = 0): dNode[] {
