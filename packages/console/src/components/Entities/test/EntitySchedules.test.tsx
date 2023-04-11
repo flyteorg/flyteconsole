@@ -8,6 +8,7 @@ import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { listLaunchPlans } from 'models/Launch/api';
 import { LaunchPlan, LaunchPlanState } from 'models/Launch/types';
 import * as React from 'react';
+import { MemoryRouter } from 'react-router';
 import { EntitySchedules } from '../EntitySchedules';
 import t from '../strings';
 
@@ -26,7 +27,11 @@ describe('EntitySchedules', () => {
   let launchPlans: LaunchPlan[];
 
   const renderSchedules = async () => {
-    const result = render(<EntitySchedules id={id} />);
+    const result = render(
+      <MemoryRouter>
+        <EntitySchedules id={id} />
+      </MemoryRouter>,
+    );
     await waitFor(() => result.getByText(t('schedulesHeader')));
     return result;
   };
