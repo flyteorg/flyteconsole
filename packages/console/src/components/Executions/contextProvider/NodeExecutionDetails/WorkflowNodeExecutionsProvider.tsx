@@ -42,7 +42,7 @@ export const WorkflowNodeExecutionsProvider = ({
   const [nodeExecutionsById, setNodeExecutionsById] =
     useState<NodeExecutionsById>({});
 
-  const [dagError, setDagError] = useState(null);
+  const [dagError, setDagError] = useState<Error>();
   const [mergedDag, setMergedDag] = useState({});
   const [initialDNodes, setInitialDNodes] = useState<dNode[]>([]);
 
@@ -98,9 +98,9 @@ export const WorkflowNodeExecutionsProvider = ({
           dynamicWorkflows,
           nodeExecutionsById,
         )
-      : { dag: {}, staticExecutionIdsMap: {}, error: null };
+      : { dag: {} as dNode, staticExecutionIdsMap: {}, error: undefined };
     const { dag, staticExecutionIdsMap, error } = dagData;
-    const nodes = dag.nodes ?? [];
+    const nodes = dag?.nodes ?? [];
 
     let newMergedDag = dag;
 

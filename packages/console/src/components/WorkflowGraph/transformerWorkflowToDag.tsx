@@ -495,11 +495,16 @@ const parseWorkflow = (
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
+export interface TransformerWorkflowToDag {
+  dag: dNode;
+  staticExecutionIdsMap: {};
+  error?: Error;
+}
 export const transformerWorkflowToDag = (
   workflow: CompiledWorkflowClosure,
   dynamicToMerge: any | null = null,
   nodeExecutionsById = {},
-) => {
+): TransformerWorkflowToDag => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
 

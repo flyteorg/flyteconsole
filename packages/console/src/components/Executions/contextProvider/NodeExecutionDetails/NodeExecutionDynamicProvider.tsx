@@ -110,11 +110,11 @@ export const NodeExecutionDynamicProvider = ({
     useNodeExecutionsById();
 
   // get the node execution
-  const nodeExecution = node.execution; // useMemo(() => node.execution, [node.execution]);
+  const nodeExecution = node?.execution; // useMemo(() => node.execution, [node.execution]);
 
   const childExecutions = useMemo(() => {
     const children = values(nodeExecutionsById).filter(execution => {
-      return execution.fromUniqueParentId === node.scopedId;
+      return execution.fromUniqueParentId === node?.scopedId;
     });
 
     return children;
@@ -159,7 +159,7 @@ export const NodeExecutionDynamicProvider = ({
 
   return (
     <NodeExecutionDynamicContext.Provider
-      key={node.scopedId}
+      key={node?.scopedId}
       value={{
         context: context!,
         inView: overloadedInView,

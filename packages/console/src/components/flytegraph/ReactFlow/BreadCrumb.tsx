@@ -5,7 +5,8 @@ import {
 } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { dNode } from 'models/Graph/types';
-import { getNestedContainerStyle } from './utils';
+import { NodeExecutionPhase } from 'models';
+import { findNodeInDag, getNestedContainerStyle } from './utils';
 import { RFCustomData } from './types';
 
 const BREAD_FONT_SIZE = '9px';
@@ -54,12 +55,16 @@ export const BreadElement = ({
 
 const BorderElement = ({
   node,
+  initialNodeExecutionStatus,
   children,
 }: PropsWithChildren<{
   node: dNode;
+  initialNodeExecutionStatus: NodeExecutionPhase;
 }>) => {
   const { componentProps } = useNodeExecutionDynamicContext();
-  const nodeExecutionStatus = node.execution?.closure.phase;
+
+  const nodeExecutionStatus =
+    node?.execution?.closure.phase || initialNodeExecutionStatus;
   const borderStyle = getNestedContainerStyle(nodeExecutionStatus);
 
   return (
@@ -75,19 +80,36 @@ export const BorderContainer = ({
 }: PropsWithChildren<{
   data: RFCustomData;
 }>) => {
-  const { node, currentNestedView } = data;
+  const { node, currentNestedView, nodeExecutionStatus } = data;
 
   let contextNode = node;
-  let borders = <BorderElement node={node}>{children}</BorderElement>;
+  let borders = (
+    <BorderElement node={node} initialNodeExecutionStatus={nodeExecutionStatus}>
+      {children}
+    </BorderElement>
+  );
   for (const view of currentNestedView || []) {
-    contextNode = contextNode?.nodes.find(n => n.scopedId === view)!;
-    borders = (
+    contextNode = findNodeInDag(view, contextNode);
+
+    borders = contextNode ? (
       <NodeExecutionDynamicProvider
         node={contextNode!}
         overrideInViewValue={true}
       >
-        <BorderElement node={contextNode!}>{borders}</BorderElement>
+        <BorderElement
+          node={contextNode!}
+          initialNodeExecutionStatus={nodeExecutionStatus}
+        >
+          {borders}
+        </BorderElement>
       </NodeExecutionDynamicProvider>
+    ) : (
+      <BorderElement
+        node={contextNode!}
+        initialNodeExecutionStatus={nodeExecutionStatus}
+      >
+        {borders}
+      </BorderElement>
     );
   }
   return borders;

@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
-import { dTypes } from 'models/Graph/types';
+import { dNode, dTypes } from 'models/Graph/types';
 import { graphStatusColors } from 'components/Theme/constants';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import dagre from 'dagre';
@@ -149,6 +149,19 @@ export const getNestedGraphContainerStyle = overwrite => {
   };
 
   return output;
+};
+
+export const findNodeInDag = (scopedId: string, root: dNode) => {
+  if (root.scopedId === scopedId) {
+    return root;
+  }
+
+  for (const node of root.nodes) {
+    const tmp = findNodeInDag(scopedId, node);
+    if (tmp) {
+      return tmp;
+    }
+  }
 };
 
 export const getNestedContainerStyle = nodeExecutionStatus => {
