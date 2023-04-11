@@ -383,18 +383,17 @@ const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
   const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
 
   useEffect(() => {
-    if (selectedNode === true) {
+    // if the node execution isn't there
+    // (like in the case of a dynamic flow when the node execution isn't available yet)
+    // bringing up the context pane will result in an infinite loop
+    // checking if the node execution is present prevents that from happening
+    if (selectedNode === true && nodeExecution) {
       onNodeSelectionChanged(selectedNode);
       setSelectedNode(false);
       onPhaseSelectionChanged(selectedPhase);
       setSelectedPhase(selectedPhase);
     }
-  }, [
-    selectedNode,
-    onNodeSelectionChanged,
-    selectedPhase,
-    onPhaseSelectionChanged,
-  ]);
+  }, [selectedNode, selectedPhase]);
 
   const mapTaskContainerStyle: React.CSSProperties = {
     position: 'absolute',

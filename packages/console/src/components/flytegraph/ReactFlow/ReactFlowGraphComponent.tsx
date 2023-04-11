@@ -54,13 +54,7 @@ export const ReactFlowGraphComponent = () => {
       maxRenderDepth: 1,
       currentNestedView,
     } as ConvertDagProps);
-    setrfGraphJson(prev => {
-      if (stringifyIsEqual(prev, newrfGraphJson)) {
-        return prev;
-      }
-
-      return newrfGraphJson;
-    });
+    setrfGraphJson(newrfGraphJson);
   }, [
     initialDNodes,
     mergedDag,

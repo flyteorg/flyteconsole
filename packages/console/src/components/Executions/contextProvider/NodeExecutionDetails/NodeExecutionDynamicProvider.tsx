@@ -48,7 +48,7 @@ export const NodeExecutionDynamicContext =
 
 const checkEnableChildQuery = (
   childExecutions: NodeExecution[],
-  nodeExecution: NodeExecution,
+  nodeExecution: WorkflowNodeExecution,
   inView: boolean,
 ) => {
   // check that we fetched all children otherwise force fetch
@@ -61,8 +61,14 @@ const checkEnableChildQuery = (
 
   const executionRunning = !nodeExecutionIsTerminal(nodeExecution);
 
+  const tasksFetched = nodeExecution.tasksFetched;
+
   const forceRefetch =
-    inView && (missingChildren || childrenStillRunning || executionRunning);
+    inView &&
+    (!tasksFetched ||
+      missingChildren ||
+      childrenStillRunning ||
+      executionRunning);
 
   // force fetch:
   // if parent's children haven't been fetched

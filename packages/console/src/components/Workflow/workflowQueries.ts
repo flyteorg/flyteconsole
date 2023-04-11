@@ -36,11 +36,14 @@ export interface NodeExecutionDynamicWorkflowQueryResult {
 export function makeNodeExecutionDynamicWorkflowQuery(
   parentsToFetch,
 ): QueryInput<NodeExecutionDynamicWorkflowQueryResult> {
+  const parentsIds = Object.keys(parentsToFetch);
   return {
     queryKey: [QueryType.DynamicWorkflowFromNodeExecution, parentsToFetch],
+    // don't make any requests as long as there are no dynamic node executions to fetch
+    enabled: !!parentsIds?.length,
     queryFn: async () => {
       return await Promise.all(
-        Object.keys(parentsToFetch)
+        parentsIds
           .filter(id => parentsToFetch[id])
           .map(id => {
             const executionId = parentsToFetch[id];

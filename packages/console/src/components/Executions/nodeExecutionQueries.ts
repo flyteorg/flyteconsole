@@ -28,7 +28,7 @@ import { WorkflowNodeExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
-import { executionIsTerminal, isParentNode } from './utils';
+import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from './utils';
 
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
@@ -57,11 +57,14 @@ export const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
   queryClient,
 ) => {
-  if (executionIsTerminal(nodeExecution as any)) {
-    return nodeExecution;
+  const isTerminal = nodeExecutionIsTerminal(nodeExecution);
+  const tasksFetched = !!nodeExecution.tasksFetched;
+  const isDynamic = isDynamicNode(nodeExecution);
+  if (!isDynamic && tasksFetched) {
+    // return null to signal no change
+    return;
   }
   return await fetchTaskExecutionList(
-    // request listTaskExecutions
     queryClient,
     nodeExecution.id as any,
   ).then(taskExecutions => {
@@ -83,10 +86,13 @@ export const getTaskExecutions = async (
 
     const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
 
+    const appendTasksFetched = !isDynamic || (isDynamic && isTerminal);
+
+    const { closure: _, ...restofNodeExecution } = nodeExecution;
     return {
-      ...nodeExecution,
+      ...restofNodeExecution,
       ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
-      tasksFetched: true,
+      ...((appendTasksFetched && { tasksFetched: true }) || {}),
     };
   });
 };
@@ -99,6 +105,7 @@ export function makeNodeExecutionQueryEnhanced(
   const { id } = nodeExecution || {};
 
   return {
+    enabled: !!nodeExecution,
     queryKey: [QueryType.NodeExecutionAndChilList, id],
     queryFn: async () => {
       // complexity:
@@ -113,7 +120,7 @@ export function makeNodeExecutionQueryEnhanced(
 
       // if the node is a parent, force refetch its children
       // called by NodeExecutionDynamicProvider
-      const parentExecutionsPromise = isParent
+      const parentNodeExecutions = isParent
         ? () =>
             fetchNodeExecutionList(
               // requests listNodeExecutions
@@ -134,21 +141,18 @@ export function makeNodeExecutionQueryEnhanced(
 
                 return e;
               });
-              return [nodeExecution, ...children];
+              return children;
             })
-        : () => Promise.resolve([nodeExecution]);
+        : () => Promise.resolve([]);
 
-      const result = await parentExecutionsPromise().then(parentAndChildren => {
-        // we don't need to fetch the childrens task executions, this is handled separately
-        // by each row component
-        const childPromises = parentAndChildren.map(c =>
-          getTaskExecutions(c, queryClient),
-        );
-
-        return Promise.all(childPromises);
+      const parentNodeAndTaskExecutions = await Promise.all([
+        getTaskExecutions(nodeExecution, queryClient),
+        parentNodeExecutions(),
+      ]).then(([parent, children]) => {
+        return [parent, ...children].filter(n => !!n);
       });
 
-      return result;
+      return parentNodeAndTaskExecutions as NodeExecution[];
     },
   };
 }

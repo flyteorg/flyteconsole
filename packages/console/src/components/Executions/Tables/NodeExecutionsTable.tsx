@@ -28,6 +28,7 @@ import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDe
 import { ExecutionFilters } from '../ExecutionFilters';
 import { ExecutionContext, FilteredNodeExecutions } from '../contexts';
 import { useExecutionNodeViewsStatePoll } from '../ExecutionDetails/useExecutionNodeViewsState';
+import { stringifyIsEqual } from '../contextProvider/NodeExecutionDetails/utils';
 
 const scrollbarPadding = scrollbarSize();
 
@@ -182,7 +183,7 @@ export const NodeExecutionsTable: React.FC<{}> = () => {
           ? mergeOriginIntoNodes(initialFilteredNodes, plainNodes)
           : merge(initialNodes, ogn);
 
-      if (!isEqual(newNodes, ogn)) {
+      if (!stringifyIsEqual(newNodes, ogn)) {
         return newNodes;
       }
 

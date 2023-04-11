@@ -499,7 +499,7 @@ export const transformerWorkflowToDag = (
   workflow: CompiledWorkflowClosure,
   dynamicToMerge: any | null = null,
   nodeExecutionsById = {},
-): any => {
+) => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
 

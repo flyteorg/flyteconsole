@@ -35,6 +35,7 @@ import {
 import { isChildGroupsFetched } from './ExecutionDetails/utils';
 import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
+  DynamicNodeExecution,
   ExecutionPhaseConstants,
   NodeExecutionDisplayType,
   ParentNodeExecution,
@@ -153,6 +154,13 @@ export function isParentNode(
   nodeExecution: NodeExecution,
 ): nodeExecution is ParentNodeExecution {
   return !!nodeExecution?.metadata?.isParentNode;
+}
+
+/** Indicates if a NodeExecution is explicitly marked as a parent node. */
+export function isDynamicNode(
+  nodeExecution: NodeExecution,
+): nodeExecution is DynamicNodeExecution {
+  return !!nodeExecution?.metadata?.isDynamic;
 }
 
 export function flattenBranchNodes(node: CompiledNode): CompiledNode[] {

@@ -19,9 +19,9 @@ export const stringifyIsEqual = (a: any, b: any) => {
 };
 
 export const mergeNodeExecutions = (val, srcVal, _key) => {
-  const retVal = mergeWith(val, srcVal, (val, srcVal, _key, ...rest) => {
+  const retVal = mergeWith(val, srcVal, (val, srcVal, _key) => {
     if (srcVal instanceof Map) {
-      return new Map([...(val || []), ...srcVal]);
+      return srcVal;
     }
     const finaVal =
       typeof srcVal === 'object' ? merge({ ...val }, { ...srcVal }) : srcVal;
