@@ -10,6 +10,7 @@ on:
     branches:
       - master
       - devmain
+      - carina/customenv
 
 jobs:
   extract_branch:
@@ -59,7 +60,7 @@ jobs:
     with:
       version: v1
       dockerfile: Dockerfile
-      push: false
+      push: true
       repository: ${{ github.repository }}
     secrets:
       FLYTE_BOT_PAT: ${{ secrets.FLYTE_BOT_PAT }}
