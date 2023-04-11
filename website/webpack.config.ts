@@ -39,7 +39,6 @@ module.exports = (_env: any, argv: { mode: Mode }) => {
     DEFAULT_HTML_WPC_OPTS,
     {
       ...webpackConfig.htmlWebpackOptions,
-      processEnv: JSON.stringify(processEnv),
       ...(shouldLoadReactFromCDN
         ? {
             cdnSettings: {

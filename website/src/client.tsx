@@ -5,7 +5,7 @@ import { env } from '@flyteorg/common';
 import { App } from '@flyteorg/console';
 
 const WrappedApp = () => {
-  return <App env={process.env} />;
+  return <App env={env} />;
 };
 
 const render = (Component: React.FC) => {
