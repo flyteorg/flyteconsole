@@ -8,11 +8,23 @@ import { Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
+import { subnavBarContentId } from 'common/constants';
+import { subnavBackgroundColor } from 'components/Theme/constants';
 import { components } from './components';
 import { Routes } from './routes';
 
 const StyledSubNavBarContent = styled(Toolbar)(() => ({
   minHeight: 'auto',
+  padding: 0,
+  margin: 0,
+
+  '& > *': {
+    alignItems: 'center',
+    display: 'flex',
+    maxWidth: '100%',
+    padding: '30px',
+    background: subnavBackgroundColor,
+  },
   '@media (min-width: 600px)': {
     minHeight: 'auto',
   },
@@ -26,7 +38,7 @@ export function withContentContainer<P extends {}>(
     <ContentContainer center={true} {...contentContainerProps}>
       <StyledSubNavBarContent
         className="subnav"
-        id="subnav-bar-content"
+        id={subnavBarContentId}
       ></StyledSubNavBarContent>
 
       <WrappedComponent {...props} />

@@ -17,6 +17,7 @@ export let primaryDarkColor = COLOR_SPECTRUM.purple70.color;
 export let primaryHighlightColor = COLOR_SPECTRUM.purple60.color;
 export const secondaryColor = COLOR_SPECTRUM.indigo100.color;
 export const secondaryBackgroundColor = COLOR_SPECTRUM.gray5.color;
+export const subnavBackgroundColor = COLOR_SPECTRUM.gray7.color;
 
 export const primaryTextColor = COLOR_SPECTRUM.gray100.color;
 export const secondaryTextColor = COLOR_SPECTRUM.gray60.color;

@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Button, Dialog, Link, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -7,16 +8,12 @@ import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
 import { useLocationState } from 'components/hooks/useLocationState';
-import { NavBarContent } from 'components/Navigation/NavBarContent';
-import { interactiveTextDisabledColor } from 'components/Theme/constants';
 import { Execution } from 'models/Execution/types';
-import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
-import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -50,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => {
       maxWidth: '100%',
     },
     inputsOutputsLink: {
-      color: interactiveTextDisabledColor,
+      color: theme.palette.primary.main,
     },
     moreActions: {
       marginLeft: theme.spacing(1),
@@ -237,13 +234,9 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{
 export const ExecutionDetailsAppBarContent: React.FC<{
   execution: Execution;
 }> = ({ execution }) => {
-  const { registry } = useExternalConfigurationContext() || null;
-  const useSubNavigation = registry?.useSubNavigation;
-
-  const NavigationWrapper = useSubNavigation ? SubNavBarContent : NavBarContent;
   return (
-    <NavigationWrapper>
+    <SubNavBarContent>
       <ExecutionDetailsAppBarContentInner execution={execution} />
-    </NavigationWrapper>
+    </SubNavBarContent>
   );
 };

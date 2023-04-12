@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
@@ -7,7 +8,6 @@ import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
 import { Execution } from 'models/Execution/types';
-import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';

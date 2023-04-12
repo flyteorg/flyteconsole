@@ -29,12 +29,12 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
-import { NavBarRouter } from 'routes/NavBarRouter';
 import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
 import {
   ExternalConfigurationProvider,
   ExternalConfigurationProviderProps,
 } from 'basics/ExternalConfigurationProvider';
+import NavBar from 'components/Navigation/NavBar';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -82,7 +82,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
                       <ExternalConfigurationProvider {...props}>
                         <Router history={history}>
                           <ErrorBoundary fixed={true}>
-                            <NavBarRouter />
+                            <NavBar />
                             <ApplicationRouter />
                           </ErrorBoundary>
                         </Router>
