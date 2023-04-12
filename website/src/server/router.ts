@@ -1,6 +1,8 @@
 import express, { Request, Response, Router } from 'express';
 import fs from 'fs';
 import path from 'path';
+import * as cheerio from 'cheerio';
+import { processEnv } from '../../env';
 
 const router: Router = express.Router();
 
@@ -17,7 +19,14 @@ router.get('/*', (_req: Request, res: Response) => {
     throw new ReferenceError('Could not find index.html to render');
   }
 
-  res.status(200).send(html);
+  // populate the app content...
+  const $ = cheerio.load(html);
+  // Populate process.env into window.env
+  $('head').append(
+    $(`<script>window.env = ${JSON.stringify(processEnv)}</script>`),
+  );
+
+  res.status(200).send($.html());
 });
 
 export default router;
