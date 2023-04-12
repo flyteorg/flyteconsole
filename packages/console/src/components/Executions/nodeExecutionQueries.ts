@@ -92,6 +92,7 @@ export const getTaskExecutions = async (
     return {
       // to avoid overwiring data from queries that handle status updates
       ...nodeExecutionLight,
+      taskExecutions,
       ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
       ...((appendTasksFetched && { tasksFetched: true }) || {}),
     };
