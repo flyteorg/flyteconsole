@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
+import { stringifyIsEqual } from 'components/Executions/contextProvider/NodeExecutionDetails/utils';
 import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,
@@ -55,7 +56,7 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
 
   const setStateDeduped = (newState: typeof state) => {
     setState(prevState => {
-      if (JSON.stringify(prevState) === JSON.stringify(newState)) {
+      if (stringifyIsEqual(prevState, newState)) {
         return prevState;
       }
       return newState;

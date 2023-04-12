@@ -16,7 +16,7 @@ import t from './strings';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 
 export const executionRefreshIntervalMs = 10000;
-export const nodeExecutionRefreshIntervalMs = 2000;
+export const nodeExecutionRefreshIntervalMs = 3000;
 export const noLogsFoundString = t('noLogsFoundString');
 
 /** Shared values for color/text/etc for each execution phase */

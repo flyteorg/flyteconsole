@@ -35,8 +35,7 @@ export const BreadElement = ({
     padding: '0 .2rem',
     fontSize: BREAD_FONT_SIZE,
   };
-  // const onClick =
-  //   currentNestedDepth > index + 1 ? handleNestedViewClick : undefined;
+
   return (
     <li
       onClick={onClick}

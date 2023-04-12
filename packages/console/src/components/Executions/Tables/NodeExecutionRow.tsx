@@ -52,7 +52,6 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   const theme = useTheme();
   const tableStyles = useExecutionTableStyles();
   const { childCount, componentProps } = useNodeExecutionDynamicContext();
-  // const key = getCacheKey(nodeExecution.id);
   const nodeLevel = node?.level ?? 0;
 
   // For the first level, we want the borders to span the entire table,

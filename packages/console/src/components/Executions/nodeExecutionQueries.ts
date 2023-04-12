@@ -88,9 +88,10 @@ export const getTaskExecutions = async (
 
     const appendTasksFetched = !isDynamic || (isDynamic && isTerminal);
 
-    const { closure: _, ...restofNodeExecution } = nodeExecution;
+    const { closure: _, metadata: __, ...nodeExecutionLight } = nodeExecution;
     return {
-      ...restofNodeExecution,
+      // to avoid overwiring data from queries that handle status updates
+      ...nodeExecutionLight,
       ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
       ...((appendTasksFetched && { tasksFetched: true }) || {}),
     };
@@ -106,7 +107,7 @@ export function makeNodeExecutionQueryEnhanced(
 
   return {
     enabled: !!nodeExecution,
-    queryKey: [QueryType.NodeExecutionAndChilList, id],
+    queryKey: [QueryType.NodeExecutionAndChildList, id],
     queryFn: async () => {
       // complexity:
       // +1 for parent node tasks
@@ -204,7 +205,6 @@ export function makeNodeExecutionListQuery(
   return {
     queryKey: [QueryType.NodeExecutionList, id, config],
     queryFn: async () => {
-      // called by useExecutionNodeViewsStatePoll
       const promise = (await listNodeExecutions(id, config)).entities;
       const nodeExecutions = removeSystemNodes(promise);
       nodeExecutions.map(exe => {
