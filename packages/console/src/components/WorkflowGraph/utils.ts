@@ -1,6 +1,9 @@
+import { NodeExecutionDetails } from 'components/Executions/types';
 import { Identifier } from 'models/Common/types';
 import { endNodeId, startNodeId } from 'models/Node/constants';
 import { CompiledWorkflow, Workflow } from 'models/Workflow/types';
+import { isCompiledNode } from 'models/Node/helpers';
+import { isCompiledWorkflow } from 'models/Workflow/helpers';
 import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
@@ -33,20 +36,24 @@ export function isExpanded(node: any) {
  * @param context input can be either CompiledWorkflow or CompiledNode
  * @returns Display name
  */
-export const getDisplayName = (context: any, truncate = true): string => {
+export const getDisplayName = (
+  context: CompiledNode | CompiledWorkflow | NodeExecutionDetails,
+  truncate = true,
+): string => {
   let displayName = '';
-  if (context.metadata) {
-    // Compiled Node with Meta
-    displayName = context.metadata.name;
+
+  if (isCompiledNode(context)) {
+    if (context.metadata) {
+      displayName = context.metadata.name;
+    } else if (context.id) {
+      displayName = context.id;
+    }
+  } else if (isCompiledWorkflow(context)) {
+    if (context.template?.id?.name) {
+      displayName = context.template.id.name;
+    }
   } else if (context.displayId) {
-    // NodeExecutionDetails
     displayName = context.displayId;
-  } else if (context.template?.id?.name) {
-    // CompiledWorkflow
-    displayName = context.template.id.name;
-  } else if (context.id) {
-    // Compiled Node (start/end)
-    displayName = context.id;
   }
 
   if (displayName === startNodeId) {
