@@ -59,7 +59,6 @@ export const errorBackgroundColor = '#FBFBFC';
 
 export const workflowLabelColor = COLOR_SPECTRUM.gray25.color;
 export const launchPlanLabelColor = COLOR_SPECTRUM.gray25.color;
-export let flyteNavigation: FlyteNavigation | undefined = undefined;
 
 export let statusColors = {
   FAILURE: COLOR_SPECTRUM.red20.color,
@@ -121,6 +120,5 @@ export const updateConstants = (config: AppConfig | undefined) => {
 
     statusColors = config.statusColors || statusColors;
     graphStatusColors = config.graphStatusColors || graphStatusColors;
-    flyteNavigation = config.flyteNavigation || flyteNavigation;
   }
 };

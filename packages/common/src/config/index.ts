@@ -46,6 +46,5 @@ export type AppConfig = {
   inputFocusBorderColor?: string;
   statusColors?: StatusColor;
   graphStatusColors?: GraphStatusColor;
-  flyteNavigation?: FlyteNavigation;
   themeOptions?: ThemeOptions;
 };
