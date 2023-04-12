@@ -64,7 +64,7 @@ const RenderExecutionContainer: React.FC<{}> = () => {
         {workflow => (
           <>
             {/* Provides a node execution tree for the current workflow */}
-            <NodeExecutionDetailsContextProvider workflow={workflow}>
+            <NodeExecutionDetailsContextProvider workflowId={workflow.id}>
               <ExecutionDetailsAppBarContent />
               <div className={styles.metadataContainer}>
                 <Collapse in={metadataExpanded}>

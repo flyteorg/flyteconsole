@@ -6,7 +6,6 @@ import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { DetailsPanelContextProvider } from './DetailsPanelContext';
 import { ScaleProvider } from './Timeline/scaleContext';
 import { ExecutionTimelineContainer } from './Timeline/ExecutionTimelineContainer';
-import { IWorkflowNodeExecutionsContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => ({
   nodesContainer: {

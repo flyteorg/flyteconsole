@@ -8,7 +8,7 @@ import { mockServer } from 'mocks/server';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
-import { ExecutionTabContent } from '../ExecutionTabContent';
+import { ExecutionTab } from '../ExecutionTab';
 import { tabs } from '../constants';
 
 jest.mock('components/Workflow/workflowQueries');
@@ -65,10 +65,7 @@ describe('Executions > ExecutionDetails > ExecutionTabContent', () => {
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
           <WorkflowNodeExecutionsContext.Provider value={nodeExecutionsById}>
-            <ExecutionTabContent
-              tabType={tabType}
-              filteredNodeExecutions={[]}
-            />
+            <ExecutionTab tabType={tabType} />
           </WorkflowNodeExecutionsContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,

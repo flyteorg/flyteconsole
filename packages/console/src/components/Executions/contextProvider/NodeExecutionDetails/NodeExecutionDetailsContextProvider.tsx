@@ -59,17 +59,17 @@ export const useNodeExecutionContext = (): NodeExecutionDetailsState =>
   useContext(NodeExecutionDetailsContext);
 
 export type ProviderProps = PropsWithChildren<{
-  workflow: Workflow;
+  workflowId: Identifier;
 }>;
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDetailsContextProvider = ({
-  workflow,
+  workflowId,
   children,
 }: ProviderProps) => {
   // workflow Identifier - separated to parameters, to minimize re-render count
   // as useEffect doesn't know how to do deep comparison
-  const { resourceType, project, domain, name, version } = workflow.id;
+  const { resourceType, project, domain, name, version } = workflowId;
 
   const [executionTree, setExecutionTree] = useState<CurrentExecutionDetails>(
     {} as CurrentExecutionDetails,
