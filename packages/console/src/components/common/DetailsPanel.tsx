@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingBottom: theme.spacing(2),
     pointerEvents: 'initial',
     width: detailsPanelWidth,
+    overflowY: 'hidden',
   },
   spacer: theme.mixins.toolbar as CSSProperties,
 }));

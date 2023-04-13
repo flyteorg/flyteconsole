@@ -40,12 +40,19 @@ interface TaskExecutionLogsCardProps {
   headerText: string;
   phase: TaskExecutionPhase;
   logs: Core.ITaskLog[];
+  observability?: boolean;
 }
 
 export const TaskExecutionLogsCard: React.FC<
   TaskExecutionLogsCardProps
 > = props => {
-  const { taskExecution, headerText, phase, logs } = props;
+  const {
+    taskExecution,
+    headerText,
+    phase,
+    logs,
+    observability = false,
+  } = props;
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   const { registry } = useExternalConfigurationContext();
@@ -56,11 +63,12 @@ export const TaskExecutionLogsCard: React.FC<
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
   const externalProps = { ...props, styles, commonStyles };
+
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
-          {registry?.taskExecutionAttemps ? (
+          {observability && registry?.taskExecutionAttemps ? (
             // Alternate path
 
             <ExternalConfigHoc

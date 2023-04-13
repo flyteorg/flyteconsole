@@ -11,6 +11,7 @@ import { TaskExecutionPhase } from 'models/Execution/enums';
 import { MapTaskExecutionDetails } from 'components/Executions/TaskExecutionsList/MapTaskExecutionDetails';
 import { TaskVersionDetailsLink } from 'components/Entities/VersionDetails/VersionDetailsLink';
 import { Identifier } from 'models/Common/types';
+import { NodeExecutionDisplayType } from 'components/Executions/types';
 import { TaskExecutionsList } from '../../TaskExecutionsList/TaskExecutionsList';
 import { NodeExecutionInputs } from './NodeExecutionInputs';
 import { NodeExecutionOutputs } from './NodeExecutionOutputs';
@@ -48,6 +49,7 @@ export const NodeExecutionTabs: React.FC<{
   phase?: TaskExecutionPhase;
   taskTemplate?: TaskTemplate | null;
   taskIndex?: number;
+  displayType?: string;
 }> = ({
   nodeExecution,
   selectedTaskExecution,
@@ -55,6 +57,7 @@ export const NodeExecutionTabs: React.FC<{
   taskTemplate,
   phase,
   taskIndex,
+  displayType,
 }) => {
   const styles = useStyles();
   const tabState = useTabState(tabIds, defaultTab);
@@ -71,12 +74,16 @@ export const NodeExecutionTabs: React.FC<{
   switch (tabState.value) {
     case tabIds.executions: {
       tabContent = selectedTaskExecution ? (
-        <MapTaskExecutionDetails taskExecution={selectedTaskExecution} />
+        <MapTaskExecutionDetails
+          taskExecution={selectedTaskExecution}
+          observability={displayType === NodeExecutionDisplayType.PythonTask}
+        />
       ) : (
         <TaskExecutionsList
           nodeExecution={nodeExecution}
           onTaskSelected={onTaskSelected}
           phase={phase}
+          observability={displayType === NodeExecutionDisplayType.PythonTask}
         />
       );
       break;

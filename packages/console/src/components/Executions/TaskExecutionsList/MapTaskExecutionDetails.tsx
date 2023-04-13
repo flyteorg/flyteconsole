@@ -7,12 +7,13 @@ import { TaskExecutionLogsCard } from './TaskExecutionLogsCard';
 
 interface MapTaskExecutionDetailsProps {
   taskExecution: MapTaskExecution;
+  observability?: boolean;
 }
 
 /** Renders an individual map task execution attempts as part of a list */
 export const MapTaskExecutionDetails: React.FC<
   MapTaskExecutionDetailsProps
-> = ({ taskExecution }) => {
+> = ({ taskExecution, observability = false }) => {
   const {
     closure: { metadata },
     taskIndex,
@@ -36,6 +37,7 @@ export const MapTaskExecutionDetails: React.FC<
               headerText={headerText}
               phase={item.phase ?? TaskExecutionPhase.UNDEFINED}
               logs={item.logs ?? []}
+              observability={observability}
             />
           </div>
         );

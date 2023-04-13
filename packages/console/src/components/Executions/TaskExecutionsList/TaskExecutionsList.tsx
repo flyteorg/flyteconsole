@@ -28,13 +28,15 @@ interface TaskExecutionsListProps {
   nodeExecution: NodeExecution;
   onTaskSelected: (val: MapTaskExecution) => void;
   phase?: TaskExecutionPhase;
+  observability?: boolean;
 }
 
 export const TaskExecutionsListContent: React.FC<{
   taskExecutions: TaskExecution[];
   onTaskSelected: (val: MapTaskExecution) => void;
   phase?: TaskExecutionPhase;
-}> = ({ taskExecutions, onTaskSelected, phase }) => {
+  observability?: boolean;
+}> = ({ taskExecutions, onTaskSelected, phase, observability = false }) => {
   const styles = useStyles();
   if (!taskExecutions.length) {
     return (
@@ -69,6 +71,7 @@ export const TaskExecutionsListContent: React.FC<{
           <TaskExecutionsListItem
             key={getUniqueTaskExecutionName(taskExecution)}
             taskExecution={taskExecution}
+            observability={observability}
           />
         );
       })}
@@ -82,6 +85,7 @@ export const TaskExecutionsList: React.FC<TaskExecutionsListProps> = ({
   nodeExecution,
   onTaskSelected,
   phase,
+  observability = false,
 }) => {
   const taskExecutions = useTaskExecutions(nodeExecution.id);
   useTaskExecutionsRefresher(nodeExecution, taskExecutions);
@@ -92,6 +96,7 @@ export const TaskExecutionsList: React.FC<TaskExecutionsListProps> = ({
         taskExecutions={taskExecutions.value}
         onTaskSelected={onTaskSelected}
         phase={phase}
+        observability={observability}
       />
     </WaitForData>
   );

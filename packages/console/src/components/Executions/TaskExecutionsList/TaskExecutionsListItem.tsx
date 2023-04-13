@@ -6,11 +6,13 @@ import { TaskExecutionLogsCard } from './TaskExecutionLogsCard';
 
 interface TaskExecutionsListItemProps {
   taskExecution: TaskExecution;
+  observability?: boolean;
 }
 
 /** Renders an individual `TaskExecution` record as part of a list */
 export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({
   taskExecution,
+  observability = false,
 }) => {
   const {
     closure: { phase, logs },
@@ -24,6 +26,7 @@ export const TaskExecutionsListItem: React.FC<TaskExecutionsListItemProps> = ({
         headerText={headerText}
         phase={phase}
         logs={logs ?? []}
+        observability={observability}
       />
     </PanelSection>
   );

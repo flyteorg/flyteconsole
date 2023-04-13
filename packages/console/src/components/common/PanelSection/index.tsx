@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyle = makeStyles(theme => ({
   detailsPanelCard: {
-    paddingBottom: '150px', // TODO @FC 454 temporary fix for panel height issue
+    paddingBottom: '0px',
   },
   detailsPanelCardContent: {
     padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
