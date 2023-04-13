@@ -21,8 +21,8 @@ import { createTestQueryClient } from 'test/utils';
 import { backLinkTitle, executionActionStrings } from '../constants';
 import { ExecutionDetailsAppBarContent } from '../ExecutionDetailsAppBarContent';
 
-jest.mock('components/Navigation/NavBarContent', () => ({
-  NavBarContent: ({ children }: React.Props<any>) => children,
+jest.mock('components/Navigation/SubNavBarContent', () => ({
+  SubNavBarContent: ({ children }: React.Props<any>) => children,
 }));
 
 describe('ExecutionDetailsAppBarContent', () => {

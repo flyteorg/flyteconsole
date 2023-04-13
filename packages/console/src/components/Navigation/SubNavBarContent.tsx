@@ -1,7 +1,7 @@
-import { subnavBarContentId } from 'common/constants';
-import { log } from 'common/log';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import { subnavBarContentId } from 'common/constants';
+import { log } from 'common/log';
 
 /** Complements NavBar, allowing pages to inject custom content. */
 export const SubNavBarContent: React.FC<React.PropsWithChildren<{}>> = ({
