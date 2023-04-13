@@ -21,7 +21,7 @@ import {
   useNodeExecutionsById,
 } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
-import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { ExecutionFiltersState, useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { searchNode } from '../utils';
 import { nodeExecutionPhaseConstants } from '../constants';
 import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
@@ -115,19 +115,18 @@ const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<{}> = () => {
+export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}> = ({filterState}) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
   const { execution } = useContext(ExecutionContext);
 
-  const filterState = useNodeExecutionFiltersState();
+  const { appliedFilters } = filterState;
   const { nodeExecutionsById, initialDNodes: initialNodes } =
     useNodeExecutionsById();
 
   // query to get filtered data to narrow down Table outputs
   const { nodeExecutionsQuery: filteredNodeExecutionsQuery } =
     useExecutionNodeViewsStatePoll(execution, filterState?.appliedFilters);
-  const { appliedFilters } = useNodeExecutionFiltersState();
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const [initialFilteredNodes, setInitialFilteredNodes] = useState<

@@ -1,7 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import {
-  NodeExecutionDetailsContextProvider,
-} from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import {
   ExecutionContext,
   WorkflowNodeExecutionsContext,
@@ -113,7 +111,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     });
   });
 
-  const renderTable = ({ nodeExecutionsById, initialNodes }) =>
+  const renderTable = ({ nodeExecutionsById, initialNodes, filterState }) =>
     render(
       <QueryClientProvider client={queryClient}>
         <ExecutionContext.Provider
@@ -137,7 +135,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
                 shouldUpdate: false,
               }}
             >
-              <NodeExecutionsTable />
+              <NodeExecutionsTable filterState={filterState} />
             </WorkflowNodeExecutionsContext.Provider>
           </NodeExecutionDetailsContextProvider>
         </ExecutionContext.Provider>
@@ -145,9 +143,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     );
 
   it('renders empty content when there are no nodes', async () => {
+    const filterState = {
+      filters: [],
+      appliedFilters: [],
+    };
     const { queryByText, queryByTestId } = renderTable({
       initialNodes: [],
       nodeExecutionsById: {},
+      filterState,
     });
 
     await waitFor(() => queryByText(noExecutionsFoundString));
@@ -159,10 +162,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
   it('renders NodeExecutionRows with initialNodes when no filteredNodes were provided', async () => {
     const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
     const nodeExecutionsById = mockExecutionsById(2, phases);
-
+    const filterState = {
+      filters: [],
+      appliedFilters: [],
+    };
     const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
+      filterState,
     });
 
     await waitFor(() => {
@@ -184,6 +191,10 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
     const nodeExecutionsById = mockExecutionsById(2, phases);
     const filteredNodeExecutions = nodeExecutionsById['n1'];
+    const filterState = {
+      filters: [],
+      appliedFilters: [],
+    };
     listNodeExecutions.mockImplementation(() => {
       return Promise.resolve({
         entities: filteredNodeExecutions,
@@ -193,6 +204,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
+      filterState,
     });
 
     await waitFor(() =>
@@ -222,11 +234,10 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const appliedFilters = [
       { key: 'phase', operation: 'value_in', value: ['FAILED'] },
     ];
-    mockUseNodeExecutionFiltersState.mockReturnValue({
+    const filterState = {
       filters: [],
       appliedFilters,
-    });
-
+    };
     const phases = [NodeExecutionPhase.FAILED, NodeExecutionPhase.SUCCEEDED];
     const nodeExecutionsById = mockExecutionsById(2, phases);
     const filteredNodeExecutions = [nodeExecutionsById['n1']];
@@ -239,6 +250,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const { queryAllByTestId, debug, container } = renderTable({
       initialNodes,
       nodeExecutionsById,
+      filterState,
     });
 
     await waitFor(() =>
@@ -263,7 +275,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     expect(ids).toHaveLength(filteredNodeExecutions.length);
     const renderedPhases = queryAllByTestId('node-execution-col-phase');
     expect(renderedPhases).toHaveLength(filteredNodeExecutions.length);
-    debug(container)
+    debug(container);
 
     for (const i in filteredNodeExecutions) {
       expect(ids[i]).toHaveTextContent(filteredNodeExecutions[i].id?.nodeId);
@@ -276,13 +288,14 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const appliedFilters = [
       { key: 'phase', operation: 'value_in', value: ['FAILED', 'SUCCEEDED'] },
     ];
-    mockUseNodeExecutionFiltersState.mockReturnValue({
+    const filterState = {
       filters: [],
       appliedFilters,
-    });
+    };
 
     const nodeExecutionsById = mockExecutionsById(2, phases);
-    const filteredNodeExecutions: NodeExecution[] = Object.values(nodeExecutionsById);
+    const filteredNodeExecutions: NodeExecution[] =
+      Object.values(nodeExecutionsById);
     listNodeExecutions.mockImplementation(() => {
       return Promise.resolve({
         entities: filteredNodeExecutions,
@@ -292,6 +305,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     const { queryAllByTestId } = renderTable({
       initialNodes,
       nodeExecutionsById,
+      filterState,
     });
 
     await waitFor(() =>

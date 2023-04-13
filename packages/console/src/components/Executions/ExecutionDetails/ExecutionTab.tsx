@@ -6,6 +6,7 @@ import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
 import { DetailsPanelContextProvider } from './DetailsPanelContext';
 import { ScaleProvider } from './Timeline/scaleContext';
 import { ExecutionTimelineContainer } from './Timeline/ExecutionTimelineContainer';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   nodesContainer: {
@@ -24,12 +25,15 @@ interface ExecutionTabProps {
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
 export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
   const styles = useStyles();
+  const filterState = useNodeExecutionFiltersState();
 
   return (
     <ScaleProvider>
       <DetailsPanelContextProvider>
         <div className={styles.nodesContainer}>
-          {tabType === tabs.nodes.id && <NodeExecutionsTable />}
+          {tabType === tabs.nodes.id && (
+            <NodeExecutionsTable filterState={filterState}/>
+          )}
           {tabType === tabs.graph.id && <WorkflowGraph />}
           {tabType === tabs.timeline.id && <ExecutionTimelineContainer />}
         </div>
