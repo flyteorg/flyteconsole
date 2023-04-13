@@ -9,7 +9,6 @@ import { isNodeGateNode } from 'components/Executions/utils';
 import { dNode } from 'models/Graph/types';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
-import { stringifyIsEqual } from 'components/Executions/contextProvider/NodeExecutionDetails/utils';
 import { RFGraphTypes, ConvertDagProps } from './types';
 import { getRFBackground } from './utils';
 import { ReactFlowWrapper } from './ReactFlowWrapper';

@@ -262,6 +262,7 @@ export const taskTypeToNodeExecutionDisplayType: {
   [TaskType.MPI]: NodeExecutionDisplayType.MpiTask,
   [TaskType.ARRAY_AWS]: NodeExecutionDisplayType.ARRAY_AWS,
   [TaskType.ARRAY_K8S]: NodeExecutionDisplayType.ARRAY_K8S,
+  [TaskType.BRANCH]: NodeExecutionDisplayType.BranchNode,
 };
 
 export const cacheStatusMessages: { [k in CatalogCacheStatus]: string } = {

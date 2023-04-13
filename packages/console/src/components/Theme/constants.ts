@@ -97,6 +97,7 @@ export const taskColors: TaskColorMap = {
   // plugins
   [TaskType.ARRAY_AWS]: '#E1E8ED',
   [TaskType.ARRAY_K8S]: '#E1E8ED',
+  [TaskType.BRANCH]: '#E1E8ED',
 };
 
 export const bodyFontSize = '0.875rem';
