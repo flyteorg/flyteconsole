@@ -14,10 +14,9 @@ export function extractCompiledNodes(
   const { primary = {} as CompiledWorkflow, subWorkflows = [] } =
     compiledWorkflowClosure;
 
-  return subWorkflows.reduce(
-    (out, subWorkflow) => [...out, ...subWorkflow.template.nodes],
-    primary?.template?.nodes,
-  );
+  return subWorkflows.reduce((out, subWorkflow) => {
+    return [...out, ...subWorkflow.template.nodes];
+  }, primary?.template?.nodes);
 }
 
 export function extractTaskTemplates(workflow: Workflow): TaskTemplate[] {

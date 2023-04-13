@@ -50,7 +50,7 @@ export const NodeExecutionActions = ({
   );
 
   const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
-  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure)?.find(
     node =>
       node.id === execution.metadata?.specNodeId ||
       node.id === execution.id.nodeId,

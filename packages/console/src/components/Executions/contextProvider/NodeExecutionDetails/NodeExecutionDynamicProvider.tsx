@@ -22,7 +22,6 @@ import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
 
 export type RefType = Ref<Element | null>;
 export interface INodeExecutionDynamicContext {
-  context: string;
   node: dNode;
   childExecutions: WorkflowNodeExecution[];
   childCount: number;
@@ -36,7 +35,6 @@ export interface INodeExecutionDynamicContext {
 
 export const NodeExecutionDynamicContext =
   createContext<INodeExecutionDynamicContext>({
-    context: 'none',
     node: {} as dNode,
     childExecutions: [],
     childCount: 0,
@@ -80,12 +78,10 @@ const checkEnableChildQuery = (
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
   node: dNode;
   overrideInViewValue?: boolean;
-  context?: string;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
   node,
-  context,
   overrideInViewValue,
   children,
 }: NodeExecutionDynamicProviderProps) => {
@@ -161,7 +157,6 @@ export const NodeExecutionDynamicProvider = ({
     <NodeExecutionDynamicContext.Provider
       key={node?.scopedId}
       value={{
-        context: context!,
         inView: overloadedInView,
         node,
         childExecutions,

@@ -8,6 +8,7 @@ import { Execution } from 'models/Execution/types';
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
+import { ExecutionContext } from 'components/Executions/contexts';
 import { tabs } from '../constants';
 import { ExecutionNodeViews } from '../ExecutionNodeViews';
 
@@ -78,7 +79,9 @@ describe('ExecutionNodeViews', () => {
   const renderViews = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <ExecutionNodeViews execution={execution} />
+        <ExecutionContext.Provider value={{ execution }}>
+          <ExecutionNodeViews />
+        </ExecutionContext.Provider>
       </QueryClientProvider>,
     );
 

@@ -208,7 +208,7 @@ export function isExecutionArchived(execution: Execution): boolean {
 
 /** Returns true if current node (by nodeId) has 'gateNode' field in the list of nodes on compiledWorkflowClosure */
 export function isNodeGateNode(nodes: CompiledNode[], id: string): boolean {
-  const node = nodes.find(n => n.id === id);
+  const node = nodes?.find(n => n.id === id);
   return !!node?.gateNode;
 }
 

@@ -7,7 +7,6 @@ import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { createTestQueryClient } from 'test/utils';
 import { dateToTimestamp } from 'common/utils';
-import { createMockWorkflow } from 'models/__mocks__/workflowData';
 import { TaskNames } from '../Timeline/TaskNames';
 
 const onToggle = jest.fn();

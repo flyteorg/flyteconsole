@@ -151,8 +151,8 @@ export const NodeExecutionDetailsContextProvider = ({
       nodeExecution.scopedId ||
       nodeExecution.metadata?.specNodeId ||
       nodeExecution.id.nodeId;
-    const nodeDetail = executionTree.nodes.filter(n => n.scopedId === specId);
-    if (nodeDetail.length === 0) {
+    const nodeDetail = executionTree.nodes?.filter(n => n.scopedId === specId);
+    if (nodeDetail?.length === 0) {
       let details = tasks.get(nodeExecution.id.nodeId);
       if (details) {
         // we already have looked for it and found
