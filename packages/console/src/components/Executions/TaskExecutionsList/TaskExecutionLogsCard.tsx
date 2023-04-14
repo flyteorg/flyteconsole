@@ -55,27 +55,31 @@ export const TaskExecutionLogsCard: React.FC<
   } = taskExecution;
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
-  const externalProps = { ...props, styles, commonStyles };
+  const defaultHeader = (
+    <Typography
+      variant="h6"
+      className={classnames(styles.title, commonStyles.textWrapped)}
+    >
+      {headerText}
+    </Typography>
+  );
+
+  const externalHeader = registry?.taskExecutionAttemps && (
+    <ExternalConfigHoc
+      ChildComponent={registry.taskExecutionAttemps}
+      data={{
+        ...props,
+        styles,
+        commonStyles,
+        fallback: defaultHeader,
+      }}
+    />
+  );
   return (
     <>
       <section className={styles.section}>
         <header className={styles.header}>
-          {registry?.taskExecutionAttemps ? (
-            // Alternate path
-
-            <ExternalConfigHoc
-              ChildComponent={registry.taskExecutionAttemps}
-              data={externalProps}
-            />
-          ) : (
-            // default path
-            <Typography
-              variant="h6"
-              className={classnames(styles.title, commonStyles.textWrapped)}
-            >
-              {headerText}
-            </Typography>
-          )}
+          {externalHeader || defaultHeader}
         </header>
         <ExecutionStatusBadge phase={phase} type="task" variant="text" />
       </section>
