@@ -32,7 +32,7 @@ export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
       <DetailsPanelContextProvider>
         <div className={styles.nodesContainer}>
           {tabType === tabs.nodes.id && (
-            <NodeExecutionsTable filterState={filterState}/>
+            <NodeExecutionsTable filterState={filterState} />
           )}
           {tabType === tabs.graph.id && <WorkflowGraph />}
           {tabType === tabs.timeline.id && <ExecutionTimelineContainer />}

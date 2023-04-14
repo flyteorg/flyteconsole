@@ -12,11 +12,14 @@ import { MemoryRouter } from 'react-router';
 import { createTestQueryClient } from 'test/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 
-jest.mock('components/Executions/ExecutionDetails/ExecutionDetailsActions', () => ({
-  ExecutionDetailsActions: jest.fn(() => (
-    <div data-test-id="execution-details-actions"></div>
-  ))
-}));
+jest.mock(
+  'components/Executions/ExecutionDetails/ExecutionDetailsActions',
+  () => ({
+    ExecutionDetailsActions: jest.fn(() => (
+      <div data-test-id="execution-details-actions"></div>
+    )),
+  }),
+);
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 

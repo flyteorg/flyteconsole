@@ -97,7 +97,17 @@ describe('flytegraph > ReactFlow > PausedTasksComponent', () => {
         }}
       >
         <WorkflowNodeExecutionsContext.Provider
-          value={{ nodeExecutionsById, setCurrentNodeExecutionsById: () => {} }}
+          value={{
+            nodeExecutionsById,
+            dagData: {
+              dagError: null,
+              mergedDag: {},
+            },
+            initialDNodes: props.nodes,
+            setCurrentNodeExecutionsById: () => {},
+            setShouldUpdate: () => {},
+            shouldUpdate: false,
+          }}
         >
           <PausedTasksComponent {...props} />
         </WorkflowNodeExecutionsContext.Provider>

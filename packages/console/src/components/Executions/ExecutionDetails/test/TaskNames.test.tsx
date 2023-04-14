@@ -76,7 +76,14 @@ describe('ExecutionDetails > Timeline > TaskNames', () => {
           <WorkflowNodeExecutionsContext.Provider
             value={{
               nodeExecutionsById,
+              dagData: {
+                dagError: null,
+                mergedDag: {},
+              },
+              initialDNodes: props.nodes,
               setCurrentNodeExecutionsById: () => {},
+              setShouldUpdate: () => {},
+              shouldUpdate: false,
             }}
           >
             <TaskNames {...props} />

@@ -21,7 +21,7 @@ import {
   useNodeExecutionsById,
 } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionRow } from './NodeExecutionRow';
-import { ExecutionFiltersState, useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+import { ExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { searchNode } from '../utils';
 import { nodeExecutionPhaseConstants } from '../constants';
 import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
@@ -36,9 +36,10 @@ const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
   if (!target?.length) {
     return target;
   }
+  const originClone = cloneDeep(origin);
   const newTarget = cloneDeep(target);
   newTarget?.forEach(value => {
-    const originalNode = origin.find(
+    const originalNode = originClone.find(
       og => og.id === value.id && og.scopedId === value.scopedId,
     );
     const newNodes = mergeOriginIntoNodes(
@@ -81,12 +82,12 @@ const filterNodes = (
 
   let initialClone = cloneDeep(initialNodes);
 
-  initialClone.forEach(n => {
+  for (const n of initialClone) {
     n.nodes = filterNodes(n.nodes, nodeExecutionsById, appliedFilters);
-  });
+  }
 
   initialClone = initialClone.filter(node => {
-    const hasFilteredChildren = node.nodes?.length;
+    const hasFilteredChildren = !!node.nodes?.length;
     const shouldBeIncluded = executionMatchesPhaseFilter(
       nodeExecutionsById[node.scopedId],
       appliedFilters[0],
@@ -103,7 +104,7 @@ const filterNodes = (
   return initialClone;
 };
 
-const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
+const isPhaseFilter = (appliedFilters: FilterOperation[] = []) => {
   if (appliedFilters.length === 1 && appliedFilters[0].key === 'phase') {
     return true;
   }
@@ -115,53 +116,53 @@ const isPhaseFilter = (appliedFilters: FilterOperation[]) => {
  * NodeExecutions are expandable and will potentially render a list of child
  * TaskExecutions
  */
-export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}> = ({filterState}) => {
+export const NodeExecutionsTable: React.FC<{
+  filterState: ExecutionFiltersState;
+}> = ({ filterState }) => {
   const commonStyles = useCommonStyles();
   const tableStyles = useExecutionTableStyles();
+  const columnStyles = useColumnStyles();
+
   const { execution } = useContext(ExecutionContext);
 
   const { appliedFilters } = filterState;
+  const [filteredNodeExecutions, setFilteredNodeExecutions] =
+    useState<FilteredNodeExecutions>();
   const { nodeExecutionsById, initialDNodes: initialNodes } =
     useNodeExecutionsById();
 
+  const [filters, setFilters] = useState<FilterOperation[]>([]);
+  const [originalNodes, setOriginalNodes] = useState<dNode[]>([]);
+
   // query to get filtered data to narrow down Table outputs
   const { nodeExecutionsQuery: filteredNodeExecutionsQuery } =
-    useExecutionNodeViewsStatePoll(execution, filterState?.appliedFilters);
+    useExecutionNodeViewsStatePoll(execution, filters);
 
+  const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
+
   const [initialFilteredNodes, setInitialFilteredNodes] = useState<
     dNode[] | undefined
   >(undefined);
 
-  const [originalNodes, setOriginalNodes] = useState<dNode[]>(
-    appliedFilters.length > 0 && initialFilteredNodes
-      ? initialFilteredNodes
-      : initialNodes,
-  );
+  useEffect(() => {
+    // keep original nodes as a record of the nodes' toggle status
+    setOriginalNodes(prev => {
+      const newOgNodes = merge(initialNodes, prev);
+      if (stringifyIsEqual(prev, newOgNodes)) {
+        return prev;
+      }
+      return newOgNodes;
+    });
+  }, [initialNodes]);
 
-  const [filters, setFilters] = useState<FilterOperation[]>(appliedFilters);
-
-  const [isFiltersChanged, setIsFiltersChanged] = useState<boolean>(false);
-
-  const { compiledWorkflowClosure } = useNodeExecutionContext();
-
-  const columnStyles = useColumnStyles();
-  // Memoizing columns so they won't be re-generated unless the styles change
-  const compiledNodes = extractCompiledNodes(compiledWorkflowClosure);
-  const columns = useMemo(
-    () => generateColumns(columnStyles, compiledNodes),
-    [columnStyles, compiledNodes],
-  );
-
-  const [filteredNodeExecutions, setFilteredNodeExecutions] =
-    useState<FilteredNodeExecutions>();
-
+  // wait for changes to filtered node executions
   useEffect(() => {
     if (filteredNodeExecutionsQuery.isFetching) {
       return;
     }
 
-    const newFilteredNodeExecutions = isPhaseFilter(filterState.appliedFilters)
+    const newFilteredNodeExecutions = isPhaseFilter(filters)
       ? undefined
       : filteredNodeExecutionsQuery.data;
 
@@ -175,20 +176,20 @@ export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}>
   }, [filteredNodeExecutionsQuery]);
 
   useEffect(() => {
-    const plainNodes = convertToPlainNodes(originalNodes || []);
-    setOriginalNodes(ogn => {
-      const newNodes =
-        appliedFilters.length > 0 && initialFilteredNodes
-          ? mergeOriginIntoNodes(initialFilteredNodes, plainNodes)
-          : merge(initialNodes, ogn);
+    const newShownNodes =
+      filters.length > 0 && initialFilteredNodes
+        ? // if there are filtered nodes, merge original ones into them to preserve toggle status
+          mergeOriginIntoNodes(
+            cloneDeep(initialFilteredNodes),
+            cloneDeep(originalNodes),
+          )
+        : // else, merge originalNodes into initialNodes to preserve toggle status
+          mergeOriginIntoNodes(
+            cloneDeep(initialNodes),
+            cloneDeep(originalNodes),
+          );
 
-      if (!stringifyIsEqual(newNodes, ogn)) {
-        return newNodes;
-      }
-
-      return ogn;
-    });
-
+    const plainNodes = convertToPlainNodes(newShownNodes || []);
     const updatedShownNodesMap = plainNodes.map(node => {
       const execution = nodeExecutionsById?.[node?.scopedId];
       return {
@@ -198,19 +199,32 @@ export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}>
       };
     });
     setShowNodes(updatedShownNodesMap);
-  }, [initialNodes, initialFilteredNodes, originalNodes, nodeExecutionsById]);
+  }, [
+    initialNodes,
+    initialFilteredNodes,
+    originalNodes,
+    nodeExecutionsById,
+    filters,
+  ]);
 
   useEffect(() => {
-    if (!isEqual(filters, appliedFilters)) {
-      setFilters(appliedFilters);
-      setIsFiltersChanged(true);
-    } else {
-      setIsFiltersChanged(false);
-    }
+    setFilters(prev => {
+      if (isEqual(prev, appliedFilters)) {
+        return prev;
+      }
+      return JSON.parse(JSON.stringify(appliedFilters));
+    });
   }, [appliedFilters]);
 
+  // Memoizing columns so they won't be re-generated unless the styles change
+  const compiledNodes = extractCompiledNodes(compiledWorkflowClosure);
+  const columns = useMemo(
+    () => generateColumns(columnStyles, compiledNodes),
+    [columnStyles, compiledNodes],
+  );
+
   useEffect(() => {
-    if (appliedFilters.length > 0) {
+    if (filters.length > 0) {
       // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
       // and need to clear out items manually
       if (!filteredNodeExecutions) {
@@ -218,7 +232,7 @@ export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}>
         const filteredNodes = filterNodes(
           initialNodes,
           nodeExecutionsById,
-          appliedFilters,
+          filters,
         );
 
         setInitialFilteredNodes(filteredNodes);
@@ -231,7 +245,7 @@ export const NodeExecutionsTable: React.FC<{filterState: ExecutionFiltersState}>
         setInitialFilteredNodes(filteredNodes);
       }
     }
-  }, [initialNodes, filteredNodeExecutions, isFiltersChanged]);
+  }, [initialNodes, filteredNodeExecutions, filters]);
 
   const toggleNode = async (id: string, scopedId: string, level: number) => {
     searchNode(originalNodes, 0, id, scopedId, level);

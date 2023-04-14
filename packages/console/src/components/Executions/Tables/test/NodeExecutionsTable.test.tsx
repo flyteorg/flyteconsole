@@ -197,7 +197,7 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     };
     listNodeExecutions.mockImplementation(() => {
       return Promise.resolve({
-        entities: filteredNodeExecutions,
+        entities: [filteredNodeExecutions],
       });
     });
 
@@ -262,20 +262,17 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
       ),
     );
 
+    debug(container);
+
     await waitFor(() => {
       const rows = queryAllByTestId('node-execution-row');
-      return rows.length === filteredNodeExecutions.length;
+      expect(rows).toHaveLength(filteredNodeExecutions.length);
     });
-
-    expect(queryAllByTestId('node-execution-row')).toHaveLength(
-      filteredNodeExecutions.length,
-    );
 
     const ids = queryAllByTestId('node-execution-col-id');
     expect(ids).toHaveLength(filteredNodeExecutions.length);
     const renderedPhases = queryAllByTestId('node-execution-col-phase');
     expect(renderedPhases).toHaveLength(filteredNodeExecutions.length);
-    debug(container);
 
     for (const i in filteredNodeExecutions) {
       expect(ids[i]).toHaveTextContent(filteredNodeExecutions[i].id?.nodeId);
