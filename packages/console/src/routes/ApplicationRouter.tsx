@@ -22,7 +22,7 @@ const StyledSubNavBarContent = styled(Toolbar)(() => ({
     alignItems: 'center',
     display: 'flex',
     maxWidth: '100%',
-    padding: '30px',
+    padding: '24px 20px 24px 30px',
     background: subnavBackgroundColor,
   },
   '@media (min-width: 600px)': {
