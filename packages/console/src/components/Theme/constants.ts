@@ -17,6 +17,7 @@ export let primaryDarkColor = COLOR_SPECTRUM.purple70.color;
 export let primaryHighlightColor = COLOR_SPECTRUM.purple60.color;
 export const secondaryColor = COLOR_SPECTRUM.indigo100.color;
 export const secondaryBackgroundColor = COLOR_SPECTRUM.gray5.color;
+export const subnavBackgroundColor = COLOR_SPECTRUM.gray7.color;
 
 export const primaryTextColor = COLOR_SPECTRUM.gray100.color;
 export const secondaryTextColor = COLOR_SPECTRUM.gray60.color;
@@ -58,7 +59,6 @@ export const errorBackgroundColor = '#FBFBFC';
 
 export const workflowLabelColor = COLOR_SPECTRUM.gray25.color;
 export const launchPlanLabelColor = COLOR_SPECTRUM.gray25.color;
-export let flyteNavigation: FlyteNavigation | undefined = undefined;
 
 export let statusColors = {
   FAILURE: COLOR_SPECTRUM.red20.color,
@@ -120,6 +120,5 @@ export const updateConstants = (config: AppConfig | undefined) => {
 
     statusColors = config.statusColors || statusColors;
     graphStatusColors = config.graphStatusColors || graphStatusColors;
-    flyteNavigation = config.flyteNavigation || flyteNavigation;
   }
 };

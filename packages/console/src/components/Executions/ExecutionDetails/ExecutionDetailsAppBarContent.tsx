@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Button, Dialog, Link, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -7,14 +8,12 @@ import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
 import { useLocationState } from 'components/hooks/useLocationState';
-import { NavBarContent } from 'components/Navigation/NavBarContent';
-import { interactiveTextDisabledColor } from 'components/Theme/constants';
 import { Execution } from 'models/Execution/types';
-import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
+import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -48,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => {
       maxWidth: '100%',
     },
     inputsOutputsLink: {
-      color: interactiveTextDisabledColor,
+      color: theme.palette.primary.main,
     },
     moreActions: {
       marginLeft: theme.spacing(1),
@@ -74,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 /** Renders information about a given Execution into the NavBar */
-export const ExecutionDetailsAppBarContent: React.FC<{
+export const ExecutionDetailsAppBarContentInner: React.FC<{
   execution: Execution;
 }> = ({ execution }) => {
   const commonStyles = useCommonStyles();
@@ -180,53 +179,64 @@ export const ExecutionDetailsAppBarContent: React.FC<{
 
   return (
     <>
-      <NavBarContent>
-        <div className={styles.container}>
-          <RouterLink
-            title={backLinkTitle}
-            className={styles.backLink}
-            to={backLink}
-          >
-            <ArrowBack />
-          </RouterLink>
-          <ExecutionStatusBadge phase={phase} type="workflow" />
-          <div className={styles.titleContainer}>
-            <Typography
-              variant="body1"
-              className={classnames(styles.title, commonStyles.textWrapped)}
-            >
-              <span>
-                {`${project}/${domain}/${sourceId.name}/`}
-                <strong>{`${name}`}</strong>
-              </span>
-            </Typography>
-          </div>
-          <div className={styles.actions}>
-            <Link
-              className={styles.inputsOutputsLink}
-              component="button"
-              onClick={onClickShowInputsOutputs}
-              variant="body1"
-            >
-              View Inputs &amp; Outputs
-            </Link>
-            {actionContent}
-            {moreActionsContent}
-          </div>
-        </div>
-        <Dialog
-          scroll="paper"
-          maxWidth="sm"
-          fullWidth={true}
-          open={showRelaunchForm}
+      <div className={styles.container}>
+        <RouterLink
+          title={backLinkTitle}
+          className={classnames('backLink', styles.backLink)}
+          to={backLink}
         >
-          <RelaunchExecutionForm
-            execution={execution}
-            onClose={onCloseRelaunch}
-          />
-        </Dialog>
-      </NavBarContent>
+          <ArrowBack />
+        </RouterLink>
+        <ExecutionStatusBadge
+          phase={phase}
+          type="workflow"
+          className="subNavBadge"
+        />
+        <div className={classnames('titleContainer', styles.titleContainer)}>
+          <Typography
+            variant="body1"
+            className={classnames(styles.title, commonStyles.textWrapped)}
+          >
+            <span>
+              {`${project}/${domain}/${sourceId.name}/`}
+              <strong>{`${name}`}</strong>
+            </span>
+          </Typography>
+        </div>
+        <div className={styles.actions}>
+          <Link
+            className={styles.inputsOutputsLink}
+            component="button"
+            onClick={onClickShowInputsOutputs}
+            variant="body1"
+          >
+            View Inputs &amp; Outputs
+          </Link>
+          {actionContent}
+          {moreActionsContent}
+        </div>
+      </div>
+      <Dialog
+        scroll="paper"
+        maxWidth="sm"
+        fullWidth={true}
+        open={showRelaunchForm}
+      >
+        <RelaunchExecutionForm
+          execution={execution}
+          onClose={onCloseRelaunch}
+        />
+      </Dialog>
       {modalContent}
     </>
+  );
+};
+export const ExecutionDetailsAppBarContent: React.FC<{
+  execution: Execution;
+}> = ({ execution }) => {
+  return (
+    <SubNavBarContent>
+      <ExecutionDetailsAppBarContentInner execution={execution} />
+    </SubNavBarContent>
   );
 };

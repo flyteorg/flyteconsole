@@ -195,6 +195,7 @@ export type ColorSpectrumType =
   | 'rose100'
   | 'gray0'
   | 'gray5'
+  | 'gray7'
   | 'gray10'
   | 'gray15'
   | 'gray20'
@@ -992,8 +993,12 @@ export const COLOR_SPECTRUM: {
     value: 0,
   },
   gray5: {
-    color: '#F4F4FA',
+    color: '#F2F3F3',
     value: 5,
+  },
+  gray7: {
+    color: '#E6E7E8',
+    value: 7,
   },
   gray10: {
     color: '#E7E7EF',
