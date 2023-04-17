@@ -40,6 +40,12 @@ export interface ParentNodeExecution extends NodeExecution {
   };
 }
 
+export interface DynamicNodeExecution extends NodeExecution {
+  metadata: NodeExecutionMetadata & {
+    isDynamic: true;
+  };
+}
+
 export interface WorkflowNodeExecutionClosure extends NodeExecutionClosure {
   workflowNodeMetadata: WorkflowNodeMetadata;
 }

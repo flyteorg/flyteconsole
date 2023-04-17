@@ -6,6 +6,7 @@ import t from './strings';
 
 interface RowExpanderProps {
   expanded: boolean;
+  disabled?: boolean;
   key?: string;
   onClick: () => void;
 }
@@ -13,7 +14,7 @@ interface RowExpanderProps {
 export const RowExpander = React.forwardRef<
   HTMLButtonElement,
   RowExpanderProps
->(({ expanded, key, onClick }, ref) => {
+>(({ disabled, expanded, key, onClick }, ref) => {
   return (
     <IconButton
       key={key}
@@ -27,6 +28,7 @@ export const RowExpander = React.forwardRef<
         e.stopPropagation();
         onClick();
       }}
+      disabled={disabled}
     >
       {expanded ? <ExpandMore /> : <ChevronRight />}
     </IconButton>

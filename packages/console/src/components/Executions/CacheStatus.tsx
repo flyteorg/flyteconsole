@@ -82,6 +82,7 @@ export interface CacheStatusProps {
   variant?: 'normal' | 'iconOnly';
   sourceTaskExecutionId?: TaskExecutionIdentifier;
   iconStyles?: React.CSSProperties;
+  className?: string;
 }
 
 export const CacheStatus: React.FC<CacheStatusProps> = ({
@@ -89,6 +90,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
   sourceTaskExecutionId,
   variant = 'normal',
   iconStyles,
+  className,
 }) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
@@ -100,11 +102,12 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
   const message = cacheStatusMessages[cacheStatus] || unknownCacheStatusString;
 
   return variant === 'iconOnly' ? (
-    <Tooltip title={message}>
+    <Tooltip title={message} className={className}>
       <NodeExecutionCacheStatusIcon
         className={classnames(
           commonStyles.iconRight,
           commonStyles.iconSecondary,
+          className,
         )}
         style={iconStyles}
         status={cacheStatus}
@@ -113,7 +116,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
   ) : (
     <>
       <Typography
-        className={styles.cacheStatus}
+        className={classnames(styles.cacheStatus, className)}
         variant="subtitle1"
         color="textSecondary"
       >
@@ -122,6 +125,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
           className={classnames(
             commonStyles.iconSecondary,
             commonStyles.iconLeft,
+            className,
           )}
         />
         {message}
@@ -131,6 +135,7 @@ export const CacheStatus: React.FC<CacheStatusProps> = ({
           className={classnames(
             commonStyles.primaryLink,
             styles.sourceExecutionLink,
+            className,
           )}
           to={Routes.ExecutionDetails.makeUrl(
             sourceTaskExecutionId.nodeExecutionId.executionId,

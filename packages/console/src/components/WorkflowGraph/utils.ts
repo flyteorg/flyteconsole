@@ -5,28 +5,13 @@ import { CompiledNode, TaskNode } from 'models/Node/types';
 import { CompiledTask, TaskTemplate } from 'models/Task/types';
 import { dTypes, dNode } from 'models/Graph/types';
 import _ from 'lodash';
+import { isEndNode, isStartNode } from 'models/Node/utils';
 import { transformerWorkflowToDag } from './transformerWorkflowToDag';
 /**
  * TODO FC#393: these are dupes for testing, remove once tests fixed
  */
 export const DISPLAY_NAME_START = 'start';
 export const DISPLAY_NAME_END = 'end';
-
-export const isStartOrEndNode = (node: any) => {
-  return node.id === startNodeId || node.id === endNodeId;
-};
-
-export function isStartNode(node: any) {
-  return node.id === startNodeId;
-}
-
-export function isEndNode(node: any) {
-  return node.id === endNodeId;
-}
-
-export function isExpanded(node: any) {
-  return !!node.expanded;
-}
 
 /**
  * Returns a display name from either workflows or nodes

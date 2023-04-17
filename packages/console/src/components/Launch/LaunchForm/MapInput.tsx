@@ -166,8 +166,6 @@ export const MapInput = (props: InputProps) => {
   } = props;
   const classes = useStyles();
 
-  console.log('MY FILTER: org error: ', error);
-
   const [data, setData] = React.useState<MapInputItem[]>(
     parseMappedTypeValue(value),
   );

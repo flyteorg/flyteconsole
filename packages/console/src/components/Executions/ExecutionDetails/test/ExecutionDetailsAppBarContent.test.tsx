@@ -47,7 +47,7 @@ describe('ExecutionDetailsAppBarContent', () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <ExecutionContext.Provider value={executionContext}>
-            <ExecutionDetailsAppBarContent execution={execution} />
+            <ExecutionDetailsAppBarContent />
           </ExecutionContext.Provider>
         </MemoryRouter>
       </QueryClientProvider>,

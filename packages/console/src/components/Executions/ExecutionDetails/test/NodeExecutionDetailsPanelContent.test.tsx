@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { NodeExecutionDetailsContextProvider } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
@@ -6,12 +7,19 @@ import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution } from 'models/Execution/types';
-import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient } from 'test/utils';
 import { NodeExecutionDetailsPanelContent } from '../NodeExecutionDetailsPanelContent';
 
+jest.mock(
+  'components/Executions/ExecutionDetails/ExecutionDetailsActions',
+  () => ({
+    ExecutionDetailsActions: jest.fn(() => (
+      <div data-test-id="execution-details-actions"></div>
+    )),
+  }),
+);
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 

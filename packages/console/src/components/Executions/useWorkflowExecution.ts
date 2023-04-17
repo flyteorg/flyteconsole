@@ -24,7 +24,10 @@ export function makeWorkflowExecutionQuery(
 ): QueryInput<Execution> {
   return {
     queryKey: [QueryType.WorkflowExecution, id],
-    queryFn: () => getExecution(id),
+    queryFn: async () => {
+      const result = await getExecution(id);
+      return result;
+    },
   };
 }
 

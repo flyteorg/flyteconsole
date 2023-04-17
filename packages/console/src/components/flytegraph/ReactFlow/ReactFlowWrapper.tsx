@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useContext } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactFlow, { Background } from 'react-flow-renderer';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
-import { useQueryClient } from 'react-query';
-import { fetchChildrenExecutions } from 'components/Executions/utils';
+import { stringifyIsEqual } from 'components/Executions/contextProvider/NodeExecutionDetails/utils';
 import { getPositionedNodes, ReactFlowIdHash } from './utils';
 import {
   ReactFlowCustomEndNode,
@@ -26,11 +24,19 @@ const CustomNodeTypes = {
   FlyteNode_start: ReactFlowCustomStartNode,
   FlyteNode_end: ReactFlowCustomEndNode,
   FlyteNode_nestedStart: ReactFlowCustomNestedPoint,
+
   FlyteNode_nestedEnd: ReactFlowCustomNestedPoint,
   FlyteNode_nestedMaxDepth: ReactFlowCustomMaxNested,
+
   FlyteNode_staticNode: ReactFlowStaticNode,
   FlyteNode_staticNestedNode: ReactFlowStaticNested,
   FlyteNode_gateNode: ReactFlowGateNode,
+};
+
+const reactFlowStyle: React.CSSProperties = {
+  display: 'flex',
+  flex: `1 1 100%`,
+  flexDirection: 'column',
 };
 
 export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
@@ -48,17 +54,31 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     needFitView: false,
   });
 
+  const setStateDeduped = (newState: typeof state) => {
+    setState(prevState => {
+      if (stringifyIsEqual(prevState, newState)) {
+        return prevState;
+      }
+      return newState;
+    });
+  };
   useEffect(() => {
-    setState(state => ({
+    if (!rfGraphJson) {
+      return;
+    }
+    setStateDeduped({
       ...state,
       shouldUpdate: true,
       nodes: rfGraphJson?.nodes,
-      edges: rfGraphJson?.edges?.map(edge => ({ ...edge, zIndex: 0 })),
-    }));
+      edges: rfGraphJson?.edges?.map(edge => ({
+        ...edge,
+        zIndex: 0,
+      })),
+    });
   }, [rfGraphJson]);
 
   const onLoad = (rf: any) => {
-    setState({ ...state, needFitView: true, reactFlowInstance: rf });
+    setStateDeduped({ ...state, needFitView: true, reactFlowInstance: rf });
   };
 
   const onNodesChange = useCallback(
@@ -82,12 +102,12 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
           state.edges,
         );
 
-        setState(state => ({
+        setStateDeduped({
           ...state,
           shouldUpdate: false,
           nodes: hashGraph,
           edges: hashEdges,
-        }));
+        });
       }
       if (
         changes.length === state.nodes.length &&
@@ -100,14 +120,8 @@ export const ReactFlowWrapper: React.FC<RFWrapperProps> = ({
     [state.shouldUpdate, state.reactFlowInstance, state.needFitView],
   );
 
-  const reactFlowStyle: React.CSSProperties = {
-    display: 'flex',
-    flex: `1 1 100%`,
-    flexDirection: 'column',
-  };
-
   const onNodeClick = async _event => {
-    setState(state => ({ ...state, needFitView: false }));
+    setStateDeduped({ ...state, needFitView: false });
   };
 
   return (

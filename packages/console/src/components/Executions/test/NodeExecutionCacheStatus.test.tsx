@@ -11,6 +11,7 @@ import * as React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { MemoryRouter } from 'react-router';
 import { createTestQueryClient } from 'test/utils';
+import { cloneDeep } from 'lodash';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
 
 jest.mock('models/Task/utils');
@@ -45,7 +46,8 @@ describe('Executions > NodeExecutionCacheStatus', () => {
     );
 
   it('should not render anything, if cacheStatus is undefined', async () => {
-    const { container } = renderComponent({ execution });
+    const ex = cloneDeep(execution);
+    const { container } = renderComponent({ execution: ex });
     await waitFor(() => container);
 
     expect(container).toBeEmptyDOMElement();

@@ -8,6 +8,8 @@ import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { NodeExecution } from 'models/Execution/types';
+import { cloneDeep } from 'lodash';
+import { DetailsPanelContextProvider } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import { NodeExecutionActions } from '../NodeExecutionActions';
 
 jest.mock('components/Workflow/workflowQueries');
@@ -28,7 +30,9 @@ describe('Executions > Tables > NodeExecutionActions', () => {
 
   beforeEach(() => {
     fixture = basicPythonWorkflow.generate();
-    execution = fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
+    execution = cloneDeep(
+      fixture.workflowExecutions.top.nodeExecutions.pythonNode.data,
+    );
     queryClient = createTestQueryClient();
     insertFixture(mockServer, fixture);
     fetchWorkflow.mockImplementation(() =>
@@ -40,7 +44,9 @@ describe('Executions > Tables > NodeExecutionActions', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionActions {...props} />
+          <DetailsPanelContextProvider>
+            <NodeExecutionActions {...props} />
+          </DetailsPanelContextProvider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );
