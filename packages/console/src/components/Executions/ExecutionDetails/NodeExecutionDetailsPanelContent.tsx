@@ -28,6 +28,7 @@ import { NoDataIsAvailable } from 'components/Literals/LiteralMapViewer';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { PanelSection } from 'components/common/PanelSection';
 import { DumpJSON } from 'components/common/DumpJSON';
+import { ScrollableMonospaceText } from 'components/common/ScrollableMonospaceText';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import {
@@ -47,7 +48,6 @@ import {
 import { NodeExecutionDetails } from '../types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { getTaskExecutionDetailReasons } from './utils';
-import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
 import { ExecutionDetailsActions } from './ExecutionDetailsActions';
@@ -470,10 +470,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       </div>
       {isRunningPhase && isReasonsVisible && (
         <div className={styles.statusBody}>
-          <ExpandableMonospaceText
-            initialExpansionState={false}
-            text={reasons.join('\n')}
-          />
+          <ScrollableMonospaceText text={reasons.join('\n')} />
         </div>
       )}
     </div>
