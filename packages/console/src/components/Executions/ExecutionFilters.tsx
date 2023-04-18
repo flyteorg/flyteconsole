@@ -116,7 +116,6 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
             />
           );
         }
-        const renderContent = () => <RenderFilter filter={filter} />;
         return (
           <FilterPopoverButton
             {...filter.button}
@@ -125,7 +124,7 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
             onReset={filter.onReset}
             buttonText={filter.label}
             className={styles.filterButton}
-            renderContent={renderContent}
+            renderContent={() => <RenderFilter filter={filter} />}
           />
         );
       })}

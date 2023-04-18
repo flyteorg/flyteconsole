@@ -46,7 +46,7 @@ export const CollectionInput: React.FC<InputProps> = props => {
           label={label}
           multiline={true}
           onChange={makeStringChangeHandler(onChange)}
-          rowsMax={8}
+          maxRows={8}
           value={value}
           variant="outlined"
         />

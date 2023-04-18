@@ -2,7 +2,15 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import * as React from 'react';
 import { createTestQueryClient } from 'test/utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { WorkflowGraph } from '../WorkflowGraph';
+
+jest.mock('../../flytegraph/ReactFlow/transformDAGToReactFlowV2.tsx', () => ({
+  ConvertFlyteDagToReactFlows: jest.fn(() => ({
+    nodes: [],
+    edges: [],
+  })),
+}));
 
 jest.mock('../../flytegraph/ReactFlow/ReactFlowWrapper.tsx', () => ({
   ReactFlowWrapper: jest.fn(({ children }) => (
@@ -21,24 +29,30 @@ describe('WorkflowGraph', () => {
     await act(() => {
       render(
         <QueryClientProvider client={queryClient}>
-          <WorkflowGraph
-            onNodeSelectionChanged={jest.fn}
-            onPhaseSelectionChanged={jest.fn}
-            isDetailsTabClosed={true}
-            mergedDag={{
-              edges: [],
-              id: 'node',
-              name: 'node',
-              nodes: [],
-              type: 4,
-              value: {
-                id: 'name',
+          <WorkflowNodeExecutionsContext.Provider
+            value={{
+              initialDNodes: [],
+              nodeExecutionsById: {},
+              setCurrentNodeExecutionsById: () => {},
+              setShouldUpdate: () => {},
+              shouldUpdate: false,
+              dagData: {
+                mergedDag: {
+                  edges: [],
+                  id: 'node',
+                  name: 'node',
+                  nodes: [],
+                  type: 4,
+                  value: {
+                    id: 'name',
+                  },
+                },
+                dagError: undefined,
               },
             }}
-            error={null}
-            dynamicWorkflows={[]}
-            initialNodes={[]}
-          />
+          >
+            <WorkflowGraph />
+          </WorkflowNodeExecutionsContext.Provider>
         </QueryClientProvider>,
       );
     });

@@ -16,6 +16,7 @@ import t from './strings';
 import { ExecutionPhaseConstants, NodeExecutionDisplayType } from './types';
 
 export const executionRefreshIntervalMs = 10000;
+export const nodeExecutionRefreshIntervalMs = 3000;
 export const noLogsFoundString = t('noLogsFoundString');
 
 /** Shared values for color/text/etc for each execution phase */
@@ -261,6 +262,7 @@ export const taskTypeToNodeExecutionDisplayType: {
   [TaskType.MPI]: NodeExecutionDisplayType.MpiTask,
   [TaskType.ARRAY_AWS]: NodeExecutionDisplayType.ARRAY_AWS,
   [TaskType.ARRAY_K8S]: NodeExecutionDisplayType.ARRAY_K8S,
+  [TaskType.BRANCH]: NodeExecutionDisplayType.BranchNode,
 };
 
 export const cacheStatusMessages: { [k in CatalogCacheStatus]: string } = {

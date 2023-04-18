@@ -5,6 +5,7 @@ export enum TaskType {
   ARRAY = 'container_array',
   BATCH_HIVE = 'batch_hive',
   DYNAMIC = 'dynamic-task',
+  BRANCH = 'branch-node',
   HIVE = 'hive',
   PYTHON = 'python-task',
   SIDECAR = 'sidecar',

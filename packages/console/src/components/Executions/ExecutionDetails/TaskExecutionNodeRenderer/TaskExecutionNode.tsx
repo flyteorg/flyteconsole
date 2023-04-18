@@ -1,10 +1,10 @@
+import React from 'react';
+import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { NodeRendererProps, Point } from 'components/flytegraph/types';
 import { TaskNodeRenderer } from 'components/WorkflowGraph/TaskNodeRenderer';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { DAGNode } from 'models/Graph/types';
-import React, { useContext } from 'react';
-import { NodeExecutionsByIdContext } from '../../contexts';
 import { StatusIndicator } from './StatusIndicator';
 
 /** Renders DAGNodes with colors based on their node type, as well as dots to
@@ -14,7 +14,7 @@ export const TaskExecutionNode: React.FC<
   NodeRendererProps<DAGNode>
 > = props => {
   const { node, config, selected } = props;
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const nodeExecution = nodeExecutionsById[node.id];
 
   const phase = nodeExecution

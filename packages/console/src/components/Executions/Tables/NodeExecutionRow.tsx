@@ -1,20 +1,28 @@
+import React from 'react';
 import classnames from 'classnames';
-import { NodeExecution } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
-import React, { useContext } from 'react';
-import { isExpanded } from 'components/WorkflowGraph/utils';
 import { isEqual } from 'lodash';
 import { useTheme } from 'components/Theme/useTheme';
 import { makeStyles } from '@material-ui/core';
-import { selectedClassName, useExecutionTableStyles } from './styles';
+import { isExpanded } from 'models/Node/utils';
+import { dateToTimestamp } from 'common/utils';
+import {
+  grayedClassName,
+  selectedClassName,
+  useExecutionTableStyles,
+} from './styles';
 import { NodeExecutionColumnDefinition } from './types';
-import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
+import { useDetailsPanel } from '../ExecutionDetails/DetailsPanelContext';
 import { RowExpander } from './RowExpander';
 import { calculateNodeExecutionRowLeftSpacing } from './utils';
 import { isParentNode } from '../utils';
+import { useNodeExecutionDynamicContext } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
+  [`${grayedClassName}`]: {
+    color: `${theme.palette.grey[300]} !important`,
+  },
   namesContainerExpander: {
     display: 'flex',
     marginTop: 'auto',
@@ -27,7 +35,6 @@ const useStyles = makeStyles(() => ({
 
 interface NodeExecutionRowProps {
   columns: NodeExecutionColumnDefinition[];
-  nodeExecution: NodeExecution;
   level?: number;
   style?: React.CSSProperties;
   node: dNode;
@@ -37,19 +44,14 @@ interface NodeExecutionRowProps {
 /** Renders a NodeExecution as a row inside a `NodeExecutionsTable` */
 export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
   columns,
-  nodeExecution,
   node,
   style,
   onToggle,
 }) => {
   const styles = useStyles();
   const theme = useTheme();
-  const expanderRef = React.useRef<HTMLButtonElement>();
-
   const tableStyles = useExecutionTableStyles();
-  const { selectedExecution, setSelectedExecution } =
-    useContext(DetailsPanelContext);
-
+  const { childCount, componentProps } = useNodeExecutionDynamicContext();
   const nodeLevel = node?.level ?? 0;
 
   // For the first level, we want the borders to span the entire table,
@@ -63,29 +65,37 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
     )}px`,
   };
 
+  const expanderRef = React.useRef<HTMLButtonElement>();
+
+  const { selectedExecution, setSelectedExecution } = useDetailsPanel();
+
   const selected = selectedExecution
-    ? isEqual(selectedExecution, nodeExecution)
+    ? isEqual(selectedExecution, node.execution?.id)
     : false;
 
   const expanderContent = React.useMemo(() => {
-    return isParentNode(nodeExecution) ? (
+    const isParent = node?.execution ? isParentNode(node.execution) : false;
+    const isExpandedVal = isExpanded(node);
+
+    return isParent ? (
       <RowExpander
         ref={expanderRef as React.ForwardedRef<HTMLButtonElement>}
-        expanded={isExpanded(node)}
+        expanded={isExpandedVal}
         onClick={() => {
           onToggle(node.id, node.scopedId, nodeLevel);
         }}
+        disabled={!childCount}
       />
     ) : (
       <div className={styles.leaf} />
     );
-  }, [node, nodeLevel]);
+  }, [node, nodeLevel, node.execution, childCount]);
 
   // open the side panel for selected execution's detail
   // use null in case if there is no execution provided - when it is null, will close side panel
   const onClickRow = () =>
-    nodeExecution.closure.phase !== NodeExecutionPhase.UNDEFINED &&
-    setSelectedExecution(nodeExecution?.id ?? null);
+    node?.execution?.closure.phase !== NodeExecutionPhase.UNDEFINED &&
+    setSelectedExecution(node.execution?.id ?? null);
 
   return (
     <div
@@ -95,11 +105,17 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
       })}
       style={style}
       onClick={onClickRow}
+      {...componentProps}
+      key={node.scopedId}
     >
       <div className={tableStyles.borderBottom} style={rowContentStyle}>
         <div className={tableStyles.rowColumns}>
           <div
-            className={classnames(tableStyles.rowColumn, tableStyles.expander)}
+            className={classnames(
+              tableStyles.rowColumn,
+              tableStyles.expander,
+              node.grayedOut ? grayedClassName : '',
+            )}
           >
             <div className={styles.namesContainerExpander}>
               {expanderContent}
@@ -108,11 +124,32 @@ export const NodeExecutionRow: React.FC<NodeExecutionRowProps> = ({
           {columns.map(({ className, key: columnKey, cellRenderer }) => (
             <div
               key={columnKey}
-              className={classnames(tableStyles.rowColumn, className)}
+              className={classnames(
+                tableStyles.rowColumn,
+                className,
+                node.grayedOut ? grayedClassName : '',
+              )}
             >
               {cellRenderer({
                 node,
-                execution: nodeExecution,
+                execution: node.execution || {
+                  closure: {
+                    createdAt: dateToTimestamp(new Date()),
+                    outputUri: '',
+                    phase: NodeExecutionPhase.UNDEFINED,
+                  },
+                  id: {
+                    executionId: {
+                      domain: node.value?.taskNode?.referenceId?.domain,
+                      name: node.value?.taskNode?.referenceId?.name,
+                      project: node.value?.taskNode?.referenceId?.project,
+                    },
+                    nodeId: node.id,
+                  },
+                  inputUri: '',
+                  scopedId: node.scopedId,
+                },
+                className: node.grayedOut ? tableStyles.grayed : '',
               })}
             </div>
           ))}

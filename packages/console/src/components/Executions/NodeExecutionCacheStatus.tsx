@@ -13,6 +13,7 @@ interface NodeExecutionCacheStatusProps {
    *  `iconOnly` will render just the icon with the description as a tooltip
    */
   variant?: 'normal' | 'iconOnly';
+  className?: string;
 }
 /** For a given `NodeExecution.closure.taskNodeMetadata` object, will render
  * the cache status with a descriptive message. For `Core.CacheCatalogStatus.CACHE_HIT`,
@@ -24,7 +25,7 @@ interface NodeExecutionCacheStatusProps {
  */
 export const NodeExecutionCacheStatus: React.FC<
   NodeExecutionCacheStatusProps
-> = ({ execution, variant = 'normal' }) => {
+> = ({ execution, variant = 'normal', className }) => {
   const taskNodeMetadata = execution.closure?.taskNodeMetadata;
   const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [nodeDetails, setNodeDetails] = useState<
@@ -49,6 +50,7 @@ export const NodeExecutionCacheStatus: React.FC<
         <CacheStatus
           cacheStatus={CatalogCacheStatus.MAP_CACHE}
           variant={variant}
+          className={className}
         />
       );
     }
@@ -64,6 +66,7 @@ export const NodeExecutionCacheStatus: React.FC<
       cacheStatus={taskNodeMetadata.cacheStatus}
       sourceTaskExecutionId={taskNodeMetadata.catalogKey?.sourceTaskExecution}
       variant={variant}
+      className={className}
     />
   );
 };

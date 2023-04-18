@@ -6,6 +6,7 @@ import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router';
 import { Routes } from 'routes/routes';
+import { ExecutionContext } from 'components/Executions/contexts';
 import { ExecutionMetadataLabels } from '../constants';
 import { ExecutionMetadata } from '../ExecutionMetadata';
 
@@ -28,7 +29,13 @@ describe('ExecutionMetadata', () => {
   const renderMetadata = () =>
     render(
       <MemoryRouter>
-        <ExecutionMetadata execution={execution} />
+        <ExecutionContext.Provider
+          value={{
+            execution,
+          }}
+        >
+          <ExecutionMetadata />
+        </ExecutionContext.Provider>
       </MemoryRouter>,
     );
 

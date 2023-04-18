@@ -1,27 +1,34 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Handle, Position, ReactFlowProps } from 'react-flow-renderer';
 import { dTypes } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import { RENDER_ORDER } from 'components/Executions/TaskExecutionsList/constants';
 import { whiteColor } from 'components/Theme/constants';
 import { PlayCircleOutline } from '@material-ui/icons';
 import { Tooltip } from '@material-ui/core';
-import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { getNodeFrontendPhase } from 'components/Executions/utils';
 import { CacheStatus } from 'components/Executions/CacheStatus';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { extractCompiledNodes } from 'components/hooks/utils';
+import {
+  NodeExecutionDynamicProvider,
+  useNodeExecutionDynamicContext,
+} from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import {
   COLOR_GRAPH_BACKGROUND,
   getGraphHandleStyle,
   getGraphNodeStyle,
-  getNestedContainerStyle,
   getStatusColor,
 } from './utils';
 import { RFHandleProps, RFNode } from './types';
 import t from './strings';
+import {
+  BorderContainer,
+  BreadCrumbContainer,
+  BreadElement,
+} from './BreadCrumb';
+import { useReactFlowBreadCrumbContext } from './ReactFlowBreadCrumbProvider';
 
 const taskContainerStyle: React.CSSProperties = {
   position: 'absolute',
@@ -54,9 +61,13 @@ const renderBasicNode = (
   scopedId: string,
   styles: React.CSSProperties,
   onClick?: () => void,
+  componentProps?: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >,
 ) => {
   return (
-    <div onClick={onClick}>
+    <div onClick={onClick} {...(componentProps || {})}>
       {renderTaskType(taskType)}
       <div style={styles}>{text}</div>
       {renderDefaultHandles(
@@ -142,25 +153,58 @@ export const ReactFlowCustomNestedPoint = ({ data }: RFNode) => {
  * denoted by solid color.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-
-export const ReactFlowCustomMaxNested = ({ data }: RFNode) => {
-  const { text, taskType, scopedId, onAddNestedView } = data;
+export const ReactFlowCustomMaxNested = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider node={props.data.node}>
+      <ReactFlowCustomMaxNestedInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+const ReactFlowCustomMaxNestedInner = ({ data }: RFNode) => {
+  const { text, taskType, scopedId, isParentNode, parentScopedId, node } = data;
   const styles = getGraphNodeStyle(dTypes.nestedMaxDepth);
+  const { onAddNestedView } = useReactFlowBreadCrumbContext();
+  const { componentProps } = useNodeExecutionDynamicContext();
 
-  const onClick = () => {
-    onAddNestedView();
-  };
-
-  return renderBasicNode(taskType, text, scopedId, styles, onClick);
+  return renderBasicNode(
+    taskType,
+    text,
+    scopedId,
+    styles,
+    () => {
+      onAddNestedView(
+        {
+          parent: isParentNode ? parentScopedId : scopedId,
+          view: scopedId,
+        },
+        node,
+      );
+    },
+    componentProps,
+  );
 };
 
-export const ReactFlowStaticNested = ({ data }: RFNode) => {
+export const ReactFlowStaticNested = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider node={props.data.node}>
+      <ReactFlowStaticNestedInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+const ReactFlowStaticNestedInner = ({ data }: RFNode) => {
   const { text, taskType, scopedId } = data;
   const styles = getGraphNodeStyle(dTypes.staticNestedNode);
   return renderBasicNode(taskType, text, scopedId, styles);
 };
 
-export const ReactFlowStaticNode = ({ data }: RFNode) => {
+export const ReactFlowStaticNode = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider node={props.data.node}>
+      <ReactFlowStaticNodeInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+const ReactFlowStaticNodeInner = ({ data }: RFNode) => {
   const { text, taskType, scopedId } = data;
   const styles = getGraphNodeStyle(dTypes.staticNode);
   return renderBasicNode(taskType, text, scopedId, styles);
@@ -220,25 +264,36 @@ const TaskPhaseItem = ({
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-
-export const ReactFlowGateNode = ({ data }: RFNode) => {
+export const ReactFlowGateNode = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider node={props.data.node}>
+      <ReactFlowGateNodeInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+const ReactFlowGateNodeInner = ({ data }: RFNode) => {
   const { compiledWorkflowClosure } = useNodeExecutionContext();
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
   const {
+    node,
     nodeType,
     nodeExecutionStatus,
     text,
     scopedId,
     onNodeSelectionChanged,
   } = data;
-  const phase = getNodeFrontendPhase(nodeExecutionStatus, true);
+  const { componentProps } = useNodeExecutionDynamicContext();
+  const nodeExecution = node.execution;
+  const phase = getNodeFrontendPhase(
+    nodeExecution?.closure?.phase || nodeExecutionStatus,
+    true,
+  );
   const styles = getGraphNodeStyle(nodeType, phase);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
 
   const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
     node =>
-      node.id === nodeExecutionsById[scopedId]?.metadata?.specNodeId ||
-      node.id === nodeExecutionsById[scopedId]?.id?.nodeId,
+      node.id === nodeExecution?.metadata?.specNodeId ||
+      node.id === nodeExecution?.id?.nodeId,
   );
 
   const iconStyles: React.CSSProperties = {
@@ -250,7 +305,8 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
     cursor: 'pointer',
   };
 
-  const handleNodeClick = () => {
+  const handleNodeClick = e => {
+    e.stopPropagation();
     onNodeSelectionChanged(true);
   };
 
@@ -260,7 +316,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
   };
 
   return (
-    <div onClick={handleNodeClick}>
+    <div onClick={handleNodeClick} {...componentProps}>
       <div style={styles}>
         {text}
         {phase === NodeExecutionPhase.PAUSED && (
@@ -278,7 +334,7 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
         <LaunchFormDialog
           compiledNode={compiledNode}
           initialParameters={undefined}
-          nodeExecutionId={nodeExecutionsById[scopedId].id}
+          nodeExecutionId={nodeExecution?.id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
         />
@@ -292,11 +348,20 @@ export const ReactFlowGateNode = ({ data }: RFNode) => {
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-
-export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
+export type ReactFlowNodeProps = ReactFlowProps & RFNode;
+export const ReactFlowCustomTaskNode = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider node={props.data.node}>
+      <ReactFlowCustomTaskNodeInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
+  const { data } = props;
   const {
+    node,
     nodeType,
-    nodeExecutionStatus,
+    nodeExecutionStatus: initialNodeExecutionStatus,
     selectedPhase: initialPhase,
     taskType,
     text,
@@ -306,25 +371,29 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
     onNodeSelectionChanged,
     onPhaseSelectionChanged,
   } = data;
-  const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
+
   const [selectedNode, setSelectedNode] = useState<boolean>(false);
   const [selectedPhase, setSelectedPhase] = useState<
     TaskExecutionPhase | undefined
   >(initialPhase);
+  const { componentProps } = useNodeExecutionDynamicContext();
+  const nodeExecution = node.execution;
+  const nodeExecutionStatus =
+    nodeExecution?.closure?.phase || initialNodeExecutionStatus;
+  const styles = getGraphNodeStyle(nodeType, nodeExecutionStatus);
 
   useEffect(() => {
-    if (selectedNode === true) {
+    // if the node execution isn't there
+    // (like in the case of a dynamic flow when the node execution isn't available yet)
+    // bringing up the context pane will result in an infinite loop
+    // checking if the node execution is present prevents that from happening
+    if (selectedNode === true && nodeExecution) {
       onNodeSelectionChanged(selectedNode);
       setSelectedNode(false);
       onPhaseSelectionChanged(selectedPhase);
       setSelectedPhase(selectedPhase);
     }
-  }, [
-    selectedNode,
-    onNodeSelectionChanged,
-    selectedPhase,
-    onPhaseSelectionChanged,
-  ]);
+  }, [selectedNode, selectedPhase]);
 
   const mapTaskContainerStyle: React.CSSProperties = {
     position: 'absolute',
@@ -351,7 +420,9 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
     display: 'flex',
   };
 
-  const handleNodeClick = _e => {
+  const handleNodeClick = e => {
+    e.stopPropagation();
+
     if (nodeExecutionStatus === NodeExecutionPhase.SKIPPED) {
       return;
     }
@@ -397,7 +468,7 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
   };
 
   return (
-    <div onClick={handleNodeClick}>
+    <div onClick={handleNodeClick} {...componentProps}>
       {nodeLogsByPhase ? renderTaskName() : renderTaskType(taskType)}
       <div style={styles}>
         {nodeLogsByPhase ? renderTaskPhases(nodeLogsByPhase) : text}
@@ -421,125 +492,50 @@ export const ReactFlowCustomTaskNode = ({ data }: RFNode) => {
  * and any edge handles.
  * @param props.data data property of ReactFlowGraphNodeData
  */
-export const ReactFlowSubWorkflowContainer = ({ data }: RFNode) => {
-  const {
-    nodeExecutionStatus,
-    text,
-    scopedId,
-    currentNestedView,
-    onRemoveNestedView,
-  } = data;
-  const BREAD_FONT_SIZE = '9px';
-  const BREAD_COLOR_ACTIVE = COLOR_SPECTRUM.purple60.color;
-  const BREAD_COLOR_INACTIVE = COLOR_SPECTRUM.black.color;
-  const borderStyle = getNestedContainerStyle(nodeExecutionStatus);
+export const ReactFlowSubWorkflowContainer = (props: ReactFlowNodeProps) => {
+  return (
+    <NodeExecutionDynamicProvider
+      node={props.data.node}
+      overrideInViewValue={true}
+    >
+      <ReactFlowSubWorkflowContainerInner {...props} />
+    </NodeExecutionDynamicProvider>
+  );
+};
+export const ReactFlowSubWorkflowContainerInner = ({ data }: RFNode) => {
+  const { text, scopedId, currentNestedView } = data;
 
-  const handleNestedViewClick = e => {
-    const index = e.target.id.substr(
-      e.target.id.indexOf('_') + 1,
-      e.target.id.length,
-    );
-    onRemoveNestedView(scopedId, index);
-  };
+  const { onRemoveNestedView } = useReactFlowBreadCrumbContext();
 
   const handleRootClick = () => {
     onRemoveNestedView(scopedId, -1);
   };
 
   const currentNestedDepth = currentNestedView?.length || 0;
-
-  const BreadElement = ({ nestedView, index }) => {
-    const liStyles: React.CSSProperties = {
-      cursor: 'pointer',
-      fontSize: BREAD_FONT_SIZE,
-      color: BREAD_COLOR_ACTIVE,
-    };
-
-    const liStyleInactive: React.CSSProperties = { ...liStyles };
-    liStyleInactive['color'] = BREAD_COLOR_INACTIVE;
-
-    const beforeStyle: React.CSSProperties = {
-      cursor: 'pointer',
-      color: BREAD_COLOR_ACTIVE,
-      padding: '0 .2rem',
-      fontSize: BREAD_FONT_SIZE,
-    };
-    const onClick =
-      currentNestedDepth > index + 1 ? handleNestedViewClick : undefined;
-    return (
-      <li
-        onClick={onClick}
-        style={index === currentNestedDepth - 1 ? liStyleInactive : liStyles}
-        id={`${scopedId}_${index}`}
-      >
-        {index === 0 ? <span style={beforeStyle}>{'>'}</span> : null}
-        {nestedView}
-        {index < currentNestedDepth - 1 ? (
-          <span style={beforeStyle}>{'>'}</span>
-        ) : null}
-      </li>
-    );
-  };
-
-  const BorderElement = props => {
-    return <div style={borderStyle}>{props.children}</div>;
-  };
-
-  const BorderContainer = props => {
-    let output = BorderElement(props);
-    for (let i = 0; i < currentNestedDepth; i++) {
-      output = <BorderElement>{output}</BorderElement>;
-    }
-    return output;
-  };
-
-  const renderBreadCrumb = () => {
-    const breadContainerStyle: React.CSSProperties = {
-      position: 'absolute',
-      display: 'flex',
-      width: '100%',
-      marginTop: '-1rem',
-    };
-    const olStyles: React.CSSProperties = {
-      margin: 0,
-      padding: 0,
-      display: 'flex',
-      listStyle: 'none',
-      listStyleImage: 'none',
-      minWidth: '1rem',
-    };
-    const headerStyle: React.CSSProperties = {
-      color: BREAD_COLOR_ACTIVE,
-      fontSize: BREAD_FONT_SIZE,
-      margin: 0,
-      padding: 0,
-    };
-
-    const rootClick = currentNestedDepth > 0 ? handleRootClick : undefined;
-    return (
-      <div style={breadContainerStyle}>
-        <header style={headerStyle} onClick={rootClick}>
-          {text}
-        </header>
-        <ol style={olStyles}>
-          {currentNestedView?.map((nestedView, i) => {
-            return (
-              <BreadElement
-                nestedView={nestedView}
-                index={i}
-                key={nestedView}
-              />
-            );
-          })}
-        </ol>
-      </div>
-    );
-  };
-
   return (
     <>
-      {renderBreadCrumb()}
-      <BorderContainer>
+      <BreadCrumbContainer
+        currentNestedDepth={currentNestedDepth}
+        text={text}
+        handleRootClick={handleRootClick}
+      >
+        {currentNestedView?.map((nestedView, viewIndex) => {
+          return (
+            <BreadElement
+              nestedView={nestedView}
+              index={viewIndex}
+              key={nestedView}
+              currentNestedDepth={currentNestedDepth}
+              scopedId={scopedId}
+              onClick={e => {
+                e.stopPropagation();
+                onRemoveNestedView(scopedId, viewIndex);
+              }}
+            />
+          );
+        })}
+      </BreadCrumbContainer>
+      <BorderContainer data={data}>
         {renderDefaultHandles(
           scopedId,
           getGraphHandleStyle('source'),
