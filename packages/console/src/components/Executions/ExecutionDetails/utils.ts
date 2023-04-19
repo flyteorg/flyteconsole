@@ -40,12 +40,7 @@ export function getTaskExecutionDetailReasons(
       if (!b || !b.occurredAt) return 1;
       return compareTimestampsAscending(a.occurredAt, b.occurredAt);
     });
-  return reasons.map(
-    reason =>
-      (reason.occurredAt
-        ? formatDateUTC(timestampToDate(reason.occurredAt)) + '\n'
-        : '') + reason.message,
-  );
+  return reasons.map(reason => reason.message);
 }
 
 export function isChildGroupsFetched(
