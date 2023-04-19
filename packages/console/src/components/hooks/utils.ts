@@ -16,7 +16,7 @@ export function extractCompiledNodes(
 
   return subWorkflows.reduce((out, subWorkflow) => {
     return [...out, ...subWorkflow.template.nodes];
-  }, primary?.template?.nodes);
+  }, primary?.template?.nodes || []);
 }
 
 export function extractTaskTemplates(workflow: Workflow): TaskTemplate[] {
@@ -32,10 +32,11 @@ export function extractAndIdentifyNodes(
   if (!workflow.closure || !workflow.closure.compiledWorkflow) {
     return [];
   }
-  const { primary, subWorkflows = [] } = workflow.closure.compiledWorkflow;
+  const { primary = {} as CompiledWorkflow, subWorkflows = [] } =
+    workflow.closure.compiledWorkflow;
   const nodes = subWorkflows.reduce(
     (out, subWorkflow) => [...out, ...subWorkflow.template.nodes],
-    primary.template.nodes,
+    primary?.template?.nodes || [],
   );
 
   return nodes.map(node => ({
