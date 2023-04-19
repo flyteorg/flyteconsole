@@ -6,7 +6,7 @@ import {
 } from 'models/Execution/types';
 import { Routes } from 'routes/routes';
 import { PaginatedEntityResponse } from 'models/AdminEntity/types';
-import { compareTimestampsAscending, timestampToDate } from 'common/utils';
+import { timestampToDate } from 'common';
 import { formatDateUTC } from 'common/formatters';
 
 export function isSingleTaskExecution(execution: Execution) {
@@ -29,18 +29,21 @@ export function getExecutionBackLink(execution: Execution): string {
 export function getTaskExecutionDetailReasons(
   taskExecutionDetails?: PaginatedEntityResponse<TaskExecution>,
 ): (string | null | undefined)[] {
-  const reasons = (
-    taskExecutionDetails?.entities.map(
-      taskExecution => taskExecution.closure.reasons || [],
-    ) || []
-  )
-    .flat()
-    .sort((a, b) => {
-      if (!a || !a.occurredAt) return -1;
-      if (!b || !b.occurredAt) return 1;
-      return compareTimestampsAscending(a.occurredAt, b.occurredAt);
-    });
-  return reasons.map(reason => reason.message);
+  let reasons: string[] = [];
+  taskExecutionDetails?.entities.forEach(taskExecution => {
+    if (taskExecution.closure.reasons)
+      reasons = reasons.concat(
+        taskExecution.closure.reasons.map(
+          reason =>
+            (reason.occurredAt
+              ? formatDateUTC(timestampToDate(reason.occurredAt)) + ' '
+              : '') + reason.message,
+        ),
+      );
+    else if (taskExecution.closure.reason)
+      reasons.push(taskExecution.closure.reason);
+  });
+  return reasons;
 }
 
 export function isChildGroupsFetched(

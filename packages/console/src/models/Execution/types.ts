@@ -145,6 +145,7 @@ export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
   startedAt?: Protobuf.ITimestamp;
   eventVersion?: number;
   reasons?: Admin.IReason[];
+  reason?: string;
 }
 
 /** Execution data */
