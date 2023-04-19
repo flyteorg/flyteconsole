@@ -470,7 +470,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       </div>
       {isRunningPhase && isReasonsVisible && (
         <div className={styles.statusBody}>
-          <ScrollableMonospaceText text={reasons.join('\n')} />
+          <ScrollableMonospaceText text={reasons.join('\n\n')} />
         </div>
       )}
     </div>
