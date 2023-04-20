@@ -110,7 +110,7 @@ export const getChartData = (data: ChartDataInput) => {
   };
 
   return {
-    labels: Array(data.elementsNumber + 4).fill(''), // clear up Chart Bar default labels
+    labels: Array(data.elementsNumber).fill(''), // clear up Chart Bar default labels
     datasets: [
       // fill-in offsets
       {
