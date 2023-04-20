@@ -11,12 +11,12 @@ interface TimelineChartProps {
 export const TimelineChart = (props: TimelineChartProps) => {
   const phaseData = generateChartData(props.items);
 
-  return (
-    <Bar
-      options={
-        getBarOptions(props.chartTimeIntervalSec, phaseData.tooltipLabel) as any
-      }
-      data={getChartData(phaseData)}
-    />
-  );
+  const options = getBarOptions(
+    props.chartTimeIntervalSec,
+    phaseData.tooltipLabel,
+  ) as any;
+
+  const data = getChartData(phaseData);
+
+  return <Bar options={options} data={data} />;
 };

@@ -5006,6 +5006,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/chroma-js@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@types/chroma-js@npm:2.4.0"
+  checksum: aa91adf61a5dee8469c1e6b298d3496041d1baa8bd9938865a61050b5e392adc3425718c7c29b09a3d8dfe0d2e8a1301e98d4b458135e53c2ecb3ecca8cb7d21
+  languageName: node
+  linkType: hard
+
 "@types/connect-history-api-fallback@npm:^1.3.5":
   version: 1.3.5
   resolution: "@types/connect-history-api-fallback@npm:1.3.5"
@@ -8163,6 +8170,13 @@ __metadata:
   version: 1.1.4
   resolution: "chownr@npm:1.1.4"
   checksum: 115648f8eb38bac5e41c3857f3e663f9c39ed6480d1349977c4d96c95a47266fcacc5a5aabf3cb6c481e22d72f41992827db47301851766c4fd77ac21a4f081d
+  languageName: node
+  linkType: hard
+
+"chroma-js@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "chroma-js@npm:2.4.2"
+  checksum: cf9884c02d406286e4370599bcd1afbf089384407df46b3a69edfedcba7bb99e8f959a5cfdbfec750b305c441c06ca40cd1f70ba3a6c2ce739ac09a92520ddae
   languageName: node
   linkType: hard
 
@@ -11667,6 +11681,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.5.0
     "@testing-library/react": ^10.0.3
     "@testing-library/react-hooks": ^7.0.2
+    "@types/chroma-js": ^2.4.0
     "@types/morgan": ^1.9.4
     "@types/react": ^16.14.35
     "@types/react-dom": ^16.9.7
@@ -11675,6 +11690,7 @@ __metadata:
     babel-loader: ^8.2.5
     chalk: ^4
     cheerio: ^1.0.0-rc.12
+    chroma-js: ^2.4.2
     compression-webpack-plugin: ^9.2.0
     cookie-parser: ^1.4.3
     copy-webpack-plugin: ^11.0.0

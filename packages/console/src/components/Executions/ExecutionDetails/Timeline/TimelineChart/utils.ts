@@ -2,6 +2,7 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
+import chroma from 'chroma-js';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -109,7 +110,7 @@ export const getChartData = (data: ChartDataInput) => {
   };
 
   return {
-    labels: Array(data.elementsNumber).fill(''), // clear up Chart Bar default labels
+    labels: Array(data.elementsNumber + 4).fill(''), // clear up Chart Bar default labels
     datasets: [
       // fill-in offsets
       {
@@ -137,6 +138,25 @@ export const getChartData = (data: ChartDataInput) => {
           },
         },
       },
+      ...Array(4)
+        .fill(0)
+        .map((_, idx) => ({
+          ...defaultStyle,
+          data: Array(data.durations.length).fill((4 - idx) * 3),
+          backgroundColor: data.barColor.map(color =>
+            chroma(color)
+              .alpha(0.1 * (4 - idx))
+              .hex(),
+          ),
+          datalabels: {
+            color: primaryTextColor,
+            align: 'end' as const, // related to text
+            anchor: 'start' as const, // related to bar
+            formatter: function (value, context) {
+              return data.barLabel[context.dataIndex] ?? '';
+            },
+          },
+        })),
     ],
   };
 };

@@ -4,6 +4,7 @@ import {
 } from 'react-query';
 
 export enum QueryType {
+  ExecutionMetrics = 'executionMetrics',
   NodeExecutionDetails = 'NodeExecutionDetails',
   DynamicWorkflowFromNodeExecution = 'DynamicWorkflowFromNodeExecution',
   NodeExecution = 'nodeExecution',
