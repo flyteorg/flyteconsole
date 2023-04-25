@@ -8,14 +8,16 @@ import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
 import { basicPythonWorkflow } from 'mocks/data/fixtures/basicPythonWorkflow';
 import { NodeExecution } from 'models/Execution/types';
-import { dTypes } from 'models/Graph/types';
+import { dNode, dTypes } from 'models/Graph/types';
+import { NodeExecutionDynamicContext } from 'components/Executions/contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
+import { cloneDeep } from 'lodash';
 import { NodeExecutionRow } from '../NodeExecutionRow';
 
 jest.mock('components/Workflow/workflowQueries');
 const { fetchWorkflow } = require('components/Workflow/workflowQueries');
 
 const columns = [];
-const node = {
+const node: dNode = {
   id: 'n1',
   scopedId: 'n1',
   type: dTypes.start,
@@ -33,6 +35,7 @@ describe('Executions > Tables > NodeExecutionRow', () => {
   beforeEach(() => {
     fixture = basicPythonWorkflow.generate();
     execution = fixture.workflowExecutions.top.nodeExecutions.pythonNode.data;
+    node.execution = cloneDeep(execution);
     queryClient = createTestQueryClient();
     insertFixture(mockServer, fixture);
     fetchWorkflow.mockImplementation(() =>
@@ -41,10 +44,23 @@ describe('Executions > Tables > NodeExecutionRow', () => {
   });
 
   const renderComponent = props => {
+    const { node } = props;
     return render(
       <QueryClientProvider client={queryClient}>
         <NodeExecutionDetailsContextProvider workflowId={mockWorkflowId}>
-          <NodeExecutionRow {...props} />
+          <NodeExecutionDynamicContext.Provider
+            value={{
+              node,
+              childCount: node.nodes.length,
+              childExecutions: node.nodes.map(n => n.execution),
+              componentProps: {
+                ref: null,
+              },
+              inView: false,
+            }}
+          >
+            <NodeExecutionRow {...props} />
+          </NodeExecutionDynamicContext.Provider>
         </NodeExecutionDetailsContextProvider>
       </QueryClientProvider>,
     );
@@ -53,7 +69,6 @@ describe('Executions > Tables > NodeExecutionRow', () => {
     const { queryByRole, queryByTestId } = renderComponent({
       columns,
       node,
-      nodeExecution: execution,
       onToggle,
     });
     await waitFor(() => queryByRole('listitem'));
@@ -63,12 +78,11 @@ describe('Executions > Tables > NodeExecutionRow', () => {
   });
 
   it('should render expander if node contains list of nodes', async () => {
+    node.execution!.metadata!.isParentNode = true;
     const mockNode = {
       ...node,
       nodes: [node, node],
     };
-
-    (execution.metadata as any).isParentNode = true;
 
     const { queryByRole, queryByTitle } = renderComponent({
       columns,

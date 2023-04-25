@@ -55,3 +55,11 @@ export const MediumLoadingSpinner: React.FC = () => (
 export const LargeLoadingSpinner: React.FC = () => (
   <LoadingSpinner size="large" />
 );
+
+export const LargeLoadingComponent = () => {
+  return (
+    <div style={{ margin: 'auto' }}>
+      <LargeLoadingSpinner />
+    </div>
+  );
+};

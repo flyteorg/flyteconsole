@@ -1,14 +1,14 @@
 import { DialogContent, Typography } from '@material-ui/core';
 import { getCacheKey } from 'components/Cache/utils';
 import * as React from 'react';
-import { useState, useContext, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NodeExecution, NodeExecutionIdentifier } from 'models/Execution/types';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { WaitForData } from 'components/common/WaitForData';
 import t from 'components/common/strings';
 import { CompiledNode } from 'models/Node/types';
+import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { useStyles } from './styles';
 import {
   BaseInterpretedLaunchState,
@@ -39,7 +39,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
     nodeExecutionId,
     onClose,
   });
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
     nodeExecutionsById[nodeExecutionId.nodeId],
   );

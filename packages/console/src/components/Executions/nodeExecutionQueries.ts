@@ -13,20 +13,23 @@ import {
 } from 'models/Execution/api';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import {
+  ExternalResource,
+  LogsByPhase,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
 } from 'models/Execution/types';
-import { endNodeId, startNodeId } from 'models/Node/constants';
+import { ignoredNodeIds } from 'models/Node/constants';
+import { isMapTaskV1 } from 'models/Task/utils';
 import { QueryClient } from 'react-query';
+import { WorkflowNodeExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
-import { formatRetryAttempt } from './TaskExecutionsList/utils';
+import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
-import { isParentNode } from './utils';
+import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from './utils';
 
-const ignoredNodeIds = [startNodeId, endNodeId];
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
     if (ignoredNodeIds.includes(ne.id.nodeId)) {
@@ -47,6 +50,112 @@ export function makeNodeExecutionQuery(
   return {
     queryKey: [QueryType.NodeExecution, id],
     queryFn: () => getNodeExecution(id),
+  };
+}
+
+export const getTaskExecutions = async (
+  nodeExecution: WorkflowNodeExecution,
+  queryClient,
+) => {
+  const isTerminal = nodeExecutionIsTerminal(nodeExecution);
+  const tasksFetched = !!nodeExecution.tasksFetched;
+  const isDynamic = isDynamicNode(nodeExecution);
+  if (!isDynamic && tasksFetched) {
+    // return null to signal no change
+    return;
+  }
+  return await fetchTaskExecutionList(
+    queryClient,
+    nodeExecution.id as any,
+  ).then(taskExecutions => {
+    const useNewMapTaskView = taskExecutions.every(taskExecution => {
+      const {
+        closure: { taskType, metadata, eventVersion = 0 },
+      } = taskExecution;
+      return isMapTaskV1(
+        eventVersion,
+        metadata?.externalResources?.length ?? 0,
+        taskType ?? undefined,
+      );
+    });
+
+    const externalResources: ExternalResource[] = taskExecutions
+      .map(taskExecution => taskExecution.closure.metadata?.externalResources)
+      .flat()
+      .filter((resource): resource is ExternalResource => !!resource);
+
+    const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+    const appendTasksFetched = !isDynamic || (isDynamic && isTerminal);
+
+    const { closure: _, metadata: __, ...nodeExecutionLight } = nodeExecution;
+    return {
+      // to avoid overwiring data from queries that handle status updates
+      ...nodeExecutionLight,
+      taskExecutions,
+      ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+      ...((appendTasksFetched && { tasksFetched: true }) || {}),
+    };
+  });
+};
+
+/** A query for fetching a single `NodeExecution` by id. */
+export function makeNodeExecutionQueryEnhanced(
+  nodeExecution: WorkflowNodeExecution,
+  queryClient: QueryClient,
+): QueryInput<NodeExecution[]> {
+  const { id } = nodeExecution || {};
+
+  return {
+    enabled: !!nodeExecution,
+    queryKey: [QueryType.NodeExecutionAndChildList, id],
+    queryFn: async () => {
+      // complexity:
+      // +1 for parent node tasks
+      // +1 for node execution list
+      // +n= executionList.length
+      const isParent = isParentNode(nodeExecution);
+      const parentNodeID = nodeExecution.id.nodeId;
+      const parentScopeId =
+        nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
+      nodeExecution.scopedId = parentScopeId;
+
+      // if the node is a parent, force refetch its children
+      // called by NodeExecutionDynamicProvider
+      const parentNodeExecutions = isParent
+        ? () =>
+            fetchNodeExecutionList(
+              // requests listNodeExecutions
+              queryClient,
+              id.executionId,
+              {
+                params: {
+                  [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+                },
+              },
+            ).then(childExecutions => {
+              const children = childExecutions.map(e => {
+                const scopedId = e.metadata?.specNodeId
+                  ? retriesToZero(e?.metadata?.specNodeId)
+                  : retriesToZero(e?.id?.nodeId);
+                e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+                e['fromUniqueParentId'] = parentNodeID;
+
+                return e;
+              });
+              return children;
+            })
+        : () => Promise.resolve([]);
+
+      const parentNodeAndTaskExecutions = await Promise.all([
+        getTaskExecutions(nodeExecution, queryClient),
+        parentNodeExecutions(),
+      ]).then(([parent, children]) => {
+        return [parent, ...children].filter(n => !!n);
+      });
+
+      return parentNodeAndTaskExecutions as NodeExecution[];
+    },
   };
 }
 
@@ -97,9 +206,8 @@ export function makeNodeExecutionListQuery(
   return {
     queryKey: [QueryType.NodeExecutionList, id, config],
     queryFn: async () => {
-      const nodeExecutions = removeSystemNodes(
-        (await listNodeExecutions(id, config)).entities,
-      );
+      const promise = (await listNodeExecutions(id, config)).entities;
+      const nodeExecutions = removeSystemNodes(promise);
       nodeExecutions.map(exe => {
         if (exe.metadata?.specNodeId) {
           return (exe.scopedId = retriesToZero(exe.metadata.specNodeId));
@@ -108,6 +216,7 @@ export function makeNodeExecutionListQuery(
         }
       });
       cacheNodeExecutions(queryClient, nodeExecutions);
+
       return nodeExecutions;
     },
   };

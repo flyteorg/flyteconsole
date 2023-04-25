@@ -1,6 +1,7 @@
 import { log } from 'common/log';
 import { QueryInput, QueryType } from 'components/data/types';
 import { extractTaskTemplates } from 'components/hooks/utils';
+import { ExecutionData } from 'models';
 import { getNodeExecutionData } from 'models/Execution/api';
 import { getWorkflow } from 'models/Workflow/api';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
@@ -29,14 +30,20 @@ export function makeWorkflowQuery(
   };
 }
 
+export interface NodeExecutionDynamicWorkflowQueryResult {
+  [key: string]: ExecutionData;
+}
 export function makeNodeExecutionDynamicWorkflowQuery(
   parentsToFetch,
-): QueryInput<{ [key: string]: any }> {
+): QueryInput<NodeExecutionDynamicWorkflowQueryResult> {
+  const parentsIds = Object.keys(parentsToFetch);
   return {
     queryKey: [QueryType.DynamicWorkflowFromNodeExecution, parentsToFetch],
+    // don't make any requests as long as there are no dynamic node executions to fetch
+    enabled: !!parentsIds?.length,
     queryFn: async () => {
       return await Promise.all(
-        Object.keys(parentsToFetch)
+        parentsIds
           .filter(id => parentsToFetch[id])
           .map(id => {
             const executionId = parentsToFetch[id];
@@ -45,10 +52,9 @@ export function makeNodeExecutionDynamicWorkflowQuery(
               // when Branch node support would be added
               log.error(`Graph missing info for ${id}`);
             }
-            const data = getNodeExecutionData(executionId.id).then(value => {
+            return getNodeExecutionData(executionId.id).then(value => {
               return { key: id, value: value };
             });
-            return data;
           }),
       ).then(values => {
         const output: { [key: string]: any } = {};

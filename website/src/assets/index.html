@@ -31,11 +31,6 @@
             href="<%= htmlWebpackPlugin.options.publicPath %>apple-touch-icon.png"
         />
     </head>
-    <% if (htmlWebpackPlugin.options.processEnv) { %>
-    <script>
-        window.env=<%= htmlWebpackPlugin.options.processEnv %>
-    </script>
-    <% } %>
     <body>
         <div id="react-app"></div>
         <% if (htmlWebpackPlugin.options.cdnSettings) { %>

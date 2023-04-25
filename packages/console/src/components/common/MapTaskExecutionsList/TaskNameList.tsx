@@ -6,6 +6,7 @@ import { getTaskLogName } from 'components/Executions/TaskExecutionsList/utils';
 import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { noLogsFoundString } from 'components/Executions/constants';
 import { CacheStatus } from 'components/Executions/CacheStatus';
+import classnames from 'classnames';
 import { useCommonStyles } from '../styles';
 
 const useStyles = makeStyles((_theme: Theme) => ({
@@ -27,12 +28,14 @@ interface TaskNameListProps {
   taskExecution: TaskExecution;
   logs: Core.ITaskLog[];
   onTaskSelected: (val: MapTaskExecution) => void;
+  className?: string;
 }
 
 export const TaskNameList = ({
   taskExecution,
   logs,
   onTaskSelected,
+  className,
 }: TaskNameListProps) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
@@ -76,12 +79,19 @@ export const TaskNameList = ({
               variant="body1"
               color={log.uri ? 'primary' : 'textPrimary'}
               onClick={log.uri ? handleClick : undefined}
-              className={log.uri ? styles.taskTitleLink : styles.taskTitle}
+              className={classnames(
+                log.uri ? styles.taskTitleLink : styles.taskTitle,
+                className,
+              )}
               data-testid="map-task-log"
             >
               {taskLogName}
             </Typography>
-            <CacheStatus cacheStatus={cacheStatus} variant="iconOnly" />
+            <CacheStatus
+              cacheStatus={cacheStatus}
+              variant="iconOnly"
+              className={className}
+            />
           </div>
         );
       })}

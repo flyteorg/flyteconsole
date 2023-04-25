@@ -1,10 +1,5 @@
 import { durationToMilliseconds, timestampToDate } from 'common/utils';
-import {
-  isEndNode,
-  isExpanded,
-  isStartNode,
-} from 'components/WorkflowGraph/utils';
-import { clone, isEqual, keyBy, merge } from 'lodash';
+import { cloneDeep, keyBy, merge } from 'lodash';
 import {
   runningExecutionStates,
   terminalExecutionStates,
@@ -21,11 +16,11 @@ import {
   BaseExecutionClosure,
   Execution,
   NodeExecution,
-  NodeExecutionIdentifier,
   TaskExecution,
 } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { CompiledNode } from 'models/Node/types';
+import { isEndNode, isExpanded, isStartNode } from 'models/Node/utils';
 import { QueryClient } from 'react-query';
 import {
   nodeExecutionPhaseConstants,
@@ -33,10 +28,14 @@ import {
   taskTypeToNodeExecutionDisplayType,
   workflowExecutionPhaseConstants,
 } from './constants';
-import { WorkflowNodeExecution } from './contexts';
+import {
+  SetCurrentNodeExecutionsById,
+  WorkflowNodeExecution,
+} from './contexts';
 import { isChildGroupsFetched } from './ExecutionDetails/utils';
 import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
+  DynamicNodeExecution,
   ExecutionPhaseConstants,
   NodeExecutionDisplayType,
   ParentNodeExecution,
@@ -154,9 +153,14 @@ function getExecutionTimingMS({
 export function isParentNode(
   nodeExecution: NodeExecution,
 ): nodeExecution is ParentNodeExecution {
-  return (
-    nodeExecution.metadata != null && !!nodeExecution.metadata.isParentNode
-  );
+  return !!nodeExecution?.metadata?.isParentNode;
+}
+
+/** Indicates if a NodeExecution is explicitly marked as a parent node. */
+export function isDynamicNode(
+  nodeExecution: NodeExecution,
+): nodeExecution is DynamicNodeExecution {
+  return !!nodeExecution?.metadata?.isDynamic;
 }
 
 export function flattenBranchNodes(node: CompiledNode): CompiledNode[] {
@@ -204,7 +208,7 @@ export function isExecutionArchived(execution: Execution): boolean {
 
 /** Returns true if current node (by nodeId) has 'gateNode' field in the list of nodes on compiledWorkflowClosure */
 export function isNodeGateNode(nodes: CompiledNode[], id: string): boolean {
-  const node = nodes.find(n => n.id === id);
+  const node = nodes?.find(n => n.id === id);
   return !!node?.gateNode;
 }
 
@@ -247,15 +251,15 @@ export async function fetchChildrenExecutions(
   queryClient: QueryClient,
   scopedId: string,
   nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
-  setCurrentNodeExecutionsById: (
-    currentNodeExecutionsById: Dictionary<NodeExecution>,
-  ) => void,
-  setShouldUpdate?: (val: boolean) => void,
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById,
+  skipCache = false,
 ) {
-  if (!isChildGroupsFetched(scopedId, nodeExecutionsById)) {
+  const cachedParentNode = nodeExecutionsById[scopedId];
+  const nodeExecutionsByIdAdapted = skipCache ? {} : nodeExecutionsById;
+  if (!isChildGroupsFetched(scopedId, nodeExecutionsByIdAdapted)) {
     const childGroups = await fetchChildNodeExecutionGroups(
       queryClient,
-      nodeExecutionsById[scopedId],
+      cachedParentNode,
       {},
     );
 
@@ -267,19 +271,12 @@ export async function fetchChildrenExecutions(
       );
     });
     if (childGroupsExecutionsById) {
-      const prevNodeExecutionsById = clone(nodeExecutionsById);
       const currentNodeExecutionsById = merge(
-        nodeExecutionsById,
-        childGroupsExecutionsById,
+        cloneDeep(nodeExecutionsByIdAdapted),
+        cloneDeep(childGroupsExecutionsById),
       );
-      if (
-        setShouldUpdate &&
-        !isEqual(prevNodeExecutionsById, currentNodeExecutionsById)
-      ) {
-        setShouldUpdate(true);
-      }
 
-      setCurrentNodeExecutionsById(currentNodeExecutionsById);
+      setCurrentNodeExecutionsById(currentNodeExecutionsById, true);
     }
   }
 }

@@ -1,3 +1,4 @@
+import { WorkflowNodeExecution } from 'components/Executions/contexts';
 import { NodeExecution } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 
@@ -58,7 +59,8 @@ export interface dNode {
   nodes: Array<dNode>;
   edges: Array<dEdge>;
   expanded?: boolean;
+  grayedOut?: boolean;
   level?: number;
-  execution?: NodeExecution;
+  execution?: WorkflowNodeExecution;
   isParentNode?: boolean;
 }

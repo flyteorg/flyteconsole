@@ -33,10 +33,14 @@ export class RenderedGraph<T> extends React.Component<
 
   private clearSelection = () => {
     // Don't need to trigger a re-render if selection is already empty
-    if (!this.props.selectedNodes || this.props.selectedNodes.length === 0) {
+    if (
+      !this.props.selectedNodes ||
+      this.props.selectedNodes.length === 0 ||
+      !this.props.onNodeSelectionChanged
+    ) {
       return;
     }
-    this.props.onNodeSelectionChanged && this.props.onNodeSelectionChanged([]);
+    this.props.onNodeSelectionChanged([]);
   };
 
   private onNodeEnter = (id: string) => {

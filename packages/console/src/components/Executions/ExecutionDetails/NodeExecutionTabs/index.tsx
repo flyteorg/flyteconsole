@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => {
   return {
     content: {
       overflowY: 'auto',
+      paddingBottom: '100px', // TODO @FC 454 temporary fix for panel height issue
     },
     tabs: {
       borderBottom: `1px solid ${theme.palette.divider}`,

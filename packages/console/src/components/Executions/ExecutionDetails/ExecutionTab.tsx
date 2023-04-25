@@ -1,40 +1,43 @@
-import { WaitForQuery } from 'components/common/WaitForQuery';
-import { DataError } from 'components/Errors/DataError';
-import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
-import { Workflow } from 'models/Workflow/types';
 import * as React from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-import { NodeExecution } from 'models/Execution/types';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import { WorkflowGraph } from 'components/WorkflowGraph/WorkflowGraph';
+import { Theme, makeStyles } from '@material-ui/core/styles';
+import { tabs } from './constants';
+import { NodeExecutionsTable } from '../Tables/NodeExecutionsTable';
+import { DetailsPanelContextProvider } from './DetailsPanelContext';
 import { ScaleProvider } from './Timeline/scaleContext';
-import { ExecutionTabContent } from './ExecutionTabContent';
+import { ExecutionTimelineContainer } from './Timeline/ExecutionTimelineContainer';
+import { useNodeExecutionFiltersState } from '../filters/useExecutionFiltersState';
+
+const useStyles = makeStyles((theme: Theme) => ({
+  nodesContainer: {
+    borderTop: `1px solid ${theme.palette.divider}`,
+    display: 'flex',
+    flex: '1 1 100%',
+    flexDirection: 'column',
+    minHeight: 0,
+  },
+}));
 
 interface ExecutionTabProps {
   tabType: string;
-  filteredNodeExecutions?: NodeExecution[];
 }
 
 /** Contains the available ways to visualize the nodes of a WorkflowExecution */
-export const ExecutionTab: React.FC<ExecutionTabProps> = ({
-  tabType,
-  filteredNodeExecutions,
-}) => {
-  const queryClient = useQueryClient();
-  const { workflowId } = useNodeExecutionContext();
-  const workflowQuery = useQuery<Workflow, Error>(
-    makeWorkflowQuery(queryClient, workflowId),
-  );
+export const ExecutionTab: React.FC<ExecutionTabProps> = ({ tabType }) => {
+  const styles = useStyles();
+  const filterState = useNodeExecutionFiltersState();
 
   return (
     <ScaleProvider>
-      <WaitForQuery errorComponent={DataError} query={workflowQuery}>
-        {() => (
-          <ExecutionTabContent
-            tabType={tabType}
-            filteredNodeExecutions={filteredNodeExecutions}
-          />
-        )}
-      </WaitForQuery>
+      <DetailsPanelContextProvider>
+        <div className={styles.nodesContainer}>
+          {tabType === tabs.nodes.id && (
+            <NodeExecutionsTable filterState={filterState} />
+          )}
+          {tabType === tabs.graph.id && <WorkflowGraph />}
+          {tabType === tabs.timeline.id && <ExecutionTimelineContainer />}
+        </div>
+      </DetailsPanelContextProvider>
     </ScaleProvider>
   );
 };
