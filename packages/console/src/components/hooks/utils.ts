@@ -1,18 +1,22 @@
 import { CompiledNode, GloballyUniqueNode } from 'models/Node/types';
 import { TaskTemplate } from 'models/Task/types';
-import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
+import {
+  CompiledWorkflow,
+  CompiledWorkflowClosure,
+  Workflow,
+} from 'models/Workflow/types';
 
 export function extractCompiledNodes(
   compiledWorkflowClosure: CompiledWorkflowClosure | null,
 ): CompiledNode[] {
   if (!compiledWorkflowClosure) return [];
 
-  const { primary, subWorkflows = [] } = compiledWorkflowClosure;
+  const { primary = {} as CompiledWorkflow, subWorkflows = [] } =
+    compiledWorkflowClosure;
 
-  return subWorkflows.reduce(
-    (out, subWorkflow) => [...out, ...subWorkflow.template.nodes],
-    primary.template.nodes,
-  );
+  return subWorkflows.reduce((out, subWorkflow) => {
+    return [...out, ...subWorkflow.template.nodes];
+  }, primary?.template?.nodes || []);
 }
 
 export function extractTaskTemplates(workflow: Workflow): TaskTemplate[] {
@@ -28,10 +32,11 @@ export function extractAndIdentifyNodes(
   if (!workflow.closure || !workflow.closure.compiledWorkflow) {
     return [];
   }
-  const { primary, subWorkflows = [] } = workflow.closure.compiledWorkflow;
+  const { primary = {} as CompiledWorkflow, subWorkflows = [] } =
+    workflow.closure.compiledWorkflow;
   const nodes = subWorkflows.reduce(
     (out, subWorkflow) => [...out, ...subWorkflow.template.nodes],
-    primary.template.nodes,
+    primary?.template?.nodes || [],
   );
 
   return nodes.map(node => ({

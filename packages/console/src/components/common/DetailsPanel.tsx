@@ -49,6 +49,7 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
       }}
       onClose={onClose}
       open={open}
+      key="detailsPanel"
     >
       <div className={styles.spacer} />
       <Paper className={styles.paper} id={detailsPanelId} square={true}>

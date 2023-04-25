@@ -1,5 +1,6 @@
 import { makeStyles, Theme } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
+import classNames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { SelectNodeExecutionLink } from 'components/Executions/Tables/SelectNodeExecutionLink';
@@ -7,12 +8,13 @@ import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution } from 'models/Execution/types';
 import React, { useContext, useEffect, useState } from 'react';
-import { DetailsPanelContext } from '../DetailsPanelContext';
+import { DetailsPanelContext, useDetailsPanel } from '../DetailsPanelContext';
 
 interface NodeExecutionTimelineNameData {
   name: string;
   templateName?: string;
   execution?: NodeExecution;
+  className?: string;
 }
 
 const useStyles = makeStyles((_theme: Theme) => ({
@@ -31,13 +33,13 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
   name,
   templateName,
   execution,
+  className,
 }) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
   const { getNodeExecutionDetails } = useNodeExecutionContext();
-  const { selectedExecution, setSelectedExecution } =
-    useContext(DetailsPanelContext);
+  const { selectedExecution, setSelectedExecution } = useDetailsPanel();
   const [displayName, setDisplayName] = useState<string | undefined>();
 
   useEffect(() => {
@@ -67,12 +69,15 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
     <>
       {isSelected ||
       execution.closure.phase === NodeExecutionPhase.UNDEFINED ? (
-        <Typography variant="body1" className={styles.selectedExecutionName}>
+        <Typography
+          variant="body1"
+          className={classNames(className, styles.selectedExecutionName)}
+        >
           {truncatedName}
         </Typography>
       ) : (
         <SelectNodeExecutionLink
-          className={commonStyles.primaryLink}
+          className={classNames(className, commonStyles.primaryLink)}
           execution={execution}
           linkText={truncatedName || ''}
           setSelectedExecution={setSelectedExecution}
@@ -82,7 +87,7 @@ export const NodeExecutionName: React.FC<NodeExecutionTimelineNameData> = ({
         <Typography
           variant="subtitle1"
           color="textSecondary"
-          className={styles.displayName}
+          className={classNames(className, styles.displayName)}
         >
           {templateName}
         </Typography>

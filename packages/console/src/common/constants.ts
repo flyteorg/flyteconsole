@@ -1,6 +1,7 @@
 export const contentContainerId = 'content-container';
 export const detailsPanelId = 'details-panel';
 export const navBarContentId = 'nav-bar-content';
+export const subnavBarContentId = 'subnav-bar-content';
 
 export const unknownValueString = '(unknown)';
 export const dashedValueString = '----';

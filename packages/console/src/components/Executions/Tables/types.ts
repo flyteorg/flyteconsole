@@ -28,6 +28,7 @@ export interface ColumnDefinition<CellRendererData> {
 export interface NodeExecutionCellRendererData {
   execution: NodeExecution;
   node: dNode;
+  className: string;
 }
 export type NodeExecutionColumnDefinition =
   ColumnDefinition<NodeExecutionCellRendererData>;

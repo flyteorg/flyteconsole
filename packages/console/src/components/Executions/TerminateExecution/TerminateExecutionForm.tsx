@@ -67,8 +67,8 @@ export const TerminateExecutionForm: React.FC<{
           multiline={true}
           onChange={onChange}
           placeholder={placeholderString}
-          rowsMax={4}
-          rows={4}
+          maxRows={4}
+          minRows={4}
           type="text"
           value={cause}
         />

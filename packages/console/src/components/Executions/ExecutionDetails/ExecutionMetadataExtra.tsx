@@ -67,7 +67,8 @@ export const ExecutionMetadataExtra: React.FC<{
       label: ExecutionMetadataLabels.rawOutputPrefix,
       value:
         rawOutputDataConfig?.outputLocationPrefix ||
-        launchPlanSpec?.rawOutputDataConfig?.outputLocationPrefix,
+        launchPlanSpec?.rawOutputDataConfig?.outputLocationPrefix ||
+        dashedValueString,
     },
     {
       label: ExecutionMetadataLabels.parallelism,

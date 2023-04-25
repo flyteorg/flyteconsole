@@ -28,6 +28,7 @@ import { NoDataIsAvailable } from 'components/Literals/LiteralMapViewer';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { PanelSection } from 'components/common/PanelSection';
 import { DumpJSON } from 'components/common/DumpJSON';
+import { ScrollableMonospaceText } from 'components/common/ScrollableMonospaceText';
 import { dNode } from 'models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from 'models/Execution/enums';
 import {
@@ -47,14 +48,13 @@ import {
 import { NodeExecutionDetails } from '../types';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { getTaskExecutionDetailReasons } from './utils';
-import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 import { fetchWorkflowExecution } from '../useWorkflowExecution';
 import { NodeExecutionTabs } from './NodeExecutionTabs';
 import { ExecutionDetailsActions } from './ExecutionDetailsActions';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
 import { fetchTaskExecutionList } from '../taskExecutionQueries';
 import { getGroupedLogs } from '../TaskExecutionsList/utils';
-import { NodeExecutionsByIdContext } from '../contexts';
+import { WorkflowNodeExecutionsContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   const paddingVertical = `${theme.spacing(2)}px`;
@@ -262,7 +262,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   const { getNodeExecutionDetails, compiledWorkflowClosure } =
     useNodeExecutionContext();
   const { nodeExecutionsById, setCurrentNodeExecutionsById } = useContext(
-    NodeExecutionsByIdContext,
+    WorkflowNodeExecutionsContext,
   );
   const isGateNode = isNodeGateNode(
     extractCompiledNodes(compiledWorkflowClosure),
@@ -325,7 +325,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     if (nodeExecution) {
       if (
         nodeExecution.scopedId &&
-        !nodeExecutionsById[nodeExecution.scopedId].tasksFetched
+        !nodeExecutionsById?.[nodeExecution.scopedId]?.tasksFetched
       )
         fetchTasksData(nodeExecution, queryClient);
     } else {
@@ -470,10 +470,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       </div>
       {isRunningPhase && isReasonsVisible && (
         <div className={styles.statusBody}>
-          <ExpandableMonospaceText
-            initialExpansionState={false}
-            text={reasons.join('\n')}
-          />
+          <ScrollableMonospaceText text={reasons.join('\n\n')} />
         </div>
       )}
     </div>

@@ -215,7 +215,7 @@ describe('ProjectDashboard', () => {
     mockUseUserProfile.mockReturnValue(
       loadedFetchable(sampleUserProfile, jest.fn()),
     );
-    const { getByText, queryByText, getAllByRole } = renderView();
+    const { getAllByText, queryAllByText, getAllByRole } = renderView();
     await waitFor(() => {});
     expect(mockUseUserProfile).toHaveBeenCalled();
 
@@ -224,13 +224,15 @@ describe('ProjectDashboard', () => {
     expect(checkboxes[0]).toBeTruthy();
     expect(checkboxes[0]?.checked).toEqual(false);
     await waitFor(() =>
-      expect(getByText(executions1[0].closure.workflowId.name)),
+      expect(getAllByText(executions1[0].closure.workflowId.name)),
     );
     await fireEvent.click(checkboxes[0]);
 
     // when user selects checkbox, table should have no executions to display
     await waitFor(() =>
-      expect(queryByText(executions1[0].closure.workflowId.name)).toBeNull(),
+      expect(
+        queryAllByText(executions1[0].closure.workflowId.name),
+      ).toHaveLength(0),
     );
   });
 

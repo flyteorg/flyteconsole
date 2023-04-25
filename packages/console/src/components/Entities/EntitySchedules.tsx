@@ -1,4 +1,13 @@
-import { Typography } from '@material-ui/core';
+import {
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import {
   getScheduleFrequencyString,
@@ -11,6 +20,7 @@ import { ResourceIdentifier } from 'models/Common/types';
 import { identifierToString } from 'models/Common/utils';
 import { LaunchPlan } from 'models/Launch/types';
 import * as React from 'react';
+import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
 
@@ -25,26 +35,61 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     marginBottom: theme.spacing(1),
   },
+  headCell: {
+    color: theme.palette.grey[400],
+  },
 }));
 
 const RenderSchedules: React.FC<{
   launchPlans: LaunchPlan[];
 }> = ({ launchPlans }) => {
-  const commonStyles = useCommonStyles();
+  const styles = useStyles();
   return (
-    <ul className={commonStyles.listUnstyled}>
-      {launchPlans.map(launchPlan => {
-        const { schedule } = launchPlan.spec.entityMetadata;
-        const frequencyString = getScheduleFrequencyString(schedule);
-        const offsetString = getScheduleOffsetString(schedule);
-        const scheduleString = offsetString
-          ? `${frequencyString} (offset by ${offsetString})`
-          : frequencyString;
-        return (
-          <li key={identifierToString(launchPlan.id)}>{scheduleString}</li>
-        );
-      })}
-    </ul>
+    <TableContainer component={Paper}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <Typography className={styles.headCell} variant="h4">
+                {t(patternKey('launchPlan', 'frequency'))}
+              </Typography>
+            </TableCell>
+            <TableCell className={styles.headCell}>
+              <Typography className={styles.headCell} variant="h4">
+                {t(patternKey('launchPlan', 'name'))}
+              </Typography>
+            </TableCell>
+            <TableCell className={styles.headCell}>
+              <Typography className={styles.headCell} variant="h4">
+                {t(patternKey('launchPlan', 'version'))}
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {launchPlans.map(launchPlan => {
+            const { schedule } = launchPlan.spec.entityMetadata;
+            const frequencyString = getScheduleFrequencyString(schedule);
+            const offsetString = getScheduleOffsetString(schedule);
+            const scheduleString = offsetString
+              ? `${frequencyString} (offset by ${offsetString})`
+              : frequencyString;
+
+            return (
+              <TableRow key={launchPlan.id.name}>
+                <TableCell>{scheduleString}</TableCell>
+                <TableCell>
+                  <LaunchPlanLink id={launchPlan.id} color="disabled">
+                    {launchPlan.id.name}
+                  </LaunchPlanLink>
+                </TableCell>
+                <TableCell>{launchPlan.id.version}</TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 

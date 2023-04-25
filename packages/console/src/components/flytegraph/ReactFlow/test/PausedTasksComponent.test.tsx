@@ -3,7 +3,7 @@ import { fireEvent, render } from '@testing-library/react';
 import { NodeExecutionDetailsContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
 import { dTypes } from 'models/Graph/types';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import { WorkflowNodeExecutionsContext } from 'components/Executions/contexts';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { dateToTimestamp } from 'common/utils';
 import { PausedTasksComponent } from '../PausedTasksComponent';
@@ -96,11 +96,21 @@ describe('flytegraph > ReactFlow > PausedTasksComponent', () => {
           compiledWorkflowClosure,
         }}
       >
-        <NodeExecutionsByIdContext.Provider
-          value={{ nodeExecutionsById, setCurrentNodeExecutionsById: () => {} }}
+        <WorkflowNodeExecutionsContext.Provider
+          value={{
+            nodeExecutionsById,
+            dagData: {
+              dagError: null,
+              mergedDag: {},
+            },
+            initialDNodes: props.nodes,
+            setCurrentNodeExecutionsById: () => {},
+            setShouldUpdate: () => {},
+            shouldUpdate: false,
+          }}
         >
           <PausedTasksComponent {...props} />
-        </NodeExecutionsByIdContext.Provider>
+        </WorkflowNodeExecutionsContext.Provider>
       </NodeExecutionDetailsContext.Provider>,
     );
 

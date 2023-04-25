@@ -3,3 +3,4 @@ export { withRouteParams } from './withRouteParams';
 export { WaitForData } from './WaitForData';
 export { WaitForQuery } from './WaitForQuery';
 export { DetailsGroup } from './DetailsGroup';
+export { ScrollableMonospaceText } from './ScrollableMonospaceText';
