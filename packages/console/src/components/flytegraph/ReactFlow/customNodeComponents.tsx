@@ -155,7 +155,7 @@ export const ReactFlowCustomNestedPoint = ({ data }: RFNode) => {
  */
 export const ReactFlowCustomMaxNested = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider nodeExecution={props.data.node.execution}>
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowCustomMaxNestedInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -186,7 +186,7 @@ const ReactFlowCustomMaxNestedInner = ({ data }: RFNode) => {
 
 export const ReactFlowStaticNested = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider nodeExecution={props.data.node.execution}>
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowStaticNestedInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -199,7 +199,7 @@ const ReactFlowStaticNestedInner = ({ data }: RFNode) => {
 
 export const ReactFlowStaticNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider nodeExecution={props.data.node.execution}>
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowStaticNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -266,7 +266,7 @@ const TaskPhaseItem = ({
  */
 export const ReactFlowGateNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider nodeExecution={props.data.node.execution}>
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowGateNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -351,7 +351,7 @@ const ReactFlowGateNodeInner = ({ data }: RFNode) => {
 export type ReactFlowNodeProps = ReactFlowProps & RFNode;
 export const ReactFlowCustomTaskNode = (props: ReactFlowNodeProps) => {
   return (
-    <NodeExecutionDynamicProvider nodeExecution={props.data.node.execution}>
+    <NodeExecutionDynamicProvider node={props.data.node}>
       <ReactFlowCustomTaskNodeInner {...props} />
     </NodeExecutionDynamicProvider>
   );
@@ -495,7 +495,7 @@ const ReactFlowCustomTaskNodeInner = (props: ReactFlowNodeProps) => {
 export const ReactFlowSubWorkflowContainer = (props: ReactFlowNodeProps) => {
   return (
     <NodeExecutionDynamicProvider
-      nodeExecution={props.data.node.execution}
+      node={props.data.node}
       overrideInViewValue={true}
     >
       <ReactFlowSubWorkflowContainerInner {...props} />

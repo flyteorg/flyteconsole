@@ -28,7 +28,6 @@ const containerStyle: React.CSSProperties = {
 export const ReactFlowGraphComponent = () => {
   const {
     selectedPhase,
-    isDetailsTabClosed,
     onNodeSelectionChanged,
     setSelectedPhase: onPhaseSelectionChanged,
   } = useDetailsPanel();
@@ -54,15 +53,7 @@ export const ReactFlowGraphComponent = () => {
       currentNestedView,
     } as ConvertDagProps);
     setrfGraphJson(newrfGraphJson);
-  }, [
-    initialDNodes,
-    mergedDag,
-    isDetailsTabClosed,
-    onNodeSelectionChanged,
-    onPhaseSelectionChanged,
-    selectedPhase,
-    currentNestedView,
-  ]);
+  }, [mergedDag, selectedPhase, currentNestedView]);
 
   const backgroundStyle = getRFBackground().nested;
 

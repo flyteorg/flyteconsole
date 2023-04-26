@@ -16,11 +16,12 @@ import {
 import { keyBy, values } from 'lodash';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
+import { dNode } from 'models/Graph/types';
 import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
 
 export type RefType = Ref<Element | null>;
 export interface INodeExecutionDynamicContext {
-  nodeExecution?: WorkflowNodeExecution;
+  node: dNode;
   childExecutions: WorkflowNodeExecution[];
   childCount: number;
   inView: boolean;
@@ -28,12 +29,11 @@ export interface INodeExecutionDynamicContext {
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >;
-  // setSkipChildList: (childList: NodeExecution[]) => void;
 }
 
 export const NodeExecutionDynamicContext =
   createContext<INodeExecutionDynamicContext>({
-    nodeExecution: {} as WorkflowNodeExecution,
+    node: {} as dNode,
     childExecutions: [],
     childCount: 0,
     inView: false,
@@ -74,12 +74,12 @@ const checkEnableChildQuery = (
 };
 
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
-  nodeExecution?: WorkflowNodeExecution;
+  node: dNode;
   overrideInViewValue?: boolean;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
-  nodeExecution,
+  node,
   overrideInViewValue,
   children,
 }: NodeExecutionDynamicProviderProps) => {
@@ -105,7 +105,7 @@ export const NodeExecutionDynamicProvider = ({
 
   const childExecutions = useMemo(() => {
     const children = values(nodeExecutionsById).filter(execution => {
-      return execution.fromUniqueParentId === nodeExecution?.scopedId;
+      return execution.fromUniqueParentId === node?.scopedId;
     });
 
     return children;
@@ -113,11 +113,11 @@ export const NodeExecutionDynamicProvider = ({
 
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
     queryClient,
-    nodeExecution!,
+    node?.execution!,
     () => {
       const shouldRun = checkEnableChildQuery(
         childExecutions,
-        nodeExecution!,
+        node?.execution!,
         !!overloadedInView,
       );
 
@@ -150,10 +150,10 @@ export const NodeExecutionDynamicProvider = ({
 
   return (
     <NodeExecutionDynamicContext.Provider
-      key={nodeExecution?.scopedId}
+      key={node?.scopedId}
       value={{
         inView: overloadedInView,
-        nodeExecution,
+        node,
         childExecutions,
         childCount: fetchedChildCount,
         componentProps: {

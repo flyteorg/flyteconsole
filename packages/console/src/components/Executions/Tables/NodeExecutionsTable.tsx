@@ -276,10 +276,7 @@ export const NodeExecutionsTable: React.FC<{
           {showNodes.length > 0 ? (
             showNodes.map(node => {
               return (
-                <NodeExecutionDynamicProvider
-                  nodeExecution={node.execution}
-                  key={node.scopedId}
-                >
+                <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
                   <NodeExecutionRow
                     columns={columns}
                     node={node}
