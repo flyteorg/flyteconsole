@@ -1,4 +1,11 @@
-import { Execution, LogsByPhase, NodeExecution } from 'models/Execution/types';
+import { Task } from 'models';
+import {
+  Execution,
+  ExecutionData,
+  LogsByPhase,
+  NodeExecution,
+  TaskExecution,
+} from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { createContext } from 'react';
 
@@ -6,9 +13,15 @@ export interface ExecutionContextData {
   execution: Execution;
 }
 
+export type WorkflowTaskExecution = TaskExecution & {
+  task?: Task;
+  taskData?: ExecutionData;
+};
 export interface WorkflowNodeExecution extends NodeExecution {
   tasksFetched?: boolean;
   logsByPhase?: LogsByPhase;
+  taskExecutions?: WorkflowTaskExecution[];
+  nodeExecutionData?: ExecutionData;
 }
 
 export const ExecutionContext = createContext<ExecutionContextData>(

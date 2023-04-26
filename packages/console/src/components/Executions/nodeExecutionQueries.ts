@@ -7,6 +7,8 @@ import {
 } from 'models/AdminEntity/types';
 import {
   getNodeExecution,
+  getNodeExecutionData,
+  getTaskExecutionData,
   listNodeExecutions,
   listTaskExecutionChildren,
   listTaskExecutions,
@@ -24,7 +26,8 @@ import {
 import { ignoredNodeIds } from 'models/Node/constants';
 import { isMapTaskV1 } from 'models/Task/utils';
 import { QueryClient } from 'react-query';
-import { WorkflowNodeExecution } from './contexts';
+import { getTask } from 'models';
+import { WorkflowNodeExecution, WorkflowTaskExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
@@ -53,10 +56,67 @@ export function makeNodeExecutionQuery(
   };
 }
 
-export const getTaskExecutions = async (
+/** A query for fetching a single `NodeExecution` by id. */
+export function makeNodeExecutionAndTasksQuery(
+  id: NodeExecutionIdentifier,
+  queryClient: QueryClient,
+): QueryInput<WorkflowNodeExecution> {
+  return {
+    queryKey: [QueryType.NodeExecution, id],
+    queryFn: async () => {
+      // step 1: Fetch the Node execution
+      const nodeExecutionPure = await getNodeExecution(id);
+
+      // step 2: Fetch the task executions and attach them to the node execution
+      const workflowNodeExecution = (await getTaskExecutions(
+        nodeExecutionPure,
+        queryClient,
+      )) as WorkflowNodeExecution;
+
+      if (!workflowNodeExecution) {
+        return {} as WorkflowNodeExecution;
+      }
+
+      workflowNodeExecution.scopedId = workflowNodeExecution?.id?.nodeId;
+      // step 3: get the node executiondata
+      const nodeExecutionData = await getNodeExecutionData(id);
+
+      // step 4: get the compiled task closure
+      // -- only one request is made as it is constant across all attempts
+      const taskExecutions = workflowNodeExecution?.taskExecutions || [];
+      const taskId = taskExecutions?.[0]?.id?.taskId;
+      const compiledTaskClosure = await (taskId
+        ? getTask(taskId!)
+        : Promise.resolve(null));
+
+      // step 5: get each task's executions data
+      const tasksExecutionData = await Promise.all(
+        taskExecutions?.map(te =>
+          getTaskExecutionData(te.id).then(executionData => {
+            const finalTask: WorkflowTaskExecution = {
+              ...te,
+              // append data to each task individually
+              task: compiledTaskClosure!,
+              taskData: executionData,
+            };
+            return finalTask;
+          }),
+        ),
+      );
+
+      return {
+        ...workflowNodeExecution,
+        taskExecutions: tasksExecutionData,
+        nodeExecutionData,
+      } as WorkflowNodeExecution;
+    },
+  };
+}
+
+const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
-  queryClient,
-) => {
+  queryClient: QueryClient,
+): Promise<WorkflowNodeExecution | undefined> => {
   const isTerminal = nodeExecutionIsTerminal(nodeExecution);
   const tasksFetched = !!nodeExecution.tasksFetched;
   const isDynamic = isDynamicNode(nodeExecution);
@@ -88,14 +148,12 @@ export const getTaskExecutions = async (
 
     const appendTasksFetched = !isDynamic || (isDynamic && isTerminal);
 
-    const { closure: _, metadata: __, ...nodeExecutionLight } = nodeExecution;
     return {
-      // to avoid overwiring data from queries that handle status updates
-      ...nodeExecutionLight,
+      ...nodeExecution,
       taskExecutions,
       ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
       ...((appendTasksFetched && { tasksFetched: true }) || {}),
-    };
+    } as any as WorkflowNodeExecution;
   });
 };
 
@@ -151,7 +209,13 @@ export function makeNodeExecutionQueryEnhanced(
         getTaskExecutions(nodeExecution, queryClient),
         parentNodeExecutions(),
       ]).then(([parent, children]) => {
-        return [parent, ...children].filter(n => !!n);
+        // strip closure and metadata to avoid overwriting data from queries that handle status updates
+        const {
+          closure: _,
+          metadata: __,
+          ...parentLight
+        } = parent || ({} as WorkflowNodeExecution);
+        return [parentLight, ...children].filter(n => !!n);
       });
 
       return parentNodeAndTaskExecutions as NodeExecution[];

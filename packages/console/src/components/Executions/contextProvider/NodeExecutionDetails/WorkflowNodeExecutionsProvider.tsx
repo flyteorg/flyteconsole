@@ -5,9 +5,10 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
+import { NodeExecution } from 'models/Execution/types';
 import {
   IWorkflowNodeExecutionsContext,
+  NodeExecutionsById,
   WorkflowNodeExecutionsContext,
 } from 'components/Executions/contexts';
 import { isEqual, keyBy, merge, mergeWith } from 'lodash';

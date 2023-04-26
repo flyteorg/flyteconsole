@@ -14,15 +14,13 @@ import {
   nodeExecutionIsTerminal,
 } from 'components/Executions/utils';
 import { keyBy, values } from 'lodash';
-import { NodeExecution } from 'models';
-import { dNode } from 'models/Graph/types';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
 import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
 
 export type RefType = Ref<Element | null>;
 export interface INodeExecutionDynamicContext {
-  node: dNode;
+  nodeExecution?: WorkflowNodeExecution;
   childExecutions: WorkflowNodeExecution[];
   childCount: number;
   inView: boolean;
@@ -35,7 +33,7 @@ export interface INodeExecutionDynamicContext {
 
 export const NodeExecutionDynamicContext =
   createContext<INodeExecutionDynamicContext>({
-    node: {} as dNode,
+    nodeExecution: {} as WorkflowNodeExecution,
     childExecutions: [],
     childCount: 0,
     inView: false,
@@ -45,7 +43,7 @@ export const NodeExecutionDynamicContext =
   });
 
 const checkEnableChildQuery = (
-  childExecutions: NodeExecution[],
+  childExecutions: WorkflowNodeExecution[],
   nodeExecution: WorkflowNodeExecution,
   inView: boolean,
 ) => {
@@ -76,12 +74,12 @@ const checkEnableChildQuery = (
 };
 
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
-  node: dNode;
+  nodeExecution?: WorkflowNodeExecution;
   overrideInViewValue?: boolean;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
-  node,
+  nodeExecution,
   overrideInViewValue,
   children,
 }: NodeExecutionDynamicProviderProps) => {
@@ -105,12 +103,9 @@ export const NodeExecutionDynamicProvider = ({
   const { setCurrentNodeExecutionsById, nodeExecutionsById } =
     useNodeExecutionsById();
 
-  // get the node execution
-  const nodeExecution = node?.execution; // useMemo(() => node.execution, [node.execution]);
-
   const childExecutions = useMemo(() => {
     const children = values(nodeExecutionsById).filter(execution => {
-      return execution.fromUniqueParentId === node?.scopedId;
+      return execution.fromUniqueParentId === nodeExecution?.scopedId;
     });
 
     return children;
@@ -155,10 +150,10 @@ export const NodeExecutionDynamicProvider = ({
 
   return (
     <NodeExecutionDynamicContext.Provider
-      key={node?.scopedId}
+      key={nodeExecution?.scopedId}
       value={{
         inView: overloadedInView,
-        node,
+        nodeExecution,
         childExecutions,
         childCount: fetchedChildCount,
         componentProps: {
