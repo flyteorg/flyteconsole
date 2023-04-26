@@ -2,7 +2,6 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase, OperationId } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
-import chroma from 'chroma-js';
 import { Admin } from '@flyteorg/flyteidl-types';
 import { dNode } from 'models/Graph/types';
 import { get, isNil } from 'lodash';
@@ -209,11 +208,7 @@ export const getChartData = (
       ...Object.entries(executionMetrics).map(([_, d], idx) => ({
         ...defaultStyle,
         data: d,
-        backgroundColor: data.barColor.map(color =>
-          chroma(color)
-            .alpha(0.1 * (4 - idx))
-            .hex(),
-        ),
+        backgroundColor: data.barColor,
         datalabels: {
           color: primaryTextColor,
           align: 'end' as const, // related to text
