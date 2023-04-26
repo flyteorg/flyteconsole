@@ -219,7 +219,7 @@ export const getChartData = (
           align: 'end' as const, // related to text
           anchor: 'start' as const, // related to bar
           formatter: function (value, context) {
-            return value;
+            return value > 0 ? `${value}s` : '';
           },
         },
       })),
