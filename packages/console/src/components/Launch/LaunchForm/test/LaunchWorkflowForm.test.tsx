@@ -31,7 +31,13 @@ import { getWorkflow, listWorkflows } from 'models/Workflow/api';
 import { Workflow } from 'models/Workflow/types';
 import { createMockWorkflowClosure } from 'models/__mocks__/workflowData';
 import * as React from 'react';
-import { delayedPromise, pendingPromise } from 'test/utils';
+import {
+  createTestQueryClient,
+  delayedPromise,
+  pendingPromise,
+} from 'test/utils';
+import { WorkflowNodeExecutionsProvider } from 'components/Executions';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import t from '../strings';
 import { LaunchForm } from '../LaunchForm';
 import { LaunchFormProps, WorkflowInitialLaunchParameters } from '../types';
@@ -51,6 +57,14 @@ import {
 import { createMockObjects } from './utils';
 import { workflowNoInputsString } from '../constants';
 
+jest.mock(
+  'components/Executions/ExecutionDetails/Timeline/ExecutionTimelineContainer',
+  () => ({
+    ExecutionTimelineContainer: jest.fn(() => (
+      <div id="ExecutionTimelineContainer-mock"></div>
+    )),
+  }),
+);
 describe('LaunchForm: Workflow', () => {
   let onClose: jest.Mock;
   let mockLaunchPlans: LaunchPlan[];
@@ -59,6 +73,7 @@ describe('LaunchForm: Workflow', () => {
   let mockWorkflowVersions: Workflow[];
   let workflowId: NamedEntityIdentifier;
   let variables: Record<string, Variable>;
+  let queryClient: QueryClient;
 
   let mockListLaunchPlans: jest.Mock<ReturnType<typeof listLaunchPlans>>;
   let mockListWorkflows: jest.Mock<ReturnType<typeof listWorkflows>>;
@@ -68,6 +83,7 @@ describe('LaunchForm: Workflow', () => {
   >;
 
   beforeEach(() => {
+    queryClient = createTestQueryClient();
     onClose = jest.fn();
     jest.useFakeTimers();
   });
@@ -154,18 +170,26 @@ describe('LaunchForm: Workflow', () => {
 
   const renderForm = (props?: Partial<LaunchFormProps>) => {
     return render(
-      <ThemeProvider theme={getMuiTheme()}>
-        <APIContext.Provider
-          value={mockAPIContextValue({
-            createWorkflowExecution: mockCreateWorkflowExecution,
-            getWorkflow: mockGetWorkflow,
-            listLaunchPlans: mockListLaunchPlans,
-            listWorkflows: mockListWorkflows,
-          })}
-        >
-          <LaunchForm onClose={onClose} workflowId={workflowId} {...props} />
-        </APIContext.Provider>
-      </ThemeProvider>,
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={getMuiTheme()}>
+          <APIContext.Provider
+            value={mockAPIContextValue({
+              createWorkflowExecution: mockCreateWorkflowExecution,
+              getWorkflow: mockGetWorkflow,
+              listLaunchPlans: mockListLaunchPlans,
+              listWorkflows: mockListWorkflows,
+            })}
+          >
+            <WorkflowNodeExecutionsProvider initialNodeExecutions={[]}>
+              <LaunchForm
+                onClose={onClose}
+                workflowId={workflowId}
+                {...props}
+              />
+            </WorkflowNodeExecutionsProvider>
+          </APIContext.Provider>
+        </ThemeProvider>
+      </QueryClientProvider>,
     );
   };
 
