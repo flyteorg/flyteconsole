@@ -106,6 +106,7 @@
     "react-dom": "^16.13.1",
     "serve-static": "^1.12.3",
     "source-map-loader": "^4.0.1",
+    "traverse": "^0.6.7",
     "ts-jest": "^26.3.0",
     "ts-loader": "^9.2.6",
     "ts-node": "^8.0.2",
@@ -129,7 +130,8 @@
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
-    "@types/chroma-js": "^2.4.0"
+    "@types/chroma-js": "^2.4.0",
+    "@types/traverse": "^0.6.32"
   },
   "resolutions": {
     "@babel/cli": "~7.16.0",

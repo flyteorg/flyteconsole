@@ -1,4 +1,10 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, {
+  createRef,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { tableHeaderColor } from 'components/Theme/constants';
 import { timestampToDate } from 'common/utils';
@@ -10,6 +16,8 @@ import {
 import { useQueryClient } from 'react-query';
 import { eq, merge } from 'lodash';
 import { useNodeExecutionsById } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { ExecutionContext } from 'components/Executions/contexts';
+import { useExecutionMetrics } from 'components/Executions/useExecutionMetrics';
 import { convertToPlainNodes } from './helpers';
 import { ChartHeader } from './ChartHeader';
 import { useScaleContext } from './scaleContext';
@@ -17,6 +25,7 @@ import { TaskNames } from './TaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 import t from '../strings';
+import { getExecutionMetricsData } from './TimelineChart/utils';
 
 interface StyleProps {
   chartWidth: number;
@@ -91,6 +100,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
   const { nodeExecutionsById, setCurrentNodeExecutionsById } =
     useNodeExecutionsById();
   const { chartInterval: chartTimeInterval } = useScaleContext();
+  const { execution } = useContext(ExecutionContext);
+  const executionMetricsData = useExecutionMetrics(execution.id, 10);
 
   useEffect(() => {
     setOriginalNodes(ogn => {
@@ -213,6 +224,10 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
             <TimelineChart
               items={barItemsData}
               chartTimeIntervalSec={chartTimeInterval}
+              executionMetricsData={getExecutionMetricsData(
+                executionMetricsData.value,
+                showNodes,
+              )}
             />
           </div>
         </div>

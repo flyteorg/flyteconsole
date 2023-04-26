@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { Bar } from 'react-chartjs-2';
+import { OperationId } from 'models';
 import { getBarOptions } from './barOptions';
 import { BarItemData, generateChartData, getChartData } from './utils';
 
 interface TimelineChartProps {
   items: BarItemData[];
   chartTimeIntervalSec: number;
+  executionMetricsData: Record<OperationId, number[]>;
 }
 
 export const TimelineChart = (props: TimelineChartProps) => {
@@ -16,7 +18,7 @@ export const TimelineChart = (props: TimelineChartProps) => {
     phaseData.tooltipLabel,
   ) as any;
 
-  const data = getChartData(phaseData);
+  const data = getChartData(phaseData, props.executionMetricsData);
 
   return <Bar options={options} data={data} />;
 };

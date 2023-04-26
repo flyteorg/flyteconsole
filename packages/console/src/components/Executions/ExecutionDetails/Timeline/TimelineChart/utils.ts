@@ -1,8 +1,13 @@
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
-import { NodeExecutionPhase } from 'models/Execution/enums';
+import { NodeExecutionPhase, OperationId } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
 import chroma from 'chroma-js';
+import { Admin } from '@flyteorg/flyteidl-types';
+import { dNode } from 'models/Graph/types';
+import { get, isNil } from 'lodash';
+import { timestampToDate } from 'common';
+import traverse from 'traverse';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -95,6 +100,66 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
   };
 };
 
+export const getExecutionMetricsData = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+  nodes: dNode[],
+): Record<OperationId, number[]> => {
+  const operations = Object.values(OperationId).reduce<
+    Record<OperationId, any>
+  >((acc, operation) => {
+    acc[operation] = [];
+
+    return acc;
+  }, {} as any);
+
+  if (isNil(data.span)) {
+    return operations;
+  }
+
+  const tree = traverse(data.span);
+  const paths = tree.paths();
+
+  for (const node of nodes) {
+    const spanPath = paths
+      .find(path => {
+        if (path.length < 2) {
+          return false;
+        }
+
+        if (path.at(-2) !== 'nodeId' || path.at(-1) !== 'nodeId') {
+          return false;
+        }
+
+        return get(data.span, path) === node.id;
+      })
+      ?.slice(0, -2);
+
+    const nodeSpans = (spanPath && get(data.span, spanPath)?.spans) ?? [];
+
+    for (const operationId of Object.values(OperationId)) {
+      const operationSpan = nodeSpans.find(
+        span => span.operationId === operationId,
+      );
+
+      if (!operationSpan || !operationSpan.startTime) {
+        operations[operationId].push(0);
+        continue;
+      }
+
+      const endTime = operationSpan.endTime
+        ? timestampToDate(operationSpan.endTime).getTime()
+        : Date.now();
+
+      const duration =
+        endTime - timestampToDate(operationSpan.startTime).getTime();
+
+      operations[operationId].push(Math.round(duration / 1000));
+    }
+  }
+
+  return operations;
+};
+
 /**
  * Generates chart data format suitable for Chart.js Bar. Each bar consists of two data items:
  * |-----------|XXXXXXXXXXXXXXXX|
@@ -103,7 +168,10 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
  * Where |---| is offset - usually transparent part to give user a feeling that timeline wasn't started from ZERO time position
  * Where |XXX| is duration of the operation, colored per step Phase status.
  */
-export const getChartData = (data: ChartDataInput) => {
+export const getChartData = (
+  data: ChartDataInput,
+  executionMetrics: Record<OperationId, number[]>,
+) => {
   const defaultStyle = {
     barPercentage: 1,
     borderWidth: 0,
@@ -138,25 +206,23 @@ export const getChartData = (data: ChartDataInput) => {
           },
         },
       },
-      ...Array(4)
-        .fill(0)
-        .map((_, idx) => ({
-          ...defaultStyle,
-          data: Array(data.durations.length).fill((4 - idx) * 3),
-          backgroundColor: data.barColor.map(color =>
-            chroma(color)
-              .alpha(0.1 * (4 - idx))
-              .hex(),
-          ),
-          datalabels: {
-            color: primaryTextColor,
-            align: 'end' as const, // related to text
-            anchor: 'start' as const, // related to bar
-            formatter: function (value, context) {
-              return data.barLabel[context.dataIndex] ?? '';
-            },
+      ...Object.entries(executionMetrics).map(([_, d], idx) => ({
+        ...defaultStyle,
+        data: d,
+        backgroundColor: data.barColor.map(color =>
+          chroma(color)
+            .alpha(0.1 * (4 - idx))
+            .hex(),
+        ),
+        datalabels: {
+          color: primaryTextColor,
+          align: 'end' as const, // related to text
+          anchor: 'start' as const, // related to bar
+          formatter: function (value, context) {
+            return value;
           },
-        })),
+        },
+      })),
     ],
   };
 };
