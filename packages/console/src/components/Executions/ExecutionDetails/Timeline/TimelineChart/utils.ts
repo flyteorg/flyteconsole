@@ -152,7 +152,7 @@ export const getExecutionMetricsData = (
       const duration =
         endTime - timestampToDate(operationSpan.startTime).getTime();
 
-      operations[operationId].push(Math.round(duration / 1000));
+      operations[operationId].push(duration / 1000);
     }
   }
 
@@ -214,7 +214,7 @@ export const getChartData = (
           align: 'end' as const, // related to text
           anchor: 'start' as const, // related to bar
           formatter: function (value, context) {
-            return value > 0 ? `${value}s` : '';
+            return value > 0.01 ? `${value}s` : '';
           },
         },
       })),
