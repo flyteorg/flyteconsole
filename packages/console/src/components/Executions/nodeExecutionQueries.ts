@@ -62,7 +62,7 @@ export function makeNodeExecutionAndTasksQuery(
   queryClient: QueryClient,
 ): QueryInput<WorkflowNodeExecution> {
   return {
-    queryKey: [QueryType.NodeExecution, id],
+    queryKey: [QueryType.NodeExecutionAndTasks, id],
     queryFn: async () => {
       // step 1: Fetch the Node execution
       const nodeExecutionPure = await getNodeExecution(id);
@@ -161,12 +161,12 @@ const getTaskExecutions = async (
 export function makeNodeExecutionQueryEnhanced(
   nodeExecution: WorkflowNodeExecution,
   queryClient: QueryClient,
-): QueryInput<NodeExecution[]> {
+): QueryInput<WorkflowNodeExecution[]> {
   const { id } = nodeExecution || {};
 
   return {
     enabled: !!nodeExecution,
-    queryKey: [QueryType.NodeExecutionAndChildList, id],
+    queryKey: [QueryType.NodeExecutionEnhanced, id],
     queryFn: async () => {
       // complexity:
       // +1 for parent node tasks
