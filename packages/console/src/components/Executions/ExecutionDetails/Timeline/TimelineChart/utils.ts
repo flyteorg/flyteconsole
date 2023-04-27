@@ -195,6 +195,13 @@ export const getChartData = (
         ...defaultStyle,
         data: data.durations,
         backgroundColor: data.barColor,
+        borderColor: 'rgba(0, 0, 0, 0.55)',
+        borderWidth: {
+          top: 0,
+          left: 0,
+          right: 1,
+          bottom: 0,
+        },
         datalabels: {
           // Positioning info - https://chartjs-plugin-datalabels.netlify.app/guide/positioning.html
           color: primaryTextColor,
@@ -209,6 +216,13 @@ export const getChartData = (
         ...defaultStyle,
         data: d,
         backgroundColor: data.barColor,
+        borderColor: 'rgba(0, 0, 0, 0.55)',
+        borderWidth: {
+          top: 0,
+          left: 0,
+          right: 1,
+          bottom: 0,
+        },
         datalabels: {
           color: primaryTextColor,
           align: 'end' as const, // related to text
