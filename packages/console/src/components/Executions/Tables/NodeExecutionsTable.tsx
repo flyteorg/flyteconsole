@@ -2,7 +2,7 @@ import React, { useMemo, useEffect, useState, useContext } from 'react';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import scrollbarSize from 'dom-helpers/scrollbarSize';
-import { NodeExecution, NodeExecutionsById } from 'models/Execution/types';
+import { NodeExecution } from 'models/Execution/types';
 import { merge, isEqual, cloneDeep } from 'lodash';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import {
@@ -26,7 +26,11 @@ import { searchNode } from '../utils';
 import { nodeExecutionPhaseConstants } from '../constants';
 import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import { ExecutionFilters } from '../ExecutionFilters';
-import { ExecutionContext, FilteredNodeExecutions } from '../contexts';
+import {
+  ExecutionContext,
+  FilteredNodeExecutions,
+  NodeExecutionsById,
+} from '../contexts';
 import { useExecutionNodeViewsStatePoll } from '../ExecutionDetails/useExecutionNodeViewsState';
 import { stringifyIsEqual } from '../contextProvider/NodeExecutionDetails/utils';
 

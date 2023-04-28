@@ -14,10 +14,9 @@ import {
   nodeExecutionIsTerminal,
 } from 'components/Executions/utils';
 import { keyBy, values } from 'lodash';
-import { NodeExecution } from 'models';
-import { dNode } from 'models/Graph/types';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from 'react-query';
+import { dNode } from 'models/Graph/types';
 import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
 
 export type RefType = Ref<Element | null>;
@@ -30,7 +29,6 @@ export interface INodeExecutionDynamicContext {
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >;
-  // setSkipChildList: (childList: NodeExecution[]) => void;
 }
 
 export const NodeExecutionDynamicContext =
@@ -45,7 +43,7 @@ export const NodeExecutionDynamicContext =
   });
 
 const checkEnableChildQuery = (
-  childExecutions: NodeExecution[],
+  childExecutions: WorkflowNodeExecution[],
   nodeExecution: WorkflowNodeExecution,
   inView: boolean,
 ) => {
@@ -105,9 +103,6 @@ export const NodeExecutionDynamicProvider = ({
   const { setCurrentNodeExecutionsById, nodeExecutionsById } =
     useNodeExecutionsById();
 
-  // get the node execution
-  const nodeExecution = node?.execution; // useMemo(() => node.execution, [node.execution]);
-
   const childExecutions = useMemo(() => {
     const children = values(nodeExecutionsById).filter(execution => {
       return execution.fromUniqueParentId === node?.scopedId;
@@ -118,11 +113,11 @@ export const NodeExecutionDynamicProvider = ({
 
   const { nodeExecutionRowQuery } = useNodeExecutionRow(
     queryClient,
-    nodeExecution!,
+    node?.execution!,
     () => {
       const shouldRun = checkEnableChildQuery(
         childExecutions,
-        nodeExecution!,
+        node?.execution!,
         !!overloadedInView,
       );
 

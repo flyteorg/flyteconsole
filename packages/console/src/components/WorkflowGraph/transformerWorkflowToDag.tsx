@@ -13,7 +13,7 @@ import {
 } from 'models/Workflow/types';
 import { isParentNode } from 'components/Executions/utils';
 import { isStartOrEndNode } from 'models/Node/utils';
-import { NodeExecutionsById } from 'models';
+import { NodeExecutionsById } from 'components/Executions/contexts';
 import {
   getDisplayName,
   getSubWorkflowFromId,

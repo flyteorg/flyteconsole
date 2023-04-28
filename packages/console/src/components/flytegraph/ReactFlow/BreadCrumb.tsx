@@ -92,7 +92,7 @@ export const BorderContainer = ({
 
     borders = contextNode ? (
       <NodeExecutionDynamicProvider
-        node={contextNode!}
+        node={contextNode}
         overrideInViewValue={true}
       >
         <BorderElement

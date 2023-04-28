@@ -5,14 +5,17 @@ import { nodeExecutionStatusFilters } from 'components/Executions/filters/status
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
-import { Execution } from 'models/Execution/types';
+import { Execution, NodeExecution } from 'models/Execution/types';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
 import { ExecutionContext } from 'components/Executions/contexts';
 import { listNodeExecutions, listTaskExecutions } from 'models/Execution/api';
 import { NodeExecutionPhase } from 'models';
 import { mockWorkflowId } from 'mocks/data/fixtures/types';
-import { NodeExecutionDetailsContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
+import {
+  NodeExecutionDetailsContext,
+  WorkflowNodeExecutionsProvider,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { ExecutionNodeViews } from '../ExecutionNodeViews';
 import { tabs } from '../constants';
@@ -54,27 +57,29 @@ jest.mock('components/WorkflowGraph/transformerWorkflowToDag', () => ({
   transformerWorkflowToDag: jest.fn(),
 }));
 
-// ExecutionNodeViews uses query params for NE list, so we must match them
-// for the list to be returned properly
-const baseQueryParams = {
-  filters: '',
-  'sort_by.direction': 'ASCENDING',
-  'sort_by.key': 'created_at',
-};
-
 describe('ExecutionNodeViews', () => {
   let queryClient: QueryClient;
   let execution: Execution;
   let fixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
+  let nodeExecutionsArray: NodeExecution[];
   beforeEach(() => {
     fixture = oneFailedTaskWorkflow.generate();
     execution = fixture.workflowExecutions.top.data;
     insertFixture(mockServer, fixture);
     const nodeExecutions = fixture.workflowExecutions.top.nodeExecutions;
-    const nodeExecutionsArray = Object.values(nodeExecutions).map(
-      ({ data }) => data,
-    );
+    nodeExecutionsArray = Object.values(nodeExecutions).map(({ data }) => data);
+
     transformerWorkflowToDag.mockImplementation(_ => {
+      const nodes = nodeExecutionsArray.map(n => ({
+        id: n.id.nodeId,
+        scopedId: n.scopedId,
+        execution: n,
+        // type: dTypes.gateNode,
+        name: n.id.nodeId,
+        type: 3,
+        nodes: [],
+        edges: [],
+      }));
       return {
         dag: {
           id: 'start-node',
@@ -113,16 +118,7 @@ describe('ExecutionNodeViews', () => {
               nodes: [],
               edges: [],
             },
-            ...nodeExecutionsArray.map(n => ({
-              id: n.id.nodeId,
-              scopedId: n.scopedId,
-              execution: n,
-              // type: dTypes.gateNode,
-              name: n.id.nodeId,
-              type: 3,
-              nodes: [],
-              edges: [],
-            })),
+            ...nodes,
           ],
         },
         staticExecutionIdsMap: {},
@@ -161,7 +157,11 @@ describe('ExecutionNodeViews', () => {
               workflowId: mockWorkflowId,
             }}
           >
-            <ExecutionNodeViews />
+            <WorkflowNodeExecutionsProvider
+              initialNodeExecutions={nodeExecutionsArray as any}
+            >
+              <ExecutionNodeViews />
+            </WorkflowNodeExecutionsProvider>
           </NodeExecutionDetailsContext.Provider>
         </ExecutionContext.Provider>
       </QueryClientProvider>,
@@ -199,6 +199,7 @@ describe('ExecutionNodeViews', () => {
 
     // Wait for succeeded task to disappear and ensure failed task remains
     await fireEvent.click(failedFilter);
+
     await waitFor(() => {
       const nodes = queryAllByTestId('node-execution-row');
       return nodes?.length === 1;

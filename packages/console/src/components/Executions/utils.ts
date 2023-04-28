@@ -29,6 +29,7 @@ import {
   workflowExecutionPhaseConstants,
 } from './constants';
 import {
+  NodeExecutionsById,
   SetCurrentNodeExecutionsById,
   WorkflowNodeExecution,
 } from './contexts';
@@ -250,7 +251,7 @@ export function searchNode(
 export async function fetchChildrenExecutions(
   queryClient: QueryClient,
   scopedId: string,
-  nodeExecutionsById: Dictionary<WorkflowNodeExecution>,
+  nodeExecutionsById: NodeExecutionsById,
   setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById,
   skipCache = false,
 ) {

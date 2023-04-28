@@ -1,3 +1,4 @@
+export * from './Workflow';
 export * from './AdminEntity';
 export * from './Execution/enums';
 export * from './Execution/types';

@@ -12,6 +12,8 @@ export enum QueryType {
   NodeExecutionChildList = 'nodeExecutionChildList',
   NodeExecutionTreeList = 'nodeExecutionTreeList',
   TaskExecution = 'taskExecution',
+  NodeExecutionEnhanced = 'NodeExecutionEnhanced',
+  NodeExecutionAndTasks = 'NodeExecutionAndTasks',
   TaskExecutionList = 'taskExecutionList',
   TaskExecutionChildList = 'taskExecutionChildList',
   TaskTemplate = 'taskTemplate',
