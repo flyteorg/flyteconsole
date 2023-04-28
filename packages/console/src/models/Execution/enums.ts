@@ -32,13 +32,3 @@ export const CatalogCacheStatus = {
 };
 export type CatalogCacheStatus = Core.CatalogCacheStatus | MapCacheStatus;
 /* eslint-enable @typescript-eslint/no-redeclare */
-
-export enum OperationId {
-  WORKFLOW_SETUP = 'WORKFLOW_SETUP',
-  WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
-  NODE_TRANSITION = 'NODE_TRANSITION',
-  NODE_SETUP = 'NODE_SETUP',
-  NODE_IDLE = 'NODE_IDLE',
-  NODE_EXECUTION = 'NODE_EXECUTION',
-  NODE_TEARDOWN = 'NODE_TEARDOWN',
-}

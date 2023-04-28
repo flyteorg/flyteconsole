@@ -1,10 +1,10 @@
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
-import { NodeExecutionPhase, OperationId } from 'models/Execution/enums';
+import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
 import { Admin } from '@flyteorg/flyteidl-types';
 import { dNode } from 'models/Graph/types';
-import { get, isNil } from 'lodash';
+import { get, isNil, startCase, uniq } from 'lodash';
 import { timestampToDate } from 'common';
 import traverse from 'traverse';
 
@@ -102,17 +102,25 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
 export const getExecutionMetricsData = (
   data: Admin.WorkflowExecutionGetMetricsResponse,
   nodes: dNode[],
-): Record<OperationId, number[]> => {
-  const operations = Object.values(OperationId).reduce<
-    Record<OperationId, any>
-  >((acc, operation) => {
-    acc[operation] = [];
+): { operationIds: string[]; operations: Record<string, number[]> } => {
+  const operationIds = uniq(
+    traverse(data)
+      .paths()
+      .filter(path => path.at(-1) === 'operationId')
+      .map(path => get(data, path)),
+  );
 
-    return acc;
-  }, {} as any);
+  const operations = operationIds.reduce<Record<string, any>>(
+    (acc, operation) => {
+      acc[operation] = [];
+
+      return acc;
+    },
+    {} as any,
+  );
 
   if (isNil(data.span)) {
-    return operations;
+    return { operationIds, operations };
   }
 
   const tree = traverse(data.span);
@@ -135,7 +143,7 @@ export const getExecutionMetricsData = (
 
     const nodeSpans = (spanPath && get(data.span, spanPath)?.spans) ?? [];
 
-    for (const operationId of Object.values(OperationId)) {
+    for (const operationId of operationIds) {
       const operationSpan = nodeSpans.find(
         span => span.operationId === operationId,
       );
@@ -156,7 +164,29 @@ export const getExecutionMetricsData = (
     }
   }
 
-  return operations;
+  return {
+    operationIds,
+    operations,
+  };
+};
+
+export const getExecutionMetricsTooltips = (
+  nodes: dNode[],
+  operationIds: string[],
+  operations: Record<string, number[]>,
+) => {
+  return nodes.map((node, idx) => {
+    const tooltipText: string[] = [];
+
+    operationIds.map(operationId => {
+      const operationLabel = startCase(
+        operationId.toLowerCase().split('_').join(' '),
+      );
+      tooltipText.push(`${operationLabel}: ${operations[operationId][idx]}s`);
+    });
+
+    return tooltipText;
+  });
 };
 
 /**
@@ -169,7 +199,7 @@ export const getExecutionMetricsData = (
  */
 export const getChartData = (
   data: ChartDataInput,
-  executionMetrics: Record<OperationId, number[]>,
+  executionMetrics: Record<string, number[]>,
 ) => {
   const defaultStyle = {
     barPercentage: 1,

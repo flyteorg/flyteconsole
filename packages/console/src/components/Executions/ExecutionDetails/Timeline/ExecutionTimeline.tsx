@@ -25,7 +25,10 @@ import { TaskNames } from './TaskNames';
 import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 import t from '../strings';
-import { getExecutionMetricsData } from './TimelineChart/utils';
+import {
+  getExecutionMetricsData,
+  getExecutionMetricsTooltips,
+} from './TimelineChart/utils';
 
 interface StyleProps {
   chartWidth: number;
@@ -189,6 +192,17 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     setOriginalNodes([...originalNodes]);
   };
 
+  const { operations, operationIds } = getExecutionMetricsData(
+    executionMetricsData.value,
+    showNodes,
+  );
+
+  const executionMetricsTooltips = getExecutionMetricsTooltips(
+    showNodes,
+    operationIds,
+    operations,
+  );
+
   return (
     <>
       <div className={styles.taskNames}>
@@ -224,10 +238,9 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
             <TimelineChart
               items={barItemsData}
               chartTimeIntervalSec={chartTimeInterval}
-              executionMetricsData={getExecutionMetricsData(
-                executionMetricsData.value,
-                showNodes,
-              )}
+              operationIds={operationIds}
+              executionMetricsData={operations}
+              executionMetricsTooltips={executionMetricsTooltips}
             />
           </div>
         </div>
