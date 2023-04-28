@@ -118,7 +118,7 @@ const externalTooltipHandler = (context: any) => {
 export const getBarOptions = (
   chartTimeIntervalSec: number,
   tooltipLabels: string[][],
-  tooltips: string[][],
+  executionMetricsTooltips: string[][],
 ) => {
   const theme = getMuiTheme(undefined);
 
@@ -183,7 +183,7 @@ export const getBarOptions = (
               return tooltipLabels[index] ?? '';
             }
 
-            return tooltips[index] ?? '';
+            return executionMetricsTooltips[index] ?? '';
           },
           labelColor: function (context) {
             return {
