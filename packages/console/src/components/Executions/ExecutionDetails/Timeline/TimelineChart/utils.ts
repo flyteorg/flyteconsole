@@ -182,7 +182,7 @@ export const getExecutionMetricsTooltips = (
       const operationLabel = startCase(
         operationId.toLowerCase().split('_').join(' '),
       );
-      tooltipText.push(`${operationLabel}: ${operations[operationId][idx]}s`);
+      tooltipText.push(`${operationLabel}: ${operations[operationId][idx]}`);
     });
 
     return tooltipText;
@@ -242,26 +242,26 @@ export const getChartData = (
           },
         },
       },
-      ...Object.entries(executionMetrics).map(([_, d], idx) => ({
-        ...defaultStyle,
-        data: d,
-        backgroundColor: data.barColor,
-        borderColor: 'rgba(0, 0, 0, 0.55)',
-        borderWidth: {
-          top: 0,
-          left: 0,
-          right: 1,
-          bottom: 0,
-        },
-        datalabels: {
-          color: primaryTextColor,
-          align: 'end' as const, // related to text
-          anchor: 'start' as const, // related to bar
-          formatter: function (value, context) {
-            return value > 0.01 ? `${value}s` : '';
-          },
-        },
-      })),
+      // ...Object.entries(executionMetrics).map(([_, d], idx) => ({
+      //   ...defaultStyle,
+      //   data: d,
+      //   backgroundColor: data.barColor,
+      //   borderColor: 'rgba(0, 0, 0, 0.55)',
+      //   borderWidth: {
+      //     top: 0,
+      //     left: 0,
+      //     right: 1,
+      //     bottom: 0,
+      //   },
+      //   datalabels: {
+      //     color: primaryTextColor,
+      //     align: 'end' as const, // related to text
+      //     anchor: 'start' as const, // related to bar
+      //     formatter: function (value, context) {
+      //       return value > 0.01 ? `${value}s` : '';
+      //     },
+      //   },
+      // })),
     ],
   };
 };
