@@ -27,11 +27,14 @@ import { ignoredNodeIds } from 'models/Node/constants';
 import { isMapTaskV1 } from 'models/Task/utils';
 import { QueryClient } from 'react-query';
 import { getTask } from 'models';
+import { createDebugLogger } from 'common/log';
 import { WorkflowNodeExecution, WorkflowTaskExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
 import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
 import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from './utils';
+
+const debug = createDebugLogger('@nodeExecutionQueries');
 
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
@@ -86,7 +89,14 @@ export function makeNodeExecutionAndTasksQuery(
       const taskExecutions = workflowNodeExecution?.taskExecutions || [];
       const taskId = taskExecutions?.[0]?.id?.taskId;
       const compiledTaskClosure = await (taskId
-        ? getTask(taskId!)
+        ? getTask(taskId!).catch(e => {
+            debug(
+              '\t failed to get compiled task closure for taskId: ',
+              taskId,
+              ' Error message:',
+              e,
+            );
+          })
         : Promise.resolve(null));
 
       // step 5: get each task's executions data
