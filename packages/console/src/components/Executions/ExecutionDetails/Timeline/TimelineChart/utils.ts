@@ -28,6 +28,55 @@ interface ChartDataInput {
   barLabel: string[];
   barColor: string[];
 }
+/**
+ * Recursively traverses span data and returns a map of nodeId/taskId to span data.
+ * Example return:
+ *  {
+ *    "n0": [span],
+ *    "n1": [span]
+ *  }
+ */
+export const parseSpanData = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+) => {
+  const results: Record<string, any> = {};
+  const workflowSpans = data?.span?.spans ?? [];
+
+  const traverseSpanData = (data: any) => {
+    if (data.length > 0) {
+      data.forEach(span => {
+        if (span.nodeId) {
+          results[span.nodeId.nodeId] = [];
+          span.spans.forEach((childSpan: any) => {
+            if (!childSpan.nodeId && !childSpan.taskId) {
+              results[span.nodeId.nodeId].push(childSpan);
+            }
+          });
+          if (span.spans.length > 0) {
+            traverseSpanData(span.spans);
+          }
+        } else if (span.taskId) {
+          results[span.taskId.nodeExecutionId.nodeId] = [];
+          span.spans.forEach((childSpan: any) => {
+            if (!childSpan.nodeId && !childSpan.taskId) {
+              results[span.taskId.nodeExecutionId.nodeId].push(childSpan);
+            }
+          });
+          if (span.spans.length > 0) {
+            traverseSpanData(span.spans);
+          }
+        } else {
+          traverseSpanData(span);
+        }
+      });
+    }
+  };
+
+  if (workflowSpans.length > 0) {
+    traverseSpanData(workflowSpans);
+  }
+  return results;
+};
 
 /**
  * Depending on amounf of second provided shows data in
