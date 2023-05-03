@@ -9,7 +9,7 @@ import React, {
 import { log } from 'common/log';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution } from 'models/Execution/types';
-import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
+import { CompiledWorkflowClosure } from 'models/Workflow/types';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { NodeExecutionDetails } from '../../types';

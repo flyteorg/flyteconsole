@@ -95,8 +95,11 @@ export interface BlobLiteral extends Core.ILiteral {
 
 export type LiteralCollection = RequiredNonNullable<Core.ILiteralCollection>;
 
+/* eslint-disable @typescript-eslint/no-redeclare */
 export type LiteralMap = RequiredNonNullable<Core.ILiteralMap>;
 export const LiteralMap = Core.LiteralMap;
+/* eslint-enable @typescript-eslint/no-redeclare */
+
 export interface LiteralMapBlob extends Admin.ILiteralMapBlob {
   values: LiteralMap;
 }

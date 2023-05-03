@@ -18,7 +18,7 @@ import { workflowVersionsTableColumnWidths } from '../Executions/Tables/constant
 
 type Order = 'asc' | 'desc';
 
-interface PaginatedDataListHeaderProps<C> {
+interface PaginatedDataListHeaderProps {
   classes: ReturnType<typeof useStyles>;
   columns: ColumnDefinition<any>[];
   onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;

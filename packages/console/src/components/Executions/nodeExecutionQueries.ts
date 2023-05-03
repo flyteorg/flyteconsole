@@ -63,6 +63,7 @@ export function makeNodeExecutionQuery(
 export function makeNodeExecutionAndTasksQuery(
   id: NodeExecutionIdentifier,
   queryClient: QueryClient,
+  dynamicParentNodeId?: string,
 ): QueryInput<WorkflowNodeExecution> {
   return {
     queryKey: [QueryType.NodeExecutionAndTasks, id],
@@ -88,15 +89,11 @@ export function makeNodeExecutionAndTasksQuery(
       // -- only one request is made as it is constant across all attempts
       const taskExecutions = workflowNodeExecution?.taskExecutions || [];
       const taskId = taskExecutions?.[0]?.id?.taskId;
-      const compiledTaskClosure = await (taskId
-        ? getTask(taskId!).catch(e => {
-            debug(
-              '\t failed to get compiled task closure for taskId: ',
-              taskId,
-              ' Error message:',
-              e,
-            );
-          })
+
+      // don't issue a task compiled closure request if the node has a dynamic parent
+      // TODO: fetch dynamic parent to get the compiled closure
+      const compiledTaskClosure = await (taskId && !dynamicParentNodeId
+        ? getTask(taskId!).catch(() => null)
         : Promise.resolve(null));
 
       // step 5: get each task's executions data

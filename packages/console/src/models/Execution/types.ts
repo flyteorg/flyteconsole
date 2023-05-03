@@ -1,10 +1,4 @@
-import {
-  Admin,
-  Core,
-  Event,
-  Protobuf,
-  Service,
-} from '@flyteorg/flyteidl-types';
+import { Admin, Core, Event, Protobuf } from '@flyteorg/flyteidl-types';
 import {
   Identifier,
   LiteralMap,
@@ -100,6 +94,7 @@ export interface NodeExecution extends Admin.INodeExecution {
   metadata?: NodeExecutionMetadata;
   scopedId?: string;
   fromUniqueParentId?: string;
+  dynamicParentNodeId?: string;
 }
 
 export interface NodeExecutionClosure extends Admin.INodeExecutionClosure {
