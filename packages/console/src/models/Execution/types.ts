@@ -130,6 +130,7 @@ export interface TaskExecution extends Admin.ITaskExecution {
   inputUri: string;
   isParent?: boolean;
   closure: TaskExecutionClosure;
+  dynamicParentNodeId?: string;
 }
 export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
   createdAt: Protobuf.ITimestamp;
