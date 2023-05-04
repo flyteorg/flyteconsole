@@ -22,7 +22,7 @@ export const TaskExecutionsListContent: React.FC<{
   phase?: TaskExecutionPhase;
 }> = ({ taskExecutions, onTaskSelected, phase }) => {
   const styles = useStyles();
-  if (!taskExecutions.length) {
+  if (!taskExecutions?.length) {
     return (
       <NonIdealState
         className={styles.noExecutionsMessage}
