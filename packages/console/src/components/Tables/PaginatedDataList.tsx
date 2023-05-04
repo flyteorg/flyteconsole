@@ -83,8 +83,8 @@ const useStyles = makeStyles((theme: Theme) =>
  * @param props
  * @constructor
  */
-const PaginatedDataListHeader = <C,>(
-  props: PropsWithChildren<PaginatedDataListHeaderProps<C>>,
+const PaginatedDataListHeader = (
+  props: PropsWithChildren<PaginatedDataListHeaderProps>,
 ) => {
   const { classes, order, orderBy, onRequestSort, columns, showRadioButton } =
     props;
