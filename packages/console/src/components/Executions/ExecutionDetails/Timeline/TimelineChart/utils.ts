@@ -2,7 +2,7 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
-import { Admin } from '@flyteorg/flyteidl-types';
+import { Admin, Protobuf } from '@flyteorg/flyteidl-types';
 import { dNode } from 'models/Graph/types';
 import { get, isNil, startCase, uniq } from 'lodash';
 import { timestampToDate } from 'common';
@@ -78,6 +78,33 @@ export const parseSpanData = (
   return results;
 };
 
+export const getOperationsFromWorkflowExecutionMetrics = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+): string[] => {
+  const operationIds = uniq(
+    traverse(data)
+      .paths()
+      .filter(path => path.at(-1) === 'operationId')
+      .map(path => get(data, path)),
+  );
+
+  return operationIds;
+};
+
+export const getTooltipData = (
+  nodes: dNode[],
+  nodeIdx: number,
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+) => {
+  const parsedSpanData = parseSpanData(data);
+
+  const operationIds = getOperationsFromWorkflowExecutionMetrics(data);
+
+  const node = nodes[nodeIdx];
+
+  // Get all the relevant node and task ids from the parsed information
+};
+
 /**
  * Depending on amounf of second provided shows data in
  * XhXmXs or XmXs or Xs format
@@ -146,6 +173,17 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
     barLabel,
     barColor,
   };
+};
+
+export const getDuration = (
+  startTime: Protobuf.ITimestamp,
+  endTime?: Protobuf.ITimestamp,
+) => {
+  const endTimeInMS = endTime ? timestampToDate(endTime).getTime() : Date.now();
+
+  const duration = endTimeInMS - timestampToDate(startTime).getTime();
+
+  return duration;
 };
 
 export const getExecutionMetricsData = (

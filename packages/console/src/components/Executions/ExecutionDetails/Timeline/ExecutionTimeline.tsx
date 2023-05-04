@@ -28,6 +28,8 @@ import t from '../strings';
 import {
   getExecutionMetricsData,
   getExecutionMetricsTooltips,
+  getOperationsFromWorkflowExecutionMetrics,
+  parseSpanData,
 } from './TimelineChart/utils';
 
 interface StyleProps {
@@ -203,6 +205,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     operations,
   );
 
+  const parsedExecutionMetricsData = parseSpanData(executionMetricsData.value);
+
   return (
     <>
       <div className={styles.taskNames}>
@@ -241,6 +245,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
               operationIds={operationIds}
               executionMetricsData={operations}
               executionMetricsTooltips={executionMetricsTooltips}
+              parsedExecutionMetricsData={parsedExecutionMetricsData}
+              nodes={showNodes}
             />
           </div>
         </div>

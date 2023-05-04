@@ -1,5 +1,6 @@
 import { Chart as ChartJS, registerables, Tooltip } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { isEqual } from 'lodash';
 
 ChartJS.register(...registerables, ChartDataLabels);
 
@@ -123,6 +124,9 @@ export const getBarOptions = (
   chartTimeIntervalSec: number,
   tooltipLabels: string[][],
   executionMetricsTooltips: string[][],
+  chartRef: React.MutableRefObject<any>,
+  tooltip: any,
+  setTooltip: any,
 ) => {
   return {
     animation: false as const,
@@ -163,7 +167,38 @@ export const getBarOptions = (
             };
           },
         },
-        external: externalTooltipHandler,
+        external: context => {
+          const tooltipModel = context.tooltip;
+
+          if (!chartRef || !chartRef.current) {
+            return;
+          }
+
+          if (tooltipModel.opacity === 0) {
+            if (tooltip.opacity !== 0)
+              setTooltip(prev => ({ ...prev, opacity: 0 }));
+            return;
+          }
+
+          const position = context.chart.canvas.getBoundingClientRect();
+
+          const dataIndex = tooltipModel.dataPoints[0]?.dataIndex;
+
+          if (!dataIndex) {
+            return;
+          }
+
+          const newTooltipData = {
+            opacity: 1,
+            left: position.left + tooltipModel.caretX,
+            top: position.top + tooltipModel.caretY,
+            dataIndex: dataIndex,
+          };
+
+          if (!isEqual(tooltip, newTooltipData)) {
+            setTooltip(newTooltipData);
+          }
+        },
       },
     },
     scales: {
