@@ -220,7 +220,7 @@ export function makeNodeExecutionQueryEnhanced(
                   ...e,
                   scopedId: `${parentScopeId}-0-${scopedId}`,
                   fromUniqueParentId,
-                  dynamicParentNodeId,
+                  ...(dynamicParentNodeId ? { dynamicParentNodeId } : {}),
                 };
               });
               return children;
