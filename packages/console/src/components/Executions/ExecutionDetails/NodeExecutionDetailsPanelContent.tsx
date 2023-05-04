@@ -325,7 +325,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       }
     }
 
-    if (!nodeExecution?.tasksFetched) {
+    if (nodeExecution && !nodeExecution?.tasksFetched) {
       fetchTasksData(queryClient);
     } else {
       if (isCurrent) {
