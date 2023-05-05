@@ -75,6 +75,7 @@ export const UnionInput = (props: InputProps) => {
     error,
     description,
     setIsError,
+    state,
   } = props;
 
   const classes = useStyles();
@@ -186,6 +187,7 @@ export const UnionInput = (props: InputProps) => {
             } as InputProps,
             true,
             setIsError,
+            state,
           )}
         </div>
       </CardContent>

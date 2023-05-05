@@ -248,6 +248,7 @@ export interface InputProps {
   value?: InputValue;
   onChange: InputChangeHandler;
   setIsError: (boolean) => void;
+  state: BaseInterpretedLaunchState;
 }
 
 export interface ParsedInput

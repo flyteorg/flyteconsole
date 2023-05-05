@@ -8,7 +8,12 @@ import {
   validateInput,
 } from './inputHelpers/inputHelpers';
 import { useInputValueCacheContext } from './inputValueCache';
-import { InputProps, InputValue, ParsedInput } from './types';
+import {
+  BaseInterpretedLaunchState,
+  InputProps,
+  InputValue,
+  ParsedInput,
+} from './types';
 import { convertFormInputsToLiterals, createInputCacheKey } from './utils';
 
 interface FormInputState extends InputProps {
@@ -21,7 +26,10 @@ interface FormInputsState {
   validate(): boolean;
 }
 
-function useFormInputState(parsedInput: ParsedInput): FormInputState {
+function useFormInputState(
+  parsedInput: ParsedInput,
+  state: BaseInterpretedLaunchState,
+): FormInputState {
   const inputValueCache = useInputValueCacheContext();
 
   const cacheKey = createInputCacheKey(
@@ -78,6 +86,7 @@ function useFormInputState(parsedInput: ParsedInput): FormInputState {
     value,
     helperText: parsedInput.description,
     setIsError: () => {},
+    state,
   };
 }
 
@@ -90,8 +99,9 @@ function useFormInputState(parsedInput: ParsedInput): FormInputState {
  */
 export function useFormInputsState(
   parsedInputs: ParsedInput[],
+  state: BaseInterpretedLaunchState,
 ): FormInputsState {
-  const inputs = parsedInputs.map(useFormInputState);
+  const inputs = parsedInputs.map(input => useFormInputState(input, state));
 
   const validate = () => {
     const valid = inputs.reduce((out, input) => out && input.validate(), true);

@@ -17,6 +17,7 @@ export const endpointPrefixes = {
   taskExecutionChildren: '/children/task_executions',
   workflow: '/workflows',
   dataProxyArtifactLink: '/dataproxy/artifact_link',
+  dataProxyArtifactUrn: '/dataproxy/artifact_urn',
 };
 
 export const identifierPrefixes: { [k in ResourceType]: string } = {
