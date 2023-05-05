@@ -5,7 +5,6 @@ import {
   TaskExecution,
 } from 'models/Execution/types';
 import { Routes } from 'routes/routes';
-import { PaginatedEntityResponse } from 'models/AdminEntity/types';
 import { timestampToDate } from 'common';
 import { formatDateUTC } from 'common/formatters';
 
@@ -27,21 +26,26 @@ export function getExecutionBackLink(execution: Execution): string {
 }
 
 export function getTaskExecutionDetailReasons(
-  taskExecutionDetails?: PaginatedEntityResponse<TaskExecution>,
+  taskExecutionDetails?: TaskExecution[],
 ): (string | null | undefined)[] {
   let reasons: string[] = [];
-  taskExecutionDetails?.entities.forEach(taskExecution => {
-    if (taskExecution.closure.reasons)
+  taskExecutionDetails?.forEach?.(taskExecution => {
+    const finalReasons = (
+      taskExecution.closure.reasons?.length
+        ? taskExecution.closure.reasons
+        : [{ message: taskExecution.closure.reason }]
+    ).filter(r => !!r);
+
+    if (finalReasons) {
       reasons = reasons.concat(
-        taskExecution.closure.reasons.map(
+        finalReasons.map(
           reason =>
             (reason.occurredAt
               ? formatDateUTC(timestampToDate(reason.occurredAt)) + ' '
               : '') + reason.message,
         ),
       );
-    else if (taskExecution.closure.reason)
-      reasons.push(taskExecution.closure.reason);
+    }
   });
   return reasons;
 }

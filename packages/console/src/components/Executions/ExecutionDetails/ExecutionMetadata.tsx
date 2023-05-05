@@ -7,7 +7,6 @@ import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { useCommonStyles } from 'components/common/styles';
 import { secondaryBackgroundColor } from 'components/Theme/constants';
-import { Execution } from 'models/Execution/types';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { ExecutionContext } from '../contexts';

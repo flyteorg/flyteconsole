@@ -28,11 +28,7 @@ import {
   taskTypeToNodeExecutionDisplayType,
   workflowExecutionPhaseConstants,
 } from './constants';
-import {
-  NodeExecutionsById,
-  SetCurrentNodeExecutionsById,
-  WorkflowNodeExecution,
-} from './contexts';
+import { NodeExecutionsById, SetCurrentNodeExecutionsById } from './contexts';
 import { isChildGroupsFetched } from './ExecutionDetails/utils';
 import { fetchChildNodeExecutionGroups } from './nodeExecutionQueries';
 import {
