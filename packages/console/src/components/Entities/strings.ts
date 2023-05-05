@@ -46,6 +46,9 @@ const str = {
   configTestSplitRatio: 'test_split_ratio',
   noExpectedInputs: 'This launch plan has no expected inputs.',
   noFixedInputs: 'This launch plan has no fixed inputs.',
+  launchPlan_frequency: 'Frequency',
+  launchPlan_name: 'Launch Plan',
+  launchPlan_version: 'Version',
 };
 
 export { patternKey } from '@flyteorg/locale';

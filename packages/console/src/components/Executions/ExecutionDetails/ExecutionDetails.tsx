@@ -1,19 +1,30 @@
+import * as React from 'react';
+import { useContext, useEffect } from 'react';
 import { Collapse, IconButton } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import classnames from 'classnames';
-import { LargeLoadingSpinner } from 'components/common/LoadingSpinner';
+import {
+  LargeLoadingComponent,
+  LargeLoadingSpinner,
+} from 'components/common/LoadingSpinner';
 import { WaitForQuery } from 'components/common/WaitForQuery';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { DataError } from 'components/Errors/DataError';
 import { Execution } from 'models/Execution/types';
-import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import { useQuery, useQueryClient } from 'react-query';
+import { Workflow } from 'models/Workflow/types';
+import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
 import { ExecutionContext } from '../contexts';
 import { useWorkflowExecutionQuery } from '../useWorkflowExecution';
-import { ExecutionDetailsAppBarContent } from './ExecutionDetailsAppBarContent';
 import { ExecutionMetadata } from './ExecutionMetadata';
 import { ExecutionNodeViews } from './ExecutionNodeViews';
+import {
+  NodeExecutionDetailsContextProvider,
+  WorkflowNodeExecutionsProvider,
+} from '../contextProvider/NodeExecutionDetails';
+import { useExecutionNodeViewsStatePoll } from './useExecutionNodeViewsState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   expandCollapseButton: {
@@ -38,33 +49,16 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export interface ExecutionDetailsRouteParams {
-  domainId: string;
-  executionId: string;
-  projectId: string;
-}
-export type ExecutionDetailsProps = ExecutionDetailsRouteParams;
-
-interface RenderExecutionDetailsProps {
-  execution: Execution;
-}
-
-const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
-  execution,
-}) => {
+const ExecutionContainer: React.FC<{}> = () => {
   const styles = useStyles();
   const [metadataExpanded, setMetadataExpanded] = React.useState(true);
   const toggleMetadata = () => setMetadataExpanded(!metadataExpanded);
-  const contextValue = {
-    execution,
-  };
 
   return (
-    <ExecutionContext.Provider value={contextValue}>
-      <ExecutionDetailsAppBarContent execution={execution} />
+    <>
       <div className={styles.metadataContainer}>
         <Collapse in={metadataExpanded}>
-          <ExecutionMetadata execution={execution} />
+          <ExecutionMetadata />
         </Collapse>
         <div className={styles.expandCollapseContainer}>
           <IconButton size="small" onClick={toggleMetadata}>
@@ -76,38 +70,120 @@ const RenderExecutionDetails: React.FC<RenderExecutionDetailsProps> = ({
           </IconButton>
         </div>
       </div>
-      <ExecutionNodeViews execution={execution} />
-    </ExecutionContext.Provider>
+      <ExecutionNodeViews />
+    </>
+  );
+};
+
+const RenderExecutionContainer: React.FC<React.PropsWithChildren<{}>> = ({
+  children,
+}) => {
+  const { execution } = useContext(ExecutionContext);
+
+  const {
+    closure: { workflowId },
+  } = execution;
+
+  const workflowQuery = useQuery<Workflow, Error>(
+    makeWorkflowQuery(useQueryClient(), workflowId),
+  );
+
+  // query to get all data to build Graph and Timeline
+  const { nodeExecutionsQuery } = useExecutionNodeViewsStatePoll(execution);
+  return (
+    <>
+      {/* Fetches the current workflow to build the execution tree inside NodeExecutionDetailsContextProvider */}
+      <WaitForQuery errorComponent={DataError} query={workflowQuery}>
+        {workflow => (
+          <>
+            {/* Provides a node execution tree for the current workflow */}
+            <NodeExecutionDetailsContextProvider workflowId={workflow.id}>
+              <WaitForQuery
+                query={nodeExecutionsQuery}
+                errorComponent={DataError}
+                loadingComponent={LargeLoadingComponent}
+              >
+                {data => (
+                  <WorkflowNodeExecutionsProvider initialNodeExecutions={data}>
+                    {children}
+                  </WorkflowNodeExecutionsProvider>
+                )}
+              </WaitForQuery>
+            </NodeExecutionDetailsContextProvider>
+          </>
+        )}
+      </WaitForQuery>
+    </>
   );
 };
 
 /** The view component for the Execution Details page */
-export const ExecutionDetailsContainer: React.FC<ExecutionDetailsProps> = ({
-  executionId,
-  domainId,
-  projectId,
-}) => {
+export const ExecutionDetailsWrapper: React.FC<
+  React.PropsWithChildren<ExecutionDetailsRouteParams>
+> = ({ children, executionId, domainId, projectId }) => {
   const id = {
     project: projectId,
     domain: domainId,
     name: executionId,
   };
 
-  const renderExecutionDetails = (execution: Execution) => (
-    <RenderExecutionDetails execution={execution} />
-  );
+  const workflowExecutionQuery = useWorkflowExecutionQuery(id);
 
   return (
+    // get the workflow execution query to get the current workflow id
     <WaitForQuery
       errorComponent={DataError}
       loadingComponent={LargeLoadingSpinner}
-      query={useWorkflowExecutionQuery(id)}
+      query={workflowExecutionQuery}
     >
-      {renderExecutionDetails}
+      {(execution: Execution) => (
+        <ExecutionContext.Provider
+          value={{
+            execution,
+          }}
+        >
+          <RenderExecutionContainer>{children}</RenderExecutionContainer>
+        </ExecutionContext.Provider>
+      )}
     </WaitForQuery>
   );
 };
 
+export function withExecutionDetails<P extends ExecutionDetailsRouteParams>(
+  WrappedComponent: React.FC<P>,
+) {
+  return (props: P) => {
+    const [localRouteProps, setLocalRouteProps] = React.useState<P>();
+
+    useEffect(() => {
+      setLocalRouteProps(prev => {
+        if (JSON.stringify(prev) === JSON.stringify(props)) {
+          return prev;
+        }
+
+        return props;
+      });
+    }, [props]);
+
+    if (!localRouteProps) {
+      return <LargeLoadingComponent />;
+    }
+    return (
+      <ExecutionDetailsWrapper {...localRouteProps!}>
+        <WrappedComponent {...localRouteProps!} />
+      </ExecutionDetailsWrapper>
+    );
+  };
+}
+
+export interface ExecutionDetailsRouteParams {
+  domainId: string;
+  executionId: string;
+  projectId: string;
+}
+
 export const ExecutionDetails: React.FunctionComponent<
   RouteComponentProps<ExecutionDetailsRouteParams>
-> = withRouteParams<ExecutionDetailsRouteParams>(ExecutionDetailsContainer);
+> = withRouteParams<ExecutionDetailsRouteParams>(
+  withExecutionDetails(ExecutionContainer),
+);

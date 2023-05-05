@@ -102,10 +102,6 @@ export interface NodeExecution extends Admin.INodeExecution {
   fromUniqueParentId?: string;
 }
 
-export interface NodeExecutionsById {
-  [k: string]: NodeExecution;
-}
-
 export interface NodeExecutionClosure extends Admin.INodeExecutionClosure {
   createdAt: Protobuf.ITimestamp;
   duration?: Protobuf.Duration;
@@ -144,6 +140,8 @@ export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
   phase: TaskExecutionPhase;
   startedAt?: Protobuf.ITimestamp;
   eventVersion?: number;
+  reasons?: Admin.IReason[];
+  reason?: string;
 }
 
 /** Execution data */

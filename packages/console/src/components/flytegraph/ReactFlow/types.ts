@@ -48,18 +48,13 @@ export interface BuildRFNodeProps {
   nodeExecutionsById: any;
   typeOverride: dTypes | null;
   onNodeSelectionChanged: any;
-  onAddNestedView?: any;
-  onRemoveNestedView?: any;
   currentNestedView?: any;
   isStaticGraph: boolean;
 }
 
 export interface ConvertDagProps {
   root: dNode;
-  nodeExecutionsById: any;
   onNodeSelectionChanged: any;
-  onRemoveNestedView?: any;
-  onAddNestedView?: any;
   currentNestedView?: any;
   maxRenderDepth: number;
   isStaticGraph?: boolean;
@@ -70,7 +65,8 @@ export interface DagToReactFlowProps extends ConvertDagProps {
   parents: any;
 }
 
-interface RFCustomData {
+export interface RFCustomData {
+  node: dNode;
   nodeExecutionStatus: NodeExecutionPhase;
   text: string;
   handles: [];
@@ -79,14 +75,13 @@ interface RFCustomData {
   dag: any;
   taskType: dTypes;
   cacheStatus: CatalogCacheStatus;
+  parentScopedId: string;
   isParentNode: boolean;
   nodeLogsByPhase: LogsByPhase;
   selectedPhase: TaskExecutionPhase;
   currentNestedView: string[];
   onNodeSelectionChanged: (n: boolean) => void;
   onPhaseSelectionChanged: (p?: TaskExecutionPhase) => void;
-  onAddNestedView: () => void;
-  onRemoveNestedView: (scopedId: string, index: number) => void;
 }
 
 export interface RFNode {

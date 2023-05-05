@@ -1,20 +1,29 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import * as React from 'react';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import { filterLabels } from 'components/Executions/filters/constants';
 import { nodeExecutionStatusFilters } from 'components/Executions/filters/statusFilters';
 import { oneFailedTaskWorkflow } from 'mocks/data/fixtures/oneFailedTaskWorkflow';
 import { insertFixture } from 'mocks/data/insertFixture';
 import { mockServer } from 'mocks/server';
-import { Execution } from 'models/Execution/types';
-import * as React from 'react';
+import { Execution, NodeExecution } from 'models/Execution/types';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
-import { tabs } from '../constants';
+import { ExecutionContext } from 'components/Executions/contexts';
+import { listNodeExecutions, listTaskExecutions } from 'models/Execution/api';
+import { NodeExecutionPhase } from 'models';
+import { mockWorkflowId } from 'mocks/data/fixtures/types';
+import {
+  NodeExecutionDetailsContext,
+  WorkflowNodeExecutionsProvider,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { transformerWorkflowToDag } from 'components/WorkflowGraph/transformerWorkflowToDag';
 import { ExecutionNodeViews } from '../ExecutionNodeViews';
+import { tabs } from '../constants';
 
 jest.mock('components/Executions/Tables/NodeExecutionRow', () => ({
-  NodeExecutionRow: jest.fn(({ nodeExecution }) => (
+  NodeExecutionRow: jest.fn(({ node }) => (
     <div data-testid="node-execution-row">
-      <span id="node-execution-col-id">{nodeExecution?.id?.nodeId}</span>
+      <span id="node-execution-col-id">{node?.execution?.id?.nodeId}</span>
     </div>
   )),
 }));
@@ -39,46 +48,122 @@ jest.mock(
     NodeExecutionName: jest.fn(({ name }) => <div>{name}</div>),
   }),
 );
+jest.mock('models/Execution/api', () => ({
+  listNodeExecutions: jest.fn(),
+  listTaskExecutions: jest.fn(),
+}));
 
-// ExecutionNodeViews uses query params for NE list, so we must match them
-// for the list to be returned properly
-const baseQueryParams = {
-  filters: '',
-  'sort_by.direction': 'ASCENDING',
-  'sort_by.key': 'created_at',
-};
+jest.mock('components/WorkflowGraph/transformerWorkflowToDag', () => ({
+  transformerWorkflowToDag: jest.fn(),
+}));
 
 describe('ExecutionNodeViews', () => {
   let queryClient: QueryClient;
   let execution: Execution;
   let fixture: ReturnType<typeof oneFailedTaskWorkflow.generate>;
-
+  let nodeExecutionsArray: NodeExecution[];
   beforeEach(() => {
     fixture = oneFailedTaskWorkflow.generate();
     execution = fixture.workflowExecutions.top.data;
     insertFixture(mockServer, fixture);
     const nodeExecutions = fixture.workflowExecutions.top.nodeExecutions;
+    nodeExecutionsArray = Object.values(nodeExecutions).map(({ data }) => data);
 
-    mockServer.insertNodeExecutionList(
-      execution.id,
-      Object.values(nodeExecutions).map(({ data }) => data),
-      baseQueryParams,
-    );
-    mockServer.insertNodeExecutionList(
-      execution.id,
-      [nodeExecutions.failedNode.data],
-      {
-        ...baseQueryParams,
-        filters: 'value_in(phase,FAILED)',
-      },
-    );
+    transformerWorkflowToDag.mockImplementation(_ => {
+      const nodes = nodeExecutionsArray.map(n => ({
+        id: n.id.nodeId,
+        scopedId: n.scopedId,
+        execution: n,
+        // type: dTypes.gateNode,
+        name: n.id.nodeId,
+        type: 3,
+        nodes: [],
+        edges: [],
+      }));
+      return {
+        dag: {
+          id: 'start-node',
+          scopedId: 'start-node',
+          value: {
+            id: 'start-node',
+          },
+          type: 4,
+          name: 'start',
+          nodes: [
+            {
+              id: 'start-node',
+              scopedId: 'start-node',
+              value: {
+                inputs: [],
+                upstreamNodeIds: [],
+                outputAliases: [],
+                id: 'start-node',
+              },
+              type: 4,
+              name: 'start',
+              nodes: [],
+              edges: [],
+            },
+            {
+              id: 'end-node',
+              scopedId: 'end-node',
+              value: {
+                inputs: [],
+                upstreamNodeIds: [],
+                outputAliases: [],
+                id: 'end-node',
+              },
+              type: 5,
+              name: 'end',
+              nodes: [],
+              edges: [],
+            },
+            ...nodes,
+          ],
+        },
+        staticExecutionIdsMap: {},
+      };
+    });
+    listNodeExecutions.mockImplementation((_, filters) => {
+      let finalNodes = nodeExecutionsArray;
+      if (filters?.filter?.length) {
+        const phases = filters?.filter
+          ?.filter(f => f.key === 'phase')?.[0]
+          .value?.map(f => NodeExecutionPhase[f]);
+        finalNodes = finalNodes.filter(n => {
+          return phases.includes(n.closure.phase);
+        });
+      }
+      return Promise.resolve({
+        entities: Object.values(finalNodes),
+      });
+    });
+    listTaskExecutions.mockImplementation(() => {
+      return Promise.resolve({
+        entities: [],
+      });
+    });
     queryClient = createTestQueryClient();
   });
 
   const renderViews = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <ExecutionNodeViews execution={execution} />
+        <ExecutionContext.Provider value={{ execution }}>
+          <NodeExecutionDetailsContext.Provider
+            value={{
+              compiledWorkflowClosure: {} as any,
+              getNodeExecutionDetails: jest.fn.call,
+              workflowId: mockWorkflowId,
+            }}
+          >
+            <WorkflowNodeExecutionsProvider
+              initialNodeExecutions={nodeExecutionsArray as any}
+            >
+              <ExecutionNodeViews />
+            </WorkflowNodeExecutionsProvider>
+          </NodeExecutionDetailsContext.Provider>
+        </ExecutionContext.Provider>
       </QueryClientProvider>,
     );
 
@@ -87,7 +172,7 @@ describe('ExecutionNodeViews', () => {
     const failedNodeName = nodeExecutions.failedNode.data.id.nodeId;
     const succeededNodeName = nodeExecutions.pythonNode.data.id.nodeId;
 
-    const { getByText, queryByText, getByLabelText } = renderViews();
+    const { getByText, queryByText, queryAllByTestId } = renderViews();
 
     await waitFor(() => getByText(tabs.nodes.label));
 
@@ -96,21 +181,32 @@ describe('ExecutionNodeViews', () => {
 
     // Ensure we are on Nodes tab
     await fireEvent.click(nodesTab);
+    await waitFor(() => {
+      const nodes = queryAllByTestId('node-execution-row');
+      return nodes?.length === 2;
+    });
+
     await waitFor(() => queryByText(succeededNodeName));
 
     const statusButton = await waitFor(() => getByText(filterLabels.status));
 
     // Apply 'Failed' filter and wait for list to include only the failed item
     await fireEvent.click(statusButton);
+
     const failedFilter = await waitFor(() =>
-      getByLabelText(nodeExecutionStatusFilters.failed.label),
+      screen.getByLabelText(nodeExecutionStatusFilters.failed.label),
     );
 
     // Wait for succeeded task to disappear and ensure failed task remains
     await fireEvent.click(failedFilter);
-    await waitFor(() => queryByText(failedNodeName));
+
+    await waitFor(() => {
+      const nodes = queryAllByTestId('node-execution-row');
+      return nodes?.length === 1;
+    });
 
     expect(queryByText(succeededNodeName)).not.toBeInTheDocument();
+
     expect(queryByText(failedNodeName)).toBeInTheDocument();
 
     // Switch to the Graph tab
@@ -118,7 +214,9 @@ describe('ExecutionNodeViews', () => {
     await fireEvent.click(timelineTab);
     await waitFor(() => queryByText(succeededNodeName));
 
+    // expect all initital nodes to be rendered
     expect(queryByText(succeededNodeName)).toBeInTheDocument();
+    expect(queryByText(failedNodeName)).toBeInTheDocument();
 
     // Switch back to Nodes Tab and verify filter still applied
     await fireEvent.click(nodesTab);

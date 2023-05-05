@@ -8,7 +8,7 @@ import { Workflow } from 'models/Workflow/types';
 import { Identifier } from 'models/Common/types';
 import { CompiledTask } from 'models/Task/types';
 import { dNode } from 'models/Graph/types';
-import { isEndNode, isStartNode } from 'components/WorkflowGraph/utils';
+import { isEndNode, isStartNode } from 'models/Node/utils';
 import { UNKNOWN_DETAILS } from './types';
 
 interface NodeExecutionInfo extends NodeExecutionDetails {

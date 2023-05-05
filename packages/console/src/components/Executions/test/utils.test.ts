@@ -180,34 +180,23 @@ describe('isNodeGateNode', () => {
   const executionId = { project: 'project', domain: 'domain', name: 'name' };
 
   it('should return true if nodeId is in the list and has a gateNode field', () => {
-    expect(
-      isNodeGateNode(mockNodesWithGateNode, {
-        nodeId: 'GateNode',
-        executionId,
-      }),
-    ).toBeTruthy();
+    expect(isNodeGateNode(mockNodesWithGateNode, 'GateNode')).toBeTruthy();
   });
 
   it('should return false if nodeId is in the list, but a gateNode field is missing', () => {
-    expect(
-      isNodeGateNode(mockNodes, { nodeId: 'BasicNode', executionId }),
-    ).toBeFalsy();
+    expect(isNodeGateNode(mockNodes, 'BasicNode')).toBeFalsy();
   });
 
   it('should return false if nodeId is not in the list, but has a gateNode field', () => {
-    expect(
-      isNodeGateNode(mockNodes, { nodeId: 'GateNode', executionId }),
-    ).toBeFalsy();
+    expect(isNodeGateNode(mockNodes, 'GateNode')).toBeFalsy();
   });
 
   it('should return false if nodeId is a gateNode, but the list is empty', () => {
-    expect(isNodeGateNode([], { nodeId: 'GateNode', executionId })).toBeFalsy();
+    expect(isNodeGateNode([], 'GateNode')).toBeFalsy();
   });
 
   it('should return false if nodeId is not a gateNode and the list is empty', () => {
-    expect(
-      isNodeGateNode([], { nodeId: 'BasicNode', executionId }),
-    ).toBeFalsy();
+    expect(isNodeGateNode([], 'BasicNode')).toBeFalsy();
   });
 });
 

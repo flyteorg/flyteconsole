@@ -1,2 +1,3 @@
 export * from './UserInformation';
-export { NavBarContent } from './NavBarContent';
+export * from './NavBarContent';
+export * from './SubNavBarContent';

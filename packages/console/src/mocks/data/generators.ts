@@ -165,9 +165,11 @@ export function generateNodeExecution(
   nodeId: string,
   overrides?: DeepPartial<NodeExecution>,
 ): NodeExecution {
+  const id = nodeExecutionId(parentExecution.id, nodeId);
   const base: NodeExecution = {
-    id: nodeExecutionId(parentExecution.id, nodeId),
+    id: id,
     metadata: { specNodeId: nodeId },
+    scopedId: id.nodeId,
     closure: {
       createdAt: timeStampOffset(parentExecution.closure.createdAt, 0),
       startedAt: timeStampOffset(parentExecution.closure.createdAt, 0),

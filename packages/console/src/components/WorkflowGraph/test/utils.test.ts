@@ -5,13 +5,12 @@ import {
   mockCompiledTaskNode,
 } from 'models/__mocks__/graphWorkflowData';
 import { dTypes } from 'models/Graph/types';
+import { isEndNode, isStartNode } from 'models/Node/utils';
 import {
   DISPLAY_NAME_START,
   DISPLAY_NAME_END,
   getDisplayName,
   getNodeTypeFromCompiledNode,
-  isStartNode,
-  isEndNode,
   getNodeTemplateName,
 } from '../utils';
 

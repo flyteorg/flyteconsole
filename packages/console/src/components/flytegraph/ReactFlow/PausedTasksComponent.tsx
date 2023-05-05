@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Badge, Button, withStyles } from '@material-ui/core';
 import { TaskNames } from 'components/Executions/ExecutionDetails/Timeline/TaskNames';
 import { dNode } from 'models/Graph/types';
-import { isExpanded } from 'components/WorkflowGraph/utils';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { nodeExecutionPhaseConstants } from 'components/Executions/constants';
 import { LaunchFormDialog } from 'components/Launch/LaunchForm/LaunchFormDialog';
-import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
-import { NodeExecutionsByIdContext } from 'components/Executions/contexts';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from 'components/Executions/contextProvider/NodeExecutionDetails';
+import { extractCompiledNodes } from 'components/hooks/utils';
+import { isExpanded } from 'models/Node/utils';
 import {
   graphButtonContainer,
   graphButtonStyle,
@@ -35,7 +38,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
   pausedNodes,
   initialIsVisible = false,
 }) => {
-  const { nodeExecutionsById } = useContext(NodeExecutionsByIdContext);
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const [isVisible, setIsVisible] = useState(initialIsVisible);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
@@ -73,9 +76,12 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
     setShowResumeForm(true);
   };
 
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === selectedNodeId);
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      (selectedNodeId &&
+        node.id === nodeExecutionsById[selectedNodeId]?.metadata?.specNodeId) ||
+      node.id === selectedNodeId,
+  );
 
   const selectedNode = (pausedNodes ?? []).find(
     node => node.id === selectedNodeId,

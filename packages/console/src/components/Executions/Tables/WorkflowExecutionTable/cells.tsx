@@ -20,6 +20,7 @@ import { ExecutionStatusBadge } from 'components/Executions/ExecutionStatusBadge
 import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
+import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
@@ -96,6 +97,28 @@ export function getDurationCell(execution: Execution): React.ReactNode {
     >
       {timing !== null ? millisecondsToHMS(timing.duration) : ''}
     </Typography>
+  );
+}
+
+export function getLaunchPlanCell(
+  execution: Execution,
+  className: string,
+): React.ReactNode {
+  const isArchived = isExecutionArchived(execution);
+  const lp = execution.spec.launchPlan;
+  const version = execution.spec.launchPlan.version;
+
+  return (
+    <>
+      <LaunchPlanLink id={lp} color={isArchived ? 'disabled' : 'primary'} />
+      <Typography
+        className={className}
+        variant="subtitle1"
+        color="textSecondary"
+      >
+        {version}
+      </Typography>
+    </>
   );
 }
 

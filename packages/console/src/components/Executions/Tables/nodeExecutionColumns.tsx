@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { CompiledNode } from 'models/Node/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { getNodeTemplateName } from 'components/WorkflowGraph/utils';
+import classnames from 'classnames';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { NodeExecutionCacheStatus } from '../NodeExecutionCacheStatus';
@@ -28,7 +29,10 @@ import {
 import t from '../strings';
 import { NodeExecutionName } from '../ExecutionDetails/Timeline/NodeExecutionName';
 
-const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
+const DisplayId: React.FC<NodeExecutionCellRendererData> = ({
+  execution,
+  className,
+}) => {
   const commonStyles = useCommonStyles();
   const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [displayId, setDisplayId] = useState<string | undefined>();
@@ -48,13 +52,16 @@ const DisplayId: React.FC<NodeExecutionCellRendererData> = ({ execution }) => {
   const nodeId = displayId ?? execution.id.nodeId;
   return (
     <Tooltip arrow title={nodeId} placement="top-start">
-      <div className={commonStyles.truncateText}>{nodeId}</div>
+      <div className={classnames(commonStyles.truncateText, className)}>
+        {nodeId}
+      </div>
     </Tooltip>
   );
 };
 
 const DisplayType: React.FC<NodeExecutionCellRendererData> = ({
   execution,
+  className,
 }) => {
   const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [type, setType] = useState<string | undefined>();
@@ -71,7 +78,11 @@ const DisplayType: React.FC<NodeExecutionCellRendererData> = ({
     };
   });
 
-  return <Typography color="textSecondary">{type}</Typography>;
+  return (
+    <Typography color="textSecondary" className={className}>
+      {type}
+    </Typography>
+  );
 };
 
 export function generateColumns(
@@ -80,11 +91,12 @@ export function generateColumns(
 ): NodeExecutionColumnDefinition[] {
   return [
     {
-      cellRenderer: ({ node }) => (
+      cellRenderer: ({ node, className }) => (
         <NodeExecutionName
           name={node.name}
           templateName={getNodeTemplateName(node)}
           execution={node.execution}
+          className={className}
         />
       ),
       className: styles.columnName,
@@ -104,8 +116,12 @@ export function generateColumns(
       label: t('typeLabel'),
     },
     {
-      cellRenderer: ({ execution }) => {
-        const isGateNode = isNodeGateNode(nodes, execution.id);
+      cellRenderer: ({ execution, className }) => {
+        const isGateNode = isNodeGateNode(
+          nodes,
+          execution.metadata?.specNodeId || execution.id.nodeId,
+        );
+
         const phase = getNodeFrontendPhase(
           execution.closure?.phase ?? NodeExecutionPhase.UNDEFINED,
           isGateNode,
@@ -113,10 +129,15 @@ export function generateColumns(
 
         return (
           <>
-            <ExecutionStatusBadge phase={phase} type="node" />
+            <ExecutionStatusBadge
+              phase={phase}
+              type="node"
+              className={className}
+            />
             <NodeExecutionCacheStatus
               execution={execution}
               variant="iconOnly"
+              className={className}
             />
           </>
         );
@@ -126,7 +147,7 @@ export function generateColumns(
       label: t('phaseLabel'),
     },
     {
-      cellRenderer: ({ execution: { closure } }) => {
+      cellRenderer: ({ execution: { closure }, className }) => {
         const { startedAt } = closure;
         if (!startedAt) {
           return '';
@@ -134,10 +155,14 @@ export function generateColumns(
         const startedAtDate = timestampToDate(startedAt);
         return (
           <>
-            <Typography variant="body1">
+            <Typography variant="body1" className={className}>
               {formatDateUTC(startedAtDate)}
             </Typography>
-            <Typography variant="subtitle1" color="textSecondary">
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              className={className}
+            >
               {formatDateLocalTimezone(startedAtDate)}
             </Typography>
           </>
@@ -148,14 +173,14 @@ export function generateColumns(
       label: t('startedAtLabel'),
     },
     {
-      cellRenderer: ({ execution }) => {
+      cellRenderer: ({ execution, className }) => {
         const timing = getNodeExecutionTimingMS(execution);
         if (timing === null) {
           return '';
         }
         return (
           <>
-            <Typography variant="body1">
+            <Typography variant="body1" className={className}>
               {millisecondsToHMS(timing.duration)}
             </Typography>
           </>
@@ -175,9 +200,9 @@ export function generateColumns(
       ),
     },
     {
-      cellRenderer: ({ execution }) =>
+      cellRenderer: ({ execution, className }) =>
         execution.closure.phase === NodeExecutionPhase.UNDEFINED ? null : (
-          <NodeExecutionActions execution={execution} />
+          <NodeExecutionActions execution={execution} className={className} />
         ),
       className: styles.columnLogs,
       key: 'actions',

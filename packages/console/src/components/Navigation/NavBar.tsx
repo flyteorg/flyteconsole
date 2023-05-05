@@ -4,6 +4,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { navBarContentId } from 'common/constants';
 import { FlyteNavigation } from '@flyteorg/common';
+import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { getFlyteNavigationData } from './utils';
 
 export interface NavBarProps {
@@ -16,7 +17,7 @@ const DefaultAppBarContent = lazy(() => import('./DefaultAppBarContent'));
 /** Contains all content in the top navbar of the application. */
 export const NavBar = (props: NavBarProps) => {
   const navData = props.navigationData ?? getFlyteNavigationData();
-  const content = props.useCustomContent ? (
+  const navBarContent = props.useCustomContent ? (
     <div id={navBarContentId} />
   ) : (
     <Suspense fallback={null}>
@@ -27,7 +28,13 @@ export const NavBar = (props: NavBarProps) => {
     </Suspense>
   );
 
-  return (
+  const { registry } = useExternalConfigurationContext();
+
+  const ExternalNav = registry?.nav;
+
+  return ExternalNav ? (
+    <ExternalNav />
+  ) : (
     <AppBar
       color="secondary"
       elevation={0}
@@ -38,7 +45,7 @@ export const NavBar = (props: NavBarProps) => {
         position: 'fixed',
       }}
     >
-      <Toolbar id={navBarContentId}>{content}</Toolbar>
+      <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
     </AppBar>
   );
 };

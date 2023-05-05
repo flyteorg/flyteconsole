@@ -1,28 +1,66 @@
-import { Execution, LogsByPhase, NodeExecution } from 'models/Execution/types';
+import { Task } from 'models';
+import {
+  Execution,
+  ExecutionData,
+  LogsByPhase,
+  NodeExecution,
+  TaskExecution,
+} from 'models/Execution/types';
+import { dNode } from 'models/Graph/types';
 import { createContext } from 'react';
 
 export interface ExecutionContextData {
   execution: Execution;
 }
 
+export type WorkflowTaskExecution = TaskExecution & {
+  task?: Task;
+  taskData?: ExecutionData;
+};
 export interface WorkflowNodeExecution extends NodeExecution {
   tasksFetched?: boolean;
   logsByPhase?: LogsByPhase;
+  taskExecutions?: WorkflowTaskExecution[];
+  nodeExecutionData?: ExecutionData;
 }
 
 export const ExecutionContext = createContext<ExecutionContextData>(
   {} as ExecutionContextData,
 );
 
-export interface INodeExecutionsByIdContext {
-  nodeExecutionsById: Dictionary<WorkflowNodeExecution>;
-  setCurrentNodeExecutionsById: (
-    currentNodeExecutionsById: Dictionary<NodeExecution>,
-  ) => void;
+export type NodeExecutionsById = Dictionary<WorkflowNodeExecution>;
+export type FilteredNodeExecutions = WorkflowNodeExecution[] | undefined;
+export type SetCurrentNodeExecutionsById = (
+  currentNodeExecutionsById: Dictionary<WorkflowNodeExecution>,
+  checkForDynamicParents?: boolean,
+) => void;
+
+export interface IWorkflowNodeExecutionsContext {
+  nodeExecutionsById: NodeExecutionsById;
+  setCurrentNodeExecutionsById: SetCurrentNodeExecutionsById;
+  shouldUpdate: boolean;
+  setShouldUpdate: (val: boolean) => void;
+  // Tabs
+  initialDNodes: dNode[];
+  dagData: {
+    mergedDag: any;
+    dagError: any;
+  };
 }
 
-export const NodeExecutionsByIdContext =
-  createContext<INodeExecutionsByIdContext>({
+export const WorkflowNodeExecutionsContext =
+  createContext<IWorkflowNodeExecutionsContext>({
     nodeExecutionsById: {},
-    setCurrentNodeExecutionsById: () => {},
+    setCurrentNodeExecutionsById: () => {
+      throw new Error('Must use NodeExecutionsByIdContextProvider');
+    },
+    shouldUpdate: false,
+    setShouldUpdate: _val => {
+      throw new Error('Must use NodeExecutionsByIdContextProvider');
+    },
+    initialDNodes: [],
+    dagData: {
+      mergedDag: {},
+      dagError: null,
+    },
   });

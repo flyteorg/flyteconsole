@@ -1,4 +1,5 @@
 import React, {
+  PropsWithChildren,
   createContext,
   useContext,
   useEffect,
@@ -8,7 +9,7 @@ import React, {
 import { log } from 'common/log';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution } from 'models/Execution/types';
-import { CompiledWorkflowClosure } from 'models/Workflow/types';
+import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { NodeExecutionDetails } from '../../types';
@@ -57,24 +58,30 @@ export const useNodeExecutionDetails = (nodeExecution?: NodeExecution) =>
 export const useNodeExecutionContext = (): NodeExecutionDetailsState =>
   useContext(NodeExecutionDetailsContext);
 
-interface ProviderProps {
+export type ProviderProps = PropsWithChildren<{
   workflowId: Identifier;
-  children?: React.ReactNode;
-}
+}>;
 
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
-export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
+export const NodeExecutionDetailsContextProvider = ({
+  workflowId,
+  children,
+}: ProviderProps) => {
   // workflow Identifier - separated to parameters, to minimize re-render count
   // as useEffect doesn't know how to do deep comparison
-  const { resourceType, project, domain, name, version } = props.workflowId;
+  const { resourceType, project, domain, name, version } = workflowId;
 
-  const [executionTree, setExecutionTree] =
-    useState<CurrentExecutionDetails | null>(null);
+  const [executionTree, setExecutionTree] = useState<CurrentExecutionDetails>(
+    {} as CurrentExecutionDetails,
+  );
   const [tasks, setTasks] = useState(new Map<string, NodeExecutionDetails>());
-  const [closure, setClosure] = useState<CompiledWorkflowClosure | null>(null);
+  const [closure, setClosure] = useState<CompiledWorkflowClosure>(
+    {} as CompiledWorkflowClosure,
+  );
 
   const resetState = () => {
-    setExecutionTree(null);
+    setExecutionTree({} as CurrentExecutionDetails);
+    setClosure({} as CompiledWorkflowClosure);
   };
 
   const queryClient = useQueryClient();
@@ -96,15 +103,15 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
         name,
         version,
       };
-      const workflow = await fetchWorkflow(queryClient, workflowId);
-      if (!workflow) {
+      const result = await fetchWorkflow(queryClient, workflowId);
+      if (!result) {
         resetState();
         return;
       }
-
-      const tree = createExecutionDetails(workflow);
+      const fetchedWorkflow = JSON.parse(JSON.stringify(result));
+      const tree = createExecutionDetails(fetchedWorkflow);
       if (isCurrent) {
-        setClosure(workflow.closure?.compiledWorkflow ?? null);
+        setClosure(fetchedWorkflow.closure?.compiledWorkflow ?? null);
         setExecutionTree(tree);
       }
     }
@@ -144,8 +151,8 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
       nodeExecution.scopedId ||
       nodeExecution.metadata?.specNodeId ||
       nodeExecution.id.nodeId;
-    const nodeDetail = executionTree.nodes.filter(n => n.scopedId === specId);
-    if (nodeDetail.length === 0) {
+    const nodeDetail = executionTree.nodes?.filter(n => n.scopedId === specId);
+    if (nodeDetail?.length === 0) {
       let details = tasks.get(nodeExecution.id.nodeId);
       if (details) {
         // we already have looked for it and found
@@ -166,11 +173,17 @@ export const NodeExecutionDetailsContextProvider = (props: ProviderProps) => {
     <NodeExecutionDetailsContext.Provider
       value={{
         getNodeExecutionDetails: getDetails,
-        workflowId: props.workflowId,
+        workflowId: {
+          resourceType,
+          project,
+          domain,
+          name,
+          version,
+        },
         compiledWorkflowClosure: closure,
       }}
     >
-      {props.children}
+      {children}
     </NodeExecutionDetailsContext.Provider>
   );
 };

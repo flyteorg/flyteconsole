@@ -10,24 +10,27 @@ import { getTask } from 'models/Task/api';
 import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { getNodeFrontendPhase, isNodeGateNode } from '../utils';
-import { DetailsPanelContext } from '../ExecutionDetails/DetailsPanelContext';
+import { useDetailsPanel } from '../ExecutionDetails/DetailsPanelContext';
 
 interface NodeExecutionActionsProps {
   execution: NodeExecution;
+  className?: string;
 }
 
 export const NodeExecutionActions = ({
   execution,
+  className,
 }: NodeExecutionActionsProps): JSX.Element => {
   const { compiledWorkflowClosure, getNodeExecutionDetails } =
     useNodeExecutionContext();
-  const { setSelectedExecution } = useContext(DetailsPanelContext);
+  const { setSelectedExecution } = useDetailsPanel();
 
   const [showLaunchForm, setShowLaunchForm] = useState<boolean>(false);
   const [showResumeForm, setShowResumeForm] = useState<boolean>(false);
@@ -42,13 +45,16 @@ export const NodeExecutionActions = ({
   const id = nodeExecutionDetails?.taskTemplate?.id;
 
   const isGateNode = isNodeGateNode(
-    compiledWorkflowClosure?.primary.template.nodes ?? [],
-    execution.id,
+    extractCompiledNodes(compiledWorkflowClosure),
+    execution.metadata?.specNodeId || execution.id.nodeId,
   );
+
   const phase = getNodeFrontendPhase(execution.closure.phase, isGateNode);
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === execution.id.nodeId);
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure)?.find(
+    node =>
+      node.id === execution.metadata?.specNodeId ||
+      node.id === execution.id.nodeId,
+  );
 
   useEffect(() => {
     let isCurrent = true;
@@ -107,20 +113,20 @@ export const NodeExecutionActions = ({
   return (
     <div>
       {phase === NodeExecutionPhase.PAUSED && (
-        <Tooltip title={t('resumeTooltip')}>
+        <Tooltip title={t('resumeTooltip')} className={className}>
           <IconButton onClick={onResumeClick}>
             <PlayCircleOutlineIcon />
           </IconButton>
         </Tooltip>
       )}
-      <Tooltip title={t('inputsAndOutputsTooltip')}>
+      <Tooltip title={t('inputsAndOutputsTooltip')} className={className}>
         <IconButton onClick={inputsAndOutputsIconOnClick}>
           <InputsAndOutputsIcon />
         </IconButton>
       </Tooltip>
       {id && initialParameters ? (
         <>
-          <Tooltip title={t('rerunTooltip')}>
+          <Tooltip title={t('rerunTooltip')} className={className}>
             <IconButton onClick={rerunIconOnClick}>
               <RerunIcon />
             </IconButton>

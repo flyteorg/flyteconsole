@@ -29,12 +29,12 @@ import { ReactQueryDevtools } from 'react-query-devtools';
 import { Router } from 'react-router-dom';
 import { ApplicationRouter } from 'routes/ApplicationRouter';
 import { history } from 'routes/history';
-import { NavBarRouter } from 'routes/NavBarRouter';
 import { LocalCacheProvider } from 'basics/LocalCache/ContextProvider';
 import {
   ExternalConfigurationProvider,
   ExternalConfigurationProviderProps,
 } from 'basics/ExternalConfigurationProvider';
+import NavBar from 'components/Navigation/NavBar';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -58,12 +58,12 @@ export const AppComponent: React.FC<AppComponentProps> = (
   return (
     <FeatureFlagsProvider>
       <LocalCacheProvider>
-        <ThemeProvider theme={getMuiTheme(props.config)}>
-          <StylesProvider
-            generateClassName={createGenerateClassName({
-              seed: 'c-',
-            })}
-          >
+        <StylesProvider
+          generateClassName={createGenerateClassName({
+            seed: 'c-',
+          })}
+        >
+          <ThemeProvider theme={getMuiTheme(props.config)}>
             <SnackbarProvider
               // Notifications provider https://iamhosseindhv.com/notistack/demos
               maxSnack={2}
@@ -82,7 +82,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
                       <ExternalConfigurationProvider {...props}>
                         <Router history={history}>
                           <ErrorBoundary fixed={true}>
-                            <NavBarRouter />
+                            <NavBar />
                             <ApplicationRouter />
                           </ErrorBoundary>
                         </Router>
@@ -94,8 +94,8 @@ export const AppComponent: React.FC<AppComponentProps> = (
                 <ReactQueryDevtools initialIsOpen={false} />
               </QueryClientProvider>
             </SnackbarProvider>
-          </StylesProvider>
-        </ThemeProvider>
+          </ThemeProvider>
+        </StylesProvider>
       </LocalCacheProvider>
     </FeatureFlagsProvider>
   );

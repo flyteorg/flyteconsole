@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/common",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Flyteconsole common utilities",
   "main": "./dist/index.js",
   "module": "./lib/index.js",

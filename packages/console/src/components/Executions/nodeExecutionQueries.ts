@@ -7,26 +7,35 @@ import {
 } from 'models/AdminEntity/types';
 import {
   getNodeExecution,
+  getNodeExecutionData,
+  getTaskExecutionData,
   listNodeExecutions,
   listTaskExecutionChildren,
   listTaskExecutions,
 } from 'models/Execution/api';
 import { nodeExecutionQueryParams } from 'models/Execution/constants';
 import {
+  ExternalResource,
+  LogsByPhase,
   NodeExecution,
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
   WorkflowExecutionIdentifier,
 } from 'models/Execution/types';
-import { endNodeId, startNodeId } from 'models/Node/constants';
+import { ignoredNodeIds } from 'models/Node/constants';
+import { isMapTaskV1 } from 'models/Task/utils';
 import { QueryClient } from 'react-query';
+import { getTask } from 'models';
+import { createDebugLogger } from 'common/log';
+import { WorkflowNodeExecution, WorkflowTaskExecution } from './contexts';
 import { fetchTaskExecutionList } from './taskExecutionQueries';
-import { formatRetryAttempt } from './TaskExecutionsList/utils';
+import { formatRetryAttempt, getGroupedLogs } from './TaskExecutionsList/utils';
 import { NodeExecutionGroup } from './types';
-import { isParentNode } from './utils';
+import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from './utils';
 
-const ignoredNodeIds = [startNodeId, endNodeId];
+const debug = createDebugLogger('@nodeExecutionQueries');
+
 function removeSystemNodes(nodeExecutions: NodeExecution[]): NodeExecution[] {
   return nodeExecutions.filter(ne => {
     if (ignoredNodeIds.includes(ne.id.nodeId)) {
@@ -47,6 +56,180 @@ export function makeNodeExecutionQuery(
   return {
     queryKey: [QueryType.NodeExecution, id],
     queryFn: () => getNodeExecution(id),
+  };
+}
+
+/** A query for fetching a single `NodeExecution` by id. */
+export function makeNodeExecutionAndTasksQuery(
+  id: NodeExecutionIdentifier,
+  queryClient: QueryClient,
+): QueryInput<WorkflowNodeExecution> {
+  return {
+    queryKey: [QueryType.NodeExecutionAndTasks, id],
+    queryFn: async () => {
+      // step 1: Fetch the Node execution
+      const nodeExecutionPure = await getNodeExecution(id);
+
+      // step 2: Fetch the task executions and attach them to the node execution
+      const workflowNodeExecution = (await getTaskExecutions(
+        nodeExecutionPure,
+        queryClient,
+      )) as WorkflowNodeExecution;
+
+      if (!workflowNodeExecution) {
+        return {} as WorkflowNodeExecution;
+      }
+
+      workflowNodeExecution.scopedId = workflowNodeExecution?.id?.nodeId;
+      // step 3: get the node executiondata
+      const nodeExecutionData = await getNodeExecutionData(id);
+
+      // step 4: get the compiled task closure
+      // -- only one request is made as it is constant across all attempts
+      const taskExecutions = workflowNodeExecution?.taskExecutions || [];
+      const taskId = taskExecutions?.[0]?.id?.taskId;
+      const compiledTaskClosure = await (taskId
+        ? getTask(taskId!).catch(e => {
+            debug(
+              '\t failed to get compiled task closure for taskId: ',
+              taskId,
+              ' Error message:',
+              e,
+            );
+          })
+        : Promise.resolve(null));
+
+      // step 5: get each task's executions data
+      const tasksExecutionData = await Promise.all(
+        taskExecutions?.map(te =>
+          getTaskExecutionData(te.id).then(executionData => {
+            const finalTask: WorkflowTaskExecution = {
+              ...te,
+              // append data to each task individually
+              task: compiledTaskClosure!,
+              taskData: executionData,
+            };
+            return finalTask;
+          }),
+        ),
+      );
+
+      return {
+        ...workflowNodeExecution,
+        taskExecutions: tasksExecutionData,
+        nodeExecutionData,
+      } as WorkflowNodeExecution;
+    },
+  };
+}
+
+const getTaskExecutions = async (
+  nodeExecution: WorkflowNodeExecution,
+  queryClient: QueryClient,
+): Promise<WorkflowNodeExecution | undefined> => {
+  const isTerminal = nodeExecutionIsTerminal(nodeExecution);
+  const tasksFetched = !!nodeExecution.tasksFetched;
+  const isDynamic = isDynamicNode(nodeExecution);
+  if (!isDynamic && tasksFetched) {
+    // return null to signal no change
+    return;
+  }
+  return await fetchTaskExecutionList(
+    queryClient,
+    nodeExecution.id as any,
+  ).then(taskExecutions => {
+    const useNewMapTaskView = taskExecutions.every(taskExecution => {
+      const {
+        closure: { taskType, metadata, eventVersion = 0 },
+      } = taskExecution;
+      return isMapTaskV1(
+        eventVersion,
+        metadata?.externalResources?.length ?? 0,
+        taskType ?? undefined,
+      );
+    });
+
+    const externalResources: ExternalResource[] = taskExecutions
+      .map(taskExecution => taskExecution.closure.metadata?.externalResources)
+      .flat()
+      .filter((resource): resource is ExternalResource => !!resource);
+
+    const logsByPhase: LogsByPhase = getGroupedLogs(externalResources);
+
+    const appendTasksFetched = !isDynamic || (isDynamic && isTerminal);
+
+    return {
+      ...nodeExecution,
+      taskExecutions,
+      ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
+      ...((appendTasksFetched && { tasksFetched: true }) || {}),
+    } as any as WorkflowNodeExecution;
+  });
+};
+
+/** A query for fetching a single `NodeExecution` by id. */
+export function makeNodeExecutionQueryEnhanced(
+  nodeExecution: WorkflowNodeExecution,
+  queryClient: QueryClient,
+): QueryInput<WorkflowNodeExecution[]> {
+  const { id } = nodeExecution || {};
+
+  return {
+    enabled: !!nodeExecution,
+    queryKey: [QueryType.NodeExecutionEnhanced, id],
+    queryFn: async () => {
+      // complexity:
+      // +1 for parent node tasks
+      // +1 for node execution list
+      // +n= executionList.length
+      const isParent = isParentNode(nodeExecution);
+      const parentNodeID = nodeExecution.id.nodeId;
+      const parentScopeId =
+        nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
+      nodeExecution.scopedId = parentScopeId;
+
+      // if the node is a parent, force refetch its children
+      // called by NodeExecutionDynamicProvider
+      const parentNodeExecutions = isParent
+        ? () =>
+            fetchNodeExecutionList(
+              // requests listNodeExecutions
+              queryClient,
+              id.executionId,
+              {
+                params: {
+                  [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+                },
+              },
+            ).then(childExecutions => {
+              const children = childExecutions.map(e => {
+                const scopedId = e.metadata?.specNodeId
+                  ? retriesToZero(e?.metadata?.specNodeId)
+                  : retriesToZero(e?.id?.nodeId);
+                e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
+                e['fromUniqueParentId'] = parentNodeID;
+
+                return e;
+              });
+              return children;
+            })
+        : () => Promise.resolve([]);
+
+      const parentNodeAndTaskExecutions = await Promise.all([
+        getTaskExecutions(nodeExecution, queryClient),
+        parentNodeExecutions(),
+      ]).then(([parent, children]) => {
+        // strip closure and metadata to avoid overwriting data from queries that handle status updates
+        const {
+          closure: _,
+          metadata: __,
+          ...parentLight
+        } = parent || ({} as WorkflowNodeExecution);
+        return [parentLight, ...children].filter(n => !!n);
+      });
+
+      return parentNodeAndTaskExecutions as NodeExecution[];
+    },
   };
 }
 
@@ -97,9 +280,8 @@ export function makeNodeExecutionListQuery(
   return {
     queryKey: [QueryType.NodeExecutionList, id, config],
     queryFn: async () => {
-      const nodeExecutions = removeSystemNodes(
-        (await listNodeExecutions(id, config)).entities,
-      );
+      const promise = (await listNodeExecutions(id, config)).entities;
+      const nodeExecutions = removeSystemNodes(promise);
       nodeExecutions.map(exe => {
         if (exe.metadata?.specNodeId) {
           return (exe.scopedId = retriesToZero(exe.metadata.specNodeId));
@@ -108,6 +290,7 @@ export function makeNodeExecutionListQuery(
         }
       });
       cacheNodeExecutions(queryClient, nodeExecutions);
+
       return nodeExecutions;
     },
   };

@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from 'react';
 import { Button, Dialog, IconButton } from '@material-ui/core';
-import * as React from 'react';
 import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
@@ -12,13 +12,16 @@ import {
 import { literalsToLiteralValueMap } from 'components/Launch/LaunchForm/utils';
 import { TaskInitialLaunchParameters } from 'components/Launch/LaunchForm/types';
 import { NodeExecutionPhase } from 'models/Execution/enums';
+import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
-import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
-import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails';
+import {
+  useNodeExecutionContext,
+  useNodeExecutionsById,
+} from '../contextProvider/NodeExecutionDetails';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -61,7 +64,6 @@ const useStyles = makeStyles((theme: Theme) => {
     },
   };
 });
-
 interface ExecutionDetailsActionsProps {
   className?: string;
   details?: NodeExecutionDetails;
@@ -89,14 +91,18 @@ export const ExecutionDetailsActions = ({
   const [initialParameters, setInitialParameters] = useState<
     TaskInitialLaunchParameters | undefined
   >(undefined);
-
+  const { nodeExecutionsById } = useNodeExecutionsById();
   const executionData = useNodeExecutionData(nodeExecutionId);
   const execution = useNodeExecution(nodeExecutionId);
   const { compiledWorkflowClosure } = useNodeExecutionContext();
   const id = details?.taskTemplate?.id;
-  const compiledNode = (
-    compiledWorkflowClosure?.primary.template.nodes ?? []
-  ).find(node => node.id === nodeExecutionId.nodeId);
+
+  const compiledNode = extractCompiledNodes(compiledWorkflowClosure).find(
+    node =>
+      node.id ===
+        nodeExecutionsById[nodeExecutionId.nodeId]?.metadata?.specNodeId ||
+      node.id === nodeExecutionId.nodeId,
+  );
 
   useEffect(() => {
     if (!id) {

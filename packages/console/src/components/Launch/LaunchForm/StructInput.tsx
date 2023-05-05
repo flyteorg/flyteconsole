@@ -41,7 +41,7 @@ const formatJson = data => {
   keys.forEach(key => {
     const item = data[`${key}`];
     if (typeof item === 'object') {
-      data = { ...data, [key]: formatJson(item) };
+      data = { ...data, [key]: formatJson(item ?? {}) };
     }
   });
 
@@ -69,7 +69,10 @@ export const StructInput: React.FC<InputProps> = props => {
       literalType?.metadata?.fields?.definitions?.structValue?.fields,
     );
 
-    if (keys[0]) {
+    if (keys.length > 1) {
+      // If there are multiple keys, we can't render a form because of not supporting nested structs so render a text field
+      jsonFormRenderable = false;
+    } else if (keys[0]) {
       parsedJson = protobufValueToPrimitive(
         literalType.metadata.fields.definitions.structValue.fields[
           `${keys[0]}`
@@ -117,7 +120,7 @@ export const StructInput: React.FC<InputProps> = props => {
       label={label}
       multiline={true}
       onChange={makeStringChangeHandler(onChange)}
-      rowsMax={8}
+      maxRows={8}
       value={value}
       variant="outlined"
     />

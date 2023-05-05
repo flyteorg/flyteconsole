@@ -1,9 +1,10 @@
-import { Button, DialogActions, FormHelperText } from '@material-ui/core';
-import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import * as React from 'react';
 import { useEffect } from 'react';
+import { Button, DialogActions, FormHelperText } from '@material-ui/core';
+import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
+import { useDetailsPanel } from 'components/Executions/ExecutionDetails/DetailsPanelContext';
 import t from './strings';
 import { LaunchState, TaskResumeContext } from './launchMachine';
 import { useStyles } from './styles';
@@ -28,6 +29,7 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
 }) => {
   const styles = useStyles();
   const submissionInFlight = state.matches(LaunchState.SUBMITTING);
+  const { setIsDetailsTabClosed } = useDetailsPanel();
   const canSubmit = [
     LaunchState.ENTER_INPUTS,
     LaunchState.VALIDATING_INPUTS,
@@ -59,9 +61,11 @@ export const LaunchFormActions: React.FC<LaunchFormActionsProps> = ({
       // if (state.matches({ submit: 'succeeded' })) {
       if (newState.matches(LaunchState.SUBMIT_SUCCEEDED)) {
         if (newState.context.resultExecutionId) {
-          history.push(
-            Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId),
-          );
+          onClose();
+          setIsDetailsTabClosed && setIsDetailsTabClosed(true);
+          // history.push(
+          //   Routes.ExecutionDetails.makeUrl(newState.context.resultExecutionId),
+          // );
         }
         const context = newState.context as TaskResumeContext;
         if (context.compiledNode) {
