@@ -17,7 +17,6 @@ import { useCommonStyles } from 'components/common/styles';
 import { WaitForData } from 'components/common/WaitForData';
 import { useWorkflowSchedules } from 'components/hooks/useWorkflowSchedules';
 import { ResourceIdentifier } from 'models/Common/types';
-import { identifierToString } from 'models/Common/utils';
 import { LaunchPlan } from 'models/Launch/types';
 import * as React from 'react';
 import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
