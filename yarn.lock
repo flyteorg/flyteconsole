@@ -2081,6 +2081,7 @@ __metadata:
     "@types/d3-shape": ^1.2.6
     "@types/debug": ^0.0.30
     "@types/dom-helpers": ^5.0.1
+    "@types/humanize-duration": ^3.27.1
     "@types/js-yaml": ^3.10.1
     "@types/linkify-it": ^2.1.0
     "@types/lodash": ^4.14.68
@@ -2111,6 +2112,7 @@ __metadata:
     debug: 2.6.9
     dom-helpers: 5.2.1
     fuzzysort: ^1.1.1
+    humanize-duration: ^3.28.0
     intersection-observer: ^0.7.0
     js-yaml: ^3.13.1
     linkify-it: ^2.2.0
@@ -5186,6 +5188,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 7a6746d00729b2a9fe9f9dd3453430b099931df879ec8f7a7b5f07b1795f6d99b0512640c45a67390b1e4bacb9401e36824952aeeaf089feba8627a063cf8e00
+  languageName: node
+  linkType: hard
+
+"@types/humanize-duration@npm:^3.27.1":
+  version: 3.27.1
+  resolution: "@types/humanize-duration@npm:3.27.1"
+  checksum: d3d69b64918d0cee4aa69580dd04d1b96e3385645d398e27b1535f8c6d0252b0235defb16619379a6196c6bbdfc7b6032f010b25cac44903a32b09db8aa06f30
   languageName: node
   linkType: hard
 
@@ -13020,6 +13029,13 @@ __metadata:
   version: 3.0.1
   resolution: "human-signals@npm:3.0.1"
   checksum: f252a7769c8094a5c9dc6772816bdb417b188820b04c8b42d0fc468e03a0ba905b1dd07afabe9385cc83504af1ccc2b985cd1e4aeeeb8e0029896c5af2e6f354
+  languageName: node
+  linkType: hard
+
+"humanize-duration@npm:^3.28.0":
+  version: 3.28.0
+  resolution: "humanize-duration@npm:3.28.0"
+  checksum: dde595ab4729d82147db41d8ca0afa86bf3f20d74cd1323ea52f299091a4f1dcb2a45b2d27ce78ab9bb0d9e66d8eb8f2628a67be36a535af645eb282a963ff7f
   languageName: node
   linkType: hard
 

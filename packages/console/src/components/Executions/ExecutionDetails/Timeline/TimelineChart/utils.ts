@@ -7,6 +7,7 @@ import { dNode } from 'models/Graph/types';
 import { get, isNil, startCase, uniq } from 'lodash';
 import { timestampToDate } from 'common';
 import traverse from 'traverse';
+import humanizeDuration from 'humanize-duration';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -351,4 +352,26 @@ export const getChartData = (
       // })),
     ],
   };
+};
+
+export const secondsToHumanReadableDuration = (seconds: number) => {
+  const shortEnglishHumanizer = humanizeDuration.humanizer({
+    maxDecimalPoints: 2,
+    language: 'shortEn',
+    languages: {
+      shortEn: {
+        y: () => 'y',
+        mo: () => 'mo',
+        w: () => 'w',
+        d: () => 'd',
+        h: () => 'h',
+        m: () => 'm',
+        s: () => 's',
+      },
+    },
+  });
+
+  const roundedSeconds = Math.round(seconds * 100) / 100;
+
+  return shortEnglishHumanizer(roundedSeconds);
 };

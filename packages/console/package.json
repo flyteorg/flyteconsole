@@ -84,6 +84,7 @@
     "debug": "2.6.9",
     "dom-helpers": "5.2.1",
     "fuzzysort": "^1.1.1",
+    "humanize-duration": "^3.28.0",
     "intersection-observer": "^0.7.0",
     "js-yaml": "^3.13.1",
     "linkify-it": "^2.2.0",
@@ -113,6 +114,7 @@
   "devDependencies": {
     "@types/debug": "^0.0.30",
     "@types/dom-helpers": "^5.0.1",
+    "@types/humanize-duration": "^3.27.1",
     "@types/js-yaml": "^3.10.1",
     "@types/linkify-it": "^2.1.0",
     "@types/lodash": "^4.14.68",

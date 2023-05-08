@@ -1,14 +1,19 @@
 import * as React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { dNode } from 'models/Graph/types';
-import { getBarOptions } from './barOptions';
+import { Box, makeStyles } from '@material-ui/core';
+
+import { NodeExecutionPhase } from 'models';
+import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import {
   BarItemData,
   generateChartData,
   getChartData,
   getDuration,
   parseSpanData,
+  secondsToHumanReadableDuration,
 } from './utils';
+import { getBarOptions } from './barOptions';
 
 interface TimelineChartProps {
   items: BarItemData[];
@@ -20,6 +25,20 @@ interface TimelineChartProps {
   parsedExecutionMetricsData: ReturnType<typeof parseSpanData>;
 }
 
+const useStyles = makeStyles({
+  tooltipText: {
+    width: '100px',
+    fontWeight: 'bold',
+  },
+  tooltipTextContainer: {
+    display: 'flex',
+    gap: 1,
+  },
+  operationIdContainer: {
+    flex: 1,
+  },
+});
+
 export const TimelineChart = (props: TimelineChartProps) => {
   const [tooltip, setTooltip] = React.useState({
     opacity: 0,
@@ -29,6 +48,7 @@ export const TimelineChart = (props: TimelineChartProps) => {
   });
   const chartRef = React.useRef<any>(null);
   const phaseData = generateChartData(props.items);
+  const styles = useStyles();
 
   const options = getBarOptions(
     props.chartTimeIntervalSec,
@@ -41,31 +61,54 @@ export const TimelineChart = (props: TimelineChartProps) => {
 
   const data = getChartData(phaseData, props.executionMetricsData);
 
+  const node = props.nodes[tooltip.dataIndex];
+
+  const phase = node?.execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED;
+  const phaseConstant = getNodeExecutionPhaseConstants(phase);
+
+  const spans = (node && props.parsedExecutionMetricsData[node.scopedId]) || [];
+
   return (
     <>
       <Bar options={options} data={data} ref={chartRef} />
-      <div
+      <Box
         style={{
-          opacity: tooltip.opacity,
           position: 'absolute',
-          top: tooltip.top + 10,
-          left: tooltip.left + 10,
-          background: 'rgba(215, 215, 255, 0.8)',
+          background: '#eeeeee',
           color: 'black',
           padding: '10px 20px',
+          borderRadius: 8,
+          width: '250px',
+          opacity: tooltip.opacity,
+          top: tooltip.top + 10,
+          left: tooltip.left + 10,
         }}
       >
-        Hello there
-        {props.nodes[tooltip.dataIndex] &&
-          props.parsedExecutionMetricsData[
-            props.nodes[tooltip.dataIndex].id
-          ]?.map(span => (
-            <div>
-              {span.operationId}:{' '}
-              {getDuration(span.startTime, span.endTime) / 1000}
-            </div>
-          ))}
-      </div>
+        {phase && (
+          <Box
+            style={{
+              padding: '2px 5px',
+              textAlign: 'center',
+              marginBlockEnd: '10px',
+              backgroundColor: phaseConstant.badgeColor,
+            }}
+          >
+            {phaseConstant.text}
+          </Box>
+        )}
+        {spans?.map(span => (
+          <Box className={styles.tooltipTextContainer}>
+            <Box className={styles.tooltipText}>
+              {secondsToHumanReadableDuration(
+                getDuration(span.startTime, span.endTime) / 1000,
+              )}
+            </Box>
+            <Box className={styles.operationIdContainer}>
+              {span.operationId}
+            </Box>
+          </Box>
+        ))}
+      </Box>
     </>
   );
 };
