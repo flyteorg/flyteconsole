@@ -27,7 +27,7 @@ export interface CompiledWorkflowClosure extends Core.ICompiledWorkflowClosure {
   tasks: CompiledTask[];
 }
 
-/** A serialized representation of all inforamtion about a specific workflow
+/** A serialized representation of all information about a specific workflow
  * version.
  */
 export interface WorkflowClosure extends Admin.IWorkflowClosure {
@@ -37,6 +37,7 @@ export interface WorkflowClosure extends Admin.IWorkflowClosure {
 export interface Workflow extends Admin.IWorkflow {
   closure?: WorkflowClosure;
   id: Identifier;
+  shortDescription?: string;
 }
 
 export type WorkflowId = Identifier;

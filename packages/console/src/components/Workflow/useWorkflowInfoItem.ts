@@ -28,6 +28,7 @@ export const useWorkflowInfoItem = ({
     id?: Identifier | undefined;
     inputs?: string | undefined;
     outputs?: string | undefined;
+    description?: string | undefined;
   };
   isLoading: boolean;
   error: unknown;
@@ -116,7 +117,8 @@ export const useWorkflowInfoItem = ({
       const parsedOutputs = getOutputsForWorkflow(launchPlan);
       const outputs =
         parsedOutputs.length > 0 ? parsedOutputs.join(', ') : undefined;
-      return { id, inputs, outputs };
+      const description = workflow?.shortDescription && workflow?.shortDescription.length > 0 ? workflow.shortDescription : undefined
+      return { id, inputs, outputs, description};
     },
     {
       staleTime: 1000 * 60 * 5,

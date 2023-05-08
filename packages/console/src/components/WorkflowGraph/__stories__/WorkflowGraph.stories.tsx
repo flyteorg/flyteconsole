@@ -10,6 +10,7 @@ import { WorkflowGraph } from '../WorkflowGraph';
 import graphData from './rich.json';
 
 const graphDataClosure = graphData as unknown as CompiledWorkflowClosure;
+const shortDescription = ""
 
 const workflow: Workflow = {
   closure: { compiledWorkflow: graphDataClosure },
@@ -19,6 +20,7 @@ const workflow: Workflow = {
     name: 'test',
     version: '1',
   },
+  shortDescription: shortDescription,
 };
 
 const onNodeSelectionChanged = action('nodeSelected');
