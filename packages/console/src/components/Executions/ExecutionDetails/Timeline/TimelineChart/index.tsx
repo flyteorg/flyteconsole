@@ -50,7 +50,6 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     marginInline: 'auto',
     marginBlockEnd: theme.spacing(2),
     backgroundColor: ({ phaseColor }) => phaseColor,
-    color: theme.palette.,
   },
   tooltipText: {
     minWidth: '80px',
