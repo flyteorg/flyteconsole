@@ -38,7 +38,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     background: theme.palette.grey[100],
     color: theme.palette.common.black,
     padding: theme.spacing(2),
-    borderRadius: 2.5,
+    borderRadius: 8,
     width: 'fit-content',
     opacity: ({ opacity }) => opacity,
     top: ({ top }) => top + 10,
@@ -52,7 +52,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     backgroundColor: ({ phaseColor }) => phaseColor,
   },
   tooltipText: {
-    minWidth: '80px',
+    minWidth: '60px',
     color: theme.palette.grey[700],
   },
   tooltipTextContainer: {
