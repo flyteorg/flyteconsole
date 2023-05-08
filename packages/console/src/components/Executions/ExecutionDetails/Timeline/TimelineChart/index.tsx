@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { dNode } from 'models/Graph/types';
-import { Box, makeStyles } from '@material-ui/core';
+import { Box, Theme, makeStyles } from '@material-ui/core';
 
 import { NodeExecutionPhase } from 'models';
 import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import {
   BarItemData,
+  formatSecondsToHmsFormat,
   generateChartData,
   getChartData,
   getDuration,
   parseSpanData,
-  secondsToHumanReadableDuration,
 } from './utils';
 import { getBarOptions } from './barOptions';
 
@@ -25,19 +25,46 @@ interface TimelineChartProps {
   parsedExecutionMetricsData: ReturnType<typeof parseSpanData>;
 }
 
-const useStyles = makeStyles({
+interface StyleProps {
+  opacity: number;
+  top: number;
+  left: number;
+  phaseColor: string;
+}
+
+const useStyles = makeStyles<Theme, StyleProps>(theme => ({
+  tooltipContainer: {
+    position: 'absolute',
+    background: theme.palette.grey[100],
+    color: theme.palette.common.black,
+    padding: theme.spacing(2),
+    borderRadius: 2.5,
+    width: 'fit-content',
+    opacity: ({ opacity }) => opacity,
+    top: ({ top }) => top + 10,
+    left: ({ left }) => left + 10,
+  },
+  phaseText: {
+    width: 'fit-content',
+    padding: theme.spacing(0.75, 1),
+    marginInline: 'auto',
+    marginBlockEnd: theme.spacing(2),
+    backgroundColor: ({ phaseColor }) => phaseColor,
+    color: theme.palette.,
+  },
   tooltipText: {
-    width: '100px',
-    fontWeight: 'bold',
+    minWidth: '80px',
+    color: theme.palette.grey[700],
   },
   tooltipTextContainer: {
     display: 'flex',
     gap: 1,
   },
   operationIdContainer: {
+    textAlign: 'left',
     flex: 1,
   },
-});
+}));
 
 export const TimelineChart = (props: TimelineChartProps) => {
   const [tooltip, setTooltip] = React.useState({
@@ -48,7 +75,6 @@ export const TimelineChart = (props: TimelineChartProps) => {
   });
   const chartRef = React.useRef<any>(null);
   const phaseData = generateChartData(props.items);
-  const styles = useStyles();
 
   const options = getBarOptions(
     props.chartTimeIntervalSec,
@@ -68,39 +94,23 @@ export const TimelineChart = (props: TimelineChartProps) => {
 
   const spans = (node && props.parsedExecutionMetricsData[node.scopedId]) || [];
 
+  const styles = useStyles({
+    opacity: tooltip.opacity,
+    top: tooltip.top,
+    left: tooltip.left,
+    phaseColor: phaseConstant.badgeColor,
+  });
+
   return (
     <>
       <Bar options={options} data={data} ref={chartRef} />
-      <Box
-        style={{
-          position: 'absolute',
-          background: '#eeeeee',
-          color: 'black',
-          padding: '10px 20px',
-          borderRadius: 8,
-          width: '250px',
-          opacity: tooltip.opacity,
-          top: tooltip.top + 10,
-          left: tooltip.left + 10,
-        }}
-      >
-        {phase && (
-          <Box
-            style={{
-              padding: '2px 5px',
-              textAlign: 'center',
-              marginBlockEnd: '10px',
-              backgroundColor: phaseConstant.badgeColor,
-            }}
-          >
-            {phaseConstant.text}
-          </Box>
-        )}
+      <Box className={styles.tooltipContainer}>
+        {phase && <Box className={styles.phaseText}>{phaseConstant.text}</Box>}
         {spans?.map(span => (
           <Box className={styles.tooltipTextContainer}>
             <Box className={styles.tooltipText}>
-              {secondsToHumanReadableDuration(
-                getDuration(span.startTime, span.endTime) / 1000,
+              {formatSecondsToHmsFormat(
+                Math.round(getDuration(span.startTime, span.endTime) / 1000),
               )}
             </Box>
             <Box className={styles.operationIdContainer}>
