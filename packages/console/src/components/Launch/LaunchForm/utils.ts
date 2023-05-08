@@ -20,7 +20,6 @@ import {
   InputTypeDefinition,
   ParsedInput,
   SearchableVersion,
-  InputValue,
 } from './types';
 
 /** Creates a unique cache key for an input based on its name and type.

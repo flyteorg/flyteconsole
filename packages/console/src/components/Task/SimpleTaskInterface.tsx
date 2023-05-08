@@ -66,10 +66,11 @@ const VariablesList: React.FC<{ variables: Record<string, Variable> }> = ({
 export const SimpleTaskInterface: React.FC<{ task: Task }> = ({ task }) => {
   const { inputs = emptyVariables, outputs = emptyVariables } =
     task.closure.compiledTask.template.interface || {};
+  const description = task.shortDescription || "No description found.";
   return (
     <div>
       <DetailsGroup
-        labelWidthGridUnits={5}
+        labelWidthGridUnits={10}
         items={[
           {
             name: 'inputs',
@@ -79,6 +80,10 @@ export const SimpleTaskInterface: React.FC<{ task: Task }> = ({ task }) => {
             name: 'outputs',
             content: <VariablesList variables={outputs.variables} />,
           },
+          {
+            name: 'description',
+            content: <span>{description}</span>
+          }
         ]}
       />
     </div>

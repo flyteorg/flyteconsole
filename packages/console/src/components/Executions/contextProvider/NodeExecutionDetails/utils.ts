@@ -1,4 +1,4 @@
-import { merge, mergeWith } from 'lodash';
+import { cloneDeep, merge, mergeWith } from 'lodash';
 
 export const mapStringifyReplacer = (key: string, value: any) => {
   if (value instanceof Map) {
@@ -19,12 +19,19 @@ export const stringifyIsEqual = (a: any, b: any) => {
 };
 
 export const mergeNodeExecutions = (val, srcVal, _key) => {
-  const retVal = mergeWith(val, srcVal, (val, srcVal, _key) => {
-    if (srcVal instanceof Map) {
-      return srcVal;
+  const retVal = mergeWith(val, srcVal, (target, src, _key) => {
+    if (!target) {
+      return src;
+    }
+    const clonedTarget = cloneDeep(target);
+    const clonedSrc = cloneDeep(src);
+    if (clonedSrc instanceof Map) {
+      return clonedSrc;
     }
     const finaVal =
-      typeof srcVal === 'object' ? merge({ ...val }, { ...srcVal }) : srcVal;
+      typeof clonedSrc === 'object'
+        ? merge(clonedTarget, clonedSrc)
+        : clonedSrc;
     return finaVal;
   });
   return retVal;

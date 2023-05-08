@@ -54,6 +54,7 @@ export interface NodeExecutionDetails {
   displayId?: string;
   displayName?: string;
   displayType: string;
+  scopedId?: string;
   taskTemplate?: TaskTemplate;
 }
 
