@@ -2,7 +2,7 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
-import { Admin, Protobuf } from '@flyteorg/flyteidl-types';
+import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
 import { dNode } from 'models/Graph/types';
 import { get, isNil, startCase, uniq } from 'lodash';
 import { timestampToDate } from 'common';
@@ -33,49 +33,39 @@ interface ChartDataInput {
  * Recursively traverses span data and returns a map of nodeId/taskId to span data.
  * Example return:
  *  {
- *    "n0": [span],
- *    "n1": [span]
+ *    "n0": [span, span, span],
+ *    "n1": [span, span]
  *  }
  */
 export const parseSpanData = (
   data: Admin.WorkflowExecutionGetMetricsResponse,
 ) => {
   const results: Record<string, any> = {};
-  const workflowSpans = data?.span?.spans ?? [];
+  const workflowSpans = data?.span ?? {};
 
-  const traverseSpanData = (data: any) => {
-    if (data.length > 0) {
-      data.forEach(span => {
-        if (span.nodeId) {
-          results[span.nodeId.nodeId] = [];
-          span.spans.forEach((childSpan: any) => {
-            if (!childSpan.nodeId && !childSpan.taskId) {
-              results[span.nodeId.nodeId].push(childSpan);
-            }
-          });
-          if (span.spans.length > 0) {
-            traverseSpanData(span.spans);
-          }
-        } else if (span.taskId) {
-          results[span.taskId.nodeExecutionId.nodeId] = [];
-          span.spans.forEach((childSpan: any) => {
-            if (!childSpan.nodeId && !childSpan.taskId) {
-              results[span.taskId.nodeExecutionId.nodeId].push(childSpan);
-            }
-          });
-          if (span.spans.length > 0) {
-            traverseSpanData(span.spans);
-          }
+  const traverseSpanData = (rootSpan: Core.Span) => {
+    const spanNodeId =
+      rootSpan.nodeId?.nodeId ||
+      rootSpan.taskId?.nodeExecutionId?.nodeId ||
+      rootSpan.workflowId?.name ||
+      '';
+
+    if (!results[spanNodeId]) {
+      results[spanNodeId] = [];
+    }
+
+    if (rootSpan.spans?.length > 0) {
+      rootSpan.spans.forEach(span => {
+        /* Recurse if taskId/nodeId; else add to record */
+        if (span.nodeId?.nodeId || span.taskId?.nodeExecutionId?.nodeId) {
+          traverseSpanData(span as Core.Span);
         } else {
-          traverseSpanData(span);
+          results[spanNodeId].push(span);
         }
       });
     }
   };
-
-  if (workflowSpans.length > 0) {
-    traverseSpanData(workflowSpans);
-  }
+  traverseSpanData(workflowSpans as Core.Span);
   return results;
 };
 
