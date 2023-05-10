@@ -6,6 +6,7 @@ export const endpointPrefixes = {
   namedEntity: '/named_entities',
   nodeExecution: '/node_executions',
   dynamicWorkflowExecution: '/data/node_executions',
+  executionMetrics: '/metrics/executions',
   project: '/projects',
   projectAttributes: '/project_attributes',
   projectDomainAtributes: '/project_domain_attributes',

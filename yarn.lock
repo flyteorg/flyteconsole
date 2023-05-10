@@ -2020,7 +2020,7 @@ __metadata:
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
     "@flyteorg/common": ^0.0.4
-    "@flyteorg/console": ^0.0.28
+    "@flyteorg/console": ^0.0.29
     "@types/long": ^3.0.32
     long: ^4.0.0
     protobufjs: ~6.11.3
@@ -2059,7 +2059,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/console@^0.0.28, @flyteorg/console@workspace:packages/console":
+"@flyteorg/console@^0.0.29, @flyteorg/console@workspace:packages/console":
   version: 0.0.0-use.local
   resolution: "@flyteorg/console@workspace:packages/console"
   dependencies:
@@ -5617,6 +5617,13 @@ __metadata:
   dependencies:
     "@types/jest": "*"
   checksum: dcb05416758fe88c1f4f3aa97b4699fcb46a5ed8f53c6b81721e66155452a48caf12ecb97dfdfd4130678e65efd66b9fca0ac434b3d63affec84842a84a6bf38
+  languageName: node
+  linkType: hard
+
+"@types/traverse@npm:^0.6.32":
+  version: 0.6.32
+  resolution: "@types/traverse@npm:0.6.32"
+  checksum: 0d27f4758e1da79463c42cdd91de018095048e5c3963ad108b97044d5f43ea48b071da87062fdd4ff46407461802cc47367dd90b8f4a03a3dcf2ff94840d4909
   languageName: node
   linkType: hard
 
@@ -11663,6 +11670,7 @@ __metadata:
     "@types/morgan": ^1.9.4
     "@types/react": ^16.14.35
     "@types/react-dom": ^16.9.7
+    "@types/traverse": ^0.6.32
     "@typescript-eslint/eslint-plugin": ^5.48.2
     "@typescript-eslint/parser": ^5.48.2
     babel-loader: ^8.2.5
@@ -11695,6 +11703,7 @@ __metadata:
     react-dom: ^16.13.1
     serve-static: ^1.12.3
     source-map-loader: ^4.0.1
+    traverse: ^0.6.7
     ts-jest: ^26.3.0
     ts-loader: ^9.2.6
     ts-node: ^8.0.2
@@ -21255,6 +21264,13 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
+  languageName: node
+  linkType: hard
+
+"traverse@npm:^0.6.7":
+  version: 0.6.7
+  resolution: "traverse@npm:0.6.7"
+  checksum: 21018085ab72f717991597e12e2b52446962ed59df591502e4d7e1a709bc0a989f7c3d451aa7d882666ad0634f1546d696c5edecda1f2fc228777df7bb529a1e
   languageName: node
   linkType: hard
 

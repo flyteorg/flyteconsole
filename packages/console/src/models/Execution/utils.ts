@@ -1,3 +1,4 @@
+import { WorkflowExecutionIdentifier } from 'models/Execution/types';
 import { Admin } from '@flyteorg/flyteidl-types';
 import { createPaginationTransformer } from 'models/AdminEntity/utils';
 import { endpointPrefixes } from 'models/Common/constants';
@@ -9,8 +10,15 @@ import {
   NodeExecutionIdentifier,
   TaskExecution,
   TaskExecutionIdentifier,
-  WorkflowExecutionIdentifier,
 } from './types';
+
+/** Generates the API endpoint for getting execution metrics for a given workflow  */
+export const makeExecutionMetricsPath = ({
+  project,
+  domain,
+  name,
+}: WorkflowExecutionIdentifier) =>
+  [endpointPrefixes.executionMetrics, project, domain, name].join('/');
 
 /** Generates the API endpoint for a given `WorkflowExecutionIdentifier` */
 export const makeExecutionPath = ({
