@@ -123,6 +123,10 @@ export const formatSecondsToHmsFormat = (seconds: number) => {
   return `${seconds}s`;
 };
 
+export const getDurationString = (element: BarItemData): string => {
+  return formatSecondsToHmsFormat(element.durationSec);
+};
+
 /**
  * Generates chart data maps per each BarItemData ("node") section
  */

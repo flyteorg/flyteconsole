@@ -43,21 +43,22 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     opacity: ({ opacity }) => opacity,
     top: ({ top }) => top + 10,
     left: ({ left }) => left + 10,
+    display: ({ opacity }) => (opacity ? 'block' : 'none'),
   },
   phaseText: {
     width: 'fit-content',
-    padding: theme.spacing(0.75, 1),
-    marginInline: 'auto',
-    marginBlockEnd: theme.spacing(2),
-    backgroundColor: ({ phaseColor }) => phaseColor,
+    // padding: theme.spacing(0.75, 1),
+    // marginInline: 'auto',
+    marginBlockEnd: theme.spacing(1),
+    // backgroundColor: ({ phaseColor }) => phaseColor,
   },
   tooltipText: {
     minWidth: '60px',
-    color: theme.palette.grey[700],
   },
   tooltipTextContainer: {
     display: 'flex',
     gap: 1,
+    color: theme.palette.grey[700],
   },
   operationIdContainer: {
     textAlign: 'left',
@@ -87,6 +88,7 @@ export const TimelineChart = (props: TimelineChartProps) => {
   const data = getChartData(phaseData, props.executionMetricsData);
 
   const node = props.nodes[tooltip.dataIndex];
+  const barItemData = props.items[tooltip.dataIndex];
 
   const phase = node?.execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED;
   const phaseConstant = getNodeExecutionPhaseConstants(phase);
@@ -104,7 +106,12 @@ export const TimelineChart = (props: TimelineChartProps) => {
     <>
       <Bar options={options} data={data} ref={chartRef} />
       <Box className={styles.tooltipContainer}>
-        {phase && <Box className={styles.phaseText}>{phaseConstant.text}</Box>}
+        {phase && (
+          <Box className={styles.phaseText}>
+            {phaseConstant.text}
+            {/* {formatSecondsToHmsFormat(barItemData.durationSec)}) */}
+          </Box>
+        )}
         {spans?.map(span => (
           <Box className={styles.tooltipTextContainer}>
             <Box className={styles.tooltipText}>

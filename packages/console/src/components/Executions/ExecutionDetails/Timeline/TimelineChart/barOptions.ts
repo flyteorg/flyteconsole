@@ -1,6 +1,6 @@
 import { Chart as ChartJS, registerables, Tooltip } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { isEqual } from 'lodash';
+import { isEqual, isNil } from 'lodash';
 
 ChartJS.register(...registerables, ChartDataLabels);
 
@@ -184,7 +184,7 @@ export const getBarOptions = (
 
           const dataIndex = tooltipModel.dataPoints[0]?.dataIndex;
 
-          if (!dataIndex) {
+          if (isNil(dataIndex)) {
             return;
           }
 
