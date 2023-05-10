@@ -1,9 +1,5 @@
 import { Identifier, IdentifierScope, RequestConfig } from '../../models';
 import { useFetchableData } from './useFetchableData';
-import {
-  getDescriptionEntity,
-  listDescriptionEntities,
-} from '../../models/DescriptionEntity/api';
 import { DescriptionEntity } from '../../models/DescriptionEntity/types';
 import { FetchableData } from './types';
 import { useAPIContext } from '../data/apiContext';
