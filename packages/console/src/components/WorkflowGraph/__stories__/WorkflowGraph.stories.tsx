@@ -10,7 +10,7 @@ import { WorkflowGraph } from '../WorkflowGraph';
 import graphData from './rich.json';
 
 const graphDataClosure = graphData as unknown as CompiledWorkflowClosure;
-const shortDescription = ""
+const shortDescription = '';
 
 const workflow: Workflow = {
   closure: { compiledWorkflow: graphDataClosure },
