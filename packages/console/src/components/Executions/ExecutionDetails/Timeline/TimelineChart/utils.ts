@@ -88,13 +88,19 @@ export const formatSecondsToHmsFormat = (seconds: number) => {
   seconds %= 3600;
   const minutes = Math.floor(seconds / 60);
   seconds = seconds % 60;
-  seconds = Math.round(seconds * 100) / 100;
+  /**
+   * Note:
+   *  if we're showing hours or minutes, round seconds
+   *  if we're (only) showing seconds, round to nearest 1/100
+   */
   if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
+    return `${hours}h ${minutes}m ${Math.round(seconds)}s`;
   } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
+    return `${minutes}m ${Math.round(seconds)}s`;
+  } else {
+    seconds = Math.round(seconds * 100) / 100;
+    return `${seconds}s`;
   }
-  return `${seconds}s`;
 };
 
 export const getDurationString = (element: BarItemData): string => {

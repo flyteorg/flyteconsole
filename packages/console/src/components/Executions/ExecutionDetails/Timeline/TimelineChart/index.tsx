@@ -38,7 +38,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     padding: theme.spacing(2),
     borderRadius: 8,
     width: 'fit-content',
-    opacity: ({ opacity }) => opacity,
+    maxContent: 'fit-content',
     top: ({ top }) => top + 10,
     left: ({ left }) => left + 10,
     display: ({ opacity }) => (opacity ? 'block' : 'none'),
@@ -48,7 +48,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
     marginBlockEnd: theme.spacing(1),
   },
   tooltipText: {
-    minWidth: '60px',
+    minWidth: '50px',
   },
   tooltipTextContainer: {
     display: 'flex',

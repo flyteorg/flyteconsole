@@ -77,11 +77,9 @@
     "babel-loader": "^8.2.5",
     "chalk": "^4",
     "cheerio": "^1.0.0-rc.12",
-    "chroma-js": "^2.4.2",
     "compression-webpack-plugin": "^9.2.0",
     "cookie-parser": "^1.4.3",
     "copy-webpack-plugin": "^11.0.0",
-    "date-fns": "^2.29.3",
     "dotenv": "^5.0.1",
     "eslint": "^8.33.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -130,7 +128,6 @@
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
-    "@types/chroma-js": "^2.4.0",
     "@types/traverse": "^0.6.32"
   },
   "resolutions": {
