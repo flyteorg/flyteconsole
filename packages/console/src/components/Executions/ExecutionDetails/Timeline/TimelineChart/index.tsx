@@ -19,9 +19,7 @@ interface TimelineChartProps {
   items: BarItemData[];
   nodes: dNode[];
   chartTimeIntervalSec: number;
-  executionMetricsData: Record<string, number[]>;
   operationIds: string[];
-  executionMetricsTooltips: string[][];
   parsedExecutionMetricsData: ReturnType<typeof parseSpanData>;
 }
 
@@ -79,13 +77,12 @@ export const TimelineChart = (props: TimelineChartProps) => {
   const options = getBarOptions(
     props.chartTimeIntervalSec,
     phaseData.tooltipLabel,
-    props.executionMetricsTooltips,
     chartRef,
     tooltip,
     setTooltip,
   ) as any;
 
-  const data = getChartData(phaseData, props.executionMetricsData);
+  const data = getChartData(phaseData);
 
   const node = props.nodes[tooltip.dataIndex];
 

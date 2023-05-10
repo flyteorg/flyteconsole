@@ -2112,7 +2112,6 @@ __metadata:
     debug: 2.6.9
     dom-helpers: 5.2.1
     fuzzysort: ^1.1.1
-    humanize-duration: ^3.28.0
     intersection-observer: ^0.7.0
     js-yaml: ^3.13.1
     linkify-it: ^2.2.0
@@ -13029,13 +13028,6 @@ __metadata:
   version: 3.0.1
   resolution: "human-signals@npm:3.0.1"
   checksum: f252a7769c8094a5c9dc6772816bdb417b188820b04c8b42d0fc468e03a0ba905b1dd07afabe9385cc83504af1ccc2b985cd1e4aeeeb8e0029896c5af2e6f354
-  languageName: node
-  linkType: hard
-
-"humanize-duration@npm:^3.28.0":
-  version: 3.28.0
-  resolution: "humanize-duration@npm:3.28.0"
-  checksum: dde595ab4729d82147db41d8ca0afa86bf3f20d74cd1323ea52f299091a4f1dcb2a45b2d27ce78ab9bb0d9e66d8eb8f2628a67be36a535af645eb282a963ff7f
   languageName: node
   linkType: hard
 

@@ -123,7 +123,6 @@ const externalTooltipHandler = context => {
 export const getBarOptions = (
   chartTimeIntervalSec: number,
   tooltipLabels: string[][],
-  executionMetricsTooltips: string[][],
   chartRef: React.MutableRefObject<any>,
   tooltip: any,
   setTooltip: any,
@@ -157,9 +156,7 @@ export const getBarOptions = (
           label: function (context) {
             const index = context.dataIndex;
 
-            return tooltipLabels
-              ? [`${tooltipLabels[index]}`, ...executionMetricsTooltips[index]]
-              : '';
+            return tooltipLabels ? [`${tooltipLabels[index]}`] : '';
           },
           labelColor: function (context) {
             return {

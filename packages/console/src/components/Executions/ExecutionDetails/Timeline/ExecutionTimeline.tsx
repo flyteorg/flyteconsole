@@ -26,9 +26,7 @@ import { getChartDurationData } from './TimelineChart/chartData';
 import { TimelineChart } from './TimelineChart';
 import t from '../strings';
 import {
-  getExecutionMetricsData,
-  getExecutionMetricsTooltips,
-  getOperationsFromWorkflowExecutionMetrics,
+  getExecutionMetricsOperationIds,
   parseSpanData,
 } from './TimelineChart/utils';
 
@@ -194,15 +192,8 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
     setOriginalNodes([...originalNodes]);
   };
 
-  const { operations, operationIds } = getExecutionMetricsData(
+  const operationIds = getExecutionMetricsOperationIds(
     executionMetricsData.value,
-    showNodes,
-  );
-
-  const executionMetricsTooltips = getExecutionMetricsTooltips(
-    showNodes,
-    operationIds,
-    operations,
   );
 
   const parsedExecutionMetricsData = parseSpanData(executionMetricsData.value);
@@ -243,8 +234,6 @@ export const ExecutionTimeline: React.FC<ExProps> = ({
               items={barItemsData}
               chartTimeIntervalSec={chartTimeInterval}
               operationIds={operationIds}
-              executionMetricsData={operations}
-              executionMetricsTooltips={executionMetricsTooltips}
               parsedExecutionMetricsData={parsedExecutionMetricsData}
               nodes={showNodes}
             />

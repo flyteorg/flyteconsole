@@ -84,7 +84,6 @@
     "debug": "2.6.9",
     "dom-helpers": "5.2.1",
     "fuzzysort": "^1.1.1",
-    "humanize-duration": "^3.28.0",
     "intersection-observer": "^0.7.0",
     "js-yaml": "^3.13.1",
     "linkify-it": "^2.2.0",

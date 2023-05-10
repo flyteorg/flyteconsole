@@ -4,10 +4,9 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
 import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
 import { dNode } from 'models/Graph/types';
-import { get, isNil, startCase, uniq } from 'lodash';
+import { get, uniq } from 'lodash';
 import { timestampToDate } from 'common';
 import traverse from 'traverse';
-import humanizeDuration from 'humanize-duration';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -181,10 +180,9 @@ export const getDuration = (
   return duration;
 };
 
-export const getExecutionMetricsData = (
+export const getExecutionMetricsOperationIds = (
   data: Admin.WorkflowExecutionGetMetricsResponse,
-  nodes: dNode[],
-): { operationIds: string[]; operations: Record<string, number[]> } => {
+): string[] => {
   const operationIds = uniq(
     traverse(data)
       .paths()
@@ -192,83 +190,7 @@ export const getExecutionMetricsData = (
       .map(path => get(data, path)),
   );
 
-  const operations = operationIds.reduce<Record<string, any>>(
-    (acc, operation) => {
-      acc[operation] = [];
-
-      return acc;
-    },
-    {} as any,
-  );
-
-  if (isNil(data.span)) {
-    return { operationIds, operations };
-  }
-
-  const tree = traverse(data.span);
-  const paths = tree.paths();
-
-  for (const node of nodes) {
-    const spanPath = paths
-      .find(path => {
-        if (path.length < 2) {
-          return false;
-        }
-
-        if (path.at(-2) !== 'nodeId' || path.at(-1) !== 'nodeId') {
-          return false;
-        }
-
-        return get(data.span, path) === node.id;
-      })
-      ?.slice(0, -2);
-
-    const nodeSpans = (spanPath && get(data.span, spanPath)?.spans) ?? [];
-
-    for (const operationId of operationIds) {
-      const operationSpan = nodeSpans.find(
-        span => span.operationId === operationId,
-      );
-
-      if (!operationSpan || !operationSpan.startTime) {
-        operations[operationId].push(0);
-        continue;
-      }
-
-      const endTime = operationSpan.endTime
-        ? timestampToDate(operationSpan.endTime).getTime()
-        : Date.now();
-
-      const duration =
-        endTime - timestampToDate(operationSpan.startTime).getTime();
-
-      operations[operationId].push(duration / 1000);
-    }
-  }
-
-  return {
-    operationIds,
-    operations,
-  };
-};
-
-export const getExecutionMetricsTooltips = (
-  nodes: dNode[],
-  operationIds: string[],
-  operations: Record<string, number[]>,
-) => {
-  return nodes.map((node, idx) => {
-    const tooltipText: string[] = [];
-
-    operationIds.map(operationId => {
-      const operationLabel = startCase(
-        operationId.toLowerCase().split('_').join(' '),
-      );
-      tooltipText.push(`${operationLabel}: ${operations[operationId][idx]}`);
-    });
-
-    return tooltipText;
-  });
+  return operationIds;
 };
 
 /**
@@ -279,10 +201,7 @@ export const getExecutionMetricsTooltips = (
  * Where |---| is offset - usually transparent part to give user a feeling that timeline wasn't started from ZERO time position
  * Where |XXX| is duration of the operation, colored per step Phase status.
  */
-export const getChartData = (
-  data: ChartDataInput,
-  executionMetrics: Record<string, number[]>,
-) => {
+export const getChartData = (data: ChartDataInput) => {
   const defaultStyle = {
     barPercentage: 1,
     borderWidth: 0,
@@ -324,48 +243,6 @@ export const getChartData = (
           },
         },
       },
-      // ...Object.entries(executionMetrics).map(([_, d], idx) => ({
-      //   ...defaultStyle,
-      //   data: d,
-      //   backgroundColor: data.barColor,
-      //   borderColor: 'rgba(0, 0, 0, 0.55)',
-      //   borderWidth: {
-      //     top: 0,
-      //     left: 0,
-      //     right: 1,
-      //     bottom: 0,
-      //   },
-      //   datalabels: {
-      //     color: primaryTextColor,
-      //     align: 'end' as const, // related to text
-      //     anchor: 'start' as const, // related to bar
-      //     formatter: function (value, context) {
-      //       return value > 0.01 ? `${value}s` : '';
-      //     },
-      //   },
-      // })),
     ],
   };
-};
-
-export const secondsToHumanReadableDuration = (seconds: number) => {
-  const shortEnglishHumanizer = humanizeDuration.humanizer({
-    maxDecimalPoints: 2,
-    language: 'shortEn',
-    languages: {
-      shortEn: {
-        y: () => 'y',
-        mo: () => 'mo',
-        w: () => 'w',
-        d: () => 'd',
-        h: () => 'h',
-        m: () => 'm',
-        s: () => 's',
-      },
-    },
-  });
-
-  const roundedSeconds = Math.round(seconds * 100) / 100;
-
-  return shortEnglishHumanizer(roundedSeconds);
 };
