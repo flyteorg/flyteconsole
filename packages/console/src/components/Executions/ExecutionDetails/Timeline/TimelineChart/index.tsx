@@ -45,10 +45,7 @@ const useStyles = makeStyles<Theme, StyleProps>(theme => ({
   },
   phaseText: {
     width: 'fit-content',
-    // padding: theme.spacing(0.75, 1),
-    // marginInline: 'auto',
     marginBlockEnd: theme.spacing(1),
-    // backgroundColor: ({ phaseColor }) => phaseColor,
   },
   tooltipText: {
     minWidth: '60px',
@@ -83,12 +80,9 @@ export const TimelineChart = (props: TimelineChartProps) => {
   ) as any;
 
   const data = getChartData(phaseData);
-
   const node = props.nodes[tooltip.dataIndex];
-
   const phase = node?.execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED;
   const phaseConstant = getNodeExecutionPhaseConstants(phase);
-
   const spans = (node && props.parsedExecutionMetricsData[node.scopedId]) || [];
 
   const styles = useStyles({
@@ -102,18 +96,14 @@ export const TimelineChart = (props: TimelineChartProps) => {
     <>
       <Bar options={options} data={data} ref={chartRef} />
       <Box className={styles.tooltipContainer}>
-        {phase && (
-          <Box className={styles.phaseText}>
-            {phaseConstant.text}
-            {/* {formatSecondsToHmsFormat(barItemData.durationSec)}) */}
-          </Box>
-        )}
+        {phase && <Box className={styles.phaseText}>{phaseConstant.text}</Box>}
         {spans?.map(span => (
           <Box className={styles.tooltipTextContainer}>
             <Box className={styles.tooltipText}>
               {formatSecondsToHmsFormat(
-                Math.round(getDuration(span.startTime, span.endTime) / 10) /
-                  100,
+                Math.round(
+                  (getDuration(span.startTime, span.endTime) / 1000) * 100,
+                ) / 100,
               )}
             </Box>
             <Box className={styles.operationIdContainer}>

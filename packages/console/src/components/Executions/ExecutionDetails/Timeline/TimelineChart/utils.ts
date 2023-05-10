@@ -3,7 +3,6 @@ import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
 import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
-import { dNode } from 'models/Graph/types';
 import { get, uniq } from 'lodash';
 import { timestampToDate } from 'common';
 import traverse from 'traverse';
@@ -80,21 +79,6 @@ export const getOperationsFromWorkflowExecutionMetrics = (
 
   return operationIds;
 };
-
-export const getTooltipData = (
-  nodes: dNode[],
-  nodeIdx: number,
-  data: Admin.WorkflowExecutionGetMetricsResponse,
-) => {
-  const parsedSpanData = parseSpanData(data);
-
-  const operationIds = getOperationsFromWorkflowExecutionMetrics(data);
-
-  const node = nodes[nodeIdx];
-
-  // Get all the relevant node and task ids from the parsed information
-};
-
 /**
  * Depending on amounf of second provided shows data in
  * XhXmXs or XmXs or Xs format
@@ -104,6 +88,7 @@ export const formatSecondsToHmsFormat = (seconds: number) => {
   seconds %= 3600;
   const minutes = Math.floor(seconds / 60);
   seconds = seconds % 60;
+  seconds = Math.round(seconds * 100) / 100;
   if (hours > 0) {
     return `${hours}h ${minutes}m ${seconds}s`;
   } else if (minutes > 0) {
@@ -174,9 +159,7 @@ export const getDuration = (
   endTime?: Protobuf.ITimestamp,
 ) => {
   const endTimeInMS = endTime ? timestampToDate(endTime).getTime() : Date.now();
-
   const duration = endTimeInMS - timestampToDate(startTime).getTime();
-
   return duration;
 };
 
