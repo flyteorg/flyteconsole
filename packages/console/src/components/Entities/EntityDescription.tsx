@@ -18,8 +18,8 @@ import { TaskClosure } from 'models/Task/types';
 import { executionFilterGenerator } from './generators';
 import { Row } from './Row';
 import t, { patternKey } from './strings';
-import {entityStrings, entitySections} from './constants';
-import {useDescriptionEntityList} from "../hooks/useDescription";
+import { entityStrings, entitySections } from './constants';
+import { useDescriptionEntityList } from '../hooks/useDescription';
 
 const Skeleton = reactLoadingSkeleton;
 
@@ -116,7 +116,7 @@ export const EntityDescription: React.FC<{
     },
   );
 
-  const descriptionEntity = descriptionEntities?.value?.[0]
+  const descriptionEntity = descriptionEntities?.value?.[0];
   const hasDescription = descriptionEntity?.longDescription.value.length !== 0;
   const hasLink = !!descriptionEntity?.sourceCode?.link;
   const sections = entitySections[id.resourceType];
@@ -150,15 +150,23 @@ export const EntityDescription: React.FC<{
                   )}
             </span>
           </Row>
-          {hasLink && (<Row title={t('githubLink')}>
-            <span>
-              {hasLink
-                ?<a href={descriptionEntity?.sourceCode?.link} target="_blank" rel="noreferrer">{descriptionEntity?.sourceCode?.link}</a>
-                : t(
-                  patternKey('noGithubLink', entityStrings[id.resourceType]),
+          {hasLink && (
+            <Row title={t('githubLink')}>
+              <span>
+                {hasLink ? (
+                  <a
+                    href={descriptionEntity?.sourceCode?.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {descriptionEntity?.sourceCode?.link}
+                  </a>
+                ) : (
+                  t(patternKey('noGithubLink', entityStrings[id.resourceType]))
                 )}
-            </span>
-          </Row>)}
+              </span>
+            </Row>
+          )}
         </WaitForData>
         {sections?.descriptionInputsAndOutputs && <InputsAndOuputs id={id} />}
       </Typography>

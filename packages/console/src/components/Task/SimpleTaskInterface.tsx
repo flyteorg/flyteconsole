@@ -66,7 +66,7 @@ const VariablesList: React.FC<{ variables: Record<string, Variable> }> = ({
 export const SimpleTaskInterface: React.FC<{ task: Task }> = ({ task }) => {
   const { inputs = emptyVariables, outputs = emptyVariables } =
     task.closure.compiledTask.template.interface || {};
-  const description = task.shortDescription || "No description found.";
+  const description = task.shortDescription || 'No description found.';
   return (
     <div>
       <DetailsGroup
@@ -82,8 +82,8 @@ export const SimpleTaskInterface: React.FC<{ task: Task }> = ({ task }) => {
           },
           {
             name: 'description',
-            content: <span>{description}</span>
-          }
+            content: <span>{description}</span>,
+          },
         ]}
       />
     </div>

@@ -43,6 +43,9 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
       ModalProps={{
         className: styles.modal,
         hideBackdrop: true,
+        // This is needed to prevent the modal from stealing focus
+        // from other modals in the app
+        disableEnforceFocus: true,
         // Modal uses inline styling for the zIndex, so we have to
         // override it
         style: { zIndex: theme.zIndex.appBar - 2 },

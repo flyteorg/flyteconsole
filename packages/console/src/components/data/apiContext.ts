@@ -4,7 +4,7 @@ import * as LaunchAPI from 'models/Launch/api';
 import * as ProjectAPI from 'models/Project/api';
 import * as TaskAPI from 'models/Task/api';
 import * as WorkflowAPI from 'models/Workflow/api';
-import * as DescriptionEntityAPI from 'models/DescriptionEntity/api'
+import * as DescriptionEntityAPI from 'models/DescriptionEntity/api';
 import * as React from 'react';
 
 type APIFunctions = typeof CommonAPI &
@@ -26,7 +26,7 @@ export const defaultAPIContextValue: APIContextValue = {
   ...ProjectAPI,
   ...TaskAPI,
   ...WorkflowAPI,
-  ...DescriptionEntityAPI
+  ...DescriptionEntityAPI,
 };
 
 /** Exposes all of the model layer api functions for use by data fetching
