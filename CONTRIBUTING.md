@@ -210,4 +210,4 @@ yarn install
 
    Your new localhost is [localhost.different.admin.service.com](http://localhost.different.admin.service.com)
 
-> Ensure you don't have `ADMIN_API_URL` or `DISABLE_AUTH` set (e.g., in your `/.profile`.)
+> Ensure you don't have `ADMIN_API_URL` set (e.g., in your `/.profile`.)
