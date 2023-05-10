@@ -88,7 +88,6 @@ export const TimelineChart = (props: TimelineChartProps) => {
   const data = getChartData(phaseData, props.executionMetricsData);
 
   const node = props.nodes[tooltip.dataIndex];
-  const barItemData = props.items[tooltip.dataIndex];
 
   const phase = node?.execution?.closure.phase ?? NodeExecutionPhase.UNDEFINED;
   const phaseConstant = getNodeExecutionPhaseConstants(phase);
@@ -116,7 +115,8 @@ export const TimelineChart = (props: TimelineChartProps) => {
           <Box className={styles.tooltipTextContainer}>
             <Box className={styles.tooltipText}>
               {formatSecondsToHmsFormat(
-                Math.round(getDuration(span.startTime, span.endTime) / 1000),
+                Math.round(getDuration(span.startTime, span.endTime) / 10) /
+                  100,
               )}
             </Box>
             <Box className={styles.operationIdContainer}>
