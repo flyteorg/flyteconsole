@@ -27,6 +27,7 @@ interface ChartDataInput {
   barLabel: string[];
   barColor: string[];
 }
+
 /**
  * Recursively traverses span data and returns a map of nodeId/taskId to span data.
  * Example return:
