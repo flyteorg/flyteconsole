@@ -2020,7 +2020,7 @@ __metadata:
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
     "@flyteorg/common": ^0.0.4
-    "@flyteorg/console": ^0.0.29
+    "@flyteorg/console": ^0.0.30
     "@types/long": ^3.0.32
     long: ^4.0.0
     protobufjs: ~6.11.3
@@ -2059,7 +2059,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/console@^0.0.29, @flyteorg/console@workspace:packages/console":
+"@flyteorg/console@^0.0.30, @flyteorg/console@workspace:packages/console":
   version: 0.0.0-use.local
   resolution: "@flyteorg/console@workspace:packages/console"
   dependencies:
@@ -2134,6 +2134,7 @@ __metadata:
     react-query-devtools: 3.0.0-beta.1
     react-virtualized: ^9.21.1
     shallowequal: ^1.1.0
+    traverse: ^0.6.7
     url-search-params: ^0.10.0
     xstate: 4.33.6
   peerDependencies:
@@ -11703,7 +11704,6 @@ __metadata:
     react-dom: ^16.13.1
     serve-static: ^1.12.3
     source-map-loader: ^4.0.1
-    traverse: ^0.6.7
     ts-jest: ^26.3.0
     ts-loader: ^9.2.6
     ts-node: ^8.0.2
