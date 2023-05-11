@@ -74,7 +74,6 @@ export const MapTaskExecutionsListItem: React.FC<
           <TaskExecutionError error={error} />
         </section>
       ) : null}
-
       {/* If main map task has log attached - show it here */}
       {logs && logs.length > 0 ? (
         <section className={styles.section}>
@@ -99,7 +98,6 @@ export const MapTaskExecutionsListItem: React.FC<
           />
         );
       })}
-
       {/* If map task is actively started - show 'started' and 'run time' details */}
       {taskHasStarted && (
         <section className={styles.section}>
