@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@flyteorg/common": "^0.0.4",
-    "@flyteorg/console": "^0.0.31",
+    "@flyteorg/console": "^0.0.32",
     "long": "^4.0.0",
     "protobufjs": "~6.11.3",
     "react-ga4": "^1.4.1",
