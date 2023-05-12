@@ -64,6 +64,7 @@ export const TaskNameList = ({
           onTaskSelected({
             ...taskExecution,
             taskIndex: (log as any).index,
+            parentRetryAttempt: taskExecution.id.retryAttempt,
           });
         };
 

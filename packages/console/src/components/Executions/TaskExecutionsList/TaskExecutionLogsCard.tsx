@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
-import { TaskExecution } from 'models/Execution/types';
+import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { Core } from '@flyteorg/flyteidl-types';
 import { ExternalConfigHoc } from 'basics/ExternalConfigHoc';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface TaskExecutionLogsCardProps {
-  taskExecution: TaskExecution;
+  taskExecution: TaskExecution | MapTaskExecution;
   headerText: string;
   phase: TaskExecutionPhase;
   logs: Core.ITaskLog[];
