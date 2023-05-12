@@ -38,9 +38,6 @@ const useStyles = makeStyles((theme: Theme) => {
       maxHeight: `calc(100% - ${theme.spacing(12)}px)`,
       height: theme.spacing(90),
       width: theme.spacing(110),
-      '& iframe': {
-        border: 'none',
-      },
     },
     dialogTitle: {
       display: 'flex',
