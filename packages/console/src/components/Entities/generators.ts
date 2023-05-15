@@ -53,6 +53,11 @@ export const executionFilterGenerator: {
             operation: FilterOperationName.EQ,
             value: version,
           },
+          {
+            key: 'workflow.name',
+            operation: FilterOperationName.EQ,
+            value: name,
+          },
         ]
       : [
           {
