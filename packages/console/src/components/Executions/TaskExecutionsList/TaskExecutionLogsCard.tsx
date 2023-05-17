@@ -40,7 +40,6 @@ interface TaskExecutionLogsCardProps {
   headerText: string;
   phase: TaskExecutionPhase;
   logs: Core.ITaskLog[];
-  mappedItem?: any;
 }
 
 export const TaskExecutionLogsCard: React.FC<
