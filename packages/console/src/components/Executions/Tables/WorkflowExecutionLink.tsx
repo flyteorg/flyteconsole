@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
