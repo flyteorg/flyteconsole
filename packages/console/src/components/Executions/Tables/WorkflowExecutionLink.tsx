@@ -1,7 +1,7 @@
+import * as React from 'react';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WorkflowExecutionIdentifier } from 'models/Execution/types';
-import * as React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { history } from 'routes/history';
@@ -14,7 +14,7 @@ export const WorkflowExecutionLink: React.FC<{
 }> = ({ className, color = 'primary', id }) => {
   const commonStyles = useCommonStyles();
   const {
-    location: { pathname },
+    location: { pathname, hash, search },
   } = history;
   const fromExecutionNav = pathname.split('/').pop() === 'executions';
 
@@ -22,12 +22,18 @@ export const WorkflowExecutionLink: React.FC<{
     color === 'disabled'
       ? commonStyles.secondaryLink
       : commonStyles.primaryLink;
+
+  // preserve router deep link state
+  const backLink = pathname + search + hash;
+
   return (
     <RouterLink
       className={classnames(linkColor, className)}
-      to={`${Routes.ExecutionDetails.makeUrl(id)}${
-        fromExecutionNav ? '?fromExecutionNav=true' : ''
-      }`}
+      to={{
+        pathname: `${Routes.ExecutionDetails.makeUrl(id)}`,
+        search: fromExecutionNav ? '?fromExecutionNav=true' : '',
+        state: { backLink },
+      }}
     >
       {id.name}
     </RouterLink>
