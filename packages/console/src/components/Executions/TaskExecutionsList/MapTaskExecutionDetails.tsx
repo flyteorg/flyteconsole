@@ -28,7 +28,6 @@ export const MapTaskExecutionDetails: React.FC<
       {filteredResources.map(item => {
         const attempt = item.retryAttempt ?? 0;
         const headerText = formatRetryAttempt(attempt);
-
         return (
           <div key={`card-${attempt}`}>
             <TaskExecutionLogsCard
@@ -36,6 +35,7 @@ export const MapTaskExecutionDetails: React.FC<
               headerText={headerText}
               phase={item.phase ?? TaskExecutionPhase.UNDEFINED}
               logs={item.logs ?? []}
+              mappedItem={item}
             />
           </div>
         );
