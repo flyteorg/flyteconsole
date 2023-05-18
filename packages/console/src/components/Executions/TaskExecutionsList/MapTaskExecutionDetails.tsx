@@ -35,6 +35,7 @@ export const MapTaskExecutionDetails: React.FC<
               headerText={headerText}
               phase={item.phase ?? TaskExecutionPhase.UNDEFINED}
               logs={item.logs ?? []}
+              mappedItem={item}
             />
           </div>
         );
