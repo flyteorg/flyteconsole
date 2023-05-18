@@ -75,7 +75,38 @@ export const getGroupedLogs = (
     }
   }
 
-  return logsByPhase;
+  const newResources: ExternalResource[] = resources?.map(r => ({
+    index: 0,
+    phase: TaskExecutionPhase.UNDEFINED,
+    ...r,
+  }));
+  const newLogsByPhase = newResources.reduce((acc, item) => {
+    acc[item.phase!] = [
+      ...(acc[item.phase!] || []),
+      ...(item?.logs?.length
+        ? item?.logs?.map?.(l => ({
+            name: item.externalId,
+            index: item.index || 0,
+            ...l,
+            item,
+          }))
+        : [
+            {
+              name: item.externalId,
+              index: item.index || 0,
+              item,
+            },
+          ]),
+    ];
+
+    return acc;
+  }, {});
+
+  const newMap = new Map();
+  for (const key in newLogsByPhase) {
+    newMap.set(+key, newLogsByPhase[key]);
+  }
+  return newMap;
 };
 
 export const getTaskRetryAtemptsForIndex = (

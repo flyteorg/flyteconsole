@@ -63,7 +63,7 @@ export const TaskNameList = ({
           // Use the resource's index instead of the log index
           onTaskSelected({
             ...taskExecution,
-            taskIndex: (log as any).index,
+            taskIndex: (log as any).index || 0,
             parentRetryAttempt: taskExecution.id.retryAttempt,
           });
         };
@@ -78,12 +78,9 @@ export const TaskNameList = ({
           >
             <Typography
               variant="body1"
-              color={log.uri ? 'primary' : 'textPrimary'}
-              onClick={log.uri ? handleClick : undefined}
-              className={classnames(
-                log.uri ? styles.taskTitleLink : styles.taskTitle,
-                className,
-              )}
+              color="primary"
+              onClick={handleClick}
+              className={classnames(styles.taskTitleLink, className)}
               data-testid="map-task-log"
             >
               {taskLogName}

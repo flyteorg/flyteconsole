@@ -78,7 +78,7 @@ export const getOperationsFromWorkflowExecutionMetrics = (
       .map(path => get(data, path)),
   );
 
-  return operationIds;
+  return operationIds as any;
 };
 /**
  * Depending on amounf of second provided shows data in
@@ -180,7 +180,7 @@ export const getExecutionMetricsOperationIds = (
       .map(path => get(data, path)),
   );
 
-  return operationIds;
+  return operationIds as any;
 };
 
 /**

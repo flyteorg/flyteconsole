@@ -81,16 +81,16 @@ export const MapTaskExecutionsListItem: React.FC<
         </section>
       ) : null}
       {/* child/array logs separated by subtasks phase */}
-      {RENDER_ORDER.map((phase, id) => {
-        const logs = logsByPhase.get(phase);
+      {RENDER_ORDER.map((orderPhase, id) => {
+        const logs = logsByPhase.get(orderPhase);
         if (!logs) {
           return null;
         }
-        const key = `${id}-${phase}`;
+        const key = `${id}-${orderPhase}`;
         return (
           <MapTaskStatusInfo
             taskExecution={taskExecution}
-            phase={phase}
+            phase={orderPhase}
             taskLogs={logs}
             selectedPhase={selectedPhase}
             key={key}

@@ -89,20 +89,18 @@ export const TaskExecutionLogsCard: React.FC<
           <TaskExecutionError error={error} />
         </section>
       )}
-      {taskHasStarted && (
-        <>
-          <section className={styles.section}>
-            <TaskExecutionLogs taskLogs={logs ?? []} />
-          </section>
-          <section className={styles.section}>
-            <TaskExecutionDetails
-              startedAt={startedAt}
-              updatedAt={updatedAt}
-              duration={duration}
-            />
-          </section>
-        </>
-      )}
+      <>
+        <section className={styles.section}>
+          <TaskExecutionLogs taskLogs={logs ?? []} />
+        </section>
+        <section className={styles.section}>
+          <TaskExecutionDetails
+            startedAt={startedAt}
+            updatedAt={updatedAt}
+            duration={duration}
+          />
+        </section>
+      </>
     </>
   );
 };
