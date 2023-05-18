@@ -7,12 +7,10 @@ import { processEnv } from '../../env';
 const router: Router = express.Router();
 
 router.get('/healthz', (_req: Request, res: Response) => {
-  console.log('/healthz');
   res.status(200).send();
 });
 
 router.get('/*', (_req: Request, res: Response) => {
-  console.log('/*');
   const html = fs
     .readFileSync(path.resolve(__dirname, 'index.html'))
     .toString();
