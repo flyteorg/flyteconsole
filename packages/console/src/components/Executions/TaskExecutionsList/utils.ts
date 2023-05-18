@@ -36,50 +36,12 @@ export function formatRetryAttempt(
 export const getGroupedLogs = (
   resources: Event.IExternalResourceInfo[],
 ): LogsByPhase => {
-  const logsByPhase: LogsByPhase = new Map();
-
-  // sort output sample [0-2, 0-1, 0, 1, 2], where 0-1 means index = 0 retry = 1
-  resources.sort((a, b) => {
-    const aIndex = a.index ?? 0;
-    const bIndex = b.index ?? 0;
-    if (aIndex !== bIndex) {
-      // return smaller index first
-      return aIndex - bIndex;
-    }
-
-    const aRetry = a.retryAttempt ?? 0;
-    const bRetry = b.retryAttempt ?? 0;
-    return bRetry - aRetry;
-  });
-
-  let lastIndex = -1;
-  for (const item of resources) {
-    if (item.index === lastIndex) {
-      // skip, as we already added final retry to data
-      continue;
-    }
-    const phase = item.phase ?? TaskExecutionPhase.UNDEFINED;
-    const currentValue = logsByPhase.get(phase);
-    lastIndex = item.index ?? 0;
-    if (item.logs) {
-      // if there is no log with active url, just create an item with externalId,
-      // for user to understand which array items are in this state
-      const newLogs =
-        item.logs.length > 0
-          ? item.logs.map(l => ({ ...l, index: item.index || 0 }))
-          : [{ name: item.externalId }];
-      logsByPhase.set(
-        phase,
-        currentValue ? [...currentValue, ...newLogs] : [...newLogs],
-      );
-    }
-  }
-
   const newResources: ExternalResource[] = resources?.map(r => ({
     index: 0,
     phase: TaskExecutionPhase.UNDEFINED,
     ...r,
   }));
+
   const newLogsByPhase = newResources.reduce((acc, item) => {
     acc[item.phase!] = [
       ...(acc[item.phase!] || []),
@@ -102,11 +64,11 @@ export const getGroupedLogs = (
     return acc;
   }, {});
 
-  const newMap = new Map();
+  const logsByPhase = new Map();
   for (const key in newLogsByPhase) {
-    newMap.set(+key, newLogsByPhase[key]);
+    logsByPhase.set(+key, newLogsByPhase[key]);
   }
-  return newMap;
+  return logsByPhase;
 };
 
 export const getTaskRetryAtemptsForIndex = (
