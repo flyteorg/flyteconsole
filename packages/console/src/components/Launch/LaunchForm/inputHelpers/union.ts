@@ -14,11 +14,16 @@ function fromLiteral(
     throw new Error(t('missingUnionListOfSubType'));
   }
 
-  // loop though the subtypes to find the correct match literal type
+  // Unpack nested variant of union data value
+  const literalValue = literal?.scalar?.union?.value
+    ? literal.scalar.union.value
+    : literal;
+
+  // loop though the subtypes to find the correct match literal typex`
   for (let i = 0; i < listOfSubTypes.length; i++) {
     try {
       const value = getHelperForInput(listOfSubTypes[i].type).fromLiteral(
-        literal,
+        literalValue,
         listOfSubTypes[i],
       );
       return { value, typeDefinition: listOfSubTypes[i] } as UnionValue;
