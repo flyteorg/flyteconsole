@@ -136,6 +136,17 @@ export const ExecutionDetailsActions = ({
   const [showDeck, setShowDeck] = React.useState(false);
   const onCloseDeck = () => setShowDeck(false);
 
+  // Close deck modal on escape
+  useEffect(() => {
+    const close = e => {
+      if (e.key === 'Escape') {
+        setShowDeck(false);
+      }
+    };
+    document.addEventListener('keydown', close);
+    return () => document.removeEventListener('keydown', close);
+  }, []);
+
   const [fullScreen, setSetFullScreen] = React.useState(false);
   const toggleFullScreen = () => {
     setSetFullScreen(!fullScreen);
