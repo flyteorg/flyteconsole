@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dialog, IconButton } from '@material-ui/core';
+import { Button, Dialog, Grid, IconButton } from '@material-ui/core';
 import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
@@ -15,6 +15,7 @@ import { NodeExecutionPhase } from 'models/Execution/enums';
 import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
 import classnames from 'classnames';
+import { Fullscreen, FullscreenExit } from '@material-ui/icons';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
@@ -38,10 +39,18 @@ const useStyles = makeStyles((theme: Theme) => {
       maxHeight: `calc(100% - ${theme.spacing(12)}px)`,
       height: theme.spacing(90),
       width: theme.spacing(110),
+      transition: 'all 0.3s ease',
     },
-    dialogTitle: {
-      display: 'flex',
-      alignItems: 'center',
+    fullscreenDialog: {
+      maxWidth: '100vw',
+      width: '100vw',
+      maxHeight: '100svh',
+      height: '100svh',
+      margin: 0,
+      transition: 'all 0.3s ease',
+      borderRadius: 0,
+    },
+    dialogHeader: {
       padding: theme.spacing(2),
       paddingBottom: theme.spacing(0),
       fontFamily: 'Open sans',
@@ -56,8 +65,7 @@ const useStyles = makeStyles((theme: Theme) => {
       paddingBottom: theme.spacing(2),
     },
     close: {
-      position: 'absolute',
-      right: theme.spacing(2),
+      paddingRight: theme.spacing(2),
     },
   };
 });
@@ -128,6 +136,11 @@ export const ExecutionDetailsActions = ({
   const [showDeck, setShowDeck] = React.useState(false);
   const onCloseDeck = () => setShowDeck(false);
 
+  const [fullScreen, setSetFullScreen] = React.useState(false);
+  const toggleFullScreen = () => {
+    setSetFullScreen(!fullScreen);
+  };
+
   const rerunOnClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
     setShowLaunchForm(true);
@@ -181,20 +194,32 @@ export const ExecutionDetailsActions = ({
       )}
       {execution?.value?.closure?.deckUri && (
         <Dialog
-          PaperProps={{ className: styles.dialog }}
+          PaperProps={{
+            className: fullScreen ? styles.fullscreenDialog : styles.dialog,
+          }}
           maxWidth={false}
           open={showDeck}
         >
-          <div className={styles.dialogTitle}>
-            <h2 className={styles.deckTitle}>{t('flyteDeck')}</h2>
-            <IconButton
-              aria-label="close"
-              onClick={onCloseDeck}
-              className={styles.close}
-            >
-              <Close />
-            </IconButton>
-          </div>
+          <Grid
+            container
+            justifyContent="space-between"
+            alignContent="center"
+            className={styles.dialogHeader}
+          >
+            <Grid item>
+              <IconButton aria-label="Expand" onClick={toggleFullScreen}>
+                {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <h2 className={styles.deckTitle}>{t('flyteDeck')}</h2>
+            </Grid>
+            <Grid item>
+              <IconButton aria-label="close" onClick={onCloseDeck}>
+                <Close />
+              </IconButton>
+            </Grid>
+          </Grid>
           <ExecutionNodeDeck nodeExecutionId={nodeExecutionId} />
         </Dialog>
       )}
