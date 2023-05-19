@@ -8,6 +8,7 @@ import {
 } from 'components/Launch/LaunchForm/types';
 import { CompiledNode } from 'models/Node/types';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { ResumeForm } from './ResumeForm';
 
 interface LaunchFormDialogProps {
@@ -38,7 +39,10 @@ export const LaunchFormDialog = ({
   compiledNode,
   nodeExecutionId,
 }: LaunchFormDialogProps): JSX.Element => {
-  const onCancelLaunch = () => setShowLaunchForm(false);
+  const onCancelLaunch = (_?: any) => setShowLaunchForm(false);
+
+  // Close modal on escape key press
+  useEscapeKey(onCancelLaunch);
 
   // prevent child onclick event in the dialog triggers parent onclick event
   const dialogOnClick = (e: React.MouseEvent<HTMLElement>) => {

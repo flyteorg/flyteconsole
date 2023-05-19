@@ -9,6 +9,7 @@ import { getProjectDomain } from 'models/Project/utils';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { backUrlGenerator, backToDetailUrlGenerator } from './generators';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
@@ -64,7 +65,12 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   const commonStyles = useCommonStyles();
 
   const [showLaunchForm, setShowLaunchForm] = React.useState(false);
-  const onCancelLaunch = () => setShowLaunchForm(false);
+  const onCancelLaunch = (_?: KeyboardEvent) => {
+    setShowLaunchForm(false);
+  };
+
+  // Close modal on escape key press
+  useEscapeKey(onCancelLaunch);
 
   const domain = getProjectDomain(project, id.domain);
   const headerText = `${domain.name} / ${id.name}`;

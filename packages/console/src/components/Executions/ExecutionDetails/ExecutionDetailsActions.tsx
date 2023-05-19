@@ -16,6 +16,7 @@ import { extractCompiledNodes } from 'components/hooks/utils';
 import Close from '@material-ui/icons/Close';
 import classnames from 'classnames';
 import { Fullscreen, FullscreenExit } from '@material-ui/icons';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { NodeExecutionDetails } from '../types';
 import t from './strings';
 import { ExecutionNodeDeck } from './ExecutionNodeDeck';
@@ -136,16 +137,8 @@ export const ExecutionDetailsActions = ({
   const [showDeck, setShowDeck] = React.useState(false);
   const onCloseDeck = () => setShowDeck(false);
 
-  // Close deck modal on escape
-  useEffect(() => {
-    const close = e => {
-      if (e.key === 'Escape') {
-        setShowDeck(false);
-      }
-    };
-    document.addEventListener('keydown', close);
-    return () => document.removeEventListener('keydown', close);
-  }, []);
+  // Close deck modal on escape key press
+  useEscapeKey(onCloseDeck);
 
   const [fullScreen, setSetFullScreen] = React.useState(false);
   const toggleFullScreen = () => {

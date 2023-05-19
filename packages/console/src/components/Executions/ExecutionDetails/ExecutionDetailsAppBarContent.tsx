@@ -13,6 +13,7 @@ import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -90,7 +91,11 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   const isTerminal = executionIsTerminal(execution);
   const onClickShowInputsOutputs = () => setShowInputsOutputs(true);
   const onClickRelaunch = () => setShowRelaunchForm(true);
-  const onCloseRelaunch = () => setShowRelaunchForm(false);
+  const onCloseRelaunch = (_?: any) => setShowRelaunchForm(false);
+
+  // Close modal on escape key press
+  useEscapeKey(onCloseRelaunch);
+
   const fromExecutionNav = new URLSearchParams(history.location.search).get(
     'fromExecutionNav',
   );
