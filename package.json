@@ -34,7 +34,8 @@
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
     "test-coverage": "NODE_ENV=test BASE_URL=/console jest --coverage",
-    "test-release": "npx semantic-release --debug --no-ci --test-run"
+    "test-release": "npx semantic-release --debug --no-ci --test-run",
+    "licenses": "npx nlf \\ -y > licenses.txt \\ echo 'License audit complete! \n View licenses.txt for results.'"
   },
   "husky": {
     "hooks": {

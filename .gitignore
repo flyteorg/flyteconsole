@@ -72,6 +72,9 @@ yarn-error.log
 # We always want them in repository, since they are necessary to install dependencies.
 !.yarn/patches
 
+# license audit
+licenses.txt
+
 # Certs
 .srl
 certificate/
