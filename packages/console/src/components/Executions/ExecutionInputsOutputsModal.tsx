@@ -6,6 +6,7 @@ import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { emptyLiteralMapBlob } from 'models/Common/constants';
 import { Execution } from 'models/Execution/types';
 import * as React from 'react';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { useWorkflowExecutionData } from './useWorkflowExecution';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -126,6 +127,7 @@ export const ExecutionInputsOutputsModal: React.FC<
   ExecutionInputsOutputsModalProps
 > = ({ execution, onClose }) => {
   const styles = useStyles();
+  useEscapeKey(onClose);
   return (
     <Dialog
       PaperProps={{ className: styles.dialog }}
