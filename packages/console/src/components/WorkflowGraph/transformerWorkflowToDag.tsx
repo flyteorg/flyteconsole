@@ -216,6 +216,7 @@ const parseNode = ({
         /* 1. Add primary workflow as subworkflow on root */
         if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
           workflow.subWorkflows?.push(dPrimaryWorkflow);
+          workflow.tasks?.push(dPrimaryWorkflow.compiledWorkflow.tasks);
         }
 
         /* 2. Add subworkflows as subworkflows on root */
@@ -226,6 +227,7 @@ const parseNode = ({
           const subId = subworkflow.template.id;
           if (getSubWorkflowFromId(subId, workflow) === false) {
             workflow.subWorkflows?.push(subworkflow);
+            workflow.tasks?.push(subworkflow.compiledWorkflow.tasks);
           }
         }
       }
