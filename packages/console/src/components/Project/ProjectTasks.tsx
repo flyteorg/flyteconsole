@@ -37,8 +37,8 @@ export const ProjectTasks: React.FC<ProjectTasksProps> = ({
     <WaitForData {...taskNames}>
       <SearchableTaskNameList
         names={taskNames.value}
-        showArchived={archivedFilter.showArchived}
-        onArchiveFilterChange={archivedFilter.setShowArchived}
+        includeArchived={archivedFilter.includeArchived}
+        onArchiveFilterChange={archivedFilter.setIncludeArchived}
       />
     </WaitForData>
   );

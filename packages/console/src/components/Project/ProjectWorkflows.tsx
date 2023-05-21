@@ -1,5 +1,5 @@
 import { WaitForData } from 'components/common/WaitForData';
-import { useWorkflowShowArchivedState } from 'components/Workflow/filters/useWorkflowShowArchivedState';
+import { useWorkflowIncludeArchivedState } from 'components/Workflow/filters/useWorkflowIncludeArchivedState';
 import { SearchableWorkflowNameList } from 'components/Workflow/SearchableWorkflowNameList';
 import { limits } from 'models/AdminEntity/constants';
 import { SortDirection } from 'models/AdminEntity/types';
@@ -22,7 +22,8 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
   domainId: domain,
   projectId: project,
 }) => {
-  const archivedFilter = useWorkflowShowArchivedState();
+  const archivedFilter = useWorkflowIncludeArchivedState();
+  const [search, setSearch] = React.useState('');
   const workflows = useWorkflowInfoList(
     { domain, project },
     {
@@ -36,8 +37,10 @@ export const ProjectWorkflows: React.FC<ProjectWorkflowsProps> = ({
     <WaitForData {...workflows}>
       <SearchableWorkflowNameList
         workflows={workflows.value}
-        showArchived={archivedFilter.showArchived}
-        onArchiveFilterChange={archivedFilter.setShowArchived}
+        includeArchived={archivedFilter.includeArchived}
+        onArchiveFilterChange={archivedFilter.setIncludeArchived}
+        search={search}
+        setSearch={setSearch}
       />
     </WaitForData>
   );

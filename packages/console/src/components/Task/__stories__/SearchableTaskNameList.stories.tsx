@@ -27,7 +27,7 @@ stories.add('basic', () => (
   <Wrapper>
     <SearchableTaskNameList
       onArchiveFilterChange={action('onArchiveFilterChange')}
-      showArchived={false}
+      includeArchived={false}
       {...baseProps}
     />
   </Wrapper>

@@ -51,7 +51,9 @@ interface SearchableWorkflowNameItemActionsProps {
 interface SearchableWorkflowNameListProps {
   workflows: WorkflowListStructureItem[];
   onArchiveFilterChange: (showArchievedItems: boolean) => void;
-  showArchived: boolean;
+  includeArchived: boolean;
+  search: string;
+  setSearch: (search: string) => void;
 }
 
 export const showOnHoverClass = 'showOnHover';
@@ -357,9 +359,15 @@ const SearchableWorkflowNameItem: React.FC<SearchableWorkflowNameItemProps> =
  */
 export const SearchableWorkflowNameList: React.FC<
   SearchableWorkflowNameListProps
-> = ({ workflows, onArchiveFilterChange, showArchived }) => {
+> = ({
+  workflows,
+  onArchiveFilterChange,
+  includeArchived,
+  search,
+  setSearch,
+}) => {
   const styles = useStyles();
-  const [search, setSearch] = useState('');
+
   const { results, setSearchString } = useSearchableListState({
     items: workflows,
     propertyGetter: ({ id }) => id.name,
@@ -392,11 +400,11 @@ export const SearchableWorkflowNameList: React.FC<
           className={styles.archiveCheckbox}
           control={
             <Checkbox
-              checked={showArchived}
+              checked={includeArchived}
               onChange={(_, checked) => onArchiveFilterChange(checked)}
             />
           }
-          label="Show Only Archived Workflows"
+          label="Include Archived Workflows"
         />
       </FormGroup>
       <div className={styles.container}>

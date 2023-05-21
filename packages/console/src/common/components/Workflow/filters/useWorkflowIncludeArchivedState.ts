@@ -1,32 +1,34 @@
 import { useState } from 'react';
 import { FilterOperation, FilterOperationName } from 'models/AdminEntity/types';
-import { ExecutionState } from 'models/Execution/enums';
+import { NamedEntityState } from 'models/enums';
 
 interface ArchiveFilterState {
   includeArchived: boolean;
   setIncludeArchived: (newValue: boolean) => void;
-  getFilter: () => FilterOperation | null;
+  getFilter: () => FilterOperation;
 }
 
 /**
  *  Allows to filter by Archive state
  */
-export function useExecutionShowArchivedState(): ArchiveFilterState {
+export function useWorkflowIncludeArchivedState(): ArchiveFilterState {
   const [includeArchived, setIncludeArchived] = useState(false);
 
-  // By default all values are returned with EXECUTION_ACTIVE state,
-  // so filter need to be applied only for ARCHIVED executions
-  const getFilter = (): FilterOperation | null => {
+  // By default all values are returned with NAMED_ENTITY_ACTIVE state
+  const getFilter = (): FilterOperation => {
     if (!includeArchived) {
-      return null;
+      return {
+        key: 'state',
+        operation: FilterOperationName.EQ,
+        value: NamedEntityState.NAMED_ENTITY_ACTIVE,
+      };
     }
-
     return {
       key: 'state',
       operation: FilterOperationName.VALUE_IN,
       value: [
-        ExecutionState.EXECUTION_ARCHIVED,
-        ExecutionState.EXECUTION_ACTIVE,
+        NamedEntityState.NAMED_ENTITY_ARCHIVED,
+        NamedEntityState.NAMED_ENTITY_ACTIVE,
       ],
     };
   };

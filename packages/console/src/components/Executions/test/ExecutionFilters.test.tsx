@@ -124,10 +124,10 @@ describe('ExecutionFilters', () => {
       expect(checkboxes[0]).toBeEnabled();
     });
 
-    it('should display showArchived checkbox when corresponding props were provided', () => {
+    it('should display includeArchived checkbox when corresponding props were provided', () => {
       const props: ExecutionFiltersProps = {
         filters: [],
-        showArchived: true,
+        includeArchived: true,
         onArchiveFilterChange: jest.fn(),
       };
       const { getAllByRole } = render(<ExecutionFilters {...props} />);
@@ -145,7 +145,7 @@ describe('ExecutionFilters', () => {
           isFilterDisabled: false,
           onOnlyMyExecutionsFilterChange: jest.fn(),
         },
-        showArchived: true,
+        includeArchived: true,
         onArchiveFilterChange: jest.fn(),
       };
       const { getAllByRole } = render(<ExecutionFilters {...props} />);
