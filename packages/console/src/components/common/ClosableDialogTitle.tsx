@@ -1,6 +1,7 @@
 import { DialogTitle, IconButton, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import Close from '@material-ui/icons/Close';
+import { useEscapeKey } from 'components/hooks/useKeyListener';
 import * as React from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -27,6 +28,10 @@ export const ClosableDialogTitle: React.FC<ClosableDialogTitleProps> = ({
   onClose,
 }) => {
   const styles = useStyles();
+
+  // Close modal on escape key press
+  useEscapeKey(onClose);
+
   return (
     <DialogTitle disableTypography={true} className={styles.root}>
       <Typography variant="h6">{children}</Typography>
