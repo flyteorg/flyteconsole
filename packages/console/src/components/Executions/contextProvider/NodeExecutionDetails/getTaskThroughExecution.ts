@@ -2,25 +2,41 @@ import { getTaskDisplayType } from 'components/Executions/utils';
 import { fetchTaskExecutionList } from 'components/Executions/taskExecutionQueries';
 import { NodeExecutionDetails } from 'components/Executions/types';
 import { fetchTaskTemplate } from 'components/Task/taskQueries';
-import { NodeExecution } from 'models/Execution/types';
 import { TaskTemplate } from 'models/Task/types';
 import { QueryClient } from 'react-query/types/core/queryClient';
+import { WorkflowNodeExecution } from 'components/Executions/contexts';
+import { CompiledWorkflowClosure } from 'models';
 
 export const getTaskThroughExecution = async (
   queryClient: QueryClient,
-  nodeExecution: NodeExecution,
+  nodeExecution: WorkflowNodeExecution,
+  closure: CompiledWorkflowClosure,
 ): Promise<NodeExecutionDetails> => {
-  const taskExecutions = await fetchTaskExecutionList(
-    queryClient,
-    nodeExecution.id,
-  );
+  const taskExecutions = await (nodeExecution?.tasksFetched
+    ? // if the nodeExecution tasks were already fetched, use them
+      Promise.resolve(nodeExecution.taskExecutions || [])
+    : // otherwise, fetch them
+      fetchTaskExecutionList(queryClient, nodeExecution.id));
 
-  let taskTemplate: TaskTemplate | undefined = undefined;
-  if (taskExecutions && taskExecutions.length > 0) {
+  let taskTemplate: TaskTemplate = closure?.tasks?.find(
+    task =>
+      JSON.stringify(task.template.id) ===
+      JSON.stringify(taskExecutions[0].id.taskId),
+  )?.template as TaskTemplate;
+
+  if (
+    // skip request if the template was found
+    !taskTemplate &&
+    // skip request if the node has a dynamic parent
+    !nodeExecution.dynamicParentNodeId &&
+    taskExecutions &&
+    taskExecutions.length > 0
+  ) {
     taskTemplate = await fetchTaskTemplate(
       queryClient,
       taskExecutions[0].id.taskId,
     );
+
     if (!taskTemplate) {
       // eslint-disable-next-line no-console
       console.error(

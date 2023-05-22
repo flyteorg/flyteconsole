@@ -129,6 +129,7 @@ export const NodeExecutionDetailsContextProvider = ({
     const taskDetails = await getTaskThroughExecution(
       queryClient,
       nodeExecution,
+      closure,
     );
 
     const tasksMap = tasks;
