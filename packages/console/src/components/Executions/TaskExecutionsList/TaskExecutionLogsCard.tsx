@@ -8,6 +8,7 @@ import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { Core } from '@flyteorg/flyteidl-types';
 import { ExternalConfigHoc } from 'basics/ExternalConfigHoc';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import { isMapTaskV1 } from 'models';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
@@ -52,7 +53,15 @@ export const TaskExecutionLogsCard: React.FC<
   const { registry } = useExternalConfigurationContext();
 
   const {
-    closure: { error, startedAt, updatedAt, duration },
+    closure: {
+      error,
+      startedAt,
+      updatedAt,
+      duration,
+      metadata,
+      eventVersion,
+      taskType,
+    },
   } = taskExecution;
 
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
@@ -76,6 +85,12 @@ export const TaskExecutionLogsCard: React.FC<
       }}
     />
   );
+
+  const isMapTask = isMapTaskV1(
+    eventVersion!,
+    metadata?.externalResources?.length ?? 0,
+    taskType ?? undefined,
+  );
   return (
     <>
       <section className={styles.section}>
@@ -94,13 +109,15 @@ export const TaskExecutionLogsCard: React.FC<
           <section className={styles.section}>
             <TaskExecutionLogs taskLogs={logs ?? []} />
           </section>
-          <section className={styles.section}>
-            <TaskExecutionDetails
-              startedAt={startedAt}
-              updatedAt={updatedAt}
-              duration={duration}
-            />
-          </section>
+          {!isMapTask && (
+            <section className={styles.section}>
+              <TaskExecutionDetails
+                startedAt={startedAt}
+                updatedAt={updatedAt}
+                duration={duration}
+              />
+            </section>
+          )}
         </>
       )}
     </>
