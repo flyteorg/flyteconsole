@@ -161,10 +161,7 @@ export const NodeExecutionDetailsContextProvider = ({
       }
 
       // look for specific task by nodeId in current execution
-      if (
-        nodeExecution.metadata?.isDynamic ||
-        nodeExecution.dynamicParentNodeId
-      ) {
+      if (nodeExecution.metadata?.isDynamic) {
         details = await getDynamicTasks(nodeExecution);
       }
       return details;

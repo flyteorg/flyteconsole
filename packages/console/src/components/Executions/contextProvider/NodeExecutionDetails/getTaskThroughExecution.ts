@@ -6,6 +6,7 @@ import { TaskTemplate } from 'models/Task/types';
 import { QueryClient } from 'react-query/types/core/queryClient';
 import { WorkflowNodeExecution } from 'components/Executions/contexts';
 import { CompiledWorkflowClosure } from 'models';
+import { isEqual } from 'lodash';
 
 export const getTaskThroughExecution = async (
   queryClient: QueryClient,
@@ -18,10 +19,8 @@ export const getTaskThroughExecution = async (
     : // otherwise, fetch them
       fetchTaskExecutionList(queryClient, nodeExecution.id));
 
-  let taskTemplate: TaskTemplate = closure?.tasks?.find(
-    task =>
-      JSON.stringify(task.template.id) ===
-      JSON.stringify(taskExecutions[0].id.taskId),
+  let taskTemplate: TaskTemplate = closure?.tasks?.find(task =>
+    isEqual(task.template.id, taskExecutions[0].id.taskId),
   )?.template as TaskTemplate;
 
   if (
