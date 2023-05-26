@@ -7,11 +7,16 @@ import {
   IconButton,
   Typography,
   styled,
+  makeStyles,
 } from '@material-ui/core';
 
 const GrowGrid = styled(Grid)(({ theme }) => ({
   display: 'flex',
   flexGrow: 1,
+}));
+
+const FlexGrid = styled(Grid)(({ theme }) => ({
+  display: 'flex',
 }));
 
 const TopLevelLayout = ({
@@ -27,6 +32,13 @@ const TopLevelLayout = ({
   const SideNavigationComponent = () => sideNavigationComponent;
   const RouterView = () => routerView;
 
+  const styles = makeStyles(() => ({
+    sticky: {
+      position: 'sticky',
+      top: 0,
+    },
+  }))();
+
   return (
     <>
       <style>
@@ -38,9 +50,9 @@ const TopLevelLayout = ({
         direction="column"
         justifyContent="flex-start"
         alignItems="stretch"
-        style={{ minHeight: '100dvh' }}
+        style={{ minHeight: '400dvh' }}
       >
-        <Grid item>
+        <Grid item className={styles.sticky}>
           <HeaderComponent />
         </Grid>
         <GrowGrid item>
@@ -52,15 +64,11 @@ const TopLevelLayout = ({
             justifyContent="flex-start"
             style={{ background: 'green' }}
           >
-            <Grid item xs={3}>
-              <SideNavigationComponent />
+            <Grid item>
+              <div style={{ height: '100%', width: '200px' }}>foo</div>
             </Grid>
             <GrowGrid item>
-              <Grid container>
-                <Grid item>
-                  <RouterView />
-                </Grid>
-              </Grid>
+              <RouterView />
             </GrowGrid>
           </GrowGrid>
         </GrowGrid>
