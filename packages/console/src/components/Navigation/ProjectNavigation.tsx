@@ -10,17 +10,13 @@ import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject, useProjects } from 'components/hooks/useProjects';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
-import {
-  matchPath,
-  NavLink,
-  NavLinkProps,
-  RouteComponentProps,
-} from 'react-router-dom';
+import { matchPath, NavLinkProps, RouteComponentProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { MuiLaunchPlanIcon } from '@flyteorg/ui-atoms';
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { ProjectSelector } from './ProjectSelector';
+import NavLinkWithSearch from './NavLinkWithSearch';
 
 interface ProjectNavigationRouteParams {
   domainId?: string;
@@ -159,7 +155,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
       )}
       <div className={styles.navLinksContainer}>
         {Object.values(routes).map(({ isActive, path, icon: Icon, text }) => (
-          <NavLink
+          <NavLinkWithSearch
             activeClassName={styles.navLinkActive}
             className={classnames(commonStyles.linkUnstyled, styles.navLink)}
             isActive={isActive}
@@ -169,7 +165,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
             <Icon className={styles.navLinkIcon} />
             <span className={styles.navLinkText}>{text}</span>
             <ChevronRight className={styles.navLinkChevron} />
-          </NavLink>
+          </NavLinkWithSearch>
         ))}
       </div>
     </>
