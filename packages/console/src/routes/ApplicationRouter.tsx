@@ -46,7 +46,7 @@ export function withContentContainer<P extends {}>(
   );
 }
 
-export const ApplicationRouter: React.FC = () => {
+export const ApplicationRouterDep: React.FC = () => {
   const additionalRoutes =
     useExternalConfigurationContext()?.registry?.additionalRoutes || null;
   return (
@@ -90,6 +90,49 @@ export const ApplicationRouter: React.FC = () => {
         component={withContentContainer(components.selectProject)}
       />
       <Route component={withContentContainer(components.notFound)} />
+    </Switch>
+  );
+};
+
+export const ApplicationRouter: React.FC = () => {
+  const additionalRoutes =
+    useExternalConfigurationContext()?.registry?.additionalRoutes || null;
+  return (
+    <Switch>
+      {additionalRoutes}
+      <Route
+        path={Routes.ExecutionDetails.path}
+        component={components.executionDetails}
+      />
+      <Route
+        path={Routes.TaskDetails.path}
+        component={components.taskDetails}
+      />
+      <Route
+        exact
+        path={Routes.LaunchPlanDetails.path}
+        component={components.launchPlanDetails}
+      />
+      <Route
+        exact
+        path={Routes.WorkflowDetails.path}
+        component={components.workflowDetails}
+        // component={components.workflowDetails}
+      />
+      <Route
+        path={Routes.EntityVersionDetails.path}
+        component={components.entityVersionDetails}
+      />
+      <Route
+        path={Routes.ProjectDetails.path}
+        component={components.projectDetails}
+      />
+      <Route
+        path={Routes.SelectProject.path}
+        exact={true}
+        component={components.selectProject}
+      />
+      <Route component={components.notFound} />
     </Switch>
   );
 };

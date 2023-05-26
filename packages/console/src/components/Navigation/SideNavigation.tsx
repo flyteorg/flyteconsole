@@ -7,14 +7,19 @@ import { projectBasePath } from 'routes/constants';
 import { ProjectNavigation } from './ProjectNavigation';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {
+  wrapper: {
+    position: 'relative',
+    width: theme.spacing(sideNavGridWidth),
     borderRight: `1px solid ${separatorColor}`,
-    display: 'flex',
-    flexDirection: 'column',
-    bottom: 0,
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
     left: 0,
+    width: '100%',
+  },
+  fixed: {
     position: 'fixed',
-    top: theme.spacing(navbarGridHeight),
     width: theme.spacing(sideNavGridWidth),
   },
 }));
@@ -23,11 +28,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const SideNavigation: React.FC = () => {
   const styles = useStyles();
   return (
-    <div className={styles.root}>
-      <Route
-        path={`${projectBasePath}/:section?`}
-        component={ProjectNavigation}
-      />
+    <div className={styles.wrapper}>
+      <div className={styles.absolute}>
+        <div className={styles.fixed}>
+          <Route
+            path={`${projectBasePath}/:section?`}
+            component={ProjectNavigation}
+          />
+        </div>
+      </div>
     </div>
   );
 };
