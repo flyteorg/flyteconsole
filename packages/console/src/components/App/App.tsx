@@ -5,6 +5,7 @@ import {
   Collapse,
   StylesProvider,
   createGenerateClassName,
+  Grid,
 } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { FlyteApiProvider } from '@flyteorg/flyte-api';
@@ -35,6 +36,7 @@ import {
   ExternalConfigurationProviderProps,
 } from 'basics/ExternalConfigurationProvider';
 import NavBar from 'components/Navigation/NavBar';
+import TopLevelLayout from 'components/Navigation/TopLevelLayout';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -82,8 +84,19 @@ export const AppComponent: React.FC<AppComponentProps> = (
                       <ExternalConfigurationProvider {...props}>
                         <Router history={history}>
                           <ErrorBoundary fixed={true}>
-                            <NavBar />
-                            <ApplicationRouter />
+                            <TopLevelLayout
+                              headerComponent={
+                                <Grid item xs={12}>
+                                  Header
+                                </Grid>
+                              }
+                              sideNavigationComponent={
+                                <Grid container>Left</Grid>
+                              }
+                              routerView={<Grid container>Router</Grid>}
+                            />
+                            {/* <NavBar /> */}
+                            {/* <ApplicationRouter /> */}
                           </ErrorBoundary>
                         </Router>
                       </ExternalConfigurationProvider>

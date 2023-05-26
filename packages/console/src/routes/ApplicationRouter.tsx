@@ -72,6 +72,7 @@ export const ApplicationRouter: React.FC = () => {
         exact
         path={Routes.WorkflowDetails.path}
         component={withSideNavigation(components.workflowDetails)}
+        // component={components.workflowDetails}
       />
       <Route
         path={Routes.EntityVersionDetails.path}
