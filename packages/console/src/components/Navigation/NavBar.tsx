@@ -42,7 +42,6 @@ export const NavBar = (props: NavBarProps) => {
       style={{
         color: navData?.color,
         background: navData?.background,
-        position: 'fixed',
       }}
     >
       <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
