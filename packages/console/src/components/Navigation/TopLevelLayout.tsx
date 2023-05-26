@@ -8,6 +8,7 @@ import {
   Typography,
   styled,
   makeStyles,
+  Box,
 } from '@material-ui/core';
 
 const GrowGrid = styled(Grid)(({ theme }) => ({
@@ -41,16 +42,16 @@ const TopLevelLayout = ({
 
   return (
     <>
-      <style>
+      {/* <style>
         {`.top-level-layout, .top-level-layout * {background: rgb(39 1 255 / 10%) !important; border: 1px solid black !important;}`}
-      </style>
+      </style> */}
       <Grid
         className="top-level-layout"
         container
         direction="column"
         justifyContent="flex-start"
         alignItems="stretch"
-        style={{ minHeight: '400dvh' }}
+        style={{ minHeight: '100dvh' }} // Full screen acounting for mobile browser UI
       >
         <Grid item className={styles.sticky}>
           <HeaderComponent />
@@ -62,13 +63,19 @@ const TopLevelLayout = ({
             direction="row"
             alignItems="stretch"
             justifyContent="flex-start"
-            style={{ background: 'green' }}
           >
-            <Grid item>
-              <div style={{ height: '100%', width: '200px' }}>foo</div>
+            <Grid item style={{ position: 'relative' }}>
+              <SideNavigationComponent />
             </Grid>
-            <GrowGrid item>
-              <RouterView />
+            <GrowGrid item style={{ position: 'relative' }}>
+              <Grid container>
+                <Grid item style={{ position: 'absolute', width: '100%' }}>
+                  <Box style={{ position: 'relative' }}>
+                    {/* <div>Foo</div> */}
+                    <RouterView />
+                  </Box>
+                </Grid>
+              </Grid>
             </GrowGrid>
           </GrowGrid>
         </GrowGrid>
