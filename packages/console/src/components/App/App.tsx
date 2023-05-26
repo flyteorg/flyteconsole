@@ -88,7 +88,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
                             <TopLevelLayout
                               headerComponent={<NavBar />}
                               sideNavigationComponent={<SideNavigation />}
-                              routerView={<Grid container>Router</Grid>}
+                              routerView={<ApplicationRouter />}
                             />
                             {/* <NavBar /> */}
                             {/* <ApplicationRouter /> */}
