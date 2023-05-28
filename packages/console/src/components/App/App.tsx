@@ -38,6 +38,7 @@ import {
 import NavBar from 'components/Navigation/NavBar';
 import TopLevelLayout from 'components/Navigation/TopLevelLayout';
 import { SideNavigation } from 'components/Navigation/SideNavigation';
+import TopLevelLayoutProvider from 'components/Navigation/TopLevelLayoutState';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -85,13 +86,13 @@ export const AppComponent: React.FC<AppComponentProps> = (
                       <ExternalConfigurationProvider {...props}>
                         <Router history={history}>
                           <ErrorBoundary fixed={true}>
-                            <TopLevelLayout
-                              headerComponent={<NavBar />}
-                              sideNavigationComponent={<SideNavigation />}
-                              routerView={<ApplicationRouter />}
-                            />
-                            {/* <NavBar /> */}
-                            {/* <ApplicationRouter /> */}
+                            <TopLevelLayoutProvider>
+                              <TopLevelLayout
+                                headerComponent={<NavBar />}
+                                sideNavigationComponent={<SideNavigation />}
+                                routerView={<ApplicationRouter />}
+                              />
+                            </TopLevelLayoutProvider>
                           </ErrorBoundary>
                         </Router>
                       </ExternalConfigurationProvider>

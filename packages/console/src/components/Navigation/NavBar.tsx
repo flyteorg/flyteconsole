@@ -5,6 +5,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { navBarContentId } from 'common/constants';
 import { FlyteNavigation } from '@flyteorg/common';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import { makeStyles } from '@material-ui/core';
+import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { getFlyteNavigationData } from './utils';
 
 export interface NavBarProps {
@@ -16,6 +18,10 @@ const DefaultAppBarContent = lazy(() => import('./DefaultAppBarContent'));
 
 /** Contains all content in the top navbar of the application. */
 export const NavBar = (props: NavBarProps) => {
+  const styles = makeStyles(theme => ({
+    spacer: theme.mixins.toolbar as CSSProperties,
+  }))();
+
   const navData = props.navigationData ?? getFlyteNavigationData();
   const navBarContent = props.useCustomContent ? (
     <div id={navBarContentId} />
@@ -35,19 +41,21 @@ export const NavBar = (props: NavBarProps) => {
   return ExternalNav ? (
     <ExternalNav />
   ) : (
-    <AppBar
-      color="secondary"
-      elevation={0}
-      id="navbar"
-      style={{
-        color: navData?.color,
-        background: navData?.background,
-        position: 'sticky',
-        top: 0,
-      }}
-    >
-      <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
-    </AppBar>
+    <>
+      <div className={styles.spacer} />
+      <AppBar
+        color="secondary"
+        elevation={0}
+        id="navbar"
+        style={{
+          color: navData?.color,
+          background: navData?.background,
+          top: 0,
+        }}
+      >
+        <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
+      </AppBar>
+    </>
   );
 };
 

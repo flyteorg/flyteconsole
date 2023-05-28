@@ -10,6 +10,7 @@ import { entitySections } from 'components/Entities/constants';
 import { EntityDetailsHeader } from 'components/Entities/EntityDetailsHeader';
 import { EntityVersions } from 'components/Entities/EntityVersions';
 import { RouteComponentProps } from 'react-router-dom';
+import { Box } from '@material-ui/core';
 import { typeNameToEntityResource } from '../constants';
 import { versionsDetailsSections } from './constants';
 import { EntityVersionDetails } from './EntityVersionDetails';
@@ -26,6 +27,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
     flexWrap: 'nowrap',
     overflow: 'hidden',
     height: `calc(100vh - ${theme.spacing(17)}px)`,
+    padding: `0 ${theme.spacing(2)}`,
   },
   staticGraphContainer: {
     display: 'flex',
@@ -40,10 +42,12 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => ({
     width: '100%',
     flex: '1',
     overflowY: 'scroll',
+    padding: `0 ${theme.spacing(2)}`,
   },
   versionsContainer: {
     display: 'flex',
     flex: '0 1 auto',
+    padding: `0 ${theme.spacing(2)}`,
     height: ({ resourceType }) =>
       resourceType === ResourceType.LAUNCH_PLAN ? '100%' : '40%',
     flexDirection: 'column',
@@ -87,12 +91,14 @@ const EntityVersionsDetailsContainerImpl: React.FC<
 
   return (
     <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={sections.launch}
-        backToWorkflow
-      />
+      <Box pl={2} pr={2}>
+        <EntityDetailsHeader
+          project={project.value}
+          id={id}
+          launchable={sections.launch}
+          backToWorkflow
+        />
+      </Box>
       <div className={styles.verionDetailsContainer}>
         {versionsSections.details && (
           <div className={styles.versionDetailsContainer}>
