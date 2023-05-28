@@ -1,10 +1,11 @@
+import React from 'react';
 import {
   ContentContainer,
   ContentContainerProps,
 } from 'components/common/ContentContainer';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
-import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import { history } from 'routes/history';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
@@ -51,6 +52,43 @@ export function withContentContainer<P extends {}>(
     </ContentContainer>
   );
 }
+
+/**
+ * Perform an animation when the route changes
+ * Currently only resets scroll
+ * @param history
+ * @returns
+ */
+const AnimateRoute = ({ history }) => {
+  const from = React.useRef(window.location);
+
+  const scrollToTop = () => {
+    setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, 0);
+  };
+
+  React.useEffect(() => {
+    const historyAction = history.listen((to, action) => {
+      if (action === 'PUSH') {
+        // link click
+        scrollToTop();
+      } else if (action === 'POP' && from.current.pathname !== to.pathname) {
+        // browser back button
+        // only scroll to top if the path is different
+        // ignore query params or hash changes
+        scrollToTop();
+      }
+      // update from location
+      from.current = to.pathname;
+    });
+    return () => {
+      historyAction();
+    };
+  }, []);
+
+  return <></>;
+};
 
 export const ApplicationRouterDep: React.FC = () => {
   const additionalRoutes =
@@ -107,61 +145,66 @@ export const ApplicationRouter: React.FC = () => {
   const additionalRoutes =
     useExternalConfigurationContext()?.registry?.additionalRoutes || null;
   return (
-    <Switch>
-      {additionalRoutes}
-      <Route
-        path={Routes.ExecutionDetails.path}
-        component={components.executionDetails}
-      />
-      <Route
-        path={Routes.TaskDetails.path}
-        component={components.taskDetails}
-      />
-      <Route
-        exact
-        path={Routes.LaunchPlanDetails.path}
-        component={components.launchPlanDetails}
-      />
-      <Route
-        exact
-        path={Routes.WorkflowDetails.path}
-        component={components.workflowDetails}
-        // component={components.workflowDetails}
-      />
-      <Route
-        path={Routes.EntityVersionDetails.path}
-        component={components.entityVersionDetails}
-      />
-      <Route
-        path={Routes.ProjectDetails.path}
-        component={components.projectDetails}
-      />
-      <Route
-        path={Routes.SelectProject.path}
-        exact={true}
-        component={components.selectProject}
-      />
-      <Route
-        path={makeRoute('/')}
-        render={() => {
-          /**
-           * If LocalStoreDefaults exist, we direct them to the project detail view
-           * for those values.
-           */
-          if (localProjectDomain) {
-            return (
-              <Redirect
-                to={`${makeRoute('/')}/projects/${
-                  localProjectDomain.project
-                }/executions?domain=${localProjectDomain.domain}&duration=all`}
-              />
-            );
-          } else {
-            return <Redirect to={Routes.SelectProject.path} />;
-          }
-        }}
-      />
-      <Route component={components.notFound} />
-    </Switch>
+    <>
+      <Switch>
+        {additionalRoutes}
+        <Route
+          path={Routes.ExecutionDetails.path}
+          component={components.executionDetails}
+        />
+        <Route
+          path={Routes.TaskDetails.path}
+          component={components.taskDetails}
+        />
+        <Route
+          exact
+          path={Routes.LaunchPlanDetails.path}
+          component={components.launchPlanDetails}
+        />
+        <Route
+          exact
+          path={Routes.WorkflowDetails.path}
+          component={components.workflowDetails}
+          // component={components.workflowDetails}
+        />
+        <Route
+          path={Routes.EntityVersionDetails.path}
+          component={components.entityVersionDetails}
+        />
+        <Route
+          path={Routes.ProjectDetails.path}
+          component={components.projectDetails}
+        />
+        <Route
+          path={Routes.SelectProject.path}
+          exact={true}
+          component={components.selectProject}
+        />
+        <Route
+          path={makeRoute('/')}
+          render={() => {
+            /**
+             * If LocalStoreDefaults exist, we direct them to the project detail view
+             * for those values.
+             */
+            if (localProjectDomain) {
+              return (
+                <Redirect
+                  to={`${makeRoute('/')}/projects/${
+                    localProjectDomain.project
+                  }/executions?domain=${
+                    localProjectDomain.domain
+                  }&duration=all`}
+                />
+              );
+            } else {
+              return <Redirect to={Routes.SelectProject.path} />;
+            }
+          }}
+        />
+        <Route component={components.notFound} />
+      </Switch>
+      <AnimateRoute history={history} />
+    </>
   );
 };

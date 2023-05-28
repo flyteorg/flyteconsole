@@ -5,6 +5,7 @@ import { WaitForData } from 'components/common/WaitForData';
 import { useProjects } from 'components/hooks/useProjects';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
+import { TopLevelLayoutContext } from 'components/Navigation/TopLevelLayoutState';
 import { ProjectList } from './ProjectList';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,6 +32,14 @@ const renderProjectList = (results: SearchResult<Project>[]) => (
 export const SelectProject: React.FC = () => {
   const styles = useStyles();
   const projects = useProjects();
+
+  const { isSideNavOpen, closeSideNav } = React.useContext(
+    TopLevelLayoutContext,
+  );
+  React.useEffect(() => {
+    closeSideNav();
+  }, [closeSideNav, isSideNavOpen]);
+
   return (
     <WaitForData {...projects}>
       <div className={styles.container}>

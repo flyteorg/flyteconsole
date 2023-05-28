@@ -21,6 +21,7 @@ import {
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { ProjectSelector } from './ProjectSelector';
 import NavLinkWithSearch from './NavLinkWithSearch';
+import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 interface ProjectNavigationRouteParams {
   domainId?: string;
@@ -155,6 +156,15 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
       text: 'Launch Plans',
     },
   ];
+
+  const { isSideNavOpen, openSideNav } = React.useContext(
+    TopLevelLayoutContext,
+  );
+  React.useEffect(() => {
+    if (!isSideNavOpen) {
+      openSideNav();
+    }
+  }, [openSideNav, isSideNavOpen]);
 
   return (
     <>

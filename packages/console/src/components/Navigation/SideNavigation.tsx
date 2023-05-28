@@ -1,5 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { navbarGridHeight, sideNavGridWidth } from 'common/layout';
+import { sideNavGridWidth } from 'common/layout';
 import { separatorColor } from 'components/Theme/constants';
 import * as React from 'react';
 import { Route } from 'react-router-dom';
@@ -9,18 +9,23 @@ import { ProjectNavigation } from './ProjectNavigation';
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     position: 'relative',
+    height: '100%',
     width: theme.spacing(sideNavGridWidth),
-    borderRight: `1px solid ${separatorColor}`,
   },
   absolute: {
     position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
+    height: '100%',
   },
   fixed: {
     position: 'fixed',
+    height: '100%',
     width: theme.spacing(sideNavGridWidth),
+  },
+  border: {
+    borderRight: `1px solid ${separatorColor}`,
   },
 }));
 
@@ -30,7 +35,7 @@ export const SideNavigation: React.FC = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.absolute}>
-        <div className={styles.fixed}>
+        <div className={`${styles.fixed} ${styles.border}`}>
           <Route
             path={`${projectBasePath}/:section?`}
             component={ProjectNavigation}
