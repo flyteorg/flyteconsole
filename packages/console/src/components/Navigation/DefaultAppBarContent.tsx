@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { AppInfo, VersionInfo } from '@flyteorg/components';
 import { FlyteLogo } from '@flyteorg/ui-atoms';
@@ -9,12 +9,14 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from '@flyteorg/common';
-import { Box, Grid } from '@material-ui/core';
+import { Box, Grid, IconButton } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
 import { FlyteNavItem } from './utils';
 import t, { patternKey } from './strings';
+import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 interface DefaultAppBarProps {
   items: FlyteNavItem[];
@@ -25,11 +27,22 @@ interface DefaultAppBarProps {
 export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   const [platformVersion, setPlatformVersion] = React.useState('');
   const [consoleVersion, setConsoleVersion] = React.useState('');
+  const { isMobileNav, openSideNav, closeSideNav, isSideNavOpen } =
+    React.useContext(TopLevelLayoutContext);
+
   const commonStyles = useCommonStyles();
 
   const isFlagEnabled = useFeatureFlag(FeatureFlag.OnlyMine);
   const { adminVersion } = useAdminVersion();
   const isGAEnabled = env.ENABLE_GA === 'true' && env.GA_TRACKING_ID !== '';
+
+  const handleSideNavToggle = React.useCallback(() => {
+    if (isSideNavOpen) {
+      closeSideNav();
+    } else {
+      openSideNav();
+    }
+  }, [isSideNavOpen, openSideNav, closeSideNav]);
 
   React.useEffect(() => {
     try {
@@ -69,11 +82,14 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
 
   const styles = makeStyles(() => ({
     wordmark: {
+      position: 'relative',
+      paddingTop: '22px',
       '& > svg': {
         height: '22px',
         transform: 'translateX(-34px)',
-        position: 'absolute',
         marginTop: '4px',
+        top: '0',
+        position: 'absolute',
       },
       '& > svg > path:first-child': {
         display: 'none',
@@ -92,27 +108,47 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
       alignItems="center"
       style={{ width: '100%', height: '100%' }}
     >
-      <Grid item className={styles.flex}>
-        <Link
-          className={
-            isInlineHeader
-              ? commonStyles.linkUnstyled
-              : classnames(commonStyles.linkUnstyled, styles.flex)
-          }
-          to={Routes.SelectProject.path}
+      <Grid item>
+        <Grid
+          container
+          direction={isInlineHeader ? 'column-reverse' : 'row'}
+          alignItems="center"
+          spacing={2}
         >
-          <FlyteLogo size={32} hideText={isInlineHeader} />
-          {isInlineHeader && (
-            <Box className={styles.wordmark}>
-              <FlyteLogo size={32} />
-            </Box>
+          {isMobileNav && (
+            <Grid item className={styles.flex}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleSideNavToggle}
+              >
+                <MenuIcon>menu</MenuIcon>
+              </IconButton>
+            </Grid>
           )}
-        </Link>
-        {props.items?.length > 0 ? (
-          <NavigationDropdown items={props.items} console={props.console} />
-        ) : (
-          false
-        )}
+          <Grid item className={styles.flex}>
+            <Link
+              className={
+                isInlineHeader
+                  ? commonStyles.linkUnstyled
+                  : classnames(commonStyles.linkUnstyled, styles.flex)
+              }
+              to={Routes.SelectProject.path}
+            >
+              <FlyteLogo size={32} hideText={isInlineHeader} />
+              {isInlineHeader && (
+                <Box className={styles.wordmark}>
+                  <FlyteLogo size={32} />
+                </Box>
+              )}
+            </Link>
+            {props.items?.length > 0 ? (
+              <NavigationDropdown items={props.items} console={props.console} />
+            ) : (
+              false
+            )}
+          </Grid>
+        </Grid>
       </Grid>
       <Grid item>
         <Grid

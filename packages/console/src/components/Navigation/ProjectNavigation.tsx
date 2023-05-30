@@ -157,14 +157,13 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
     },
   ];
 
-  const { isSideNavOpen, openSideNav } = React.useContext(
-    TopLevelLayoutContext,
-  );
+  const { openSideNav } = React.useContext(TopLevelLayoutContext);
+
   React.useEffect(() => {
-    if (!isSideNavOpen) {
+    if (window.innerWidth > 1120) {
       openSideNav();
     }
-  }, [openSideNav, isSideNavOpen]);
+  }, []);
 
   return (
     <>
