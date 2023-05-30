@@ -1,13 +1,20 @@
 import * as React from 'react';
 import { useFlyteApi } from '@flyteorg/flyte-api';
-import { Link, makeStyles, Theme } from '@material-ui/core';
+import { Avatar, Link, makeStyles, Theme } from '@material-ui/core';
 import { WaitForData } from 'components/common/WaitForData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     color: theme.palette.common.white,
+  },
+  avatar: {
+    width: '2rem',
+    height: '2rem',
+    fontSize: '1rem',
+    backgroundColor: theme.palette.primary.dark,
   },
 }));
 
@@ -21,20 +28,41 @@ const LoginLink = (props: { loginUrl: string }) => {
 
 /** Displays user info if logged in, or a login link otherwise. */
 export const UserInformation: React.FC<{}> = () => {
-  const style = useStyles();
+  const styles = useStyles();
   const profile = useUserProfile();
   const apiContext = useFlyteApi();
 
+  const userName = React.useMemo(() => {
+    if (!profile.value) {
+      return null;
+    }
+    return !profile.value.preferredUsername ||
+      profile.value.preferredUsername === ''
+      ? profile.value.name
+      : profile.value.preferredUsername;
+  }, [profile.value]);
+
+  const userNameInitial = React.useMemo(() => {
+    if (!userName) {
+      return '';
+    }
+    return userName[0].toLocaleUpperCase();
+  }, [userName]);
+
+  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
+
   return (
     <WaitForData spinnerVariant="none" {...profile}>
-      <div className={style.container}>
-        {!profile.value ? (
-          <LoginLink loginUrl={apiContext.getLoginUrl()} />
-        ) : !profile.value.preferredUsername ||
-          profile.value.preferredUsername === '' ? (
-          profile.value.name
-        ) : (
-          profile.value.preferredUsername
+      <div className={styles.container}>
+        {!profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
+        {profile.value && (
+          <>
+            {isInlineHeader ? (
+              <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
+            ) : (
+              <span>{userName}</span>
+            )}
+          </>
         )}
       </div>
     </WaitForData>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, styled, makeStyles, Box } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 const GrowGrid = styled(Grid)(() => ({
@@ -81,6 +82,7 @@ const TopLevelLayout = ({
   }))();
 
   const { isSideNavOpen } = React.useContext(TopLevelLayoutContext);
+  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
 
   return (
     <>
@@ -88,19 +90,18 @@ const TopLevelLayout = ({
         <ExternalTopLevelLayout />
       ) : (
         <>
-          {/* <style>
-        {`.top-level-layout, .top-level-layout * {background: rgb(39 1 255 / 10%) !important; border: 1px solid black !important;}`}
-      </style> */}
           <Grid
             className={`top-level-layout ${styles.h100}`}
             container
-            direction="column"
+            direction={isInlineHeader ? 'row' : 'column'}
             justifyContent="flex-start"
             alignItems="stretch"
           >
             <Grid
               item
-              className={`${styles.sticky} ${styles.above} sticky-header-container`}
+              className={`sticky-header-container
+              ${isInlineHeader ? '' : styles.sticky} 
+              ${isInlineHeader ? '' : styles.above}`}
             >
               <HeaderComponent />
             </Grid>
