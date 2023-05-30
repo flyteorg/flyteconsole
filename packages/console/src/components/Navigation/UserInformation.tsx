@@ -1,20 +1,13 @@
 import * as React from 'react';
 import { useFlyteApi } from '@flyteorg/flyte-api';
-import { Avatar, Link, makeStyles, Theme } from '@material-ui/core';
+import { Link, makeStyles, Theme } from '@material-ui/core';
 import { WaitForData } from 'components/common/WaitForData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     color: theme.palette.common.white,
-  },
-  avatar: {
-    width: '2rem',
-    height: '2rem',
-    fontSize: '1rem',
-    backgroundColor: theme.palette.primary.dark,
   },
 }));
 
@@ -42,28 +35,11 @@ export const UserInformation: React.FC<{}> = () => {
       : profile.value.preferredUsername;
   }, [profile.value]);
 
-  const userNameInitial = React.useMemo(() => {
-    if (!userName) {
-      return '';
-    }
-    return userName[0].toLocaleUpperCase();
-  }, [userName]);
-
-  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
-
   return (
     <WaitForData spinnerVariant="none" {...profile}>
       <div className={styles.container}>
         {!profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
-        {profile.value && (
-          <>
-            {isInlineHeader ? (
-              <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
-            ) : (
-              <span>{userName}</span>
-            )}
-          </>
-        )}
+        {profile.value && <span>{userName}</span>}
       </div>
     </WaitForData>
   );
