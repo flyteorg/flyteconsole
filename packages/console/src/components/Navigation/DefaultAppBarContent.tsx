@@ -9,7 +9,7 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from '@flyteorg/common';
-import { Box, Grid, IconButton } from '@material-ui/core';
+import { Grid, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
@@ -78,8 +78,6 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     },
   ];
 
-  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
-
   const styles = makeStyles(() => ({
     wordmark: {
       position: 'relative',
@@ -103,18 +101,13 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   return (
     <Grid
       container
-      direction={isInlineHeader ? 'column' : 'row'}
+      direction="row"
       justifyContent="space-between"
       alignItems="center"
       style={{ width: '100%', height: '100%' }}
     >
       <Grid item>
-        <Grid
-          container
-          direction={isInlineHeader ? 'column-reverse' : 'row'}
-          alignItems="center"
-          spacing={2}
-        >
+        <Grid container direction="row" alignItems="center" spacing={2}>
           {isMobileNav && (
             <Grid item className={styles.flex}>
               <IconButton
@@ -128,19 +121,10 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
           )}
           <Grid item className={styles.flex}>
             <Link
-              className={
-                isInlineHeader
-                  ? commonStyles.linkUnstyled
-                  : classnames(commonStyles.linkUnstyled, styles.flex)
-              }
+              className={classnames(commonStyles.linkUnstyled, styles.flex)}
               to={Routes.SelectProject.path}
             >
-              <FlyteLogo size={32} hideText={isInlineHeader} />
-              {isInlineHeader && (
-                <Box className={styles.wordmark}>
-                  <FlyteLogo size={32} />
-                </Box>
-              )}
+              <FlyteLogo size={32} />
             </Link>
             {props.items?.length > 0 ? (
               <NavigationDropdown items={props.items} console={props.console} />
@@ -153,7 +137,7 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
       <Grid item>
         <Grid
           container
-          direction={isInlineHeader ? 'column' : 'row'}
+          direction="row"
           spacing={2}
           alignItems="center"
           justifyContent="center"

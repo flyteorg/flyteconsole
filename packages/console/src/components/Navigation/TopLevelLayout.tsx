@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Grid, styled, makeStyles, Box } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { sideNavGridWidth } from 'common/layout';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
@@ -91,7 +90,6 @@ const TopLevelLayout = ({
 
   const { isMobileNav, isSideNavOpen, openSideNav, closeSideNav } =
     React.useContext(TopLevelLayoutContext);
-  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
 
   // useEffect to listen to window resize events
   useEffect(() => {
@@ -111,15 +109,16 @@ const TopLevelLayout = ({
           <Grid
             className={`top-level-layout ${styles.h100}`}
             container
-            direction={isInlineHeader ? 'row' : 'column'}
+            direction="column"
             justifyContent="flex-start"
             alignItems="stretch"
           >
             <Grid
               item
               className={`sticky-header-container
-              ${isInlineHeader ? '' : styles.sticky} 
-              ${isInlineHeader ? '' : styles.above}`}
+                ${styles.sticky} 
+                ${styles.above}
+              `}
             >
               <HeaderComponent />
             </Grid>
