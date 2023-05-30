@@ -9,20 +9,12 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from '@flyteorg/common';
+import { Box, Grid } from '@material-ui/core';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
 import { FlyteNavItem } from './utils';
 import t, { patternKey } from './strings';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  spacer: {
-    flexGrow: 1,
-  },
-  rightNavBarItem: {
-    marginLeft: theme.spacing(2),
-  },
-}));
 
 interface DefaultAppBarProps {
   items: FlyteNavItem[];
@@ -34,7 +26,6 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   const [platformVersion, setPlatformVersion] = React.useState('');
   const [consoleVersion, setConsoleVersion] = React.useState('');
   const commonStyles = useCommonStyles();
-  const styles = useStyles();
 
   const isFlagEnabled = useFeatureFlag(FeatureFlag.OnlyMine);
   const { adminVersion } = useAdminVersion();
@@ -74,27 +65,80 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     },
   ];
 
+  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
+
+  const styles = makeStyles(() => ({
+    wordmark: {
+      '& > svg': {
+        height: '22px',
+        transform: 'translateX(-34px)',
+        position: 'absolute',
+        marginTop: '4px',
+      },
+      '& > svg > path:first-child': {
+        display: 'none',
+      },
+    },
+    flex: {
+      display: 'flex',
+    },
+  }))();
+
   return (
-    <>
-      <Link
-        className={classnames(commonStyles.linkUnstyled)}
-        to={Routes.SelectProject.path}
-      >
-        <FlyteLogo size={32} />
-      </Link>
-      {props.items?.length > 0 ? (
-        <NavigationDropdown items={props.items} console={props.console} />
-      ) : (
-        false
-      )}
-      <div className={styles.spacer} />
-      {isFlagEnabled && <OnlyMine />}
-      <UserInformation />
-      <AppInfo
-        versions={versions}
-        documentationUrl="https://docs.flyte.org/en/latest/"
-      />
-    </>
+    <Grid
+      container
+      direction={isInlineHeader ? 'column' : 'row'}
+      justifyContent="space-between"
+      alignItems="center"
+      style={{ width: '100%', height: '100%' }}
+    >
+      <Grid item className={styles.flex}>
+        <Link
+          className={
+            isInlineHeader
+              ? commonStyles.linkUnstyled
+              : classnames(commonStyles.linkUnstyled, styles.flex)
+          }
+          to={Routes.SelectProject.path}
+        >
+          <FlyteLogo size={32} hideText={isInlineHeader} />
+          {isInlineHeader && (
+            <Box className={styles.wordmark}>
+              <FlyteLogo size={32} />
+            </Box>
+          )}
+        </Link>
+        {props.items?.length > 0 ? (
+          <NavigationDropdown items={props.items} console={props.console} />
+        ) : (
+          false
+        )}
+      </Grid>
+      <Grid item>
+        <Grid
+          container
+          direction={isInlineHeader ? 'column' : 'row'}
+          spacing={2}
+          alignItems="center"
+          justifyContent="center"
+        >
+          {isFlagEnabled && (
+            <Grid item>
+              <OnlyMine />
+            </Grid>
+          )}
+          <Grid item>
+            <UserInformation />
+          </Grid>
+          <Grid item className={styles.flex}>
+            <AppInfo
+              versions={versions}
+              documentationUrl="https://docs.flyte.org/en/latest/"
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 
