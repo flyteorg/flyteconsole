@@ -25,25 +25,58 @@ const TopLevelLayout = ({
   const { registry } = useExternalConfigurationContext();
   const ExternalTopLevelLayout = registry?.topLevelLayout;
 
-  const styles = makeStyles(() => ({
+  const styles = makeStyles(theme => ({
     sticky: {
       position: 'sticky',
       top: 0,
     },
+    relative: {
+      position: 'relative',
+    },
+    absolute: {
+      position: 'relative',
+    },
+    w100: {
+      width: '100%',
+    },
+    h100: {
+      minHeight: '100dvh',
+    },
     above: {
       zIndex: 1,
     },
-    sideNav: {
+    sideNavAnimation: {
       // causes jank when animating side nav
-      // transition: 'all 0.3s ease',
+      animationName: `$sideNavAnimation`,
+      animationEasing: `${theme.transitions.easing.easeInOut}`,
+      animationDuration: `300ms`,
+      animationFillMode: 'forwards',
+    },
+    '@keyframes sideNavAnimation': {
+      '0%': {
+        opacity: 0,
+        display: 'none',
+      },
+      '1%': {
+        opacity: 0,
+        transform: 'translateX(-20%)',
+        display: 'block',
+      },
+      '99%': {
+        opacity: 1,
+        transform: 'translateX(0)',
+      },
+      '100%': {
+        opacity: 1,
+        display: 'block',
+      },
     },
     closeSideNav: {
+      animationDirection: 'reverse',
       display: 'none',
-      left: '-100%',
     },
     openSideNav: {
-      display: 'block',
-      left: 0,
+      animationDirection: 'forward',
     },
   }))();
 
@@ -59,12 +92,11 @@ const TopLevelLayout = ({
         {`.top-level-layout, .top-level-layout * {background: rgb(39 1 255 / 10%) !important; border: 1px solid black !important;}`}
       </style> */}
           <Grid
-            className="top-level-layout"
+            className={`top-level-layout ${styles.h100}`}
             container
             direction="column"
             justifyContent="flex-start"
             alignItems="stretch"
-            style={{ minHeight: '100dvh' }} // Full screen acounting for mobile browser UI
           >
             <Grid
               item
@@ -79,20 +111,22 @@ const TopLevelLayout = ({
                 direction="row"
                 alignItems="stretch"
                 justifyContent="flex-start"
-                style={{ position: 'relative' }}
+                className={`${styles.relative}`}
               >
                 <Grid
                   item
-                  style={{ position: 'relative' }}
-                  className={`side-nav-container ${styles.sideNav}
-                ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}`}
+                  className={`side-nav-container
+                    ${styles.relative}
+                    ${styles.sideNavAnimation}
+                    ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}
+                  `}
                 >
                   <SideNavigationComponent />
                 </Grid>
-                <GrowGrid item style={{ position: 'relative' }}>
+                <GrowGrid item className={`${styles.relative}`}>
                   <Grid container>
-                    <Grid item style={{ position: 'absolute', width: '100%' }}>
-                      <Box style={{ position: 'relative' }}>
+                    <Grid item className={`${styles.absolute} ${styles.w100}`}>
+                      <Box className={`${styles.relative}`}>
                         {/* Legacy, need to move to <Grid/> */}
                         <ContentContainer className="routerview-content-container flex-column-container">
                           <RouterView />
