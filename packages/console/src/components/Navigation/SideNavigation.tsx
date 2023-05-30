@@ -35,7 +35,9 @@ export const SideNavigation: React.FC = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.absolute}>
-        <div className={`${styles.fixed} ${styles.border}`}>
+        <div
+          className={`left-nav-fixed-wrapper ${styles.fixed} ${styles.border}`}
+        >
           <Route
             path={`${projectBasePath}/:section?`}
             component={ProjectNavigation}

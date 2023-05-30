@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, styled, makeStyles, Box } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
+import { sideNavGridWidth } from 'common/layout';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 const GrowGrid = styled(Grid)(() => ({
@@ -35,7 +36,7 @@ const TopLevelLayout = ({
       position: 'relative',
     },
     absolute: {
-      position: 'relative',
+      position: 'absolute',
     },
     w100: {
       width: '100%',
@@ -46,10 +47,17 @@ const TopLevelLayout = ({
     above: {
       zIndex: 1,
     },
+    mobileNav: {
+      zIndex: 2,
+      position: 'fixed',
+      height: '100%',
+      minWidth: theme.spacing(sideNavGridWidth),
+      background: theme.palette.background.paper,
+      boxShadow: theme.shadows[4],
+    },
     sideNavAnimation: {
-      // causes jank when animating side nav
       animationName: `$sideNavAnimation`,
-      animationEasing: `${theme.transitions.easing.easeInOut}`,
+      animationTimingFunction: `${theme.transitions.easing.easeInOut}`,
       animationDuration: `300ms`,
       animationFillMode: 'forwards',
     },
@@ -77,12 +85,22 @@ const TopLevelLayout = ({
       display: 'none',
     },
     openSideNav: {
-      animationDirection: 'forward',
+      animationDirection: 'normal',
     },
   }))();
 
-  const { isSideNavOpen } = React.useContext(TopLevelLayoutContext);
+  const { isMobileNav, isSideNavOpen, openSideNav, closeSideNav } =
+    React.useContext(TopLevelLayoutContext);
   const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
+
+  // useEffect to listen to window resize events
+  useEffect(() => {
+    if (isMobileNav) {
+      closeSideNav();
+    } else {
+      openSideNav();
+    }
+  }, [isMobileNav]);
 
   return (
     <>
@@ -118,6 +136,7 @@ const TopLevelLayout = ({
                   item
                   className={`side-nav-container
                     ${styles.relative}
+                    ${isMobileNav ? styles.mobileNav : ''}
                     ${styles.sideNavAnimation}
                     ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}
                   `}
