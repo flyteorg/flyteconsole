@@ -12,9 +12,6 @@ export enum FeatureFlag {
 
   // Test Only Mine flag
   OnlyMine = 'only-mine',
-
-  // Makes the header inline with the content
-  InlineHeader = 'inline-header',
 }
 
 export type FeatureFlagConfig = { [k: string]: boolean };
@@ -28,9 +25,6 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   'launch-plan': false,
 
   'only-mine': false,
-
-  // Makes the header inline with the content
-  'inline-header': false,
 };
 
 export interface AdminVersion {

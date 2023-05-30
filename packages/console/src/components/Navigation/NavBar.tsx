@@ -7,7 +7,6 @@ import { FlyteNavigation } from '@flyteorg/common';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { makeStyles } from '@material-ui/core';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
-import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { getFlyteNavigationData } from './utils';
 
 export interface NavBarProps {
@@ -23,19 +22,10 @@ export const NavBar = (props: NavBarProps) => {
 
   const styles = makeStyles(theme => ({
     spacer: theme.mixins.toolbar as CSSProperties,
-    inlineSpacer: {
-      width: '60px',
-    },
     navBar: {
       color: navData?.color,
       background: navData?.background,
       top: 0,
-    },
-    inlineNavBar: {
-      width: '60px',
-      height: '100%',
-      position: 'relative',
-      inset: '0',
     },
     inlineToolBar: {
       padding: `${theme.spacing(2)}px 0 ${theme.spacing(4)}px 0`,
@@ -58,28 +48,20 @@ export const NavBar = (props: NavBarProps) => {
 
   const ExternalNav = registry?.nav;
 
-  const isInlineHeader = useFeatureFlag(FeatureFlag.InlineHeader) ?? false;
-
   return ExternalNav ? (
     <ExternalNav />
   ) : (
     <>
-      {!isInlineHeader && <div className={styles.spacer} />}
+      <div className={styles.spacer} />
       <AppBar
         color="secondary"
         elevation={0}
         id="navbar"
         className={`
           ${styles.navBar} 
-          ${isInlineHeader ? styles.inlineNavBar : ''}
         `}
       >
-        <Toolbar
-          id={navBarContentId}
-          className={isInlineHeader ? styles.inlineToolBar : ''}
-        >
-          {navBarContent}
-        </Toolbar>
+        <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
       </AppBar>
     </>
   );
