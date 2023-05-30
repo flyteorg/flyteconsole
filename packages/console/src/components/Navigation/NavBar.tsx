@@ -23,6 +23,9 @@ export const NavBar = (props: NavBarProps) => {
 
   const styles = makeStyles(theme => ({
     spacer: theme.mixins.toolbar as CSSProperties,
+    inlineSpacer: {
+      width: '60px',
+    },
     navBar: {
       color: navData?.color,
       background: navData?.background,

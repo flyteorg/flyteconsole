@@ -37,6 +37,7 @@ export const SelectProject: React.FC = () => {
     TopLevelLayoutContext,
   );
   React.useEffect(() => {
+    // Side nav is always closed on this page
     closeSideNav();
   }, [closeSideNav, isSideNavOpen]);
 
