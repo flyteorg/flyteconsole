@@ -67,12 +67,15 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   projectId,
   section,
 }) => {
+  console.log('*** ProjectNavigationImpl projectId', projectId);
   const styles = useStyles();
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
   const projects = useProjects();
-  const onProjectSelected = (project: Project) =>
-    history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  const onProjectSelected = (project: Project) => {
+    if (project?.id)
+      history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  };
 
   const routes: ProjectRoute[] = [
     {
@@ -152,6 +155,8 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
       openSideNav();
     }
   }, []);
+
+  console.log('***', JSON.parse(JSON.stringify(project)));
 
   return (
     <>

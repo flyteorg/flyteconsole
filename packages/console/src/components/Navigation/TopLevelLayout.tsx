@@ -10,21 +10,24 @@ const GrowGrid = styled(Grid)(() => ({
   flexGrow: 1,
 }));
 
-const TopLevelLayout = ({
-  headerComponent,
-  sideNavigationComponent,
-  routerView,
-}: {
+export interface TopLevelLayoutInterFace {
   headerComponent: JSX.Element;
   sideNavigationComponent: JSX.Element;
   routerView: JSX.Element;
-}) => {
-  const HeaderComponent = () => headerComponent;
-  const SideNavigationComponent = () => sideNavigationComponent;
-  const RouterView = () => routerView;
+  className?: string;
+}
 
-  const { registry } = useExternalConfigurationContext();
-  const ExternalTopLevelLayout = registry?.topLevelLayout;
+export const TopLevelLayoutGrid = ({
+  headerComponent,
+  sideNavigationComponent,
+  routerView,
+  className = '',
+}: TopLevelLayoutInterFace) => {
+  const HeaderComponent = headerComponent ? () => headerComponent : () => <></>;
+  const SideNavigationComponent = sideNavigationComponent
+    ? () => sideNavigationComponent
+    : () => <></>;
+  const RouterView = routerView ? () => routerView : () => <></>;
 
   const styles = makeStyles(theme => ({
     sticky: {
@@ -101,66 +104,66 @@ const TopLevelLayout = ({
   }, [isMobileNav]);
 
   return (
-    <>
-      {ExternalTopLevelLayout ? (
-        <ExternalTopLevelLayout />
-      ) : (
-        <>
+    <Grid
+      className={`top-level-layout ${styles.h100} ${className}`}
+      container
+      direction="column"
+      justifyContent="flex-start"
+      alignItems="stretch"
+    >
+      <Grid
+        item
+        className={`sticky-header-container
+          ${styles.sticky} 
+          ${styles.above}
+        `}
+      >
+        <HeaderComponent />
+      </Grid>
+      <GrowGrid item>
+        {/* Grow X Axis */}
+        <GrowGrid
+          container
+          direction="row"
+          alignItems="stretch"
+          justifyContent="flex-start"
+          className={`${styles.relative}`}
+        >
           <Grid
-            className={`top-level-layout ${styles.h100}`}
-            container
-            direction="column"
-            justifyContent="flex-start"
-            alignItems="stretch"
+            item
+            className={`side-nav-container
+              ${styles.relative}
+              ${isMobileNav ? styles.mobileNav : ''}
+              ${styles.sideNavAnimation}
+              ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}
+            `}
           >
-            <Grid
-              item
-              className={`sticky-header-container
-                ${styles.sticky} 
-                ${styles.above}
-              `}
-            >
-              <HeaderComponent />
-            </Grid>
-            <GrowGrid item>
-              {/* Grow X Axis */}
-              <GrowGrid
-                container
-                direction="row"
-                alignItems="stretch"
-                justifyContent="flex-start"
-                className={`${styles.relative}`}
-              >
-                <Grid
-                  item
-                  className={`side-nav-container
-                    ${styles.relative}
-                    ${isMobileNav ? styles.mobileNav : ''}
-                    ${styles.sideNavAnimation}
-                    ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}
-                  `}
-                >
-                  <SideNavigationComponent />
-                </Grid>
-                <GrowGrid item className={`${styles.relative}`}>
-                  <Grid container>
-                    <Grid item className={`${styles.absolute} ${styles.w100}`}>
-                      <Box className={`${styles.relative}`}>
-                        {/* Legacy, need to move to <Grid/> */}
-                        <ContentContainer className="routerview-content-container flex-column-container">
-                          <RouterView />
-                        </ContentContainer>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </GrowGrid>
-              </GrowGrid>
-            </GrowGrid>
+            <SideNavigationComponent />
           </Grid>
-        </>
-      )}
-    </>
+          <GrowGrid item className={`${styles.relative}`}>
+            <Grid container>
+              <Grid item className={`${styles.absolute} ${styles.w100}`}>
+                <Box className={`${styles.relative}`}>
+                  {/* Legacy, need to move to <Grid/> */}
+                  <ContentContainer className="routerview-content-container flex-column-container">
+                    <RouterView />
+                  </ContentContainer>
+                </Box>
+              </Grid>
+            </Grid>
+          </GrowGrid>
+        </GrowGrid>
+      </GrowGrid>
+    </Grid>
   );
+};
+
+export const TopLevelLayout = (props: TopLevelLayoutInterFace) => {
+  const { registry } = useExternalConfigurationContext();
+  const ExternalTopLevelLayout = registry?.topLevelLayout;
+
+  if (ExternalTopLevelLayout) return <ExternalTopLevelLayout {...props} />;
+  return <TopLevelLayoutGrid {...props} />;
 };
 
 export default TopLevelLayout;
