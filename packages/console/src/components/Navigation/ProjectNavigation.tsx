@@ -71,6 +71,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   projectId,
   section,
 }) => {
+  console.log('*** ProjectNavigationImpl projectId', projectId);
   const styles = useStyles();
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
@@ -164,6 +165,8 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
       openSideNav();
     }
   }, []);
+
+  console.log('***', JSON.parse(JSON.stringify(project)));
 
   return (
     <>

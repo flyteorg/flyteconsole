@@ -90,54 +90,6 @@ const AnimateRoute = ({ history }) => {
   return <></>;
 };
 
-export const ApplicationRouterDep: React.FC = () => {
-  const additionalRoutes =
-    useExternalConfigurationContext()?.registry?.additionalRoutes || null;
-  return (
-    <Switch>
-      {additionalRoutes}
-      <Route
-        path={Routes.ExecutionDetails.path}
-        component={withContentContainer(components.executionDetails, {
-          center: false,
-          noMargin: true,
-        })}
-      />
-      <Route
-        path={Routes.TaskDetails.path}
-        component={withSideNavigation(components.taskDetails)}
-      />
-      <Route
-        exact
-        path={Routes.LaunchPlanDetails.path}
-        component={withSideNavigation(components.launchPlanDetails)}
-      />
-      <Route
-        exact
-        path={Routes.WorkflowDetails.path}
-        component={withSideNavigation(components.workflowDetails)}
-        // component={components.workflowDetails}
-      />
-      <Route
-        path={Routes.EntityVersionDetails.path}
-        component={withSideNavigation(components.entityVersionDetails)}
-      />
-      <Route
-        path={Routes.ProjectDetails.path}
-        component={withSideNavigation(components.projectDetails, {
-          noMargin: true,
-        })}
-      />
-      <Route
-        path={Routes.SelectProject.path}
-        exact={true}
-        component={withContentContainer(components.selectProject)}
-      />
-      <Route component={withContentContainer(components.notFound)} />
-    </Switch>
-  );
-};
-
 export const ApplicationRouter: React.FC = () => {
   const localProjectDomain = getLocalStore(
     LOCAL_PROJECT_DOMAIN,
@@ -165,7 +117,6 @@ export const ApplicationRouter: React.FC = () => {
           exact
           path={Routes.WorkflowDetails.path}
           component={components.workflowDetails}
-          // component={components.workflowDetails}
         />
         <Route
           path={Routes.EntityVersionDetails.path}
