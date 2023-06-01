@@ -2,7 +2,6 @@ import * as React from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from 'components/common/WaitForData';
 import { useProject } from 'components/hooks/useProjects';
 import { StaticGraphContainer } from 'components/Workflow/StaticGraphContainer';
 import { WorkflowId } from 'models/Workflow/types';
@@ -11,6 +10,7 @@ import { EntityDetailsHeader } from 'components/Entities/EntityDetailsHeader';
 import { EntityVersions } from 'components/Entities/EntityVersions';
 import { RouteComponentProps } from 'react-router-dom';
 import { Box } from '@material-ui/core';
+import { LoadingSpinner } from 'components/common';
 import { typeNameToEntityResource } from '../constants';
 import { versionsDetailsSections } from './constants';
 import { EntityVersionDetails } from './EntityVersionDetails';
@@ -86,35 +86,43 @@ const EntityVersionsDetailsContainerImpl: React.FC<
   const id = workflowId as ResourceIdentifier;
   const sections = entitySections[id.resourceType];
   const versionsSections = versionsDetailsSections[id.resourceType];
-  const project = useProject(workflowId.project);
+  const [project] = useProject(workflowId.project);
   const styles = useStyles({ resourceType: id.resourceType });
 
   return (
-    <WaitForData {...project}>
-      <Box pl={2} pr={2}>
-        <EntityDetailsHeader
-          project={project.value}
-          id={id}
-          launchable={sections.launch}
-          backToWorkflow
-        />
-      </Box>
-      <div className={styles.verionDetailsContainer}>
-        {versionsSections.details && (
-          <div className={styles.versionDetailsContainer}>
-            <EntityVersionDetails id={id} />
+    <>
+      {project?.id ? (
+        <>
+          <Box pl={2} pr={2}>
+            <EntityDetailsHeader
+              project={project.value}
+              id={id}
+              launchable={sections.launch}
+              backToWorkflow
+            />
+          </Box>
+          <div className={styles.verionDetailsContainer}>
+            {versionsSections.details && (
+              <div className={styles.versionDetailsContainer}>
+                <EntityVersionDetails id={id} />
+              </div>
+            )}
+            {versionsSections.graph && (
+              <div className={styles.staticGraphContainer}>
+                <StaticGraphContainer workflowId={workflowId} />
+              </div>
+            )}
+            <div className={styles.versionsContainer}>
+              <EntityVersions id={id} showAll />
+            </div>
           </div>
-        )}
-        {versionsSections.graph && (
-          <div className={styles.staticGraphContainer}>
-            <StaticGraphContainer workflowId={workflowId} />
-          </div>
-        )}
-        <div className={styles.versionsContainer}>
-          <EntityVersions id={id} showAll />
-        </div>
-      </div>
-    </WaitForData>
+        </>
+      ) : (
+        <>
+          <LoadingSpinner />
+        </>
+      )}
+    </>
   );
 };
 
