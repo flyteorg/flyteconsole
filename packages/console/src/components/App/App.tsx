@@ -99,7 +99,10 @@ export const AppComponent: React.FC<AppComponentProps> = (
                     </SkeletonTheme>
                   </APIContext.Provider>
                 </FlyteApiProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
+                <ReactQueryDevtools
+                  initialIsOpen={false}
+                  position="bottom-right"
+                />
               </QueryClientProvider>
             </SnackbarProvider>
           </ThemeProvider>

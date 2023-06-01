@@ -2,7 +2,6 @@ import * as React from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from 'components/common/WaitForData';
 import { useProject } from 'components/hooks/useProjects';
 import { StaticGraphContainer } from 'components/Workflow/StaticGraphContainer';
 import { WorkflowId } from 'models/Workflow/types';
@@ -10,6 +9,7 @@ import { entitySections } from 'components/Entities/constants';
 import { EntityDetailsHeader } from 'components/Entities/EntityDetailsHeader';
 import { EntityVersions } from 'components/Entities/EntityVersions';
 import { RouteComponentProps } from 'react-router-dom';
+import { LoadingSpinner } from 'components/common';
 
 const useStyles = makeStyles((_theme: Theme) => ({
   verionDetailsContatiner: {
@@ -63,26 +63,34 @@ const WorkflowVersionDetailsContainer: React.FC<
 
   const id = workflowId as ResourceIdentifier;
   const sections = entitySections[ResourceType.WORKFLOW];
-  const project = useProject(workflowId.project);
+  const [project] = useProject(workflowId.project);
   const styles = useStyles();
 
   return (
-    <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={sections.launch}
-        backToWorkflow
-      />
-      <div className={styles.verionDetailsContatiner}>
-        <div className={styles.staticGraphContainer}>
-          <StaticGraphContainer workflowId={workflowId} />
-        </div>
-        <div className={styles.versionsContainer}>
-          <EntityVersions id={id} showAll />
-        </div>
-      </div>
-    </WaitForData>
+    <>
+      {project?.id ? (
+        <>
+          <EntityDetailsHeader
+            project={project}
+            id={id}
+            launchable={sections.launch}
+            backToWorkflow
+          />
+          <div className={styles.verionDetailsContatiner}>
+            <div className={styles.staticGraphContainer}>
+              <StaticGraphContainer workflowId={workflowId} />
+            </div>
+            <div className={styles.versionsContainer}>
+              <EntityVersions id={id} showAll />
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <LoadingSpinner />
+        </>
+      )}
+    </>
   );
 };
 

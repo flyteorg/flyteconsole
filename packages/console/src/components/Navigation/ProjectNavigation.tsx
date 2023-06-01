@@ -67,103 +67,103 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   projectId,
   section,
 }) => {
-  console.log('*** ProjectNavigationImpl projectId', projectId);
   const styles = useStyles();
   const commonStyles = useCommonStyles();
-  const project = useProject(projectId);
-  const projects = useProjects();
+  if (!projectId) return <span>no project id</span>;
+
+  const [projects] = useProjects();
+  const [project] = useProject(projectId);
+
   const onProjectSelected = (project: Project) => {
     if (project?.id)
       history.push(Routes.ProjectDetails.makeUrl(project.id, section));
   };
 
-  const routes: ProjectRoute[] = [
-    {
-      icon: Dashboard,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.ProjectDashboard.path,
-              exact: false,
-            });
-        return !!finalMatch;
+  const routes: ProjectRoute[] = React.useMemo(() => {
+    if (!project?.id && !domainId) return [];
+    return [
+      {
+        icon: Dashboard,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.ProjectDashboard.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.dashboard.makeUrl(
+          project.id,
+          domainId,
+        ),
+        text: 'Project Dashboard',
       },
-      path: Routes.ProjectDetails.sections.dashboard.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Project Dashboard',
-    },
-    {
-      icon: DeviceHub,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.WorkflowDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
+      {
+        icon: DeviceHub,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.WorkflowDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.workflows.makeUrl(
+          projectId,
+          domainId,
+        ),
+        text: 'Workflows',
       },
-      path: Routes.ProjectDetails.sections.workflows.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Workflows',
-    },
-    {
-      icon: LinearScale,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.TaskDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
+      {
+        icon: LinearScale,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.TaskDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.tasks.makeUrl(projectId, domainId),
+        text: 'Tasks',
       },
-      path: Routes.ProjectDetails.sections.tasks.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Tasks',
-    },
-    {
-      icon: MuiLaunchPlanIcon as any,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.LaunchPlanDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
+      {
+        icon: MuiLaunchPlanIcon as any,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.LaunchPlanDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.launchPlans.makeUrl(
+          project.id,
+          domainId,
+        ),
+        text: 'Launch Plans',
       },
-      path: Routes.ProjectDetails.sections.launchPlans.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Launch Plans',
-    },
-  ];
+    ];
+  }, [project?.id, domainId]);
 
   const { openSideNav } = React.useContext(TopLevelLayoutContext);
-
   React.useEffect(() => {
     if (window.innerWidth > 1120) {
       openSideNav();
     }
   }, []);
 
-  console.log('***', JSON.parse(JSON.stringify(project)));
-
+  if (!project && !projects) return <></>;
   return (
     <>
-      {project.value && projects.value && (
+      {project?.id && (
         <ProjectSelector
-          projects={projects.value}
-          selectedProject={project.value}
+          projects={projects}
+          selectedProject={project}
           onProjectSelected={onProjectSelected}
         />
       )}
