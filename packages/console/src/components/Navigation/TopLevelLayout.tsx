@@ -114,7 +114,7 @@ export const TopLevelLayoutGrid = ({
       <Grid
         item
         className={`sticky-header-container
-          ${styles.sticky} 
+          ${styles.sticky}
           ${styles.above}
         `}
       >
