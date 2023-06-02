@@ -8,6 +8,7 @@ import { useExternalConfigurationContext } from 'basics/ExternalConfigurationPro
 import { makeStyles } from '@material-ui/core';
 import { CSSProperties } from '@material-ui/core/styles/withStyles';
 import { getFlyteNavigationData } from './utils';
+import { useTopLevelLayoutContext } from './TopLevelLayoutState';
 
 export interface NavBarProps {
   useCustomContent?: boolean;
@@ -19,6 +20,7 @@ const DefaultAppBarContent = lazy(() => import('./DefaultAppBarContent'));
 /** Contains all content in the top navbar of the application. */
 export const NavBar = (props: NavBarProps) => {
   const navData = props.navigationData ?? getFlyteNavigationData();
+  const layoutState = useTopLevelLayoutContext();
 
   const styles = makeStyles(theme => ({
     spacer: theme.mixins.toolbar as CSSProperties,
@@ -49,7 +51,7 @@ export const NavBar = (props: NavBarProps) => {
   const ExternalNav = registry?.nav;
 
   return ExternalNav ? (
-    <ExternalNav />
+    <ExternalNav {...layoutState} />
   ) : (
     <>
       <div className={styles.spacer} />
