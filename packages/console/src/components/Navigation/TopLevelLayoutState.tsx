@@ -2,6 +2,7 @@ import debounce from 'lodash/debounce';
 import React, {
   createContext,
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useState,
@@ -15,6 +16,10 @@ const initValues = {
 };
 
 export const TopLevelLayoutContext = createContext(initValues);
+
+export const useTopLevelLayoutContext = () => {
+  return useContext(TopLevelLayoutContext);
+};
 
 const TopLevelLayoutProvider = ({ children }) => {
   const [isMobileNav, setIsMobileNav] = useState(initValues.isMobileNav);

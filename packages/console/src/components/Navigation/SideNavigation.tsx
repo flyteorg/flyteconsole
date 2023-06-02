@@ -16,11 +16,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'absolute',
     top: 0,
     left: 0,
+    bottom: 0,
     width: '100%',
     height: '100%',
   },
   fixed: {
-    position: 'fixed',
+    position: 'sticky',
+    top: 0,
     height: '100%',
     width: theme.spacing(sideNavGridWidth),
   },
@@ -34,15 +36,14 @@ export const SideNavigation: React.FC = () => {
   const styles = useStyles();
   return (
     <div className={styles.wrapper}>
-      <div className={styles.absolute}>
-        <div
-          className={`left-nav-fixed-wrapper ${styles.fixed} ${styles.border}`}
-        >
-          <Route
-            path={`${projectBasePath}/:section?`}
-            component={ProjectNavigation}
-          />
-        </div>
+      <div className={styles.absolute}></div>
+      <div
+        className={`left-nav-fixed-wrapper ${styles.fixed} ${styles.border}`}
+      >
+        <Route
+          path={`${projectBasePath}/:section?`}
+          component={ProjectNavigation}
+        />
       </div>
     </div>
   );

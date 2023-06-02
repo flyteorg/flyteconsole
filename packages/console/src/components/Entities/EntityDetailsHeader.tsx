@@ -72,8 +72,8 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   // Close modal on escape key press
   useEscapeKey(onCancelLaunch);
 
-  const domain = getProjectDomain(project, id.domain);
-  const headerText = `${domain.name} / ${id.name}`;
+  const domain = project ? getProjectDomain(project, id.domain) : undefined;
+  const headerText = domain ? `${domain.name} / ${id.name}` : '';
 
   return (
     <>
