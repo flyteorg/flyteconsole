@@ -23,17 +23,28 @@ export const NavBar = (props: NavBarProps) => {
   const layoutState = useTopLevelLayoutContext();
 
   const styles = makeStyles(theme => ({
-    spacer: theme.mixins.toolbar as CSSProperties,
+    stackedSpacer: theme.mixins.toolbar as CSSProperties,
+    horizontalSpacer: {
+      width: '80px',
+    },
     navBar: {
       color: navData?.color,
       background: navData?.background,
       top: 0,
+    },
+    inlineNavBar: {
+      width: '80px',
+      height: '100%',
+      position: 'relative',
+      inset: '0',
     },
     inlineToolBar: {
       padding: `${theme.spacing(2)}px 0 ${theme.spacing(4)}px 0`,
       height: '100%',
     },
   }))();
+
+  const { isLayoutHorizontal } = layoutState;
 
   const navBarContent = props.useCustomContent ? (
     <div id={navBarContentId} />
@@ -54,16 +65,26 @@ export const NavBar = (props: NavBarProps) => {
     <ExternalNav {...layoutState} />
   ) : (
     <>
-      <div className={styles.spacer} />
+      {isLayoutHorizontal ? (
+        <div className={styles.horizontalSpacer} />
+      ) : (
+        <div className={styles.stackedSpacer} />
+      )}
       <AppBar
         color="secondary"
         elevation={0}
         id="navbar"
         className={`
           ${styles.navBar} 
+          ${isLayoutHorizontal ? styles.inlineNavBar : ''}
         `}
       >
-        <Toolbar id={navBarContentId}>{navBarContent}</Toolbar>
+        <Toolbar
+          id={navBarContentId}
+          className={isLayoutHorizontal ? styles.inlineToolBar : ''}
+        >
+          {navBarContent}
+        </Toolbar>
       </AppBar>
     </>
   );

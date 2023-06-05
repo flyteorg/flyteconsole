@@ -1,3 +1,4 @@
+import { useTheme } from 'components/Theme/useTheme';
 import debounce from 'lodash/debounce';
 import React, {
   createContext,
@@ -13,6 +14,9 @@ const initValues = {
   isMobileNav: window.innerWidth < 1120,
   openSideNav: () => {},
   closeSideNav: () => {},
+  isLayoutHorizontal: false,
+  columnLayout: () => {},
+  rowLayout: () => {},
 };
 
 export const TopLevelLayoutContext = createContext(initValues);
@@ -23,7 +27,11 @@ export const useTopLevelLayoutContext = () => {
 
 const TopLevelLayoutProvider = ({ children }) => {
   const [isMobileNav, setIsMobileNav] = useState(initValues.isMobileNav);
-  const [isSideNavOpen, setIsSideNavOpen] = useState(false);
+  const [isSideNavOpen, setIsSideNavOpen] = useState(initValues.isMobileNav);
+  const [isLayoutHorizontal, setisLayoutHorizontal] = useState(
+    initValues.isLayoutHorizontal,
+  );
+
   const openSideNav = useCallback(
     () => setIsSideNavOpen(true),
     [isSideNavOpen, setIsSideNavOpen],
@@ -31,6 +39,15 @@ const TopLevelLayoutProvider = ({ children }) => {
   const closeSideNav = useCallback(
     () => setIsSideNavOpen(false),
     [isSideNavOpen, setIsSideNavOpen],
+  );
+
+  const columnLayout = useCallback(
+    () => setisLayoutHorizontal(true),
+    [isLayoutHorizontal, setisLayoutHorizontal],
+  );
+  const rowLayout = useCallback(
+    () => setisLayoutHorizontal(false),
+    [isLayoutHorizontal, setisLayoutHorizontal],
   );
 
   useEffect(() => {
@@ -47,9 +64,43 @@ const TopLevelLayoutProvider = ({ children }) => {
     return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
+  const theme = useTheme();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (isLayoutHorizontal) {
+        if (window.innerWidth < theme.breakpoints.values.md) {
+          rowLayout();
+        } else {
+          columnLayout();
+        }
+      }
+    };
+    const debouncedResize = debounce(handleResize, 50);
+
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, []);
+
   const value = useMemo(() => {
-    return { isMobileNav, isSideNavOpen, openSideNav, closeSideNav };
-  }, [isMobileNav, isSideNavOpen, openSideNav, closeSideNav]);
+    return {
+      isMobileNav,
+      isSideNavOpen,
+      openSideNav,
+      closeSideNav,
+      isLayoutHorizontal,
+      columnLayout,
+      rowLayout,
+    };
+  }, [
+    isMobileNav,
+    isSideNavOpen,
+    openSideNav,
+    closeSideNav,
+    isLayoutHorizontal,
+    columnLayout,
+    rowLayout,
+  ]);
 
   return (
     <TopLevelLayoutContext.Provider value={value}>

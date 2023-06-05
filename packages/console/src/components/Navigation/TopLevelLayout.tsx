@@ -91,8 +91,13 @@ export const TopLevelLayoutGrid = ({
     },
   }))();
 
-  const { isMobileNav, isSideNavOpen, openSideNav, closeSideNav } =
-    React.useContext(TopLevelLayoutContext);
+  const {
+    isMobileNav,
+    isSideNavOpen,
+    openSideNav,
+    closeSideNav,
+    isLayoutHorizontal,
+  } = React.useContext(TopLevelLayoutContext);
 
   // useEffect to listen to window resize events
   useEffect(() => {
@@ -107,15 +112,15 @@ export const TopLevelLayoutGrid = ({
     <Grid
       className={`top-level-layout ${styles.h100} ${className}`}
       container
-      direction="column"
+      direction={isLayoutHorizontal ? 'row' : 'column'}
       justifyContent="flex-start"
       alignItems="stretch"
     >
       <Grid
         item
         className={`sticky-header-container
-          ${styles.sticky}
-          ${styles.above}
+          ${isLayoutHorizontal ? '' : styles.sticky}
+          ${isLayoutHorizontal ? '' : styles.above}
         `}
       >
         <HeaderComponent />
