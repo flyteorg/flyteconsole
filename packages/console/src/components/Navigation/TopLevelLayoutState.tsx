@@ -4,7 +4,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
@@ -50,7 +50,7 @@ const TopLevelLayoutProvider = ({ children }) => {
     [isLayoutHorizontal, setisLayoutHorizontal],
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1120) {
         if (!isMobileNav) setIsMobileNav(true);
@@ -66,7 +66,7 @@ const TopLevelLayoutProvider = ({ children }) => {
 
   const theme = useTheme();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleResize = () => {
       if (isLayoutHorizontal) {
         if (window.innerWidth < theme.breakpoints.values.md) {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { Grid, styled, makeStyles, Box } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
@@ -15,6 +15,7 @@ export interface TopLevelLayoutInterFace {
   sideNavigationComponent: JSX.Element;
   routerView: JSX.Element;
   className?: string;
+  isHorizontalLayout: boolean;
 }
 
 export const TopLevelLayoutGrid = ({
@@ -22,6 +23,7 @@ export const TopLevelLayoutGrid = ({
   sideNavigationComponent,
   routerView,
   className = '',
+  isHorizontalLayout = false,
 }: TopLevelLayoutInterFace) => {
   const HeaderComponent = headerComponent ? () => headerComponent : () => <></>;
   const SideNavigationComponent = sideNavigationComponent
@@ -49,12 +51,17 @@ export const TopLevelLayoutGrid = ({
     above: {
       zIndex: 1,
     },
-    mobileNav: {
-      zIndex: 2,
-      position: 'fixed',
+    nav: {
+      top: 0,
+      position: 'relative',
       height: '100%',
       minWidth: theme.spacing(sideNavGridWidth),
       background: theme.palette.background.paper,
+      // transition: 'top ease',
+    },
+    mobileNav: {
+      zIndex: 2,
+      position: 'absolute',
       boxShadow: theme.shadows[4],
     },
     sideNavAnimation: {
@@ -97,16 +104,46 @@ export const TopLevelLayoutGrid = ({
     openSideNav,
     closeSideNav,
     isLayoutHorizontal,
+    rowLayout,
+    columnLayout,
   } = React.useContext(TopLevelLayoutContext);
 
-  // useEffect to listen to window resize events
+  // run on init
   useEffect(() => {
+    if (isHorizontalLayout) {
+      columnLayout();
+    } else {
+      rowLayout();
+    }
+  }, [isHorizontalLayout]);
+
+  // useEffect to listen to window resize events
+  useLayoutEffect(() => {
     if (isMobileNav) {
       closeSideNav();
     } else {
       openSideNav();
     }
   }, [isMobileNav]);
+
+  // ref to update offset on scroll
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      const scrollElement = scrollRef.current;
+      const scroll = window.scrollY;
+
+      if (scrollElement) {
+        scrollElement.style.top = `${scroll}px`;
+      }
+    };
+
+    document.addEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <Grid
@@ -119,8 +156,8 @@ export const TopLevelLayoutGrid = ({
       <Grid
         item
         className={`sticky-header-container
-          ${isLayoutHorizontal ? '' : styles.sticky}
-          ${isLayoutHorizontal ? '' : styles.above}
+          ${styles.sticky}
+          ${isLayoutHorizontal || isMobileNav ? '' : styles.above}
         `}
       >
         <HeaderComponent />
@@ -132,16 +169,17 @@ export const TopLevelLayoutGrid = ({
           direction="row"
           alignItems="stretch"
           justifyContent="flex-start"
-          className={`${styles.relative}`}
+          className={`${styles.sticky}`}
         >
           <Grid
             item
+            ref={scrollRef}
             className={`side-nav-container
-              ${styles.relative}
+              ${styles.nav}
               ${isMobileNav ? styles.mobileNav : ''}
               ${styles.sideNavAnimation}
               ${isSideNavOpen ? styles.openSideNav : styles.closeSideNav}
-            `}
+              `}
           >
             <SideNavigationComponent />
           </Grid>
