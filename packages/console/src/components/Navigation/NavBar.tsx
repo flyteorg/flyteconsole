@@ -35,7 +35,7 @@ export const NavBar = (props: NavBarProps) => {
     inlineNavBar: {
       width: '80px',
       height: '100%',
-      position: 'relative',
+      position: 'fixed',
       inset: '0',
     },
     inlineToolBar: {
