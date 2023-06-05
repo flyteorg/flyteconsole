@@ -9,7 +9,7 @@ import { Routes } from 'routes/routes';
 import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from '@flyteorg/common';
-import { Grid, IconButton } from '@material-ui/core';
+import { Box, Grid, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
@@ -27,8 +27,13 @@ interface DefaultAppBarProps {
 export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   const [platformVersion, setPlatformVersion] = React.useState('');
   const [consoleVersion, setConsoleVersion] = React.useState('');
-  const { isMobileNav, openSideNav, closeSideNav, isSideNavOpen } =
-    React.useContext(TopLevelLayoutContext);
+  const {
+    isMobileNav,
+    openSideNav,
+    closeSideNav,
+    isSideNavOpen,
+    isLayoutHorizontal,
+  } = React.useContext(TopLevelLayoutContext);
 
   const commonStyles = useCommonStyles();
 
@@ -101,13 +106,18 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   return (
     <Grid
       container
-      direction="row"
+      direction={isLayoutHorizontal ? 'column' : 'row'}
       justifyContent="space-between"
       alignItems="center"
       style={{ width: '100%', height: '100%' }}
     >
       <Grid item>
-        <Grid container direction="row" alignItems="center" spacing={2}>
+        <Grid
+          container
+          direction={isLayoutHorizontal ? 'column-reverse' : 'row'}
+          alignItems="center"
+          spacing={2}
+        >
           {isMobileNav && (
             <Grid item className={styles.flex}>
               <IconButton
@@ -121,10 +131,19 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
           )}
           <Grid item className={styles.flex}>
             <Link
-              className={classnames(commonStyles.linkUnstyled, styles.flex)}
+              className={
+                isLayoutHorizontal
+                  ? commonStyles.linkUnstyled
+                  : classnames(commonStyles.linkUnstyled, styles.flex)
+              }
               to={Routes.SelectProject.path}
             >
-              <FlyteLogo size={32} />
+              <FlyteLogo size={32} hideText={isLayoutHorizontal} />
+              {isLayoutHorizontal && (
+                <Box className={styles.wordmark}>
+                  <FlyteLogo size={32} />
+                </Box>
+              )}
             </Link>
             {props.items?.length > 0 ? (
               <NavigationDropdown items={props.items} console={props.console} />
@@ -137,7 +156,7 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
       <Grid item>
         <Grid
           container
-          direction="row"
+          direction={isLayoutHorizontal ? 'column' : 'row'}
           spacing={2}
           alignItems="center"
           justifyContent="center"
