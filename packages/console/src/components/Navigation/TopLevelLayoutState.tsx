@@ -1,22 +1,21 @@
-import { useTheme } from 'components/Theme/useTheme';
-import debounce from 'lodash/debounce';
 import React, {
   createContext,
   useCallback,
   useContext,
-  useLayoutEffect,
   useMemo,
   useState,
 } from 'react';
 
 const initValues = {
   isSideNavOpen: false,
-  isMobileNav: window.innerWidth < 1120,
+  isMobileNav: window.innerWidth < 960, // < md breakboint
   openSideNav: () => {},
   closeSideNav: () => {},
   isLayoutHorizontal: false,
   columnLayout: () => {},
   rowLayout: () => {},
+  showMobileNav: () => {},
+  hideMobileNav: () => {},
 };
 
 export const TopLevelLayoutContext = createContext(initValues);
@@ -50,37 +49,14 @@ const TopLevelLayoutProvider = ({ children }) => {
     [isLayoutHorizontal, setisLayoutHorizontal],
   );
 
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1120) {
-        if (!isMobileNav) setIsMobileNav(true);
-      } else {
-        if (!isMobileNav) setIsMobileNav(false);
-      }
-    };
-    const debouncedResize = debounce(handleResize, 50);
-
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
-  }, []);
-
-  const theme = useTheme();
-
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (isLayoutHorizontal) {
-        if (window.innerWidth < theme.breakpoints.values.md) {
-          rowLayout();
-        } else {
-          columnLayout();
-        }
-      }
-    };
-    const debouncedResize = debounce(handleResize, 50);
-
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
-  }, []);
+  const showMobileNav = useCallback(
+    () => setIsMobileNav(true),
+    [isMobileNav, setIsMobileNav],
+  );
+  const hideMobileNav = useCallback(
+    () => setIsMobileNav(false),
+    [isMobileNav, setIsMobileNav],
+  );
 
   const value = useMemo(() => {
     return {
@@ -91,6 +67,8 @@ const TopLevelLayoutProvider = ({ children }) => {
       isLayoutHorizontal,
       columnLayout,
       rowLayout,
+      showMobileNav,
+      hideMobileNav,
     };
   }, [
     isMobileNav,
@@ -100,6 +78,8 @@ const TopLevelLayoutProvider = ({ children }) => {
     isLayoutHorizontal,
     columnLayout,
     rowLayout,
+    showMobileNav,
+    hideMobileNav,
   ]);
 
   return (

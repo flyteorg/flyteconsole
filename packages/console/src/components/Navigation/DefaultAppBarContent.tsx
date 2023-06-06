@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { AppInfo, VersionInfo } from '@flyteorg/components';
 import { FlyteLogo } from '@flyteorg/ui-atoms';
@@ -33,6 +33,8 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
     closeSideNav,
     isSideNavOpen,
     isLayoutHorizontal,
+    showMobileNav,
+    hideMobileNav,
   } = React.useContext(TopLevelLayoutContext);
 
   const commonStyles = useCommonStyles();
@@ -48,6 +50,23 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
       openSideNav();
     }
   }, [isSideNavOpen, openSideNav, closeSideNav]);
+
+  const theme = useTheme();
+
+  // Enable / Disable mobile nav behaviour based on screen size
+  React.useLayoutEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < theme.breakpoints.values.md) {
+        showMobileNav();
+        closeSideNav();
+      } else {
+        hideMobileNav();
+        openSideNav();
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [closeSideNav, theme.breakpoints.values.md]);
 
   React.useEffect(() => {
     try {

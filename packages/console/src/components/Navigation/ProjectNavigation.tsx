@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import DeviceHub from '@material-ui/icons/DeviceHub';
@@ -151,8 +151,9 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   }, [project?.id, domainId]);
 
   const { openSideNav } = React.useContext(TopLevelLayoutContext);
+  const theme = useTheme();
   React.useEffect(() => {
-    if (window.innerWidth > 1120) {
+    if (window.innerWidth > theme.breakpoints.values.md) {
       openSideNav();
     }
   }, []);

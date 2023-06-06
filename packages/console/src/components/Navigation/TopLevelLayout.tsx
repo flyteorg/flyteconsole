@@ -1,8 +1,9 @@
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { Grid, styled, makeStyles, Box } from '@material-ui/core';
+import { Grid, styled, makeStyles, Box, useTheme } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { sideNavGridWidth } from 'common/layout';
+import debounce from 'lodash/debounce';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 const GrowGrid = styled(Grid)(() => ({
@@ -25,6 +26,8 @@ export const TopLevelLayoutGrid = ({
   className = '',
   isHorizontalLayout = false,
 }: TopLevelLayoutInterFace) => {
+  const userHorizontalPref = isHorizontalLayout;
+  const theme = useTheme();
   const HeaderComponent = headerComponent ? () => headerComponent : () => <></>;
   const SideNavigationComponent = sideNavigationComponent
     ? () => sideNavigationComponent
@@ -108,18 +111,49 @@ export const TopLevelLayoutGrid = ({
     columnLayout,
   } = React.useContext(TopLevelLayoutContext);
 
+  // hide nav on narrow screen by default
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < theme.breakpoints.values.md) {
+        if (!isMobileNav) openSideNav();
+      } else {
+        if (!isMobileNav) closeSideNav();
+      }
+    };
+    const debouncedResize = debounce(handleResize, 50);
+
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, []);
+
+  // flip layout on narrow screen
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (isLayoutHorizontal || userHorizontalPref) {
+        if (window.innerWidth < theme.breakpoints.values.md) {
+          rowLayout();
+        } else {
+          columnLayout();
+        }
+      }
+    };
+    const debouncedResize = debounce(handleResize, 50);
+
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
+  }, []);
+
   // run on init
   useEffect(() => {
-    if (isHorizontalLayout) {
+    if (userHorizontalPref) {
       columnLayout();
     } else {
       rowLayout();
     }
-  }, [isHorizontalLayout]);
+  }, []);
 
-  // useEffect to listen to window resize events
-  useLayoutEffect(() => {
-    if (isMobileNav) {
+  useEffect(() => {
+    if (!isMobileNav) {
       closeSideNav();
     } else {
       openSideNav();
@@ -129,6 +163,7 @@ export const TopLevelLayoutGrid = ({
   // ref to update offset on scroll
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // pin left nav to top of screen
   useLayoutEffect(() => {
     const handleScroll = () => {
       const scrollElement = scrollRef.current;
