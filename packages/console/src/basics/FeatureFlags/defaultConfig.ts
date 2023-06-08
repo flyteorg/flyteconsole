@@ -10,11 +10,11 @@ export enum FeatureFlag {
   // Production flags
   LaunchPlan = 'launch-plan',
 
-  // Test Only Mine flag
-  OnlyMine = 'only-mine',
-
   // Makes the header inline with the content
   HorizontalLayout = 'horizontal-layout',
+
+  // Test Only Mine flag
+  OnlyMine = 'only-mine',
 }
 
 export type FeatureFlagConfig = { [k: string]: boolean };
@@ -27,9 +27,9 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   // If you need to turn it on locally -> update runtimeConfig in ./index.tsx file
   'launch-plan': false,
 
-  'only-mine': false,
-
   'horizontal-layout': false,
+
+  'only-mine': false,
 };
 
 export interface AdminVersion {
