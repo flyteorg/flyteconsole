@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     detailsContainer: {
       display: 'flex',
-      paddingTop: theme.spacing(3),
+      paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(2),
+      marginTop: 0,
     },
     detailItem: {
       marginLeft: theme.spacing(4),
