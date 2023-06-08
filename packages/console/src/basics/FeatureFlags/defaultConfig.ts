@@ -12,6 +12,9 @@ export enum FeatureFlag {
 
   // Test Only Mine flag
   OnlyMine = 'only-mine',
+
+  // Makes the header inline with the content
+  HorizontalLayout = 'horizontal-layout',
 }
 
 export type FeatureFlagConfig = { [k: string]: boolean };
@@ -25,6 +28,8 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   'launch-plan': false,
 
   'only-mine': false,
+
+  'horizontal-layout': false,
 };
 
 export interface AdminVersion {
