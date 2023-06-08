@@ -1,9 +1,16 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Grid, styled, makeStyles, Box, useTheme } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { sideNavGridWidth } from 'common/layout';
 import debounce from 'lodash/debounce';
+import { FeatureFlag, useFeatureFlagContext } from 'basics/FeatureFlags';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 const GrowGrid = styled(Grid)(() => ({
@@ -246,8 +253,24 @@ export const TopLevelLayout = (props: TopLevelLayoutInterFace) => {
   const { registry } = useExternalConfigurationContext();
   const ExternalTopLevelLayout = registry?.topLevelLayout;
 
-  if (ExternalTopLevelLayout) return <ExternalTopLevelLayout {...props} />;
-  return <TopLevelLayoutGrid {...props} />;
+  const { getFeatureFlag } = useFeatureFlagContext();
+  const flag = getFeatureFlag(FeatureFlag.HorizontalLayout);
+
+  const isHorizontalLayout = useMemo(
+    () => flag || props.isHorizontalLayout,
+    [flag, props.isHorizontalLayout],
+  );
+
+  if (ExternalTopLevelLayout)
+    return (
+      <ExternalTopLevelLayout
+        {...props}
+        isHorizontalLayout={isHorizontalLayout}
+      />
+    );
+  return (
+    <TopLevelLayoutGrid {...props} isHorizontalLayout={isHorizontalLayout} />
+  );
 };
 
 export default TopLevelLayout;
