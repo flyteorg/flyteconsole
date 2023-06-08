@@ -188,11 +188,18 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
           <Grid item>
             <UserInformation />
           </Grid>
-          <Grid item className={styles.flex}>
-            <AppInfo
-              versions={versions}
-              documentationUrl="https://docs.flyte.org/en/latest/"
-            />
+          <Grid
+            item
+            className={styles.flex}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box margin={-2}>
+              <AppInfo
+                versions={versions}
+                documentationUrl="https://docs.flyte.org/en/latest/"
+              />
+            </Box>
           </Grid>
         </Grid>
       </Grid>

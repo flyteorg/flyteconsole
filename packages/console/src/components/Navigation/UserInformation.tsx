@@ -13,7 +13,6 @@ import {
 import { WaitForData } from 'components/common/WaitForData';
 import { useUserProfile } from 'components/hooks/useUserProfile';
 import t from './strings';
-import { useTopLevelLayoutContext } from './TopLevelLayoutState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -23,7 +22,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '2rem',
     height: '2rem',
     fontSize: '1rem',
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: theme.palette.secondary.main,
+    border: `1px solid ${theme.palette.common.white}`,
   },
 }));
 
@@ -40,7 +40,6 @@ export const UserInformation: React.FC<{}> = () => {
   const styles = useStyles();
   const profile = useUserProfile();
   const apiContext = useFlyteApi();
-  const { isLayoutHorizontal } = useTopLevelLayoutContext();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -56,62 +55,72 @@ export const UserInformation: React.FC<{}> = () => {
     if (!profile.value) {
       return null;
     }
-    return !profile.value.preferredUsername ||
-      profile.value.preferredUsername === ''
+
+    return profile.value.preferredUsername
+      ? profile.value.preferredUsername
+      : profile.value.name;
+  }, [profile.value]);
+
+  const givenName = React.useMemo(() => {
+    if (!profile.value) {
+      return null;
+    }
+
+    return profile.value.name
       ? profile.value.name
-      : profile.value.preferredUsername;
+      : `${profile.value.givenName} ${profile.value.familyName}`.trim();
   }, [profile.value]);
 
   const userNameInitial = React.useMemo(() => {
-    if (!userName) {
+    if (!givenName) {
       return '';
     }
-    return userName[0].toLocaleUpperCase();
-  }, [userName]);
+    const names = givenName.split(' ');
+    const firstInitial = names[0].charAt(0);
+    const lastInitial =
+      names.length > 1 ? names[names.length - 1].charAt(0) : '';
+    return `${firstInitial}${lastInitial}`.toLocaleUpperCase();
+  }, [givenName]);
 
   const open = Boolean(anchorEl);
 
   return (
     <WaitForData spinnerVariant="none" {...profile}>
-      <div className={styles.container}>
-        {!profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
-        {profile.value && (
+      <Box pt={2} pb={2} className={styles.container}>
+        {profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
+        {!profile.value && (
           <>
-            {isLayoutHorizontal ? (
-              <IconButton
-                aria-owns="avatar-popover"
-                aria-haspopup="true"
-                onMouseEnter={handlePopoverOpen}
-                onMouseLeave={handlePopoverClose}
-                disableFocusRipple
+            <IconButton
+              aria-owns="avatar-popover"
+              aria-haspopup="true"
+              onMouseEnter={handlePopoverOpen}
+              onMouseLeave={handlePopoverClose}
+              disableFocusRipple
+            >
+              <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
+              <Popover
+                open={open}
+                id="avatar-popover"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
               >
-                <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
-                <Popover
-                  open={open}
-                  id="avatar-popover"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                  }}
-                  onClose={handlePopoverClose}
-                  disableRestoreFocus
-                >
-                  <Box pl={1} pr={1} pt={1} pb={1}>
-                    <Typography>{userName}</Typography>
-                  </Box>
-                </Popover>
-              </IconButton>
-            ) : (
-              <span>{userName}</span>
-            )}
+                <Box pl={1} pr={1} pt={1} pb={1}>
+                  <Typography>{userName}</Typography>
+                </Box>
+              </Popover>
+            </IconButton>
           </>
         )}
-      </div>
+      </Box>
     </WaitForData>
   );
 };
