@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Grid, styled, makeStyles, Box, useTheme } from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
@@ -152,9 +152,15 @@ export const TopLevelLayoutGrid = ({
     }
   }, []);
 
+  const [firstRender, setFirstRender] = useState(true);
   useEffect(() => {
     if (!isMobileNav) {
-      closeSideNav();
+      // close nav only if screen resized during session
+      if (!firstRender) {
+        closeSideNav();
+      } else {
+        setFirstRender(false);
+      }
     } else {
       openSideNav();
     }
