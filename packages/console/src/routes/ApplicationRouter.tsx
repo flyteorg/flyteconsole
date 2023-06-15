@@ -1,50 +1,9 @@
 import * as React from 'react';
-import {
-  ContentContainer,
-  ContentContainerProps,
-} from 'components/common/ContentContainer';
 import { Route, Switch } from 'react-router-dom';
 import { history } from 'routes/history';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
-import { Toolbar } from '@material-ui/core';
-import { styled } from '@material-ui/core/styles';
-import { subnavBarContentId } from 'common/constants';
-import { subnavBackgroundColor } from 'components/Theme/constants';
 import { components } from './components';
 import { Routes } from './routes';
-
-const StyledSubNavBarContent = styled(Toolbar)(() => ({
-  minHeight: 'auto',
-  padding: 0,
-  margin: 0,
-
-  '& > *': {
-    alignItems: 'center',
-    display: 'flex',
-    maxWidth: '100%',
-    padding: '24px 20px 24px 30px',
-    background: subnavBackgroundColor,
-  },
-  '@media (min-width: 600px)': {
-    minHeight: 'auto',
-  },
-}));
-
-export function withContentContainer<P extends {}>(
-  WrappedComponent: React.FC<P>,
-  contentContainerProps?: ContentContainerProps,
-) {
-  return (props: P) => (
-    <ContentContainer center={true} {...contentContainerProps}>
-      <StyledSubNavBarContent
-        className="subnav"
-        id={subnavBarContentId}
-      ></StyledSubNavBarContent>
-
-      <WrappedComponent {...props} />
-    </ContentContainer>
-  );
-}
 
 /**
  * Perform an animation when the route changes
