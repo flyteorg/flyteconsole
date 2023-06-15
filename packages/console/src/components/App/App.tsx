@@ -90,7 +90,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
                                 headerComponent={<NavBar />}
                                 sideNavigationComponent={<SideNavigation />}
                                 routerView={<ApplicationRouter />}
-                                isHorizontalLayout={false}
+                                isHorizontalLayout={true}
                               />
                             </TopLevelLayoutProvider>
                           </ErrorBoundary>
