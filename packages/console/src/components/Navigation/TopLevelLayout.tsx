@@ -58,6 +58,12 @@ export const TopLevelLayoutGrid = ({
     h100: {
       minHeight: '100dvh',
     },
+    headerZIndex: {
+      zIndex: 2,
+    },
+    leftNavZIndex: {
+      zIndex: 1,
+    },
     above: {
       zIndex: 1,
     },
@@ -67,7 +73,6 @@ export const TopLevelLayoutGrid = ({
       height: '100%',
       minWidth: theme.spacing(sideNavGridWidth),
       background: theme.palette.background.paper,
-      // transition: 'top ease',
     },
     mobileNav: {
       zIndex: 2,
@@ -205,12 +210,13 @@ export const TopLevelLayoutGrid = ({
         item
         className={`sticky-header-container
           ${styles.sticky}
+          ${styles.headerZIndex}
           ${isLayoutHorizontal || isMobileNav ? '' : styles.above}
         `}
       >
         <HeaderComponent />
       </Grid>
-      <GrowGrid item>
+      <GrowGrid item className={`${styles.above} ${styles.relative}`}>
         {/* Grow X Axis */}
         <GrowGrid
           container

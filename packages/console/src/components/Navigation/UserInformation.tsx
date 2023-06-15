@@ -29,9 +29,11 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const LoginLink = (props: { loginUrl: string }) => {
   return (
-    <Link href={props.loginUrl} color="inherit">
-      {t('login')}
-    </Link>
+    <Box display="flex" alignItems="center" pb={0.75}>
+      <Link href={props.loginUrl} color="inherit">
+        {t('login')}
+      </Link>
+    </Box>
   );
 };
 
@@ -86,41 +88,39 @@ export const UserInformation: React.FC<{}> = () => {
 
   return (
     <WaitForData spinnerVariant="none" {...profile}>
-      <Box pt={2} pb={2} className={styles.container}>
-        {profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
-        {!profile.value && (
-          <>
-            <IconButton
-              aria-owns="avatar-popover"
-              aria-haspopup="true"
-              onMouseEnter={handlePopoverOpen}
-              onMouseLeave={handlePopoverClose}
-              disableFocusRipple
+      {!profile.value && <LoginLink loginUrl={apiContext.getLoginUrl()} />}
+      {profile.value && (
+        <>
+          <IconButton
+            aria-owns="avatar-popover"
+            aria-haspopup="true"
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={handlePopoverClose}
+            disableFocusRipple
+          >
+            <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
+            <Popover
+              open={open}
+              id="avatar-popover"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus
             >
-              <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
-              <Popover
-                open={open}
-                id="avatar-popover"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                onClose={handlePopoverClose}
-                disableRestoreFocus
-              >
-                <Box pl={1} pr={1} pt={1} pb={1}>
-                  <Typography>{userName}</Typography>
-                </Box>
-              </Popover>
-            </IconButton>
-          </>
-        )}
-      </Box>
+              <Box pl={1} pr={1} pt={1} pb={1}>
+                <Typography>{userName}</Typography>
+              </Box>
+            </Popover>
+          </IconButton>
+        </>
+      )}
     </WaitForData>
   );
 };
