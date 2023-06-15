@@ -5,13 +5,39 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Grid, styled, makeStyles, Box, useTheme } from '@material-ui/core';
+import {
+  Grid,
+  styled,
+  makeStyles,
+  Box,
+  useTheme,
+  Toolbar,
+} from '@material-ui/core';
 import { ContentContainer } from 'components/common/ContentContainer';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { sideNavGridWidth } from 'common/layout';
 import debounce from 'lodash/debounce';
 import { FeatureFlag, useFeatureFlagContext } from 'basics/FeatureFlags';
+import { subnavBackgroundColor } from 'components/Theme/constants';
+import { subnavBarContentId } from 'common/constants';
 import { TopLevelLayoutContext } from './TopLevelLayoutState';
+
+const StyledSubNavBarContent = styled(Toolbar)(() => ({
+  minHeight: 'auto',
+  padding: 0,
+  margin: 0,
+
+  '& > *': {
+    alignItems: 'center',
+    display: 'flex',
+    maxWidth: '100%',
+    padding: '24px 20px 24px 30px',
+    background: subnavBackgroundColor,
+  },
+  '@media (min-width: 600px)': {
+    minHeight: 'auto',
+  },
+}));
 
 const GrowGrid = styled(Grid)(() => ({
   display: 'flex',
@@ -243,6 +269,10 @@ export const TopLevelLayoutGrid = ({
                 <Box className={`${styles.relative}`}>
                   {/* Legacy, need to move to <Grid/> */}
                   <ContentContainer className="routerview-content-container flex-column-container">
+                    <StyledSubNavBarContent
+                      className="subnav"
+                      id={subnavBarContentId}
+                    />
                     <RouterView />
                   </ContentContainer>
                 </Box>
