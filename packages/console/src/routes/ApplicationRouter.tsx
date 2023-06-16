@@ -120,7 +120,7 @@ export const ApplicationRouter: React.FC = () => {
               />
             );
           } else {
-            return <Redirect to={makeRoute('/select')} />;
+            return <Redirect to={Routes.SelectProject.path} />;
           }
         }}
       />
