@@ -128,6 +128,6 @@ export class Routes {
 
   // Landing page
   static SelectProject = {
-    path: makeRoute('/'),
+    path: makeRoute('/select'),
   };
 }

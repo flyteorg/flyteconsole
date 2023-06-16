@@ -4,14 +4,15 @@ import {
 } from 'components/common/ContentContainer';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
 import { subnavBarContentId } from 'common/constants';
 import { subnavBackgroundColor } from 'components/Theme/constants';
+import { makeRoute } from '@flyteorg/common';
 import { components } from './components';
-import { Routes } from './routes';
+import { makeProjectBoundPath, Routes } from './routes';
 
 const StyledSubNavBarContent = styled(Toolbar)(() => ({
   minHeight: 'auto',
@@ -87,6 +88,25 @@ export const ApplicationRouter: React.FC = () => {
         path={Routes.SelectProject.path}
         exact={true}
         component={withContentContainer(components.selectProject)}
+      />
+      <Route
+        path={makeRoute('/')}
+        render={() => {
+          // check if value exists in local storage
+          const localStoreProject = 'onboarding';
+          const localStoreDomain = 'development';
+          if (localStoreProject && localStoreDomain) {
+            return (
+              <Redirect
+                to={`${makeRoute(
+                  '/',
+                )}/projects/${localStoreProject}/executions?domain=${localStoreDomain}&duration=all`}
+              />
+            );
+          } else {
+            return <Redirect to={makeRoute('/select')} />;
+          }
+        }}
       />
       <Route component={withContentContainer(components.notFound)} />
     </Switch>
