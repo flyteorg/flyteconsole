@@ -3,7 +3,7 @@ import {
   ContentContainerProps,
 } from 'components/common/ContentContainer';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
@@ -12,7 +12,7 @@ import { subnavBarContentId } from 'common/constants';
 import { subnavBackgroundColor } from 'components/Theme/constants';
 import { makeRoute } from '@flyteorg/common';
 import { components } from './components';
-import { makeProjectBoundPath, Routes } from './routes';
+import { Routes } from './routes';
 
 const StyledSubNavBarContent = styled(Toolbar)(() => ({
   minHeight: 'auto',
@@ -46,8 +46,23 @@ export function withContentContainer<P extends {}>(
     </ContentContainer>
   );
 }
+/**
+ * The last project/domain viewed by a user is saved to localStorage
+ * to bypass the project select UX if values exists
+ */
+export interface LocalStoreDefaults {
+  project: string | null;
+  domain: string | null;
+}
+export const LOCAL_STORE_DEFAULTS = 'localProjectDomain';
 
 export const ApplicationRouter: React.FC = () => {
+  const localProject = localStorage.getItem(LOCAL_STORE_DEFAULTS);
+  let projectDomain: LocalStoreDefaults;
+  if (localProject) {
+    projectDomain = JSON.parse(localProject) as LocalStoreDefaults;
+  }
+
   const additionalRoutes =
     useExternalConfigurationContext()?.registry?.additionalRoutes || null;
   return (
@@ -92,15 +107,16 @@ export const ApplicationRouter: React.FC = () => {
       <Route
         path={makeRoute('/')}
         render={() => {
-          // check if value exists in local storage
-          const localStoreProject = 'onboarding';
-          const localStoreDomain = 'development';
-          if (localStoreProject && localStoreDomain) {
+          /**
+           * If LocalStoreDefaults exist, we direct them to the project detail view
+           * for those values.
+           */
+          if (projectDomain) {
             return (
               <Redirect
-                to={`${makeRoute(
-                  '/',
-                )}/projects/${localStoreProject}/executions?domain=${localStoreDomain}&duration=all`}
+                to={`${makeRoute('/')}/projects/${
+                  projectDomain.project
+                }/executions?domain=${projectDomain.domain}&duration=all`}
               />
             );
           } else {

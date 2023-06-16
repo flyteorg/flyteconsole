@@ -1,5 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Typography } from '@material-ui/core';
 import {
   useTaskNameList,
@@ -37,6 +37,7 @@ import {
   getProjectAttributes,
   getProjectDomainAttributes,
 } from 'models/Project/api';
+import { LocalStoreDefaults, LOCAL_STORE_DEFAULTS } from 'routes';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 
@@ -77,6 +78,19 @@ export const ProjectDashboard: React.FC<ProjectDashboardProps> = ({
   domainId: domain,
   projectId: project,
 }) => {
+  /**
+   * The last project/domain viewed by a user is saved here and used by
+   * ApplicationRouter to bypass the project select UX if this value
+   * exists
+   */
+  useEffect(() => {
+    const projectDomain: LocalStoreDefaults = {
+      domain: domain,
+      project: project,
+    };
+    localStorage.setItem(LOCAL_STORE_DEFAULTS, JSON.stringify(projectDomain));
+  }, []);
+
   const styles = useStyles();
   const archivedFilter = useExecutionShowArchivedState();
   const filtersState = useWorkflowExecutionFiltersState();
