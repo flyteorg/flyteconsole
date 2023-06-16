@@ -49,7 +49,9 @@ export const checkForDynamicExecutions = (allExecutions, staticExecutions) => {
   const result = {};
   for (const parentId in parentsToFetch) {
     const execution = executionsByNodeId[parentId];
-    result[execution.scopedId] = execution;
+    if (execution) {
+      result[execution.scopedId] = execution;
+    }
   }
   return result;
 };
