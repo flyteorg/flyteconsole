@@ -1,3 +1,4 @@
+import { makeRoute } from '@flyteorg/common';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -7,6 +8,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { listhoverColor } from 'components/Theme/constants';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { SearchableProjectList } from './SearchableProjectList';
 
 const expanderGridHeight = 12;
@@ -40,6 +42,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowY: 'scroll',
     top: theme.spacing(expanderGridHeight),
     width: '100%',
+  },
+  viewProjects: {
+    display: 'flex',
+    padding: '.25rem',
+    justifyContent: 'flex-end',
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.body1.fontSize,
+    textAlign: 'right',
+    textDecoration: 'none',
   },
 }));
 
@@ -95,6 +106,9 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
       </ButtonBase>
       {expanded && (
         <div className={styles.listContainer}>
+          <Link className={styles.viewProjects} to={makeRoute('/select')}>
+            View All Projects
+          </Link>
           <SearchableProjectList
             onProjectSelected={onSelect}
             projects={projects}
