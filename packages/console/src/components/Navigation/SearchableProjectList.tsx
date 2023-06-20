@@ -50,55 +50,102 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onProjectSelected,
   results,
 }) => {
+  const viewAllProjects = {
+    id: Routes.SelectProject.id,
+    name: 'View All Projects',
+    description: 'View All Projects',
+    domains: [],
+  } as Project;
+
   const commonStyles = useCommonStyles();
   const styles = useStyles();
-  return results.length === 0 ? (
-    <NoResults />
-  ) : (
-    <ul className={commonStyles.listUnstyled}>
-      {results.map(({ content, value }) => (
-        <Tooltip
-          TransitionComponent={Fade}
-          key={value.id}
-          placement="bottom-end"
-          enterDelay={500}
-          title={
-            <Typography variant="body1">
-              <div className={commonStyles.textMonospace}>{value.id}</div>
-              <div>
-                <em>{value.description || defaultProjectDescription}</em>
-              </div>
-            </Typography>
-          }
-        >
-          <div
-            className={styles.searchResult}
-            onClick={onProjectSelected.bind(null, value)}
-          >
-            <div
-              className={classnames(styles.itemName, commonStyles.textWrapped)}
-            >
-              <Grid
-                container
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Grid item>
-                  <Box>{content}</Box>
-                </Grid>
-                {value.id === Routes.SelectProject.id && (
-                  <Grid item>
-                    <Icon>
-                      <KeyboardArrowRight />
-                    </Icon>
-                  </Grid>
-                )}
-              </Grid>
+  return (
+    <>
+      <Tooltip
+        TransitionComponent={Fade}
+        placement="bottom-end"
+        enterDelay={500}
+        title={
+          <Typography variant="body1">
+            <div className={commonStyles.textMonospace}>
+              {viewAllProjects.description}
             </div>
-          </div>
-        </Tooltip>
-      ))}
-    </ul>
+          </Typography>
+        }
+      >
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          className={styles.searchResult}
+          onClick={() => onProjectSelected(viewAllProjects)}
+        >
+          <Grid item>
+            <Typography color="primary" className={styles.itemName}>
+              {viewAllProjects.name}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Icon color="primary">
+              <KeyboardArrowRight />
+            </Icon>
+          </Grid>
+        </Grid>
+      </Tooltip>
+      {!results ? (
+        <NoResults />
+      ) : (
+        <ul className={commonStyles.listUnstyled}>
+          <li>
+            {results.map(({ content, value }) => (
+              <Tooltip
+                TransitionComponent={Fade}
+                key={value.id}
+                placement="bottom-end"
+                enterDelay={500}
+                title={
+                  <Typography variant="body1">
+                    <div className={commonStyles.textMonospace}>{value.id}</div>
+                    <div>
+                      <em>{value.description || defaultProjectDescription}</em>
+                    </div>
+                  </Typography>
+                }
+              >
+                <div
+                  className={styles.searchResult}
+                  onClick={onProjectSelected.bind(null, value)}
+                >
+                  <div
+                    className={classnames(
+                      styles.itemName,
+                      commonStyles.textWrapped,
+                    )}
+                  >
+                    <Grid
+                      container
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Grid item>
+                        <Box>{content}</Box>
+                      </Grid>
+                      {value.id === Routes.SelectProject.id && (
+                        <Grid item>
+                          <Icon color="primary">
+                            <KeyboardArrowRight />
+                          </Icon>
+                        </Grid>
+                      )}
+                    </Grid>
+                  </div>
+                </div>
+              </Tooltip>
+            ))}
+          </li>
+        </ul>
+      )}
+    </>
   );
 };
 

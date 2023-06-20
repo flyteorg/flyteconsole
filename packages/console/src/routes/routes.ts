@@ -21,8 +21,8 @@ export class Routes {
 
   // Landing page
   static SelectProject = {
-    id: 'view-all-projects',
-    path: makeRoute('/select'),
+    id: '__FLYTE__VIEW_ALL_PROJECTS__',
+    path: makeRoute('/select-project'),
   };
 
   // Projects
