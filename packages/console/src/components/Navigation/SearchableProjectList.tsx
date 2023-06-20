@@ -92,7 +92,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           </Grid>
         </Grid>
       </Tooltip>
-      {!results ? (
+      {!results.length ? (
         <NoResults />
       ) : (
         <ul className={commonStyles.listUnstyled}>
