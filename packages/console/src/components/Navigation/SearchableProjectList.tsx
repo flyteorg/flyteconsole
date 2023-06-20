@@ -1,5 +1,6 @@
-import { Fade, Tooltip, Typography } from '@material-ui/core';
+import { Box, Fade, Grid, Icon, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import { KeyboardArrowRight } from '@material-ui/icons';
 import classnames from 'classnames';
 import { NoResults } from 'components/common/NoResults';
 import { SearchableList, SearchResult } from 'components/common/SearchableList';
@@ -8,6 +9,7 @@ import { defaultProjectDescription } from 'components/SelectProject/constants';
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
+import { Routes } from 'routes';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -76,7 +78,22 @@ const SearchResults: React.FC<SearchResultsProps> = ({
             <div
               className={classnames(styles.itemName, commonStyles.textWrapped)}
             >
-              {content}
+              <Grid
+                container
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Grid item>
+                  <Box>{content}</Box>
+                </Grid>
+                {value.id === Routes.SelectProject.id && (
+                  <Grid item>
+                    <Icon>
+                      <KeyboardArrowRight />
+                    </Icon>
+                  </Grid>
+                )}
+              </Grid>
             </div>
           </div>
         </Tooltip>

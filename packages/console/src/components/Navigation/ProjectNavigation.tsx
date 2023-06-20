@@ -70,8 +70,10 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
   const projects = useProjects();
-  const onProjectSelected = (project: Project) =>
-    history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  const onProjectSelected = (project: Project) => {
+    const path = Routes.ProjectDetails.makeUrl(project.id, section);
+    return history.push(path);
+  };
 
   const routes: ProjectRoute[] = [
     {

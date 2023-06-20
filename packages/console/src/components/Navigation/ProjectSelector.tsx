@@ -84,6 +84,16 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
     }
   };
 
+  const projectsNav = React.useMemo(() => {
+    const viewAllProjects = {
+      id: Routes.SelectProject.id,
+      name: 'View All Projects',
+      description: 'Project overview page',
+      domains: [],
+    } as Project;
+    return [viewAllProjects, ...projects];
+  }, [projects]);
+
   return (
     <div onKeyDownCapture={onKeyDown}>
       <ButtonBase
@@ -107,12 +117,9 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
       </ButtonBase>
       {expanded && (
         <div className={styles.listContainer}>
-          <Link className={styles.viewProjects} to={Routes.SelectProject.path}>
-            View All Projects
-          </Link>
           <SearchableProjectList
             onProjectSelected={onSelect}
-            projects={projects}
+            projects={projectsNav}
           />
         </div>
       )}
