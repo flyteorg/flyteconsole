@@ -86,6 +86,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   searchInputContainer: {
     padding: 0,
   },
+  svgIcon: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 /**
@@ -109,7 +112,12 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
           className={classNames(listStyles.searchResult, styles.itemContainer)}
         >
           <div className={styles.itemName}>
-            <MuiLaunchPlanIcon width={16} height={16} />
+            <MuiLaunchPlanIcon
+              width={16}
+              height={16}
+              className={styles.svgIcon}
+              fill="#666666"
+            />
             <div>{id.name}</div>
           </div>
         </div>

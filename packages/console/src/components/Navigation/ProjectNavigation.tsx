@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import ChevronRight from '@material-ui/icons/ChevronRight';
@@ -9,7 +10,6 @@ import { useCommonStyles } from 'components/common/styles';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject, useProjects } from 'components/hooks/useProjects';
 import { Project } from 'models/Project/types';
-import * as React from 'react';
 import { matchPath, NavLinkProps, RouteComponentProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
@@ -126,7 +126,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
       text: 'Tasks',
     },
     {
-      icon: MuiLaunchPlanIcon as any,
+      icon: MuiLaunchPlanIcon,
       isActive: (match, location) => {
         const finalMatch = match
           ? match
