@@ -1,5 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Typography } from '@material-ui/core';
 import {
   useTaskNameList,
@@ -37,7 +37,6 @@ import {
   getProjectAttributes,
   getProjectDomainAttributes,
 } from 'models/Project/api';
-import { LocalStoreDefaults, LOCAL_STORE_DEFAULTS } from 'routes';
 import t from './strings';
 import { failedToLoadExecutionsString } from './constants';
 

@@ -7,10 +7,14 @@ import {
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ButtonLink } from 'components/common/ButtonLink';
+import {
+  LocalStorageProjectDomain,
+  LOCAL_PROJECT_DOMAIN,
+  setLocalStore,
+} from 'components/common/LocalStoreDefaults';
 import { useCommonStyles } from 'components/common/styles';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
-import { LocalStoreDefaults, LOCAL_STORE_DEFAULTS } from 'routes';
 import { Routes } from 'routes/routes';
 import { defaultProjectDescription } from './constants';
 
@@ -67,14 +71,11 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                * application if this value
                * exists
                */
-              const projectDomain: LocalStoreDefaults = {
+              const projectDomain: LocalStorageProjectDomain = {
                 domain: domainId,
                 project: project.name,
               };
-              localStorage.setItem(
-                LOCAL_STORE_DEFAULTS,
-                JSON.stringify(projectDomain),
-              );
+              setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
             }}
             to={Routes.ProjectDetails.sections.dashboard.makeUrl(
               project.id,

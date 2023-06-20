@@ -3,7 +3,7 @@ import {
   ContentContainerProps,
 } from 'components/common/ContentContainer';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
@@ -11,6 +11,11 @@ import { styled } from '@material-ui/core/styles';
 import { subnavBarContentId } from 'common/constants';
 import { subnavBackgroundColor } from 'components/Theme/constants';
 import { makeRoute } from '@flyteorg/common';
+import {
+  getLocalStore,
+  LocalStorageProjectDomain,
+  LOCAL_PROJECT_DOMAIN,
+} from 'components/common/LocalStoreDefaults';
 import { components } from './components';
 import { Routes } from './routes';
 
@@ -46,22 +51,11 @@ export function withContentContainer<P extends {}>(
     </ContentContainer>
   );
 }
-/**
- * The last project/domain viewed by a user is saved to localStorage
- * to bypass the project select UX if values exists
- */
-export interface LocalStoreDefaults {
-  project: string | null;
-  domain: string | null;
-}
-export const LOCAL_STORE_DEFAULTS = 'localProjectDomain';
 
 export const ApplicationRouter: React.FC = () => {
-  const localProject = localStorage.getItem(LOCAL_STORE_DEFAULTS);
-  let projectDomain: LocalStoreDefaults;
-  if (localProject) {
-    projectDomain = JSON.parse(localProject) as LocalStoreDefaults;
-  }
+  const localProjectDomain = getLocalStore(
+    LOCAL_PROJECT_DOMAIN,
+  ) as LocalStorageProjectDomain;
 
   const additionalRoutes =
     useExternalConfigurationContext()?.registry?.additionalRoutes || null;
@@ -111,12 +105,12 @@ export const ApplicationRouter: React.FC = () => {
            * If LocalStoreDefaults exist, we direct them to the project detail view
            * for those values.
            */
-          if (projectDomain) {
+          if (localProjectDomain) {
             return (
               <Redirect
                 to={`${makeRoute('/')}/projects/${
-                  projectDomain.project
-                }/executions?domain=${projectDomain.domain}&duration=all`}
+                  localProjectDomain.project
+                }/executions?domain=${localProjectDomain.domain}&duration=all`}
               />
             );
           } else {
