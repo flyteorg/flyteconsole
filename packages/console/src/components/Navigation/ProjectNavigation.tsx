@@ -168,18 +168,35 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
           onProjectSelected={onProjectSelected}
         />
       )}
-      <div className={styles.navLinksContainer}>
+      <div
+        className={classnames(
+          styles.navLinksContainer,
+          'side-nav-links-container',
+        )}
+      >
         {Object.values(routes).map(({ isActive, path, icon: Icon, text }) => (
           <NavLinkWithSearch
-            activeClassName={styles.navLinkActive}
-            className={classnames(commonStyles.linkUnstyled, styles.navLink)}
+            activeClassName={classnames(
+              styles.navLinkActive,
+              'side-nav-link--active',
+            )}
+            className={classnames(
+              commonStyles.linkUnstyled,
+              styles.navLink,
+              'side-nav-link',
+            )}
             isActive={isActive}
             key={path}
             to={path}
           >
             <Icon className={styles.navLinkIcon} />
             <span className={styles.navLinkText}>{text}</span>
-            <ChevronRight className={styles.navLinkChevron} />
+            <ChevronRight
+              className={classnames(
+                styles.navLinkChevron,
+                'side-nav-link-chevron',
+              )}
+            />
           </NavLinkWithSearch>
         ))}
       </div>

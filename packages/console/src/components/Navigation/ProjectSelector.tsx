@@ -77,7 +77,11 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
       <ButtonBase
         disableRipple={true}
         disableTouchRipple={true}
-        className={classnames(styles.expander, { expanded })}
+        className={classnames(
+          styles.expander,
+          { expanded },
+          'side-nav-project-select',
+        )}
         onClick={onToggleExpanded}
       >
         <header className={styles.header}>
@@ -86,12 +90,19 @@ export const ProjectSelector: React.FC<ProjectSelectorProps> = ({
             className={classnames(
               commonStyles.mutedHeader,
               commonStyles.textWrapped,
+              'side-nav-project-select__project-name',
             )}
           >
             {selectedProject.name}
           </div>
         </header>
-        <ExpandMore fontSize="large" className={styles.expandIcon} />
+        <ExpandMore
+          fontSize="large"
+          className={classnames(
+            styles.expandIcon,
+            'side-nav-project-select-expand-icon',
+          )}
+        />
       </ButtonBase>
       {expanded && (
         <div className={styles.listContainer}>
