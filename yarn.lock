@@ -2020,7 +2020,7 @@ __metadata:
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
     "@flyteorg/common": ^0.0.4
-    "@flyteorg/console": ^0.0.38
+    "@flyteorg/console": ^0.0.39
     "@types/long": ^3.0.32
     long: ^4.0.0
     protobufjs: ~6.11.3
@@ -2047,7 +2047,7 @@ __metadata:
   resolution: "@flyteorg/components@workspace:packages/components"
   dependencies:
     "@flyteorg/locale": ^0.0.2
-    "@flyteorg/ui-atoms": ^0.0.3
+    "@flyteorg/ui-atoms": ^0.0.4
     "@material-ui/core": ^4.0.0
     "@material-ui/icons": ^4.0.0
     "@types/react": ^16.9.34
@@ -2059,7 +2059,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/console@^0.0.38, @flyteorg/console@workspace:packages/console":
+"@flyteorg/console@^0.0.39, @flyteorg/console@workspace:packages/console":
   version: 0.0.0-use.local
   resolution: "@flyteorg/console@workspace:packages/console"
   dependencies:
@@ -2070,7 +2070,7 @@ __metadata:
     "@flyteorg/flyte-api": ^0.0.2
     "@flyteorg/flyteidl-types": ^0.0.4
     "@flyteorg/locale": ^0.0.2
-    "@flyteorg/ui-atoms": ^0.0.3
+    "@flyteorg/ui-atoms": ^0.0.4
     "@material-ui/core": ^4.12.4
     "@material-ui/icons": ^4.11.3
     "@material-ui/pickers": ^3.2.2
@@ -2190,7 +2190,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/ui-atoms@^0.0.3, @flyteorg/ui-atoms@workspace:packages/ui-atoms":
+"@flyteorg/ui-atoms@^0.0.4, @flyteorg/ui-atoms@workspace:packages/ui-atoms":
   version: 0.0.0-use.local
   resolution: "@flyteorg/ui-atoms@workspace:packages/ui-atoms"
   dependencies:
