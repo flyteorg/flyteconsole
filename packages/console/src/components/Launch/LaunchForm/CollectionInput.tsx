@@ -5,6 +5,7 @@ import { makeStringChangeHandler } from './handlers';
 import { InputProps, InputType } from './types';
 import { UnsupportedInput } from './UnsupportedInput';
 import { getLaunchInputId } from './utils';
+import { UnionInput } from './UnionInput';
 
 /** Handles rendering of the input component for a Collection of SimpleType values */
 export const CollectionInput: React.FC<InputProps> = props => {
@@ -37,7 +38,6 @@ export const CollectionInput: React.FC<InputProps> = props => {
     case InputType.Map:
     case InputType.String:
     case InputType.Struct:
-    case InputType.Union:
       return (
         <TextField
           id={getLaunchInputId(name)}
@@ -52,6 +52,19 @@ export const CollectionInput: React.FC<InputProps> = props => {
           variant="outlined"
         />
       );
+    case InputType.Union: {
+      const unionInputProps = {
+        ...props,
+        initialValue:
+          props?.initialValue?.collection?.literals?.[0] || props?.initialValue,
+        typeDefinition: subtype,
+        onChange: ({ value: newValue }: InputProps) => {
+          // collection type expects a stringified list of values
+          props.onChange(JSON.stringify([newValue]));
+        },
+      } as InputProps;
+      return <UnionInput {...unionInputProps} />;
+    }
     default:
       return <UnsupportedInput {...props} />;
   }

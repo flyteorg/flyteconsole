@@ -26,6 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     flexGrow: 1,
     position: 'relative',
+    display: 'flex',
+    gap: theme.spacing(1),
+    alignItems: 'center',
+    paddingBottom: theme.spacing(3),
+    maxWidth: '200px',
   },
   menuItem: {
     display: 'flex',

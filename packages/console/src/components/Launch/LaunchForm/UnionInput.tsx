@@ -1,6 +1,7 @@
-import { Typography } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { Typography } from '@material-ui/core';
+import { styled } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import {
@@ -19,12 +20,16 @@ import {
 } from './SearchableSelector';
 import t from '../../common/strings';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  inlineTitle: {
-    display: 'flex',
-    gap: theme.spacing(1),
-    alignItems: 'center',
-    paddingBottom: theme.spacing(3),
+const StyledCard = styled(Card)(() => ({
+  position: 'relative',
+  overflow: 'visible',
+
+  '& .inlineTitle': {
+    position: 'absolute',
+    top: '-8px',
+    color: 'gray',
+    background: 'white',
+    fontSize: '10px',
   },
 }));
 
@@ -37,14 +42,15 @@ const generateInputTypeToValueMap = (
     return {};
   }
 
-  return listOfSubTypes.reduce(function (map, subType) {
+  const final = listOfSubTypes.reduce(function (map, subType) {
     if (initialInputValue && subType === initialType) {
       map[subType.type] = initialInputValue;
     } else {
-      map[subType.type] = { value: '', typeDefinition: subType };
+      map[subType.type] = { value: undefined, typeDefinition: subType };
     }
     return map;
   }, {});
+  return final;
 };
 
 const generateSearchableSelectorOption = (
@@ -70,16 +76,14 @@ export const UnionInput = (props: InputProps) => {
     initialValue,
     required,
     label,
-    onChange,
+    // onChange,
     typeDefinition,
-    error,
     description,
     setIsError,
   } = props;
 
-  const classes = useStyles();
-
   const listOfSubTypes = typeDefinition?.listOfSubTypes;
+  const [localSubtypeError, setLocalSubtypeError] = useState<string>();
 
   if (!listOfSubTypes?.length) {
     return <></>;
@@ -90,12 +94,11 @@ export const UnionInput = (props: InputProps) => {
     {},
   );
 
+  const helper = getHelperForInput(typeDefinition.type);
+
   const initialInputValue =
     initialValue &&
-    (getHelperForInput(typeDefinition.type).fromLiteral(
-      initialValue,
-      typeDefinition,
-    ) as UnionValue);
+    (helper.fromLiteral(initialValue, typeDefinition) as UnionValue);
 
   const initialInputTypeDefinition =
     initialInputValue?.typeDefinition ?? listOfSubTypes[0];
@@ -104,7 +107,7 @@ export const UnionInput = (props: InputProps) => {
     return <></>;
   }
 
-  const [inputTypeToValueMap, setInputTypeToValueMap] = React.useState<
+  const [inputTypeToValueMap, setInputTypeToValueMap] = useState<
     Record<InputType, UnionValue> | {}
   >(
     generateInputTypeToValueMap(
@@ -114,7 +117,7 @@ export const UnionInput = (props: InputProps) => {
     ),
   );
 
-  const [selectedInputType, setSelectedInputType] = React.useState<InputType>(
+  const [selectedInputType, setSelectedInputType] = useState<InputType>(
     initialInputTypeDefinition.type,
   );
 
@@ -123,7 +126,7 @@ export const UnionInput = (props: InputProps) => {
   ] as InputTypeDefinition;
 
   // change the selected union input value when change the selected union input type
-  React.useEffect(() => {
+  useEffect(() => {
     if (inputTypeToValueMap[selectedInputType]) {
       handleSubTypeOnChange(inputTypeToValueMap[selectedInputType].value);
     }
@@ -136,10 +139,23 @@ export const UnionInput = (props: InputProps) => {
   };
 
   const handleSubTypeOnChange = (input: InputValue) => {
-    onChange({
+    const subtypeHelper = getHelperForInput(selectedInputTypeDefintion.type);
+    const newValue = {
       value: input,
       typeDefinition: selectedInputTypeDefintion,
-    } as UnionValue);
+    };
+    try {
+      subtypeHelper.validate({
+        ...newValue,
+        required: props.required,
+      } as any);
+      setLocalSubtypeError('');
+      setIsError(false);
+    } catch (error) {
+      setLocalSubtypeError(error.message);
+      setIsError(true);
+    }
+
     setInputTypeToValueMap({
       ...inputTypeToValueMap,
       [selectedInputType]: {
@@ -149,46 +165,39 @@ export const UnionInput = (props: InputProps) => {
     });
   };
 
+  const inputComponent = getComponentForInput(
+    {
+      description: description,
+      name: `${formatType(selectedInputTypeDefintion)}`,
+      label: '',
+      required: required,
+      typeDefinition: selectedInputTypeDefintion,
+      onChange: handleSubTypeOnChange,
+      value: inputTypeToValueMap[selectedInputType]?.value,
+      error: localSubtypeError,
+    } as InputProps,
+    true,
+    setIsError,
+  );
+
   return (
-    <Card
-      variant="outlined"
-      style={{
-        overflow: 'visible',
-      }}
-    >
+    <StyledCard variant="outlined">
       <CardContent>
-        <div className={classes.inlineTitle}>
-          <Typography variant="body1" component="label">
-            {label}
-          </Typography>
+        <Typography variant="body1" component="label" className="inlineTitle">
+          {label}
+        </Typography>
 
-          <SearchableSelector
-            label={t('type')}
-            options={generateListOfSearchableSelectorOptions(listOfSubTypes)}
-            selectedItem={generateSearchableSelectorOption(
-              selectedInputTypeDefintion,
-            )}
-            onSelectionChanged={handleTypeOnSelectionChanged}
-          />
-        </div>
-
-        <div>
-          {getComponentForInput(
-            {
-              description: description,
-              name: `${formatType(selectedInputTypeDefintion)}`,
-              label: '',
-              required: required,
-              typeDefinition: selectedInputTypeDefintion,
-              onChange: handleSubTypeOnChange,
-              value: inputTypeToValueMap[selectedInputType]?.value,
-              error: error,
-            } as InputProps,
-            true,
-            setIsError,
+        <SearchableSelector
+          label={t('type')}
+          options={generateListOfSearchableSelectorOptions(listOfSubTypes)}
+          selectedItem={generateSearchableSelectorOption(
+            selectedInputTypeDefintion,
           )}
-        </div>
+          onSelectionChanged={handleTypeOnSelectionChanged}
+        />
+
+        <div>{inputComponent}</div>
       </CardContent>
-    </Card>
+    </StyledCard>
   );
 };

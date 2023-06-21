@@ -3,18 +3,36 @@ import {
   TextField,
   Card,
   CardContent,
-  CardHeader,
   StylesProvider,
   createGenerateClassName,
+  Typography,
 } from '@material-ui/core';
 import { useState } from 'react';
 import Form from '@rjsf/material-ui';
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import {
+  MuiThemeProvider,
+  createTheme,
+  styled,
+} from '@material-ui/core/styles';
 import validator from '@rjsf/validator-ajv8';
 import { makeStringChangeHandler } from './handlers';
 import { InputProps } from './types';
 import { getLaunchInputId } from './utils';
 import { protobufValueToPrimitive, PrimitiveType } from './inputHelpers/struct';
+
+const StyledCard = styled(Card)(() => ({
+  position: 'relative',
+  overflow: 'visible',
+  fontFamily: 'inherit',
+
+  '& .inlineTitle': {
+    position: 'absolute',
+    top: '-8px',
+    color: 'gray',
+    background: 'white',
+    fontSize: '10px',
+  },
+}));
 
 const muiTheme = createTheme({
   props: {
@@ -30,9 +48,9 @@ const muiTheme = createTheme({
     },
   },
   typography: {
-    h5: {
-      fontSize: '16px',
-      fontWeight: 400,
+    body1: {
+      fontFamily: 'inherit',
+      fontSize: '14px',
     },
   },
 });
@@ -110,12 +128,15 @@ export const StructInput: React.FC<InputProps> = props => {
       })}
     >
       <MuiThemeProvider theme={muiTheme}>
-        <Card>
-          <CardHeader
-            title={label}
-            style={{ borderBottom: 'solid 1px gray' }}
-          />
+        <StyledCard variant="outlined">
           <CardContent>
+            <Typography
+              variant="body1"
+              component="label"
+              className="inlineTitle"
+            >
+              {label}
+            </Typography>
             <Form
               schema={JSON.parse(JSON.stringify(parsedJson))}
               validator={validator}
@@ -125,7 +146,7 @@ export const StructInput: React.FC<InputProps> = props => {
               <div></div>
             </Form>
           </CardContent>
-        </Card>
+        </StyledCard>
       </MuiThemeProvider>
     </StylesProvider>
   ) : (
