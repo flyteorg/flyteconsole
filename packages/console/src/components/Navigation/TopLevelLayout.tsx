@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   Grid,
   styled,
@@ -68,6 +62,10 @@ export const TopLevelLayoutGrid = ({
   const RouterView = routerView ? () => routerView : () => <></>;
 
   const styles = makeStyles(theme => ({
+    noBounce: {
+      '-webkit-overflow-scrolling':
+        'touch' /* enables “momentum” (smooth) scrolling */,
+    },
     sticky: {
       position: 'sticky',
       top: 0,
@@ -99,6 +97,7 @@ export const TopLevelLayoutGrid = ({
       height: '100%',
       minWidth: theme.spacing(sideNavGridWidth),
       background: theme.palette.background.paper,
+      willChange: 'transform',
     },
     mobileNav: {
       zIndex: 2,
@@ -142,37 +141,23 @@ export const TopLevelLayoutGrid = ({
   const {
     isMobileNav,
     isSideNavOpen,
-    openSideNav,
     closeSideNav,
     isLayoutHorizontal,
     rowLayout,
     columnLayout,
   } = React.useContext(TopLevelLayoutContext);
 
-  // // hide nav on narrow screen by default
-  // useLayoutEffect(() => {
-  //   const handleResize = () => {
-  //     if (window.innerWidth < theme.breakpoints.values.md) {
-  //       closeSideNav();
-  //     } else {
-  //       if (!isMobileNav) openSideNav();
-  //     }
-  //   };
-  //   const debouncedResize = debounce(handleResize, 50);
-  //   handleResize();
-
-  //   window.addEventListener('resize', debouncedResize);
-  //   return () => window.removeEventListener('resize', debouncedResize);
-  // }, []);
-
   // flip layout on narrow screen per flag and resizes
   useLayoutEffect(() => {
     const handleResize = () => {
-      if (!userHorizontalPref) return;
       if (window.innerWidth < theme.breakpoints.values.md) {
         rowLayout();
       } else {
-        columnLayout();
+        if (!userHorizontalPref) {
+          rowLayout();
+        } else {
+          columnLayout();
+        }
       }
     };
 
@@ -184,10 +169,11 @@ export const TopLevelLayoutGrid = ({
 
   // run on init
   useEffect(() => {
-    if (userHorizontalPref || isMobileNav) {
-      columnLayout();
-    } else {
+    if (isMobileNav || !isLayoutHorizontal || !userHorizontalPref) {
       rowLayout();
+      closeSideNav();
+    } else {
+      columnLayout();
     }
   }, []);
 
@@ -197,10 +183,12 @@ export const TopLevelLayoutGrid = ({
   useLayoutEffect(() => {
     const handleScroll = () => {
       const scrollElement = scrollRef.current;
-      const scroll = window.scrollY;
+      const documentHeight =
+        document.body.scrollHeight - document.body.clientHeight;
 
-      if (scrollElement) {
-        scrollElement.style.top = `${scroll}px`;
+      if (scrollElement && window.scrollY + 1 < documentHeight) {
+        const scroll = window.scrollY;
+        scrollElement.style.transform = `translateY(${scroll}px)`;
       }
     };
 
@@ -212,7 +200,7 @@ export const TopLevelLayoutGrid = ({
 
   return (
     <Grid
-      className={`top-level-layout ${styles.h100} ${className}`}
+      className={`top-level-layout ${styles.h100} ${className} ${styles.noBounce}`}
       container
       direction={isLayoutHorizontal ? 'row' : 'column'}
       justifyContent="flex-start"
@@ -223,7 +211,6 @@ export const TopLevelLayoutGrid = ({
         className={`sticky-header-container
           ${styles.sticky}
           ${styles.headerZIndex}
-          ${isLayoutHorizontal || isMobileNav ? '' : styles.above}
         `}
       >
         <HeaderComponent />

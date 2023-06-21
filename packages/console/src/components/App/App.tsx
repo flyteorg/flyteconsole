@@ -34,10 +34,11 @@ import {
   ExternalConfigurationProvider,
   ExternalConfigurationProviderProps,
 } from 'basics/ExternalConfigurationProvider';
-import NavBar from 'components/Navigation/NavBar';
-import TopLevelLayout from 'components/Navigation/TopLevelLayout';
-import { SideNavigation } from 'components/Navigation/SideNavigation';
+import GlobalStyles from 'components/utils/GlobalStyles';
 import TopLevelLayoutProvider from 'components/Navigation/TopLevelLayoutState';
+import TopLevelLayout from 'components/Navigation/TopLevelLayout';
+import NavBar from 'components/Navigation/NavBar';
+import { SideNavigation } from 'components/Navigation/SideNavigation';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -58,8 +59,12 @@ export const AppComponent: React.FC<AppComponentProps> = (
   }
   const apiState = useAPIState();
 
+  const horizontalLayoutFlag =
+    `${env.HORIZONTAL_LAYOUT}`.trim().toLowerCase() === 'true';
+
   return (
     <FeatureFlagsProvider>
+      <GlobalStyles />
       <LocalCacheProvider>
         <StylesProvider
           generateClassName={createGenerateClassName({
@@ -90,7 +95,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
                                 headerComponent={<NavBar />}
                                 sideNavigationComponent={<SideNavigation />}
                                 routerView={<ApplicationRouter />}
-                                isHorizontalLayout={true}
+                                isHorizontalLayout={horizontalLayoutFlag}
                               />
                             </TopLevelLayoutProvider>
                           </ErrorBoundary>

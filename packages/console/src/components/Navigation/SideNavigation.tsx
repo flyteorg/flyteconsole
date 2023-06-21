@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   fixed: {
     position: 'fixed',
     top: 0,
-    height: '100dvh',
+    height: 'calc(100dvh - 64px)',
     width: theme.spacing(sideNavGridWidth),
     transition: 'top 0s',
   },

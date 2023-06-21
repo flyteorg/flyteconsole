@@ -41,6 +41,8 @@ const GA_TRACKING_ID = process.env.GA_TRACKING_ID || '';
 
 const FLYTE_NAVIGATION = process.env.FLYTE_NAVIGATION || '';
 
+const HORIZONTAL_LAYOUT = process.env.HORIZONTAL_LAYOUT || 'false';
+
 module.exports = {
   ADMIN_API_URL,
   ADMIN_API_USE_SSL,
@@ -53,6 +55,7 @@ module.exports = {
   ASSETS_PATH,
   CERTIFICATE_PATH,
   LOCAL_DEV_HOST,
+  HORIZONTAL_LAYOUT,
   processEnv: {
     ADMIN_API_URL,
     BASE_URL,
@@ -61,5 +64,6 @@ module.exports = {
     NODE_ENV,
     STATUS_URL,
     FLYTE_NAVIGATION,
+    HORIZONTAL_LAYOUT,
   },
 };
