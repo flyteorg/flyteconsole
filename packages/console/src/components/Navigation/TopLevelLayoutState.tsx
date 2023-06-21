@@ -6,12 +6,14 @@ import React, {
   useState,
 } from 'react';
 
+const isMobileInit = window.innerWidth < 960;
+
 const initValues = {
   isSideNavOpen: false,
-  isMobileNav: window.innerWidth < 960, // < md breakboint
+  isMobileNav: isMobileInit, // < md breakboint
   openSideNav: () => {},
   closeSideNav: () => {},
-  isLayoutHorizontal: false,
+  isLayoutHorizontal: !isMobileInit,
   columnLayout: () => {},
   rowLayout: () => {},
   showMobileNav: () => {},

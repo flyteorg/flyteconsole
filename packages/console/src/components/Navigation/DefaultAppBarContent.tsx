@@ -11,6 +11,7 @@ import { useAdminVersion } from 'components/hooks/useVersion';
 import { env } from '@flyteorg/common';
 import { Box, Grid, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
+import debounce from 'lodash/debounce';
 import { NavigationDropdown } from './NavigationDropdown';
 import { UserInformation } from './UserInformation';
 import { OnlyMine } from './OnlyMine';
@@ -57,15 +58,21 @@ export const DefaultAppBarContent = (props: DefaultAppBarProps) => {
   React.useLayoutEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < theme.breakpoints.values.md) {
-        showMobileNav();
-        closeSideNav();
+        if (!isMobileNav) {
+          showMobileNav();
+          closeSideNav();
+        }
       } else {
-        hideMobileNav();
-        openSideNav();
+        if (isMobileNav) {
+          hideMobileNav();
+          closeSideNav();
+        }
       }
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    handleResize();
+    const debouncedResize = debounce(handleResize, 50);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, [closeSideNav, theme.breakpoints.values.md]);
 
   React.useEffect(() => {

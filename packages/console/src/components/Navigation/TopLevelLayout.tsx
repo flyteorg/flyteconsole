@@ -149,64 +149,50 @@ export const TopLevelLayoutGrid = ({
     columnLayout,
   } = React.useContext(TopLevelLayoutContext);
 
-  // hide nav on narrow screen by default
+  // // hide nav on narrow screen by default
+  // useLayoutEffect(() => {
+  //   const handleResize = () => {
+  //     if (window.innerWidth < theme.breakpoints.values.md) {
+  //       closeSideNav();
+  //     } else {
+  //       if (!isMobileNav) openSideNav();
+  //     }
+  //   };
+  //   const debouncedResize = debounce(handleResize, 50);
+  //   handleResize();
+
+  //   window.addEventListener('resize', debouncedResize);
+  //   return () => window.removeEventListener('resize', debouncedResize);
+  // }, []);
+
+  // flip layout on narrow screen per flag and resizes
   useLayoutEffect(() => {
     const handleResize = () => {
+      if (!userHorizontalPref) return;
       if (window.innerWidth < theme.breakpoints.values.md) {
-        if (!isMobileNav) openSideNav();
+        rowLayout();
       } else {
-        if (!isMobileNav) closeSideNav();
+        columnLayout();
       }
     };
+
+    handleResize();
     const debouncedResize = debounce(handleResize, 50);
-
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
-  }, []);
-
-  // flip layout on narrow screen
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (isLayoutHorizontal || userHorizontalPref) {
-        if (window.innerWidth < theme.breakpoints.values.md) {
-          rowLayout();
-        } else {
-          columnLayout();
-        }
-      }
-    };
-    const debouncedResize = debounce(handleResize, 50);
-
     window.addEventListener('resize', debouncedResize);
     return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   // run on init
   useEffect(() => {
-    if (userHorizontalPref) {
+    if (userHorizontalPref || isMobileNav) {
       columnLayout();
     } else {
       rowLayout();
     }
   }, []);
 
-  const [firstRender, setFirstRender] = useState(true);
-  useEffect(() => {
-    if (!isMobileNav) {
-      // close nav only if screen resized during session
-      if (!firstRender) {
-        closeSideNav();
-      } else {
-        setFirstRender(false);
-      }
-    } else {
-      openSideNav();
-    }
-  }, [isMobileNav]);
-
   // ref to update offset on scroll
   const scrollRef = useRef<HTMLDivElement>(null);
-
   // pin left nav to top of screen
   useLayoutEffect(() => {
     const handleScroll = () => {
