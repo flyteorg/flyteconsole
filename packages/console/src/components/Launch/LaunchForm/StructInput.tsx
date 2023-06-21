@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
+import {
+  TextField,
+  Card,
+  CardContent,
+  CardHeader,
+  StylesProvider,
+  createGenerateClassName,
+} from '@material-ui/core';
 import { useState } from 'react';
 import Form from '@rjsf/material-ui';
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
@@ -22,12 +29,13 @@ const muiTheme = createTheme({
       },
     },
   },
+  typography: {
+    h5: {
+      fontSize: '16px',
+      fontWeight: 400,
+    },
+  },
 });
-
-muiTheme.typography.h5 = {
-  fontSize: '16px',
-  fontWeight: 400,
-};
 
 const formatJson = data => {
   const keys = Object.keys(data);
@@ -96,21 +104,30 @@ export const StructInput: React.FC<InputProps> = props => {
   }, []);
 
   return jsonFormRenderable ? (
-    <MuiThemeProvider theme={muiTheme}>
-      <Card>
-        <CardHeader title={label} style={{ borderBottom: 'solid 1px gray' }} />
-        <CardContent>
-          <Form
-            schema={JSON.parse(JSON.stringify(parsedJson))}
-            validator={validator}
-            formData={paramData}
-            onChange={onFormChange}
-          >
-            <div></div>
-          </Form>
-        </CardContent>
-      </Card>
-    </MuiThemeProvider>
+    <StylesProvider
+      generateClassName={createGenerateClassName({
+        seed: 'StructInput-',
+      })}
+    >
+      <MuiThemeProvider theme={muiTheme}>
+        <Card>
+          <CardHeader
+            title={label}
+            style={{ borderBottom: 'solid 1px gray' }}
+          />
+          <CardContent>
+            <Form
+              schema={JSON.parse(JSON.stringify(parsedJson))}
+              validator={validator}
+              formData={paramData}
+              onChange={onFormChange}
+            >
+              <div></div>
+            </Form>
+          </CardContent>
+        </Card>
+      </MuiThemeProvider>
+    </StylesProvider>
   ) : (
     <TextField
       id={getLaunchInputId(name)}

@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { Admin } from '@flyteorg/flyteidl-types';
-import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import {
+  createGenerateClassName,
+  createTheme,
+  MuiThemeProvider,
+  StylesProvider,
+} from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -171,7 +176,11 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
     );
 
     return (
-      <>
+      <StylesProvider
+        generateClassName={createGenerateClassName({
+          seed: 'AdvancedInput-',
+        })}
+      >
         <section title="Labels" className={styles.collapsibleSection}>
           <Accordion>
             <AccordionSummary
@@ -269,7 +278,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
             onChange={handleMaxParallelismChange}
           />
         </section>
-      </>
+      </StylesProvider>
     );
   },
 );

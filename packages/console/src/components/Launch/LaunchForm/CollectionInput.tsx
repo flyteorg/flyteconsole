@@ -37,6 +37,7 @@ export const CollectionInput: React.FC<InputProps> = props => {
     case InputType.Map:
     case InputType.String:
     case InputType.Struct:
+    case InputType.Union:
       return (
         <TextField
           id={getLaunchInputId(name)}

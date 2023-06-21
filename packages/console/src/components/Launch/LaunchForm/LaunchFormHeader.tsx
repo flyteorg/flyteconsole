@@ -16,7 +16,14 @@ export const LaunchFormHeader: React.FC<LaunchFormHeaderProps> = ({
   return (
     <DialogTitle disableTypography={true} className={styles.header}>
       <div className={styles.inputLabel}>{formTitle}</div>
-      <Typography variant="h6">{title}</Typography>
+      <Typography
+        variant="h6"
+        style={{
+          lineBreak: 'anywhere',
+        }}
+      >
+        {title}
+      </Typography>
     </DialogTitle>
   );
 };
