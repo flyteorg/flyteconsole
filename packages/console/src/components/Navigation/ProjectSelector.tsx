@@ -41,6 +41,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: theme.spacing(expanderGridHeight),
     width: '100%',
   },
+  viewProjects: {
+    display: 'flex',
+    padding: '.25rem',
+    justifyContent: 'flex-end',
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.body1.fontSize,
+    textAlign: 'right',
+    textDecoration: 'none',
+  },
 }));
 
 export interface ProjectSelectorProps {

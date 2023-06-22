@@ -18,18 +18,30 @@ export const makeProjectDomainBoundPath = (
 
 export class Routes {
   static NotFound = {};
+
+  // Landing page
+  static SelectProject = {
+    id: '__FLYTE__VIEW_ALL_PROJECTS__',
+    path: makeRoute('/select-project'),
+  };
+
   // Projects
   static ProjectDetails = {
-    makeUrl: (project: string, section?: string) =>
-      makeProjectBoundPath(project, section ? `/${section}` : ''),
+    makeUrl: (project: string, section?: string) => {
+      if (project === this.SelectProject.id) {
+        return this.SelectProject.path;
+      }
+      return makeProjectBoundPath(project, section ? `/${section}` : '');
+    },
     path: projectBasePath,
     sections: {
       dashboard: {
-        makeUrl: (project: string, domain?: string) =>
-          makeProjectBoundPath(
+        makeUrl: (project: string, domain?: string) => {
+          return makeProjectBoundPath(
             project,
             `/executions${domain ? `?domain=${domain}` : ''}`,
-          ),
+          );
+        },
         path: `${projectBasePath}/executions`,
       },
       tasks: {
@@ -124,10 +136,5 @@ export class Routes {
     makeUrl: ({ domain, name, project }: WorkflowExecutionIdentifier) =>
       makeProjectDomainBoundPath(project, domain, `/executions/${name}`),
     path: `${projectDomainBasePath}/executions/:executionId`,
-  };
-
-  // Landing page
-  static SelectProject = {
-    path: makeRoute('/'),
   };
 }
