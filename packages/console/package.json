@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/console",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "description": "Flyteconsole main app module",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -61,7 +61,7 @@
     "@flyteorg/flyte-api": "^0.0.2",
     "@flyteorg/flyteidl-types": "^0.0.4",
     "@flyteorg/locale": "^0.0.2",
-    "@flyteorg/ui-atoms": "^0.0.3",
+    "@flyteorg/ui-atoms": "^0.0.4",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
     "@material-ui/pickers": "^3.2.2",
