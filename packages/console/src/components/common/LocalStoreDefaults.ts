@@ -30,19 +30,18 @@ export interface LocalStoreDefaults {
  */
 export const getLocalStore = (key: string | null = null): any | false => {
   const localStoreDefaults = localStorage.getItem(LOCAL_STORE_DEFAULTS);
-  if (localStoreDefaults) {
-    const localJSON = JSON.parse(localStoreDefaults) as LocalStoreDefaults;
-    if (key) {
-      if (localJSON[key]) {
-        return localJSON[key];
-      } else {
-        return false;
-      }
+  if (!localStoreDefaults) {
+    return false;
+  }
+  const localJSON = JSON.parse(localStoreDefaults) as LocalStoreDefaults;
+  if (key) {
+    if (localJSON[key]) {
+      return localJSON[key];
     } else {
-      return localJSON;
+      return false;
     }
   } else {
-    return false;
+    return localJSON;
   }
 };
 
@@ -50,13 +49,10 @@ export const getLocalStore = (key: string | null = null): any | false => {
  * Sets values to 'flyteDefaults' for use in persisting various user defaults.
  */
 export const setLocalStore = (key: string, value: any) => {
-  const localStoreDefaults = localStorage.getItem(LOCAL_STORE_DEFAULTS);
-  let newRecord;
-  if (localStoreDefaults) {
-    newRecord = JSON.parse(localStoreDefaults) as LocalStoreDefaults;
-    newRecord[key] = value;
-  } else {
-    newRecord = { [key]: value };
-  }
-  localStorage.setItem(LOCAL_STORE_DEFAULTS, JSON.stringify(newRecord));
+  const localStoreDefaults = localStorage.getItem(LOCAL_STORE_DEFAULTS) || '{}';
+  const storeDefaultsJSON = JSON.parse(
+    localStoreDefaults,
+  ) as LocalStoreDefaults;
+  storeDefaultsJSON[key] = value;
+  localStorage.setItem(LOCAL_STORE_DEFAULTS, JSON.stringify(storeDefaultsJSON));
 };
