@@ -7,8 +7,6 @@ import { useCommonStyles } from 'components/common/styles';
 import { listhoverColor } from 'components/Theme/constants';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Routes } from 'routes';
 import { SearchableProjectList } from './SearchableProjectList';
 
 const expanderGridHeight = 12;

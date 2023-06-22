@@ -1,6 +1,5 @@
-import { Box, Fade, Grid, Icon, Tooltip, Typography } from '@material-ui/core';
+import { Box, Fade, Grid, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { KeyboardArrowRight } from '@material-ui/icons';
 import classnames from 'classnames';
 import { NoResults } from 'components/common/NoResults';
 import { SearchableList, SearchResult } from 'components/common/SearchableList';
@@ -82,13 +81,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         >
           <Grid item>
             <Typography color="primary" className={styles.itemName}>
-              {viewAllProjects.name}
+              {viewAllProjects.name}…
             </Typography>
-          </Grid>
-          <Grid item>
-            <Icon color="primary">
-              <KeyboardArrowRight />
-            </Icon>
           </Grid>
         </Grid>
       </Tooltip>
@@ -130,13 +124,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
                       <Grid item>
                         <Box>{content}</Box>
                       </Grid>
-                      {value.id === Routes.SelectProject.id && (
-                        <Grid item>
-                          <Icon color="primary">
-                            <KeyboardArrowRight />
-                          </Icon>
-                        </Grid>
-                      )}
                     </Grid>
                   </div>
                 </div>
