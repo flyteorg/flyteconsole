@@ -7,6 +7,9 @@ const GlobalStyles = () => {
       body {
         overscroll-behavior: none;
       }
+      .sr-only {
+        display: none;
+      }
     `);
   }, []);
   return <></>;

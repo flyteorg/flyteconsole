@@ -98,11 +98,15 @@ export const UserInformation: React.FC<{}> = () => {
             onMouseLeave={handlePopoverClose}
             disableFocusRipple
           >
-            <Avatar className={styles.avatar}>{userNameInitial}</Avatar>
+            <Avatar className={styles.avatar}>
+              {userNameInitial}
+              <span className="sr-only">{userName}</span>
+            </Avatar>
             <Popover
               open={open}
               id="avatar-popover"
               anchorEl={anchorEl}
+              aria-hidden
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'left',
