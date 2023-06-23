@@ -16,6 +16,7 @@ import { timestampToDate } from 'common';
 import { formatDateUTC } from 'common/formatters';
 import { listNamedEntities } from 'models/Common/api';
 import { defaultPaginationConfig } from 'models/AdminEntity/constants';
+import { listProjects } from 'models/Project/api';
 
 export interface Breadcrumb {
   pathId: string;
@@ -44,7 +45,7 @@ const defaultBreadcrumb: Breadcrumb = {
   label: 'Default',
   defaultValue: 'default',
   valididator: breadcrumbDefaultvalidator,
-  asyncData: async (projectId = '', domainId = '') => [],
+  asyncData: async (_projectId = '', _domainId = '') => [],
   viewAllLink: '',
 };
 
