@@ -1,5 +1,5 @@
 import { Routes } from 'routes';
-import { tasks, workflows } from '../async/fn';
+import { projects, tasks, workflows } from '../async/fn';
 import { Breadcrumb } from '../types';
 import { breadcrumbDefaultvalidator } from '../validators';
 
@@ -20,6 +20,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
   makeBreadcrumb({
     pathId: 'projects',
     label: 'Project',
+    asyncData: projects,
   }),
   makeBreadcrumb({
     pathId: 'domains',

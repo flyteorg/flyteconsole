@@ -1,7 +1,12 @@
 import { listWorkflows } from 'models/Workflow/api';
 import { listNamedEntities } from 'models/Common/api';
 import { ResourceType, defaultPaginationConfig } from 'models';
-import { formatEntities } from './utils';
+import { listProjects } from 'models/Project/api';
+import { formatEntities, formatProjectEntities } from './utils';
+
+export const projects = async () => {
+  return listProjects().then(data => formatProjectEntities(data));
+};
 
 export const workflows = async (projectId = '', domainId = '') => {
   return listWorkflows({

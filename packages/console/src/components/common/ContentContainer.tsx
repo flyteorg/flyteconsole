@@ -8,7 +8,7 @@ import {
   navbarGridHeight,
   sideNavGridWidth,
 } from 'common/layout';
-import BreadCrumbs from 'components/Breadcrumbs';
+import { BreadCrumbs } from 'components/Breadcrumbs';
 import { ErrorBoundary } from './ErrorBoundary';
 
 enum ContainerClasses {
