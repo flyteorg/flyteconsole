@@ -76,6 +76,8 @@
     "@typescript-eslint/parser": "^5.48.2",
     "babel-loader": "^8.2.5",
     "chalk": "^4",
+    "chart.js": "3.6.2",
+    "chartjs-plugin-datalabels": "2.0.0",
     "cheerio": "^1.0.0-rc.12",
     "compression-webpack-plugin": "^9.2.0",
     "cookie-parser": "^1.4.3",
