@@ -20,8 +20,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
         <Input
           name={htmlLabel}
           id={htmlLabel}
-          defaultValue={props.defaultValue}
-          value={props.value}
+          value={props.value || props.defaultValue}
         />
       </FormControl>
       {!!anchorEl && (

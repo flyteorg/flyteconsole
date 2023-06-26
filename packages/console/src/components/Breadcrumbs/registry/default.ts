@@ -1,5 +1,5 @@
 import { Routes } from 'routes';
-import { projects, tasks, workflows } from '../async/fn';
+import { defaultVoid, domains, projects, tasks, workflows } from '../async/fn';
 import { Breadcrumb } from '../types';
 import { breadcrumbDefaultvalidator } from '../validators';
 
@@ -8,8 +8,9 @@ const defaultBreadcrumb: Breadcrumb = {
   label: '',
   defaultValue: '',
   valididator: breadcrumbDefaultvalidator,
-  asyncData: async (_projectId = '', _domainId = '') => [],
+  asyncData: defaultVoid,
   viewAllLink: '',
+  required: false,
 };
 
 export const makeBreadcrumb = (config: Partial<Breadcrumb>) => {
@@ -20,11 +21,16 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
   makeBreadcrumb({
     pathId: 'projects',
     label: 'Project',
+    required: true,
     asyncData: projects,
+    viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
   }),
   makeBreadcrumb({
     pathId: 'domains',
     label: 'Domain',
+    required: true,
+    asyncData: domains,
+    viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
   }),
   makeBreadcrumb({
     pathId: 'workflows',

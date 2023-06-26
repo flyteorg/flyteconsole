@@ -2,13 +2,14 @@ export interface Breadcrumb {
   pathId: string;
   label: string;
   defaultValue?: string;
-  valididator?: (urlPathId: string, thisPathId: string) => boolean;
+  valididator: (urlPathId: string, thisPathId: string) => boolean;
   asyncData: (
     projectId: string,
     domainId: string,
   ) => Promise<BreadcrumbEntity[]>;
   customComponent?: React.FC<any>;
   viewAllLink: string | ((projectId: string, domainId: string) => string);
+  required: boolean;
 }
 
 export interface BreadcrumbEntity {

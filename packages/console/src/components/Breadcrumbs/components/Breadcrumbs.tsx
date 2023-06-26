@@ -4,9 +4,11 @@ import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
 import startCase from 'lodash/startCase';
 import { Grid } from '@material-ui/core';
+import uniqBy from 'lodash/uniqBy';
 import { BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
+import { domainIdfromUrl } from '../async/utils';
 
 const BreadCrumbs = () => {
   const routerLocation = useLocation();
@@ -22,13 +24,10 @@ const BreadCrumbs = () => {
   }, [projectQuery.data, projectQuery.isLoading]);
 
   const currentDomainId = useMemo(() => {
-    if (routerParams['domainId']) {
-      return routerParams['domainId'];
-    }
-    if (routerLocation.search.includes('domain')) {
-      const searchParams = new URLSearchParams(routerLocation.search);
-      return searchParams.get('domain') || '';
-    }
+    const id = domainIdfromUrl();
+    if (id) return id;
+
+    // get the first domain id from the project
     if (projectData.length) {
       const currentProject = projectData.find(p => p.id === currentProjectId);
       if (currentProject) {
@@ -40,11 +39,6 @@ const BreadCrumbs = () => {
     return '';
   }, [routerParams, routerLocation.search, projectData, currentProjectId]);
 
-  console.log('*** projectData', projectData);
-  console.log('*** routerParams', routerParams);
-  console.log('*** routerLocation', routerLocation);
-  console.log('*** currentDomainId', currentDomainId);
-
   const pathSegments = useMemo(() => {
     const pathName = routerLocation.pathname;
     const pathFragments = pathName.split('/').filter(f => !!f);
@@ -55,6 +49,13 @@ const BreadCrumbs = () => {
       const value = pathFragments[i + 1];
       values[key] = value;
     }
+    // required segments
+    breadcrumbRegistry.breadcrumbs
+      .filter(b => b.required)
+      .forEach(b => {
+        console.log(b.pathId);
+        if (!values[b.pathId]) values[b.pathId] = b.defaultValue;
+      });
 
     return Object.entries(values);
   }, [routerLocation.pathname]);
@@ -64,19 +65,36 @@ const BreadCrumbs = () => {
   }, []);
 
   const breadcrumbs: BreadcrumbFormControlInterface[] = useMemo(() => {
+    /**
+     * spacial case to init domainId
+     * since its not always present in URL
+     */
+    if (currentDomainId) {
+      breadcrumbRegistry.addBreadcrumb({
+        pathId: 'domains',
+        defaultValue: currentDomainId,
+      });
+    }
+
     return pathSegments.map(segment => {
       const key = segment[0];
       const value: string = segment[1] ? (segment[1] as string) : '';
 
+      // fill in real value from url and return rest of breadcrumb data
       const breadcrumb = breadcrumbRegistry.addBreadcrumb({
         pathId: key,
         label: startCase(key),
         defaultValue: value,
       });
 
+      console.log(
+        '*** mutated breadcrumbs',
+        JSON.parse(JSON.stringify(breadcrumb)),
+      );
+
       return {
         key,
-        value,
+        value: value || breadcrumb.defaultValue || '',
         projectId: currentProjectId,
         domainId: currentDomainId,
         ...breadcrumb,

@@ -3,14 +3,18 @@ import { useQuery } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import { Grid, Popover } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import { BreadcrumbPopoverInterface } from '../types';
+import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
+  console.log('*** BreadcrumbPopOver', props);
   const { isLoading, error, data } = useQuery(
     `breadcrumb-${props.pathId}`,
     () => props.asyncData(props.projectId, props.domainId),
+    {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
   );
-  const queryData = useMemo(() => {
+  const queryData: BreadcrumbEntity[] = useMemo(() => {
     if (isEmpty(data) || data === undefined) return [];
     return data;
   }, [data]);
@@ -20,7 +24,14 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       ? props.viewAllLink
       : props.viewAllLink(props.projectId, props.domainId);
 
-  console.log('*** BreadcrumbPopOver', data);
+  const dataToShow = useMemo(() => {
+    return queryData
+      .filter(breadcrumb => {
+        return breadcrumb.title !== props.value;
+      })
+      .slice(0, 5);
+  }, [queryData]);
+
   return (
     <Popover
       open={props.open}
@@ -36,21 +47,27 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
         spacing={2}
         style={{ maxWidth: 350, maxHeight: '80vh', overflowY: 'scroll' }}
       >
-        {queryData.length &&
-          queryData.slice(0, 5).map(data => {
+        {dataToShow.length &&
+          dataToShow.map(data => {
             return (
               <>
                 <Grid item xs={6}>
-                  <Link to={data.url}>{data?.title || 'name not found'}</Link>
+                  <Link onClick={props.onClose} to={data.url}>
+                    {data?.title || 'name not found'}
+                  </Link>
                 </Grid>
                 <Grid item xs={6}>
-                  <Link to={data.url}>{data?.createdAt}</Link>
+                  <Link onClick={props.onClose} to={data.url}>
+                    {data?.createdAt}
+                  </Link>
                 </Grid>
               </>
             );
           })}
         <Grid item xs={12}>
-          <Link to={viewAllLink}>View All…</Link>
+          <Link onClick={props.onClose} to={viewAllLink}>
+            View All…
+          </Link>
         </Grid>
       </Grid>
     </Popover>
