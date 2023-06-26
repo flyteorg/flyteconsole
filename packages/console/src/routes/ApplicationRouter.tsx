@@ -3,13 +3,19 @@ import {
   ContentContainerProps,
 } from 'components/common/ContentContainer';
 import { withSideNavigation } from 'components/Navigation/withSideNavigation';
-import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import { Toolbar } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
 import { subnavBarContentId } from 'common/constants';
 import { subnavBackgroundColor } from 'components/Theme/constants';
+import { makeRoute } from '@flyteorg/common';
+import {
+  getLocalStore,
+  LocalStorageProjectDomain,
+  LOCAL_PROJECT_DOMAIN,
+} from 'components/common/LocalStoreDefaults';
 import { components } from './components';
 import { Routes } from './routes';
 
@@ -47,6 +53,10 @@ export function withContentContainer<P extends {}>(
 }
 
 export const ApplicationRouter: React.FC = () => {
+  const localProjectDomain = getLocalStore(
+    LOCAL_PROJECT_DOMAIN,
+  ) as LocalStorageProjectDomain;
+
   const additionalRoutes =
     useExternalConfigurationContext()?.registry?.additionalRoutes || null;
   return (
@@ -87,6 +97,26 @@ export const ApplicationRouter: React.FC = () => {
         path={Routes.SelectProject.path}
         exact={true}
         component={withContentContainer(components.selectProject)}
+      />
+      <Route
+        path={makeRoute('/')}
+        render={() => {
+          /**
+           * If LocalStoreDefaults exist, we direct them to the project detail view
+           * for those values.
+           */
+          if (localProjectDomain) {
+            return (
+              <Redirect
+                to={`${makeRoute('/')}/projects/${
+                  localProjectDomain.project
+                }/executions?domain=${localProjectDomain.domain}&duration=all`}
+              />
+            );
+          } else {
+            return <Redirect to={Routes.SelectProject.path} />;
+          }
+        }}
       />
       <Route component={withContentContainer(components.notFound)} />
     </Switch>

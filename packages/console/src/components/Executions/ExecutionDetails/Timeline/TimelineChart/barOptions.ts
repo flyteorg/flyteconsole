@@ -1,8 +1,64 @@
-import { Chart as ChartJS, registerables, Tooltip } from 'chart.js';
+import {
+  Chart as ChartJS,
+  // registerables
+  ArcElement,
+  LineElement,
+  BarElement,
+  PointElement,
+  BarController,
+  BubbleController,
+  DoughnutController,
+  LineController,
+  PieController,
+  PolarAreaController,
+  RadarController,
+  ScatterController,
+  CategoryScale,
+  LinearScale,
+  LogarithmicScale,
+  RadialLinearScale,
+  TimeScale,
+  TimeSeriesScale,
+  Decimation,
+  Filler,
+  Legend,
+  Title,
+  Tooltip,
+  SubTitle,
+} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { isEqual, isNil } from 'lodash';
 
-ChartJS.register(...registerables, ChartDataLabels);
+const registerables = [
+  ArcElement,
+  LineElement,
+  BarElement,
+  PointElement,
+  BarController,
+  BubbleController,
+  DoughnutController,
+  LineController,
+  PieController,
+  PolarAreaController,
+  RadarController,
+  ScatterController,
+  CategoryScale,
+  LinearScale,
+  LogarithmicScale,
+  RadialLinearScale,
+  TimeScale,
+  TimeSeriesScale,
+  Decimation,
+  Filler,
+  Legend,
+  Title,
+  Tooltip,
+  SubTitle,
+];
+
+// "registerables" helper was failing tests
+registerables.forEach(plugin => ChartJS.register(plugin));
+ChartJS.register(ChartDataLabels);
 
 // Create positioner to put tooltip at cursor position
 Tooltip.positioners.cursor = function (_chartElements, coordinates) {

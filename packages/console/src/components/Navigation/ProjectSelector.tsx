@@ -1,3 +1,4 @@
+import * as React from 'react';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -6,7 +7,6 @@ import { KeyCodes } from 'common/constants';
 import { useCommonStyles } from 'components/common/styles';
 import { listhoverColor } from 'components/Theme/constants';
 import { Project } from 'models/Project/types';
-import * as React from 'react';
 import { SearchableProjectList } from './SearchableProjectList';
 
 const expanderGridHeight = 12;
@@ -40,6 +40,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     overflowY: 'scroll',
     top: theme.spacing(expanderGridHeight),
     width: '100%',
+  },
+  viewProjects: {
+    display: 'flex',
+    padding: '.25rem',
+    justifyContent: 'flex-end',
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.body1.fontSize,
+    textAlign: 'right',
+    textDecoration: 'none',
   },
 }));
 

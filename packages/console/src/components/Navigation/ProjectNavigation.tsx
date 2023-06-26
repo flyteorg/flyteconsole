@@ -14,6 +14,10 @@ import { matchPath, NavLinkProps, RouteComponentProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { MuiLaunchPlanIcon } from '@flyteorg/ui-atoms';
+import {
+  LOCAL_PROJECT_DOMAIN,
+  setLocalStore,
+} from 'components/common/LocalStoreDefaults';
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { ProjectSelector } from './ProjectSelector';
 import NavLinkWithSearch from './NavLinkWithSearch';
@@ -70,8 +74,16 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
   const commonStyles = useCommonStyles();
   const project = useProject(projectId);
   const projects = useProjects();
-  const onProjectSelected = (project: Project) =>
-    history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  const onProjectSelected = (project: Project) => {
+    const path = Routes.ProjectDetails.makeUrl(project.id, section);
+    const projectDomain = {
+      project: project.id,
+      domain: domainId || 'development',
+    };
+    /* Store user intent in localStorage */
+    setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+    return history.push(path);
+  };
 
   const routes: ProjectRoute[] = [
     {
