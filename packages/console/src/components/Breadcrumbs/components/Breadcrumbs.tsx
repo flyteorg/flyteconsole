@@ -53,8 +53,8 @@ const BreadCrumbs = () => {
     breadcrumbRegistry.breadcrumbs
       .filter(b => b.required)
       .forEach(b => {
-        console.log(b.pathId);
-        if (!values[b.pathId]) values[b.pathId] = b.defaultValue;
+        console.log(b.id);
+        if (!values[b.id]) values[b.id] = b.defaultValue;
       });
 
     return Object.entries(values);
@@ -71,7 +71,7 @@ const BreadCrumbs = () => {
      */
     if (currentDomainId) {
       breadcrumbRegistry.addBreadcrumb({
-        pathId: 'domains',
+        id: 'domains',
         defaultValue: currentDomainId,
       });
     }
@@ -82,7 +82,7 @@ const BreadCrumbs = () => {
 
       // fill in real value from url and return rest of breadcrumb data
       const breadcrumb = breadcrumbRegistry.addBreadcrumb({
-        pathId: key,
+        id: key,
         label: startCase(key),
         defaultValue: value,
       });

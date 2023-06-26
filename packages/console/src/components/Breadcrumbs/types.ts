@@ -1,8 +1,8 @@
 export interface Breadcrumb {
-  pathId: string;
+  id: string;
   label: string;
   defaultValue?: string;
-  valididator: (urlPathId: string, thisPathId: string) => boolean;
+  valididator: BreadcrumbValidator;
   asyncData: (
     projectId: string,
     domainId: string,
@@ -11,6 +11,14 @@ export interface Breadcrumb {
   viewAllLink: string | ((projectId: string, domainId: string) => string);
   required: boolean;
 }
+
+export type BreadcrumbValidator = (
+  targetBreadcrumbId: string,
+  currentPathSegment: string,
+  prevPathSegment?: string,
+  nextPathSegment?: string,
+  url?: string,
+) => boolean;
 
 export interface BreadcrumbEntity {
   url: string;

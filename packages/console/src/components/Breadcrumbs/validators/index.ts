@@ -1,4 +1,6 @@
-export const breadcrumbDefaultvalidator = (
-  urlPathId: string,
-  thisPathId: string,
-) => urlPathId === thisPathId;
+import { BreadcrumbValidator } from '../types';
+
+export const breadcrumbDefaultvalidator: BreadcrumbValidator = (
+  targetBreadcrumbId: string,
+  currentPathSegment: string,
+) => targetBreadcrumbId === currentPathSegment;

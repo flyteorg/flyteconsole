@@ -14,13 +14,13 @@ class BreadcrumbRegistry {
   public addBreadcrumb(breadcrumb: Partial<Breadcrumb>) {
     console.log(
       this.breadcrumbs.length,
-      this.breadcrumbs.map(b => b.pathId).join(', '),
+      this.breadcrumbs.map(b => b.id).join(', '),
     );
 
     const breadcrumbData = makeBreadcrumb(breadcrumb);
 
     const existingBreadcrumbIndex = this.breadcrumbs.findIndex(
-      b => b.pathId === breadcrumb.pathId,
+      b => b.id === breadcrumb.id,
     );
 
     if (existingBreadcrumbIndex > -1) {

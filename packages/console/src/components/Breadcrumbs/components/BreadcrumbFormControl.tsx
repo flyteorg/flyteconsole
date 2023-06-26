@@ -4,7 +4,7 @@ import { BreadcrumbFormControlInterface } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 
 const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
-  const htmlLabel = `breadcrumb-${props.pathId}`;
+  const htmlLabel = `breadcrumb-${props.id}`;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

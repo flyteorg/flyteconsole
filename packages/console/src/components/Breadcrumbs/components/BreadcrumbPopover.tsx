@@ -8,7 +8,7 @@ import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   console.log('*** BreadcrumbPopOver', props);
   const { isLoading, error, data } = useQuery(
-    `breadcrumb-${props.pathId}`,
+    `breadcrumb-${props.id}`,
     () => props.asyncData(props.projectId, props.domainId),
     {
       staleTime: 1000 * 60 * 5, // 5 minutes
