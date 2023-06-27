@@ -1,7 +1,19 @@
 import { Routes } from 'routes';
-import { defaultVoid, domains, projects, tasks, workflows } from '../async/fn';
+import {
+  defaultVoid,
+  domains,
+  launchPlans,
+  namedEntities,
+  namedEntitiesDefaultValue,
+  projects,
+  tasks,
+  workflows,
+} from '../async/fn';
 import { Breadcrumb } from '../types';
-import { breadcrumbDefaultvalidator } from '../validators';
+import {
+  breadcrumbDefaultvalidator,
+  namedEntitiesValidator,
+} from '../validators';
 
 const defaultBreadcrumb: Breadcrumb = {
   id: 'default',
@@ -33,6 +45,14 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
   }),
   makeBreadcrumb({
+    id: 'named-entity',
+    label: 'Named Entity',
+    defaultValue: namedEntitiesDefaultValue,
+    asyncData: namedEntities,
+    valididator: namedEntitiesValidator,
+    viewAllLink: projectId => Routes.ProjectDetails.makeUrl(projectId),
+  }),
+  makeBreadcrumb({
     id: 'workflows',
     label: 'Workflow',
     asyncData: workflows,
@@ -45,5 +65,12 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     asyncData: tasks,
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.TaskDetails.makeUrl(projectId, domainId, ''),
+  }),
+  makeBreadcrumb({
+    id: 'launchPlans',
+    label: 'Launch Plans',
+    asyncData: launchPlans,
+    viewAllLink: (projectId = '', domainId = '') =>
+      Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
   }),
 ];

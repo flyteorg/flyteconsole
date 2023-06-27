@@ -1,7 +1,7 @@
 export interface Breadcrumb {
   id: string;
   label: string;
-  defaultValue?: string;
+  defaultValue: string | BreadcrumbCustomDefaultValue;
   valididator: BreadcrumbValidator;
   asyncData: (
     projectId: string,
@@ -13,12 +13,22 @@ export interface Breadcrumb {
 }
 
 export type BreadcrumbValidator = (
-  targetBreadcrumbId: string,
-  currentPathSegment: string,
-  prevPathSegment?: string,
-  nextPathSegment?: string,
-  url?: string,
+  valididator: BreadcrumbValidatorInterface,
 ) => boolean;
+
+export type BreadcrumbCustomDefaultValue = (
+  location: Location,
+  breadcrumb: Breadcrumb,
+) => string;
+
+export interface BreadcrumbValidatorInterface {
+  targetBreadcrumbId: string;
+  currentPathSegment: string;
+  currentPathValue: string;
+  prevPathSegment: string;
+  nextPathSegment: string;
+  url: string;
+}
 
 export interface BreadcrumbEntity {
   url: string;
