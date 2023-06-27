@@ -53,11 +53,11 @@ export const ApplicationRouter: React.FC = () => {
     LOCAL_PROJECT_DOMAIN,
   ) as LocalStorageProjectDomain;
   const additionalRoutes =
-    useExternalConfigurationContext()?.registry?.additionalRoutes || null;
+    useExternalConfigurationContext()?.registry?.additionalRoutes || [];
   return (
     <>
       <Switch>
-        {additionalRoutes}
+        {additionalRoutes.map(route => route)}
         <Route
           path={Routes.ExecutionDetails.path}
           component={components.executionDetails}
