@@ -22,7 +22,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   const viewAllLink =
     typeof props.viewAllLink === 'string'
       ? props.viewAllLink
-      : props.viewAllLink(props.projectId, props.domainId);
+      : props.viewAllLink(props.projectId, props.domainId, window.location);
 
   const dataToShow = useMemo(() => {
     return queryData

@@ -5,6 +5,7 @@ import { listProjects } from 'models/Project/api';
 import { Routes } from 'routes';
 import startCase from 'lodash/startCase';
 import camelCase from 'lodash/camelCase';
+import { listExecutions } from 'models/Execution/api';
 import {
   formatEntities,
   formatProjectEntities,
@@ -98,4 +99,38 @@ export const namedEntitiesDefaultValue = (
   const entity =
     titles.find(title => title === normalizedNamedEntitySegment) || '';
   return startCase(entity);
+};
+
+export const namedEntitiesVersions = async (projectId = '', domainId = '') => {
+  const segments = decodeURI(window.location.pathname).split('/');
+  const versionIndex = segments.findIndex(segment => segment === 'version');
+  const nameIndex = versionIndex - 1;
+  const name = segments[nameIndex];
+  return listExecutions({
+    project: projectId,
+    domain: domainId,
+    name,
+  }).then(data => formatEntities(data));
+};
+
+export const namedEntitiesVersionsViewAll = (projectId = '', domainId = '') => {
+  // const segments = decodeURI(window.location.pathname).split('/');
+  // const versionIndex = segments.findIndex(segment => segment === 'version');
+  // const nameIndex = versionIndex - 2;
+  // const name = segments[nameIndex];
+
+  /// TODO: namedEntitiesUrlSegments
+
+  // const routesKeys = Object.keys(Routes.ProjectDetails.sections);
+  // const routesKey = routesKeys.find(key => key.includes(name)) || '';
+  // const routeSection = Routes.ProjectDetails.sections[routesKey];
+  // const makeUrl =
+  //   typeof routeSection['makeUrl'] !== 'undefined' &&
+  //   typeof routeSection.makeUrl === 'function'
+  //     ? routeSection.makeUrl
+  //     : Routes.ProjectDashboard.makeUrl;
+
+  // return makeUrl(projectId, domainId, name);
+
+  return '/todo';
 };

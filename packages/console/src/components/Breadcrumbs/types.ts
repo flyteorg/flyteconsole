@@ -8,7 +8,7 @@ export interface Breadcrumb {
     domainId: string,
   ) => Promise<BreadcrumbEntity[]>;
   customComponent?: React.FC<any>;
-  viewAllLink: string | ((projectId: string, domainId: string) => string);
+  viewAllLink: BreadcrumbEntityViewAllLink;
   required: boolean;
 }
 
@@ -35,6 +35,10 @@ export interface BreadcrumbEntity {
   title: string;
   createdAt: string;
 }
+
+export type BreadcrumbEntityViewAllLink =
+  | string
+  | ((projectId: string, domainId: string, location: Location) => string);
 
 export interface BreadcrumbPopoverInterface
   extends BreadcrumbFormControlInterface {

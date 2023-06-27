@@ -5,6 +5,8 @@ import {
   launchPlans,
   namedEntities,
   namedEntitiesDefaultValue,
+  namedEntitiesVersions,
+  namedEntitiesVersionsViewAll,
   projects,
   tasks,
   workflows,
@@ -94,5 +96,11 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     asyncData: launchPlans,
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
+  }),
+  makeBreadcrumb({
+    id: 'version',
+    label: 'Versions',
+    asyncData: namedEntitiesVersions,
+    viewAllLink: namedEntitiesVersionsViewAll,
   }),
 ];
