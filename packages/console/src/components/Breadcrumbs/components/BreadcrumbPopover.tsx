@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
-import { Grid, Popover } from '@material-ui/core';
+import { Grid, Popover, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { LoadingSpinner } from 'components/common';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
-  console.log('*** BreadcrumbPopOver', props);
   const { isLoading, error, data } = useQuery(
     `breadcrumb-${props.id}`,
     () => props.asyncData(props.projectId, props.domainId),
@@ -47,7 +47,10 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
         spacing={2}
         style={{ maxWidth: 350, maxHeight: '80vh', overflowY: 'scroll' }}
       >
-        {dataToShow.length &&
+        {isLoading && <LoadingSpinner />}
+        {error && <Typography color="error">{error}</Typography>}
+        {!isLoading &&
+          dataToShow.length &&
           dataToShow.map(data => {
             return (
               <>

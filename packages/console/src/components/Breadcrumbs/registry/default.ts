@@ -53,11 +53,26 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: projectId => Routes.ProjectDetails.makeUrl(projectId),
   }),
   makeBreadcrumb({
+    id: 'workflow',
+    label: 'Workflow',
+    asyncData: workflows,
+    viewAllLink: (projectId = '', domainId = '') =>
+      Routes.WorkflowDetails.makeUrl(projectId, domainId, ''),
+  }),
+  makeBreadcrumb({
     id: 'workflows',
     label: 'Workflow',
     asyncData: workflows,
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.WorkflowDetails.makeUrl(projectId, domainId, ''),
+  }),
+  // task version
+  makeBreadcrumb({
+    id: 'task',
+    label: 'Task',
+    asyncData: tasks,
+    viewAllLink: (projectId = '', domainId = '') =>
+      Routes.TaskDetails.makeUrl(projectId, domainId, ''),
   }),
   makeBreadcrumb({
     id: 'tasks',
@@ -65,6 +80,13 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     asyncData: tasks,
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.TaskDetails.makeUrl(projectId, domainId, ''),
+  }),
+  makeBreadcrumb({
+    id: 'launch_plan',
+    label: 'Launch Plans',
+    asyncData: launchPlans,
+    viewAllLink: (projectId = '', domainId = '') =>
+      Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
   }),
   makeBreadcrumb({
     id: 'launchPlans',

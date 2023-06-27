@@ -111,8 +111,8 @@ class BreadcrumbRegistry {
     const values: Record<string, string> = {};
 
     for (let i = 0; i < pathFragments.length; i = i + 2) {
-      const key = pathFragments[i];
-      const value = pathFragments[i + 1];
+      const key = decodeURIComponent(pathFragments[i]);
+      const value = decodeURIComponent(pathFragments[i + 1]);
       values[key] = value || startCase(key);
     }
 

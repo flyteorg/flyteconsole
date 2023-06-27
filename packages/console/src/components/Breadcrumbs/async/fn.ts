@@ -11,6 +11,7 @@ import {
   formatProjectEntitiesAsDomains,
 } from './utils';
 import { Breadcrumb, BreadcrumbEntity } from '../types';
+import { namedEntitiesUrlSegments } from '../validators';
 
 export const defaultVoid = async (_projectId = '', _domainId = '') => [];
 
@@ -82,8 +83,19 @@ export const namedEntitiesDefaultValue = (
   _breadcrumb: Breadcrumb,
 ) => {
   const segments = location.pathname.split('/');
-  const namedEntitiesArray: BreadcrumbEntity[] = namedEntitiesList('', '');
-  const titles = namedEntitiesArray.map(entity => camelCase(entity.title));
-  const entity = segments.find(segment => titles.includes(segment)) || '';
+  const namedEntitySegment =
+    namedEntitiesUrlSegments.find(e => segments.find(s => s === e)) || '';
+
+  const normalizedNamedEntitySegment = namedEntitySegment.endsWith('s')
+    ? camelCase(namedEntitySegment)
+    : `${camelCase(namedEntitySegment)}s`;
+
+  const namedEntitiesBreadcumbPopOverList: BreadcrumbEntity[] =
+    namedEntitiesList('', '');
+  const titles = namedEntitiesBreadcumbPopOverList.map(entity =>
+    camelCase(entity.title),
+  );
+  const entity =
+    titles.find(title => title === normalizedNamedEntitySegment) || '';
   return startCase(entity);
 };
