@@ -6,7 +6,6 @@ import FileItem from './FileItem';
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     margin: 'auto',
-    maxWidth: '536px',
     color: theme.palette.grey[400],
     cursor: 'pointer',
   },

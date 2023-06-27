@@ -89,6 +89,7 @@
     "linkify-it": "^2.2.0",
     "lodash": "^4.17.21",
     "lossless-json": "^1.0.3",
+    "md5": "^2.3.0",
     "memoize-one": "^5.0.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.28",

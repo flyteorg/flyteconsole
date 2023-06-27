@@ -93,6 +93,33 @@ export const createDownloadLink = (
     config,
   );
 
+/** Creates a temporary signed url to allow callers to upload content. */
+export const createUploadLocation = (
+  project: string,
+  domain: string,
+  filename: string,
+  contentMd5: Uint8Array,
+  config?: RequestConfig,
+) =>
+  postAdminEntity<
+    Service.CreateUploadLocationRequest,
+    Service.CreateUploadLocationResponse
+  >(
+    {
+      data: {
+        project,
+        domain,
+        filename,
+        contentMd5,
+      },
+      path: endpointPrefixes.dataProxyArtifactUrn,
+      requestMessageType: Service.CreateUploadLocationRequest,
+      responseMessageType: Service.CreateUploadLocationResponse,
+      method: 'post',
+    },
+    config,
+  );
+
 const emptyExecutionData: ExecutionData = {
   inputs: {},
   outputs: {},

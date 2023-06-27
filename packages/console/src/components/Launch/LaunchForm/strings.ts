@@ -12,6 +12,9 @@ const str = {
   taskUnsupportedRequiredInputsString: `This Task version contains one or more required inputs which are not supported by Flyte Console.\n\nYou can launch this Task version with the Flyte CLI instead.\n\nThe required inputs are :`,
   blobUriHelperText: '(required) location of the data',
   blobFormatHelperText: '(optional) csv, parquet, etc...',
+  blobFileTypesHelperText: '(File types: txt, doc, docx, rtf, pdf)',
+  blobUriEnterManually: 'Enter Manually',
+  blobUriUndo: 'Undo',
   correctInputErrors:
     'Some inputs have errors. Please correct them before submitting.',
   noneInputTypeDescription: 'The value of none type is empty',

@@ -1,6 +1,5 @@
 import { Typography } from '@material-ui/core';
 import * as React from 'react';
-import { BlobInput } from './BlobInput';
 import { CollectionInput } from './CollectionInput';
 import t from './strings';
 import { LaunchState } from './launchMachine';
@@ -23,11 +22,13 @@ import { useFormInputsState } from './useFormInputsState';
 import { isEnterInputsState } from './utils';
 import { getHelperForInput } from './inputHelpers/getHelperForInput';
 import { NoneInput } from './NoneInput';
+import { FileInput } from './FileInput';
 
 export function getComponentForInput(
   input: InputProps,
   showErrors: boolean,
   setIsError: (boolean) => void,
+  state: BaseInterpretedLaunchState,
 ) {
   const onChange = (newValue: InputValue) => {
     const helper = getHelperForInput(input.typeDefinition.type);
@@ -45,13 +46,14 @@ export function getComponentForInput(
     error: showErrors ? input.error : undefined,
     setIsError,
     onChange,
+    sourceId: state.context.sourceId,
   };
 
   switch (input.typeDefinition.type) {
     case InputType.Union:
       return <UnionInput {...props} />;
     case InputType.Blob:
-      return <BlobInput {...props} />;
+      return <FileInput {...props} />;
     case InputType.Collection:
       return <CollectionInput {...props} />;
     case InputType.Struct:
@@ -78,7 +80,8 @@ const RenderFormInputs: React.FC<{
   showErrors: boolean;
   variant: LaunchFormInputsProps['variant'];
   setIsError: (boolean) => void;
-}> = ({ inputs, showErrors, variant, setIsError }) => {
+  state: BaseInterpretedLaunchState;
+}> = ({ inputs, showErrors, variant, setIsError, state }) => {
   const styles = useStyles();
   return inputs.length === 0 ? (
     <NoInputsNeeded variant={variant} />
@@ -90,7 +93,7 @@ const RenderFormInputs: React.FC<{
       </header>
       {inputs.map(input => (
         <div key={input.label} className={styles.formControl}>
-          {getComponentForInput(input, showErrors, setIsError)}
+          {getComponentForInput(input, showErrors, setIsError, state)}
         </div>
       ))}
     </>
@@ -102,7 +105,10 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
   LaunchFormInputsProps
 > = ({ state, variant, setIsError }, ref) => {
   const { parsedInputs, unsupportedRequiredInputs, showErrors } = state.context;
-  const { getValues, inputs, validate } = useFormInputsState(parsedInputs);
+  const { getValues, inputs, validate } = useFormInputsState(
+    parsedInputs,
+    state,
+  );
   React.useImperativeHandle(ref, () => ({
     getValues,
     validate,
@@ -121,6 +127,7 @@ export const LaunchFormInputsImpl: React.RefForwardingComponent<
           showErrors={showErrors}
           variant={variant}
           setIsError={setIsError}
+          state={state}
         />
       )}
     </section>
