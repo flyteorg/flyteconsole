@@ -3,7 +3,8 @@ import { listProjects } from 'models/Project/api';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
-import { BreadcrumbFormControlInterface } from '../types';
+import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl } from '../async/utils';
@@ -12,6 +13,9 @@ import { domainIdfromUrl } from '../async/utils';
  * Top level component to kick off the breadcrumb rendering.
  * The system will look for a registry and compare it to the URL
  * to see if there are any custom breadcrumbs.
+ *
+ * Depends on useExternalConfigurationContext for external configuration.
+ * See `flyteBreadcrumbRegistryList` for example usage.
  */
 const BreadCrumbs = () => {
   const routerLocation = useLocation();
@@ -41,6 +45,18 @@ const BreadCrumbs = () => {
     }
     return '';
   }, [routerParams, routerLocation.search, projectData, currentProjectId]);
+
+  // load from user provided registry for custom breadcrumb handling
+  const { registry } = useExternalConfigurationContext();
+  useEffect(() => {
+    const breadcrumbs: Breadcrumb[] = registry?.breadcrumbs || [];
+    if (breadcrumbs?.length) {
+      for (let i = 0; i < breadcrumbs.length; i++) {
+        const breadcrumb = breadcrumbs[i];
+        breadcrumbRegistry.addBreadcrumbSeed(breadcrumb);
+      }
+    }
+  }, [registry?.breadcrumbs]);
 
   useEffect(() => {
     breadcrumbRegistry.resetBreadcrumbs();
