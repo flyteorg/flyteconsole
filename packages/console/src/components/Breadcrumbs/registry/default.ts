@@ -100,7 +100,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
   makeBreadcrumb({
     id: 'version',
     label: 'Versions',
-    asyncData: namedEntitiesVersions,
-    viewAllLink: namedEntitiesVersionsViewAll,
+    // asyncData: namedEntitiesVersions,
+    // viewAllLink: namedEntitiesVersionsViewAll,
   }),
 ];
