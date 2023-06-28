@@ -30,6 +30,16 @@ export const namedEntitiesList = (projectId = '', domainId = '') => {
   return [workflow, task, launchPlans];
 };
 
+/**
+ * Find a friendly name for the named entity breadcrumb value.
+ *
+ * @param location
+ * @param _breadcrumb
+ * @returns
+ *
+ * @example
+ * /launch_plan/ => Launch Plans
+ */
 export const namedEntitiesDefaultValue = (
   location: Location,
   _breadcrumb: Breadcrumb,

@@ -66,7 +66,6 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.WorkflowDetails.makeUrl(projectId, domainId, ''),
   }),
-  // task version
   makeBreadcrumb({
     id: 'task',
     label: 'Task',
