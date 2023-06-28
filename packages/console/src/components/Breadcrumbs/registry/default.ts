@@ -4,9 +4,6 @@ import {
   domains,
   launchPlans,
   namedEntities,
-  namedEntitiesDefaultValue,
-  namedEntitiesVersions,
-  namedEntitiesVersionsViewAll,
   projects,
   tasks,
   workflows,
@@ -16,11 +13,12 @@ import {
   breadcrumbDefaultvalidator,
   namedEntitiesValidator,
 } from '../validators';
+import { defaultValue, namedEntitiesDefaultValue } from '../defaultValue';
 
 const defaultBreadcrumb: Breadcrumb = {
   id: 'default',
   label: '',
-  defaultValue: '',
+  defaultValue: defaultValue,
   valididator: breadcrumbDefaultvalidator,
   asyncData: defaultVoid,
   viewAllLink: '',
@@ -97,6 +95,8 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
   }),
+  // TODO: Split this into a seperate lookup function per version type
+  // make a validater, asyncData, and viewAllLink for each version type
   makeBreadcrumb({
     id: 'version',
     label: 'Versions',

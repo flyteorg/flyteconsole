@@ -18,10 +18,21 @@ import { defaultVoid } from '../async/fn';
  * @method addBreadcrumb
  */
 class BreadcrumbRegistry {
-  // Data structure for storing breadcrumbs
+  /**
+   * List of breadcrumbs definitions to be processed.
+   * This list is used to generate the breadcrumbs list.
+   * External breadcrumbs definitions are merged in from the registry provider.
+   */
   breadcrumbSeeds: Breadcrumb[] = [];
-  // Breadcrumbs to render in UI
+
+  /**
+   * List of breadcrumbs to be rendered by the BreadcrumbFormControl component
+   */
   breadcrumbs: BreadcrumbFormControlInterface[] = [];
+
+  /**
+   * Hash of breadcrumb ids to be used as a key for rendering
+   */
   renderHash: string = '';
 
   constructor() {
@@ -40,7 +51,10 @@ class BreadcrumbRegistry {
   }
 
   /**
-   * Add a breadcrumb to the registry
+   * Add a breadcrumb to the registry.
+   * Accepts a partial breadcrumb object and merges it with the defaults.
+   * If a breadcrumb with the same id already exists, it will be merged with the new data.
+   * Returns the merged breadcrumb.
    * @param breadcrumb
    * @returns
    */
@@ -111,8 +125,8 @@ class BreadcrumbRegistry {
     const values: Record<string, string> = {};
 
     for (let i = 0; i < pathFragments.length; i = i + 2) {
-      const key = decodeURIComponent(pathFragments[i]);
-      const value = decodeURIComponent(pathFragments[i + 1]);
+      const key = decodeURIComponent(pathFragments[i] || '');
+      const value = decodeURIComponent(pathFragments[i + 1] || '');
       values[key] = value || startCase(key);
     }
 
@@ -132,11 +146,22 @@ class BreadcrumbRegistry {
     return { pathEntries: values, pathFragments };
   }
 
+  /**
+   * Reset built breadcrumbs to empty.
+   * This will not remove the seeds.
+   */
   public resetBreadcrumbs() {
     this.breadcrumbs = [];
     this._makeRenderHash();
   }
 
+  /**
+   * Build breadcrumbs from the registry.
+   * This will use the current window.location, project ids and domain ids to determine which breadcrumbs to build.
+   * @param location
+   * @param projectId
+   * @param domainId
+   */
   public breadcrumbBuilder({
     location,
     projectId,
@@ -161,7 +186,7 @@ class BreadcrumbRegistry {
 
       const prevPathSegment = pathFragments[i - 2] || '';
       const nextPathSegment = pathFragments[i + 2] || '';
-      const currentPathValue = pathEntries[pathFragment];
+      const currentPathValue = pathEntries[pathFragment] || '';
 
       const seeds = this.breadcrumbSeeds.filter(seed => {
         const targetBreadcrumbId = seed.id;
@@ -178,7 +203,8 @@ class BreadcrumbRegistry {
       });
 
       for (let j = 0; j < seeds.length; j++) {
-        if (!seeds[j].defaultValue) seeds[j].defaultValue = currentPathValue;
+        if (!seeds[j].defaultValue)
+          seeds[j].defaultValue = currentPathValue || '';
         validSeeds.push(seeds[j]);
       }
     }
@@ -187,10 +213,13 @@ class BreadcrumbRegistry {
       const validSeed = validSeeds[i];
       const breadcrumb = this.addBreadcrumbSeed(validSeed);
 
-      const value =
-        typeof breadcrumb.defaultValue === 'function'
-          ? breadcrumb.defaultValue(location, breadcrumb)
-          : `${breadcrumb.defaultValue}`;
+      let value = '';
+      if (typeof breadcrumb.defaultValue === 'function') {
+        value = breadcrumb.defaultValue(location, breadcrumb);
+      } else {
+        value = breadcrumb.defaultValue;
+      }
+      if (breadcrumb.id === 'workflows') console.log('***', breadcrumb);
 
       const controller: BreadcrumbFormControlInterface = {
         ...breadcrumb,
@@ -206,5 +235,9 @@ class BreadcrumbRegistry {
   }
 }
 
+/**
+ * Exported instance of the breadcrumb registry.
+ * Append to this instance to add breadcrumbs to the registry.
+ */
 const breadcrumbRegistry = new BreadcrumbRegistry();
 export default breadcrumbRegistry;

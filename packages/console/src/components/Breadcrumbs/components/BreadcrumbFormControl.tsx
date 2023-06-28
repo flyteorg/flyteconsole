@@ -3,6 +3,12 @@ import { FormControl, Input, InputLabel } from '@material-ui/core';
 import { BreadcrumbFormControlInterface } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 
+/**
+ * This component is a wrapper around the Material UI FormControl component.
+ * It is used to render a breadcrumb with a popover.
+ *
+ * These are used in the Breadcrumbs component.
+ */
 const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
   const htmlLabel = `breadcrumb-${props.id}`;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

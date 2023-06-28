@@ -4,15 +4,17 @@ import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
+import get from 'lodash/get';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl } from '../async/utils';
 
 /**
- * Top level component to kick off the breadcrumb rendering.
- * The system will look for a registry and compare it to the URL
- * to see if there are any custom breadcrumbs.
+ * Top level Breadcumb component used to kick off the breadcrumb rendering.
+ * The system will look for a registry and compare it to the URL to see if there are any custom breadcrumbs.
+ *
+ * The project and domain ids are pulled from the URL as well as the window.location object.
  *
  * Depends on useExternalConfigurationContext for external configuration.
  * See `flyteBreadcrumbRegistryList` for example usage.
@@ -35,10 +37,10 @@ const BreadCrumbs = () => {
     if (id) return id;
 
     // get the first domain id from the project
-    if (projectData.length) {
+    if (projectData?.length) {
       const currentProject = projectData.find(p => p.id === currentProjectId);
       if (currentProject) {
-        return currentProject.domains[0].id;
+        return `${get(currentProject, 'domains[0].id')}` || '';
       } else {
         return '';
       }
@@ -58,22 +60,23 @@ const BreadCrumbs = () => {
     }
   }, [registry?.breadcrumbs]);
 
-  useEffect(() => {
-    breadcrumbRegistry.resetBreadcrumbs();
-    breadcrumbRegistry.breadcrumbBuilder({
-      location: window.location,
-      projectId: currentProjectId,
-      domainId: currentDomainId,
-    });
-    // load from user provided registry for custom breadcrumb handling
-  }, [
-    routerLocation.pathname,
-    routerLocation.search,
-    currentProjectId,
-    currentDomainId,
-    breadcrumbRegistry.renderHash,
-  ]);
+  // // rebuild when page changes
+  // useEffect(() => {
+  //   breadcrumbRegistry.resetBreadcrumbs();
+  //   breadcrumbRegistry.breadcrumbBuilder({
+  //     location: window.location,
+  //     projectId: currentProjectId,
+  //     domainId: currentDomainId,
+  //   });
+  // }, [
+  //   routerLocation.pathname,
+  //   routerLocation.search,
+  //   currentProjectId,
+  //   currentDomainId,
+  //   breadcrumbRegistry.renderHash,
+  // ]);
 
+  // rebuild when page changes
   const breadcrumbs: BreadcrumbFormControlInterface[] = useMemo(() => {
     breadcrumbRegistry.resetBreadcrumbs();
     return breadcrumbRegistry.breadcrumbBuilder({
