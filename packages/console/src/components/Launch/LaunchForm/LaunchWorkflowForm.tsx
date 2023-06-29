@@ -11,7 +11,7 @@ import { LaunchFormActions } from './LaunchFormActions';
 import { LaunchFormHeader } from './LaunchFormHeader';
 import { LaunchFormInputs } from './LaunchFormInputs';
 import { LaunchState } from './launchMachine';
-import { SearchableSelector } from './SearchableSelector';
+import { SearchableSelector } from './LaunchFormComponents/SearchableSelector';
 import { useStyles } from './styles';
 import {
   BaseInterpretedLaunchState,
@@ -21,9 +21,9 @@ import {
 import { useLaunchWorkflowFormState } from './useLaunchWorkflowFormState';
 import { isEnterInputsState } from './utils';
 import { LaunchRoleInput } from './LaunchRoleInput';
-import { LaunchFormAdvancedInputs } from './LaunchFormAdvancedInputs';
-import { LaunchInterruptibleInput } from './LaunchInterruptibleInput';
-import { LaunchOverwriteCacheInput } from './LaunchOverwriteCacheInput';
+import { LaunchInterruptibleInput } from './LaunchFormComponents/LaunchInterruptibleInput';
+import { LaunchOverwriteCacheInput } from './LaunchFormComponents/LaunchOverwriteCacheInput';
+import { LaunchFormAdvancedInputs } from './LaunchFormComponents';
 
 /** Renders the form for initiating a Launch request based on a Workflow */
 export const LaunchWorkflowForm: React.FC<LaunchWorkflowFormProps> = props => {

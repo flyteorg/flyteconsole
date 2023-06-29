@@ -5,16 +5,16 @@ import {
 } from '@material-ui/pickers';
 // Flyte dates are specified in UTC
 import { Moment, utc as moment } from 'moment';
-import * as React from 'react';
-import { InputProps } from './types';
-import { getLaunchInputId } from './utils';
+import React, { FC } from 'react';
+import { InputProps } from '../types';
+import { getLaunchInputId } from '../utils';
 
 const momentDateUtils = momentUtils.default ? momentUtils.default : momentUtils;
 
 /** A form field for selecting a date/time from a picker or entering it via
  * keyboard.
  */
-export const DatetimeInput: React.FC<InputProps> = props => {
+export const DatetimeInput: FC<InputProps> = props => {
   const { error, label, name, onChange, value: propValue } = props;
   const hasError = !!error;
   const helperText = hasError ? error : props.helperText;

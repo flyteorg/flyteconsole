@@ -23,7 +23,7 @@ import {
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
 } from './launchMachine';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;

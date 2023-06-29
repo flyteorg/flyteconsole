@@ -1,13 +1,15 @@
-import * as React from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
-import { useState } from 'react';
 import Form from '@rjsf/material-ui';
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import validator from '@rjsf/validator-ajv8';
-import { makeStringChangeHandler } from './handlers';
-import { InputProps } from './types';
-import { getLaunchInputId } from './utils';
-import { protobufValueToPrimitive, PrimitiveType } from './inputHelpers/struct';
+import { makeStringChangeHandler } from '../handlers';
+import { InputProps } from '../types';
+import { getLaunchInputId } from '../utils';
+import {
+  protobufValueToPrimitive,
+  PrimitiveType,
+} from '../inputHelpers/struct';
 
 const muiTheme = createTheme({
   props: {
@@ -49,7 +51,7 @@ const formatJson = data => {
 };
 
 /** Handles rendering of the input component for a Struct */
-export const StructInput: React.FC<InputProps> = props => {
+export const StructInput: FC<InputProps> = props => {
   const {
     error,
     label,
@@ -58,9 +60,6 @@ export const StructInput: React.FC<InputProps> = props => {
     typeDefinition: { literalType },
     value = '',
   } = props;
-  const hasError = !!error;
-  const helperText = hasError ? error : props.helperText;
-
   let jsonFormRenderable = false;
   let parsedJson: PrimitiveType = {};
 
@@ -90,7 +89,7 @@ export const StructInput: React.FC<InputProps> = props => {
     jsonFormRenderable && value ? JSON.parse(value as string) : {},
   );
 
-  const onFormChange = React.useCallback(({ formData }) => {
+  const onFormChange = useCallback(({ formData }) => {
     onChange(JSON.stringify(formData));
     setParamData(formData);
   }, []);
@@ -113,9 +112,9 @@ export const StructInput: React.FC<InputProps> = props => {
     </MuiThemeProvider>
   ) : (
     <TextField
+      error={!!error}
       id={getLaunchInputId(name)}
-      error={hasError}
-      helperText={helperText}
+      helperText={error}
       fullWidth={true}
       label={label}
       multiline={true}

@@ -10,7 +10,7 @@ import * as React from 'react';
 import {
   SearchableSelector,
   SearchableSelectorOption,
-} from '../SearchableSelector';
+} from '../LaunchFormComponents/SearchableSelector';
 
 const mockWorkflow = createMockWorkflow('MyWorkflow');
 const mockWorkflowVersions = createMockWorkflowVersions(

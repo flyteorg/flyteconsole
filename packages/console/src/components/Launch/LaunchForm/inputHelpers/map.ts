@@ -94,13 +94,13 @@ function validate({
     throw new Error(t('valueNotParse'));
   }
   const obj = parseJSON(value);
-  if (
-    !Object.keys(obj).length ||
-    Object.keys(obj).some(key => !key.trim().length)
-  ) {
+  if (!Object.keys(obj).length) {
     throw new Error(t('valueKeyRequired'));
   }
   Object.keys(obj).forEach(key => {
+    if (!key || typeof key !== 'string') {
+      throw new Error(t('valueKeyInvalid'));
+    }
     const helper = getHelperForInput(subtype.type);
     const subValue = obj[key];
 

@@ -1,71 +1,19 @@
+import React, { useEffect } from 'react';
 import { Typography } from '@material-ui/core';
-import * as React from 'react';
-import { BlobInput } from './BlobInput';
-import { CollectionInput } from './CollectionInput';
+import { isEqual } from 'lodash';
 import t from './strings';
 import { LaunchState } from './launchMachine';
-import { MapInput } from './MapInput';
 import { NoInputsNeeded } from './NoInputsNeeded';
-import { SimpleInput } from './SimpleInput';
-import { StructInput } from './StructInput';
-import { UnionInput } from './UnionInput';
 import { useStyles } from './styles';
 import {
   BaseInterpretedLaunchState,
   InputProps,
-  InputType,
-  InputValue,
   LaunchFormInputsRef,
 } from './types';
-import { UnsupportedInput } from './UnsupportedInput';
 import { UnsupportedRequiredInputsError } from './UnsupportedRequiredInputsError';
 import { useFormInputsState } from './useFormInputsState';
 import { isEnterInputsState } from './utils';
-import { getHelperForInput } from './inputHelpers/getHelperForInput';
-import { NoneInput } from './NoneInput';
-
-export function getComponentForInput(
-  input: InputProps,
-  showErrors: boolean,
-  setIsError: (boolean) => void,
-) {
-  const onChange = (newValue: InputValue) => {
-    const helper = getHelperForInput(input.typeDefinition.type);
-    try {
-      helper.validate({ ...input, value: newValue });
-      setIsError(false);
-    } catch (e) {
-      setIsError(true);
-    }
-    input.onChange(newValue);
-  };
-
-  const props = {
-    ...input,
-    error: showErrors ? input.error : undefined,
-    setIsError,
-    onChange,
-  };
-
-  switch (input.typeDefinition.type) {
-    case InputType.Union:
-      return <UnionInput {...props} />;
-    case InputType.Blob:
-      return <BlobInput {...props} />;
-    case InputType.Collection:
-      return <CollectionInput {...props} />;
-    case InputType.Struct:
-      return <StructInput {...props} />;
-    case InputType.Map:
-      return <MapInput {...props} />;
-    case InputType.Unknown:
-      return <UnsupportedInput {...props} />;
-    case InputType.None:
-      return <NoneInput {...props} />;
-    default:
-      return <SimpleInput {...props} />;
-  }
-}
+import { getComponentForInput } from './LaunchFormComponents';
 
 export interface LaunchFormInputsProps {
   state: BaseInterpretedLaunchState;
@@ -78,8 +26,23 @@ const RenderFormInputs: React.FC<{
   showErrors: boolean;
   variant: LaunchFormInputsProps['variant'];
   setIsError: (boolean) => void;
-}> = ({ inputs, showErrors, variant, setIsError }) => {
+}> = ({ inputs, variant, setIsError }) => {
   const styles = useStyles();
+  const [errors, setErrors] = React.useState<boolean[]>([]);
+  const updateErrors = (value, index) => {
+    setErrors(prev => {
+      const newErrors = [...errors];
+      newErrors[index] = value;
+      if (isEqual(prev, newErrors)) {
+        return prev;
+      }
+      return newErrors;
+    });
+  };
+
+  useEffect(() => {
+    setIsError(errors.some(error => error));
+  }, [errors]);
   return inputs.length === 0 ? (
     <NoInputsNeeded variant={variant} />
   ) : (
@@ -88,9 +51,11 @@ const RenderFormInputs: React.FC<{
         <Typography variant="h6">{t('inputs')}</Typography>
         <Typography variant="body2">{t('inputsDescription')}</Typography>
       </header>
-      {inputs.map(input => (
+      {inputs.map((input, index) => (
         <div key={input.label} className={styles.formControl}>
-          {getComponentForInput(input, showErrors, setIsError)}
+          {getComponentForInput(input, true, isError =>
+            updateErrors(isError, index),
+          )}
         </div>
       ))}
     </>

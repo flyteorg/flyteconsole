@@ -12,19 +12,19 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  const stringValue = typeof value === 'string' ? value : value.toString();
+  const stringValue = typeof value === 'string' ? value : value?.toString?.();
   return { scalar: { primitive: { stringValue } } };
 }
 
-function validate({ value }: InputValidatorParams) {
+function validate({ value, required }: InputValidatorParams) {
   if (typeof value !== 'string') {
     throw new Error('Value is not a string');
   }
-  if (value && value[0] === ' ') {
-    throw new Error('Value should not have a leading space');
+  if (required && !value) {
+    throw new Error('Value should not be empty');
   }
-  if (value && value[value.length - 1] === ' ') {
-    throw new Error('Value should not have a trailing space');
+  if (value?.length !== value?.trim?.()?.length) {
+    throw new Error('Value should not have leading or trailing spaces');
   }
 }
 

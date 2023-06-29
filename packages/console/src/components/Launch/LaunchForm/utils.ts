@@ -11,7 +11,7 @@ import { simpleTypeToInputType, typeLabels } from './constants';
 import { inputToLiteral } from './inputHelpers/inputHelpers';
 import { typeIsSupported } from './inputHelpers/utils';
 import { LaunchState } from './launchMachine';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 import {
   BaseInterpretedLaunchState,
   BlobValue,

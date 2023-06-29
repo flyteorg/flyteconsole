@@ -7,9 +7,9 @@ import { LaunchFormHeader } from './LaunchFormHeader';
 import { LaunchFormInputs } from './LaunchFormInputs';
 import { LaunchState } from './launchMachine';
 import { LaunchRoleInput } from './LaunchRoleInput';
-import { LaunchInterruptibleInput } from './LaunchInterruptibleInput';
-import { LaunchOverwriteCacheInput } from './LaunchOverwriteCacheInput';
-import { SearchableSelector } from './SearchableSelector';
+import { LaunchInterruptibleInput } from './LaunchFormComponents/LaunchInterruptibleInput';
+import { LaunchOverwriteCacheInput } from './LaunchFormComponents/LaunchOverwriteCacheInput';
+import { SearchableSelector } from './LaunchFormComponents/SearchableSelector';
 import { useStyles } from './styles';
 import {
   BaseInterpretedLaunchState,

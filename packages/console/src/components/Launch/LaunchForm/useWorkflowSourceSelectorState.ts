@@ -5,7 +5,7 @@ import { LaunchPlan } from 'models/Launch/types';
 import { workflowSortFields } from 'models/Workflow/constants';
 import { Workflow, WorkflowId } from 'models/Workflow/types';
 import { useMemo, useState } from 'react';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 import { WorkflowSourceSelectorState } from './types';
 import { useVersionSelectorOptions } from './useVersionSelectorOptions';
 import {

@@ -1,3 +1,4 @@
+import React, { FC, useEffect, useMemo } from 'react';
 import {
   FormControl,
   FormHelperText,
@@ -5,14 +6,13 @@ import {
   MenuItem,
   Select,
   TextField,
-  Typography,
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { BlobDimensionality } from 'models/Common/types';
-import * as React from 'react';
-import t from './strings';
-import { InputProps } from './types';
-import { getLaunchInputId, isBlobValue } from './utils';
+import t from '../strings';
+import { BlobValue, InputProps } from '../types';
+import { getLaunchInputId, isBlobValue } from '../utils';
+import { StyledCard } from './StyledCard';
 
 const useStyles = makeStyles((theme: Theme) => ({
   dimensionalityInput: {
@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flex: '1 1 auto',
   },
   inputContainer: {
-    borderLeft: `1px solid ${theme.palette.divider}`,
     marginTop: theme.spacing(1),
     paddingLeft: theme.spacing(1),
   },
@@ -35,68 +34,46 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 /** A micro form for entering the values related to a Blob Literal */
-export const BlobInput: React.FC<InputProps> = props => {
+export const BlobInput: FC<InputProps> = props => {
   const styles = useStyles();
   const {
     error,
-    label,
     name,
     onChange,
     value: propValue,
     typeDefinition,
+    label,
   } = props;
+
   const dimensionality = typeDefinition?.literalType?.blob?.dimensionality;
-  const blobValue = isBlobValue(propValue)
-    ? propValue
-    : {
-        uri: '',
-        dimensionality: dimensionality ?? BlobDimensionality.SINGLE,
-      };
-  const hasError = !!error;
-  const helperText = hasError ? error : props.helperText;
+  const blobValue = useMemo(
+    () =>
+      isBlobValue(propValue)
+        ? propValue
+        : ({
+            uri: undefined,
+            dimensionality: dimensionality ?? BlobDimensionality.SINGLE,
+            format: undefined,
+          } as any as BlobValue),
+    [propValue, dimensionality],
+  );
 
-  const handleUriChange = ({
-    target: { value: uri },
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({
-      ...blobValue,
-      uri,
-    });
-  };
-
-  const handleFormatChange = ({
-    target: { value: format },
-  }: React.ChangeEvent<HTMLInputElement>) => {
-    onChange({
-      ...blobValue,
-      format,
-    });
-  };
-
-  const handleDimensionalityChange = ({
-    target: { value },
-  }: React.ChangeEvent<{ value: unknown }>) => {
-    onChange({
-      ...blobValue,
-      dimensionality: value as BlobDimensionality,
-    });
+  const handleChange = (input: Partial<BlobValue>) => {
+    const value = { ...blobValue, ...input };
+    onChange(value);
   };
 
   const selectId = getLaunchInputId(`${name}-select`);
 
   return (
-    <div>
-      <Typography variant="body1" component="label">
-        {label}
-      </Typography>
-      <FormHelperText error={hasError}>{helperText}</FormHelperText>
+    <StyledCard error={error} label={label}>
       <div className={styles.inputContainer}>
         <TextField
           id={getLaunchInputId(`${name}-uri`)}
           helperText={t('blobUriHelperText')}
           fullWidth={true}
           label="uri"
-          onChange={handleUriChange}
+          onChange={e => handleChange({ uri: e.target.value })}
           value={blobValue.uri}
           variant="outlined"
         />
@@ -106,7 +83,7 @@ export const BlobInput: React.FC<InputProps> = props => {
             id={getLaunchInputId(`${name}-format`)}
             helperText={t('blobFormatHelperText')}
             label="format"
-            onChange={handleFormatChange}
+            onChange={e => handleChange({ format: e.target.value })}
             value={blobValue.format}
             variant="outlined"
           />
@@ -116,7 +93,11 @@ export const BlobInput: React.FC<InputProps> = props => {
               labelId={`${selectId}-label`}
               id={selectId}
               value={blobValue.dimensionality}
-              onChange={handleDimensionalityChange}
+              onChange={e =>
+                handleChange({
+                  dimensionality: e.target.value as BlobDimensionality,
+                })
+              }
               disabled
             >
               <MenuItem value={BlobDimensionality.SINGLE}>
@@ -129,6 +110,6 @@ export const BlobInput: React.FC<InputProps> = props => {
           </FormControl>
         </div>
       </div>
-    </div>
+    </StyledCard>
   );
 };
