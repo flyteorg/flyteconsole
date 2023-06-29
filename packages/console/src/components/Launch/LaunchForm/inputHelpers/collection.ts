@@ -33,17 +33,17 @@ function fromLiteral(
   }
 
   const subTypeHelper = getHelperForInput(subtype.type);
-  const values = literal.collection.literals.reduce<string[]>(
-    (out, literal) => {
-      const value = subTypeHelper.fromLiteral(literal, subtype);
-      if (value !== undefined) {
-        out.push(collectionChildToString(subtype.type, value));
-      }
-      return out;
-    },
-    [],
-  );
-  return `[${values.join(',')}]`;
+  const values = literal.collection.literals.map(literal => {
+    let temp = subTypeHelper.fromLiteral(literal, subtype);
+    try {
+      temp = JSON.parse(temp as string);
+    } catch {
+      // no-op
+    }
+    return temp;
+  });
+
+  return JSON.stringify(values);
 }
 
 function toLiteral({
@@ -77,7 +77,12 @@ function toLiteral({
   };
 }
 
-function validate({ value }: InputValidatorParams) {
+function validate({
+  value,
+  typeDefinition,
+  required,
+  ...props
+}: InputValidatorParams) {
   if (typeof value !== 'string') {
     throw new Error('Value must be a string');
   }
@@ -87,8 +92,21 @@ function validate({ value }: InputValidatorParams) {
     if (!Array.isArray(parsed)) {
       throw new Error(`Value parsed to type: ${typeof parsed}`);
     }
+    // validate sub values
+    const collectionLiteral = toLiteral({ value, typeDefinition });
+    const subtype = typeDefinition!.subtype;
+    const subTypeHelper = getHelperForInput(subtype?.type!);
+    collectionLiteral.collection!.literals!.map(subLiteral => {
+      const value = subTypeHelper.fromLiteral(subLiteral, subtype!);
+      subTypeHelper.validate({
+        value,
+        typeDefinition: subtype,
+        required,
+        ...props,
+      } as any);
+    });
   } catch (e) {
-    throw new Error(`Failed to parse array: ${e}`);
+    throw new Error(`Failed to parse collection: ${e}`);
   }
 }
 

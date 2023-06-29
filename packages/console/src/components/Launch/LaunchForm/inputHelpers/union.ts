@@ -78,10 +78,7 @@ function toLiteral({
   };
 }
 
-function validate({
-  value,
-  typeDefinition: { listOfSubTypes },
-}: InputValidatorParams) {
+function validate({ value, ...props }: InputValidatorParams) {
   if (!value) {
     throw new Error(t('valueRequired'));
   }
@@ -89,10 +86,15 @@ function validate({
     throw new Error(t('valueMustBeObject'));
   }
 
-  const { typeDefinition } = value as UnionValue;
-  getHelperForInput(typeDefinition.type).validate(
-    value as InputValidatorParams,
-  );
+  try {
+    const { typeDefinition: subTypeDefinition } = value as UnionValue;
+    getHelperForInput(subTypeDefinition.type).validate({
+      required: props.required,
+      ...(value as any),
+    });
+  } catch (error) {
+    throw new Error('Invalid value');
+  }
 }
 
 export const unionHelper: InputHelper = {

@@ -37,9 +37,6 @@ function getDimensionality(value: string | number) {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  if (!isObject(value)) {
-    return literalNone();
-  }
   const {
     dimensionality: rawDimensionality,
     format: rawFormat,

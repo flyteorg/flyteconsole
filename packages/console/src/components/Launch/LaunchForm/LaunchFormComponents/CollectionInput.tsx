@@ -73,7 +73,7 @@ export const CollectionInput: FC<InputProps> = props => {
     value: subtypeValue,
     typeDefinition: typeDefinition.subtype,
     onChange: (input: InputValue) => {
-      if (typeof input === 'string') {
+      if (isTextSubType) {
         onChange(input!);
       } else {
         const newValue = {
