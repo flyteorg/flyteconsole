@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { log } from 'common/log';
 import { Core } from '@flyteorg/flyteidl-types';
-import { InputProps, InputValue } from '../types';
+import { InputProps, InputType, InputValue } from '../types';
 import { UnsupportedInput } from './UnsupportedInput';
 import { isSimpleType } from './SimpleInput';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
@@ -39,14 +39,15 @@ export const CollectionInput: FC<InputProps> = props => {
 
   const helper = getHelperForInput(type);
 
-  const isTextSubType = isSimpleType(subtype.type);
+  const isTextSubType =
+    isSimpleType(subtype.type) || subtype.type === InputType.Collection;
 
   // TODO: handle collection  multiple items correctly
   const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
   const subtypeValue = isTextSubType
     ? value
     : tryGetCollectionValue({ value, typeDefinition } as any, helper)
-        ?.collection?.literals?.[0];
+        ?.collection?.literals?.[0] || value;
 
   const newprops: any = {
     ...props,
