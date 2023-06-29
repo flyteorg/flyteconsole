@@ -7,9 +7,11 @@ import {
 } from '@material-ui/core';
 import React, { FC } from 'react';
 
-export const StyledCardContainer = styled(Card)(() => ({
+export const StyledCardContainer = styled(Card)(({ theme }) => ({
   position: 'relative',
   overflow: 'visible',
+  border: `1px solid ${theme.palette.grey[300]}`,
+  boxShadow: 'none',
 
   '&.error': {
     border: '1px solid red',
@@ -21,9 +23,11 @@ export const StyledCardContainer = styled(Card)(() => ({
   '& .inlineTitle': {
     position: 'absolute',
     top: '-8px',
+    left: '10px',
     color: 'gray',
     background: 'white',
-    fontSize: '10px',
+    fontSize: '10.5px',
+    padding: '0 4px',
   },
 }));
 

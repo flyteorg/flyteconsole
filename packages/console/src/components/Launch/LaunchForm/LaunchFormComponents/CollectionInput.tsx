@@ -1,17 +1,32 @@
 import React, { FC } from 'react';
 import { log } from 'common/log';
-import { Core } from '@flyteorg/flyteidl-types';
-import { InputProps, InputType, InputValue } from '../types';
+import {
+  InputProps,
+  InputType,
+  InputTypeDefinition,
+  InputValue,
+} from '../types';
 import { UnsupportedInput } from './UnsupportedInput';
 import { isSimpleType } from './SimpleInput';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
 import { getComponentForInput } from './getComponentForInput';
 import { ConverterInput, InputHelper } from '../inputHelpers/types';
 
-const tryGetCollectionValue = (input: ConverterInput, helper: InputHelper) => {
-  let collectionLiteral: Core.ILiteral | undefined;
+const tryGetCollectionValue = (
+  input: ConverterInput,
+  typeDefinition: InputTypeDefinition,
+  helper: InputHelper,
+) => {
+  let collectionLiteral: InputValue | undefined;
   try {
-    collectionLiteral = helper.toLiteral(input);
+    const literal = helper.toLiteral(input);
+    collectionLiteral = literal.collection?.literals?.map(subInput => {
+      if (typeDefinition?.subtype?.type) {
+        const subInputHelper = getHelperForInput(typeDefinition?.subtype?.type);
+        return subInputHelper.fromLiteral(subInput, typeDefinition?.subtype);
+      }
+      return;
+    });
   } catch (error) {
     // no-op
   }
@@ -42,12 +57,15 @@ export const CollectionInput: FC<InputProps> = props => {
   const isTextSubType =
     isSimpleType(subtype.type) || subtype.type === InputType.Collection;
 
-  // TODO: handle collection  multiple items correctly
+  // TODO: handle collection  multiple items correctly instead of just taking the first one
   const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
   const subtypeValue = isTextSubType
     ? value
-    : tryGetCollectionValue({ value, typeDefinition } as any, helper)
-        ?.collection?.literals?.[0] || value;
+    : tryGetCollectionValue(
+        { value, typeDefinition } as any,
+        typeDefinition,
+        helper,
+      )?.[0] || value;
 
   const newprops: any = {
     ...props,

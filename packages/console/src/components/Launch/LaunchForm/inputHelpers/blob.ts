@@ -45,9 +45,6 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
     format: rawFormat,
     uri,
   } = value as BlobValue;
-  if (!uri) {
-    return literalNone();
-  }
 
   const dimensionality = getDimensionality(rawDimensionality);
 
