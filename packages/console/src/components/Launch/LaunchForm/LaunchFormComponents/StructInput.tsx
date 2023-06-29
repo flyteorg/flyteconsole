@@ -1,7 +1,12 @@
 import React, { FC, useCallback, useState } from 'react';
 import { TextField } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
-import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
+import {
+  MuiThemeProvider,
+  StylesProvider,
+  createGenerateClassName,
+  createTheme,
+} from '@material-ui/core/styles';
 import validator from '@rjsf/validator-ajv8';
 import { makeStringChangeHandler } from '../handlers';
 import { InputProps } from '../types';
@@ -96,18 +101,24 @@ export const StructInput: FC<InputProps> = props => {
   }, []);
 
   return jsonFormRenderable ? (
-    <MuiThemeProvider theme={muiTheme}>
-      <StyledCard error={error} label={label}>
-        <Form
-          schema={JSON.parse(JSON.stringify(parsedJson))}
-          validator={validator}
-          formData={paramData}
-          onChange={onFormChange}
-        >
-          <div></div>
-        </Form>
-      </StyledCard>
-    </MuiThemeProvider>
+    <StylesProvider
+      generateClassName={createGenerateClassName({
+        seed: 'StructInput-',
+      })}
+    >
+      <MuiThemeProvider theme={muiTheme}>
+        <StyledCard error={error} label={label}>
+          <Form
+            schema={JSON.parse(JSON.stringify(parsedJson))}
+            validator={validator}
+            formData={paramData}
+            onChange={onFormChange}
+          >
+            <div></div>
+          </Form>
+        </StyledCard>
+      </MuiThemeProvider>
+    </StylesProvider>
   ) : (
     <TextField
       error={!!error}

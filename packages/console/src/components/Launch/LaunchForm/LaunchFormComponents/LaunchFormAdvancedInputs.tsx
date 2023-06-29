@@ -6,7 +6,12 @@ import React, {
   useState,
 } from 'react';
 import { Admin } from '@flyteorg/flyteidl-types';
-import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import {
+  createGenerateClassName,
+  createTheme,
+  MuiThemeProvider,
+  StylesProvider,
+} from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -188,23 +193,29 @@ export const LaunchFormAdvancedInputs = forwardRef<
             </AccordionSummary>
 
             <AccordionDetails>
-              <MuiThemeProvider theme={muiTheme}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Form
-                      schema={{
-                        type: 'object',
-                        additionalProperties: true,
-                      }}
-                      formData={labelsParamData}
-                      onChange={handleLabelsChange}
-                      validator={validator}
-                    >
-                      <div />
-                    </Form>
-                  </CardContent>
-                </Card>
-              </MuiThemeProvider>
+              <StylesProvider
+                generateClassName={createGenerateClassName({
+                  seed: 'AdvancedInput-',
+                })}
+              >
+                <MuiThemeProvider theme={muiTheme}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Form
+                        schema={{
+                          type: 'object',
+                          additionalProperties: true,
+                        }}
+                        formData={labelsParamData}
+                        onChange={handleLabelsChange}
+                        validator={validator}
+                      >
+                        <div />
+                      </Form>
+                    </CardContent>
+                  </Card>
+                </MuiThemeProvider>
+              </StylesProvider>
             </AccordionDetails>
           </Accordion>
         </section>
