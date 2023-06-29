@@ -67,11 +67,13 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
               </>
             );
           })}
-        <Grid item xs={12}>
-          <Link onClick={props.onClose} to={viewAllLink}>
-            View All…
-          </Link>
-        </Grid>
+        {viewAllLink && (
+          <Grid item xs={12}>
+            <Link onClick={props.onClose} to={viewAllLink}>
+              View All…
+            </Link>
+          </Grid>
+        )}
       </Grid>
     </Popover>
   );
