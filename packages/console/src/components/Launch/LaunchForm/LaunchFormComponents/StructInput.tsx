@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useState } from 'react';
-import { TextField, Card, CardContent, CardHeader } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import Form from '@rjsf/material-ui';
 import { MuiThemeProvider, createTheme } from '@material-ui/core/styles';
 import validator from '@rjsf/validator-ajv8';
@@ -10,6 +10,7 @@ import {
   protobufValueToPrimitive,
   PrimitiveType,
 } from '../inputHelpers/struct';
+import { StyledCard } from './StyledCard';
 
 const muiTheme = createTheme({
   props: {
@@ -96,19 +97,16 @@ export const StructInput: FC<InputProps> = props => {
 
   return jsonFormRenderable ? (
     <MuiThemeProvider theme={muiTheme}>
-      <Card>
-        <CardHeader title={label} style={{ borderBottom: 'solid 1px gray' }} />
-        <CardContent>
-          <Form
-            schema={JSON.parse(JSON.stringify(parsedJson))}
-            validator={validator}
-            formData={paramData}
-            onChange={onFormChange}
-          >
-            <div></div>
-          </Form>
-        </CardContent>
-      </Card>
+      <StyledCard error={error} label={label}>
+        <Form
+          schema={JSON.parse(JSON.stringify(parsedJson))}
+          validator={validator}
+          formData={paramData}
+          onChange={onFormChange}
+        >
+          <div></div>
+        </Form>
+      </StyledCard>
     </MuiThemeProvider>
   ) : (
     <TextField
