@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import {
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -9,10 +8,13 @@ import {
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { BlobDimensionality } from 'models/Common/types';
+import { Core } from '@flyteorg/flyteidl-types';
 import t from '../strings';
-import { BlobValue, InputProps } from '../types';
+import { BlobValue, InputProps, InputTypeDefinition } from '../types';
 import { getLaunchInputId, isBlobValue } from '../utils';
 import { StyledCard } from './StyledCard';
+import { getHelperForInput } from '../inputHelpers/getHelperForInput';
+import { InputHelper } from '../inputHelpers/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
   dimensionalityInput: {
@@ -33,6 +35,24 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const tryGetBlobValue = (
+  value: BlobValue | Core.ILiteral,
+  typeDefinition: InputTypeDefinition,
+  helper: InputHelper,
+) => {
+  let finalValue = value as BlobValue;
+  try {
+    finalValue = helper.fromLiteral(
+      value as Core.ILiteral,
+      typeDefinition,
+    ) as BlobValue;
+  } catch {
+    // do nothing
+  }
+
+  return finalValue;
+};
+
 /** A micro form for entering the values related to a Blob Literal */
 export const BlobInput: FC<InputProps> = props => {
   const styles = useStyles();
@@ -45,11 +65,16 @@ export const BlobInput: FC<InputProps> = props => {
     label,
   } = props;
 
+  const helper = useMemo(
+    () => getHelperForInput(typeDefinition.type),
+    [typeDefinition],
+  );
+
   const dimensionality = typeDefinition?.literalType?.blob?.dimensionality;
   const blobValue = useMemo(
     () =>
       isBlobValue(propValue)
-        ? propValue
+        ? tryGetBlobValue(propValue, typeDefinition, helper)
         : ({
             uri: undefined,
             dimensionality: dimensionality ?? BlobDimensionality.SINGLE,
