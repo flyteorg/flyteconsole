@@ -9,6 +9,7 @@ import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl } from '../async/utils';
+import BreadcrumbTitleActions from './BreadCrumbTitleActions';
 
 /**
  * Top level Breadcumb component used to kick off the breadcrumb rendering.
@@ -60,22 +61,6 @@ const BreadCrumbs = () => {
     }
   }, [registry?.breadcrumbs]);
 
-  // // rebuild when page changes
-  // useEffect(() => {
-  //   breadcrumbRegistry.resetBreadcrumbs();
-  //   breadcrumbRegistry.breadcrumbBuilder({
-  //     location: window.location,
-  //     projectId: currentProjectId,
-  //     domainId: currentDomainId,
-  //   });
-  // }, [
-  //   routerLocation.pathname,
-  //   routerLocation.search,
-  //   currentProjectId,
-  //   currentDomainId,
-  //   breadcrumbRegistry.renderHash,
-  // ]);
-
   // rebuild when page changes
   const breadcrumbs: BreadcrumbFormControlInterface[] = useMemo(() => {
     breadcrumbRegistry.resetBreadcrumbs();
@@ -94,11 +79,25 @@ const BreadCrumbs = () => {
 
   return (
     <Grid container className="breadcrumbs" spacing={2}>
-      {breadcrumbs.map(breadcrumbValue => (
-        <Grid item key={breadcrumbValue.key}>
-          <BreadcrumbFormControl {...breadcrumbValue} />
+      <Grid item xs={12}>
+        <Grid container className="breadcrumbs-segment-row" spacing={2}>
+          {breadcrumbs.map(breadcrumbValue => (
+            <Grid item key={breadcrumbValue.key}>
+              <BreadcrumbFormControl {...breadcrumbValue} />
+            </Grid>
+          ))}
         </Grid>
-      ))}
+      </Grid>
+      <Grid item xs={6}>
+        <Grid container className="breadcrumbs-title-row" spacing={2}>
+          <Grid item className="breadcrumbs-title">
+            <h1>{breadcrumbs[breadcrumbs.length - 1].value}</h1>
+          </Grid>
+          <Grid item id="breadcrumbs-actions" className="breadcrumbs-actions">
+            <BreadcrumbTitleActions />
+          </Grid>
+        </Grid>
+      </Grid>
     </Grid>
   );
 };
