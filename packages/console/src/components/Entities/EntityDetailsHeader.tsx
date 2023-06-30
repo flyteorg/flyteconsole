@@ -10,6 +10,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
+import BreadcrumbTitleActions from 'components/Breadcrumbs/components/BreadcrumbTitleActions';
 import { backUrlGenerator, backToDetailUrlGenerator } from './generators';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
@@ -97,16 +98,20 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
           <span className={styles.headerText}>{headerText}</span>
         </div>
         <div>
-          {launchable ? (
-            <Button
-              color="primary"
-              id="launch-workflow"
-              onClick={() => setShowLaunchForm(true)}
-              variant="contained"
-            >
-              {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
-            </Button>
-          ) : null}
+          <BreadcrumbTitleActions>
+            {launchable ? (
+              <Button
+                color="primary"
+                id="launch-workflow"
+                onClick={() => setShowLaunchForm(true)}
+                variant="contained"
+              >
+                {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
+              </Button>
+            ) : (
+              <></>
+            )}
+          </BreadcrumbTitleActions>
         </div>
       </div>
       {launchable ? (

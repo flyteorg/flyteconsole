@@ -28,6 +28,9 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
           name={htmlLabel}
           id={htmlLabel}
           value={props.value || props.defaultValue}
+          readOnly
+          role="button"
+          style={{ cursor: 'pointer' }}
         />
       </FormControl>
       <IconButton

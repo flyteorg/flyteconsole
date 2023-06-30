@@ -9,7 +9,7 @@ import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl } from '../async/utils';
-import BreadcrumbTitleActions from './BreadCrumbTitleActions';
+import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
 
 /**
  * Top level Breadcumb component used to kick off the breadcrumb rendering.
@@ -79,8 +79,9 @@ const BreadCrumbs = () => {
 
   return (
     <Grid container className="breadcrumbs" spacing={2}>
+      {/* Breadcrumbs from url */}
       <Grid item xs={12}>
-        <Grid container className="breadcrumbs-segment-row" spacing={2}>
+        <Grid container className="breadcrumbs-segment-container" spacing={2}>
           {breadcrumbs.map(breadcrumbValue => (
             <Grid item key={breadcrumbValue.key}>
               <BreadcrumbFormControl {...breadcrumbValue} />
@@ -88,13 +89,22 @@ const BreadCrumbs = () => {
           ))}
         </Grid>
       </Grid>
-      <Grid item xs={6}>
-        <Grid container className="breadcrumbs-title-row" spacing={2}>
-          <Grid item className="breadcrumbs-title">
-            <h1>{breadcrumbs[breadcrumbs.length - 1].value}</h1>
+      {/* Current page content */}
+      <Grid item xs={12}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={6}>
+            <Grid
+              container
+              className="breadcrumbs-current-page-container"
+              spacing={2}
+            >
+              <Grid item className="breadcrumbs-title">
+                <h1>{breadcrumbs[breadcrumbs.length - 1].value}</h1>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item id="breadcrumbs-actions" className="breadcrumbs-actions">
-            <BreadcrumbTitleActions />
+          <Grid xs={6} item className="breadcrumbs-actions-container">
+            <BreadcrumbTitleActionsPortal />
           </Grid>
         </Grid>
       </Grid>
