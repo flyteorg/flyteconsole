@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, createRef } from 'react';
 import { log } from 'common/log';
 import {
   InputProps,
@@ -55,9 +55,11 @@ export const CollectionInput: FC<InputProps> = props => {
   const helper = getHelperForInput(type);
 
   const isTextSubType =
-    isSimpleType(subtype.type) || subtype.type === InputType.Collection;
+    isSimpleType(subtype.type) ||
+    subtype.type === InputType.Collection ||
+    subtype.type === InputType.Struct;
 
-  // TODO: handle collection  multiple items correctly instead of just taking the first one
+  // TODO: handle collection  multiple items correctly instead of just taking the first one.
   const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
   const subtypeValue = isTextSubType
     ? value
@@ -67,11 +69,18 @@ export const CollectionInput: FC<InputProps> = props => {
         helper,
       )?.[0] || value;
 
-  const newprops: any = {
+  const newprops: InputProps = {
     ...props,
     initialValue: subtypeInitialValue,
     value: subtypeValue,
-    typeDefinition: typeDefinition.subtype,
+    typeDefinition: typeDefinition.subtype!,
+    ...(subtype.type === InputType.Struct
+      ? {
+          settings: {
+            forceTextField: true,
+          },
+        }
+      : {}),
     onChange: (input: InputValue) => {
       if (isTextSubType) {
         onChange(input!);
@@ -95,8 +104,12 @@ export const CollectionInput: FC<InputProps> = props => {
     },
   };
 
-  // do not show errors for collection items
-  const component = getComponentForInput(newprops, false, props.setIsError);
+  const component = getComponentForInput(
+    newprops,
+    // do not show errors for collection items
+    false,
+    props.setIsError,
+  );
 
   return component;
 };

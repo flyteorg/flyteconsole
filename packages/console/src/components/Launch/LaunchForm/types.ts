@@ -248,6 +248,11 @@ export interface InputProps {
   value?: InputValue;
   onChange: InputChangeHandler;
   setIsError: (boolean) => void;
+  // Additional settings for custom rendering
+  settings?: {
+    // Only implemented for struct: forces the field to be a text field
+    forceTextField?: boolean;
+  };
 }
 
 export interface ParsedInput

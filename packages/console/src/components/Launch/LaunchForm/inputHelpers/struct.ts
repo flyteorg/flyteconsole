@@ -127,6 +127,7 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
   return { scalar: { generic: objectToProtobufStruct(parsedObject) } };
 }
 
+// TODO: proper validation based on struct params from typedefs
 function validate({ value }: InputValidatorParams) {
   if (typeof value !== 'string') {
     throw new Error('Value is not a string');

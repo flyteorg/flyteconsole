@@ -43,7 +43,7 @@ function fromLiteral(
     return temp;
   });
 
-  return JSON.stringify(values);
+  return JSON.stringify(values, null, 2);
 }
 
 function toLiteral({
