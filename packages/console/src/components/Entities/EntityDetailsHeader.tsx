@@ -10,7 +10,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
-import BreadcrumbTitleActions from 'components/Breadcrumbs/components/BreadcrumbTitleActions';
+import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
 import { backUrlGenerator, backToDetailUrlGenerator } from './generators';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';

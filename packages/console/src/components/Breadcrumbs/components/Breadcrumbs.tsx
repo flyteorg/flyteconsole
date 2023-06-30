@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { listProjects } from 'models/Project/api';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
@@ -62,20 +62,37 @@ const BreadCrumbs = () => {
   }, [registry?.breadcrumbs]);
 
   // rebuild when page changes
-  const breadcrumbs: BreadcrumbFormControlInterface[] = useMemo(() => {
+  const [breadcrumbs, setBreadcrumbs] = useState<
+    BreadcrumbFormControlInterface[]
+  >([]);
+  const [breadcrumbsHash, setBreadcrumbsHash] = useState('');
+
+  useEffect(() => {
+    const location = { ...window.location };
+    location.pathname = routerLocation.pathname;
+
     breadcrumbRegistry.resetBreadcrumbs();
-    return breadcrumbRegistry.breadcrumbBuilder({
-      location: window.location,
+
+    const val = breadcrumbRegistry.breadcrumbBuilder({
+      location,
       projectId: currentProjectId,
       domainId: currentDomainId,
     });
+    setBreadcrumbs(val);
+    setBreadcrumbsHash(breadcrumbRegistry.renderHash);
   }, [
     routerLocation.pathname,
     routerLocation.search,
     currentProjectId,
     currentDomainId,
-    breadcrumbRegistry.renderHash,
+    breadcrumbsHash,
+    routerLocation.hash,
   ]);
+
+  const lastBreadcrumb = useMemo(
+    () => breadcrumbs[breadcrumbs.length - 1],
+    [breadcrumbsHash],
+  );
 
   return (
     <Grid container className="breadcrumbs" spacing={2}>
@@ -98,9 +115,17 @@ const BreadCrumbs = () => {
               className="breadcrumbs-current-page-container"
               spacing={2}
             >
-              <Grid item className="breadcrumbs-title">
-                <h1>{breadcrumbs[breadcrumbs.length - 1].value}</h1>
-              </Grid>
+              {lastBreadcrumb?.key && (
+                <Grid
+                  item
+                  className="breadcrumbs-title"
+                  key={lastBreadcrumb.value}
+                >
+                  <h1>
+                    <small>{lastBreadcrumb.value}</small>
+                  </h1>
+                </Grid>
+              )}
             </Grid>
           </Grid>
           <Grid xs={6} item className="breadcrumbs-actions-container">

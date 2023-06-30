@@ -23,6 +23,8 @@ const BreadcrumbTitleActionsPortal = () => {
  * Render the actions inline with the breadcrumb title.
  * Use it from other components templatess through the app similar to the Modal componet.
  *
+ * There must be an instance of <Breadcrumb /> on the page for this to render.
+ *
  * @param children
  */
 const BreadcrumbTitleActions = ({ children = <></> }) => {

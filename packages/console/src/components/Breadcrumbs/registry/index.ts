@@ -47,7 +47,7 @@ class BreadcrumbRegistry {
     this.renderHash =
       this.breadcrumbs.map(b => b.id).join(',') +
       '|' +
-      this.breadcrumbSeeds.map(b => b.id).join(',');
+      this.breadcrumbSeeds.map(b => b.id + b.defaultValue).join(',');
   }
 
   /**
@@ -203,8 +203,11 @@ class BreadcrumbRegistry {
       });
 
       for (let j = 0; j < seeds.length; j++) {
-        if (!seeds[j].defaultValue)
+        if (!seeds[j].defaultValue) {
           seeds[j].defaultValue = currentPathValue || '';
+        } else if (typeof seeds[j].defaultValue !== 'function') {
+          seeds[j].defaultValue = currentPathValue || '';
+        }
         validSeeds.push(seeds[j]);
       }
     }
@@ -219,18 +222,20 @@ class BreadcrumbRegistry {
       } else {
         value = breadcrumb.defaultValue;
       }
-      if (breadcrumb.id === 'workflows') console.log('***', breadcrumb);
 
       const controller: BreadcrumbFormControlInterface = {
         ...breadcrumb,
         value,
-        key: `breadcrumb-controller-${breadcrumb.id}`,
+        key: `breadcrumb-controller-${breadcrumb.id}-${
+          value || breadcrumb.defaultValue
+        }`,
         projectId,
         domainId,
       };
       this.addBreadcrumbController(controller);
     }
 
+    this._makeRenderHash();
     return this.breadcrumbs;
   }
 }

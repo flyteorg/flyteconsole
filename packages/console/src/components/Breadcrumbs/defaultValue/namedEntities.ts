@@ -24,7 +24,7 @@ export const namedEntitiesList = (projectId = '', domainId = '') => {
   const launchPlans = {
     title: 'Launch Plans',
     createdAt: '',
-    url: Routes.TaskDetails.makeUrl(projectId, domainId, ''),
+    url: Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
   };
 
   return [workflow, task, launchPlans];

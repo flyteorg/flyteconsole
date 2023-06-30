@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Dialog, Link, Typography } from '@material-ui/core';
+import { Button, Dialog, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import classnames from 'classnames';
@@ -14,6 +14,7 @@ import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
+import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
@@ -27,7 +28,7 @@ import { ExecutionContext } from '../contexts';
 const useStyles = makeStyles((theme: Theme) => {
   return {
     actionButton: {
-      marginLeft: theme.spacing(2),
+      // marginLeft: theme.spacing(2),
     },
     actions: {
       alignItems: 'center',
@@ -51,8 +52,8 @@ const useStyles = makeStyles((theme: Theme) => {
       color: theme.palette.primary.main,
     },
     moreActions: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(-2),
+      // marginLeft: theme.spacing(1),
+      // marginRight: theme.spacing(-2),
     },
     title: {
       flex: '0 1 auto',
@@ -193,11 +194,6 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
         >
           <ArrowBack />
         </RouterLink>
-        <ExecutionStatusBadge
-          phase={phase}
-          type="workflow"
-          className="subNavBadge"
-        />
         <div className={classnames('titleContainer', styles.titleContainer)}>
           <Typography
             variant="body1"
@@ -222,6 +218,29 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
           {moreActionsContent}
         </div>
       </div>
+      <BreadcrumbTitleActions>
+        <Grid container justifyContent="flex-end" spacing={2}>
+          <Grid item>
+            <ExecutionStatusBadge
+              phase={phase}
+              type="workflow"
+              className="subNavBadge"
+            />
+          </Grid>
+          <Grid item>
+            <Link
+              className={styles.inputsOutputsLink}
+              component="button"
+              onClick={onClickShowInputsOutputs}
+              variant="body1"
+            >
+              View Inputs &amp; Outputs
+            </Link>
+          </Grid>
+          {actionContent && <Grid item>{actionContent}</Grid>}
+          {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+        </Grid>
+      </BreadcrumbTitleActions>
       <Dialog
         scroll="paper"
         maxWidth="sm"

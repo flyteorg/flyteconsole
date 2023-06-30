@@ -53,6 +53,10 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: projectId => Routes.ProjectDetails.makeUrl(projectId),
   }),
   makeBreadcrumb({
+    id: 'executions',
+    label: 'Executions',
+  }),
+  makeBreadcrumb({
     id: 'workflow',
     label: 'Workflow',
     asyncData: workflows,
