@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FormControl, Input, InputLabel } from '@material-ui/core';
+import { FormControl, IconButton, Input, InputLabel } from '@material-ui/core';
+import { ArrowDropDown } from '@material-ui/icons';
 import { BreadcrumbFormControlInterface } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 
@@ -21,7 +22,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
 
   return (
     <>
-      <FormControl onClick={handleClick}>
+      <FormControl>
         <InputLabel htmlFor={htmlLabel}>{props.label}</InputLabel>
         <Input
           name={htmlLabel}
@@ -29,6 +30,14 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
           value={props.value || props.defaultValue}
         />
       </FormControl>
+      <IconButton
+        aria-label="more"
+        aria-controls="long-menu"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <ArrowDropDown />
+      </IconButton>
       {!!anchorEl && (
         <BreadcrumbPopOver
           onClose={handleClose}
