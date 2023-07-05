@@ -1,17 +1,11 @@
+import React from 'react';
 import { Button, Dialog } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import classnames from 'classnames';
-import { useCommonStyles } from 'components/common/styles';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { Project } from 'models/Project/types';
-import { getProjectDomain } from 'models/Project/utils';
-import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
-import { backUrlGenerator, backToDetailUrlGenerator } from './generators';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
 
@@ -62,9 +56,6 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   launchable = false,
   backToWorkflow = false,
 }) => {
-  const styles = useStyles();
-  const commonStyles = useCommonStyles();
-
   const [showLaunchForm, setShowLaunchForm] = React.useState(false);
   const onCancelLaunch = (_?: KeyboardEvent) => {
     setShowLaunchForm(false);
@@ -73,46 +64,23 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   // Close modal on escape key press
   useEscapeKey(onCancelLaunch);
 
-  const domain = getProjectDomain(project, id.domain);
-  const headerText = `${domain.name} / ${id.name}`;
-
   return (
     <>
-      <div className={styles.headerContainer}>
-        <div
-          className={classnames(
-            commonStyles.mutedHeader,
-            styles.headerTextContainer,
+      <div>
+        <BreadcrumbTitleActions>
+          {launchable ? (
+            <Button
+              color="primary"
+              id="launch-workflow"
+              onClick={() => setShowLaunchForm(true)}
+              variant="contained"
+            >
+              {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
+            </Button>
+          ) : (
+            <></>
           )}
-        >
-          <Link
-            className={commonStyles.linkUnstyled}
-            to={
-              backToWorkflow
-                ? backToDetailUrlGenerator[id.resourceType](id)
-                : backUrlGenerator[id.resourceType](id)
-            }
-          >
-            <ArrowBack color="inherit" />
-          </Link>
-          <span className={styles.headerText}>{headerText}</span>
-        </div>
-        <div>
-          <BreadcrumbTitleActions>
-            {launchable ? (
-              <Button
-                color="primary"
-                id="launch-workflow"
-                onClick={() => setShowLaunchForm(true)}
-                variant="contained"
-              >
-                {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
-              </Button>
-            ) : (
-              <></>
-            )}
-          </BreadcrumbTitleActions>
-        </div>
+        </BreadcrumbTitleActions>
       </div>
       {launchable ? (
         <Dialog
