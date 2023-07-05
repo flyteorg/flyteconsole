@@ -14,6 +14,7 @@ import {
   namedEntitiesValidator,
 } from '../validators';
 import { defaultValue, namedEntitiesDefaultValue } from '../defaultValue';
+import { projectSelfLink } from '../selfLinks';
 
 const defaultBreadcrumb: Breadcrumb = {
   id: 'default',
@@ -22,6 +23,7 @@ const defaultBreadcrumb: Breadcrumb = {
   valididator: breadcrumbDefaultvalidator,
   asyncData: defaultVoid,
   viewAllLink: '',
+  selfLink: '',
   required: false,
 };
 
@@ -35,6 +37,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     label: 'Project',
     required: true,
     asyncData: projects,
+    selfLink: projectSelfLink,
     viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
   }),
   makeBreadcrumb({
@@ -42,6 +45,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     label: 'Domain',
     required: true,
     asyncData: domains,
+    selfLink: projectSelfLink,
     viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
   }),
   makeBreadcrumb({

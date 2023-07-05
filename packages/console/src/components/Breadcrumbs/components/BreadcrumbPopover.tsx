@@ -34,6 +34,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
 
   return (
     <Popover
+      className="breadcrumb-form-control-popover"
       open={props.open}
       anchorEl={props.anchorEl}
       onClose={props.onClose}
@@ -69,7 +70,11 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
           })}
         {viewAllLink && (
           <Grid item xs={12}>
-            <Link onClick={props.onClose} to={viewAllLink}>
+            <Link
+              onClick={props.onClose}
+              to={viewAllLink}
+              className="breadcrumb-form-control-view-all-link"
+            >
               View All…
             </Link>
           </Grid>

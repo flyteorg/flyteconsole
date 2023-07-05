@@ -12,6 +12,7 @@ export interface Breadcrumb {
     domainId: string,
   ) => Promise<BreadcrumbEntity[]>;
   customComponent?: React.FC<any>;
+  selfLink: BreadcrumbEntitySelfLink;
   viewAllLink: BreadcrumbEntityViewAllLink;
   required: boolean;
 }
@@ -54,11 +55,26 @@ export interface BreadcrumbEntity {
 
 /**
  * The link to view all of a given collection of breadcrumb entities.
+ * This happens when the user clicks on the "View All" button within the popover.
  * This can be a string or a function that returns a string at runtime.
+ * Empty string means no link.
  */
 export type BreadcrumbEntityViewAllLink =
   | string
   | ((projectId: string, domainId: string, location: Location) => string);
+
+/**
+ * The link to return to taht sepecific id's detail page.
+ * This happens when a user clicks on the breadcrumb vlue text.
+ * This can be a string or a function that returns a string at runtime.
+ * Empty string means no link.
+ */
+export type BreadcrumbEntitySelfLink =
+  | string
+  | ((
+      location: Location,
+      breadcrumb: BreadcrumbFormControlInterface,
+    ) => string);
 
 export interface BreadcrumbPopoverInterface
   extends BreadcrumbFormControlInterface {
