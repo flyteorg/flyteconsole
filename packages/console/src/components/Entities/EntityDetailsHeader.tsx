@@ -1,8 +1,6 @@
 import React from 'react';
 import { Button, Dialog } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
-import { Project } from 'models/Project/types';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
 import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
