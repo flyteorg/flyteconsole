@@ -44,8 +44,19 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
   const isMoreButtonHidden =
     props.asyncData.name === defaultVoid.name && props.viewAllLink === '';
 
+  const value = (props.value || props.defaultValue) as string;
+  const width = value.length;
+
   const styles = makeStyles(theme => ({
     formControl: {
+      // ch = character with of 0 character in font
+      width: width ? `${width || 2}ch` : 'auto',
+      maxWidth: '200pt',
+      '& input': {
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+      },
       '& .breadcrumb-form-control-input': {
         '& *': {
           cursor: props.selfLink ? 'pointer' : 'default',
@@ -74,13 +85,14 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
         <Input
           name={htmlLabel}
           id={htmlLabel}
-          value={props.value || props.defaultValue}
+          value={value}
           readOnly={!!props.selfLink}
           disabled={!props.selfLink}
           role="button"
           tabIndex={0}
           className="breadcrumb-form-control-input"
           onClick={handleValueClick}
+          title={value}
         />
       </FormControl>
       {!isMoreButtonHidden && (
