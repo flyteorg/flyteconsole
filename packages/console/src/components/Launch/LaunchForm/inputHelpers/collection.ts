@@ -8,7 +8,7 @@ import { collectionChildToString } from './utils';
 
 const missingSubTypeError = 'Unexpected missing subtype for collection';
 
-function parseCollection(list: string) {
+export function parseCollection(list: string) {
   const parsed = parseJSON(list);
   if (!Array.isArray(parsed)) {
     throw new Error('Value did not parse to an array');

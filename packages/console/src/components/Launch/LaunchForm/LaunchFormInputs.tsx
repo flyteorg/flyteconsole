@@ -41,8 +41,8 @@ const RenderFormInputs: React.FC<{
   };
 
   useEffect(() => {
-    setIsError(errors.some(error => error));
-  }, [errors]);
+    setIsError(inputs.some(i => !!i.error));
+  }, [inputs]);
   return inputs.length === 0 ? (
     <NoInputsNeeded variant={variant} />
   ) : (

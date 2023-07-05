@@ -11,6 +11,7 @@ import { isSimpleType } from './SimpleInput';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
 import { getComponentForInput } from './getComponentForInput';
 import { ConverterInput, InputHelper } from '../inputHelpers/types';
+import { parseCollection } from '../inputHelpers/collection';
 
 const tryGetCollectionValue = (
   input: ConverterInput,
@@ -82,25 +83,43 @@ export const CollectionInput: FC<InputProps> = props => {
         }
       : {}),
     onChange: (input: InputValue) => {
-      if (isTextSubType) {
-        onChange(input!);
-      } else {
-        const newValue = {
-          value: Array.isArray(input) ? input : [input],
-          typeDefinition: typeDefinition,
-        } as any;
+      let collectionString = input;
 
+      if (typeof input === 'string') {
+        collectionString = input;
+      } else {
         try {
+          let temp;
+          if ((input as any).typeDefinition.type === InputType.None) {
+            temp = [input];
+          } else {
+            const tempValue = (input as any)?.value;
+            let collection = parseCollection(tempValue);
+            collection = collection?.length ? collection : [tempValue];
+            temp = collection?.map(value => {
+              return {
+                value,
+                typeDefinition: (input as any)?.typeDefinition,
+              };
+            });
+          }
+
+          const newValue = {
+            value: temp,
+            typeDefinition: typeDefinition,
+          } as any;
           const collectionLiteral = helper.toLiteral(newValue);
-          const collectionString = helper.fromLiteral(
+          collectionString = helper.fromLiteral(
             collectionLiteral,
             typeDefinition,
-          );
-          onChange(collectionString!);
+          ) as any;
         } catch (error) {
+          collectionString = (input as any)?.value;
           setIsError(true);
         }
       }
+
+      onChange(collectionString!);
     },
   };
 
