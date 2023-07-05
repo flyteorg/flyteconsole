@@ -87,12 +87,7 @@ const EntityVersionsDetailsContainerImpl: React.FC<
 
   return (
     <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={sections.launch}
-        backToWorkflow
-      />
+      <EntityDetailsHeader id={id} launchable={sections.launch} />
       <div className={styles.verionDetailsContainer}>
         {versionsSections.details && (
           <div className={styles.versionDetailsContainer}>

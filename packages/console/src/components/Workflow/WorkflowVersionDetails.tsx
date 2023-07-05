@@ -68,12 +68,7 @@ const WorkflowVersionDetailsContainer: React.FC<
 
   return (
     <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={sections.launch}
-        backToWorkflow
-      />
+      <EntityDetailsHeader id={id} launchable={sections.launch} />
       <div className={styles.verionDetailsContatiner}>
         <div className={styles.staticGraphContainer}>
           <StaticGraphContainer workflowId={workflowId} />

@@ -63,11 +63,7 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
 
   return (
     <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={!!sections.launch}
-      />
+      <EntityDetailsHeader id={id} launchable={!!sections.launch} />
 
       <div className={styles.metadataContainer}>
         {sections.description ? (

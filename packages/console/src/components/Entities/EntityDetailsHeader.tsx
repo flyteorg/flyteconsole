@@ -9,29 +9,9 @@ import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  headerContainer: {
-    alignItems: 'center',
-    display: 'flex',
-    height: theme.spacing(5),
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(2),
-    width: '100%',
-  },
-  headerText: {
-    margin: theme.spacing(0, 1),
-  },
-  headerTextContainer: {
-    display: 'flex',
-    flex: '1 0 auto',
-  },
-}));
-
 interface EntityDetailsHeaderProps {
-  project: Project;
   id: ResourceIdentifier;
   launchable?: boolean;
-  backToWorkflow?: boolean;
 }
 
 function getLaunchProps(id: ResourceIdentifier) {
@@ -52,9 +32,7 @@ function getLaunchProps(id: ResourceIdentifier) {
  */
 export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   id,
-  project,
   launchable = false,
-  backToWorkflow = false,
 }) => {
   const [showLaunchForm, setShowLaunchForm] = React.useState(false);
   const onCancelLaunch = (_?: KeyboardEvent) => {
