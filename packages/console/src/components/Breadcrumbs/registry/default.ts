@@ -4,6 +4,7 @@ import {
   domains,
   launchPlans,
   namedEntities,
+  namedEntitiesVersions,
   projects,
   tasks,
   workflows,
@@ -113,12 +114,10 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     viewAllLink: (projectId = '', domainId = '') =>
       Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
   }),
-  // TODO: Split this into a seperate lookup function per version type
-  // make a validater, asyncData, and viewAllLink for each version type
   makeBreadcrumb({
     id: 'version',
     label: 'Versions',
-    // asyncData: namedEntitiesVersions,
-    // viewAllLink: namedEntitiesVersionsViewAll,
+    asyncData: namedEntitiesVersions,
+    viewAllLink: '',
   }),
 ];

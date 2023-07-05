@@ -27,11 +27,14 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       : props.viewAllLink(props.projectId, props.domainId, window.location);
 
   const dataToShow = useMemo(() => {
-    return queryData
-      .filter(breadcrumb => {
-        return breadcrumb.title !== props.value;
-      })
-      .slice(0, 5);
+    const shouldFilter = queryData.length > 5;
+    return !shouldFilter
+      ? queryData
+      : queryData
+          .filter(breadcrumb => {
+            return breadcrumb.title !== props.value;
+          })
+          .slice(0, 5);
   }, [queryData]);
 
   /**

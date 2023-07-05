@@ -1,12 +1,15 @@
 import { listWorkflows } from 'models/Workflow/api';
 import { listNamedEntities } from 'models/Common/api';
-import { ResourceType, defaultPaginationConfig } from 'models';
+import { ResourceType, SortDirection, defaultPaginationConfig } from 'models';
 import { listProjects } from 'models/Project/api';
-import { listExecutions } from 'models/Execution/api';
+import { executionFilterGenerator } from 'components/Entities/generators';
+import { entityFunctions } from 'components/hooks/Entity/constants';
+import { executionSortFields } from 'models/Execution/constants';
 import {
   formatEntities,
   formatProjectEntities,
   formatProjectEntitiesAsDomains,
+  formatVersions,
 } from './utils';
 import { namedEntitiesList } from '../defaultValue';
 
@@ -99,15 +102,58 @@ export const namedEntities = async (projectId = '', domainId = '') => {
   return namedEntitiesList(projectId, domainId);
 };
 
-// TODO: Split this into a seperate lookup function per version type
+/**
+ * Invoke admin API to get versions
+ * @param resourceId
+ * @param entityName
+ * @returns
+ */
+const fetchVersions = async (resourceId, entityName) => {
+  const filter = executionFilterGenerator[resourceId.resourceType](resourceId);
+  const sort = {
+    key: executionSortFields.createdAt,
+    direction: SortDirection.DESCENDING,
+  };
+  const data = await entityFunctions[resourceId.resourceType].listEntity(
+    resourceId,
+    { sort, filter },
+  );
+  return formatVersions(data, entityName);
+};
+
+/**
+ * Get the versions of a named entity (workflow, task, launch plan)
+ * @param projectId
+ * @param domainId
+ * @returns
+ */
 export const namedEntitiesVersions = async (projectId = '', domainId = '') => {
   const segments = decodeURI(window.location.pathname).split('/');
   const versionIndex = segments.findIndex(segment => segment === 'version');
-  const nameIndex = versionIndex - 1;
-  const name = segments[nameIndex];
-  return listExecutions({
+  const entityNameIndex = versionIndex - 2;
+  const entityName = segments[entityNameIndex];
+  const entityIdIndex = versionIndex - 1;
+  const entityId = segments[entityIdIndex];
+
+  const resourceId = {
     project: projectId,
     domain: domainId,
-    name,
-  }).then(data => formatEntities(data));
+    name: entityId,
+    resourceType: ResourceType.UNSPECIFIED,
+  };
+
+  if (!entityName) {
+    return [];
+  } else if (entityName.startsWith('task')) {
+    resourceId.resourceType = ResourceType.TASK;
+    return await fetchVersions(resourceId, entityName);
+  } else if (entityName.startsWith('workflow')) {
+    resourceId.resourceType = ResourceType.WORKFLOW;
+    return await fetchVersions(resourceId, entityName);
+  } else if (entityName.startsWith('launch')) {
+    resourceId.resourceType = ResourceType.LAUNCH_PLAN;
+    return await fetchVersions(resourceId, entityName);
+  }
+
+  return [];
 };

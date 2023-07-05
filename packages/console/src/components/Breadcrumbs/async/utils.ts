@@ -19,6 +19,24 @@ export const formatEntities = data => {
   });
 };
 
+export const formatVersions = (data, resourceUrl) => {
+  return data.entities.map(entity => {
+    return {
+      title: entity.id.version,
+      createdAt: entity?.closure?.createdAt
+        ? formatDateUTC(timestampToDate(entity.closure.createdAt))
+        : '',
+      url: Routes.EntityVersionDetails.makeUrl(
+        entity.id.project,
+        entity.id.domain,
+        entity.id.name,
+        resourceUrl,
+        entity.id.version,
+      ),
+    };
+  });
+};
+
 export const projectIdfromUrl = () => {
   const path = window.location.pathname.split('/');
   const projectIdIndex = path.indexOf('projects') + 1;
