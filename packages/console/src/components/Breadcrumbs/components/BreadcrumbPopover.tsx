@@ -1,12 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { Fragment, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
-import { Grid, Popover, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Grid, Link, Popover, Typography } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
+import { useHistory } from 'react-router';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
+  const history = useHistory();
+
   const { isLoading, error, data } = useQuery(
     `breadcrumb-${props.id}`,
     () => props.asyncData(props.projectId, props.domainId),
@@ -32,6 +34,17 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       .slice(0, 5);
   }, [queryData]);
 
+  /**
+   * Handle the callback to close the popover and navigate to the url
+   */
+  const handleLink = (e, url: string) => () => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    history.push(url);
+    props.onClose();
+  };
+
   return (
     <Popover
       className="breadcrumb-form-control-popover"
@@ -54,25 +67,25 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
           dataToShow.length &&
           dataToShow.map(data => {
             return (
-              <>
+              <Fragment key={data.title}>
                 <Grid item xs={6}>
-                  <Link onClick={props.onClose} to={data.url}>
+                  <Link onClick={e => handleLink(e, data.url)} href={data.url}>
                     {data?.title || 'name not found'}
                   </Link>
                 </Grid>
                 <Grid item xs={6}>
-                  <Link onClick={props.onClose} to={data.url}>
+                  <Link onClick={e => handleLink(e, data.url)} href={data.url}>
                     {data?.createdAt}
                   </Link>
                 </Grid>
-              </>
+              </Fragment>
             );
           })}
         {viewAllLink && (
           <Grid item xs={12}>
             <Link
-              onClick={props.onClose}
-              to={viewAllLink}
+              onClick={e => handleLink(e, viewAllLink)}
+              href={viewAllLink}
               className="breadcrumb-form-control-view-all-link"
             >
               View All…
