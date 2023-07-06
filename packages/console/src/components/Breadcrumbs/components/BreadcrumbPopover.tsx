@@ -1,7 +1,16 @@
-import React, { Fragment, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
-import { Grid, Link, Popover, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Grid,
+  Link,
+  List,
+  ListItem,
+  Popover,
+  Typography,
+} from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
 import { useHistory } from 'react-router';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
@@ -61,38 +70,68 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
     >
       <Grid
         container
-        spacing={2}
-        style={{ maxWidth: 350, maxHeight: '80vh', overflowY: 'scroll' }}
+        spacing={0}
+        style={{
+          maxWidth: 350,
+          maxHeight: '80vh',
+          minWidth: 300,
+          overflowY: 'scroll',
+        }}
       >
-        {isLoading && <LoadingSpinner />}
-        {error && <Typography color="error">{error}</Typography>}
-        {!isLoading &&
-          dataToShow.length &&
-          dataToShow.map(data => {
-            return (
-              <Fragment key={data.title}>
-                <Grid item xs={6}>
-                  <Link onClick={e => handleLink(e, data.url)} href={data.url}>
-                    {data?.title || 'name not found'}
-                  </Link>
-                </Grid>
-                <Grid item xs={6}>
-                  <Link onClick={e => handleLink(e, data.url)} href={data.url}>
-                    {data?.createdAt}
-                  </Link>
-                </Grid>
-              </Fragment>
-            );
-          })}
+        <Grid item xs={12} justifyContent="center">
+          {isLoading && (
+            <Box pt={2}>
+              <LoadingSpinner size="small" useDelay={false} />
+            </Box>
+          )}
+          {error && <Typography color="error">{error}</Typography>}
+          {!isLoading && dataToShow.length && (
+            <List>
+              {dataToShow.length &&
+                dataToShow.map(data => {
+                  return (
+                    <ListItem
+                      key={data.title}
+                      button
+                      onClick={e => handleLink(e, data.url)}
+                    >
+                      <Grid container>
+                        <Grid item xs={6}>
+                          <Link
+                            onClick={e => handleLink(e, data.url)}
+                            href={data.url}
+                          >
+                            {data?.title || 'name not found'}
+                          </Link>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Link
+                            onClick={e => handleLink(e, data.url)}
+                            href={data.url}
+                          >
+                            {data?.createdAt}
+                          </Link>
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                  );
+                })}
+            </List>
+          )}
+        </Grid>
         {viewAllLink && (
           <Grid item xs={12}>
-            <Link
+            <hr />
+            <Button
               onClick={e => handleLink(e, viewAllLink)}
               href={viewAllLink}
               className="breadcrumb-form-control-view-all-link"
+              fullWidth
+              // variant="solid"
+              color="secondary"
             >
-              View All…
-            </Link>
+              View All
+            </Button>
           </Grid>
         )}
       </Grid>
