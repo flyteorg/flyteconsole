@@ -77,7 +77,6 @@ function useFormInputState(parsedInput: ParsedInput): FormInputState {
     validate,
     value,
     helperText: parsedInput.description,
-    setIsError: () => {},
   };
 }
 

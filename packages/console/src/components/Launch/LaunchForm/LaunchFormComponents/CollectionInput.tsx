@@ -1,4 +1,4 @@
-import React, { FC, createRef } from 'react';
+import React, { FC, useMemo } from 'react';
 import { log } from 'common/log';
 import {
   InputProps,
@@ -9,9 +9,10 @@ import {
 import { UnsupportedInput } from './UnsupportedInput';
 import { isSimpleType } from './SimpleInput';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
-import { getComponentForInput } from './getComponentForInput';
 import { ConverterInput, InputHelper } from '../inputHelpers/types';
-import { parseCollection } from '../inputHelpers/collection';
+import { StyledCard } from './StyledCard';
+import { CollectionList } from './CollectionList';
+import { getComponentForInput } from './getComponentForInput';
 
 const tryGetCollectionValue = (
   input: ConverterInput,
@@ -36,13 +37,7 @@ const tryGetCollectionValue = (
 };
 /** Handles rendering of the input component for a Collection of SimpleType values */
 export const CollectionInput: FC<InputProps> = props => {
-  const {
-    typeDefinition,
-    initialValue: propsInitialValue,
-    value,
-    onChange,
-    setIsError,
-  } = props;
+  const { typeDefinition, value, onChange, error, label } = props;
 
   const { subtype, type } = typeDefinition;
   if (!subtype) {
@@ -54,81 +49,80 @@ export const CollectionInput: FC<InputProps> = props => {
   }
 
   const helper = getHelperForInput(type);
+  const subtypeHelper = getHelperForInput(subtype.type);
 
-  const isTextSubType =
-    isSimpleType(subtype.type) ||
-    subtype.type === InputType.Collection ||
-    subtype.type === InputType.Struct;
+  const { collectionInputs, newprops, subtypeDefaultValue } = useMemo(() => {
+    const { typeDefinition, initialValue: propsInitialValue } = props;
+    const { subtype } = typeDefinition;
 
-  // TODO: handle collection  multiple items correctly instead of just taking the first one.
-  const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
-  const subtypeValue = isTextSubType
-    ? value
-    : tryGetCollectionValue(
-        { value, typeDefinition } as any,
-        typeDefinition,
-        helper,
-      )?.[0] || value;
+    const subtypeDefaultValue = subtypeHelper.typeDefinitionToDefaultValue(
+      subtype!,
+    );
+    const isTextSubType =
+      isSimpleType(subtype!.type) ||
+      subtype!.type === InputType.Collection ||
+      subtype!.type === InputType.Struct;
 
-  const newprops: InputProps = {
-    ...props,
-    initialValue: subtypeInitialValue,
-    value: subtypeValue,
-    typeDefinition: typeDefinition.subtype!,
-    ...(subtype.type === InputType.Struct
-      ? {
-          settings: {
-            forceTextField: true,
-          },
-        }
-      : {}),
-    onChange: (input: InputValue) => {
-      let collectionString = input;
+    const collectionInputs = isTextSubType
+      ? value
+      : tryGetCollectionValue(
+          { value, typeDefinition } as any,
+          typeDefinition,
+          helper,
+        ) || [subtypeDefaultValue];
+    // TODO: handle collection  multiple items correctly instead of just taking the first one.
+    const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
 
-      if (typeof input === 'string') {
-        collectionString = input;
-      } else {
-        try {
-          let temp;
-          if ((input as any).typeDefinition.type === InputType.None) {
-            temp = [input];
-          } else {
-            const tempValue = (input as any)?.value;
-            let collection = parseCollection(tempValue);
-            collection = collection?.length ? collection : [tempValue];
-            temp = collection?.map(value => {
-              return {
-                value,
-                typeDefinition: (input as any)?.typeDefinition,
-              };
-            });
+    const newprops: InputProps = {
+      ...props,
+      initialValue: subtypeInitialValue,
+      typeDefinition: typeDefinition.subtype!,
+      ...(subtype!.type === InputType.Struct
+        ? {
+            settings: {
+              forceTextField: true,
+            },
           }
+        : {}),
+    };
 
-          const newValue = {
-            value: temp,
-            typeDefinition: typeDefinition,
-          } as any;
-          const collectionLiteral = helper.toLiteral(newValue);
-          collectionString = helper.fromLiteral(
-            collectionLiteral,
-            typeDefinition,
-          ) as any;
-        } catch (error) {
-          collectionString = (input as any)?.value;
-          setIsError(true);
-        }
-      }
+    return {
+      collectionInputs,
+      newprops,
+      subtypeDefaultValue,
+    };
+  }, [props]);
 
-      onChange(collectionString!);
-    },
+  const updateCollection = (inputs: InputValue[]) => {
+    debugger;
+    let collectionString;
+    try {
+      const newValue = {
+        value: inputs,
+        typeDefinition: typeDefinition,
+      } as any;
+      const collectionLiteral = helper.toLiteral(newValue);
+      collectionString = helper.fromLiteral(
+        collectionLiteral,
+        typeDefinition,
+      ) as any;
+    } catch (error) {
+      collectionString = inputs;
+    }
+
+    onChange(collectionString!);
   };
 
-  const component = getComponentForInput(
-    newprops,
-    // do not show errors for collection items
-    false,
-    props.setIsError,
+  return typeof collectionInputs === 'string' ? (
+    <>{getComponentForInput(newprops, true)}</>
+  ) : (
+    <StyledCard error={error} label={label}>
+      <CollectionList
+        defaultValue={subtypeDefaultValue}
+        inputs={(collectionInputs as any) || []}
+        updateCollection={updateCollection}
+        inputProps={newprops}
+      />
+    </StyledCard>
   );
-
-  return component;
 };

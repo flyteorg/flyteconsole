@@ -27,4 +27,7 @@ export interface InputHelper {
   fromLiteral: LiteralToInputConterterFn;
   /** Will throw in the case of a failed validation */
   validate: (params: InputValidatorParams) => void;
+  typeDefinitionToDefaultValue: (
+    typeDefinition: InputTypeDefinition,
+  ) => InputValue;
 }

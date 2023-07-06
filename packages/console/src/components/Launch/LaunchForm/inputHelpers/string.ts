@@ -12,7 +12,12 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  const stringValue = typeof value === 'string' ? value : value?.toString?.();
+  const stringValue =
+    typeof value === 'string'
+      ? value
+      : // TODO: this is a hack to support the case where the value is a number
+        // Should we throw an error instead?
+        value?.toString?.();
   return { scalar: { primitive: { stringValue } } };
 }
 
@@ -32,4 +37,7 @@ export const stringHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return { scalar: { primitive: { stringValue: '' } } };
+  },
 };

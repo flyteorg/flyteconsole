@@ -33,4 +33,10 @@ export const durationHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: (typeDefinition) => {
+    // debugger;
+    return {
+
+    }
+  }
 };

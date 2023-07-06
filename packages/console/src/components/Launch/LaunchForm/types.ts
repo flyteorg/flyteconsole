@@ -247,12 +247,8 @@ export interface InputProps {
   typeDefinition: InputTypeDefinition;
   value?: InputValue;
   onChange: InputChangeHandler;
-  setIsError: (boolean) => void;
-  // Additional settings for custom rendering
-  settings?: {
-    // Only implemented for struct: forces the field to be a text field
-    forceTextField?: boolean;
-  };
+  // used to signal to the input that it is part of a collection
+  hasCollectionParent?: boolean;
 }
 
 export interface ParsedInput

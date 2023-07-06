@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
 import { InputProps, InputType, InputValue } from '../types';
 import { UnionInput } from './UnionInput';
@@ -13,27 +13,21 @@ import { SimpleInput } from './SimpleInput';
 export function getComponentForInput(
   input: InputProps,
   showErrors: boolean,
-  setIsError: (boolean) => void,
 ) {
-  const [error, setError] = useState<string | undefined>();
 
   const onChange = (newValue: InputValue) => {
     const helper = getHelperForInput(input.typeDefinition.type);
     try {
       helper.validate({ ...input, value: newValue });
-      setIsError(false);
-      setError(undefined);
     } catch (e) {
-      setError(e.message);
-      setIsError(true);
+      // no-op
     }
     input.onChange(newValue);
   };
 
   const props = {
     ...input,
-    ...(error && showErrors ? { error: error } : {}),
-    setIsError,
+    error: showErrors ? input.error : undefined,
     onChange,
   };
 

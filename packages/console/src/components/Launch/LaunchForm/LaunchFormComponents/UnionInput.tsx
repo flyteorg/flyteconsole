@@ -56,8 +56,7 @@ const generateListOfSearchableSelectorOptions = (
 };
 
 export const UnionInput = (props: InputProps) => {
-  const { initialValue, label, onChange, typeDefinition, setIsError, error } =
-    props;
+  const { initialValue, label, onChange, typeDefinition, error } = props;
 
   const { listOfSubTypes, type } = typeDefinition;
 
@@ -140,7 +139,6 @@ export const UnionInput = (props: InputProps) => {
       value: childComponentValue,
     } as InputProps,
     true,
-    setIsError,
   );
 
   return (

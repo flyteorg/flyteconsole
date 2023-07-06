@@ -44,6 +44,7 @@ export function getInputsForWorkflow(
     const inputKey = createInputCacheKey(name, typeDefinition);
     const defaultVaue =
       parameter.default != null ? parameter.default : undefined;
+    // TODO: fill default value if initial value is not set
     const initialValue = initialValues.has(inputKey)
       ? initialValues.get(inputKey)
       : defaultVaue;

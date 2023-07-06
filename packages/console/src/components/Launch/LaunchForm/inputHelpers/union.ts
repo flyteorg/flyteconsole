@@ -101,4 +101,17 @@ export const unionHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    const { listOfSubTypes } = typeDefinition;
+    const selectedSubType = listOfSubTypes?.[0];
+    const subtypeHelper = getHelperForInput(selectedSubType?.type!);
+    return {
+      scalar: {
+        union: {
+          value: subtypeHelper.typeDefinitionToDefaultValue(selectedSubType!),
+          type: typeDefinition.literalType,
+        },
+      },
+    };
+  },
 };

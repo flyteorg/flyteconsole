@@ -27,13 +27,24 @@ const muiTheme = createTheme({
         color: 'gray',
       },
     },
+    MuiInputLabel: {
+      root: {
+        fontSize: '13.5px',
+      },
+    },
+    MuiInputBase: {
+      root: {
+        fontSize: '14px',
+      },
+    },
+  },
+  typography: {
+    h5: {
+      fontSize: '16px',
+      fontWeight: 400,
+    },
   },
 });
-
-muiTheme.typography.h5 = {
-  fontSize: '16px',
-  fontWeight: 400,
-};
 
 const formatJson = data => {
   const keys = Object.keys(data);
@@ -62,7 +73,7 @@ export const StructInput: FC<InputProps> = props => {
     onChange,
     typeDefinition: { literalType },
     value = '',
-    settings,
+    hasCollectionParent,
   } = props;
 
   const { jsonFormRenderable, parsedJson } = useMemo(() => {
@@ -92,10 +103,10 @@ export const StructInput: FC<InputProps> = props => {
     }
 
     return {
-      jsonFormRenderable: jsonFormRenderable && !settings?.forceTextField,
+      jsonFormRenderable: jsonFormRenderable && !hasCollectionParent,
       parsedJson,
     };
-  }, [literalType, settings]);
+  }, [literalType, hasCollectionParent]);
 
   const [paramData, setParamData] = useState(
     jsonFormRenderable && value ? JSON.parse(value as string) : {},

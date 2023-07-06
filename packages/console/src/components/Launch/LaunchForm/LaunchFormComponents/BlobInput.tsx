@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import {
   FormControl,
   InputLabel,
@@ -9,6 +9,7 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { BlobDimensionality } from 'models/Common/types';
 import { Core } from '@flyteorg/flyteidl-types';
+import { isEqual } from 'lodash';
 import t from '../strings';
 import { BlobValue, InputProps, InputTypeDefinition } from '../types';
 import { getLaunchInputId, isBlobValue } from '../utils';
@@ -70,23 +71,33 @@ export const BlobInput: FC<InputProps> = props => {
     [typeDefinition],
   );
 
-  const dimensionality = typeDefinition?.literalType?.blob?.dimensionality;
-  const blobValue = useMemo(
-    () =>
-      isBlobValue(propValue)
-        ? tryGetBlobValue(propValue, typeDefinition, helper)
-        : ({
-            uri: undefined,
-            dimensionality: dimensionality ?? BlobDimensionality.SINGLE,
-            format: undefined,
-          } as any as BlobValue),
-    [propValue, dimensionality],
-  );
+  const [blobValue, setBlobValue] = useState<BlobValue>();
+
+  useEffect(() => {
+    const newValue = isBlobValue(propValue)
+      ? tryGetBlobValue(propValue, typeDefinition, helper)
+      : (helper.typeDefinitionToDefaultValue(typeDefinition) as BlobValue);
+
+    setBlobValue(prev => {
+      if (isEqual(prev, newValue)) {
+        return prev;
+      }
+
+      return newValue;
+    });
+  }, [propValue, typeDefinition]);
 
   const handleChange = (input: Partial<BlobValue>) => {
-    const value = { ...blobValue, ...input };
-    onChange(value);
+    const value = { ...blobValue, ...input } as BlobValue;
+    setBlobValue(value);
   };
+
+  useEffect(() => {
+    if (!blobValue) {
+      return;
+    }
+    onChange(blobValue);
+  }, [blobValue]);
 
   const selectId = getLaunchInputId(`${name}-select`);
 
@@ -99,7 +110,7 @@ export const BlobInput: FC<InputProps> = props => {
           fullWidth={true}
           label="uri"
           onChange={e => handleChange({ uri: e.target.value })}
-          value={blobValue.uri}
+          value={blobValue?.uri}
           variant="outlined"
         />
         <div className={styles.metadataContainer}>
@@ -109,7 +120,7 @@ export const BlobInput: FC<InputProps> = props => {
             helperText={t('blobFormatHelperText')}
             label="format"
             onChange={e => handleChange({ format: e.target.value })}
-            value={blobValue.format}
+            value={blobValue?.format}
             variant="outlined"
           />
           <FormControl className={styles.dimensionalityInput}>
@@ -117,7 +128,7 @@ export const BlobInput: FC<InputProps> = props => {
             <Select
               labelId={`${selectId}-label`}
               id={selectId}
-              value={blobValue.dimensionality}
+              value={blobValue?.dimensionality}
               onChange={e =>
                 handleChange({
                   dimensionality: e.target.value as BlobDimensionality,

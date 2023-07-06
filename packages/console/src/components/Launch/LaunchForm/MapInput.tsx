@@ -148,7 +148,7 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
 }
 
 export const MapInput = (props: InputProps) => {
-  const { value, label, onChange, error, typeDefinition, setIsError } = props;
+  const { value, label, onChange, error, typeDefinition } = props;
   const classes = useStyles();
   const [data, setData] = React.useState<MapInputItem[]>(
     parseMappedTypeValue(value),
@@ -162,9 +162,8 @@ export const MapInput = (props: InputProps) => {
     try {
       const newValue = arrayToMappedType(data);
       onChange(newValue);
-      setIsError?.(false);
     } catch (error) {
-      setIsError?.(true);
+      // noop
     }
   }, [data]);
 

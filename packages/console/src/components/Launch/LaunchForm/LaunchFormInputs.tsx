@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Typography } from '@material-ui/core';
-import { isEqual } from 'lodash';
 import t from './strings';
 import { LaunchState } from './launchMachine';
 import { NoInputsNeeded } from './NoInputsNeeded';
@@ -28,21 +27,20 @@ const RenderFormInputs: React.FC<{
   setIsError: (boolean) => void;
 }> = ({ inputs, variant, setIsError }) => {
   const styles = useStyles();
-  const [errors, setErrors] = React.useState<boolean[]>([]);
-  const updateErrors = (value, index) => {
-    setErrors(prev => {
-      const newErrors = [...errors];
-      newErrors[index] = value;
-      if (isEqual(prev, newErrors)) {
-        return prev;
-      }
-      return newErrors;
-    });
-  };
 
   useEffect(() => {
     setIsError(inputs.some(i => !!i.error));
   }, [inputs]);
+
+  const inputsFormElements = useMemo(() => {
+    return inputs
+      .map(input => (
+        <div key={input.label} className={styles.formControl}>
+          {getComponentForInput(input, true)}
+        </div>
+      ));
+  }, [inputs]);
+
   return inputs.length === 0 ? (
     <NoInputsNeeded variant={variant} />
   ) : (
@@ -51,13 +49,7 @@ const RenderFormInputs: React.FC<{
         <Typography variant="h6">{t('inputs')}</Typography>
         <Typography variant="body2">{t('inputsDescription')}</Typography>
       </header>
-      {inputs.map((input, index) => (
-        <div key={input.label} className={styles.formControl}>
-          {getComponentForInput(input, true, isError =>
-            updateErrors(isError, index),
-          )}
-        </div>
-      ))}
+      {inputsFormElements}
     </>
   );
 };

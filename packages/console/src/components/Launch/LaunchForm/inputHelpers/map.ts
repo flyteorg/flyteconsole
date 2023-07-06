@@ -121,4 +121,8 @@ export const mapHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    // debugger;
+    return {};
+  },
 };

@@ -1,12 +1,11 @@
 import { Core } from '@flyteorg/flyteidl-types';
 import { isObject } from 'lodash';
 import { BlobDimensionality } from 'models/Common/types';
-import { BlobValue, InputValue } from '../types';
-import { literalNone } from './constants';
+import { BlobValue } from '../types';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import { isKeyOfBlobDimensionality } from './utils';
 
-function fromLiteral(literal: Core.ILiteral): InputValue {
+function fromLiteral(literal: Core.ILiteral): BlobValue {
   if (!literal.scalar || !literal.scalar.blob) {
     throw new Error('Literal blob missing scalar.blob property');
   }
@@ -55,27 +54,27 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
 }
 
 function validate({ value, required }: InputValidatorParams) {
-  if (typeof value !== 'object') {
-    throw new Error('Value must be an object');
+  if (!isObject(value)) {
+    throw new Error('Invalid blob value');
   }
 
   const blobValue = value as BlobValue;
   if (required && !blobValue.uri) {
-    throw new Error('uri is required');
+    throw new Error('Blob uri is required');
   }
   if (blobValue != null && typeof blobValue.uri !== 'string') {
-    throw new Error('uri must be a string');
+    throw new Error('Blob uri must be a string');
   }
   if (blobValue.dimensionality == null) {
-    throw new Error('dimensionality is required');
+    throw new Error('Blob dimensionality is required');
   }
   if (!(getDimensionality(blobValue.dimensionality) in BlobDimensionality)) {
     throw new Error(
-      `unknown dimensionality value: ${blobValue.dimensionality}`,
+      `Unknown blob dimensionality value: ${blobValue.dimensionality}`,
     );
   }
   if (blobValue.format != null && typeof blobValue.format !== 'string') {
-    throw new Error('format must be a string');
+    throw new Error('Blob format must be a string');
   }
 }
 
@@ -83,4 +82,13 @@ export const blobHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: (typeDefinition): BlobValue => {
+    return {
+      uri: undefined,
+      dimensionality:
+        typeDefinition?.literalType?.blob?.dimensionality ??
+        BlobDimensionality.SINGLE,
+      format: undefined,
+    } as any as BlobValue;
+  },
 };

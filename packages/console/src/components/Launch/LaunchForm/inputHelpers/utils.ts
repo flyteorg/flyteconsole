@@ -17,18 +17,6 @@ export function extractLiteralWithCheck<T>(
   return get(literal, path) as T;
 }
 
-/** Converts a value within a collection to the appropriate string
- * representation. Some values require additional quotes.
- */
-export function collectionChildToString(type: InputType, value: any) {
-  if (value === undefined) {
-    return '';
-  }
-  return type === (InputType.Integer || InputType.Struct)
-    ? `${value}`
-    : stringifyValue(value);
-}
-
 /** Determines if a given input type, including all levels of nested types, is
  * supported for use in the Launch form.
  */

@@ -1,10 +1,10 @@
 import { Core } from '@flyteorg/flyteidl-types';
-import { InputTypeDefinition, InputValue } from '../types';
+import { InputTypeDefinition } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
 import { parseJSON } from './parseJson';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
-import { collectionChildToString } from './utils';
+import { formatType } from '../utils';
 
 const missingSubTypeError = 'Unexpected missing subtype for collection';
 
@@ -19,7 +19,7 @@ export function parseCollection(list: string) {
 function fromLiteral(
   literal: Core.ILiteral,
   { subtype }: InputTypeDefinition,
-): InputValue {
+): string {
   if (!subtype) {
     throw new Error(missingSubTypeError);
   }
@@ -28,7 +28,7 @@ function fromLiteral(
   }
   if (!literal.collection.literals) {
     throw new Error(
-      'Collection literal missing `colleciton.literals` property',
+      'Collection literal missing `collection.literals` property',
     );
   }
 
@@ -37,13 +37,13 @@ function fromLiteral(
     let temp = subTypeHelper.fromLiteral(literal, subtype);
     try {
       temp = JSON.parse(temp as string);
-    } catch {
+    } catch (e) {
       // no-op
     }
     return temp;
   });
 
-  return JSON.stringify(values, null, 2);
+  return JSON.stringify(values).split(',').join(', ');
 }
 
 function toLiteral({
@@ -106,7 +106,10 @@ function validate({
       } as any);
     });
   } catch (e) {
-    throw new Error(`Failed to parse collection: ${e}`);
+    const typeString = formatType(typeDefinition);
+    throw new Error(
+      `Failed to parse to expected format: ${typeString}. ${e.message}`,
+    );
   }
 }
 
@@ -114,4 +117,24 @@ export const collectionHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    const { subtype } = typeDefinition;
+    const subtypeHelper = getHelperForInput(subtype?.type!);
+    const subDefaultValue = subtypeHelper.typeDefinitionToDefaultValue(
+      subtype!,
+    );
+    // debugger;
+    const subLiteral = subtypeHelper.toLiteral({
+      value: subDefaultValue,
+      typeDefinition: subtype!,
+    });
+    return fromLiteral(
+      {
+        collection: {
+          literals: [subLiteral],
+        },
+      },
+      { subtype: subtype! } as any,
+    );
+  },
 };

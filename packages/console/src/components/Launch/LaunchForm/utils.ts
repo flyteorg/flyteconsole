@@ -211,6 +211,10 @@ export function getUnsupportedRequiredInputs(
   );
 }
 
+export function isStringValue(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
 export function isBlobValue(value: unknown): value is BlobValue {
   return isObject(value);
 }
