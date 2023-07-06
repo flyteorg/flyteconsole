@@ -92,6 +92,11 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
           tabIndex={0}
           className="breadcrumb-form-control-input"
           onClick={handleValueClick}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              handleValueClick(e);
+            }
+          }}
           title={value}
         />
       </FormControl>
