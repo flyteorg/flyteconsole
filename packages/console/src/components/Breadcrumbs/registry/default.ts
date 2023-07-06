@@ -44,7 +44,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     required: true,
     selfLink: projectSelfLink,
     asyncData: projects,
-    viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
+    viewAllLink: Routes.SelectProject.path,
   }),
   makeBreadcrumb({
     id: 'domains',
@@ -52,7 +52,7 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     required: true,
     selfLink: projectSelfLink,
     asyncData: domains,
-    viewAllLink: () => Routes.ProjectDetails.makeUrl(''),
+    viewAllLink: Routes.SelectProject.path,
   }),
   makeBreadcrumb({
     id: 'named-entity',
