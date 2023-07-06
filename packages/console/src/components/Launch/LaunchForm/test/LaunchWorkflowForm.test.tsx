@@ -171,7 +171,7 @@ describe('LaunchForm: Workflow', () => {
   const renderForm = (props?: Partial<LaunchFormProps>) => {
     return render(
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={getMuiTheme()}>
+        <ThemeProvider theme={getMuiTheme({})}>
           <APIContext.Provider
             value={mockAPIContextValue({
               createWorkflowExecution: mockCreateWorkflowExecution,
@@ -305,14 +305,21 @@ describe('LaunchForm: Workflow', () => {
       const integerInput = getByLabelText(integerInputName, {
         exact: false,
       });
-      const submitButton = getSubmitButton(container);
-      await fireEvent.change(integerInput, { target: { value: 'abc' } });
-      await waitFor(() => expect(submitButton).toBeDisabled());
+      let submitButton = getSubmitButton(container);
 
-      await fireEvent.change(integerInput, { target: { value: '123' } });
+      await fireEvent.change(integerInput, { target: { value: 'abc' } });
       await act(() => {
         jest.runAllTimers();
       });
+
+      await waitFor(() => expect(submitButton).toBeDisabled());
+
+      await fireEvent.change(integerInput, { target: { value: 123 } });
+      await act(() => {
+        jest.runAllTimers();
+      });
+
+      submitButton = getSubmitButton(container);
       await waitFor(() => expect(submitButton).toBeEnabled());
     });
 
@@ -464,7 +471,8 @@ describe('LaunchForm: Workflow', () => {
         const { container } = renderForm();
         await waitFor(() => {});
 
-        await fireEvent.click(getSubmitButton(container));
+        const submitButton = getSubmitButton(container);
+        await fireEvent.click(submitButton);
         await waitFor(() => {});
 
         expect(mockCreateWorkflowExecution).toHaveBeenCalled();

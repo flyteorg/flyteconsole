@@ -33,12 +33,11 @@ const RenderFormInputs: React.FC<{
   }, [inputs]);
 
   const inputsFormElements = useMemo(() => {
-    return inputs
-      .map(input => (
-        <div key={input.label} className={styles.formControl}>
-          {getComponentForInput(input, true)}
-        </div>
-      ));
+    return inputs.map(input => (
+      <div key={input.label} className={styles.formControl}>
+        {getComponentForInput(input, true)}
+      </div>
+    ));
   }, [inputs]);
 
   return inputs.length === 0 ? (

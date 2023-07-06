@@ -59,11 +59,11 @@ function validate({ value, required }: InputValidatorParams) {
   }
 
   const blobValue = value as BlobValue;
-  if (required && !blobValue.uri) {
+  if (
+    required &&
+    (!blobValue.uri || (blobValue != null && typeof blobValue.uri !== 'string'))
+  ) {
     throw new Error('Blob uri is required');
-  }
-  if (blobValue != null && typeof blobValue.uri !== 'string') {
-    throw new Error('Blob uri must be a string');
   }
   if (blobValue.dimensionality == null) {
     throw new Error('Blob dimensionality is required');

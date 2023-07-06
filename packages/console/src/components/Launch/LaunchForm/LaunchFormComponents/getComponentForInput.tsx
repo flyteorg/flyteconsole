@@ -10,11 +10,7 @@ import { UnsupportedInput } from './UnsupportedInput';
 import { NoneInput } from './NoneInput';
 import { SimpleInput } from './SimpleInput';
 
-export function getComponentForInput(
-  input: InputProps,
-  showErrors: boolean,
-) {
-
+export function getComponentForInput(input: InputProps, showErrors: boolean) {
   const onChange = (newValue: InputValue) => {
     const helper = getHelperForInput(input.typeDefinition.type);
     try {
