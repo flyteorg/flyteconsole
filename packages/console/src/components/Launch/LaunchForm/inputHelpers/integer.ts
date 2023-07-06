@@ -46,7 +46,6 @@ export const integerHelper: InputHelper = {
   toLiteral,
   validate,
   typeDefinitionToDefaultValue: typeDefinition => {
-    // debugger;
-    return {};
+    return '';
   },
 };

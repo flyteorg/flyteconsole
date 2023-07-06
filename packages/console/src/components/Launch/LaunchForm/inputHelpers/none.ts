@@ -23,7 +23,6 @@ export const noneHelper: InputHelper = {
   toLiteral,
   validate,
   typeDefinitionToDefaultValue: typeDefinition => {
-    // debugger;
     return fromLiteral({} as any);
   },
 };

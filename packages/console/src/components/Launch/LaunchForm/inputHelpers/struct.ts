@@ -144,10 +144,7 @@ export const structHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
-  typeDefinitionToDefaultValue: (typeDefinition) => {
-    // debugger;
-    return {
-
-    }
-  }
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return {};
+  },
 };

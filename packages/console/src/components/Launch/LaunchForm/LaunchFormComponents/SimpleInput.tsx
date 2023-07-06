@@ -24,7 +24,12 @@ export function isSimpleType(type: InputType): boolean {
 export const SimpleInput: FC<InputProps> = props => {
   const {
     typeDefinition: { type },
+    hasCollectionParent,
   } = props;
+
+  if (hasCollectionParent) {
+    return <TextInput {...props} />;
+  }
 
   switch (type) {
     case InputType.Boolean:

@@ -51,7 +51,7 @@ export const CollectionInput: FC<InputProps> = props => {
   const helper = getHelperForInput(type);
   const subtypeHelper = getHelperForInput(subtype.type);
 
-  const { collectionInputs, newprops, subtypeDefaultValue } = useMemo(() => {
+  const { isTextSubType, newprops, subtypeDefaultValue } = useMemo(() => {
     const { typeDefinition, initialValue: propsInitialValue } = props;
     const { subtype } = typeDefinition;
 
@@ -63,38 +63,31 @@ export const CollectionInput: FC<InputProps> = props => {
       subtype!.type === InputType.Collection ||
       subtype!.type === InputType.Struct;
 
-    const collectionInputs = isTextSubType
+    const finalValue = isTextSubType
       ? value
       : tryGetCollectionValue(
           { value, typeDefinition } as any,
           typeDefinition,
           helper,
         ) || [subtypeDefaultValue];
-    // TODO: handle collection  multiple items correctly instead of just taking the first one.
-    const subtypeInitialValue = propsInitialValue?.collection?.literals?.[0];
+    const subtypeInitialValue = propsInitialValue?.collection?.literals as any;
 
     const newprops: InputProps = {
       ...props,
+      value: finalValue,
       initialValue: subtypeInitialValue,
       typeDefinition: typeDefinition.subtype!,
-      ...(subtype!.type === InputType.Struct
-        ? {
-            settings: {
-              forceTextField: true,
-            },
-          }
-        : {}),
+      hasCollectionParent: true,
     };
 
     return {
-      collectionInputs,
       newprops,
       subtypeDefaultValue,
+      isTextSubType,
     };
   }, [props]);
 
   const updateCollection = (inputs: InputValue[]) => {
-    debugger;
     let collectionString;
     try {
       const newValue = {
@@ -113,13 +106,12 @@ export const CollectionInput: FC<InputProps> = props => {
     onChange(collectionString!);
   };
 
-  return typeof collectionInputs === 'string' ? (
+  return isTextSubType ? (
     <>{getComponentForInput(newprops, true)}</>
   ) : (
     <StyledCard error={error} label={label}>
       <CollectionList
         defaultValue={subtypeDefaultValue}
-        inputs={(collectionInputs as any) || []}
         updateCollection={updateCollection}
         inputProps={newprops}
       />

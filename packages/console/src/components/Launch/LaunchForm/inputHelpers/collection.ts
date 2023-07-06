@@ -1,5 +1,5 @@
 import { Core } from '@flyteorg/flyteidl-types';
-import { InputTypeDefinition } from '../types';
+import { InputType, InputTypeDefinition } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
 import { parseJSON } from './parseJson';
@@ -43,7 +43,9 @@ function fromLiteral(
     return temp;
   });
 
-  return JSON.stringify(values).split(',').join(', ');
+  return JSON.stringify(values, null, subtype.type === InputType.Struct ? 2 : 0)
+    .split(',')
+    .join(', ');
 }
 
 function toLiteral({
@@ -83,14 +85,17 @@ function validate({
   required,
   ...props
 }: InputValidatorParams) {
+  const typeString = formatType(typeDefinition);
   if (typeof value !== 'string') {
-    throw new Error('Value must be a string');
+    throw `Failed to parse to expected format: ${typeString}.`;
   }
 
   try {
     const parsed = parseCollection(value);
     if (!Array.isArray(parsed)) {
-      throw new Error(`Value parsed to type: ${typeof parsed}`);
+      throw new Error(
+        `Value parsed to type: ${typeof parsed}. Expected format: ${typeString}`,
+      );
     }
     // validate sub values
     const collectionLiteral = toLiteral({ value, typeDefinition });
@@ -123,7 +128,6 @@ export const collectionHelper: InputHelper = {
     const subDefaultValue = subtypeHelper.typeDefinitionToDefaultValue(
       subtype!,
     );
-    // debugger;
     const subLiteral = subtypeHelper.toLiteral({
       value: subDefaultValue,
       typeDefinition: subtype!,

@@ -56,7 +56,14 @@ const generateListOfSearchableSelectorOptions = (
 };
 
 export const UnionInput = (props: InputProps) => {
-  const { initialValue, label, onChange, typeDefinition, error } = props;
+  const {
+    initialValue,
+    label,
+    onChange,
+    typeDefinition,
+    error,
+    hasCollectionParent,
+  } = props;
 
   const { listOfSubTypes, type } = typeDefinition;
 
@@ -118,15 +125,11 @@ export const UnionInput = (props: InputProps) => {
   };
 
   const childComponentValue = useMemo(() => {
-    return inputTypeToValueMap[selectedInputType]?.value;
+    return inputTypeToValueMap[selectedInputType];
   }, [inputTypeToValueMap, selectedInputType]);
 
   useEffect(() => {
-    const newValue = {
-      value: childComponentValue,
-      typeDefinition: selectedInputTypeDefinition,
-    } as any;
-    onChange(newValue);
+    onChange(childComponentValue);
   }, [childComponentValue]);
 
   const inputComponent = getComponentForInput(
@@ -136,9 +139,9 @@ export const UnionInput = (props: InputProps) => {
       label: '',
       typeDefinition: selectedInputTypeDefinition,
       onChange: handleSubTypeOnChange,
-      value: childComponentValue,
+      value: childComponentValue.value,
     } as InputProps,
-    true,
+    !hasCollectionParent,
   );
 
   return (
