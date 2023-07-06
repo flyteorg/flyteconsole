@@ -60,7 +60,6 @@ export const flyteBreadcrumbRegistryList: Breadcrumb[] = [
     defaultValue: namedEntitiesDefaultValue,
     asyncData: namedEntities,
     valididator: namedEntitiesValidator,
-    viewAllLink: projectId => Routes.ProjectDetails.makeUrl(projectId),
   }),
   makeBreadcrumb({
     id: 'executions',
