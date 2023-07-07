@@ -231,6 +231,9 @@ export const validityTestCases = {
 /** Test cases for converting a *valid* input value to its corresponding ILiteral
  * representation. */
 export const literalTestCases: InputToLiteralTestParams[] = [
+  /**
+   * BOOLEAN TEST CASES
+   */
   [inputTypes.boolean, true, primitiveLiteral({ boolean: true })],
   [inputTypes.boolean, 'true', primitiveLiteral({ boolean: true })],
   [inputTypes.boolean, 't', primitiveLiteral({ boolean: true })],
@@ -241,6 +244,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
   [inputTypes.boolean, 'f', primitiveLiteral({ boolean: false })],
   [inputTypes.boolean, '0', primitiveLiteral({ boolean: false })],
   [inputTypes.boolean, 0, primitiveLiteral({ boolean: false })],
+  /**
+   * DATETIME TEST CASES
+   */
   [
     inputTypes.datetime,
     new Date(validDateString),
@@ -255,6 +261,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
       datetime: dateToTimestamp(new Date(validDateString)),
     }),
   ],
+  /**
+   * DURATION TEST CASES
+   */
   [
     inputTypes.duration,
     0,
@@ -265,6 +274,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
     10000,
     primitiveLiteral({ duration: millisecondsToDuration(10000) }),
   ],
+  /**
+   * FLOAT TEST CASES
+   */
   [inputTypes.float, 0, primitiveLiteral({ floatValue: 0 })],
   [inputTypes.float, '0', primitiveLiteral({ floatValue: 0 })],
   [inputTypes.float, -1.5, primitiveLiteral({ floatValue: -1.5 })],
@@ -273,6 +285,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
   [inputTypes.float, '1.5', primitiveLiteral({ floatValue: 1.5 })],
   [inputTypes.float, 1.25e10, primitiveLiteral({ floatValue: 1.25e10 })],
   [inputTypes.float, '1.25e10', primitiveLiteral({ floatValue: 1.25e10 })],
+  /**
+   * INTEGER TEST CASES
+   */
   [inputTypes.integer, 0, primitiveLiteral({ integer: Long.fromNumber(0) })],
   [
     inputTypes.integer,
@@ -318,6 +333,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
     Long.MIN_VALUE,
     primitiveLiteral({ integer: Long.MIN_VALUE }),
   ],
+  /**
+   * SCHEMA TEST CASES
+   */
   [
     inputTypes.schema,
     '',
@@ -339,8 +357,14 @@ export const literalTestCases: InputToLiteralTestParams[] = [
       },
     },
   ],
+  /**
+   * STRING TEST CASES
+   */
   [inputTypes.string, '', primitiveLiteral({ stringValue: '' })],
   [inputTypes.string, 'abcdefg', primitiveLiteral({ stringValue: 'abcdefg' })],
+  /**
+   * BLOB TEST CASES
+   */
   // Standard Blob
   [
     inputTypes.blobSingle,
@@ -451,6 +475,9 @@ export const literalTestCases: InputToLiteralTestParams[] = [
   ],
   // Blob which is not an object (results in None)
   [inputTypes.blobMulti, undefined, literalNone()],
+  /**
+   * STRUCT TEST CASES
+   */
   ...structTestCases.map<InputToLiteralTestParams>(
     ([stringValue, literalValue]) => [
       inputTypes.struct,
@@ -497,22 +524,18 @@ export const literalToInputTestCases: LiteralToInputTestParams[] = [
   [inputTypes.float, primitiveLiteral({ floatValue: 1.5 }), 1.5],
   [inputTypes.float, primitiveLiteral({ floatValue: 1.25e10 }), 1.25e10],
   // Integers will be returned as strings because they may overflow numbers
-  [inputTypes.integer, primitiveLiteral({ integer: Long.fromNumber(0) }), '0'],
-  [inputTypes.integer, primitiveLiteral({ integer: Long.fromNumber(1) }), '1'],
-  [
-    inputTypes.integer,
-    primitiveLiteral({ integer: Long.fromNumber(-1) }),
-    '-1',
-  ],
+  [inputTypes.integer, primitiveLiteral({ integer: Long.fromNumber(0) }), 0],
+  [inputTypes.integer, primitiveLiteral({ integer: Long.fromNumber(1) }), 1],
+  [inputTypes.integer, primitiveLiteral({ integer: Long.fromNumber(-1) }), -1],
   [
     inputTypes.integer,
     primitiveLiteral({ integer: Long.MAX_VALUE }),
-    Long.MAX_VALUE.toString(),
+    Long.MAX_VALUE,
   ],
   [
     inputTypes.integer,
     primitiveLiteral({ integer: Long.MIN_VALUE }),
-    Long.MIN_VALUE.toString(),
+    Long.MIN_VALUE,
   ],
   [inputTypes.schema, { scalar: { schema: { uri: '' } } }, ''],
   [
@@ -589,11 +612,9 @@ export const literalToInputTestCases: LiteralToInputTestParams[] = [
       uri: 's3://somePath',
     },
   ],
-  ...structTestCases.map<LiteralToInputTestParams>(
-    ([stringValue, literalValue]) => [
-      inputTypes.struct,
-      literalValue,
-      stringValue,
-    ],
-  ),
+  ...structTestCases.map<LiteralToInputTestParams>(([value, literalValue]) => [
+    inputTypes.struct,
+    literalValue,
+    value,
+  ]),
 ];

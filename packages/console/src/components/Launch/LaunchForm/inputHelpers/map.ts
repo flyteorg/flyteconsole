@@ -39,7 +39,12 @@ function fromLiteral(
 
   Object.entries(literal.map.literals).forEach(([key, childLiteral]) => {
     const helper = getHelperForInput(subtype.type);
-    result[key] = helper.fromLiteral(childLiteral, subtype);
+    const literalValue = helper.fromLiteral(childLiteral, subtype);
+    try {
+      result[key] = parseJSON(literalValue as any);
+    } catch {
+      result[key] = literalValue;
+    }
   });
 
   return stringifyValue(result);

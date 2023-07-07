@@ -5,6 +5,7 @@ import { getHelperForInput } from './getHelperForInput';
 import { parseJSON } from './parseJson';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import { formatType } from '../utils';
+import { formatParameterValues } from './utils';
 
 const missingSubTypeError = 'Unexpected missing subtype for collection';
 
@@ -36,16 +37,15 @@ function fromLiteral(
   const values = literal.collection.literals.map(literal => {
     let temp = subTypeHelper.fromLiteral(literal, subtype);
     try {
-      temp = JSON.parse(temp as string);
+      // JSON.parse corrupts large numbers, so we must use lossless json parsing
+      temp = parseJSON(temp as string);
     } catch (e) {
       // no-op
     }
     return temp;
   });
 
-  return JSON.stringify(values, null, subtype.type === InputType.Struct ? 2 : 0)
-    .split(',')
-    .join(', ');
+  return formatParameterValues(subtype.type, values);
 }
 
 function toLiteral({

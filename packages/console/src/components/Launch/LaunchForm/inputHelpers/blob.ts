@@ -4,6 +4,7 @@ import { BlobDimensionality } from 'models/Common/types';
 import { BlobValue } from '../types';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import { isKeyOfBlobDimensionality } from './utils';
+import { literalNone } from './constants';
 
 function fromLiteral(literal: Core.ILiteral): BlobValue {
   if (!literal.scalar || !literal.scalar.blob) {
@@ -36,6 +37,9 @@ function getDimensionality(value: string | number) {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
+  if (!(value as BlobValue)?.uri) {
+    return literalNone();
+  }
   const {
     dimensionality: rawDimensionality,
     format: rawFormat,
@@ -59,11 +63,11 @@ function validate({ value, required }: InputValidatorParams) {
   }
 
   const blobValue = value as BlobValue;
-  if (
-    required &&
-    (!blobValue.uri || (blobValue != null && typeof blobValue.uri !== 'string'))
-  ) {
+  if (required && !blobValue?.uri) {
     throw new Error('Blob uri is required');
+  }
+  if (typeof blobValue.uri !== 'string') {
+    throw new Error('Blob uri must be a string');
   }
   if (blobValue.dimensionality == null) {
     throw new Error('Blob dimensionality is required');
