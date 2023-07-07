@@ -333,11 +333,13 @@ describe('LaunchForm: Workflow', () => {
         }),
       );
       const submitButton = getSubmitButton(container);
+
       await fireEvent.change(integerInput, { target: { value: 'abc' } });
       await waitFor(() => expect(submitButton).toBeDisabled());
 
       await fireEvent.change(integerInput, { target: { value: '123' } });
       await waitFor(() => expect(submitButton).toBeEnabled());
+
       await fireEvent.click(submitButton);
       await waitFor(() =>
         expect(mockCreateWorkflowExecution).toHaveBeenCalled(),

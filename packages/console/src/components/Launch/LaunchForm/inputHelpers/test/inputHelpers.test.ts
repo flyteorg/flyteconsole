@@ -39,8 +39,9 @@ const baseInputProps: InputProps = {
 function makeSimpleInput(
   typeDefinition: InputTypeDefinition,
   value: any,
+  required = false,
 ): InputProps {
-  return { ...baseInputProps, value, typeDefinition };
+  return { ...baseInputProps, value, typeDefinition, required };
 }
 
 function makeMapInput(
@@ -391,8 +392,8 @@ function generateValidityTests(
   invalid.map(value =>
     it(`should treat ${stringifyValue(
       value,
-    )} (${typeof value}) as invalid`, () => {
-      const input = makeSimpleInput(typeDefinition, value);
+    )} (${typeof value}) as invalid when required`, () => {
+      const input = makeSimpleInput(typeDefinition, value, true);
       expect(() => validateInput(input)).toThrowError();
     }),
   );
