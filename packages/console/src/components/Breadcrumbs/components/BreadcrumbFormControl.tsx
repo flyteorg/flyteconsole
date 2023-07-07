@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import {
   FormControl,
   IconButton,
-  Input,
-  InputLabel,
+  TextField,
   makeStyles,
 } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
 import { useHistory } from 'react-router';
+import classNames from 'classnames';
+import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
 import { BreadcrumbFormControlInterface } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 import { defaultVoid } from '../async/fn';
@@ -19,15 +20,22 @@ import { defaultVoid } from '../async/fn';
  * These are used in the Breadcrumbs component.
  */
 const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
   const history = useHistory();
   const htmlLabel = `breadcrumb-${props.id}`;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const handlePopoverClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
+
+  const toggleHover = () => setHovered(h => !h);
+  const togglePressed = () => setPressed(p => !p);
 
   const handleValueClick = e => {
     e.preventDefault();
@@ -71,22 +79,56 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
         },
       },
     },
+    moreButton: {
+      width: '20px',
+      height: '20px',
+      borderRadius: '5px',
+      color: () => {
+        if (pressed) {
+          return COLOR_SPECTRUM.white.color;
+        }
+
+        return COLOR_SPECTRUM.indigo80.color;
+      },
+      backgroundColor: () => {
+        if (pressed) {
+          return COLOR_SPECTRUM.indigo80.color;
+        }
+
+        return 'transparent';
+      },
+      '&:hover': {
+        backgroundColor: () => {
+          if (pressed) {
+            return COLOR_SPECTRUM.indigo80.color;
+          }
+
+          return 'transparent';
+        },
+        border: `1px solid ${COLOR_SPECTRUM.indigo80.color}`,
+      },
+    },
   }))();
 
   return (
     <>
-      <FormControl className={`breadcrumb-form-control ${styles.formControl}`}>
-        <InputLabel
+      <FormControl
+        className={classNames(styles.formControl, 'breadcrumb-form-control')}
+        onMouseOver={toggleHover}
+        onMouseOut={toggleHover}
+        onMouseDown={togglePressed}
+        onMouseUp={togglePressed}
+      >
+        {/* <InputLabel
           htmlFor={htmlLabel}
           className="breadcrumb-form-control-label"
         >
           {props.label}
-        </InputLabel>
-        <Input
+        </InputLabel> */}
+        <TextField
           name={htmlLabel}
           id={htmlLabel}
           value={value}
-          readOnly={!!props.selfLink}
           disabled={!props.selfLink}
           role="button"
           tabIndex={0}
@@ -98,19 +140,27 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterface) => {
             }
           }}
           title={value}
+          InputProps={{
+            disableUnderline: !hovered && !pressed,
+            readOnly: !!props.selfLink,
+            endAdornment: !isMoreButtonHidden && (
+              <IconButton
+                className={classNames(styles.moreButton, 'breadcrumb-more')}
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handlePopoverClick}
+                size="small"
+                disableTouchRipple
+                disableFocusRipple
+                disableRipple
+              >
+                <ArrowDropDown />
+              </IconButton>
+            ),
+          }}
         />
       </FormControl>
-      {!isMoreButtonHidden && (
-        <IconButton
-          className="breadcrumb-form-control-more-button"
-          aria-label="more"
-          aria-controls="long-menu"
-          aria-haspopup="true"
-          onClick={handlePopoverClick}
-        >
-          <ArrowDropDown />
-        </IconButton>
-      )}
       {!!anchorEl && (
         <BreadcrumbPopOver
           onClose={handlePopoverClose}

@@ -2,14 +2,33 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { listProjects } from 'models/Project/api';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
+import {
+  Breadcrumbs as MuiBreadcrumbs,
+  Grid,
+  makeStyles,
+  Typography,
+  Box,
+} from '@material-ui/core';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import get from 'lodash/get';
+import classNames from 'classnames';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl } from '../async/utils';
 import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
+
+const useStyles = makeStyles(theme => ({
+  breadcrumbs: {
+    padding: theme.spacing(1, 2, 2, 2),
+  },
+  breadcrumbTitle: {
+    fontSize: '24px',
+  },
+  pageTitle: {
+    paddingBlock: theme.spacing(0.75),
+  },
+}));
 
 /**
  * Top level Breadcumb component used to kick off the breadcrumb rendering.
@@ -21,6 +40,7 @@ import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
  * See `flyteBreadcrumbRegistryList` for example usage.
  */
 const BreadCrumbs = () => {
+  const classes = useStyles();
   const routerLocation = useLocation();
   const routerParams = useParams();
 
@@ -95,38 +115,34 @@ const BreadCrumbs = () => {
   );
 
   return (
-    <Grid container className="breadcrumbs" spacing={2}>
+    <Grid container className={classNames('breadcrumbs', classes.breadcrumbs)}>
       {/* Breadcrumbs from url */}
       <Grid item xs={12}>
-        <Grid container className="breadcrumbs-segment-container" spacing={2}>
-          {breadcrumbs.map(breadcrumbValue => (
-            <Grid item key={breadcrumbValue.key}>
+        <MuiBreadcrumbs className="breadcrumbs-segment-container">
+          {React.Children.toArray(
+            breadcrumbs.map(breadcrumbValue => (
               <BreadcrumbFormControl {...breadcrumbValue} />
-            </Grid>
-          ))}
-        </Grid>
+            )),
+          )}
+        </MuiBreadcrumbs>
       </Grid>
       {/* Current page content */}
-      <Grid item xs={12}>
+      <Grid className={classes.pageTitle} item xs={12}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={6}>
-            <Grid
-              container
-              className="breadcrumbs-current-page-container"
-              spacing={2}
-            >
-              {lastBreadcrumb?.key && (
-                <Grid
-                  item
-                  className="breadcrumbs-title"
-                  key={lastBreadcrumb.value}
+          <Grid item xs={6} className="breadcrumbs-current-page-container">
+            {lastBreadcrumb?.key && (
+              <Box key={lastBreadcrumb.value}>
+                <Typography
+                  variant="h2"
+                  className={classNames(
+                    'breadcrumbs-title',
+                    classes.breadcrumbTitle,
+                  )}
                 >
-                  <h1>
-                    <small>{lastBreadcrumb.value}</small>
-                  </h1>
-                </Grid>
-              )}
-            </Grid>
+                  {lastBreadcrumb.value}
+                </Typography>
+              </Box>
+            )}
           </Grid>
           <Grid xs={6} item className="breadcrumbs-actions-container">
             <BreadcrumbTitleActionsPortal />
