@@ -34,7 +34,8 @@ const RenderFormInputs: React.FC<{
      * * value is required and the input is invalid
      * * value is supplied and the input is invalid
      */
-    setIsError(inputs.some(i => (i.required || i.value) && !!i.error));
+    const hasError = inputs.some(i => (i.required || i.value) && !!i.error);
+    setIsError(hasError);
   }, [inputs]);
 
   const inputsFormElements = useMemo(() => {

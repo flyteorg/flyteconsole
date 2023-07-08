@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@material-ui/styles';
 import {
+  act,
   fireEvent,
   getAllByRole,
   getByLabelText,
@@ -48,6 +49,15 @@ import {
 } from './constants';
 import { createMockObjects } from './utils';
 
+jest.mock(
+  'components/Executions/ExecutionDetails/Timeline/ExecutionTimelineContainer',
+  () => ({
+    ExecutionTimelineContainer: jest.fn(() => (
+      <div id="ExecutionTimelineContainer-mock"></div>
+    )),
+  }),
+);
+
 describe('LaunchForm: Task', () => {
   let onClose: jest.Mock;
   let mockTask: Task;
@@ -63,6 +73,12 @@ describe('LaunchForm: Task', () => {
 
   beforeEach(() => {
     onClose = jest.fn();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   const createMockTaskWithInputs = (id: Identifier) => {
@@ -132,7 +148,7 @@ describe('LaunchForm: Task', () => {
 
   const renderForm = (props?: Partial<LaunchFormProps>) => {
     return render(
-      <ThemeProvider theme={getMuiTheme()}>
+      <ThemeProvider theme={getMuiTheme({})}>
         <APIContext.Provider
           value={mockAPIContextValue({
             createWorkflowExecution: mockCreateWorkflowExecution,
@@ -208,15 +224,18 @@ describe('LaunchForm: Task', () => {
   describe('With Inputs', () => {
     beforeEach(() => {
       const { simpleString, simpleInteger, simpleFloat, simpleBoolean } =
-        cloneDeep(mockSimpleVariables);
+        mockSimpleVariables;
       // Only taking supported variable types since they are all required.
-      variables = {
+      variables = cloneDeep({
         simpleString,
         simpleInteger,
         simpleFloat,
         simpleBoolean,
-      };
+      });
       createMocks();
+    });
+    afterEach(() => {
+      variables = {};
     });
 
     it('should not show task selector until options have loaded', async () => {
@@ -239,12 +258,21 @@ describe('LaunchForm: Task', () => {
         identifier = id;
         return promise;
       });
-      const { container } = renderForm();
+      const { container, getByLabelText } = renderForm();
 
       const submitButton = await waitFor(() => getSubmitButton(container));
 
       expect(submitButton).toBeDisabled();
       resolve(createMockTaskWithInputs(identifier));
+
+      // wait for inputs to load
+      await waitFor(() =>
+        getByLabelText(integerInputName, {
+          exact: false,
+        }),
+      );
+      // fill inputs because they are required
+      await fillInputs(container);
 
       await waitFor(() => expect(submitButton).not.toBeDisabled());
     });
@@ -258,12 +286,17 @@ describe('LaunchForm: Task', () => {
           exact: false,
         }),
       );
-      const submitButton = getSubmitButton(container);
+
+      // fill inputs because they are required
+      await fillInputs(container);
+
       await fireEvent.change(integerInput, { target: { value: 'abc' } });
-      await fireEvent.click(getSubmitButton(container));
+
+      const submitButton = getSubmitButton(container);
       await waitFor(() => expect(submitButton).toBeDisabled());
 
-      await fireEvent.change(integerInput, { target: { value: '123' } });
+      await fireEvent.change(integerInput, { target: { value: 123 } });
+
       await waitFor(() => expect(submitButton).toBeEnabled());
     });
 
@@ -345,11 +378,25 @@ describe('LaunchForm: Task', () => {
       const errorString = 'Something went wrong';
       mockCreateWorkflowExecution.mockRejectedValue(new Error(errorString));
 
-      const { container, getByText, getByTitle, queryByText } = renderForm();
-      await waitFor(() => getByTitle(t('inputs')));
+      const { container, getByText, getByTitle, queryByText, getByLabelText } =
+        renderForm();
+      await waitFor(() =>
+        getByLabelText(integerInputName, {
+          exact: false,
+        }),
+      );
+
       await fillInputs(container);
 
-      await fireEvent.click(getSubmitButton(container));
+      const submitButton = await waitFor(() => getSubmitButton(container));
+      await waitFor(() => expect(submitButton).toBeEnabled());
+
+      await fireEvent.click(submitButton);
+
+      await waitFor(() =>
+        expect(mockCreateWorkflowExecution).toHaveBeenCalled(),
+      );
+
       await waitFor(() => expect(getByText(errorString)).toBeInTheDocument());
 
       // Click the expander for the launch plan, select the second item
@@ -634,6 +681,9 @@ describe('LaunchForm: Task', () => {
     });
 
     describe('Interruptible', () => {
+      beforeEach(() => {
+        createMocks();
+      });
       it('should render checkbox', async () => {
         const { getByLabelText } = renderForm();
         const inputElement = await waitFor(() =>
@@ -710,7 +760,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).toHaveAttribute('data-indeterminate', 'true');
 
         await fillInputs(container);
-        await fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -735,7 +787,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).toHaveAttribute('data-indeterminate', 'false');
 
         await fillInputs(container);
-        await fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -760,7 +814,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).toHaveAttribute('data-indeterminate', 'false');
 
         await fillInputs(container);
-        await fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        await fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -773,6 +829,9 @@ describe('LaunchForm: Task', () => {
     });
 
     describe('overwrite cache', () => {
+      beforeEach(() => {
+        createMocks();
+      });
       it('should render checkbox', async () => {
         const { getByLabelText } = renderForm();
         const inputElement = await waitFor(() =>
@@ -809,7 +868,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).not.toBeChecked();
 
         await fillInputs(container);
-        fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -825,6 +886,7 @@ describe('LaunchForm: Task', () => {
           overwriteCache: true,
         };
         const { container, getByLabelText } = renderForm({ initialParameters });
+        await waitFor(() => {});
 
         const inputElement = await waitFor(() =>
           getByLabelText(t('overwriteCache'), { exact: false }),
@@ -833,7 +895,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).toBeChecked();
 
         await fillInputs(container);
-        fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -857,7 +921,9 @@ describe('LaunchForm: Task', () => {
         expect(inputElement).not.toBeChecked();
 
         await fillInputs(container);
-        fireEvent.click(getSubmitButton(container));
+        const submitButton = await waitFor(() => getSubmitButton(container));
+        await waitFor(() => expect(submitButton).toBeEnabled());
+        fireEvent.click(submitButton);
 
         await waitFor(() =>
           expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -871,6 +937,19 @@ describe('LaunchForm: Task', () => {
   });
 
   describe('overwrite cache', () => {
+    beforeEach(() => {
+      const { simpleString, simpleInteger, simpleFloat, simpleBoolean } =
+        cloneDeep(mockSimpleVariables);
+      // Only taking supported variable types since they are all required.
+      variables = {
+        simpleString,
+        simpleInteger,
+        simpleFloat,
+        simpleBoolean,
+      };
+      createMocks();
+    });
+
     it('should render checkbox', async () => {
       const { getByLabelText } = renderForm();
       const inputElement = await waitFor(() =>
@@ -907,7 +986,10 @@ describe('LaunchForm: Task', () => {
       expect(inputElement).not.toBeChecked();
 
       await fillInputs(container);
-      fireEvent.click(getSubmitButton(container));
+
+      const submitButton = await waitFor(() => getSubmitButton(container));
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      fireEvent.click(submitButton);
 
       await waitFor(() =>
         expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -931,7 +1013,10 @@ describe('LaunchForm: Task', () => {
       expect(inputElement).toBeChecked();
 
       await fillInputs(container);
-      fireEvent.click(getSubmitButton(container));
+
+      const submitButton = await waitFor(() => getSubmitButton(container));
+      await waitFor(() => expect(submitButton).toBeEnabled());
+      fireEvent.click(submitButton);
 
       await waitFor(() =>
         expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
@@ -946,16 +1031,22 @@ describe('LaunchForm: Task', () => {
       const initialParameters: TaskInitialLaunchParameters = {
         overwriteCache: false,
       };
-      const { container, getByLabelText } = renderForm({ initialParameters });
+      const { container, getByLabelText } = renderForm({
+        initialParameters,
+      });
+      await waitFor(() => {});
 
       const inputElement = await waitFor(() =>
         getByLabelText(t('overwriteCache'), { exact: false }),
       );
       expect(inputElement).toBeInTheDocument();
       expect(inputElement).not.toBeChecked();
-
       await fillInputs(container);
-      fireEvent.click(getSubmitButton(container));
+
+      const submitButton = await waitFor(() => getSubmitButton(container));
+      await waitFor(() => expect(submitButton).toBeEnabled());
+
+      await fireEvent.click(submitButton);
 
       await waitFor(() =>
         expect(mockCreateWorkflowExecution).toHaveBeenCalledWith(
