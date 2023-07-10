@@ -464,14 +464,17 @@ export const literalTestCases: InputToLiteralTestParams[] = [
       uri: 's3://somePath',
     }),
   ],
-  // Blob missing URI (results in None)
+  // Blob missing URI
   [
     inputTypes.blobMulti,
     {
       format: 'csv',
       dimensionality: 'MULTIPART',
     },
-    literalNone(),
+    blobLiteral({
+      dimensionality: BlobDimensionality.MULTIPART,
+      format: 'csv',
+    }),
   ],
   // Blob which is not an object (results in None)
   [inputTypes.blobMulti, undefined, literalNone()],

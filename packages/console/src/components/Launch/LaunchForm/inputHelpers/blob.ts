@@ -37,9 +37,10 @@ function getDimensionality(value: string | number) {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  if (!(value as BlobValue)?.uri) {
+  if (!value) {
     return literalNone();
   }
+
   const {
     dimensionality: rawDimensionality,
     format: rawFormat,

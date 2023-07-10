@@ -215,8 +215,11 @@ export function isStringValue(value: unknown): value is string {
   return typeof value === 'string';
 }
 
-export function isBlobValue(value: unknown): value is BlobValue {
-  return isObject(value);
+export function isBlobValue(value: any): value is BlobValue {
+  return (
+    isObject(value) &&
+    ('uri' in value || 'format' in value || 'dimensionality' in value)
+  );
 }
 
 /** Determines if a given launch machine state is one in which a user can provide input values. */

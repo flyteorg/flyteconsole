@@ -9,9 +9,13 @@ import {
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { BlobDimensionality } from 'models/Common/types';
 import { Core } from '@flyteorg/flyteidl-types';
-import { isEqual } from 'lodash';
 import t from '../strings';
-import { BlobValue, InputProps, InputTypeDefinition } from '../types';
+import {
+  BlobValue,
+  InputProps,
+  InputTypeDefinition,
+  InputValue,
+} from '../types';
 import { getLaunchInputId, isBlobValue } from '../utils';
 import { StyledCard } from './StyledCard';
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
@@ -37,18 +41,24 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const tryGetBlobValue = (
-  value: BlobValue | Core.ILiteral,
   typeDefinition: InputTypeDefinition,
   helper: InputHelper,
+  value?: InputValue,
 ) => {
-  let finalValue = value as BlobValue;
+  if (isBlobValue(value)) {
+    return value;
+  }
+
+  let finalValue;
   try {
     finalValue = helper.fromLiteral(
       value as Core.ILiteral,
       typeDefinition,
     ) as BlobValue;
   } catch {
-    // do nothing
+    finalValue = helper.typeDefinitionToDefaultValue(
+      typeDefinition,
+    ) as BlobValue;
   }
 
   return finalValue;
@@ -71,21 +81,9 @@ export const BlobInput: FC<InputProps> = props => {
     [typeDefinition],
   );
 
-  const [blobValue, setBlobValue] = useState<BlobValue>();
-
-  useEffect(() => {
-    const newValue = isBlobValue(propValue)
-      ? tryGetBlobValue(propValue, typeDefinition, helper)
-      : (helper.typeDefinitionToDefaultValue(typeDefinition) as BlobValue);
-
-    setBlobValue(prev => {
-      if (isEqual(prev, newValue)) {
-        return prev;
-      }
-
-      return newValue;
-    });
-  }, [propValue, typeDefinition]);
+  const [blobValue, setBlobValue] = useState<BlobValue>(
+    tryGetBlobValue(typeDefinition, helper, propValue),
+  );
 
   const handleChange = (input: Partial<BlobValue>) => {
     const value = { ...blobValue, ...input } as BlobValue;
