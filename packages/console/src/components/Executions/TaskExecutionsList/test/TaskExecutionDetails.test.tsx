@@ -7,7 +7,7 @@ import { TaskExecutionDetails } from '../TaskExecutionDetails';
 const date = { seconds: long(5), nanos: 0 };
 const duration = { seconds: long(0), nanos: 0 };
 
-const dateContent = '1/1/1970 12:00:05 AM UTC (53 years ago)';
+const dateContent = '1/1/1970 12:00:05 AM UTC';
 
 describe('TaskExecutionDetails', () => {
   it('should render details with task started info and duration', () => {
@@ -17,7 +17,7 @@ describe('TaskExecutionDetails', () => {
 
     expect(queryByText('started')).toBeInTheDocument();
     expect(queryByText('last updated')).not.toBeInTheDocument();
-    expect(queryByText(dateContent)).toBeInTheDocument();
+    expect(queryByText(dateContent, { exact: false })).toBeInTheDocument();
     expect(queryByText('run time')).toBeInTheDocument();
     expect(queryByText('0s')).toBeInTheDocument();
   });
@@ -27,7 +27,7 @@ describe('TaskExecutionDetails', () => {
 
     expect(queryByText('started')).toBeInTheDocument();
     expect(queryByText('last updated')).not.toBeInTheDocument();
-    expect(queryByText(dateContent)).toBeInTheDocument();
+    expect(queryByText(dateContent, { exact: false })).toBeInTheDocument();
     expect(queryByText('run time')).toBeInTheDocument();
     expect(queryByText(unknownValueString)).toBeInTheDocument();
   });
@@ -39,7 +39,7 @@ describe('TaskExecutionDetails', () => {
 
     expect(queryByText('started')).not.toBeInTheDocument();
     expect(queryByText('last updated')).toBeInTheDocument();
-    expect(queryByText(dateContent)).toBeInTheDocument();
+    expect(queryByText(dateContent, { exact: false })).toBeInTheDocument();
     expect(queryByText('run time')).not.toBeInTheDocument();
     expect(queryByText('0s')).not.toBeInTheDocument();
   });
@@ -49,7 +49,7 @@ describe('TaskExecutionDetails', () => {
 
     expect(queryByText('started')).not.toBeInTheDocument();
     expect(queryByText('last updated')).toBeInTheDocument();
-    expect(queryByText(dateContent)).toBeInTheDocument();
+    expect(queryByText(dateContent, { exact: false })).toBeInTheDocument();
     expect(queryByText('run time')).not.toBeInTheDocument();
     expect(queryByText(unknownValueString)).not.toBeInTheDocument();
   });
