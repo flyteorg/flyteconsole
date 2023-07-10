@@ -90,7 +90,7 @@ export const blobHelper: InputHelper = {
       dimensionality:
         typeDefinition?.literalType?.blob?.dimensionality ??
         BlobDimensionality.SINGLE,
-      format: undefined,
+      format: (typeDefinition?.literalType?.blob as any)?.format,
     } as any as BlobValue;
   },
 };
