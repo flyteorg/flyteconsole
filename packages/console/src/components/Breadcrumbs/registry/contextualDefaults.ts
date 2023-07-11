@@ -17,7 +17,6 @@ import {
   executionTaskWorkflowVersions,
   executionTaskWorkflowViewAll,
   executionsPeerExecutionList,
-  executonNamedEntityAsyncValue,
   executonTaskWorkFlowNameAsyncValue,
   launchPlanVersions,
   launchPlanVersionsLink,
