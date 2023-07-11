@@ -113,14 +113,14 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
           overflowY: 'scroll',
         }}
       >
-        <Grid item xs={12} justifyContent="center">
+        <Grid item xs={12}>
           {isLoading && (
-            <Box pt={2}>
+            <Box pt={2} marginX="auto">
               <LoadingSpinner size="small" useDelay={false} />
             </Box>
           )}
           {error && <Typography color="error">{error}</Typography>}
-          {!isLoading && dataToShow.length && (
+          {!isLoading && !!dataToShow?.length && (
             <List>
               {dataToShow.length &&
                 dataToShow.map(data => {

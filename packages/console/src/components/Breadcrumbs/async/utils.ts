@@ -44,12 +44,12 @@ export const projectIdfromUrl = () => {
   return path[projectIdIndex];
 };
 
-export const domainIdfromUrl = () => {
-  const path = window.location.pathname.split('/');
-  if (path.indexOf('domains')) {
+export const domainIdfromUrl = (location: Location) => {
+  const path = location.pathname.split('/');
+  if (path.indexOf('domains') > -1) {
     return path[path.indexOf('domains') + 1] || '';
   }
-  if (window.location.search.includes('domain')) {
+  if (location.search.includes('domain')) {
     const searchParams = new URLSearchParams(window.location.search);
     return searchParams.get('domain') || '';
   }
@@ -91,7 +91,7 @@ export const formatProjectEntitiesAsDomains = (
       '',
     );
 
-    const isDomainInUrl = domainIdfromUrl() === domainId;
+    const isDomainInUrl = domainIdfromUrl(window.location) === domainId;
 
     let newUrl = pathSearchHash;
 
