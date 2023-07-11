@@ -8,7 +8,7 @@ import get from 'lodash/get';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import breadcrumbRegistry from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
-import { domainIdfromUrl } from '../async/utils';
+import { domainIdfromUrl, projectIdfromUrl } from '../async/utils';
 import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
 
 /**
@@ -24,7 +24,8 @@ const BreadCrumbs = () => {
   const routerLocation = useLocation();
   const routerParams = useParams();
 
-  const currentProjectId = routerParams['projectId'] || '';
+  const currentProjectId =
+    routerParams['projectId']?.trim() || projectIdfromUrl() || '';
 
   const projectQuery = useQuery('projects', () => listProjects());
   const projectData = useMemo(() => {
@@ -34,7 +35,7 @@ const BreadCrumbs = () => {
   }, [projectQuery.data, projectQuery.isLoading]);
 
   const currentDomainId = useMemo(() => {
-    const id = domainIdfromUrl();
+    const id = routerParams['domainId'] || domainIdfromUrl(window.location);
     if (id) return id;
 
     // get the first domain id from the project
@@ -47,7 +48,28 @@ const BreadCrumbs = () => {
       }
     }
     return '';
-  }, [routerParams, routerLocation.search, projectData, currentProjectId]);
+  }, [
+    routerParams['domainId'],
+    routerLocation.search,
+    projectData,
+    projectData?.length,
+    currentProjectId,
+  ]);
+
+  console.log(
+    '***',
+    routerParams,
+    '-',
+    routerLocation,
+    '-',
+    currentDomainId,
+    '-',
+    routerParams['domainId'],
+    '-',
+    domainIdfromUrl(window.location),
+    '-',
+    window.location.href.includes('domain'),
+  );
 
   // load from user provided registry for custom breadcrumb handling
   const { registry } = useExternalConfigurationContext();

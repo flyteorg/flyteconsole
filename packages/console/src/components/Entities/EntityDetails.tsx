@@ -17,7 +17,6 @@ import { EntityExecutionsBarChart } from './EntityExecutionsBarChart';
 
 const useStyles = makeStyles((theme: Theme) => ({
   entityDetailsWrapper: {
-    px: theme.spacing(2),
     minHeight: '100vh',
   },
   metadataContainer: {
@@ -25,6 +24,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
     width: '100%',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
   descriptionContainer: {
     flex: '2 1 auto',
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: '1 1 auto',
     flexDirection: 'column',
-    margin: `0 -${theme.spacing(contentMarginGridUnits)}px`,
+    margin: `0`,
     flexBasis: theme.spacing(80),
   },
   versionsContainer: {
@@ -47,6 +48,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputsContainer: {
     display: 'flex',
     flexDirection: 'column',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
 }));
 

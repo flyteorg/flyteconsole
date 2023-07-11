@@ -32,10 +32,6 @@ interface SearchableLaunchPlanNameListProps {
 export const showOnHoverClass = 'showOnHover';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    padding: theme.spacing(2),
-    paddingRight: theme.spacing(5),
-  },
   filterGroup: {
     display: 'flex',
     flexWrap: 'nowrap',
@@ -166,7 +162,7 @@ export const SearchableLaunchPlanNameList: React.FC<
           )}
         />
       </FormGroup>
-      <div className={styles.container}>
+      <div>
         {results.map(({ value }) => (
           <SearchableLaunchPlanNameItem
             item={value}

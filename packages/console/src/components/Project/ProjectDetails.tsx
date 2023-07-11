@@ -39,8 +39,7 @@ const ProjectEntitiesByDomain: React.FC<{
   project: Project;
   entityType: 'executions' | 'tasks' | 'workflows' | 'launchPlans';
 }> = ({ entityType, project }) => {
-  const styles = useStyles();
-  const { params, setQueryState } = useQueryState<{ domain: string }>();
+  const { params } = useQueryState<{ domain: string }>();
   if (project && !project?.domains) {
     throw new Error('No domains exist for this project');
   }
@@ -51,25 +50,10 @@ const ProjectEntitiesByDomain: React.FC<{
     return project?.domains ? project?.domains[0].id : '';
   }, [project, project?.domains, params?.domain]);
 
-  const handleTabChange = (_event: React.ChangeEvent<unknown>, tabId: string) =>
-    setQueryState({
-      domain: tabId,
-    });
   const EntityComponent = entityTypeToComponent[entityType];
 
   return (
     <>
-      {project?.domains && (
-        <Tabs
-          className={styles.tabs}
-          onChange={handleTabChange}
-          value={domainId}
-        >
-          {project.domains.map(({ id, name }) => (
-            <Tab className={styles.tab} key={id} value={id} label={name} />
-          ))}
-        </Tabs>
-      )}
       {project?.id ? (
         <EntityComponent projectId={project.id} domainId={domainId} />
       ) : (

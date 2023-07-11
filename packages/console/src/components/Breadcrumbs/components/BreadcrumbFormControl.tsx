@@ -110,7 +110,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
                 size="small"
               >
                 <span aria-hidden="true">/</span>&nbsp;
-                {value}
+                {value || ''}
               </Button>
             ) : (
               <h1
@@ -123,7 +123,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
                   }
                 }}
               >
-                {value}
+                <small>{value}</small>
               </h1>
             )}
           </Tooltip>

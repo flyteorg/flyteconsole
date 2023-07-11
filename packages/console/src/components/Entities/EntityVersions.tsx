@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { history } from 'routes/history';
 import Typography from '@material-ui/core/Typography';
-import { IconButton, makeStyles, Theme } from '@material-ui/core';
+import { Box, IconButton, makeStyles, Theme } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import { LocalCacheItem, useLocalCache } from 'basics/LocalCache';
@@ -117,13 +117,15 @@ export const EntityVersions: React.FC<EntityVersionsProps> = ({
           <Typography className={styles.header} variant="h3">
             {t(patternKey('versionsTitle', entityStrings[id.resourceType]))}
           </Typography>
-          <Typography
-            className={styles.viewAll}
-            variant="body1"
-            onClick={handleViewAll}
-          >
-            {t('viewAll')}
-          </Typography>
+          <Box display="inline" mr={2}>
+            <Typography
+              className={styles.viewAll}
+              variant="body1"
+              onClick={handleViewAll}
+            >
+              {t('viewAll')}
+            </Typography>
+          </Box>
         </div>
       )}
       <WaitForData {...versions}>
