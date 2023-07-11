@@ -7,7 +7,7 @@ module.exports = {
   testPathIgnorePatterns: [
     '__stories__',
     '.storybook',
-    'node_modules',
+    '/node_modules/',
     'dist',
     'lib',
     'build',

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { dashedValueString } from 'common/constants';
@@ -18,19 +18,15 @@ const useStyles = makeStyles((theme: Theme) => {
   return {
     container: {
       background: secondaryBackgroundColor,
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
+      width: '100%',
     },
     detailsContainer: {
-      alignItems: 'start',
       display: 'flex',
-      flex: '0 1 auto',
-      paddingTop: theme.spacing(3),
+      paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(2),
+      marginTop: 0,
     },
     detailItem: {
-      flexShrink: 0,
       marginLeft: theme.spacing(4),
     },
     expandCollapseButton: {
@@ -111,9 +107,13 @@ export const ExecutionMetadata: React.FC<{}> = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.detailsContainer}>
+      <Grid container className={styles.detailsContainer} spacing={4}>
         {details.map(({ className, label, value }) => (
-          <div className={classnames(styles.detailItem, className)} key={label}>
+          <Grid
+            item
+            className={classnames(styles.detailItem, className)}
+            key={label}
+          >
             <Typography
               className={commonStyles.truncateText}
               variant="subtitle1"
@@ -127,10 +127,10 @@ export const ExecutionMetadata: React.FC<{}> = () => {
             >
               {value}
             </Typography>
-          </div>
+          </Grid>
         ))}
         <ExecutionMetadataExtra execution={execution} />
-      </div>
+      </Grid>
 
       {error || abortMetadata ? (
         <ExpandableExecutionError

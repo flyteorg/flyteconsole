@@ -5,7 +5,6 @@ import { contentContainerId } from 'common/constants';
 import {
   contentMarginGridUnits,
   maxContainerGridWidth,
-  navbarGridHeight,
   sideNavGridWidth,
 } from 'common/layout';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -19,16 +18,15 @@ enum ContainerClasses {
 
 const useStyles = makeStyles((theme: Theme) => {
   const contentMargin = `${theme.spacing(contentMarginGridUnits)}px`;
-  const spacerHeight = `${theme.spacing(navbarGridHeight)}px`;
   return {
     root: {
       display: 'flex',
       flexDirection: 'column',
-      minHeight: '100vh',
-      padding: `${spacerHeight} ${contentMargin} 0 ${contentMargin}`,
+      minHeight: `100dvh`,
+      padding: `0 ${contentMargin} 0 ${contentMargin}`,
       [`&.${ContainerClasses.NoMargin}`]: {
         margin: 0,
-        padding: `${spacerHeight} 0 0 0`,
+        padding: 0,
       },
       [`&.${ContainerClasses.Centered}`]: {
         margin: '0 auto',
@@ -66,7 +64,7 @@ export const ContentContainer: React.FC<ContentContainerProps> = props => {
   const styles = useStyles();
   const {
     center = false,
-    noMargin = false,
+    noMargin = true,
     className: additionalClassName,
     children,
     sideNav = false,

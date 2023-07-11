@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormControlLabel, Checkbox, FormGroup } from '@material-ui/core';
+import { FormControlLabel, Checkbox, FormGroup, Grid } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { MultiSelectForm } from 'components/common/MultiSelectForm';
 import { SearchInputForm } from 'components/common/SearchInputForm';
@@ -18,9 +18,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    height: theme.spacing(7),
     minHeight: theme.spacing(7),
     paddingLeft: theme.spacing(1),
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(1),
     width: '100%',
   },
   filterButton: {
@@ -95,7 +96,7 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
   });
 
   return (
-    <div className={styles.container}>
+    <Grid container className={styles.container}>
       {filters.map((filter: any) => {
         if (filter.hidden) {
           return null;
@@ -105,27 +106,31 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
             filter.setActive(event.target.checked);
 
           return (
-            <FormControlLabel
-              key={filter.label}
-              data-testid="checkbox"
-              control={
-                <Checkbox checked={filter.active} onChange={handleChange} />
-              }
-              className={styles.checkbox}
-              label={filter.label}
-            />
+            <Grid item key={filter.label}>
+              <FormControlLabel
+                key={filter.label}
+                data-testid="checkbox"
+                control={
+                  <Checkbox checked={filter.active} onChange={handleChange} />
+                }
+                className={styles.checkbox}
+                label={filter.label}
+              />
+            </Grid>
           );
         }
         return (
-          <FilterPopoverButton
-            {...filter.button}
-            active={filter.active}
-            key={filter.label}
-            onReset={filter.onReset}
-            buttonText={filter.label}
-            className={styles.filterButton}
-            renderContent={() => <RenderFilter filter={filter} />}
-          />
+          <Grid item key={filter.label}>
+            <FilterPopoverButton
+              {...filter.button}
+              active={filter.active}
+              key={filter.label}
+              onReset={filter.onReset}
+              buttonText={filter.label}
+              className={styles.filterButton}
+              renderContent={() => <RenderFilter filter={filter} />}
+            />
+          </Grid>
         );
       })}
       {chartIds && chartIds.length > 0 && (
@@ -141,38 +146,42 @@ export const ExecutionFilters: React.FC<ExecutionFiltersProps> = ({
         />
       )}
       {!!onlyMyExecutionsFilterState && (
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={onlyMyExecutionsFilterState.onlyMyExecutionsValue}
-                disabled={onlyMyExecutionsFilterState.isFilterDisabled}
-                onChange={(_, checked) =>
-                  onlyMyExecutionsFilterState.onOnlyMyExecutionsFilterChange(
-                    checked,
-                  )
-                }
-              />
-            }
-            className={styles.checkbox}
-            label="Only my executions"
-          />
-        </FormGroup>
+        <Grid item>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={onlyMyExecutionsFilterState.onlyMyExecutionsValue}
+                  disabled={onlyMyExecutionsFilterState.isFilterDisabled}
+                  onChange={(_, checked) =>
+                    onlyMyExecutionsFilterState.onOnlyMyExecutionsFilterChange(
+                      checked,
+                    )
+                  }
+                />
+              }
+              className={styles.checkbox}
+              label="Only my executions"
+            />
+          </FormGroup>
+        </Grid>
       )}
       {!!onArchiveFilterChange && (
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showArchived}
-                onChange={(_, checked) => onArchiveFilterChange(checked)}
-              />
-            }
-            className={styles.checkbox}
-            label="Show archived executions"
-          />
-        </FormGroup>
+        <Grid item>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={showArchived}
+                  onChange={(_, checked) => onArchiveFilterChange(checked)}
+                />
+              }
+              className={styles.checkbox}
+              label="Show archived executions"
+            />
+          </FormGroup>
+        </Grid>
       )}
-    </div>
+    </Grid>
   );
 };

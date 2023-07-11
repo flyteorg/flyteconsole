@@ -1,14 +1,14 @@
+import * as React from 'react';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { WaitForData } from 'components/common/WaitForData';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject } from 'components/hooks/useProjects';
 import { useQueryState } from 'components/hooks/useQueryState';
 import { Project } from 'models/Project/types';
-import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import { Routes } from 'routes/routes';
 import { RouteComponentProps } from 'react-router-dom';
+import { LoadingSpinner } from 'components/common';
 import { ProjectDashboard } from './ProjectDashboard';
 import { ProjectTasks } from './ProjectTasks';
 import { ProjectWorkflows } from './ProjectWorkflows';
@@ -41,23 +41,42 @@ const ProjectEntitiesByDomain: React.FC<{
 }> = ({ entityType, project }) => {
   const styles = useStyles();
   const { params, setQueryState } = useQueryState<{ domain: string }>();
-  if (project.domains.length === 0) {
+  if (project && !project?.domains) {
     throw new Error('No domains exist for this project');
   }
-  const domainId = params.domain || project.domains[0].id;
+  const domainId = React.useMemo(() => {
+    if (params?.domain) {
+      return params.domain;
+    }
+    return project?.domains ? project?.domains[0].id : '';
+  }, [project, project?.domains, params?.domain]);
+
   const handleTabChange = (_event: React.ChangeEvent<unknown>, tabId: string) =>
     setQueryState({
       domain: tabId,
     });
   const EntityComponent = entityTypeToComponent[entityType];
+
   return (
     <>
-      <Tabs className={styles.tabs} onChange={handleTabChange} value={domainId}>
-        {project.domains.map(({ id, name }) => (
-          <Tab className={styles.tab} key={id} value={id} label={name} />
-        ))}
-      </Tabs>
-      <EntityComponent projectId={project.id} domainId={domainId} />
+      {project?.domains && (
+        <Tabs
+          className={styles.tabs}
+          onChange={handleTabChange}
+          value={domainId}
+        >
+          {project.domains.map(({ id, name }) => (
+            <Tab className={styles.tab} key={id} value={id} label={name} />
+          ))}
+        </Tabs>
+      )}
+      {project?.id ? (
+        <EntityComponent projectId={project.id} domainId={domainId} />
+      ) : (
+        <>
+          <LoadingSpinner />
+        </>
+      )}
     </>
   );
 };
@@ -82,31 +101,30 @@ const ProjectLaunchPlansByDomain: React.FC<{ project: Project }> = ({
 export const ProjectDetailsContainer: React.FC<ProjectDetailsRouteParams> = ({
   projectId,
 }) => {
-  const project = useProject(projectId);
+  const [project] = useProject(projectId);
+
+  if (!project?.id) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <WaitForData {...project}>
-      {() => {
-        return (
-          <Switch>
-            <Route path={Routes.ProjectDetails.sections.dashboard.path}>
-              <ProjectDashboardByDomain project={project.value} />
-            </Route>
-            <Route path={Routes.ProjectDetails.sections.workflows.path}>
-              <ProjectWorkflowsByDomain project={project.value} />
-            </Route>
-            <Route path={Routes.ProjectDetails.sections.tasks.path}>
-              <ProjectTasksByDomain project={project.value} />
-            </Route>
-            <Route path={Routes.ProjectDetails.sections.launchPlans.path}>
-              <ProjectLaunchPlansByDomain project={project.value} />
-            </Route>
-            <Redirect
-              to={Routes.ProjectDetails.sections.workflows.makeUrl(projectId)}
-            />
-          </Switch>
-        );
-      }}
-    </WaitForData>
+    <Switch>
+      <Route path={Routes.ProjectDetails.sections.dashboard.path}>
+        <ProjectDashboardByDomain project={project} />
+      </Route>
+      <Route path={Routes.ProjectDetails.sections.workflows.path}>
+        <ProjectWorkflowsByDomain project={project} />
+      </Route>
+      <Route path={Routes.ProjectDetails.sections.tasks.path}>
+        <ProjectTasksByDomain project={project} />
+      </Route>
+      <Route path={Routes.ProjectDetails.sections.launchPlans.path}>
+        <ProjectLaunchPlansByDomain project={project} />
+      </Route>
+      <Redirect
+        to={Routes.ProjectDetails.sections.workflows.makeUrl(projectId)}
+      />
+    </Switch>
   );
 };
 
