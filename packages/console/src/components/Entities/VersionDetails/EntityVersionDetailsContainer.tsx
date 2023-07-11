@@ -9,7 +9,6 @@ import { entitySections } from 'components/Entities/constants';
 import { EntityDetailsHeader } from 'components/Entities/EntityDetailsHeader';
 import { EntityVersions } from 'components/Entities/EntityVersions';
 import { RouteComponentProps } from 'react-router-dom';
-import { Box } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
 import { typeNameToEntityResource } from '../constants';
 import { versionsDetailsSections } from './constants';
@@ -95,14 +94,7 @@ const EntityVersionsDetailsContainerImpl: React.FC<
 
   return (
     <>
-      <Box pl={2} pr={2}>
-        <EntityDetailsHeader
-          project={project.value}
-          id={id}
-          launchable={sections.launch}
-          backToWorkflow
-        />
-      </Box>
+      <EntityDetailsHeader id={id} launchable={sections.launch} />
       <div className={styles.verionDetailsContainer}>
         {versionsSections.details && (
           <div className={styles.versionDetailsContainer}>

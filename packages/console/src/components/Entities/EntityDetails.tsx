@@ -71,12 +71,7 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
       {!project?.id && <LoadingSpinner />}
       {project?.id && (
         <>
-          <EntityDetailsHeader
-            project={project}
-            id={id}
-            launchable={!!sections.launch}
-          />
-
+          <EntityDetailsHeader id={id} launchable={!!sections.launch} />
           <div className={styles.metadataContainer}>
             {sections.description && (
               <div className={styles.descriptionContainer}>
