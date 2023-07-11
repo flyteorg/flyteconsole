@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
@@ -7,8 +8,6 @@ import {
   primaryTextColor,
   launchPlanLabelColor,
 } from 'components/Theme/constants';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';

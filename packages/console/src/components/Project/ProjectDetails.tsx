@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { Tab, Tabs } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject } from 'components/hooks/useProjects';
 import { useQueryState } from 'components/hooks/useQueryState';
@@ -13,15 +11,6 @@ import { ProjectDashboard } from './ProjectDashboard';
 import { ProjectTasks } from './ProjectTasks';
 import { ProjectWorkflows } from './ProjectWorkflows';
 import { ProjectLaunchPlans } from './ProjectLaunchPlans';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  tab: {
-    textTransform: 'capitalize',
-  },
-  tabs: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-}));
 
 export interface ProjectDetailsRouteParams {
   projectId: string;

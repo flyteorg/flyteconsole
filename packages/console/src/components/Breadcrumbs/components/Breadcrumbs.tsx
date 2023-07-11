@@ -56,21 +56,6 @@ const BreadCrumbs = () => {
     currentProjectId,
   ]);
 
-  console.log(
-    '***',
-    routerParams,
-    '-',
-    routerLocation,
-    '-',
-    currentDomainId,
-    '-',
-    routerParams['domainId'],
-    '-',
-    domainIdfromUrl(window.location),
-    '-',
-    window.location.href.includes('domain'),
-  );
-
   // load from user provided registry for custom breadcrumb handling
   const { registry } = useExternalConfigurationContext();
   useEffect(() => {
