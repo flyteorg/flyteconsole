@@ -7,6 +7,7 @@ import {
   maxContainerGridWidth,
   sideNavGridWidth,
 } from 'common/layout';
+import { BreadCrumbs } from 'components/Breadcrumbs';
 import { ErrorBoundary } from './ErrorBoundary';
 
 enum ContainerClasses {
@@ -79,7 +80,12 @@ export const ContentContainer: React.FC<ContentContainerProps> = props => {
 
   return (
     <div {...restProps} className={className} id={contentContainerId}>
-      <ErrorBoundary>{children}</ErrorBoundary>
+      <ErrorBoundary>
+        <>
+          <BreadCrumbs />
+          {children}
+        </>
+      </ErrorBoundary>
     </div>
   );
 };

@@ -138,4 +138,8 @@ export class Routes {
       makeProjectDomainBoundPath(project, domain, `/executions/${name}`),
     path: `${projectDomainBasePath}/executions/:executionId`,
   };
+
+  public static getRoute(route: string) {
+    return this[route];
+  }
 }

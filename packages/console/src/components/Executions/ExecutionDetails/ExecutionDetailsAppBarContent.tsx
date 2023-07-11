@@ -1,34 +1,27 @@
 import * as React from 'react';
-import { Button, Dialog, Link, Typography } from '@material-ui/core';
+import { Button, Dialog, Grid, Link } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import ArrowBack from '@material-ui/icons/ArrowBack';
-import classnames from 'classnames';
 import { navbarGridHeight } from 'common/layout';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
-import { useLocationState } from 'components/hooks/useLocationState';
-import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
+import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
 import { executionIsRunning, executionIsTerminal } from '../utils';
-import { backLinkTitle, executionActionStrings } from './constants';
+import { executionActionStrings } from './constants';
 import { RelaunchExecutionForm } from './RelaunchExecutionForm';
-import { getExecutionBackLink, getExecutionSourceId } from './utils';
 import { useRecoverExecutionState } from './useRecoverExecutionState';
 import { ExecutionContext } from '../contexts';
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
-    actionButton: {
-      marginLeft: theme.spacing(2),
-    },
     actions: {
       alignItems: 'center',
       display: 'flex',
@@ -49,10 +42,6 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     inputsOutputsLink: {
       color: theme.palette.primary.main,
-    },
-    moreActions: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(-2),
     },
     title: {
       flex: '0 1 auto',
@@ -82,11 +71,8 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 
   const [showInputsOutputs, setShowInputsOutputs] = React.useState(false);
   const [showRelaunchForm, setShowRelaunchForm] = React.useState(false);
-  const { domain, name, project } = execution.id;
   const { phase } = execution.closure;
-  const sourceId = getExecutionSourceId(execution);
-  const { backLink: originalBackLink = getExecutionBackLink(execution) } =
-    useLocationState();
+
   const isRunning = executionIsRunning(execution);
   const isTerminal = executionIsTerminal(execution);
   const onClickShowInputsOutputs = () => setShowInputsOutputs(true);
@@ -96,12 +82,6 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   // Close modal on escape key press
   useEscapeKey(onCloseRelaunch);
 
-  const fromExecutionNav = new URLSearchParams(history.location.search).get(
-    'fromExecutionNav',
-  );
-  const backLink = fromExecutionNav
-    ? Routes.ProjectDetails.sections.dashboard.makeUrl(project, domain)
-    : originalBackLink;
   const {
     recoverExecution,
     recoverState: { isLoading: recovering, data: recoveredId },
@@ -136,44 +116,41 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   );
 
   const actionContent = isRunning ? (
-    <TerminateExecutionButton className={styles.actionButton} />
+    <TerminateExecutionButton />
   ) : isTerminal ? (
-    <>
+    <Grid container spacing={2}>
       {isRecoverVisible && (
+        <Grid item>
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={recovering}
+            className={commonStyles.buttonWhiteOutlined}
+            onClick={onClickRecover}
+            size="small"
+          >
+            Recover
+            {recovering && <ButtonCircularProgress />}
+          </Button>
+        </Grid>
+      )}
+      <Grid item>
         <Button
           variant="outlined"
           color="primary"
-          disabled={recovering}
-          className={classnames(
-            styles.actionButton,
-            commonStyles.buttonWhiteOutlined,
-          )}
-          onClick={onClickRecover}
+          className={commonStyles.buttonWhiteOutlined}
+          onClick={onClickRelaunch}
           size="small"
         >
-          Recover
-          {recovering && <ButtonCircularProgress />}
+          Relaunch
         </Button>
-      )}
-      <Button
-        variant="outlined"
-        color="primary"
-        className={classnames(
-          styles.actionButton,
-          commonStyles.buttonWhiteOutlined,
-        )}
-        onClick={onClickRelaunch}
-        size="small"
-      >
-        Relaunch
-      </Button>
-    </>
+      </Grid>
+    </Grid>
   ) : null;
 
   // For non-terminal executions, add an overflow menu with the ability to clone
   const moreActionsContent = !isTerminal ? (
     <MoreOptionsMenu
-      className={styles.moreActions}
       options={[
         {
           label: executionActionStrings.clone,
@@ -185,43 +162,34 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 
   return (
     <>
-      <div className={styles.container}>
-        <RouterLink
-          title={backLinkTitle}
-          className={classnames('backLink', styles.backLink)}
-          to={backLink}
+      <BreadcrumbTitleActions>
+        <Grid
+          container
+          justifyContent="flex-end"
+          alignItems="center"
+          spacing={2}
         >
-          <ArrowBack />
-        </RouterLink>
-        <ExecutionStatusBadge
-          phase={phase}
-          type="workflow"
-          className="subNavBadge"
-        />
-        <div className={classnames('titleContainer', styles.titleContainer)}>
-          <Typography
-            variant="body1"
-            className={classnames(styles.title, commonStyles.textWrapped)}
-          >
-            <span>
-              {`${project}/${domain}/${sourceId.name}/`}
-              <strong>{`${name}`}</strong>
-            </span>
-          </Typography>
-        </div>
-        <div className={styles.actions}>
-          <Link
-            className={styles.inputsOutputsLink}
-            component="button"
-            onClick={onClickShowInputsOutputs}
-            variant="body1"
-          >
-            View Inputs &amp; Outputs
-          </Link>
-          {actionContent}
-          {moreActionsContent}
-        </div>
-      </div>
+          <Grid item>
+            <ExecutionStatusBadge
+              phase={phase}
+              type="workflow"
+              className="subNavBadge"
+            />
+          </Grid>
+          <Grid item>
+            <Link
+              className={styles.inputsOutputsLink}
+              component="button"
+              onClick={onClickShowInputsOutputs}
+              variant="body1"
+            >
+              View Inputs &amp; Outputs
+            </Link>
+          </Grid>
+          {actionContent && <Grid item>{actionContent}</Grid>}
+          {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+        </Grid>
+      </BreadcrumbTitleActions>
       <Dialog
         scroll="paper"
         maxWidth="sm"
