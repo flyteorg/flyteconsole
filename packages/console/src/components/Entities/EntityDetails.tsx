@@ -1,11 +1,12 @@
+import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { contentMarginGridUnits } from 'common/layout';
-import { WaitForData } from 'components/common/WaitForData';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks/useProjects';
 import { useChartState } from 'components/hooks/useChartState';
 import { ResourceIdentifier } from 'models/Common/types';
-import * as React from 'react';
+import { Grid } from '@material-ui/core';
+import { LoadingSpinner } from 'components/common';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';
 import { EntityInputs } from './EntityInputs';
@@ -15,6 +16,10 @@ import { EntityVersions } from './EntityVersions';
 import { EntityExecutionsBarChart } from './EntityExecutionsBarChart';
 
 const useStyles = makeStyles((theme: Theme) => ({
+  entityDetailsWrapper: {
+    px: theme.spacing(2),
+    minHeight: '100vh',
+  },
   metadataContainer: {
     display: 'flex',
     marginBottom: theme.spacing(2),
@@ -57,58 +62,63 @@ interface EntityDetailsProps {
  */
 export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
   const sections = entitySections[id.resourceType];
-  const project = useProject(id.project);
+  const [project] = useProject(id.project);
   const styles = useStyles();
   const { chartIds, onToggle, clearCharts } = useChartState();
 
   return (
-    <WaitForData {...project}>
-      <EntityDetailsHeader
-        project={project.value}
-        id={id}
-        launchable={!!sections.launch}
-      />
+    <Grid container direction="column" className={styles.entityDetailsWrapper}>
+      {!project?.id && <LoadingSpinner />}
+      {project?.id && (
+        <>
+          <EntityDetailsHeader
+            project={project}
+            id={id}
+            launchable={!!sections.launch}
+          />
 
-      <div className={styles.metadataContainer}>
-        {sections.description ? (
-          <div className={styles.descriptionContainer}>
-            <EntityDescription id={id} />
+          <div className={styles.metadataContainer}>
+            {sections.description && (
+              <div className={styles.descriptionContainer}>
+                <EntityDescription id={id} />
+              </div>
+            )}
+            {!sections.inputs && sections.schedules && (
+              <div className={styles.schedulesContainer}>
+                <EntitySchedules id={id} />
+              </div>
+            )}
           </div>
-        ) : null}
-        {!sections.inputs && sections.schedules ? (
-          <div className={styles.schedulesContainer}>
-            <EntitySchedules id={id} />
-          </div>
-        ) : null}
-      </div>
 
-      {sections.inputs ? (
-        <div className={styles.inputsContainer}>
-          <EntityInputs id={id} />
-        </div>
-      ) : null}
+          {!!sections.inputs && (
+            <div className={styles.inputsContainer}>
+              <EntityInputs id={id} />
+            </div>
+          )}
 
-      {sections.versions ? (
-        <div className={styles.versionsContainer}>
-          <EntityVersions id={id} />
-        </div>
-      ) : null}
+          {!!sections.versions && (
+            <div className={styles.versionsContainer}>
+              <EntityVersions id={id} />
+            </div>
+          )}
 
-      <EntityExecutionsBarChart
-        onToggle={onToggle}
-        chartIds={chartIds}
-        id={id}
-      />
-
-      {sections.executions ? (
-        <div className={styles.executionsContainer}>
-          <EntityExecutions
+          <EntityExecutionsBarChart
+            onToggle={onToggle}
             chartIds={chartIds}
             id={id}
-            clearCharts={clearCharts}
           />
-        </div>
-      ) : null}
-    </WaitForData>
+          {!sections.executions && <LoadingSpinner />}
+          {sections.executions && (
+            <div className={styles.executionsContainer}>
+              <EntityExecutions
+                chartIds={chartIds}
+                id={id}
+                clearCharts={clearCharts}
+              />
+            </div>
+          )}
+        </>
+      )}
+    </Grid>
   );
 };

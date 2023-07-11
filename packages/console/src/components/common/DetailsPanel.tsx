@@ -9,6 +9,7 @@ import { detailsPanelWidth } from './constants';
 const useStyles = makeStyles((theme: Theme) => ({
   modal: {
     pointerEvents: 'none',
+    padding: '100px',
   },
   paper: {
     display: 'flex',
@@ -54,7 +55,6 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
       open={open}
       key="detailsPanel"
     >
-      <div className={styles.spacer} />
       <Paper className={styles.paper} id={detailsPanelId} square={true}>
         {children}
       </Paper>

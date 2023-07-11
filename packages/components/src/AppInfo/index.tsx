@@ -18,7 +18,6 @@ export const INFO_WINDOW_WIDTH = 260;
 const useStyles = makeStyles((theme: Theme) => ({
   infoIcon: {
     cursor: 'pointer',
-    marginLeft: theme.spacing(1),
     backgroundColor: 'initial',
   },
   closeButton: {

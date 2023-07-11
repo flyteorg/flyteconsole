@@ -176,7 +176,7 @@ export const getExecutionMetricsOperationIds = (
   const operationIds = uniq(
     traverse(data)
       .paths()
-      .filter(path => path.at(-1) === 'operationId')
+      .filter(path => path[path.length - 1] === 'operationId')
       .map(path => get(data, path)),
   );
 
