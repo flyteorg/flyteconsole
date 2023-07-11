@@ -1,6 +1,11 @@
 import { Routes } from 'routes';
 import { domains, namedEntities, projects } from '../async/fn';
-import { projectSelfLink } from '../selfLinks';
+import {
+  launchPlanSelfLink,
+  projectSelfLink,
+  taskSelfLink,
+  workflowSelfLink,
+} from '../selfLinks';
 import { Breadcrumb } from '../types';
 import { makeBreadcrumb } from './utils';
 import { namedEntitiesDefaultValue } from '../defaultValue';
@@ -14,6 +19,12 @@ import {
   executionsPeerExecutionList,
   executonNamedEntityAsyncValue,
   executonTaskWorkFlowNameAsyncValue,
+  launchPlanVersions,
+  launchPlanVersionsLink,
+  taskVersions,
+  taskVersionsLink,
+  workflowVersions,
+  workflowVersionsLink,
 } from '../async/executionContext';
 
 /**
@@ -46,13 +57,14 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
   makeBreadcrumb({
     id: 'executions:named-entity',
     label: 'Entity Search Lists',
-    asyncValue: executonNamedEntityAsyncValue,
+    defaultValue: 'Executions',
     asyncData: namedEntities,
     valididator: executionsValidatorEmpty,
   }),
   makeBreadcrumb({
     id: 'executions:task-workflow-name',
     label: 'Workflow',
+    defaultValue: 'Executions',
     asyncValue: executonTaskWorkFlowNameAsyncValue,
     asyncData: executionTaskWorkflowVersions,
     asyncViewAllLink: executionTaskWorkflowViewAll,
@@ -62,5 +74,41 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     label: 'Executions',
     defaultValue: 'Executions',
     asyncData: executionsPeerExecutionList,
+  }),
+  makeBreadcrumb({
+    id: 'tasks:details',
+    label: 'Execution',
+    selfLink: taskSelfLink,
+    asyncData: taskVersions,
+    asyncViewAllLink: taskVersionsLink,
+  }),
+  makeBreadcrumb({
+    id: 'task:versions',
+    label: 'Execution',
+    selfLink: taskSelfLink,
+  }),
+  makeBreadcrumb({
+    id: 'workflows:details',
+    label: 'Workflow',
+    selfLink: workflowSelfLink,
+    asyncData: workflowVersions,
+    asyncViewAllLink: workflowVersionsLink,
+  }),
+  makeBreadcrumb({
+    id: 'workflow:versions',
+    label: 'Workflow',
+    selfLink: workflowSelfLink,
+  }),
+  makeBreadcrumb({
+    id: 'launchPlans:details',
+    label: 'Launch Plan',
+    selfLink: launchPlanSelfLink,
+    asyncData: launchPlanVersions,
+    asyncViewAllLink: launchPlanVersionsLink,
+  }),
+  makeBreadcrumb({
+    id: 'launch_plan:versions',
+    label: 'Launch Plan',
+    selfLink: launchPlanSelfLink,
   }),
 ];

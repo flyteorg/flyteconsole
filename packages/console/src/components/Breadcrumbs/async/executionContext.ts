@@ -55,6 +55,14 @@ const getExecutionValue = (location: Location) => {
   return executionValue;
 };
 
+const getVersionValue = (location: Location) => {
+  const segments = decodeURIComponent(location.pathname).split('/');
+  const versionSegmentName = segments.findIndex(s => s === 'version');
+
+  const versionValue = segments[versionSegmentName + 1] || '';
+  return versionValue;
+};
+
 export const executonNamedEntityAsyncValue: BreadcrumbAsyncValue = async (
   location,
   breadcrumb,
@@ -138,6 +146,159 @@ export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
   );
 
   return popOverData;
+};
+
+export const taskVersions: BreadcrumbAsyncPopOverData = async (
+  location,
+  breadcrumb,
+) => {
+  const resourceId = {
+    project: breadcrumb.projectId,
+    domain: breadcrumb.domainId,
+    name: breadcrumb.value,
+    resourceType: ResourceType.TASK,
+  };
+
+  const versionValue = getVersionValue(location);
+  const entityVersions = await fetchVersions(resourceId);
+
+  const popOverData: BreadcrumbEntity[] = entityVersions.entities.map(
+    (entityVersion, index) => {
+      const title = entityVersion?.id?.version || '';
+      const url = Routes.EntityVersionDetails.makeUrl(
+        breadcrumb.projectId,
+        breadcrumb.domainId,
+        breadcrumb.value,
+        'task',
+        title,
+      );
+      const createdAt = formatDateUTC(
+        timestampToDate(entityVersion?.closure?.createdAt),
+      );
+
+      // UI only shows last version
+      const active = versionValue ? versionValue === title : index === 0;
+
+      return {
+        title,
+        url,
+        createdAt,
+        active,
+      };
+    },
+  );
+
+  return popOverData;
+};
+
+export const workflowVersions: BreadcrumbAsyncPopOverData = async (
+  location,
+  breadcrumb,
+) => {
+  const resourceId = {
+    project: breadcrumb.projectId,
+    domain: breadcrumb.domainId,
+    name: breadcrumb.value,
+    resourceType: ResourceType.WORKFLOW,
+  };
+
+  const versionValue = getVersionValue(location);
+  const entityVersions = await fetchVersions(resourceId);
+
+  const popOverData: BreadcrumbEntity[] = entityVersions.entities.map(
+    (entityVersion, index) => {
+      const title = entityVersion?.id?.version || '';
+      const url = Routes.EntityVersionDetails.makeUrl(
+        breadcrumb.projectId,
+        breadcrumb.domainId,
+        breadcrumb.value,
+        'workflow',
+        title,
+      );
+      const createdAt = formatDateUTC(
+        timestampToDate(entityVersion?.closure?.createdAt),
+      );
+
+      // UI only shows last version
+      const active = versionValue ? versionValue === title : index === 0;
+
+      return {
+        title,
+        url,
+        createdAt,
+        active,
+      };
+    },
+  );
+
+  return popOverData;
+};
+
+export const launchPlanVersions: BreadcrumbAsyncPopOverData = async (
+  location,
+  breadcrumb,
+) => {
+  const resourceId = {
+    project: breadcrumb.projectId,
+    domain: breadcrumb.domainId,
+    name: breadcrumb.value,
+    resourceType: ResourceType.LAUNCH_PLAN,
+  };
+
+  const versionValue = getVersionValue(location);
+  const entityVersions = await fetchVersions(resourceId);
+
+  const popOverData: BreadcrumbEntity[] = entityVersions.entities.map(
+    (entityVersion, index) => {
+      const title = entityVersion?.id?.version || '';
+      const url = Routes.EntityVersionDetails.makeUrl(
+        breadcrumb.projectId,
+        breadcrumb.domainId,
+        breadcrumb.value,
+        'launch_plan',
+        title,
+      );
+      const createdAt = formatDateUTC(
+        timestampToDate(entityVersion?.closure?.createdAt),
+      );
+
+      // UI only shows last version
+      const active = versionValue ? versionValue === title : index === 0;
+
+      return {
+        title,
+        url,
+        createdAt,
+        active,
+      };
+    },
+  );
+
+  return popOverData;
+};
+
+export const taskVersionsLink: BreadcrumbAsyncViewAllLink = async (
+  location,
+  breadcrumb,
+) => {
+  const data = await taskVersions(location, breadcrumb);
+  return data[0].url;
+};
+
+export const workflowVersionsLink: BreadcrumbAsyncViewAllLink = async (
+  location,
+  breadcrumb,
+) => {
+  const data = await workflowVersions(location, breadcrumb);
+  return data[0].url;
+};
+
+export const launchPlanVersionsLink: BreadcrumbAsyncViewAllLink = async (
+  location,
+  breadcrumb,
+) => {
+  const data = await launchPlanVersions(location, breadcrumb);
+  return data[0].url;
 };
 
 export const executionTaskWorkflowViewAll: BreadcrumbAsyncViewAllLink = async (
