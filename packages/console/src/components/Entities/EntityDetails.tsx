@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { contentMarginGridUnits } from 'common/layout';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks/useProjects';
 import { useChartState } from 'components/hooks/useChartState';
