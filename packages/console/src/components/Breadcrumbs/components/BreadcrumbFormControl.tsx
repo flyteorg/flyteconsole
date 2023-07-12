@@ -52,10 +52,29 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
     return queryAsyncValueData;
   }, [queryAsyncValueData]);
 
+  const { data: queryAsyncSelfLinkData } = useQuery(
+    `breadcrumb-selflinkasync-${props.id}`,
+    async () => {
+      if (!props.asyncValue) return '';
+      return props.asyncValue(window.location, props);
+    },
+    {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  );
+  const asyncSelfLinkData: string = useMemo(() => {
+    if (isEmpty(queryAsyncSelfLinkData) || queryAsyncSelfLinkData === undefined)
+      return '';
+    return queryAsyncSelfLinkData;
+  }, [queryAsyncSelfLinkData]);
+
   const handleValueClick = e => {
     e.preventDefault();
     e.stopPropagation();
-    if (props.selfLink) {
+    if (props.selfLink || props.asyncSelfLink) {
+      if (asyncSelfLinkData) {
+        history.push(asyncSelfLinkData);
+      }
       if (typeof props.selfLink === 'function') {
         history.push(props.selfLink(window.location, props));
       } else {
@@ -78,10 +97,10 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
   const styles = makeStyles(theme => ({
     formControl: {
       '& .breadcrumb-form-control-input': {
-        cursor: props.selfLink ? 'pointer' : 'default',
+        cursor: props.selfLink || props.asyncSelfLink ? 'pointer' : 'default',
         color: theme.palette.text.primary,
         '& *': {
-          cursor: props.selfLink ? 'pointer' : 'default',
+          cursor: props.selfLink || props.asyncSelfLink ? 'pointer' : 'default',
         },
       },
       '& h1': {

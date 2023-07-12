@@ -18,6 +18,7 @@ import {
   executionTaskWorkflowViewAll,
   executionsPeerExecutionList,
   executonNamedEntityAsyncValue,
+  executonTaskWorkFlowNameAsyncSelfLink,
   executonTaskWorkFlowNameAsyncValue,
   launchPlanVersions,
   launchPlanVersionsLink,
@@ -69,6 +70,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     asyncValue: executonTaskWorkFlowNameAsyncValue,
     asyncData: executionTaskWorkflowVersions,
     asyncViewAllLink: executionTaskWorkflowViewAll,
+    asyncSelfLink: executonTaskWorkFlowNameAsyncSelfLink,
   }),
   makeBreadcrumb({
     id: 'executions',

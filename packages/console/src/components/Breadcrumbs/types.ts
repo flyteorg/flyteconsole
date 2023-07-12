@@ -11,6 +11,7 @@ export interface Breadcrumb {
   asyncData: BreadcrumbAsyncPopOverData;
   customComponent?: React.FC<any>;
   selfLink: BreadcrumbEntitySelfLink;
+  asyncSelfLink?: BreadcrumbAsyncViewAllLink;
   viewAllLink: BreadcrumbEntityViewAllLink;
   asyncViewAllLink?: BreadcrumbAsyncViewAllLink;
   required: boolean;
@@ -102,6 +103,11 @@ export type BreadcrumbEntitySelfLink =
       location: Location,
       breadcrumb: BreadcrumbFormControlInterface,
     ) => string);
+
+export type BreadcrumbEntitySelfLinkAsync = (
+  location: Location,
+  breadcrumb: BreadcrumbFormControlInterface,
+) => Promise<string>;
 
 export interface BreadcrumbPopoverInterface
   extends BreadcrumbFormControlInterface {
