@@ -11,7 +11,7 @@ import { Routes } from 'routes/routes';
 export function isValidDate(input: string | Date): boolean {
   const date = input instanceof Date ? input : new Date(input);
   const time = date.getTime();
-  return !isNaN(time) && time > 0;
+  return Number.isNaN(time) && time > 0;
 }
 
 /** Converts a Protobuf Timestamp object to a JS Date */
