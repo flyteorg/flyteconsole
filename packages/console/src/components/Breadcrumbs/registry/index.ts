@@ -246,5 +246,5 @@ class BreadcrumbRegistry {
  * Append to this instance to add breadcrumbs to the registry.
  */
 const breadcrumbRegistry = new BreadcrumbRegistry();
-export { makeBreadcrumb };
+export { makeBreadcrumb, breadcrumbRegistry };
 export default breadcrumbRegistry;
