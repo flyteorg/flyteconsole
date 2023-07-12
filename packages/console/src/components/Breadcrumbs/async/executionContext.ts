@@ -10,6 +10,7 @@ import {
   BreadcrumbAsyncValue,
   BreadcrumbAsyncViewAllLink,
   BreadcrumbEntity,
+  BreadcrumbEntitySelfLinkAsync,
   BreadcrumbFormControlInterface,
 } from '../types';
 import { fetchVersions } from './fn';
@@ -94,6 +95,32 @@ export const executonTaskWorkFlowNameAsyncValue: BreadcrumbAsyncValue = async (
 
   return getTaskOrWorkflowName(executionData);
 };
+
+export const executonTaskWorkFlowNameAsyncSelfLink: BreadcrumbEntitySelfLinkAsync =
+  async (location, breadcrumb) => {
+    const executionValue = getExecutionValue(location);
+    const executionData = await getExecutionData(
+      breadcrumb.projectId,
+      breadcrumb.domainId,
+      executionValue,
+    );
+
+    const resourceName = getTaskOrWorkflowName(executionData);
+    const resourceType = isExecutionTaskOrWorkflow(executionData);
+
+    if (resourceType === ResourceType.TASK) {
+      return Routes.TaskDetails.makeUrl(
+        breadcrumb.projectId,
+        breadcrumb.domainId,
+        resourceName,
+      );
+    }
+    return Routes.WorkflowDetails.makeUrl(
+      breadcrumb.projectId,
+      breadcrumb.domainId,
+      resourceName,
+    );
+  };
 
 export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
   location,

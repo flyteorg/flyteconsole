@@ -14,6 +14,7 @@ const defaultBreadcrumb: Breadcrumb = {
   required: false,
   asyncValue: undefined,
   asyncViewAllLink: undefined,
+  asyncSelfLink: undefined,
 };
 
 export const makeBreadcrumb = (config: Partial<Breadcrumb>) => {
