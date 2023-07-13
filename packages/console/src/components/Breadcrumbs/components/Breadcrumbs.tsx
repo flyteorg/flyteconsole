@@ -6,7 +6,7 @@ import { Grid } from '@material-ui/core';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import get from 'lodash/get';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
-import breadcrumbRegistry from '../registry';
+import { breadcrumbRegistry } from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl, projectIdfromUrl } from '../async/utils';
 import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';

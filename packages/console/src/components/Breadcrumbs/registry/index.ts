@@ -247,4 +247,3 @@ class BreadcrumbRegistry {
  */
 const breadcrumbRegistry = new BreadcrumbRegistry();
 export { makeBreadcrumb, breadcrumbRegistry };
-export default breadcrumbRegistry;
