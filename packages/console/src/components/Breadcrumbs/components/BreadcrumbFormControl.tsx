@@ -37,7 +37,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
   };
 
   const { data: queryAsyncValueData } = useQuery(
-    `breadcrumb-selfasync-${props.id}`,
+    `breadcrumb-selfasync-${props.id}-${props.value}`,
     async () => {
       if (!props.asyncValue) return '';
       return props.asyncValue(window.location, props);
@@ -53,7 +53,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
   }, [queryAsyncValueData]);
 
   const { data: queryAsyncSelfLinkData } = useQuery(
-    `breadcrumb-selflinkasync-${props.id}`,
+    `breadcrumb-selflinkasync-${props.id}-${props.value}`,
     async () => {
       if (!props.asyncValue) return '';
       return props.asyncValue(window.location, props);
