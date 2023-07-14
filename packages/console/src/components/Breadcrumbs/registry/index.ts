@@ -200,7 +200,7 @@ class BreadcrumbRegistry {
           nextPathSegment,
           url,
         };
-        return seed.valididator(validator);
+        return seed.validator(validator);
       });
 
       for (let j = 0; j < seeds.length; j++) {

@@ -7,7 +7,7 @@ export interface Breadcrumb {
   label: string;
   defaultValue: string | BreadcrumbCustomDefaultValue;
   asyncValue?: BreadcrumbAsyncValue;
-  valididator: BreadcrumbValidator;
+  validator: BreadcrumbValidator;
   asyncData: BreadcrumbAsyncPopOverData;
   customComponent?: React.FC<any>;
   selfLink: BreadcrumbEntitySelfLink;
