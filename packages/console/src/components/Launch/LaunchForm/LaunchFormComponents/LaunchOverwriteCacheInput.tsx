@@ -1,10 +1,17 @@
-import * as React from 'react';
+import React, {
+  ForwardRefRenderFunction,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { Typography } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { LaunchOverwriteCacheInputRef } from './types';
-import { useStyles } from './styles';
-import t from './strings';
+import { LaunchOverwriteCacheInputRef } from '../types';
+import { useStyles } from '../styles';
+import t from '../strings';
 
 const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
@@ -14,24 +21,24 @@ interface LaunchOverwriteCacheInputProps {
   initialValue?: boolean | null;
 }
 
-export const LaunchOverwriteCacheInputImpl: React.ForwardRefRenderFunction<
+export const LaunchOverwriteCacheInputImpl: ForwardRefRenderFunction<
   LaunchOverwriteCacheInputRef,
   LaunchOverwriteCacheInputProps
 > = (props, ref) => {
   // overwriteCache stores the override to enable/disable the setting for an execution
-  const [overwriteCache, setOverwriteCache] = React.useState(false);
+  const [overwriteCache, setOverwriteCache] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isValueValid(props.initialValue)) {
       setOverwriteCache(() => props.initialValue!);
     }
   }, [props.initialValue]);
 
-  const handleInputChange = React.useCallback(() => {
+  const handleInputChange = useCallback(() => {
     setOverwriteCache(prevState => !prevState);
   }, [overwriteCache]);
 
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref,
     () => ({
       getValue: () => {
@@ -67,6 +74,6 @@ export const LaunchOverwriteCacheInputImpl: React.ForwardRefRenderFunction<
   );
 };
 
-export const LaunchOverwriteCacheInput = React.forwardRef(
+export const LaunchOverwriteCacheInput = forwardRef(
   LaunchOverwriteCacheInputImpl,
 );

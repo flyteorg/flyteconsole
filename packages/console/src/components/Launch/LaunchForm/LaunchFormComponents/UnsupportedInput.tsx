@@ -1,11 +1,10 @@
+import React, { FC } from 'react';
 import { TextField } from '@material-ui/core';
-import * as React from 'react';
-import t from './strings';
-import { InputProps } from './types';
-import { getLaunchInputId } from './utils';
+import { InputProps } from '../types';
+import { getLaunchInputId } from '../utils';
 
 /** Shared renderer for any launch input type we can't accept via the UI */
-export const NoneInput: React.FC<InputProps> = props => {
+export const UnsupportedInput: FC<InputProps> = props => {
   const { description, label, name } = props;
   return (
     <TextField
@@ -15,7 +14,7 @@ export const NoneInput: React.FC<InputProps> = props => {
       variant="outlined"
       disabled={true}
       helperText={description}
-      value={t('noneInputTypeDescription')}
+      value="Flyte Console does not support entering values of this type"
     />
   );
 };

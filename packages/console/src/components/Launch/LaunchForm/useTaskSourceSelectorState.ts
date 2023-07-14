@@ -4,7 +4,7 @@ import { Identifier, NamedEntityIdentifier } from 'models/Common/types';
 import { taskSortFields } from 'models/Task/constants';
 import { Task } from 'models/Task/types';
 import { useMemo, useState } from 'react';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 import { TaskSourceSelectorState } from './types';
 import { useVersionSelectorOptions } from './useVersionSelectorOptions';
 import { versionsToSearchableSelectorOptions } from './utils';

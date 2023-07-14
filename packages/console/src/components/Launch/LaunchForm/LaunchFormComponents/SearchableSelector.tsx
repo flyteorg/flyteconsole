@@ -1,3 +1,4 @@
+import React, { ChangeEvent, FC, useState, MouseEvent, useRef } from 'react';
 import {
   IconButton,
   InputAdornment,
@@ -14,7 +15,6 @@ import { isLoadingState } from 'components/hooks/fetchMachine';
 import { FetchableData, FetchFn } from 'components/hooks/types';
 import { useDebouncedValue } from 'components/hooks/useDebouncedValue';
 import { useFetchableData } from 'components/hooks/useFetchableData';
-import * as React from 'react';
 import reactLoadingSkeleton from 'react-loading-skeleton';
 
 const Skeleton = reactLoadingSkeleton;
@@ -26,6 +26,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     flexGrow: 1,
     position: 'relative',
+    display: 'inline-block',
+    marginBottom: theme.spacing(1),
   },
   menuItem: {
     display: 'flex',
@@ -73,7 +75,7 @@ interface SearchableSelectorState<DataType> {
   showList: boolean;
   inputValue: string;
   onBlur(): void;
-  onChange(event: React.ChangeEvent<HTMLInputElement>): void;
+  onChange(event: ChangeEvent<HTMLInputElement>): void;
   onFocus(): void;
   selectItem(item: SearchableSelectorOption<DataType>): void;
   setIsExpanded(expanded: boolean): void;
@@ -93,15 +95,15 @@ function useSearchableSelectorState<DataType>({
   onSelectionChanged,
 }: SearchableSelectorProps<DataType>): SearchableSelectorState<DataType> {
   const fetchResults = fetchSearchResults || generateDefaultFetch(options);
-  const [hasReceivedInput, setHasReceivedInput] = React.useState(false);
-  const [rawSearchValue, setSearchValue] = React.useState('');
+  const [hasReceivedInput, setHasReceivedInput] = useState(false);
+  const [rawSearchValue, setSearchValue] = useState('');
   const debouncedSearchValue = useDebouncedValue(
     rawSearchValue,
     searchDebounceTimeMs,
   );
 
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const [focused, setFocused] = React.useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [focused, setFocused] = useState(false);
   const minimumQueryMet =
     hasReceivedInput && debouncedSearchValue.length > minimumQuerySize;
 
@@ -137,9 +139,7 @@ function useSearchableSelectorState<DataType>({
     setFocused(true);
   };
 
-  const onChange = ({
-    target: { value },
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
     setHasReceivedInput(true);
     setSearchValue(value);
   };
@@ -169,17 +169,17 @@ function useSearchableSelectorState<DataType>({
   };
 }
 
-const preventBubble = (event: React.MouseEvent<any>) => {
+const preventBubble = (event: MouseEvent<any>) => {
   event.preventDefault();
 };
 
-const NoResultsContent: React.FC = () => (
+const NoResultsContent: FC = () => (
   <MenuItem className={useStyles().placeholderResult} disabled={true}>
     No results found.
   </MenuItem>
 );
 
-const LoadingContent: React.FC = () => (
+const LoadingContent: FC = () => (
   <MenuItem className={useStyles().placeholderResult} disabled={true}>
     <div style={{ width: '100%' }}>
       <Skeleton />
@@ -235,7 +235,7 @@ export const SearchableSelector = <DataType extends {}>(
   const state = useSearchableSelectorState(props);
   const { inputValue, isExpanded, onBlur, onChange, setIsExpanded, showList } =
     state;
-  const inputRef = React.useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>();
 
   const blurInput = () => {
     if (inputRef.current) {
@@ -269,7 +269,7 @@ export const SearchableSelector = <DataType extends {}>(
       <TextField
         id={props.id}
         inputRef={inputRef}
-        fullWidth={true}
+        fullWidth={false}
         InputProps={{
           onBlur,
           onFocus,

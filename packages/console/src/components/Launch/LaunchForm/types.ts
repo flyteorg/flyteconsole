@@ -23,7 +23,7 @@ import {
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
 } from './launchMachine';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
@@ -247,7 +247,8 @@ export interface InputProps {
   typeDefinition: InputTypeDefinition;
   value?: InputValue;
   onChange: InputChangeHandler;
-  setIsError: (boolean) => void;
+  // used to signal to the input that it is part of a collection
+  hasCollectionParent?: boolean;
 }
 
 export interface ParsedInput

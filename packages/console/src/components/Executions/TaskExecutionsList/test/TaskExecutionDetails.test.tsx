@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { unknownValueString } from 'common/constants';
 import * as React from 'react';
 import { long } from 'test/utils';
@@ -44,8 +44,10 @@ describe('TaskExecutionDetails', () => {
     expect(queryByText('0s')).not.toBeInTheDocument();
   });
 
-  it('should render details with task updated info without duration', () => {
-    const { queryByText } = render(<TaskExecutionDetails updatedAt={date} />);
+  it('should render details with task updated info without duration', async () => {
+    const { queryByText } = await render(
+      <TaskExecutionDetails updatedAt={date} />,
+    );
 
     expect(queryByText('started')).not.toBeInTheDocument();
     expect(queryByText('last updated')).toBeInTheDocument();

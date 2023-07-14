@@ -1,15 +1,12 @@
+import React, { useEffect } from 'react';
 import {
   Button,
   FormHelperText,
   IconButton,
   TextField,
-  Typography,
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import * as React from 'react';
 import RemoveIcon from '@material-ui/icons/Remove';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import t from './strings';
 import {
   InputProps,
@@ -19,6 +16,7 @@ import {
 } from './types';
 import { formatType, toMappedTypeValue } from './utils';
 import { getHelperForInput } from './inputHelpers/getHelperForInput';
+import { StyledCard } from './LaunchFormComponents/StyledCard';
 
 const useStyles = makeStyles((theme: Theme) => ({
   formControl: {
@@ -48,80 +46,74 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const arrayToMappedType = (array: MapInputItem[]): string => {
+  const newPairs = array.map(item => {
+    return {
+      key: item.key,
+      value: item.value,
+    };
+  });
+
+  return toMappedTypeValue(newPairs);
+};
+
 interface MapInputItemProps {
   data: MapInputItem;
-  subtype?: InputTypeDefinition;
+  typeDefinition: InputTypeDefinition;
   setKey: (key: string) => void;
   setValue: (value: string) => void;
-  isValid: (value: string) => boolean;
+  validate: (value: MapInputItem) => string | undefined;
   onDeleteItem: () => void;
 }
 
 const MapSingleInputItem = (props: MapInputItemProps) => {
   const classes = useStyles();
-  const { data, subtype, setKey, setValue, isValid, onDeleteItem } = props;
-  const [error, setError] = React.useState(false);
-  const [focused, setFocused] = React.useState(false);
-  const [touched, setTouched] = React.useState(false);
+  const { data, typeDefinition, setKey, setValue, onDeleteItem, validate } =
+    props;
+  // const [tupleError, setTupleError] = React.useState<string>();
 
+  const tupleError = validate(data);
+  const { subtype } = typeDefinition;
   const isOneLineType =
     subtype?.type === InputType.String || subtype?.type === InputType.Integer;
 
-  let invalidValueError = null;
-  if (subtype && !focused && touched) {
-    const helper = getHelperForInput(subtype.type);
-    try {
-      helper.validate({
-        name: data.key,
-        value: data.value,
-        required: true,
-        typeDefinition: subtype,
-      });
-    } catch (e) {
-      invalidValueError = e?.message;
-    }
-  }
-
   return (
-    <div className={classes.controls}>
-      <TextField
-        label={`string${t('requiredInputSuffix')}`}
-        onChange={({
-          target: { value },
-        }: React.ChangeEvent<HTMLInputElement>) => {
-          setKey(value);
-          setError(!!value && !isValid(value));
-        }}
-        value={data.key}
-        error={error}
-        placeholder="key"
-        variant="outlined"
-        helperText={error ? 'This key already defined' : ''}
-        className={classes.keyControl}
-      />
-      <TextField
-        label={
-          subtype ? `${formatType(subtype)}${t('requiredInputSuffix')}` : ''
-        }
-        onChange={({
-          target: { value },
-        }: React.ChangeEvent<HTMLInputElement>) => {
-          setTouched(true);
-          setValue(value);
-        }}
-        value={data.value}
-        variant="outlined"
-        className={classes.valueControl}
-        multiline={!isOneLineType}
-        type={subtype?.type === InputType.Integer ? 'number' : 'text'}
-        error={!!invalidValueError}
-        helperText={invalidValueError ? invalidValueError : ''}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
-      />
-      <IconButton onClick={onDeleteItem}>
-        <RemoveIcon />
-      </IconButton>
+    <div>
+      <div className={classes.controls}>
+        <TextField
+          label={`string${t('requiredInputSuffix')}`}
+          onChange={({
+            target: { value },
+          }: React.ChangeEvent<HTMLInputElement>) => {
+            setKey(value);
+          }}
+          value={data.key}
+          error={!!tupleError}
+          placeholder="key"
+          variant="outlined"
+          className={classes.keyControl}
+        />
+        <TextField
+          label={
+            subtype ? `${formatType(subtype)}${t('requiredInputSuffix')}` : ''
+          }
+          onChange={({
+            target: { value },
+          }: React.ChangeEvent<HTMLInputElement>) => {
+            setValue(value);
+          }}
+          value={data.value}
+          variant="outlined"
+          className={classes.valueControl}
+          multiline={!isOneLineType}
+          type={subtype?.type === InputType.Integer ? 'number' : 'text'}
+          error={!!tupleError}
+        />
+        <IconButton onClick={onDeleteItem}>
+          <RemoveIcon />
+        </IconButton>
+      </div>
+      <FormHelperText error={!!tupleError}>{tupleError}</FormHelperText>
     </div>
   );
 };
@@ -156,117 +148,81 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
 }
 
 export const MapInput = (props: InputProps) => {
-  const {
-    value,
-    label,
-    onChange,
-    error,
-    typeDefinition: { subtype },
-    setIsError,
-  } = props;
+  const { value, label, onChange, error, typeDefinition } = props;
   const classes = useStyles();
-
   const [data, setData] = React.useState<MapInputItem[]>(
     parseMappedTypeValue(value),
   );
 
   const onAddItem = () => {
-    setIsError?.(true);
     setData(data => [...data, getNewMapItem(data.length)]);
   };
 
-  const updateUpperStream = (newData: MapInputItem[]) => {
-    let newError = false;
-    newData.forEach(item => {
-      if (item.id === null || !item.key?.length || !item.value?.length)
-        newError = true;
-      else {
-        if (
-          data.findIndex(({ key, id }) => id !== item.id && key === item.key) >=
-          0
-        )
-          newError = true;
-      }
-    });
-    const newPairs = newData
-      .filter(item => {
-        // we filter out delted values and items with errors or empty keys/values
-        return item.id !== null && !!item.key && !!item.value;
-      })
-      .map(item => {
-        return {
-          key: item.key,
-          value: item.value,
-        };
-      });
-    const newValue = toMappedTypeValue(newPairs);
-    onChange(newValue);
-    if (newError) setIsError?.(newError);
-  };
+  useEffect(() => {
+    try {
+      const newValue = arrayToMappedType(data);
+      onChange(newValue);
+    } catch (error) {
+      // noop
+    }
+  }, [data]);
 
-  const onSetKey = (id: number | null, key: string) => {
-    if (id === null) return;
+  const onSetKey = (index: number, key: string) => {
     const newData = [...data];
-    newData[id].key = key;
+    newData[index].key = key;
     setData([...newData]);
-    updateUpperStream([...newData]);
   };
 
-  const onSetValue = (id: number | null, value: string) => {
-    if (id === null) return;
+  const onSetValue = (index: number, value: string) => {
     const newData = [...data];
-    newData[id].value = value;
+    newData[index].value = value;
     setData([...newData]);
-    updateUpperStream([...newData]);
   };
 
-  const onDeleteItem = (id: number | null) => {
-    if (id === null) return;
+  const onDeleteItem = index => {
     const newData = [...data];
-    const dataIndex = newData.findIndex(item => item.id === id);
-    if (dataIndex >= 0 && dataIndex < newData.length) {
-      newData[dataIndex].id = null;
+    if (index >= 0 && index < newData.length) {
+      newData.splice(index, 1);
     }
     setData([...newData]);
-    updateUpperStream([...newData]);
-  };
-
-  const isValid = (id: number | null, value: string) => {
-    if (id === null) return true;
-    // findIndex returns -1 if value is not found, which means we can use that key
-    return (
-      data
-        .filter(item => item.id !== null && item.id !== id)
-        .findIndex(item => item.key === value) === -1
-    );
   };
 
   return (
-    <Card variant="outlined">
-      <CardContent>
-        <Typography variant="body1" component="label">
-          {label}
-        </Typography>
-        {data
-          .filter(item => item.id !== null)
-          .map(item => {
-            return (
-              <MapSingleInputItem
-                key={item.id}
-                data={item}
-                subtype={subtype}
-                setKey={key => onSetKey(item.id, key)}
-                setValue={value => onSetValue(item.id, value)}
-                isValid={value => isValid(item.id, value)}
-                onDeleteItem={() => onDeleteItem(item.id)}
-              />
-            );
-          })}
-        {error && <FormHelperText error={true}>{error}</FormHelperText>}
-        <div className={classes.addButton}>
-          <Button onClick={onAddItem}>+ ADD ITEM</Button>
-        </div>
-      </CardContent>
-    </Card>
+    <StyledCard error={error} label={label}>
+      {data
+        .filter(item => item.id !== null)
+        .map((item, index) => {
+          return (
+            <MapSingleInputItem
+              key={item.id}
+              data={item}
+              typeDefinition={typeDefinition}
+              setKey={key => onSetKey(index, key)}
+              setValue={value => onSetValue(index, value)}
+              validate={value => {
+                const instances = data.filter(i => i.key === value.key);
+                if (instances.length > 1) {
+                  return 'Duplicate key';
+                }
+
+                const helper = getHelperForInput(typeDefinition.type);
+                try {
+                  helper.validate({
+                    typeDefinition,
+                    value: arrayToMappedType([value]),
+                    required: true,
+                  } as any);
+                } catch (e) {
+                  return e.message;
+                }
+              }}
+              onDeleteItem={() => onDeleteItem(index)}
+            />
+          );
+        })}
+      <div className={classes.addButton}>
+        <Button onClick={onAddItem}>+ ADD ITEM</Button>
+      </div>
+    </StyledCard>
   );
 };

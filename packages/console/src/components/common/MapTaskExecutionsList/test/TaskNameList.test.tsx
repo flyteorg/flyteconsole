@@ -21,7 +21,7 @@ const taskLogsWithoutUri = [
 describe('TaskNameList', () => {
   it('should render log names in color if they have URI', async () => {
     const { queryAllByTestId } = render(
-      <ThemeProvider theme={getMuiTheme()}>
+      <ThemeProvider theme={getMuiTheme({})}>
         <TaskNameList
           logs={taskLogs}
           taskExecution={mockTaskExecution}

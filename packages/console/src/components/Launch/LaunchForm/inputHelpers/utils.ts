@@ -20,13 +20,28 @@ export function extractLiteralWithCheck<T>(
 /** Converts a value within a collection to the appropriate string
  * representation. Some values require additional quotes.
  */
-export function collectionChildToString(type: InputType, value: any) {
+export function collectionChildToStringOld(type: InputType, value: any) {
   if (value === undefined) {
     return '';
   }
   return type === (InputType.Integer || InputType.Struct)
     ? `${value}`
     : stringifyValue(value);
+}
+
+export function formatParameterValues(type: InputType, value: any) {
+  if (value === undefined) {
+    return '';
+  }
+
+  return type === InputType.Integer
+    ? `${value}`
+    : JSON.stringify(value, null, type === InputType.Struct ? 2 : 0)
+        .split(',')
+        .join(', ');
+  // return type === (InputType.Integer || InputType.Struct)
+  //   ? `${value}`
+  //   : stringifyValue(value);
 }
 
 /** Determines if a given input type, including all levels of nested types, is

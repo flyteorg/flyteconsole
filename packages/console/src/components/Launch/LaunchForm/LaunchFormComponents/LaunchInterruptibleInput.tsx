@@ -1,11 +1,18 @@
+import React, {
+  ForwardRefRenderFunction,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { makeStyles, Theme, Typography } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import * as React from 'react';
 import { Protobuf } from '@flyteorg/flyteidl-types';
-import { useStyles } from './styles';
-import { LaunchInterruptibleInputRef } from './types';
-import t from './strings';
+import { useStyles } from '../styles';
+import { LaunchInterruptibleInputRef } from '../types';
+import t from '../strings';
 
 export const useInterruptibleStyles = makeStyles((theme: Theme) => ({
   labelIndeterminate: {
@@ -21,16 +28,16 @@ interface LaunchInterruptibleInputProps {
   initialValue?: Protobuf.IBoolValue | null;
 }
 
-export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
+export const LaunchInterruptibleInputImpl: ForwardRefRenderFunction<
   LaunchInterruptibleInputRef,
   LaunchInterruptibleInputProps
 > = (props, ref) => {
   // interruptible stores the override to enable/disable the setting for an execution
-  const [interruptible, setInterruptible] = React.useState(false);
+  const [interruptible, setInterruptible] = useState(false);
   // indeterminate tracks whether the interruptible flag is unspecified/indeterminate (true) or an override has been selected (false)
-  const [indeterminate, setIndeterminate] = React.useState(true);
+  const [indeterminate, setIndeterminate] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       isValueValid(props.initialValue) &&
       isValueValid(props.initialValue!.value)
@@ -43,7 +50,7 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
     }
   }, [props.initialValue?.value]);
 
-  const handleInputChange = React.useCallback(() => {
+  const handleInputChange = useCallback(() => {
     if (indeterminate) {
       setInterruptible(() => true);
       setIndeterminate(() => false);
@@ -56,7 +63,7 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
     }
   }, [interruptible, indeterminate]);
 
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref,
     () => ({
       getValue: () => {
@@ -114,6 +121,6 @@ export const LaunchInterruptibleInputImpl: React.ForwardRefRenderFunction<
   );
 };
 
-export const LaunchInterruptibleInput = React.forwardRef(
+export const LaunchInterruptibleInput = forwardRef(
   LaunchInterruptibleInputImpl,
 );

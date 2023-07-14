@@ -1,6 +1,17 @@
-import * as React from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { Admin } from '@flyteorg/flyteidl-types';
-import { createTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import {
+  createGenerateClassName,
+  createTheme,
+  MuiThemeProvider,
+  StylesProvider,
+} from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -14,13 +25,13 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Form from '@rjsf/material-ui';
 import validator from '@rjsf/validator-ajv8';
 import { State } from 'xstate';
-import { LaunchAdvancedOptionsRef } from './types';
+import { LaunchAdvancedOptionsRef } from '../types';
 import {
   WorkflowLaunchContext,
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
-} from './launchMachine';
-import { useStyles } from './styles';
+} from '../launchMachine';
+import { useStyles } from '../styles';
 
 const muiTheme = createTheme({
   props: {
@@ -62,7 +73,7 @@ const isValueValid = (value: any) => {
   return value !== undefined && value !== null;
 };
 
-export const LaunchFormAdvancedInputs = React.forwardRef<
+export const LaunchFormAdvancedInputs = forwardRef<
   LaunchAdvancedOptionsRef,
   LaunchAdvancedOptionsProps
 >(
@@ -75,13 +86,13 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
     ref,
   ) => {
     const styles = useStyles();
-    const [labelsParamData, setLabelsParamData] = React.useState({});
-    const [annotationsParamData, setAnnotationsParamData] = React.useState({});
-    const [disableAll, setDisableAll] = React.useState(false);
-    const [maxParallelism, setMaxParallelism] = React.useState('');
-    const [rawOutputDataConfig, setRawOutputDataConfig] = React.useState('');
+    const [labelsParamData, setLabelsParamData] = useState({});
+    const [annotationsParamData, setAnnotationsParamData] = useState({});
+    const [disableAll, setDisableAll] = useState(false);
+    const [maxParallelism, setMaxParallelism] = useState('');
+    const [rawOutputDataConfig, setRawOutputDataConfig] = useState('');
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (isValueValid(other.disableAll)) {
         setDisableAll(other.disableAll!);
       }
@@ -113,7 +124,7 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
       launchPlan?.spec,
     ]);
 
-    React.useImperativeHandle(
+    useImperativeHandle(
       ref,
       () => ({
         getValues: () => {
@@ -144,26 +155,23 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
       ],
     );
 
-    const handleDisableAllChange = React.useCallback(() => {
+    const handleDisableAllChange = useCallback(() => {
       setDisableAll(prevState => !prevState);
     }, []);
 
-    const handleMaxParallelismChange = React.useCallback(
-      ({ target: { value } }) => {
-        setMaxParallelism(value);
-      },
-      [],
-    );
+    const handleMaxParallelismChange = useCallback(({ target: { value } }) => {
+      setMaxParallelism(value);
+    }, []);
 
-    const handleLabelsChange = React.useCallback(({ formData }) => {
+    const handleLabelsChange = useCallback(({ formData }) => {
       setLabelsParamData(formData);
     }, []);
 
-    const handleAnnotationsParamData = React.useCallback(({ formData }) => {
+    const handleAnnotationsParamData = useCallback(({ formData }) => {
       setAnnotationsParamData(formData);
     }, []);
 
-    const handleRawOutputDataConfigChange = React.useCallback(
+    const handleRawOutputDataConfigChange = useCallback(
       ({ target: { value } }) => {
         setRawOutputDataConfig(value);
       },
@@ -185,23 +193,29 @@ export const LaunchFormAdvancedInputs = React.forwardRef<
             </AccordionSummary>
 
             <AccordionDetails>
-              <MuiThemeProvider theme={muiTheme}>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Form
-                      schema={{
-                        type: 'object',
-                        additionalProperties: true,
-                      }}
-                      formData={labelsParamData}
-                      onChange={handleLabelsChange}
-                      validator={validator}
-                    >
-                      <div />
-                    </Form>
-                  </CardContent>
-                </Card>
-              </MuiThemeProvider>
+              <StylesProvider
+                generateClassName={createGenerateClassName({
+                  seed: 'AdvancedInput-',
+                })}
+              >
+                <MuiThemeProvider theme={muiTheme}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Form
+                        schema={{
+                          type: 'object',
+                          additionalProperties: true,
+                        }}
+                        formData={labelsParamData}
+                        onChange={handleLabelsChange}
+                        validator={validator}
+                      >
+                        <div />
+                      </Form>
+                    </CardContent>
+                  </Card>
+                </MuiThemeProvider>
+              </StylesProvider>
             </AccordionDetails>
           </Accordion>
         </section>

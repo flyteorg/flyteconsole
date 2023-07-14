@@ -4,6 +4,7 @@ import { InputTypeDefinition, InputValue, UnionValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import t from '../../../common/strings';
+import { getInputDefintionForLiteralType } from '../utils';
 
 function fromLiteral(
   literal: Core.ILiteral,
@@ -14,27 +15,39 @@ function fromLiteral(
     throw new Error(t('missingUnionListOfSubType'));
   }
 
-  // Unpack nested variant of union data value
-  const literalValue = literal?.scalar?.union?.value
-    ? literal.scalar.union.value
-    : literal;
+  const localLiteral = literal?.scalar?.union || (literal as any);
+  const inputDef =
+    (localLiteral?.type &&
+      getInputDefintionForLiteralType(localLiteral.type as any)) ||
+    localLiteral?.typeDefinition;
 
-  // loop though the subtypes to find the correct match literal typex`
-  for (let i = 0; i < listOfSubTypes.length; i++) {
+  // Unpack nested variant of union data value
+  const literalValue = localLiteral?.value || literal;
+
+  if (inputDef) {
+    const helper = getHelperForInput(inputDef.type);
     try {
-      const value = getHelperForInput(listOfSubTypes[i].type).fromLiteral(
-        literalValue,
-        listOfSubTypes[i],
-      );
-      return { value, typeDefinition: listOfSubTypes[i] } as UnionValue;
-    } catch (error) {
-      // do nothing here. it's expected to have error from fromLiteral
-      // because we loop through all the type to decode the input value
-      // the error should be something like this
-      // new Error(`Failed to extract literal value with path ${path}`);
+      const value = helper.fromLiteral(literalValue, inputDef);
+      return { value, typeDefinition: inputDef } as UnionValue;
+    } catch {
+      // no-op, continue executing
     }
   }
-  throw new Error(t('noMatchingResults'));
+
+  // else try to guess the type
+  const values = listOfSubTypes.map(subtype => {
+    const helper = getHelperForInput(subtype.type);
+    try {
+      const value = helper.fromLiteral(literalValue, subtype);
+
+      return { value, typeDefinition: subtype } as UnionValue;
+    } catch {
+      // no-op
+    }
+    return { value: undefined, typeDefinition: subtype };
+  });
+
+  return values?.filter(v => v.value)?.[0] || values?.[0];
 }
 
 function toLiteral({
@@ -51,16 +64,21 @@ function toLiteral({
 
   const { value: unionValue, typeDefinition } = value as UnionValue;
 
-  return getHelperForInput(typeDefinition.type).toLiteral({
+  const literal = getHelperForInput(typeDefinition.type).toLiteral({
     value: unionValue,
     typeDefinition: typeDefinition,
   } as ConverterInput);
+  return {
+    scalar: {
+      union: {
+        value: literal,
+        type: typeDefinition.literalType,
+      },
+    },
+  };
 }
 
-function validate({
-  value,
-  typeDefinition: { listOfSubTypes },
-}: InputValidatorParams) {
+function validate({ value, ...props }: InputValidatorParams) {
   if (!value) {
     throw new Error(t('valueRequired'));
   }
@@ -68,14 +86,32 @@ function validate({
     throw new Error(t('valueMustBeObject'));
   }
 
-  const { typeDefinition } = value as UnionValue;
-  getHelperForInput(typeDefinition.type).validate(
-    value as InputValidatorParams,
-  );
+  try {
+    const { typeDefinition: subTypeDefinition } = value as UnionValue;
+    getHelperForInput(subTypeDefinition.type).validate({
+      required: props.required,
+      ...(value as any),
+    });
+  } catch (error) {
+    throw new Error('Invalid value');
+  }
 }
 
 export const unionHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    const { listOfSubTypes } = typeDefinition;
+    const selectedSubType = listOfSubTypes?.[0];
+    const subtypeHelper = getHelperForInput(selectedSubType?.type!);
+    return {
+      scalar: {
+        union: {
+          value: subtypeHelper.typeDefinitionToDefaultValue(selectedSubType!),
+          type: typeDefinition.literalType,
+        },
+      },
+    };
+  },
 };

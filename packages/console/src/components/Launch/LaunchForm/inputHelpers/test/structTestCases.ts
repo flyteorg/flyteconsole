@@ -23,17 +23,14 @@ const structValues: { [k in keyof typeof values]: Protobuf.IValue } = {
   booleanFalseField: { boolValue: false },
 };
 
-type StructTestCase = [string, Core.ILiteral];
+type StructTestCase = [any, Core.ILiteral];
 export const structTestCases: StructTestCase[] = [
-  ['{}', structLiteral({ fields: {} })],
+  [{}, structLiteral({ fields: {} })],
   // simple case with no lists or nested structs
-  [
-    stringifyValue({ ...values }),
-    structLiteral({ fields: { ...structValues } }),
-  ],
+  [{ ...values }, structLiteral({ fields: { ...structValues } })],
   // Nested struct value
   [
-    stringifyValue({ nestedStruct: { ...values } }),
+    { nestedStruct: { ...values } },
     structLiteral({
       fields: {
         nestedStruct: { structValue: { fields: { ...structValues } } },
@@ -42,7 +39,7 @@ export const structTestCases: StructTestCase[] = [
   ],
   // List
   [
-    stringifyValue({ listField: Object.values(values) }),
+    { listField: Object.values(values) },
     structLiteral({
       fields: {
         listField: {
@@ -53,7 +50,7 @@ export const structTestCases: StructTestCase[] = [
   ],
   // Nested struct with list
   [
-    stringifyValue({ nestedStruct: { listField: Object.values(values) } }),
+    { nestedStruct: { listField: Object.values(values) } },
     structLiteral({
       fields: {
         nestedStruct: {
@@ -72,7 +69,7 @@ export const structTestCases: StructTestCase[] = [
   ],
   // List with nested struct
   [
-    stringifyValue({ listField: [{ ...values }] }),
+    { listField: [{ ...values }] },
     structLiteral({
       fields: {
         listField: {
@@ -85,7 +82,7 @@ export const structTestCases: StructTestCase[] = [
   ],
   // List with nested list
   [
-    stringifyValue({ listField: [Object.values(values)] }),
+    { listField: [Object.values(values)] },
     structLiteral({
       fields: {
         listField: {
