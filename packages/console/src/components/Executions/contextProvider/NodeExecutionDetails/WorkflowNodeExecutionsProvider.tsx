@@ -100,7 +100,15 @@ export const WorkflowNodeExecutionsProvider = ({
           nodeExecutionsById,
         )
       : { dag: {} as dNode, staticExecutionIdsMap: {}, error: undefined };
+
     const { dag, staticExecutionIdsMap, error } = dagData;
+
+    if (error) {
+      // if an error occured, stop processing
+      setDagError(error);
+      return;
+    }
+
     const nodes = dag?.nodes ?? [];
 
     let newMergedDag = dag;
@@ -117,7 +125,6 @@ export const WorkflowNodeExecutionsProvider = ({
         }
       }
     }
-    setDagError(error);
     setMergedDag(prev => {
       if (stringifyIsEqual(prev, newMergedDag)) {
         return prev;

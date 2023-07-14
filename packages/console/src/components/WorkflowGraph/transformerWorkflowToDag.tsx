@@ -229,7 +229,9 @@ const parseNode = ({
           const subId = subworkflow.template.id;
           if (getSubWorkflowFromId(subId, workflow) === false) {
             workflow.subWorkflows?.push(subworkflow);
-            workflow.tasks?.push(...subworkflow.compiledWorkflow.tasks);
+            workflow.tasks?.push(
+              ...(subworkflow?.compiledWorkflow?.tasks || []),
+            );
           }
         }
       }
