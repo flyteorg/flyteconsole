@@ -21,7 +21,7 @@ export interface Breadcrumb {
  * The function used for controlling if a breadcrumb should be rednered or not.
  */
 export type BreadcrumbValidator = (
-  valididator: BreadcrumbValidatorInterface,
+  validator: BreadcrumbValidatorInterface,
 ) => boolean;
 
 /**

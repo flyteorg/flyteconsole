@@ -7,19 +7,18 @@ import { BreadcrumbValidator, BreadcrumbValidatorInterface } from '../types';
  * - The current path value is not empty
  * - The current path value is not a path id
  *
- * @param valididator
+ * @param validator
  * @returns
  */
 export const breadcrumbDefaultvalidator: BreadcrumbValidator = (
-  valididator: BreadcrumbValidatorInterface,
+  validator: BreadcrumbValidatorInterface,
 ) => {
   // ":" as duplicate id spliter, remove all to the end
-  const cleanTargetId = valididator.targetBreadcrumbId.replace(/:.*/gim, '');
+  const cleanTargetId = validator.targetBreadcrumbId.replace(/:.*/gim, '');
 
-  const isMatchingPathSegment =
-    cleanTargetId === valididator.currentPathSegment;
-  const isValueEmpty = !!valididator.currentPathValue;
-  const isNotPathId = camelCase(valididator.currentPathValue) !== cleanTargetId;
+  const isMatchingPathSegment = cleanTargetId === validator.currentPathSegment;
+  const isValueEmpty = !!validator.currentPathValue;
+  const isNotPathId = camelCase(validator.currentPathValue) !== cleanTargetId;
 
   const condition = isMatchingPathSegment && isValueEmpty && isNotPathId;
 
