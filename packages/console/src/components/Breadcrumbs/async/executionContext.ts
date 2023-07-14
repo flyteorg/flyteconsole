@@ -69,6 +69,10 @@ export const executonNamedEntityAsyncValue: BreadcrumbAsyncValue = async (
   breadcrumb,
 ) => {
   const executionValue = getExecutionValue(location);
+  if (!executionValue)
+    return typeof breadcrumb.defaultValue === 'string'
+      ? breadcrumb.defaultValue
+      : breadcrumb.defaultValue(location, breadcrumb);
   const executionData = await getExecutionData(
     breadcrumb.projectId,
     breadcrumb.domainId,
