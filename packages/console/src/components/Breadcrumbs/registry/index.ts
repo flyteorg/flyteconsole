@@ -18,7 +18,7 @@ import { makeBreadcrumb } from './utils';
  * @property {string} renderHash
  * @method addBreadcrumb
  */
-class BreadcrumbRegistry {
+export class BreadcrumbRegistry {
   /**
    * List of breadcrumbs definitions to be processed.
    * This list is used to generate the breadcrumbs list.

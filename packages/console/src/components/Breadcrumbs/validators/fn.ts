@@ -19,33 +19,33 @@ export const namedEntitiesUrlSegments = [
  * - The current path segment is a named entity (single or plural variant)
  * - The previous path segment is a project or domain
  *
- * @param valididator
+ * @param validator
  * @returns
  */
 export const namedEntitiesValidator: BreadcrumbValidator = (
-  valididator: BreadcrumbValidatorInterface,
+  validator: BreadcrumbValidatorInterface,
 ) => {
   const segmentSingle = ['workflow', 'task', 'launch_plan'];
   const segmentsPlural = segmentSingle.map(s => `${camelCase(s)}s`);
   const segments = [...segmentSingle, ...segmentsPlural];
   const prevSegment = ['projects', 'domains'];
   return (
-    segments.includes(valididator.currentPathSegment) &&
-    prevSegment.includes(valididator.prevPathSegment)
+    segments.includes(validator.currentPathSegment) &&
+    prevSegment.includes(validator.prevPathSegment)
   );
 };
 
 export const executionsValidator: BreadcrumbValidator = (
-  valididator: BreadcrumbValidatorInterface,
+  validator: BreadcrumbValidatorInterface,
 ) => {
-  const isMatchingPathSegment = valididator.currentPathSegment === 'executions';
+  const isMatchingPathSegment = validator.currentPathSegment === 'executions';
   return isMatchingPathSegment;
 };
 
 export const executionsValidatorEmpty: BreadcrumbValidator = (
-  valididator: BreadcrumbValidatorInterface,
+  validator: BreadcrumbValidatorInterface,
 ) => {
-  const isMatchingPathSegment = valididator.currentPathSegment === 'executions';
-  const isValueEmpty = !!valididator.currentPathValue;
+  const isMatchingPathSegment = validator.currentPathSegment === 'executions';
+  const isValueEmpty = !!validator.currentPathValue;
   return isMatchingPathSegment && isValueEmpty;
 };
