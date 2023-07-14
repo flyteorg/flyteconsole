@@ -53,7 +53,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     label: 'Entity Search Lists',
     defaultValue: namedEntitiesDefaultValue,
     asyncData: namedEntities,
-    valididator: b => namedEntitiesValidator(b) && !executionsValidatorEmpty(b),
+    validator: b => namedEntitiesValidator(b) && !executionsValidatorEmpty(b),
   }),
   makeBreadcrumb({
     id: 'executions:named-entity',
@@ -61,7 +61,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     defaultValue: 'Executions',
     asyncValue: executonNamedEntityAsyncValue,
     asyncData: namedEntities,
-    valididator: executionsValidatorEmpty,
+    validator: executionsValidatorEmpty,
   }),
   makeBreadcrumb({
     id: 'executions:task-workflow-name',

@@ -9,7 +9,7 @@ const defaultBreadcrumb: Breadcrumb = {
   defaultValue: defaultValue,
   selfLink: '',
   asyncData: defaultVoid,
-  valididator: breadcrumbDefaultvalidator,
+  validator: breadcrumbDefaultvalidator,
   viewAllLink: '',
   required: false,
   asyncValue: undefined,

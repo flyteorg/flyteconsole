@@ -45,13 +45,13 @@ export const semanticBreadcrumbRegistryList: Breadcrumb[] = [
     label: 'Named Entity',
     defaultValue: namedEntitiesDefaultValue,
     asyncData: namedEntities,
-    valididator: namedEntitiesValidator,
+    validator: namedEntitiesValidator,
   }),
   makeBreadcrumb({
     id: 'executions',
     label: 'Executions',
     defaultValue: 'Executions',
-    valididator: executionsValidator,
+    validator: executionsValidator,
   }),
   makeBreadcrumb({
     id: 'workflow',
