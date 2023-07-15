@@ -13,7 +13,7 @@
     "forceConsistentCasingInFileNames": false,
 
     "jsx": "react",
-    "lib": ["dom", "dom.iterable", "es6", "es2021"],
+    "lib": ["dom", "dom.iterable", "es6", "es2022"],
     "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",
