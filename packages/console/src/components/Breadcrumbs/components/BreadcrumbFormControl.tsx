@@ -20,7 +20,9 @@ import { defaultVoid } from '../async/fn';
  *
  * These are used in the Breadcrumbs component.
  */
-const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
+const BreadcrumbFormControlDefault = (
+  props: BreadcrumbFormControlInterfaceUI,
+) => {
   const history = useHistory();
   const htmlLabel = `breadcrumb-${props.id}`;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -107,21 +109,8 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
     },
   }))();
 
-  const WrapperComponent = useMemo(() => {
-    if (props.customComponent) {
-      const { customComponent: CustomComponent } = props;
-      return props => (
-        <CustomComponent {...props}>{props.children}</CustomComponent>
-      );
-    }
-    return props => <div>{props.children}</div>;
-  }, [props.customComponent]);
-
   return (
-    <WrapperComponent
-      {...(props.customComponent ? props : {})}
-      className={`breadcrumb-form-control ${styles.formControl}`}
-    >
+    <div className={`breadcrumb-form-control ${styles.formControl}`}>
       <Grid container alignItems="center">
         <Grid item>
           <Tooltip title={`${props.label}: ${value}`}>
@@ -183,8 +172,20 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
           value={value}
         />
       )}
-    </WrapperComponent>
+    </div>
   );
+};
+
+const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
+  const { customComponent: CustomComponent } = props;
+  if (CustomComponent) {
+    return (
+      <CustomComponent {...props}>
+        <BreadcrumbFormControlDefault {...props} />
+      </CustomComponent>
+    );
+  }
+  return <BreadcrumbFormControlDefault {...props} />;
 };
 
 export default BreadcrumbFormControl;
