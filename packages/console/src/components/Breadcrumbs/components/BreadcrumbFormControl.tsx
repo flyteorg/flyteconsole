@@ -55,30 +55,33 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
   const { data: queryAsyncSelfLinkData } = useQuery(
     `breadcrumb-selflinkasync-${props.id}-${props.value}`,
     async () => {
-      if (!props.asyncValue) return '';
-      return props.asyncValue(window.location, props);
+      if (!props.asyncSelfLink) return '';
+      return props.asyncSelfLink(window.location, props);
     },
     {
       staleTime: 1000 * 60 * 5, // 5 minutes
     },
   );
   const asyncSelfLinkData: string = useMemo(() => {
-    if (isEmpty(queryAsyncSelfLinkData) || queryAsyncSelfLinkData === undefined)
+    if (isEmpty(queryAsyncSelfLinkData) && queryAsyncSelfLinkData === undefined)
       return '';
-    return queryAsyncSelfLinkData;
+    return `${queryAsyncSelfLinkData}`;
   }, [queryAsyncSelfLinkData]);
 
   const handleValueClick = e => {
     e.preventDefault();
     e.stopPropagation();
     if (props.selfLink || props.asyncSelfLink) {
-      if (asyncSelfLinkData) {
+      if (asyncSelfLinkData?.length) {
         history.push(asyncSelfLinkData);
+        return;
       }
       if (typeof props.selfLink === 'function') {
         history.push(props.selfLink(window.location, props));
+        return;
       } else {
         history.push(props.selfLink);
+        return;
       }
     }
   };
