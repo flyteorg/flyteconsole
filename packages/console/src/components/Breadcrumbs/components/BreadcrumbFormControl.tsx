@@ -10,14 +10,9 @@ import { ArrowDropDown } from '@material-ui/icons';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import { useQuery } from 'react-query';
-import { BreadcrumbFormControlInterface } from '../types';
+import { BreadcrumbFormControlInterfaceUI } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 import { defaultVoid } from '../async/fn';
-
-interface BreadcrumbFormControlInterfaceUI
-  extends BreadcrumbFormControlInterface {
-  variant?: 'title' | 'inline';
-}
 
 /**
  * This component is a wrapper around the Material UI FormControl component.
@@ -112,8 +107,21 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
     },
   }))();
 
+  const WrapperComponent = useMemo(() => {
+    if (props.customComponent) {
+      const { customComponent: CustomComponent } = props;
+      return props => (
+        <CustomComponent {...props}>{props.children}</CustomComponent>
+      );
+    }
+    return props => <div>{props.children}</div>;
+  }, [props.customComponent]);
+
   return (
-    <div className={`breadcrumb-form-control ${styles.formControl}`}>
+    <WrapperComponent
+      {...(props.customComponent ? props : {})}
+      className={`breadcrumb-form-control ${styles.formControl}`}
+    >
       <Grid container alignItems="center">
         <Grid item>
           <Tooltip title={`${props.label}: ${value}`}>
@@ -175,7 +183,7 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
           value={value}
         />
       )}
-    </div>
+    </WrapperComponent>
   );
 };
 
