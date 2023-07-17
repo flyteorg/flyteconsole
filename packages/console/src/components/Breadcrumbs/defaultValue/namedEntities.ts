@@ -1,5 +1,4 @@
 import camelCase from 'lodash/camelCase';
-import startCase from 'lodash/startCase';
 import { Routes } from 'routes';
 import { Breadcrumb, BreadcrumbEntity } from '../types';
 import { namedEntitiesUrlSegments } from '../validators';
@@ -64,5 +63,5 @@ export const namedEntitiesDefaultValue = (
   );
   const entity =
     titles.find(title => title === normalizedNamedEntitySegment) || '';
-  return startCase(entity);
+  return camelCase(entity);
 };
