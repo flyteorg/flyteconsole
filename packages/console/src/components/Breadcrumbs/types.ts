@@ -125,3 +125,13 @@ export interface BreadcrumbFormControlInterface extends Breadcrumb {
   projectId: string;
   domainId: string;
 }
+
+/**
+ * The props used for rendering the breadcrumb list UI components.
+ * Contains extra props for internal React rendering.
+ */
+export interface BreadcrumbFormControlInterfaceUI
+  extends BreadcrumbFormControlInterface {
+  children?: any;
+  variant?: 'title' | 'inline';
+}
