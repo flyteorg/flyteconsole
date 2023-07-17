@@ -4,6 +4,7 @@ import {
   Grid,
   IconButton,
   Tooltip,
+  Typography,
   makeStyles,
 } from '@material-ui/core';
 import { ArrowDropDown } from '@material-ui/icons';
@@ -107,6 +108,10 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
         margin: 0,
       },
     },
+    buttonLabelSpan: {
+      fontWeight: 400,
+      fontSize: theme.typography.h3.fontSize,
+    },
   }))();
 
   return (
@@ -129,10 +134,11 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
                 size="small"
               >
                 <span aria-hidden="true">/</span>&nbsp;
-                {value || ''}
+                <span className={styles.buttonLabelSpan}>{value || ''}</span>
               </Button>
             ) : (
-              <h1
+              <Typography
+                variant="h1"
                 id={htmlLabel}
                 className="breadcrumb-form-control-input"
                 onClick={handleValueClick}
@@ -142,8 +148,8 @@ const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
                   }
                 }}
               >
-                <small>{value}</small>
-              </h1>
+                {value}
+              </Typography>
             )}
           </Tooltip>
         </Grid>

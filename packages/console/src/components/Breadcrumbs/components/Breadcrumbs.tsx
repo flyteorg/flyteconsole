@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { listProjects } from 'models/Project/api';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
+import { Box, Grid, makeStyles } from '@material-ui/core';
+import cn from 'classnames';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import get from 'lodash/get';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
@@ -10,6 +11,18 @@ import { breadcrumbRegistry } from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
 import { domainIdfromUrl, projectIdfromUrl } from '../async/utils';
 import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
+
+const useStyles = makeStyles({
+  pageNavigationItems: {
+    paddingBottom: 0,
+  },
+  pageTitle: {
+    paddingTop: 0,
+  },
+  pageTitleItem: {
+    paddingBlock: 0,
+  },
+});
 
 /**
  * Top level Breadcumb component used to kick off the breadcrumb rendering.
@@ -23,6 +36,7 @@ import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
 const BreadCrumbs = () => {
   const routerLocation = useLocation();
   const routerParams = useParams();
+  const styles = useStyles();
 
   const currentProjectId =
     routerParams['projectId']?.trim() || projectIdfromUrl() || '';
@@ -102,9 +116,9 @@ const BreadCrumbs = () => {
   );
 
   return (
-    <Grid container className="breadcrumbs" spacing={2}>
+    <Grid container className="breadcrumbs">
       {/* Breadcrumbs from url */}
-      <Grid item xs={12}>
+      <Grid className={styles.pageNavigationItems} item xs={12}>
         <Grid container className="breadcrumbs-segment-container" spacing={2}>
           {breadcrumbs.map((breadcrumbValue, index) => {
             if (index === breadcrumbs.length - 1) return null;
@@ -117,26 +131,29 @@ const BreadCrumbs = () => {
         </Grid>
       </Grid>
       {/* Current page content */}
-      <Grid item xs={12}>
+      <Grid
+        className={cn(styles.pageTitle, 'breadcrumbs-page-title')}
+        item
+        xs={12}
+      >
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={6}>
-            <Grid
-              container
-              className="breadcrumbs-current-page-container"
-              spacing={2}
-            >
+          <Grid className={styles.pageTitleItem} item xs={6}>
+            <Box className="breadcrumbs-current-page-container">
               {lastBreadcrumb?.key && (
-                <Grid
-                  item
-                  className="breadcrumbs-title"
-                  key={lastBreadcrumb.value}
-                >
+                <Box className="breadcrumbs-title" key={lastBreadcrumb.value}>
                   <BreadcrumbFormControl {...lastBreadcrumb} variant="title" />
-                </Grid>
+                </Box>
               )}
-            </Grid>
+            </Box>
           </Grid>
-          <Grid xs={6} item className="breadcrumbs-actions-container">
+          <Grid
+            className={cn(
+              styles.pageTitleItem,
+              'breadcrumbs-actions-container',
+            )}
+            xs={6}
+            item
+          >
             <BreadcrumbTitleActionsPortal />
           </Grid>
         </Grid>
