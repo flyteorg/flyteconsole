@@ -10,6 +10,8 @@ import { ArrowDropDown } from '@material-ui/icons';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import { useQuery } from 'react-query';
+import { COLOR_SPECTRUM } from 'components/Theme/colorSpectrum';
+import cn from 'classnames';
 import { BreadcrumbFormControlInterfaceUI } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 import { defaultVoid } from '../async/fn';
@@ -23,6 +25,8 @@ import { defaultVoid } from '../async/fn';
 const BreadcrumbFormControlDefault = (
   props: BreadcrumbFormControlInterfaceUI,
 ) => {
+  const [hovered, setHovered] = useState(false);
+  const [pressed, setPressed] = useState(false);
   const history = useHistory();
   const htmlLabel = `breadcrumb-${props.id}`;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -32,6 +36,9 @@ const BreadcrumbFormControlDefault = (
   const handlePopoverClose = () => {
     setAnchorEl(null);
   };
+
+  const toggleHover = () => setHovered(h => !h);
+  const togglePressed = () => setPressed(p => !p);
 
   const { data: queryAsyncValueData } = useQuery(
     `breadcrumb-selfasync-${props.id}-${props.value}`,
@@ -107,10 +114,35 @@ const BreadcrumbFormControlDefault = (
         margin: 0,
       },
     },
+    moreButton: {
+      width: '20px',
+      height: '20px',
+      borderRadius: '5px',
+      marginLeft: props.variant === 'title' ? theme.spacing(0.25) : 0,
+      '&:hover': {
+        color: COLOR_SPECTRUM.indigo80.color,
+        backgroundColor: 'transparent',
+        border: `1px solid ${COLOR_SPECTRUM.indigo80.color}`,
+      },
+      '&:active': {
+        color: COLOR_SPECTRUM.white.color,
+        backgroundColor: COLOR_SPECTRUM.indigo80.color,
+      },
+    },
+    breadcrumbLabel: {
+      cursor: 'pointer',
+      '&:hover': {
+        textDecoration: 'underline',
+      },
+      '&:active': {
+        fontWeight: 700,
+        textDecoration: 'underline',
+      },
+    },
   }))();
 
   return (
-    <div className={`breadcrumb-form-control ${styles.formControl}`}>
+    <div className={cn('breadcrumb-form-control', styles.formControl)}>
       <Grid container alignItems="center">
         <Grid item>
           <Tooltip title={`${props.label}: ${value}`}>
@@ -119,7 +151,10 @@ const BreadcrumbFormControlDefault = (
                 variant="text"
                 id={htmlLabel}
                 tabIndex={0}
-                className="breadcrumb-form-control-input"
+                className={cn(
+                  'breadcrumb-form-control-input',
+                  styles.breadcrumbLabel,
+                )}
                 onClick={handleValueClick}
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
@@ -134,7 +169,10 @@ const BreadcrumbFormControlDefault = (
             ) : (
               <h1
                 id={htmlLabel}
-                className="breadcrumb-form-control-input"
+                className={cn(
+                  'breadcrumb-form-control-input',
+                  styles.breadcrumbLabel,
+                )}
                 onClick={handleValueClick}
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
@@ -142,7 +180,7 @@ const BreadcrumbFormControlDefault = (
                   }
                 }}
               >
-                <small>{value}</small>
+                {value}
               </h1>
             )}
           </Tooltip>
@@ -150,12 +188,18 @@ const BreadcrumbFormControlDefault = (
         <Grid item>
           {!isMoreButtonHidden && (
             <IconButton
-              className="breadcrumb-form-control-more-button"
+              className={cn(
+                'breadcrumb-form-control-more-button',
+                styles.moreButton,
+              )}
               aria-label="more"
               aria-controls="long-menu"
               aria-haspopup="true"
-              size={props.variant === 'title' ? 'medium' : 'small'}
+              size="small"
               onClick={handlePopoverClick}
+              disableTouchRipple
+              disableFocusRipple
+              disableRipple
             >
               <ArrowDropDown />
             </IconButton>

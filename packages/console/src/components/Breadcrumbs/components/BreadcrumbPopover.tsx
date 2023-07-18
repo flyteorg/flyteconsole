@@ -107,13 +107,18 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
         container
         spacing={0}
         style={{
-          maxWidth: 350,
-          maxHeight: '80vh',
           minWidth: 300,
-          overflowY: 'scroll',
+          maxWidth: 350,
         }}
       >
-        <Grid item xs={12}>
+        <Grid
+          item
+          xs={12}
+          style={{
+            maxHeight: '70vh',
+            overflowY: 'auto',
+          }}
+        >
           {isLoading && (
             <Box pt={2} marginX="auto">
               <LoadingSpinner size="small" useDelay={false} />
