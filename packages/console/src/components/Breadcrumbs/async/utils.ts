@@ -59,18 +59,12 @@ export const domainIdfromUrl = (location: Location) => {
 
 export const formatProjectEntities = data => {
   return data.map(project => {
-    // replace text in URL segment following "projects" keyword
-    const projectId = projectIdfromUrl();
-    const path = window.location.pathname.replace(projectId, project.id);
-
-    const urlObj = new URL(window.location.href);
-    urlObj.pathname = path;
-    const newUrl = urlObj.toString().replace(urlObj.origin, '');
+    const url = Routes.ProjectDetails.sections.dashboard.makeUrl(project.id);
 
     return {
       title: project.name,
       createdAt: '',
-      url: newUrl,
+      url,
     };
   });
 };
@@ -78,34 +72,21 @@ export const formatProjectEntities = data => {
 export const formatProjectEntitiesAsDomains = (
   data: Project[] = [],
   projectId = '',
-  domainId = '',
 ) => {
   if (!data.length) return [];
 
   const project = data.find(p => p.id === projectId) || data[0];
-  project.domains.find(d => d.id === domainId);
 
   return project.domains.map(domain => {
-    const pathSearchHash = `${window.location.href}`.replace(
-      window.location.origin,
-      '',
+    const url = Routes.ProjectDetails.sections.dashboard.makeUrl(
+      project.id,
+      domain.id,
     );
-
-    const isDomainInUrl = domainIdfromUrl(window.location) === domainId;
-
-    let newUrl = pathSearchHash;
-
-    if (isDomainInUrl) {
-      newUrl = pathSearchHash.replace(domainId, domain.id);
-    } else {
-      // Todo: handle the case where its not in the URL
-      newUrl = pathSearchHash.replace(domainId, domain.id);
-    }
 
     return {
       title: domain.name,
       createdAt: '',
-      url: newUrl,
+      url,
     };
   });
 };
