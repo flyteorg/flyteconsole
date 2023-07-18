@@ -15,7 +15,7 @@ import BreadcrumbPopOver from './BreadcrumbPopover';
 import { defaultVoid } from '../async/fn';
 
 /**
- * This component is a wrapper around the Material UI FormControl component.
+ * This component is a wrapper to facilitate user interaction using MUI components.
  * It is used to render a breadcrumb with a popover.
  *
  * These are used in the Breadcrumbs component.
@@ -176,6 +176,12 @@ const BreadcrumbFormControlDefault = (
   );
 };
 
+/**
+ * This component is a wrapper to facilitate user interaction using MUI components.
+ * It is used to render a breadcrumb with a popover.
+ *
+ * These are used in the Breadcrumbs component.
+ */
 const BreadcrumbFormControl = (props: BreadcrumbFormControlInterfaceUI) => {
   const { customComponent: CustomComponent } = props;
   if (CustomComponent) {
