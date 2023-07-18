@@ -1,4 +1,6 @@
+import isEqual from 'lodash/isEqual';
 import { Breadcrumb } from '../types';
+import { breadcrumbRegistry } from '../registry';
 
 /**
  * A way to inject a breadcrumb from anywhere in the system.
@@ -8,6 +10,13 @@ import { Breadcrumb } from '../types';
  */
 export const useSetBreadcrumbSeed = (breadcrumb: Breadcrumb | null) => {
   if (!breadcrumb) return;
+
+  const isEqualObj = isEqual(
+    breadcrumb,
+    breadcrumbRegistry.breadcrumbSeeds.find(b => breadcrumb.id === b.id),
+  );
+  if (isEqualObj) return;
+
   const event = new CustomEvent('__FLYTE__BREADCRUMB__', {
     detail: {
       breadcrumb,
