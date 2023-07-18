@@ -68,6 +68,25 @@ const BreadCrumbs = () => {
     }
   }, [registry?.breadcrumbs]);
 
+  // respond to custom event hook
+  useEffect(() => {
+    const listener = e => {
+      if (e.detail?.breadcrumb) {
+        const breadcrumb = e.detail?.breadcrumb as Breadcrumb;
+        breadcrumbRegistry.addBreadcrumbSeed(breadcrumb);
+        const val = breadcrumbRegistry.breadcrumbBuilder({
+          location,
+          projectId: currentProjectId,
+          domainId: currentDomainId,
+        });
+        setBreadcrumbs(val);
+        setBreadcrumbsHash(breadcrumbRegistry.renderHash);
+      }
+    };
+    window.addEventListener('__FLYTE__BREADCRUMB__', listener);
+    return () => window.removeEventListener('__FLYTE__BREADCRUMB__', listener);
+  }, []);
+
   // rebuild when page changes
   const [breadcrumbs, setBreadcrumbs] = useState<
     BreadcrumbFormControlInterface[]
@@ -94,6 +113,7 @@ const BreadCrumbs = () => {
     currentDomainId,
     breadcrumbsHash,
     routerLocation.hash,
+    breadcrumbRegistry.renderHash,
   ]);
 
   const lastBreadcrumb = useMemo(

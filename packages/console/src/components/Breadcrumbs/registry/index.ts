@@ -48,18 +48,19 @@ export class BreadcrumbRegistry {
     this.renderHash =
       this.breadcrumbs
         .map(b => {
-          const id = b.id;
-          const value = b.value;
-          const defaultValue =
-            typeof b.defaultValue === 'string'
-              ? b.defaultValue
-              : b.defaultValue(window.location, b);
-
-          return id + value + defaultValue;
+          return Object.keys(b)
+            .map(k => b[k])
+            .join(',');
         })
         .join(',') +
       '|' +
-      this.breadcrumbSeeds.map(b => b.id + b.defaultValue).join(',');
+      this.breadcrumbSeeds
+        .map(b => {
+          return Object.keys(b)
+            .map(k => b[k])
+            .join(',');
+        })
+        .join(',');
   }
 
   /**
