@@ -50,11 +50,7 @@ export const domains: BreadcrumbAsyncPopOverData = async (
   breadcrumb,
 ) => {
   return listProjects().then(data =>
-    formatProjectEntitiesAsDomains(
-      data,
-      breadcrumb.projectId,
-      breadcrumb.domainId,
-    ),
+    formatProjectEntitiesAsDomains(data, breadcrumb.projectId),
   );
 };
 
