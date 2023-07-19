@@ -86,26 +86,24 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   /**
    * Handle the callback to close the popover and navigate to the url
    */
-  const handleLink =
-    (e, url: string, isActive = false) =>
-    () => {
-      e.preventDefault();
-      e.stopPropagation();
+  const handleLink = (e, url: string, isActive = false) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-      if (props.id.startsWith('project') || props.id.startsWith('domain')) {
-        const projectDomain: LocalStorageProjectDomain = {
-          domain: props.domainId,
-          project: props.projectId,
-        };
-        setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
-      }
+    if (props.id.startsWith('project') || props.id.startsWith('domain')) {
+      const projectDomain: LocalStorageProjectDomain = {
+        domain: props.domainId,
+        project: props.projectId,
+      };
+      setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+    }
 
-      if (!isActive) {
-        history.push(url);
-        props.onClose();
-        return;
-      }
-    };
+    if (!isActive) {
+      history.push(url);
+      props.onClose();
+      return;
+    }
+  };
 
   const styles = makeStyles(theme => ({
     wrapper: {
@@ -170,13 +168,13 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                     <ListItem
                       key={data.title}
                       button
-                      onClick={e =>
+                      onClick={e => {
                         handleLink(
                           e,
                           data.url,
                           activeBasedOnTitle || activeBasedOnAsyncData,
-                        )
-                      }
+                        );
+                      }}
                       className={`breadcrumb-form-control-popover-list-item ${
                         activeBasedOnTitle || activeBasedOnAsyncData
                           ? 'active'
@@ -218,38 +216,11 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                             </>
                           )}
                         </Grid>
-                        <Grid item>
-                          <Link
-                            onClick={e =>
-                              handleLink(
-                                e,
-                                data.url,
-                                activeBasedOnTitle || activeBasedOnAsyncData,
-                              )
-                            }
-                            href={data.url}
-                          >
-                            {data?.title || 'name not found'}
-                          </Link>
-                        </Grid>
+                        <Grid item>{data?.title || 'name not found'}</Grid>
                         {data?.createdAt && (
                           <>
                             <Grid item>|</Grid>
-                            <Grid item>
-                              <Link
-                                onClick={e =>
-                                  handleLink(
-                                    e,
-                                    data.url,
-                                    activeBasedOnTitle ||
-                                      activeBasedOnAsyncData,
-                                  )
-                                }
-                                href={data.url}
-                              >
-                                {data.createdAt}
-                              </Link>
-                            </Grid>
+                            <Grid item>{data.createdAt}</Grid>
                           </>
                         )}
                       </Grid>
