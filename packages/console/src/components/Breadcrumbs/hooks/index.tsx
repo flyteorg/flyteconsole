@@ -1,6 +1,5 @@
-import React, { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import isEqual from 'lodash/isEqual';
-import { injectGlobal } from 'emotion';
 import { Breadcrumb } from '../types';
 import { breadcrumbRegistry } from '../registry';
 
@@ -39,20 +38,25 @@ export const useBreadCrumbsGreyStyle = () => {
     transition: background-color 0.2s ease-in-out;
     background-color: #F2F3F3;
     border-bottom: 1px solid lightgrey;
-    __BREADCRUMB_GREY_TEMP__: remove-me;
   }`;
 
-  useLayoutEffect(() => {
-    injectGlobal(breadcrumbBackground);
+  useEffect(() => {
+    // make a new style tag in the head with js
+    const style = document.createElement('style');
+    style.innerHTML = breadcrumbBackground;
+    style.setAttribute('type', 'text/css');
+    style.setAttribute('data-breadcrumb-temp', 'true');
+    document.head.appendChild(style);
+
     return () => {
       // remove global css sheet with matching comment text
       [...document.querySelectorAll('style')]
-        .filter(s => s.innerHTML.includes('__BREADCRUMB_GREY_TEMP__'))
+        .filter(s => s.outerHTML.includes('data-breadcrumb-temp'))
         .forEach(s => {
           s.remove();
         });
     };
-  }, []);
+  }, [window.location.pathname]);
 
-  return <></>;
+  return;
 };
