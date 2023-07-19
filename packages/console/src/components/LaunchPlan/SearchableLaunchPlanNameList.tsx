@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexWrap: 'nowrap',
     flexDirection: 'row',
-    margin: theme.spacing(4, 5, 0, 2),
+    margin: theme.spacing(2, 5, 0, 2),
   },
   itemContainer: {
     padding: theme.spacing(3, 3),

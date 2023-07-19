@@ -9,6 +9,7 @@ export interface Breadcrumb {
   asyncValue?: BreadcrumbAsyncValue;
   validator: BreadcrumbValidator;
   asyncData: BreadcrumbAsyncPopOverData;
+  popoverTitle?: string;
   customComponent?: React.FC<any>;
   selfLink: BreadcrumbEntitySelfLink;
   asyncSelfLink?: BreadcrumbAsyncViewAllLink;

@@ -1,3 +1,4 @@
+import camelCase from 'lodash/camelCase';
 import { Routes } from 'routes';
 import { BreadcrumbFormControlInterface } from '../types';
 import { namedEntitiesDefaultValue, namedEntitiesList } from '../defaultValue';
@@ -40,10 +41,10 @@ export const namedEntitiesSelfLink = async (
   breadcrumb: BreadcrumbFormControlInterface,
 ) => {
   const { projectId, domainId } = breadcrumb;
-  const key = namedEntitiesDefaultValue(location, breadcrumb);
+  const key = camelCase(namedEntitiesDefaultValue(location, breadcrumb));
   const namedEntities = namedEntitiesList(projectId, domainId);
   const entity = namedEntities.find(entity =>
-    entity.title.toLowerCase().includes(key),
+    camelCase(entity.title).includes(key),
   );
   return entity?.url || '';
 };
@@ -56,7 +57,7 @@ export const namedEntitiesSelfLinkExecutions = async (
   const key = await executonNamedEntityAsyncValue(location, breadcrumb);
   const namedEntities = namedEntitiesList(projectId, domainId);
   const entity = namedEntities.find(entity =>
-    entity.title.toLowerCase().includes(key),
+    camelCase(entity.title).includes(key),
   );
   return entity?.url || '';
 };

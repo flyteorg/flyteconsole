@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { listProjects } from 'models/Project/api';
 import { useQuery } from 'react-query';
 import { useLocation, useParams } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import get from 'lodash/get';
 import {
@@ -136,11 +136,18 @@ const BreadCrumbs = () => {
     [breadcrumbsHash],
   );
 
+  const styles = makeStyles(theme => ({
+    breadcrumbContainer: {
+      padding: theme.spacing(1, 2, 2, 2),
+    },
+  }))();
+
+  if (!breadcrumbs?.length) return <></>;
+
   return (
-    <Grid container className="breadcrumbs" spacing={2}>
-      {/* Breadcrumbs from url */}
+    <Grid container className={`breadcrumbs ${styles.breadcrumbContainer}`}>
       <Grid item xs={12}>
-        <Grid container className="breadcrumbs-segment-container" spacing={2}>
+        <Grid container className="breadcrumbs-segment-container">
           {breadcrumbs.map((breadcrumbValue, index) => {
             if (index === breadcrumbs.length - 1) return null;
             return (
@@ -153,13 +160,9 @@ const BreadCrumbs = () => {
       </Grid>
       {/* Current page content */}
       <Grid item xs={12}>
-        <Grid container spacing={2} alignItems="center">
+        <Grid container alignItems="center">
           <Grid item xs={6}>
-            <Grid
-              container
-              className="breadcrumbs-current-page-container"
-              spacing={2}
-            >
+            <Grid container className="breadcrumbs-current-page-container">
               {lastBreadcrumb?.key && (
                 <Grid
                   item

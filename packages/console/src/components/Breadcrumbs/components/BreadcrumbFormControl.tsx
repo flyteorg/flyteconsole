@@ -86,13 +86,14 @@ const BreadcrumbFormControlDefault = (
       if (asyncSelfLinkData?.length) {
         history.push(asyncSelfLinkData);
         return;
-      }
-      if (typeof props.selfLink === 'function') {
-        history.push(props.selfLink(window.location, props));
-        return;
       } else {
-        history.push(props.selfLink);
-        return;
+        if (typeof props.selfLink === 'function') {
+          history.push(props.selfLink(window.location, props));
+          return;
+        } else {
+          history.push(props.selfLink);
+          return;
+        }
       }
     }
   };
@@ -117,15 +118,22 @@ const BreadcrumbFormControlDefault = (
           cursor: props.selfLink || props.asyncSelfLink ? 'pointer' : 'default',
         },
       },
+      '& button': {
+        fontWeight: 500,
+      },
       '& h1': {
         margin: 0,
+        fontSize: 24,
       },
+    },
+    noWrap: {
+      flexWrap: 'nowrap',
     },
   }))();
 
   return (
     <div className={`breadcrumb-form-control ${styles.formControl}`}>
-      <Grid container alignItems="center">
+      <Grid container alignItems="center" className={styles.noWrap}>
         <Grid item>
           <Tooltip title={`${props.label}: ${value}`}>
             {props.variant !== 'title' ? (
@@ -133,6 +141,7 @@ const BreadcrumbFormControlDefault = (
                 variant="text"
                 id={htmlLabel}
                 tabIndex={0}
+                disabled={!(props.selfLink || props.asyncSelfLink)}
                 className="breadcrumb-form-control-input"
                 onClick={handleValueClick}
                 onKeyDown={e => {
@@ -156,20 +165,30 @@ const BreadcrumbFormControlDefault = (
                   }
                 }}
               >
-                <small>{value}</small>
+                {value}
               </h1>
             )}
           </Tooltip>
         </Grid>
         <Grid item>
-          {!isMoreButtonHidden && (
+          {!isMoreButtonHidden ? (
             <IconButton
               className="breadcrumb-form-control-more-button"
               aria-label="more"
               aria-controls="long-menu"
               aria-haspopup="true"
-              size={props.variant === 'title' ? 'medium' : 'small'}
+              size="small"
               onClick={handlePopoverClick}
+            >
+              <ArrowDropDown />
+            </IconButton>
+          ) : (
+            <IconButton
+              className="breadcrumb-form-control-more-button hidden"
+              size="small"
+              aria-hidden
+              tabIndex={-1}
+              style={{ opacity: 0 }}
             >
               <ArrowDropDown />
             </IconButton>
