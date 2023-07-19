@@ -50,7 +50,7 @@ export const domainIdfromUrl = (location: Location) => {
     return path[path.indexOf('domains') + 1] || '';
   }
   if (location.search.includes('domain')) {
-    const searchParams = new URLSearchParams(window.location.search);
+    const searchParams = new URLSearchParams(location.search);
     return searchParams.get('domain') || '';
   }
 
