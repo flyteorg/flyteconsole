@@ -93,7 +93,7 @@ function validate({ value, ...props }: InputValidatorParams) {
       ...(value as any),
     });
   } catch (error) {
-    throw new Error('Invalid value');
+    throw new Error(error.message);
   }
 }
 

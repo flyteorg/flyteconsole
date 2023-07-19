@@ -96,11 +96,11 @@ describe('literalToInputValue', () => {
       )}`, () => {
         const result = literalToInputValue(typeDefinition, input);
         let expectedString = output;
-        if (
-          typeDefinition.type === InputType.Integer ||
-          typeDefinition.type === InputType.Struct
-        ) {
+        if (typeDefinition.type === InputType.Struct) {
           expectedString = formatParameterValues(typeDefinition.type, output);
+        }
+        if (typeDefinition.type === InputType.Integer) {
+          expectedString = `${output}`;
         }
         expect(expectedString).toEqual(result);
       }),

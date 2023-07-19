@@ -20,7 +20,7 @@ export function extractLiteralWithCheck<T>(
 /** Converts a value within a collection to the appropriate string
  * representation. Some values require additional quotes.
  */
-export function collectionChildToStringOld(type: InputType, value: any) {
+export function collectionChildToString(type: InputType, value: any) {
   if (value === undefined) {
     return '';
   }
@@ -34,14 +34,9 @@ export function formatParameterValues(type: InputType, value: any) {
     return '';
   }
 
-  return type === InputType.Integer
-    ? `${value}`
-    : JSON.stringify(value, null, type === InputType.Struct ? 2 : 0)
-        .split(',')
-        .join(', ');
-  // return type === (InputType.Integer || InputType.Struct)
-  //   ? `${value}`
-  //   : stringifyValue(value);
+  return JSON.stringify(value, null, type === InputType.Struct ? 2 : 0)
+    .split(',')
+    .join(', ');
 }
 
 /** Determines if a given input type, including all levels of nested types, is
@@ -101,7 +96,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
 }
 
 export function isKeyOfBlobDimensionality(
-  value: string,
+  value: string | number | symbol,
 ): value is keyof typeof BlobDimensionality {
-  return Object.keys(BlobDimensionality).indexOf(value) >= 0;
+  return Object.keys(BlobDimensionality).indexOf(value as any) >= 0;
 }
