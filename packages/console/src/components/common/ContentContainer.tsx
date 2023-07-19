@@ -8,7 +8,6 @@ import {
   sideNavGridWidth,
 } from 'common/layout';
 import { BreadCrumbs } from 'components/Breadcrumbs';
-import { Box } from '@material-ui/core';
 import { ErrorBoundary } from './ErrorBoundary';
 
 enum ContainerClasses {
@@ -83,9 +82,7 @@ export const ContentContainer: React.FC<ContentContainerProps> = props => {
     <div {...restProps} className={className} id={contentContainerId}>
       <ErrorBoundary>
         <>
-          <Box paddingX={2}>
-            <BreadCrumbs />
-          </Box>
+          <BreadCrumbs />
           {children}
         </>
       </ErrorBoundary>

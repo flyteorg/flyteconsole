@@ -11,6 +11,7 @@ import {
   ListItem,
   Popover,
   Typography,
+  makeStyles,
 } from '@material-ui/core';
 import {
   LOCAL_PROJECT_DOMAIN,
@@ -19,7 +20,7 @@ import {
   setLocalStore,
 } from 'components/common';
 import { useHistory } from 'react-router';
-import { Check, InsertLink } from '@material-ui/icons';
+import { Check, InsertLinkOutlined } from '@material-ui/icons';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
@@ -106,9 +107,30 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       }
     };
 
+  const styles = makeStyles(theme => ({
+    wrapper: {
+      '& a': {
+        color: theme.palette.text.primary,
+        fontWeight: 500,
+        // no text line break css
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+      },
+      '& button': {
+        color: theme.palette.text.primary,
+        fontWeight: 500,
+      },
+    },
+
+    noWrap: {
+      flexWrap: 'nowrap',
+    },
+  }))();
+
   return (
     <Popover
-      className="breadcrumb-form-control-popover"
+      className={`breadcrumb-form-control-popover ${styles.wrapper}`}
       open={props.open}
       anchorEl={props.anchorEl}
       onClose={props.onClose}
@@ -117,16 +139,16 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
         horizontal: 'left',
       }}
     >
-      <Grid
-        container
-        spacing={0}
-        style={{
-          maxWidth: 350,
-          maxHeight: '80vh',
-          minWidth: 300,
-          overflowY: 'scroll',
-        }}
-      >
+      <Grid container>
+        {props.popoverTitle && (
+          <Grid item xs={12}>
+            <Box pt={2} pl={2} marginX="auto">
+              <Typography variant="h6" className="popover-title">
+                {props.popoverTitle}
+              </Typography>
+            </Box>
+          </Grid>
+        )}
         <Grid item xs={12}>
           {isLoading && (
             <Box pt={2} marginX="auto">
@@ -140,7 +162,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                 dataToShow.map(data => {
                   const activeBasedOnTitle =
                     data.active === undefined &&
-                    data.title.trim().toLocaleLowerCase() !==
+                    data.title.trim().toLocaleLowerCase() ===
                       props.value.trim().toLocaleLowerCase();
                   const activeBasedOnAsyncData =
                     data?.active !== undefined && data.active;
@@ -161,14 +183,19 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                           : ''
                       }`}
                     >
-                      <Grid container alignItems="center">
-                        <Grid item xs={2}>
+                      <Grid
+                        container
+                        alignItems="center"
+                        className={styles.noWrap}
+                        spacing={1}
+                      >
+                        <Grid item>
                           {data.active === undefined && (
                             <>
-                              {activeBasedOnTitle ? (
+                              {!activeBasedOnTitle ? (
                                 // Consistent Row Hieght
-                                <Icon style={{ visibility: 'hidden' }}>
-                                  <InsertLink />
+                                <Icon style={{ opacity: 0 }}>
+                                  <InsertLinkOutlined />
                                 </Icon>
                               ) : (
                                 <Icon>
@@ -179,15 +206,19 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                           )}
                           {data?.active !== undefined && (
                             <>
-                              {data.active && (
+                              {data.active ? (
                                 <Icon>
                                   <Check />
+                                </Icon>
+                              ) : (
+                                <Icon style={{ opacity: 0 }}>
+                                  <InsertLinkOutlined />
                                 </Icon>
                               )}
                             </>
                           )}
                         </Grid>
-                        <Grid item xs={6}>
+                        <Grid item>
                           <Link
                             onClick={e =>
                               handleLink(
@@ -201,20 +232,26 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                             {data?.title || 'name not found'}
                           </Link>
                         </Grid>
-                        <Grid item xs={4}>
-                          <Link
-                            onClick={e =>
-                              handleLink(
-                                e,
-                                data.url,
-                                activeBasedOnTitle || activeBasedOnAsyncData,
-                              )
-                            }
-                            href={data.url}
-                          >
-                            {data?.createdAt}
-                          </Link>
-                        </Grid>
+                        {data?.createdAt && (
+                          <>
+                            <Grid item>|</Grid>
+                            <Grid item>
+                              <Link
+                                onClick={e =>
+                                  handleLink(
+                                    e,
+                                    data.url,
+                                    activeBasedOnTitle ||
+                                      activeBasedOnAsyncData,
+                                  )
+                                }
+                                href={data.url}
+                              >
+                                {data.createdAt}
+                              </Link>
+                            </Grid>
+                          </>
+                        )}
                       </Grid>
                     </ListItem>
                   );
@@ -224,22 +261,21 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
         </Grid>
         {viewAllLink && !props.asyncViewAllLink && (
           <Grid item xs={12}>
-            <hr />
-            <Button
-              onClick={e => handleLink(e, viewAllLink)}
-              href={viewAllLink}
-              className="breadcrumb-form-control-view-all-link"
-              fullWidth
-              // variant="solid"
-              color="secondary"
-            >
-              View All
-            </Button>
+            <Box paddingLeft={5} paddingBottom={1}>
+              <Button
+                onClick={e => handleLink(e, viewAllLink)}
+                href={viewAllLink}
+                className="breadcrumb-form-control-view-all-link"
+                variant="text"
+                color="secondary"
+              >
+                View All...
+              </Button>
+            </Box>
           </Grid>
         )}
         {!!props.asyncViewAllLink && (
           <Grid item xs={12}>
-            <hr />
             {viewAllQueryIsLoading && (
               <Box pt={2}>
                 <LoadingSpinner size="small" useDelay={false} />
@@ -249,16 +285,17 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
               <Typography color="error">{error}</Typography>
             )}
             {!viewAllQueryIsLoading && viewAllLink.length && (
-              <Button
-                onClick={e => handleLink(e, viewAllLink)}
-                href={viewAllLink}
-                className="breadcrumb-form-control-view-all-link"
-                fullWidth
-                // variant="solid"
-                color="secondary"
-              >
-                View All
-              </Button>
+              <Box paddingLeft={5} paddingBottom={1}>
+                <Button
+                  onClick={e => handleLink(e, viewAllLink)}
+                  href={viewAllLink}
+                  className="breadcrumb-form-control-view-all-link"
+                  variant="text"
+                  color="secondary"
+                >
+                  View All...
+                </Button>
+              </Box>
             )}
           </Grid>
         )}
