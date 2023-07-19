@@ -14,6 +14,7 @@ import { namedEntitiesDefaultValue } from '../defaultValue';
 import {
   executionsValidatorEmpty,
   namedEntitiesValidator,
+  namedEntitiesValidatorExecutionsEmpty,
 } from '../validators';
 import {
   executionTaskWorkflowVersions,
@@ -57,7 +58,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     asyncSelfLink: namedEntitiesSelfLink,
     defaultValue: namedEntitiesDefaultValue,
     asyncData: namedEntities,
-    validator: b => namedEntitiesValidator(b) && !executionsValidatorEmpty(b),
+    validator: namedEntitiesValidatorExecutionsEmpty,
   }),
   makeBreadcrumb({
     id: 'executions:named-entity',

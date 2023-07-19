@@ -35,6 +35,14 @@ export const namedEntitiesValidator: BreadcrumbValidator = (
   );
 };
 
+export const namedEntitiesValidatorExecutionsEmpty: BreadcrumbValidator = (
+  validator: BreadcrumbValidatorInterface,
+) => {
+  return (
+    namedEntitiesValidator(validator) && !executionsValidatorEmpty(validator)
+  );
+};
+
 export const executionsValidator: BreadcrumbValidator = (
   validator: BreadcrumbValidatorInterface,
 ) => {

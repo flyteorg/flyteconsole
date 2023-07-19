@@ -162,34 +162,27 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 
   return (
     <>
-      <BreadcrumbTitleActions>
-        <Grid
-          container
-          justifyContent="flex-end"
-          alignItems="center"
-          spacing={2}
-        >
-          <Grid item>
-            <ExecutionStatusBadge
-              phase={phase}
-              type="workflow"
-              className="subNavBadge"
-            />
-          </Grid>
-          <Grid item>
-            <Link
-              className={styles.inputsOutputsLink}
-              component="button"
-              onClick={onClickShowInputsOutputs}
-              variant="body1"
-            >
-              View Inputs &amp; Outputs
-            </Link>
-          </Grid>
-          {actionContent && <Grid item>{actionContent}</Grid>}
-          {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+      <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
+        <Grid item>
+          <ExecutionStatusBadge
+            phase={phase}
+            type="workflow"
+            className="subNavBadge"
+          />
         </Grid>
-      </BreadcrumbTitleActions>
+        <Grid item>
+          <Link
+            className={styles.inputsOutputsLink}
+            component="button"
+            onClick={onClickShowInputsOutputs}
+            variant="body1"
+          >
+            View Inputs &amp; Outputs
+          </Link>
+        </Grid>
+        {actionContent && <Grid item>{actionContent}</Grid>}
+        {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+      </Grid>
       <Dialog
         scroll="paper"
         maxWidth="sm"
@@ -205,10 +198,13 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
     </>
   );
 };
+
 export const ExecutionDetailsAppBarContent: React.FC<{}> = () => {
   return (
     <SubNavBarContent>
-      <ExecutionDetailsAppBarContentInner />
+      <BreadcrumbTitleActions>
+        <ExecutionDetailsAppBarContentInner />
+      </BreadcrumbTitleActions>
     </SubNavBarContent>
   );
 };
