@@ -1,4 +1,6 @@
+import React, { useLayoutEffect } from 'react';
 import isEqual from 'lodash/isEqual';
+import { injectGlobal } from 'emotion';
 import { Breadcrumb } from '../types';
 import { breadcrumbRegistry } from '../registry';
 
@@ -24,4 +26,33 @@ export const useSetBreadcrumbSeed = (breadcrumb: Breadcrumb | null) => {
   });
   window.dispatchEvent(event);
   return;
+};
+
+/**
+ * Turns the breadcrumb into the title bar variant.
+ * Can inject other css too.
+ *
+ * @param customStyles
+ */
+export const useBreadCrumbsGreyStyle = () => {
+  const breadcrumbBackground = `.breadcrumbs {
+    transition: background-color 0.2s ease-in-out;
+    background-color: #F2F3F3;
+    border-bottom: 1px solid lightgrey;
+    __BREADCRUMB_GREY_TEMP__: remove-me;
+  }`;
+
+  useLayoutEffect(() => {
+    injectGlobal(breadcrumbBackground);
+    return () => {
+      // remove global css sheet with matching comment text
+      [...document.querySelectorAll('style')]
+        .filter(s => s.innerHTML.includes('__BREADCRUMB_GREY_TEMP__'))
+        .forEach(s => {
+          s.remove();
+        });
+    };
+  }, []);
+
+  return <></>;
 };

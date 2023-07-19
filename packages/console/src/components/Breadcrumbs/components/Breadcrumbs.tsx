@@ -142,7 +142,12 @@ const BreadCrumbs = () => {
     },
   }))();
 
-  if (!breadcrumbs?.length) return <></>;
+  if (!breadcrumbs?.length) {
+    return <></>;
+  }
+  if (breadcrumbs.length <= 2) {
+    return <></>;
+  }
 
   return (
     <Grid container className={`breadcrumbs ${styles.breadcrumbContainer}`}>
