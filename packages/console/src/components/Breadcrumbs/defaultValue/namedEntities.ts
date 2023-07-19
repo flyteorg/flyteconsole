@@ -13,22 +13,25 @@ export const namedEntitiesList = (projectId = '', domainId = '') => {
   const executions = {
     title: 'Executions',
     createdAt: '',
-    url: Routes.ProjectDashboard.makeUrl(projectId, domainId),
+    url: Routes.ProjectDetails.sections.dashboard.makeUrl(projectId, domainId),
   };
   const workflow = {
     title: 'Workflows',
     createdAt: '',
-    url: Routes.WorkflowDetails.makeUrl(projectId, domainId, ''),
+    url: Routes.ProjectDetails.sections.workflows.makeUrl(projectId, domainId),
   };
   const task = {
     title: 'Tasks',
     createdAt: '',
-    url: Routes.TaskDetails.makeUrl(projectId, domainId, ''),
+    url: Routes.ProjectDetails.sections.tasks.makeUrl(projectId, domainId),
   };
   const launchPlans = {
     title: 'Launch Plans',
     createdAt: '',
-    url: Routes.LaunchPlanDetails.makeUrl(projectId, domainId, ''),
+    url: Routes.ProjectDetails.sections.launchPlans.makeUrl(
+      projectId,
+      domainId,
+    ),
   };
 
   return [executions, workflow, task, launchPlans];

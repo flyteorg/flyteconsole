@@ -2,6 +2,8 @@ import { Routes } from 'routes';
 import { domains, namedEntities, projects } from '../async/fn';
 import {
   launchPlanSelfLink,
+  namedEntitiesSelfLink,
+  namedEntitiesSelfLinkExecutions,
   projectSelfLink,
   taskSelfLink,
   workflowSelfLink,
@@ -51,6 +53,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
   makeBreadcrumb({
     id: 'named-entity',
     label: 'Entity Search Lists',
+    asyncSelfLink: namedEntitiesSelfLink,
     defaultValue: namedEntitiesDefaultValue,
     asyncData: namedEntities,
     validator: b => namedEntitiesValidator(b) && !executionsValidatorEmpty(b),
@@ -59,6 +62,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
     id: 'executions:named-entity',
     label: 'Entity Search Lists',
     defaultValue: 'Executions',
+    asyncSelfLink: namedEntitiesSelfLinkExecutions,
     asyncValue: executonNamedEntityAsyncValue,
     asyncData: namedEntities,
     validator: executionsValidatorEmpty,
