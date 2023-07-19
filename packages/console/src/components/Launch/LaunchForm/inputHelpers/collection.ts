@@ -1,5 +1,5 @@
 import { Core } from '@flyteorg/flyteidl-types';
-import { InputType, InputTypeDefinition } from '../types';
+import { InputTypeDefinition } from '../types';
 import { literalNone } from './constants';
 import { getHelperForInput } from './getHelperForInput';
 import { parseJSON } from './parseJson';

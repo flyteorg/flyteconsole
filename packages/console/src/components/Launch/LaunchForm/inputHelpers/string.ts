@@ -38,6 +38,6 @@ export const stringHelper: InputHelper = {
   toLiteral,
   validate,
   typeDefinitionToDefaultValue: typeDefinition => {
-    return { scalar: { primitive: { stringValue: '' } } };
+    return '';
   },
 };

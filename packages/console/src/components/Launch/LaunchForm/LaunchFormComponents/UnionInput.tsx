@@ -6,7 +6,7 @@ import {
   UnionValue,
   InputValue,
 } from '../types';
-import { formatType } from '../utils';
+import { formatType, getInputDefintionForLiteralType } from '../utils';
 
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
 import {
@@ -30,13 +30,58 @@ const generateInputTypeToValueMap = (
     if (initialInputValue && subType.type === initialType.type) {
       map[subType.type] = initialInputValue;
     } else {
-      map[subType.type] = { value: undefined, typeDefinition: subType };
+      const subtypeHelper = getHelperForInput(subType.type);
+      map[subType.type] = {
+        value:
+          subtypeHelper?.typeDefinitionToDefaultValue?.(subType) || undefined,
+        typeDefinition: subType,
+      };
     }
     return map;
   }, {});
   return final;
 };
 
+const getInitialInputValue = (props: InputProps): UnionValue => {
+  const collectionHelper = getHelperForInput(InputType.Collection);
+  const unionHelper = getHelperForInput(props.typeDefinition.type);
+
+  if (props.hasCollectionParent && Array.isArray(props.initialValue)) {
+    const collectionValues = props.initialValue.map(literal => {
+      const unionValue = literal.scalar.union;
+
+      return {
+        value: unionValue.value,
+        typeDefinition: getInputDefintionForLiteralType(unionValue.type as any),
+      };
+    });
+
+    const subtype = collectionValues?.[0].typeDefinition;
+    const value = collectionHelper.fromLiteral(
+      {
+        collection: {
+          literals: collectionValues.map(v => v.value),
+        },
+      } as any,
+      {
+        subtype,
+      } as any,
+    ) as any;
+
+    return {
+      value,
+      typeDefinition: subtype,
+    };
+  }
+
+  return (
+    props.initialValue &&
+    (unionHelper.fromLiteral(
+      props.initialValue,
+      props.typeDefinition,
+    ) as UnionValue as any)
+  );
+};
 const generateSearchableSelectorOption = (
   inputTypeDefinition: InputTypeDefinition,
 ): SearchableSelectorOption<InputType> => {
@@ -56,26 +101,15 @@ const generateListOfSearchableSelectorOptions = (
 };
 
 export const UnionInput = (props: InputProps) => {
-  const {
-    initialValue,
-    label,
-    onChange,
-    typeDefinition,
-    error,
-    hasCollectionParent,
-  } = props;
+  const { label, onChange, typeDefinition, error, hasCollectionParent } = props;
 
-  const { listOfSubTypes, type } = typeDefinition;
+  const { listOfSubTypes } = typeDefinition;
 
   if (!listOfSubTypes?.length) {
     return <></>;
   }
 
-  const helper = getHelperForInput(type);
-
-  const initialInputValue =
-    initialValue &&
-    (helper.fromLiteral(initialValue, typeDefinition) as UnionValue);
+  const initialInputValue = getInitialInputValue(props);
 
   const initialInputTypeDefinition =
     initialInputValue?.typeDefinition ?? listOfSubTypes[0];

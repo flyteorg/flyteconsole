@@ -39,6 +39,6 @@ export const datetimeHelper: InputHelper = {
   toLiteral,
   validate,
   typeDefinitionToDefaultValue: typeDefinition => {
-    return {};
+    return '';
   },
 };
