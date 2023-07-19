@@ -102,10 +102,16 @@ export const ApplicationRouter: React.FC = () => {
         path={makeRoute('/')}
         render={() => {
           /**
-           * If LocalStoreDefaults exist, we direct them to the project detail view
+           * If LocalStoreDefaults exists, we direct them to the project detail view
            * for those values.
+           *
+           * TODO: the Routes.SelectProject.id check should be removed once we phase out the
+           *       local storage bug that leads to 404
            */
-          if (localProjectDomain) {
+          if (
+            localProjectDomain &&
+            localProjectDomain.project !== Routes.SelectProject.id
+          ) {
             return (
               <Redirect
                 to={`${makeRoute('/')}/projects/${

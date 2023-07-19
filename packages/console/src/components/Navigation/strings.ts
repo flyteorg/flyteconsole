@@ -6,6 +6,7 @@ const str = {
   versionConsolePackage: 'Package Version',
   versionAdmin: 'Admin Version',
   versionGoogleAnalytics: 'Google Analytics',
+  viewAllProjects: 'View All Projects',
   gaActive_: 'Active',
   gaActive_true: 'Active',
   gaActive_false: 'Inactive',

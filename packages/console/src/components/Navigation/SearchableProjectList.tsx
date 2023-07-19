@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { Box, Fade, Grid, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
@@ -7,8 +8,9 @@ import { useCommonStyles } from 'components/common/styles';
 import { defaultProjectDescription } from 'components/SelectProject/constants';
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { Project } from 'models/Project/types';
-import * as React from 'react';
 import { Routes } from 'routes';
+import { history } from 'routes/history';
+import t from './strings';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -49,13 +51,6 @@ const SearchResults: React.FC<SearchResultsProps> = ({
   onProjectSelected,
   results,
 }) => {
-  const viewAllProjects = {
-    id: Routes.SelectProject.id,
-    name: 'View All Projects',
-    description: 'View All Projects',
-    domains: [],
-  } as Project;
-
   const commonStyles = useCommonStyles();
   const styles = useStyles();
   return (
@@ -67,7 +62,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         title={
           <Typography variant="body1">
             <div className={commonStyles.textMonospace}>
-              {viewAllProjects.description}
+              {t('viewAllProjects')}
             </div>
           </Typography>
         }
@@ -77,11 +72,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({
           justifyContent="space-between"
           alignItems="center"
           className={styles.searchResult}
-          onClick={() => onProjectSelected(viewAllProjects)}
+          onClick={() => {
+            history.push(Routes.SelectProject.path);
+          }}
         >
           <Grid item>
             <Typography color="primary" className={styles.itemName}>
-              {viewAllProjects.name}…
+              {t('viewAllProjects')}…
             </Typography>
           </Grid>
         </Grid>
@@ -108,7 +105,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
               >
                 <div
                   className={styles.searchResult}
-                  onClick={onProjectSelected.bind(null, value)}
+                  onClick={() => onProjectSelected(value)}
                 >
                   <div
                     className={classnames(

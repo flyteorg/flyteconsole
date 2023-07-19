@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 
-interface NavLinkWithSearchProps extends React.ComponentProps<typeof NavLink> {
+interface NavLinkWithSearchProps extends React.ComponentProps<NavLink> {
   preserve?: string[];
 }
 
