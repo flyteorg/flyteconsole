@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import isEqual from 'lodash/isEqual';
 import { Breadcrumb } from '../types';
 import { breadcrumbRegistry } from '../registry';
@@ -29,8 +29,6 @@ export const useSetBreadcrumbSeed = (breadcrumb: Breadcrumb | null) => {
 
 /**
  * Turns the breadcrumb into the title bar variant.
- * Can inject other css too.
- *
  * @param customStyles
  */
 export const useBreadCrumbsGreyStyle = () => {
@@ -40,23 +38,27 @@ export const useBreadCrumbsGreyStyle = () => {
     border-bottom: 1px solid lightgrey;
   }`;
 
+  const [id] = useState<string>(
+    'data-breadcrumb-temp-' + Date.now().toString(),
+  );
+
   useEffect(() => {
     // make a new style tag in the head with js
     const style = document.createElement('style');
     style.innerHTML = breadcrumbBackground;
     style.setAttribute('type', 'text/css');
-    style.setAttribute('data-breadcrumb-temp', 'true');
+    style.setAttribute(id, 'true');
     document.head.appendChild(style);
 
     return () => {
       // remove global css sheet with matching comment text
       [...document.querySelectorAll('style')]
-        .filter(s => s.outerHTML.includes('data-breadcrumb-temp'))
+        .filter(s => s.outerHTML.includes(id))
         .forEach(s => {
           s.remove();
         });
     };
-  }, [window.location.pathname]);
+  }, [window.location.pathname, id]);
 
   return;
 };
