@@ -74,13 +74,20 @@ const BreadcrumbFormControlDefault = (
     e.preventDefault();
     e.stopPropagation();
 
-    if (props.id.startsWith('project') || props.id.startsWith('domain')) {
-      const projectDomain: LocalStorageProjectDomain = {
-        domain: props.domainId,
-        project: props.projectId,
-      };
-      setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
-    }
+    const projectValue = props.id.startsWith('project')
+      ? props.value
+      : props.projectId;
+
+    const domainValue = props.id.startsWith('domain')
+      ? props.value
+      : props.domainId;
+
+    const projectDomain: LocalStorageProjectDomain = {
+      project: projectValue,
+      domain: domainValue,
+    };
+
+    setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
 
     if (props.selfLink || props.asyncSelfLink) {
       if (asyncSelfLinkData?.length) {

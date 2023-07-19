@@ -13,7 +13,6 @@ import { makeBreadcrumb } from './utils';
 import { namedEntitiesDefaultValue } from '../defaultValue';
 import {
   executionsValidatorEmpty,
-  namedEntitiesValidator,
   namedEntitiesValidatorExecutionsEmpty,
 } from '../validators';
 import {

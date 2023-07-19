@@ -6,7 +6,6 @@ import {
   Button,
   Grid,
   Icon,
-  Link,
   List,
   ListItem,
   Popover,
@@ -86,14 +85,23 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   /**
    * Handle the callback to close the popover and navigate to the url
    */
-  const handleLink = (e, url: string, isActive = false) => {
+  const handleLink = (e, url: string, title: string, isActive = false) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (props.id.startsWith('project') || props.id.startsWith('domain')) {
+    // view all link has no title prop
+    if (title) {
+      const projectValue = props.id.startsWith('project')
+        ? title
+        : props.projectId;
+
+      const domainValue = props.id.startsWith('domain')
+        ? title
+        : props.domainId;
+
       const projectDomain: LocalStorageProjectDomain = {
-        domain: props.domainId,
-        project: props.projectId,
+        project: projectValue,
+        domain: domainValue,
       };
       setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
     }
@@ -172,6 +180,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
                         handleLink(
                           e,
                           data.url,
+                          data.title,
                           activeBasedOnTitle || activeBasedOnAsyncData,
                         );
                       }}
@@ -234,7 +243,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
           <Grid item xs={12}>
             <Box paddingLeft={5} paddingBottom={1}>
               <Button
-                onClick={e => handleLink(e, viewAllLink)}
+                onClick={e => handleLink(e, viewAllLink, '')}
                 href={viewAllLink}
                 className="breadcrumb-form-control-view-all-link"
                 variant="text"
@@ -258,7 +267,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
             {!viewAllQueryIsLoading && viewAllLink.length && (
               <Box paddingLeft={5} paddingBottom={1}>
                 <Button
-                  onClick={e => handleLink(e, viewAllLink)}
+                  onClick={e => handleLink(e, viewAllLink, '')}
                   href={viewAllLink}
                   className="breadcrumb-form-control-view-all-link"
                   variant="text"
