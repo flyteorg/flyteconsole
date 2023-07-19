@@ -5,6 +5,11 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Grid } from '@material-ui/core';
 import { useExternalConfigurationContext } from 'basics/ExternalConfigurationProvider';
 import get from 'lodash/get';
+import {
+  LOCAL_PROJECT_DOMAIN,
+  LocalStorageProjectDomain,
+  getLocalStore,
+} from 'components/common';
 import { Breadcrumb, BreadcrumbFormControlInterface } from '../types';
 import { breadcrumbRegistry } from '../registry';
 import BreadcrumbFormControl from './BreadcrumbFormControl';
@@ -23,9 +28,15 @@ import { BreadcrumbTitleActionsPortal } from './BreadcrumbTitleActions';
 const BreadCrumbs = () => {
   const routerLocation = useLocation();
   const routerParams = useParams();
+  const projectDomain = getLocalStore(
+    LOCAL_PROJECT_DOMAIN,
+  ) as LocalStorageProjectDomain;
 
   const currentProjectId =
-    routerParams['projectId']?.trim() || projectIdfromUrl() || '';
+    routerParams['projectId']?.trim() ||
+    projectIdfromUrl() ||
+    projectDomain?.project ||
+    '';
 
   const projectQuery = useQuery('projects', () => listProjects());
   const projectData = useMemo(() => {
@@ -35,7 +46,10 @@ const BreadCrumbs = () => {
   }, [projectQuery.data, projectQuery.isLoading]);
 
   const currentDomainId = useMemo(() => {
-    const id = routerParams['domainId'] || domainIdfromUrl(window.location);
+    const id =
+      routerParams['domainId'] ||
+      domainIdfromUrl(window.location) ||
+      projectDomain?.domain;
     if (id) return id;
 
     // get the first domain id from the project
@@ -54,6 +68,7 @@ const BreadCrumbs = () => {
     projectData,
     projectData?.length,
     currentProjectId,
+    projectDomain?.domain,
   ]);
 
   // load from user provided registry for custom breadcrumb handling
