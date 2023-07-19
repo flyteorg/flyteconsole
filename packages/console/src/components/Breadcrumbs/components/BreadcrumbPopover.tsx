@@ -12,7 +12,12 @@ import {
   Popover,
   Typography,
 } from '@material-ui/core';
-import { LoadingSpinner } from 'components/common';
+import {
+  LOCAL_PROJECT_DOMAIN,
+  LoadingSpinner,
+  LocalStorageProjectDomain,
+  setLocalStore,
+} from 'components/common';
 import { useHistory } from 'react-router';
 import { Check, InsertLink } from '@material-ui/icons';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
@@ -86,9 +91,18 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       e.preventDefault();
       e.stopPropagation();
 
+      if (props.id.startsWith('project') || props.id.startsWith('domain')) {
+        const projectDomain: LocalStorageProjectDomain = {
+          domain: props.domainId,
+          project: props.projectId,
+        };
+        setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+      }
+
       if (!isActive) {
         history.push(url);
         props.onClose();
+        return;
       }
     };
 

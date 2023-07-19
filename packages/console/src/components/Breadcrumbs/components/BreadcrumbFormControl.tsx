@@ -10,6 +10,11 @@ import { ArrowDropDown } from '@material-ui/icons';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 import { useQuery } from 'react-query';
+import {
+  LOCAL_PROJECT_DOMAIN,
+  LocalStorageProjectDomain,
+  setLocalStore,
+} from 'components/common';
 import { BreadcrumbFormControlInterfaceUI } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
 import { defaultVoid } from '../async/fn';
@@ -68,6 +73,15 @@ const BreadcrumbFormControlDefault = (
   const handleValueClick = e => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (props.id.startsWith('project') || props.id.startsWith('domain')) {
+      const projectDomain: LocalStorageProjectDomain = {
+        domain: props.domainId,
+        project: props.projectId,
+      };
+      setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+    }
+
     if (props.selfLink || props.asyncSelfLink) {
       if (asyncSelfLinkData?.length) {
         history.push(asyncSelfLinkData);
