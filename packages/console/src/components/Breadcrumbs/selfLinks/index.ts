@@ -54,6 +54,12 @@ export const namedEntitiesSelfLinkExecutions = async (
   breadcrumb: BreadcrumbFormControlInterface,
 ) => {
   const { projectId, domainId } = breadcrumb;
+  if (!breadcrumb.value || breadcrumb.value.toLowerCase() === 'executions') {
+    return Routes.ProjectDetails.sections.dashboard.makeUrl(
+      projectId,
+      domainId,
+    );
+  }
   const key = await executonNamedEntityAsyncValue(location, breadcrumb);
   const namedEntities = namedEntitiesList(projectId, domainId);
   const entity = namedEntities.find(entity =>
