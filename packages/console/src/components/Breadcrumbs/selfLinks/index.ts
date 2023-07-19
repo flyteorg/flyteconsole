@@ -1,5 +1,7 @@
 import { Routes } from 'routes';
 import { BreadcrumbFormControlInterface } from '../types';
+import { namedEntitiesDefaultValue, namedEntitiesList } from '../defaultValue';
+import { executonNamedEntityAsyncValue } from '../async/executionContext';
 
 export const projectSelfLink = (
   _location: Location,
@@ -31,4 +33,30 @@ export const taskSelfLink = (
 ) => {
   const { projectId, domainId, value } = breadcrumb;
   return Routes.TaskDetails.makeUrl(projectId, domainId, value);
+};
+
+export const namedEntitiesSelfLink = async (
+  location: Location,
+  breadcrumb: BreadcrumbFormControlInterface,
+) => {
+  const { projectId, domainId } = breadcrumb;
+  const key = namedEntitiesDefaultValue(location, breadcrumb);
+  const namedEntities = namedEntitiesList(projectId, domainId);
+  const entity = namedEntities.find(entity =>
+    entity.title.toLowerCase().includes(key),
+  );
+  return entity?.url || '';
+};
+
+export const namedEntitiesSelfLinkExecutions = async (
+  location: Location,
+  breadcrumb: BreadcrumbFormControlInterface,
+) => {
+  const { projectId, domainId } = breadcrumb;
+  const key = await executonNamedEntityAsyncValue(location, breadcrumb);
+  const namedEntities = namedEntitiesList(projectId, domainId);
+  const entity = namedEntities.find(entity =>
+    entity.title.toLowerCase().includes(key),
+  );
+  return entity?.url || '';
 };
