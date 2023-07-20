@@ -4,7 +4,7 @@ import { injectGlobal } from 'emotion';
 const GlobalStyles = () => {
   useEffect(() => {
     injectGlobal(`
-      body {
+      body > div {
         overscroll-behavior: none;
       }
       .sr-only {
