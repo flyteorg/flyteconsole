@@ -140,12 +140,8 @@ export const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
 ): Promise<WorkflowNodeExecution | undefined> => {
   const isTerminal = nodeExecutionIsTerminal(nodeExecution);
-  const tasksFetched = !!nodeExecution.tasksFetched;
   const isDynamic = isDynamicNode(nodeExecution);
-  if (!isDynamic && tasksFetched) {
-    // return null to signal no change
-    return;
-  }
+
   return await fetchTaskExecutionList(
     queryClient,
     nodeExecution.id as any,
