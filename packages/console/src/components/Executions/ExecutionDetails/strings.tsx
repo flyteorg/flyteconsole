@@ -1,7 +1,7 @@
 import { createLocalizedString } from '@flyteorg/locale';
 
 const str = {
-  rerun: 'Rerun',
+  rerun: 'Rerun Task',
   flyteDeck: 'Flyte Deck',
   resume: 'Resume',
   taskNameColumnHeader: 'Task Name',
