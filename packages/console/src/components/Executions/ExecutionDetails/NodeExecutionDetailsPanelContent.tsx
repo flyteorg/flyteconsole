@@ -266,10 +266,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
   const [selectedTaskExecution, setSelectedTaskExecution] =
-    useState<MapTaskExecution | null>(null);
-  // const [nodePhase, setNodePhase] = useState<NodeExecutionPhase>(
-  //   nodeExecution?.closure.phase ?? NodeExecutionPhase.UNDEFINED,
-  // );
+    useState<MapTaskExecution>();
 
   const { getNodeExecutionDetails, compiledWorkflowClosure } =
     useNodeExecutionContext();
@@ -342,7 +339,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   }, [nodeExecutionId]);
 
   useEffect(() => {
-    setSelectedTaskExecution(null);
+    setSelectedTaskExecution(undefined);
   }, [nodeExecutionId, taskPhase]);
 
   // TODO: needs to be removed
@@ -372,7 +369,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   );
 
   const onBackClick = () => {
-    setSelectedTaskExecution(null);
+    setSelectedTaskExecution(undefined);
   };
 
   const headerTitle = useMemo(() => {
@@ -449,7 +446,10 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   if (nodeExecution) {
     detailsContent = (
       <>
-        <NodeExecutionCacheStatus execution={nodeExecution} />
+        <NodeExecutionCacheStatus
+          execution={nodeExecution}
+          selectedTaskExecution={selectedTaskExecution}
+        />
         <ExecutionTypeDetails details={details} execution={nodeExecution} />
       </>
     );

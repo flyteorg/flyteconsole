@@ -209,6 +209,7 @@ export const WorkflowNodeExecutionsProvider = ({
           setShouldUpdate(true);
         }
 
+        console.log('carina newNodes', { newNodes });
         return newNodes;
       });
     },
