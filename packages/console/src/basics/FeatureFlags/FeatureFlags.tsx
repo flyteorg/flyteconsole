@@ -53,6 +53,7 @@ interface FeatureFlagState {
 }
 
 interface FeatureFlagProviderProps {
+  externalFlags?: { [k: string]: boolean };
   children?: React.ReactNode;
 }
 
@@ -77,6 +78,7 @@ export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   const [flags, setFlags] = useState<FeatureFlagConfig>({
     ...defaultFlagConfig,
     ...runtimeConfig,
+    ...props.externalFlags,
   });
 
   const setFeatureFlag = useCallback((flag: FeatureFlag, newValue: boolean) => {

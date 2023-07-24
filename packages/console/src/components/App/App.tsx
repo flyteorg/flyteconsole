@@ -63,7 +63,7 @@ export const AppComponent: React.FC<AppComponentProps> = (
     `${env.HORIZONTAL_LAYOUT}`.trim().toLowerCase() === 'true';
 
   return (
-    <FeatureFlagsProvider>
+    <FeatureFlagsProvider externalFlags={props.env}>
       <GlobalStyles />
       <LocalCacheProvider>
         <StylesProvider
