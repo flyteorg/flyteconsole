@@ -62,8 +62,12 @@ export const AppComponent: React.FC<AppComponentProps> = (
   const horizontalLayoutFlag =
     `${env.HORIZONTAL_LAYOUT}`.trim().toLowerCase() === 'true';
 
+  const breadcrumbsFlag = `${env.BREADCRUMBS}`.trim().toLowerCase() === 'true';
+
   return (
-    <FeatureFlagsProvider externalFlags={props.env}>
+    <FeatureFlagsProvider
+      externalFlags={{ ...props.env, breadcrumbs: breadcrumbsFlag }}
+    >
       <GlobalStyles />
       <LocalCacheProvider>
         <StylesProvider
