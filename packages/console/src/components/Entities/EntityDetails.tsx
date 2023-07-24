@@ -4,8 +4,9 @@ import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks/useProjects';
 import { useChartState } from 'components/hooks/useChartState';
 import { ResourceIdentifier } from 'models/Common/types';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';
 import { EntityInputs } from './EntityInputs';
@@ -68,12 +69,20 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
   const styles = useStyles();
   const { chartIds, onToggle, clearCharts } = useChartState();
 
+  const isBreadcrumbsFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
   return (
     <Grid container direction="column" className={styles.entityDetailsWrapper}>
       {!project?.id && <LoadingSpinner />}
       {project?.id && (
         <>
-          <EntityDetailsHeader id={id} launchable={!!sections.launch} />
+          <Box px={isBreadcrumbsFlag ? 0 : 2}>
+            <EntityDetailsHeader
+              id={id}
+              launchable={!!sections.launch}
+              project={project}
+            />
+          </Box>
           <div className={styles.metadataContainer}>
             {sections.description && (
               <div className={styles.descriptionContainer}>

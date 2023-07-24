@@ -8,6 +8,7 @@ import {
   sideNavGridWidth,
 } from 'common/layout';
 import { BreadCrumbs } from 'components/Breadcrumbs';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { ErrorBoundary } from './ErrorBoundary';
 
 enum ContainerClasses {
@@ -78,11 +79,13 @@ export const ContentContainer: React.FC<ContentContainerProps> = props => {
     [ContainerClasses.WithSideNav]: sideNav,
   });
 
+  const isBreadcrumbFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
   return (
     <div {...restProps} className={className} id={contentContainerId}>
       <ErrorBoundary>
         <>
-          <BreadCrumbs />
+          {isBreadcrumbFlag && <BreadCrumbs />}
           {children}
         </>
       </ErrorBoundary>

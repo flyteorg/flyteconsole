@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import { createPortal } from 'react-dom';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 
 /**
  * This component is used to render a portal for the breadcrumb title actions.
@@ -33,9 +34,13 @@ const BreadcrumbTitleActions = ({ children = <></> }) => {
   useEffect(() => {
     if (!portalRef) {
       const domElement = document.getElementById('bread-crumb-actions');
-      setPortalRef(domElement);
+      if (domElement) setPortalRef(domElement);
     }
   }, [portalRef]);
+
+  const isBreadcrumbFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
+  if (!isBreadcrumbFlag) return <>{children}</>;
 
   if (!portalRef) return <></>;
   return <>{createPortal(<>{children}</>, portalRef)}</>;

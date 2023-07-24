@@ -1,22 +1,28 @@
-import * as React from 'react';
-import { Button, Dialog, Grid, Link } from '@material-ui/core';
+import React from 'react';
+import { Box, Button, Dialog, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import classnames from 'classnames';
 import { navbarGridHeight } from 'common/layout';
 import { ButtonCircularProgress } from 'components/common/ButtonCircularProgress';
 import { MoreOptionsMenu } from 'components/common/MoreOptionsMenu';
 import { useCommonStyles } from 'components/common/styles';
+import { useLocationState } from 'components/hooks/useLocationState';
+import { Link as RouterLink } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { SubNavBarContent } from 'components/Navigation/SubNavBarContent';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
 import { ExecutionInputsOutputsModal } from '../ExecutionInputsOutputsModal';
 import { ExecutionStatusBadge } from '../ExecutionStatusBadge';
 import { TerminateExecutionButton } from '../TerminateExecution/TerminateExecutionButton';
 import { executionIsRunning, executionIsTerminal } from '../utils';
-import { executionActionStrings } from './constants';
+import { backLinkTitle, executionActionStrings } from './constants';
 import { RelaunchExecutionForm } from './RelaunchExecutionForm';
+import { getExecutionBackLink, getExecutionSourceId } from './utils';
 import { useRecoverExecutionState } from './useRecoverExecutionState';
 import { ExecutionContext } from '../contexts';
 
@@ -67,11 +73,17 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
 
+  const isBreadcrumbFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
   const { execution } = React.useContext(ExecutionContext);
+  const { domain, name, project } = execution.id;
 
   const [showInputsOutputs, setShowInputsOutputs] = React.useState(false);
   const [showRelaunchForm, setShowRelaunchForm] = React.useState(false);
   const { phase } = execution.closure;
+  const sourceId = getExecutionSourceId(execution);
+  const { backLink: originalBackLink = getExecutionBackLink(execution) } =
+    useLocationState();
 
   const isRunning = executionIsRunning(execution);
   const isTerminal = executionIsTerminal(execution);
@@ -81,6 +93,13 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 
   // Close modal on escape key press
   useEscapeKey(onCloseRelaunch);
+
+  const fromExecutionNav = new URLSearchParams(history.location.search).get(
+    'fromExecutionNav',
+  );
+  const backLink = fromExecutionNav
+    ? Routes.ProjectDetails.sections.dashboard.makeUrl(project, domain)
+    : originalBackLink;
 
   const {
     recoverExecution,
@@ -118,7 +137,15 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   const actionContent = isRunning ? (
     <TerminateExecutionButton />
   ) : isTerminal ? (
-    <Grid container spacing={2}>
+    <Grid
+      container
+      spacing={2}
+      justifyContent="flex-end"
+      style={{
+        flexWrap: isBreadcrumbFlag ? 'wrap' : 'nowrap',
+        width: isBreadcrumbFlag ? '100%' : 'auto',
+      }}
+    >
       {isRecoverVisible && (
         <Grid item>
           <Button
@@ -162,27 +189,77 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 
   return (
     <>
-      <Grid container justifyContent="flex-end" alignItems="center" spacing={2}>
-        <Grid item>
+      {!isBreadcrumbFlag && (
+        <div className={styles.container}>
+          <RouterLink
+            title={backLinkTitle}
+            className={classnames('backLink', styles.backLink)}
+            to={backLink}
+          >
+            <ArrowBack />
+          </RouterLink>
           <ExecutionStatusBadge
             phase={phase}
             type="workflow"
             className="subNavBadge"
           />
-        </Grid>
-        <Grid item>
-          <Link
-            className={styles.inputsOutputsLink}
-            component="button"
-            onClick={onClickShowInputsOutputs}
-            variant="body1"
+          <div className={classnames('titleContainer', styles.titleContainer)}>
+            <Typography
+              variant="body1"
+              className={classnames(styles.title, commonStyles.textWrapped)}
+            >
+              <span>
+                {`${project}/${domain}/${sourceId.name}/`}
+                <strong>{`${name}`}</strong>
+              </span>
+            </Typography>
+          </div>
+          <div className={styles.actions}>
+            <Box pr={2}>
+              <Link
+                className={styles.inputsOutputsLink}
+                component="button"
+                onClick={onClickShowInputsOutputs}
+                variant="body1"
+              >
+                View Inputs &amp; Outputs
+              </Link>
+            </Box>
+            {actionContent}
+            {moreActionsContent}
+          </div>
+        </div>
+      )}
+      {isBreadcrumbFlag && (
+        <BreadcrumbTitleActions>
+          <Grid
+            container
+            justifyContent="flex-end"
+            alignItems="center"
+            spacing={2}
           >
-            View Inputs &amp; Outputs
-          </Link>
-        </Grid>
-        {actionContent && <Grid item>{actionContent}</Grid>}
-        {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
-      </Grid>
+            <Grid item>
+              <ExecutionStatusBadge
+                phase={phase}
+                type="workflow"
+                className="subNavBadge"
+              />
+            </Grid>
+            <Grid item>
+              <Link
+                className={styles.inputsOutputsLink}
+                component="button"
+                onClick={onClickShowInputsOutputs}
+                variant="body1"
+              >
+                View Inputs &amp; Outputs
+              </Link>
+            </Grid>
+            {actionContent && <Grid item>{actionContent}</Grid>}
+            {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+          </Grid>
+        </BreadcrumbTitleActions>
+      )}
       <Dialog
         scroll="paper"
         maxWidth="sm"
@@ -202,9 +279,7 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
 export const ExecutionDetailsAppBarContent: React.FC<{}> = () => {
   return (
     <SubNavBarContent>
-      <BreadcrumbTitleActions>
-        <ExecutionDetailsAppBarContentInner />
-      </BreadcrumbTitleActions>
+      <ExecutionDetailsAppBarContentInner />
     </SubNavBarContent>
   );
 };

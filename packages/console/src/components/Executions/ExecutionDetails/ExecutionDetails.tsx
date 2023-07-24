@@ -59,7 +59,6 @@ const ExecutionContainer: React.FC<{}> = () => {
 
   return (
     <>
-      {/* <BreadCrumbsPageStyle nameSpace="__GLOBALS_TEMP_EXECUTIONS__" /> */}
       <div className={styles.metadataContainer}>
         <Collapse in={metadataExpanded}>
           <ExecutionMetadata />

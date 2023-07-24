@@ -13,6 +13,9 @@ export enum FeatureFlag {
   // Makes the header inline with the content
   HorizontalLayout = 'horizontal-layout',
 
+  // Replace the page header with the breadcrumb context navigation with related item quicklinks
+  breadcrumbs = 'breadcrumbs',
+
   // Test Only Mine flag
   OnlyMine = 'only-mine',
 }
@@ -28,6 +31,8 @@ export const defaultFlagConfig: FeatureFlagConfig = {
   'launch-plan': false,
 
   'horizontal-layout': false,
+
+  breadcrumbs: false,
 
   'only-mine': false,
 };
