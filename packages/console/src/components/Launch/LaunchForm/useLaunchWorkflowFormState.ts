@@ -153,9 +153,11 @@ async function loadInputs(
     defaultInputValues,
   );
 
+  const unsupportedRequiredInputs = getUnsupportedRequiredInputs(parsedInputs);
+
   return {
     parsedInputs,
-    unsupportedRequiredInputs: getUnsupportedRequiredInputs(parsedInputs),
+    unsupportedRequiredInputs,
   };
 }
 
