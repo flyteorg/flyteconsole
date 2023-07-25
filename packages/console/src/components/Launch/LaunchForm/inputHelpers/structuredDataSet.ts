@@ -42,7 +42,7 @@ function validate({ value, required }: InputValidatorParams) {
     throw new Error('Dataset uri is required');
   }
 
-  if (dsValue.format !== null && typeof dsValue.format !== 'string') {
+  if (!!dsValue.format && typeof dsValue.format !== 'string') {
     throw new Error('Dataset format must be a string');
   }
 }
