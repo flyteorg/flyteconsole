@@ -77,8 +77,8 @@ export const useFeatureFlagContext = () => useContext(FeatureFlagContext);
 export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   const [flags, setFlags] = useState<FeatureFlagConfig>({
     ...defaultFlagConfig,
-    ...runtimeConfig,
     ...props.externalFlags,
+    ...runtimeConfig,
   });
 
   const setFeatureFlag = useCallback((flag: FeatureFlag, newValue: boolean) => {

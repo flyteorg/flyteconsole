@@ -137,15 +137,7 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
   const actionContent = isRunning ? (
     <TerminateExecutionButton />
   ) : isTerminal ? (
-    <Grid
-      container
-      spacing={2}
-      justifyContent="flex-end"
-      style={{
-        flexWrap: isBreadcrumbFlag ? 'wrap' : 'nowrap',
-        width: isBreadcrumbFlag ? '100%' : 'auto',
-      }}
-    >
+    <>
       {isRecoverVisible && (
         <Grid item>
           <Button
@@ -172,7 +164,7 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
           Relaunch
         </Button>
       </Grid>
-    </Grid>
+    </>
   ) : null;
 
   // For non-terminal executions, add an overflow menu with the ability to clone
@@ -255,8 +247,8 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
                 View Inputs &amp; Outputs
               </Link>
             </Grid>
-            {actionContent && <Grid item>{actionContent}</Grid>}
-            {moreActionsContent && <Grid item>{moreActionsContent}</Grid>}
+            {actionContent && <>{actionContent}</>}
+            {moreActionsContent && <>{moreActionsContent}</>}
           </Grid>
         </BreadcrumbTitleActions>
       )}
