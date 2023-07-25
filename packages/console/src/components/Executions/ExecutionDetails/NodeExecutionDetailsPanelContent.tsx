@@ -257,9 +257,11 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     useNodeExecutionsById();
 
   const nodeExecution = useMemo(() => {
-    return values(nodeExecutionsById).find(node =>
+    const finalExecution = values(nodeExecutionsById).find(node =>
       isEqual(node.id, nodeExecutionId),
     );
+
+    return finalExecution;
   }, [nodeExecutionId, nodeExecutionsById]);
 
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
@@ -299,7 +301,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     return () => {
       isCurrent = false;
     };
-  });
+  }, [nodeExecution]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -408,7 +410,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       isGateNode,
     );
     return computedPhase;
-  }, [nodeExecution?.closure.phase, isGateNode]);
+  }, [nodeExecution, isGateNode]);
 
   const isRunningPhase = useMemo(
     () =>
