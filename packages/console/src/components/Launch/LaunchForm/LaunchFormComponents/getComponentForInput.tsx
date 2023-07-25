@@ -9,6 +9,7 @@ import { MapInput } from '../MapInput';
 import { UnsupportedInput } from './UnsupportedInput';
 import { NoneInput } from './NoneInput';
 import { SimpleInput } from './SimpleInput';
+import { StructuredDatasetInput } from './StructuredDatasetInput';
 
 export function getComponentForInput(input: InputProps, showErrors: boolean) {
   const onChange = (newValue: InputValue) => {
@@ -36,6 +37,8 @@ export function getComponentForInput(input: InputProps, showErrors: boolean) {
       return <CollectionInput {...props} />;
     case InputType.Struct:
       return <StructInput {...props} />;
+    case InputType.StructuredDataset:
+      return <StructuredDatasetInput {...props} />;
     case InputType.Map:
       return <MapInput {...props} />;
     case InputType.Unknown:
