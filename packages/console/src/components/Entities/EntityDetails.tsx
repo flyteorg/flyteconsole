@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { contentMarginGridUnits } from 'common/layout';
 import { EntityDescription } from 'components/Entities/EntityDescription';
 import { useProject } from 'components/hooks/useProjects';
 import { useChartState } from 'components/hooks/useChartState';
 import { ResourceIdentifier } from 'models/Common/types';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { entitySections } from './constants';
 import { EntityDetailsHeader } from './EntityDetailsHeader';
 import { EntityInputs } from './EntityInputs';
@@ -17,7 +17,6 @@ import { EntityExecutionsBarChart } from './EntityExecutionsBarChart';
 
 const useStyles = makeStyles((theme: Theme) => ({
   entityDetailsWrapper: {
-    px: theme.spacing(2),
     minHeight: '100vh',
   },
   metadataContainer: {
@@ -25,6 +24,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
     width: '100%',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
   descriptionContainer: {
     flex: '2 1 auto',
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: '1 1 auto',
     flexDirection: 'column',
-    margin: `0 -${theme.spacing(contentMarginGridUnits)}px`,
+    margin: `0`,
     flexBasis: theme.spacing(80),
   },
   versionsContainer: {
@@ -47,6 +48,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   inputsContainer: {
     display: 'flex',
     flexDirection: 'column',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
 }));
 
@@ -66,17 +69,20 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
   const styles = useStyles();
   const { chartIds, onToggle, clearCharts } = useChartState();
 
+  const isBreadcrumbsFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
   return (
     <Grid container direction="column" className={styles.entityDetailsWrapper}>
       {!project?.id && <LoadingSpinner />}
       {project?.id && (
         <>
-          <EntityDetailsHeader
-            project={project}
-            id={id}
-            launchable={!!sections.launch}
-          />
-
+          <Box px={isBreadcrumbsFlag ? 0 : 2}>
+            <EntityDetailsHeader
+              id={id}
+              launchable={!!sections.launch}
+              project={project}
+            />
+          </Box>
           <div className={styles.metadataContainer}>
             {sections.description && (
               <div className={styles.descriptionContainer}>

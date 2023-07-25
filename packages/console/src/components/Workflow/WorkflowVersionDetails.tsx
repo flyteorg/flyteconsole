@@ -73,10 +73,10 @@ const WorkflowVersionDetailsContainer: React.FC<
   return (
     <>
       <EntityDetailsHeader
-        project={project}
         id={id}
         launchable={sections.launch}
         backToWorkflow
+        project={project}
       />
       <div className={styles.verionDetailsContatiner}>
         <div className={styles.staticGraphContainer}>

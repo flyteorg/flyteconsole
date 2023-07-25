@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { Tab, Tabs } from '@material-ui/core';
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject } from 'components/hooks/useProjects';
 import { useQueryState } from 'components/hooks/useQueryState';
@@ -13,15 +11,6 @@ import { ProjectDashboard } from './ProjectDashboard';
 import { ProjectTasks } from './ProjectTasks';
 import { ProjectWorkflows } from './ProjectWorkflows';
 import { ProjectLaunchPlans } from './ProjectLaunchPlans';
-
-const useStyles = makeStyles((theme: Theme) => ({
-  tab: {
-    textTransform: 'capitalize',
-  },
-  tabs: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
-  },
-}));
 
 export interface ProjectDetailsRouteParams {
   projectId: string;
@@ -39,8 +28,7 @@ const ProjectEntitiesByDomain: React.FC<{
   project: Project;
   entityType: 'executions' | 'tasks' | 'workflows' | 'launchPlans';
 }> = ({ entityType, project }) => {
-  const styles = useStyles();
-  const { params, setQueryState } = useQueryState<{ domain: string }>();
+  const { params } = useQueryState<{ domain: string }>();
   if (project && !project?.domains) {
     throw new Error('No domains exist for this project');
   }
@@ -51,25 +39,10 @@ const ProjectEntitiesByDomain: React.FC<{
     return project?.domains ? project?.domains[0].id : '';
   }, [project, project?.domains, params?.domain]);
 
-  const handleTabChange = (_event: React.ChangeEvent<unknown>, tabId: string) =>
-    setQueryState({
-      domain: tabId,
-    });
   const EntityComponent = entityTypeToComponent[entityType];
 
   return (
     <>
-      {project?.domains && (
-        <Tabs
-          className={styles.tabs}
-          onChange={handleTabChange}
-          value={domainId}
-        >
-          {project.domains.map(({ id, name }) => (
-            <Tab className={styles.tab} key={id} value={id} label={name} />
-          ))}
-        </Tabs>
-      )}
       {project?.id ? (
         <EntityComponent projectId={project.id} domainId={domainId} />
       ) : (

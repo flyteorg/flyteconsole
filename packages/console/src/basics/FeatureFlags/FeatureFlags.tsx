@@ -18,10 +18,31 @@ import {
 
 export { FeatureFlag } from './defaultConfig';
 
+/**
+ * Set feature flag value for current session using URLSearchParams values
+ * @param search
+ * @returns
+ */
+const getSearchParamFlags = (search: string): FeatureFlagConfig => {
+  const urlParams = new URLSearchParams(search);
+  const flags: FeatureFlagConfig = {};
+  for (const [key, value] of urlParams.entries()) {
+    if (value === 'true') {
+      flags[key] = true;
+    } else if (value === 'false') {
+      flags[key] = false;
+    }
+  }
+  return flags as FeatureFlagConfig;
+};
+
+const search: string = window.location.search || '';
+
 // To turn on flag for local development only - update flag value here
 // REMOVE change prior to commit
 let runtimeConfig: FeatureFlagConfig = {
   ...defaultFlagConfig,
+  ...getSearchParamFlags(search),
   // 'test-flag-true': true,  <== locally turns flag on
 };
 
@@ -32,6 +53,7 @@ interface FeatureFlagState {
 }
 
 interface FeatureFlagProviderProps {
+  externalFlags?: { [k: string]: boolean };
   children?: React.ReactNode;
 }
 
@@ -55,6 +77,7 @@ export const useFeatureFlagContext = () => useContext(FeatureFlagContext);
 export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   const [flags, setFlags] = useState<FeatureFlagConfig>({
     ...defaultFlagConfig,
+    ...props.externalFlags,
     ...runtimeConfig,
   });
 

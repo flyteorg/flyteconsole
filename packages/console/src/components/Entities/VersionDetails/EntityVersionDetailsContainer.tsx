@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useMemo, FC } from 'react';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
@@ -9,8 +9,9 @@ import { entitySections } from 'components/Entities/constants';
 import { EntityDetailsHeader } from 'components/Entities/EntityDetailsHeader';
 import { EntityVersions } from 'components/Entities/EntityVersions';
 import { RouteComponentProps } from 'react-router-dom';
-import { Box } from '@material-ui/core';
 import { LoadingSpinner } from 'components/common';
+import { Box } from '@material-ui/core';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { typeNameToEntityResource } from '../constants';
 import { versionsDetailsSections } from './constants';
 import { EntityVersionDetails } from './EntityVersionDetails';
@@ -69,10 +70,10 @@ interface WorkflowVersionDetailsRouteParams {
  * @param domainId
  * @param workflowName
  */
-const EntityVersionsDetailsContainerImpl: React.FC<
+const EntityVersionsDetailsContainerImpl: FC<
   WorkflowVersionDetailsRouteParams
 > = ({ projectId, domainId, entityType, entityName, entityVersion }) => {
-  const workflowId = React.useMemo<WorkflowId>(
+  const workflowId = useMemo<WorkflowId>(
     () => ({
       resourceType: typeNameToEntityResource[entityType],
       project: projectId,
@@ -89,17 +90,19 @@ const EntityVersionsDetailsContainerImpl: React.FC<
   const [project] = useProject(workflowId.project);
   const styles = useStyles({ resourceType: id.resourceType });
 
+  const isBreadcrumbsFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
+
   if (!project?.id) {
     return <LoadingSpinner />;
   }
 
   return (
     <>
-      <Box pl={2} pr={2}>
+      <Box px={isBreadcrumbsFlag ? 0 : 2}>
         <EntityDetailsHeader
-          project={project.value}
           id={id}
           launchable={sections.launch}
+          project={project}
           backToWorkflow
         />
       </Box>
@@ -122,7 +125,7 @@ const EntityVersionsDetailsContainerImpl: React.FC<
   );
 };
 
-export const EntityVersionsDetailsContainer: React.FunctionComponent<
+export const EntityVersionsDetailsContainer: FC<
   RouteComponentProps<WorkflowVersionDetailsRouteParams>
 > = withRouteParams<WorkflowVersionDetailsRouteParams>(
   EntityVersionsDetailsContainerImpl,
