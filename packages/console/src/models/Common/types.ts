@@ -21,6 +21,10 @@ export type SchemaColumnType = Core.SchemaType.SchemaColumn.SchemaColumnType;
 export const SchemaColumnType = Core.SchemaType.SchemaColumn.SchemaColumnType;
 export type MessageFormat = Core.TaskLog.MessageFormat;
 export const MessageFormat = Core.TaskLog.MessageFormat;
+export type StructuredDatasetType = Core.StructuredDatasetType;
+export const StructuredDatasetType = Core.StructuredDatasetType;
+export type DatasetColumn = Core.StructuredDatasetType.DatasetColumn;
+export const DatasetColumn = Core.StructuredDatasetType.DatasetColumn;
 /* eslint-enable @typescript-eslint/no-redeclare */
 
 export type Alias = Core.IAlias;
@@ -154,6 +158,7 @@ export interface LiteralType extends Core.ILiteralType {
   metadata?: ProtobufStruct;
   schema?: SchemaType;
   simple?: SimpleType;
+  structuredDatasetType?: StructuredDatasetType;
   enumType?: EnumType;
 }
 

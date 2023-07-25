@@ -202,6 +202,7 @@ export enum InputType {
   Schema = 'SCHEMA',
   String = 'STRING',
   Struct = 'STRUCT',
+  StructuredDataset = 'STRUCTUREDDS',
   Union = 'Union',
   Unknown = 'UNKNOWN',
 }
@@ -219,6 +220,11 @@ export interface BlobValue {
   uri: string;
 }
 
+export interface DatasetValue {
+  uri?: string;
+  format?: string;
+}
+
 export interface UnionValue {
   value: InputValue;
   typeDefinition: InputTypeDefinition;
@@ -231,6 +237,7 @@ export type InputValue =
   | number
   | boolean
   | Date
+  | DatasetValue
   | BlobValue
   | UnionValue
   | NoneValue;

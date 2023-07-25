@@ -60,6 +60,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.Schema:
     case InputType.String:
     case InputType.Struct:
+    case InputType.StructuredDataset:
       return true;
     case InputType.Union:
       if (listOfSubTypes?.length) {

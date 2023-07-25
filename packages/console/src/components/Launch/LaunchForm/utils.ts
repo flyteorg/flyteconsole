@@ -175,6 +175,8 @@ export function getInputDefintionForLiteralType(
     result.subtype = getInputDefintionForLiteralType(literalType.mapValueType);
   } else if (literalType.schema) {
     result.type = InputType.Schema;
+  } else if (literalType.structuredDatasetType) {
+    result.type = InputType.StructuredDataset;
   } else if (literalType.simple) {
     result.type = simpleTypeToInputType[literalType.simple];
   } else if (literalType.enumType) {
