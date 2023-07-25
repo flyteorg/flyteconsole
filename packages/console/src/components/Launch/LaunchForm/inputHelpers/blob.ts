@@ -76,7 +76,7 @@ function validate({ value, required }: InputValidatorParams) {
       `Unknown blob dimensionality value: ${blobValue.dimensionality}`,
     );
   }
-  if (blobValue.format !== null && typeof blobValue.format !== 'string') {
+  if (!!blobValue.format && typeof blobValue.format !== 'string') {
     throw new Error('Blob format must be a string');
   }
 }
