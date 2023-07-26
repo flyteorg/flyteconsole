@@ -41,7 +41,6 @@ const search: string = window.location.search || '';
 // To turn on flag for local development only - update flag value here
 // REMOVE change prior to commit
 let runtimeConfig: FeatureFlagConfig = {
-  ...defaultFlagConfig,
   ...getSearchParamFlags(search),
   // 'test-flag-true': true,  <== locally turns flag on
 };
