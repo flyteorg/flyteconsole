@@ -41,7 +41,6 @@ const search: string = window.location.search || '';
 // To turn on flag for local development only - update flag value here
 // REMOVE change prior to commit
 let runtimeConfig: FeatureFlagConfig = {
-  ...defaultFlagConfig,
   ...getSearchParamFlags(search),
   // 'test-flag-true': true,  <== locally turns flag on
 };
@@ -83,7 +82,11 @@ export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
 
   const setFeatureFlag = useCallback((flag: FeatureFlag, newValue: boolean) => {
     runtimeConfig[flag] = newValue;
-    setFlags({ ...defaultFlagConfig, ...runtimeConfig });
+    setFlags({
+      ...defaultFlagConfig,
+      ...props.externalFlags,
+      ...runtimeConfig,
+    });
   }, []);
 
   const getFeatureFlag = useCallback(
@@ -97,7 +100,7 @@ export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   );
 
   const clearRuntimeConfig = useCallback(() => {
-    runtimeConfig = { ...defaultFlagConfig };
+    runtimeConfig = { ...defaultFlagConfig, ...props.externalFlags };
   }, []);
 
   useEffect(() => {

@@ -68,8 +68,8 @@ export const AppComponent: React.FC<AppComponentProps> = (
     <FeatureFlagsProvider
       externalFlags={{
         ...props.env,
-        breadcrumbs: breadcrumbsFlag,
-        'horizontal-layout': horizontalLayoutFlag,
+        breadcrumbs: `${breadcrumbsFlag}`,
+        'horizontal-layout': `${horizontalLayoutFlag}`,
       }}
     >
       <GlobalStyles />
