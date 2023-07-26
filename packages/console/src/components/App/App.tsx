@@ -34,7 +34,11 @@ import {
   ExternalConfigurationProvider,
   ExternalConfigurationProviderProps,
 } from 'basics/ExternalConfigurationProvider';
+import TopLevelLayoutProvider from 'components/Navigation/TopLevelLayoutState';
+import TopLevelLayout from 'components/Navigation/TopLevelLayout';
 import NavBar from 'components/Navigation/NavBar';
+import { SideNavigation } from 'components/Navigation/SideNavigation';
+import GlobalStyles from 'components/utils/GlobalStyles';
 
 export type AppComponentProps = ExternalConfigurationProviderProps;
 
@@ -55,8 +59,20 @@ export const AppComponent: React.FC<AppComponentProps> = (
   }
   const apiState = useAPIState();
 
+  const horizontalLayoutFlag =
+    `${env.HORIZONTAL_LAYOUT}`.trim().toLowerCase() === 'true';
+
+  const breadcrumbsFlag = `${env.BREADCRUMBS}`.trim().toLowerCase() === 'true';
+
   return (
-    <FeatureFlagsProvider>
+    <FeatureFlagsProvider
+      externalFlags={{
+        ...props.env,
+        breadcrumbs: breadcrumbsFlag,
+        'horizontal-layout': horizontalLayoutFlag,
+      }}
+    >
+      <GlobalStyles />
       <LocalCacheProvider>
         <StylesProvider
           generateClassName={createGenerateClassName({
@@ -82,8 +98,14 @@ export const AppComponent: React.FC<AppComponentProps> = (
                       <ExternalConfigurationProvider {...props}>
                         <Router history={history}>
                           <ErrorBoundary fixed={true}>
-                            <NavBar />
-                            <ApplicationRouter />
+                            <TopLevelLayoutProvider>
+                              <TopLevelLayout
+                                headerComponent={<NavBar />}
+                                sideNavigationComponent={<SideNavigation />}
+                                routerView={<ApplicationRouter />}
+                                isHorizontalLayout={horizontalLayoutFlag}
+                              />
+                            </TopLevelLayoutProvider>
                           </ErrorBoundary>
                         </Router>
                       </ExternalConfigurationProvider>
@@ -91,7 +113,10 @@ export const AppComponent: React.FC<AppComponentProps> = (
                     </SkeletonTheme>
                   </APIContext.Provider>
                 </FlyteApiProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
+                <ReactQueryDevtools
+                  initialIsOpen={false}
+                  position="bottom-right"
+                />
               </QueryClientProvider>
             </SnackbarProvider>
           </ThemeProvider>

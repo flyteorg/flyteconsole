@@ -5,6 +5,7 @@ export * from './Errors';
 export * from './Launch';
 
 export * from './Navigation';
+export * from './Breadcrumbs';
 
 export * from './Executions';
 export * from './Task';
