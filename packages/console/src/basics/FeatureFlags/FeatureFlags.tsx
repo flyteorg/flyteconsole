@@ -82,7 +82,11 @@ export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
 
   const setFeatureFlag = useCallback((flag: FeatureFlag, newValue: boolean) => {
     runtimeConfig[flag] = newValue;
-    setFlags({ ...defaultFlagConfig, ...runtimeConfig });
+    setFlags({
+      ...defaultFlagConfig,
+      ...props.externalFlags,
+      ...runtimeConfig,
+    });
   }, []);
 
   const getFeatureFlag = useCallback(
@@ -96,7 +100,7 @@ export const FeatureFlagsProvider = (props: FeatureFlagProviderProps) => {
   );
 
   const clearRuntimeConfig = useCallback(() => {
-    runtimeConfig = { ...defaultFlagConfig };
+    runtimeConfig = { ...defaultFlagConfig, ...props.externalFlags };
   }, []);
 
   useEffect(() => {
