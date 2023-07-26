@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { Button, Dialog } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ArrowBack from '@material-ui/icons/ArrowBack';
@@ -6,10 +7,11 @@ import { useCommonStyles } from 'components/common/styles';
 import { ResourceIdentifier, ResourceType } from 'models/Common/types';
 import { Project } from 'models/Project/types';
 import { getProjectDomain } from 'models/Project/utils';
-import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { LaunchForm } from 'components/Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from 'components/hooks/useKeyListener';
+import { BreadcrumbTitleActions } from 'components/Breadcrumbs';
+import { FeatureFlag, useFeatureFlag } from 'basics/FeatureFlags';
 import { backUrlGenerator, backToDetailUrlGenerator } from './generators';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
@@ -64,7 +66,7 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   const styles = useStyles();
   const commonStyles = useCommonStyles();
 
-  const [showLaunchForm, setShowLaunchForm] = React.useState(false);
+  const [showLaunchForm, setShowLaunchForm] = useState(false);
   const onCancelLaunch = (_?: KeyboardEvent) => {
     setShowLaunchForm(false);
   };
@@ -72,43 +74,53 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
   // Close modal on escape key press
   useEscapeKey(onCancelLaunch);
 
-  const domain = getProjectDomain(project, id.domain);
-  const headerText = `${domain.name} / ${id.name}`;
+  const domain = project ? getProjectDomain(project, id.domain) : undefined;
+  const headerText = domain ? `${domain.name} / ${id.name}` : '';
+
+  const isBreadcrumbFlag = useFeatureFlag(FeatureFlag.breadcrumbs);
 
   return (
     <>
-      <div className={styles.headerContainer}>
-        <div
-          className={classnames(
-            commonStyles.mutedHeader,
-            styles.headerTextContainer,
-          )}
-        >
-          <Link
-            className={commonStyles.linkUnstyled}
-            to={
-              backToWorkflow
-                ? backToDetailUrlGenerator[id.resourceType](id)
-                : backUrlGenerator[id.resourceType](id)
-            }
+      {!isBreadcrumbFlag && (
+        <div className={styles.headerContainer}>
+          <div
+            className={classnames(
+              commonStyles.mutedHeader,
+              styles.headerTextContainer,
+            )}
           >
-            <ArrowBack color="inherit" />
-          </Link>
-          <span className={styles.headerText}>{headerText}</span>
-        </div>
-        <div>
-          {launchable ? (
-            <Button
-              color="primary"
-              id="launch-workflow"
-              onClick={() => setShowLaunchForm(true)}
-              variant="contained"
+            <Link
+              className={commonStyles.linkUnstyled}
+              to={
+                backToWorkflow
+                  ? backToDetailUrlGenerator[id.resourceType](id)
+                  : backUrlGenerator[id.resourceType](id)
+              }
             >
-              {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
-            </Button>
-          ) : null}
+              <ArrowBack color="inherit" />
+            </Link>
+            <span className={styles.headerText}>{headerText}</span>
+          </div>
         </div>
-      </div>
+      )}
+      {isBreadcrumbFlag && (
+        <div>
+          <BreadcrumbTitleActions>
+            {launchable ? (
+              <Button
+                color="primary"
+                id="launch-workflow"
+                onClick={() => setShowLaunchForm(true)}
+                variant="contained"
+              >
+                {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
+              </Button>
+            ) : (
+              <></>
+            )}
+          </BreadcrumbTitleActions>
+        </div>
+      )}
       {launchable ? (
         <Dialog
           scroll="paper"

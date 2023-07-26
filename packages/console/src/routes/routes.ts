@@ -4,10 +4,11 @@ import { makeRoute } from '@flyteorg/common';
 import { projectBasePath, projectDomainBasePath } from './constants';
 
 /** Creates a path relative to a particular project */
-export const makeProjectBoundPath = (projectId: string, path = '') =>
-  makeRoute(
+export const makeProjectBoundPath = (projectId: string, path = '') => {
+  return makeRoute(
     `/projects/${projectId}${path.length ? ensureSlashPrefixed(path) : path}`,
   );
+};
 
 /** Creates a path relative to a particular project and domain. Paths should begin with a slash (/) */
 export const makeProjectDomainBoundPath = (
@@ -137,4 +138,8 @@ export class Routes {
       makeProjectDomainBoundPath(project, domain, `/executions/${name}`),
     path: `${projectDomainBasePath}/executions/:executionId`,
   };
+
+  public static getRoute(route: string) {
+    return this[route];
+  }
 }
