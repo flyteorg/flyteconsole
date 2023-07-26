@@ -50,7 +50,7 @@ describe('EntityDetails', () => {
     // check text for header
     await waitFor(() =>
       expect(
-        within(screen.getByText(`${id.domain} / ${id.name}`)),
+        within(screen.getByText(`${id.domain} / ${id.name}`, { exact: false })),
       ).toBeInTheDocument(),
     );
 

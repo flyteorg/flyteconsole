@@ -32,7 +32,7 @@
     "storybook": "start-storybook -p 6006",
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
-    "test-coverage": "NODE_ENV=test BASE_URL=/console jest --coverage",
+    "test-coverage": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=test BASE_URL=/console jest --coverage",
     "test-release": "npx semantic-release --debug --no-ci --test-run"
   },
   "husky": {
