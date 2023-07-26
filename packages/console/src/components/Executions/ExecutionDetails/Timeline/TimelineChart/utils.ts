@@ -71,7 +71,7 @@ export const parseSpanData = (
 export const getOperationsFromWorkflowExecutionMetrics = (
   data: Admin.WorkflowExecutionGetMetricsResponse,
 ): string[] => {
-  const operationIds = uniq(
+  const operationIds = uniq<string>(
     traverse(data)
       .paths()
       .filter(path => path[path.length - 1] === 'operationId')
@@ -173,7 +173,7 @@ export const getDuration = (
 export const getExecutionMetricsOperationIds = (
   data: Admin.WorkflowExecutionGetMetricsResponse,
 ): string[] => {
-  const operationIds = uniq(
+  const operationIds = uniq<string>(
     traverse(data)
       .paths()
       .filter(path => path[path.length - 1] === 'operationId')

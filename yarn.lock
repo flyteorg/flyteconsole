@@ -2032,7 +2032,7 @@ __metadata:
   resolution: "@flyteconsole/client-app@workspace:website"
   dependencies:
     "@flyteorg/common": ^0.0.4
-    "@flyteorg/console": ^0.0.45
+    "@flyteorg/console": ^0.0.46
     "@types/long": ^3.0.32
     long: ^4.0.0
     protobufjs: ~6.11.3
@@ -2054,7 +2054,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/components@^0.0.3, @flyteorg/components@workspace:packages/components":
+"@flyteorg/components@^0.0.4, @flyteorg/components@workspace:packages/components":
   version: 0.0.0-use.local
   resolution: "@flyteorg/components@workspace:packages/components"
   dependencies:
@@ -2071,14 +2071,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@flyteorg/console@^0.0.45, @flyteorg/console@workspace:packages/console":
+"@flyteorg/console@^0.0.46, @flyteorg/console@workspace:packages/console":
   version: 0.0.0-use.local
   resolution: "@flyteorg/console@workspace:packages/console"
   dependencies:
     "@date-io/moment": 1.3.9
     "@emotion/core": 10.1.1
     "@flyteorg/common": ^0.0.4
-    "@flyteorg/components": ^0.0.3
+    "@flyteorg/components": ^0.0.4
     "@flyteorg/flyte-api": ^0.0.2
     "@flyteorg/flyteidl-types": ^0.0.4
     "@flyteorg/locale": ^0.0.2

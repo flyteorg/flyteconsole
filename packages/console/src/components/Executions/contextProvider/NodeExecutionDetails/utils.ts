@@ -18,20 +18,15 @@ export const stringifyIsEqual = (a: any, b: any) => {
   );
 };
 
-export const mergeNodeExecutions = (val, srcVal, _key) => {
+export const mergeNodeExecutions = (val, srcVal, _topkey) => {
   const retVal = mergeWith(val, srcVal, (target, src, _key) => {
     if (!target) {
       return src;
     }
-    const clonedTarget = cloneDeep(target);
-    const clonedSrc = cloneDeep(src);
-    if (clonedSrc instanceof Map) {
-      return clonedSrc;
+    if (src instanceof Map) {
+      return src;
     }
-    const finaVal =
-      typeof clonedSrc === 'object'
-        ? merge(clonedTarget, clonedSrc)
-        : clonedSrc;
+    const finaVal = typeof src === 'object' ? merge(target, src) : src;
     return finaVal;
   });
   return retVal;
