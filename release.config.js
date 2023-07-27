@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+const path = require('path');
 
 /**
  *
@@ -16,7 +17,10 @@ function getProdConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
-      ['@semantic-release/npm', { npmPublish: false }],
+      [
+        '@semantic-release/npm',
+        { npmPublish: false, pkgRoot: path.resolve(__dirname, '.') },
+      ],
       '@semantic-release/github',
     ],
   };

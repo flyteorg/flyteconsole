@@ -31,6 +31,90 @@ All notable changes to this project will be documented in this file. See
 - releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
 - Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
 
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
+## [1.9.1](https:/Users/frankflitton/Git/flyteconsole//compare/v1.9.0...v1.9.1) (2023-07-27)
+
+### Bug Fixes
+
+- releases ([#806](https:/Users/frankflitton/Git/flyteconsole//issues/806)) ([66d4c75](https:/Users/frankflitton/Git/flyteconsole//commit/66d4c75e9389bbb1b59b7ca6c8ee1d3a739b31a2))
+- Tasks status out of sync ([#802](https:/Users/frankflitton/Git/flyteconsole//issues/802)) ([8872536](https:/Users/frankflitton/Git/flyteconsole//commit/8872536677dfc48c219d9468a59a383cc0abdbe9))
+
 # [1.0.0](http://github.com/lyft/flyteconsole/compare/v0.55.1...v1.0.0) (2022-04-26)
 
 ### chore

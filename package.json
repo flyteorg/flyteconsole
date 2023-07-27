@@ -130,6 +130,7 @@
     "@storybook/testing-library": "^0.0.9",
     "@types/traverse": "^0.6.32",
     "ansicolors": "^0.3.2",
+    "execa": "^7.2.0",
     "semantic-release": "^21.0.7",
     "traverse": "^0.6.7"
   },
