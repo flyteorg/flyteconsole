@@ -42,7 +42,7 @@ const RenderedProtobufValue: React.FC<{
         </>
       );
     default:
-      return <PrintValue label={label} value={`${value[value.kind]}`} />;
+      return <PrintValue label={label} value={value[value.kind]} />;
   }
 };
 

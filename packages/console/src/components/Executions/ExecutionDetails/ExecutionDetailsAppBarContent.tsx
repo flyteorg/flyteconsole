@@ -202,7 +202,7 @@ export const ExecutionDetailsAppBarContentInner: React.FC<{}> = () => {
             >
               <span>
                 {`${project}/${domain}/${sourceId.name}/`}
-                <strong>{`${name}`}</strong>
+                <strong>{name}</strong>
               </span>
             </Typography>
           </div>

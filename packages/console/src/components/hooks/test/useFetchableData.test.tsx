@@ -25,7 +25,7 @@ const FetchableTester = ({ config, data }: FetchableTesterProps) => {
   return (
     <div>
       <div aria-label={stateLabel}>{fetchable.state.value}</div>
-      <div aria-label={errorLabel}>{`${fetchable.lastError}`}</div>
+      <div aria-label={errorLabel}>{fetchable.lastError}</div>
       <div aria-label={valueLabel}>{fetchable.value}</div>
       <button aria-label={fetchLabel} onClick={onClickFetch}>
         Fetch Data
