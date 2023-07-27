@@ -1,6 +1,6 @@
 {
   "name": "flyteconsole",
-  "version": "1.4.2",
+  "version": "1.9.1",
   "private": true,
   "description": "The web UI for the Flyte platform",
   "repository": {
@@ -128,7 +128,10 @@
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
     "@storybook/testing-library": "^0.0.9",
-    "@types/traverse": "^0.6.32"
+    "@types/traverse": "^0.6.32",
+    "ansicolors": "^0.3.2",
+    "semantic-release": "^21.0.7",
+    "traverse": "^0.6.7"
   },
   "resolutions": {
     "@babel/cli": "~7.16.0",
