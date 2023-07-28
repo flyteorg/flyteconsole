@@ -17,17 +17,17 @@ function getProdConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
+      // set package.json version
       [
-        '@semantic-release/npm',
-        // { npmPublish: false, pkgRoot: path.resolve(__dirname, '.') },
-        [
-          '@semantic-release/exec',
-          {
-            // eslint-disable-next-line no-template-curly-in-string
-            prepareCmd: './my-build-script.sh ${nextRelease.version}',
-          },
-        ],
+        '@semantic-release/exec',
+        {
+          // eslint-disable-next-line no-template-curly-in-string
+          prepareCmd:
+            'node script/semantic-release-npm-prepare.js ${nextRelease.version}',
+        },
       ],
+      // make repo tags that match the package.json version
+      '@semantic-release/git',
       '@semantic-release/github',
     ],
   };
@@ -66,16 +66,17 @@ function getTestConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
+      // set package.json version
       [
         '@semantic-release/exec',
         {
           // eslint-disable-next-line no-template-curly-in-string
           prepareCmd:
-            'node script/semantic-release-npm-prepare.js ${nextRelease.version} ${cwd}',
+            'node script/semantic-release-npm-prepare.js ${nextRelease.version}',
         },
       ],
-      // '@semantic-release/git',
-      // '@semantic-release/npm',
+      // make repo tags that match the package.json version
+      '@semantic-release/git',
       // ["@semantic-release/github", {
       //   "verifyConditions": false,
       //   "publish": false,
