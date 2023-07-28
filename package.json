@@ -1,6 +1,6 @@
 {
   "name": "flyteconsole",
-  "version": "1.9.1",
+  "version": "1.4.2",
   "private": true,
   "description": "The web UI for the Flyte platform",
   "repository": {
@@ -33,7 +33,7 @@
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
     "test-coverage": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=test BASE_URL=/console jest --coverage",
-    "test-release": "npx semantic-release --debug --no-ci --test-run"
+    "test-release": "yarn semantic-release --debug --no-ci --test-run"
   },
   "husky": {
     "hooks": {
@@ -59,12 +59,13 @@
     "@commitlint/config-conventional": "^17.3.0",
     "@material-ui/core": "^4.2.0",
     "@material-ui/icons": "^4.2.1",
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^10.0.1",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^9.0.4",
-    "@semantic-release/npm": "^10.0.4",
-    "@semantic-release/release-notes-generator": "^11.0.4",
+    "@semantic-release/github": "^7.0.5",
+    "@semantic-release/npm": "^7.0.5",
+    "@semantic-release/release-notes-generator": "^9.0.1",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/react": "^10.0.3",
     "@testing-library/react-hooks": "^7.0.2",
@@ -97,12 +98,15 @@
     "jest": "^26.0.0",
     "jest-transformer-svg": "^2.0.0",
     "lint-staged": "^13.1.0",
+    "marked-gfm-heading-id": "^3.0.4",
+    "marked-mangle": "^1.1.0",
     "morgan": "^1.10.0",
     "msw": "^0.24.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "prettier": "^2.8.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "semantic-release": "^21.0.7",
     "serve-static": "^1.12.3",
     "source-map-loader": "^4.0.1",
     "ts-jest": "^26.3.0",

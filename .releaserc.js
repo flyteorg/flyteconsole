@@ -19,7 +19,14 @@ function getProdConfiguration() {
       ],
       [
         '@semantic-release/npm',
-        { npmPublish: false, pkgRoot: path.resolve(__dirname, '.') },
+        // { npmPublish: false, pkgRoot: path.resolve(__dirname, '.') },
+        [
+          '@semantic-release/exec',
+          {
+            // eslint-disable-next-line no-template-curly-in-string
+            prepareCmd: './my-build-script.sh ${nextRelease.version}',
+          },
+        ],
       ],
       '@semantic-release/github',
     ],
@@ -59,7 +66,16 @@ function getTestConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
-      ['@semantic-release/npm', { npmPublish: false }],
+      '@semantic-release/git',
+      [
+        '@semantic-release/exec',
+        {
+          // eslint-disable-next-line no-template-curly-in-string
+          prepareCmd:
+            'node script/semantic-release-npm-prepare.js ${nextRelease.version} in ${cwd}',
+        },
+      ],
+      // '@semantic-release/npm',
       // ["@semantic-release/github", {
       //   "verifyConditions": false,
       //   "publish": false,
