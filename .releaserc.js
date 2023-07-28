@@ -66,15 +66,15 @@ function getTestConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
-      '@semantic-release/git',
       [
         '@semantic-release/exec',
         {
           // eslint-disable-next-line no-template-curly-in-string
           prepareCmd:
-            'node script/semantic-release-npm-prepare.js ${nextRelease.version} in ${cwd}',
+            'node script/semantic-release-npm-prepare.js ${nextRelease.version} ${cwd}',
         },
       ],
+      // '@semantic-release/git',
       // '@semantic-release/npm',
       // ["@semantic-release/github", {
       //   "verifyConditions": false,
