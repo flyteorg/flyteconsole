@@ -92,7 +92,7 @@ jobs:
           GIT_AUTHOR_EMAIL: "admin@flyte.org"
           GIT_COMMITTER_NAME: "flyte bot"
           GIT_COMMITTER_EMAIL: "admin@flyte.org"
-        run: npx semantic-release
+        run: npx semantic-release@21.0.7
 
   check_for_tag:
     name: Get Release Tag
