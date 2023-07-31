@@ -22,8 +22,7 @@ function getProdConfiguration() {
         '@semantic-release/exec',
         {
           // eslint-disable-next-line no-template-curly-in-string
-          prepareCmd:
-            'node script/semantic-release-npm-prepare.js ${nextRelease.version}',
+          prepareCmd: 'make update_npmversion VERSION=${nextRelease.version}',
         },
       ],
       // make repo tags that match the package.json version
@@ -71,8 +70,7 @@ function getTestConfiguration() {
         '@semantic-release/exec',
         {
           // eslint-disable-next-line no-template-curly-in-string
-          prepareCmd:
-            'node script/semantic-release-npm-prepare.js ${nextRelease.version}',
+          prepareCmd: 'make update_npmversion VERSION=${nextRelease.version}',
         },
       ],
       // make repo tags that match the package.json version
