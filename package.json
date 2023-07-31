@@ -45,7 +45,7 @@
     "react",
     "lyft"
   ],
-  "author": "Lyft <flyte-eng@lyft.com>",
+  "author": "Flyte Contributors <admin@flyte.org>",
   "license": "Apache-2.0",
   "lint-staged": {
     "*.{js,jsx,ts,tsx,scss,css,md,json}": [
