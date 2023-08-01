@@ -222,7 +222,7 @@ export const TopLevelLayoutGrid = ({
           direction="row"
           alignItems="stretch"
           justifyContent="flex-start"
-          className={`${styles.sticky}`}
+          className={styles.sticky}
         >
           <Grid
             item
@@ -236,10 +236,10 @@ export const TopLevelLayoutGrid = ({
           >
             <SideNavigationComponent />
           </Grid>
-          <GrowGrid item className={`${styles.relative}`}>
+          <GrowGrid item className={styles.relative}>
             <Grid container>
               <Grid item className={`${styles.absolute} ${styles.w100}`}>
-                <Box className={`${styles.relative}`}>
+                <Box className={styles.relative}>
                   {/* Legacy, need to move to <Grid/> */}
                   <ContentContainer className="routerview-content-container flex-column-container">
                     <StyledSubNavBarContent

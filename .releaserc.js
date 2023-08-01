@@ -1,4 +1,5 @@
 const { execSync } = require('child_process');
+const path = require('path');
 
 /**
  *
@@ -16,7 +17,16 @@ function getProdConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
-      ['@semantic-release/npm', { npmPublish: false }],
+      // set package.json version
+      [
+        '@semantic-release/exec',
+        {
+          // eslint-disable-next-line no-template-curly-in-string
+          prepareCmd: 'make update_npmversion VERSION=${nextRelease.version}',
+        },
+      ],
+      // make repo tags that match the package.json version
+      '@semantic-release/git',
       '@semantic-release/github',
     ],
   };
@@ -55,7 +65,16 @@ function getTestConfiguration() {
             '# Changelog\n\nAll notable changes to this project will be documented in this file. See\n[Conventional Commits](https://conventionalcommits.org) for commit guidelines.',
         },
       ],
-      ['@semantic-release/npm', { npmPublish: false }],
+      // set package.json version
+      [
+        '@semantic-release/exec',
+        {
+          // eslint-disable-next-line no-template-curly-in-string
+          prepareCmd: 'make update_npmversion VERSION=${nextRelease.version}',
+        },
+      ],
+      // make repo tags that match the package.json version
+      '@semantic-release/git',
       // ["@semantic-release/github", {
       //   "verifyConditions": false,
       //   "publish": false,

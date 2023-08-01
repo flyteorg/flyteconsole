@@ -102,7 +102,7 @@ export const ScrollableMonospaceText: React.FC<
   return (
     <div className={classnames(styles.wrapper)}>
       <div className={classnames(styles.container)} ref={scrollRef}>
-        <div className={styles.errorMessage}>{`${text}`}</div>
+        <div className={styles.errorMessage}>{text}</div>
         <div className={classnames(styles.actionContainer, showOnHoverClass)}>
           <Button
             color="primary"

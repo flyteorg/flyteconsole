@@ -73,7 +73,7 @@ export const TerminateExecutionForm: React.FC<{
           value={cause}
         />
       </FormControl>
-      {error && <p className={commonStyles.errorText}>{`${error}`}</p>}
+      {error && <p className={commonStyles.errorText}>{error}</p>}
       <div className={commonStyles.formButtonGroup}>
         <Button
           color="primary"
