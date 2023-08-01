@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import isEmpty from 'lodash/isEmpty';
 import {
   Box,
@@ -24,6 +24,7 @@ import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   const history = useHistory();
+  const queryClient = useQueryClient();
 
   const {
     isLoading,
@@ -46,13 +47,14 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
     error: viewAllQueryError,
     data: viewAllQueryData,
   } = useQuery(
-    `breadcrumb-view-all-${props.id}`,
+    ['breadcrumb-view-all', props.id],
     () => {
       if (!props.asyncViewAllLink) return '';
       return props.asyncViewAllLink(window.location, props);
     },
     {
       staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnMount: true,
     },
   );
   const viewAllLinkData: string = useMemo(() => {
@@ -109,6 +111,7 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
     if (!isActive) {
       history.push(url);
       props.onClose();
+      queryClient.invalidateQueries(['breadcrumb-view-all']);
       return;
     }
   };
