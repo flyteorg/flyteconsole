@@ -33,7 +33,7 @@
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
     "test-coverage": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=test BASE_URL=/console jest --coverage",
-    "test-release": "npx semantic-release@21.0.7 --debug --no-ci --test-run"
+    "test-release": "CI=true npx semantic-release@21.0.7 --debug --no-ci --test-run"
   },
   "husky": {
     "hooks": {
