@@ -31,10 +31,10 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
     error,
     data: popoverQueryData,
   } = useQuery(
-    `breadcrumb-list-${props.id}`,
+    `breadcrumb-list-${props.id}-${props.value}`,
     () => props.asyncData(window.location, props),
     {
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnMount: true,
     },
   );
   const popoverData: BreadcrumbEntity[] = useMemo(() => {
@@ -53,7 +53,6 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
       return props.asyncViewAllLink(window.location, props);
     },
     {
-      staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnMount: true,
     },
   );
