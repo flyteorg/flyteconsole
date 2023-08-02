@@ -49,9 +49,7 @@ const RenderError: React.FC<{ error: Error; fixed: boolean }> = ({
     <div className={styles.messageContainer}>
       <p>The error we received was:</p>
       <Card className={styles.errorContainer}>
-        <CardContent
-          className={commonStyles.codeBlock}
-        >{`${error}`}</CardContent>
+        <CardContent className={commonStyles.codeBlock}>{error}</CardContent>
       </Card>
       <p>There may be additional information in the browser console.</p>
     </div>

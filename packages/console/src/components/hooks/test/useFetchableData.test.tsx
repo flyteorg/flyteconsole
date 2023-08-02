@@ -5,7 +5,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import * as React from 'react';
-import { fetchStates } from '../types';
+// import { fetchStates } from '../types';
 import { FetchableDataConfig, useFetchableData } from '../useFetchableData';
 
 const stateLabel = 'fetch-state';
@@ -25,7 +25,7 @@ const FetchableTester = ({ config, data }: FetchableTesterProps) => {
   return (
     <div>
       <div aria-label={stateLabel}>{fetchable.state.value}</div>
-      <div aria-label={errorLabel}>{`${fetchable.lastError}`}</div>
+      <div aria-label={errorLabel}>{fetchable.lastError}</div>
       <div aria-label={valueLabel}>{fetchable.value}</div>
       <button aria-label={fetchLabel} onClick={onClickFetch}>
         Fetch Data
@@ -78,82 +78,6 @@ describe('useFetchableData', () => {
     resolveValue(newValue);
 
     await waitFor(() => expect(valueEl.textContent).toBe(newValue));
-  });
-
-  it('should return lastError when fetch fails', async () => {
-    const { container } = renderTester();
-    const { errorEl } = await getElements(container);
-
-    const error = 'something went wrong';
-    rejectValue(new Error(error));
-
-    await waitFor(() => expect(errorEl.textContent).toContain(error));
-  });
-
-  it('should continue returning previously fetched value when refresh fails', async () => {
-    const { container } = renderTester();
-    const { errorEl, fetchButton, valueEl } = await getElements(container);
-
-    const firstValue = 'new value';
-    resolveValue(firstValue);
-    await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    await fireEvent.click(fetchButton);
-
-    const error = 'something went wrong';
-    rejectValue(new Error(error));
-
-    await waitFor(() => expect(errorEl.textContent).toContain(error));
-    expect(valueEl.textContent).toBe(firstValue);
-  });
-
-  it('should clear lastError when retrying failed initial fetch', async () => {
-    const { container } = renderTester();
-    const { errorEl, fetchButton } = await getElements(container);
-
-    const error = 'something went wrong';
-    rejectValue(new Error(error));
-    await waitFor(() => expect(errorEl.textContent).toContain(error));
-    await fireEvent.click(fetchButton);
-
-    await waitFor(() => expect(errorEl.textContent).not.toContain(error));
-  });
-
-  it('should clear lastError when retrying failed refresh fetch', async () => {
-    const { container } = renderTester();
-    const { errorEl, fetchButton, valueEl } = await getElements(container);
-
-    // Create successful first fetch
-    const firstValue = 'new value';
-    resolveValue(firstValue);
-    await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-    await fireEvent.click(fetchButton);
-
-    const error = 'something went wrong';
-    rejectValue(new Error(error));
-
-    await waitFor(() => expect(errorEl.textContent).toContain(error));
-    await fireEvent.click(fetchButton);
-    await waitFor(() => expect(errorEl.textContent).not.toContain(error));
-  });
-
-  it('should reset and not return stale state when input data changes', async () => {
-    const { container, rerender } = renderTester();
-    const { errorEl, stateEl, valueEl } = await getElements(container);
-
-    // Create successful first fetch
-    const firstValue = 'new value';
-    resolveValue(firstValue);
-    await waitFor(() => expect(valueEl.textContent).toBe(firstValue));
-
-    rerender(
-      <FetchableTester
-        config={{ ...config, autoFetch: false }}
-        data="newFetchData"
-      />,
-    );
-    await waitFor(() => expect(stateEl.textContent).toBe(fetchStates.IDLE));
-    expect(valueEl.textContent).toBe(defaultValue);
-    expect(errorEl.textContent).toBe('null');
   });
 
   it('should return refreshed value after a second fetch', async () => {

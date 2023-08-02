@@ -19,7 +19,7 @@ export const LaunchPlanLink: React.FC<{
   return (
     <RouterLink
       className={classnames(linkColor, className)}
-      to={`${Routes.LaunchPlanDetails.makeUrl(id.project, id.domain, id.name)}`}
+      to={Routes.LaunchPlanDetails.makeUrl(id.project, id.domain, id.name)}
     >
       {id.name}
     </RouterLink>
