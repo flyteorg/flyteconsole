@@ -208,7 +208,7 @@ export enum InputType {
 }
 
 export interface InputTypeDefinition {
-  literalType: LiteralType;
+  literalType: Partial<LiteralType>;
   type: InputType;
   subtype?: InputTypeDefinition;
   listOfSubTypes?: InputTypeDefinition[];

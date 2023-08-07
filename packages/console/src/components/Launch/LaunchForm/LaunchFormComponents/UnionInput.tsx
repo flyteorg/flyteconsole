@@ -6,7 +6,7 @@ import {
   UnionValue,
   InputValue,
 } from '../types';
-import { formatType, getInputDefintionForLiteralType } from '../utils';
+import { formatType } from '../utils';
 
 import { getHelperForInput } from '../inputHelpers/getHelperForInput';
 import {
@@ -48,19 +48,23 @@ const getInitialInputValue = (props: InputProps): UnionValue => {
 
   if (props.hasCollectionParent && Array.isArray(props.initialValue)) {
     const collectionValues = props.initialValue.map(literal => {
-      const unionValue = literal.scalar.union;
+      const unionValue = unionHelper.fromLiteral(
+        literal,
+        props.typeDefinition,
+      ) as UnionValue;
 
-      return {
-        value: unionValue.value,
-        typeDefinition: getInputDefintionForLiteralType(unionValue.type as any),
-      };
+      return unionValue;
     });
 
-    const subtype = collectionValues?.[0].typeDefinition;
+    const subtype =
+      collectionValues?.[0]?.typeDefinition ||
+      props.typeDefinition.listOfSubTypes?.[0];
     const value = collectionHelper.fromLiteral(
       {
         collection: {
-          literals: collectionValues.map(v => v.value),
+          literals: props.initialValue?.map(l =>
+            l?.scalar?.union ? l?.scalar?.union?.value : l,
+          ),
         },
       } as any,
       {
