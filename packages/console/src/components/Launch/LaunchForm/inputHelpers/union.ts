@@ -105,13 +105,10 @@ export const unionHelper: InputHelper = {
     const { listOfSubTypes } = typeDefinition;
     const selectedSubType = listOfSubTypes?.[0];
     const subtypeHelper = getHelperForInput(selectedSubType?.type!);
+
     return {
-      scalar: {
-        union: {
-          value: subtypeHelper.typeDefinitionToDefaultValue(selectedSubType!),
-          type: typeDefinition.literalType,
-        },
-      },
+      value: subtypeHelper.typeDefinitionToDefaultValue(selectedSubType!),
+      typeDefinition: selectedSubType,
     };
   },
 };
