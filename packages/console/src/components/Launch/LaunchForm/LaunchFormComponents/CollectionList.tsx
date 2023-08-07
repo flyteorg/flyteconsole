@@ -38,7 +38,7 @@ export interface CollectionListProps {
 /** Handles rendering of the input component for a Collection of SimpleType values */
 export const CollectionList: FC<CollectionListProps> = props => {
   const { defaultValue, updateCollection, inputProps } = props;
-  const { value, typeDefinition } = inputProps;
+  const { value, typeDefinition, initialValue } = inputProps;
 
   const collectionInputs = value as InputValue[];
 
@@ -75,6 +75,7 @@ export const CollectionList: FC<CollectionListProps> = props => {
           {getComponentForInput(
             {
               ...inputProps,
+              initialValue: initialValue?.[index],
               value: inputValue,
               label: `${inputProps.description}[${index}]`,
               onChange: val => onChange(val, index),
