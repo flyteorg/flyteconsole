@@ -7,7 +7,11 @@ import { Task } from 'models/Task/types';
 import { Workflow } from 'models/Workflow/types';
 import moment from 'moment';
 import { LiteralValueMap } from 'components/Launch/LaunchForm/types';
-import { simpleTypeToInputType, typeLabels } from './constants';
+import {
+  primitiveToInputType,
+  simpleTypeToInputType,
+  typeLabels,
+} from './constants';
 import { inputToLiteral } from './inputHelpers/inputHelpers';
 import { typeIsSupported } from './inputHelpers/utils';
 import { LaunchState } from './launchMachine';
@@ -156,14 +160,16 @@ export function convertFormInputsToLiterals(
  * a type annotation and converting input values.
  */
 export function getInputDefintionForLiteralType(
-  literalType: LiteralType,
+  literalType: Partial<LiteralType>,
 ): InputTypeDefinition {
   const result: InputTypeDefinition = {
     literalType,
     type: InputType.Unknown,
   };
 
-  if (literalType.blob) {
+  if (literalType.noneType) {
+    result.type = InputType.None;
+  } else if (literalType.blob) {
     result.type = InputType.Blob;
   } else if (literalType.collectionType) {
     result.type = InputType.Collection;
@@ -191,6 +197,13 @@ export function getInputDefintionForLiteralType(
     literalType.structure?.tag === 'none'
   ) {
     result.type = simpleTypeToInputType[literalType.simple];
+  } else if ((literalType as any).primitive) {
+    const primitive = (literalType as any).primitive;
+
+    result.type =
+      primitiveToInputType[
+        primitive.value || Object.keys(primitive || {})?.[0]
+      ];
   }
   return result;
 }
