@@ -9,6 +9,8 @@ import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
 /* eslint-disable @typescript-eslint/no-redeclare */
 export type SimpleType = Core.SimpleType;
 export const SimpleType = Core.SimpleType;
+export type NoneType = Core.Void;
+export const NoneType = Core.Void;
 export type EnumType = Core.EnumType;
 export const EnumType = Core.EnumType;
 export type FixedRateUnit = Admin.FixedRateUnit;
@@ -23,6 +25,12 @@ export type MessageFormat = Core.TaskLog.MessageFormat;
 export const MessageFormat = Core.TaskLog.MessageFormat;
 export type StructuredDatasetType = Core.StructuredDatasetType;
 export const StructuredDatasetType = Core.StructuredDatasetType;
+export type UnionType = Core.UnionType;
+export const UnionType = Core.UnionType;
+export type AnnotationType = Core.TypeAnnotation;
+export const AnnotationType = Core.TypeAnnotation;
+export type StructureType = Core.TypeStructure;
+export const StructureType = Core.TypeStructure;
 export type DatasetColumn = Core.StructuredDatasetType.DatasetColumn;
 export const DatasetColumn = Core.StructuredDatasetType.DatasetColumn;
 /* eslint-enable @typescript-eslint/no-redeclare */
@@ -152,14 +160,18 @@ export interface TypedInterface extends Core.ITypedInterface {
 }
 
 export interface LiteralType extends Core.ILiteralType {
-  blob?: BlobType;
+  simple?: SimpleType;
+  schema?: SchemaType;
   collectionType?: LiteralType;
   mapValueType?: LiteralType;
-  metadata?: ProtobufStruct;
-  schema?: SchemaType;
-  simple?: SimpleType;
-  structuredDatasetType?: StructuredDatasetType;
+  blob?: BlobType;
   enumType?: EnumType;
+  structuredDatasetType?: StructuredDatasetType;
+  unionType?: UnionType;
+  metadata?: ProtobufStruct;
+  annotationType?: AnnotationType;
+  structure: StructureType;
+  noneType?: NoneType;
 }
 
 export interface Variable extends Core.IVariable {
