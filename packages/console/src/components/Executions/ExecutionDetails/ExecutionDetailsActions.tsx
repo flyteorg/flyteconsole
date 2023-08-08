@@ -163,7 +163,6 @@ export const ExecutionDetailsActions = ({
             variant="outlined"
             color="primary"
             onClick={() => setShowDeck(true)}
-            disabled={phase !== NodeExecutionPhase.SUCCEEDED}
           >
             {text?.flyteDeckText || t('flyteDeck')}
           </Button>
