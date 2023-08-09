@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dialog, Grid, IconButton } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  Grid,
+  IconButton,
+} from '@material-ui/core';
 import { ResourceIdentifier, Identifier } from 'models/Common/types';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { getTask } from 'models/Task/api';
@@ -224,7 +230,15 @@ export const ExecutionDetailsActions = ({
               </IconButton>
             </Grid>
           </Grid>
-          <ExecutionNodeDeck nodeExecutionId={nodeExecutionId} />
+
+          <DialogContent
+            style={{
+              padding: 0,
+              overflow: 'hidden',
+            }}
+          >
+            <ExecutionNodeDeck nodeExecutionId={nodeExecutionId} />
+          </DialogContent>
         </Dialog>
       )}
     </>
