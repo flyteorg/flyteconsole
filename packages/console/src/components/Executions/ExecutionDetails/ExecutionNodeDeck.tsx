@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useDownloadLink } from 'components/hooks/useDataProxy';
 import { Core } from '@flyteorg/flyteidl-types';
 import { LoadingSpinner, WaitForData } from 'components/common';
