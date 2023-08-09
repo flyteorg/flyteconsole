@@ -8,7 +8,7 @@ import t from '../../../common/strings';
 import { getInputDefintionForLiteralType } from '../utils';
 
 export function isScalarType(value: any): value is Literal {
-  return isObject(value) && !value.type && !!(value as any).scalar;
+  return isObject(value) && !(value as any).type && !!(value as any).scalar;
 }
 
 function getUnionValueFromUnknownLiteral(
