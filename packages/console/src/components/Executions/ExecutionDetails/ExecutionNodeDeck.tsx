@@ -9,16 +9,15 @@ export const ExecutionNodeDeck: React.FC<{
   className?: string;
 }> = ({ nodeExecutionId, className = '' }) => {
   const downloadLink = useDownloadLink(nodeExecutionId);
-  const ref = React.useRef<HTMLIFrameElement>(null);
   const iFrameSrc = downloadLink?.value?.signedUrl?.[0];
 
-  console.log('carina', { ref });
   return (
     <WaitForData {...downloadLink} loadingComponent={LoadingSpinner}>
       <iframe
-        ref={ref}
         title="deck"
         src={iFrameSrc}
+        width="100%"
+        height="100%"
         className={className}
         style={{
           border: 'none',
