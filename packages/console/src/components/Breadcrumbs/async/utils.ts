@@ -57,9 +57,12 @@ export const domainIdfromUrl = (location: Location) => {
   return '';
 };
 
-export const formatProjectEntities = data => {
+export const formatProjectEntities = (data: Project[], domain?: string) => {
   return data.map(project => {
-    const url = Routes.ProjectDetails.sections.dashboard.makeUrl(project.id);
+    const url = Routes.ProjectDetails.sections.dashboard.makeUrl(
+      project.id,
+      domain,
+    );
 
     return {
       title: project.name,
