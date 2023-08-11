@@ -34,9 +34,11 @@ export const defaultVoid: BreadcrumbAsyncPopOverData = async (
  */
 export const projects: BreadcrumbAsyncPopOverData = async (
   _location,
-  _breadcrumb,
+  breadcrumb,
 ) => {
-  return listProjects().then(data => formatProjectEntities(data));
+  return listProjects().then(data =>
+    formatProjectEntities(data, breadcrumb.domainId),
+  );
 };
 
 /**
