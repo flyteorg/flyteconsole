@@ -44,9 +44,6 @@ const BreadcrumbFormControlDefault = (
       if (!props.asyncValue) return '';
       return props.asyncValue(window.location, props);
     },
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
   );
   const asyncValueData: string = useMemo(() => {
     if (isEmpty(queryAsyncValueData) || queryAsyncValueData === undefined)
@@ -59,9 +56,6 @@ const BreadcrumbFormControlDefault = (
     async () => {
       if (!props.asyncSelfLink) return '';
       return props.asyncSelfLink(window.location, props);
-    },
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
     },
   );
   const asyncSelfLinkData: string = useMemo(() => {
@@ -105,8 +99,7 @@ const BreadcrumbFormControlDefault = (
     }
   };
 
-  const isMoreButtonHidden =
-    props.asyncData.name === defaultVoid.name && props.viewAllLink === '';
+  const isMoreButtonHidden = !props.asyncData && props.viewAllLink === '';
 
   const value = useMemo(
     () =>
