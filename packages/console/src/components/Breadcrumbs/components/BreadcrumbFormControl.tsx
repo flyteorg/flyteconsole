@@ -17,7 +17,6 @@ import {
 } from 'components/common';
 import { BreadcrumbFormControlInterfaceUI } from '../types';
 import BreadcrumbPopOver from './BreadcrumbPopover';
-import { defaultVoid } from '../async/fn';
 
 /**
  * This component is a wrapper to facilitate user interaction using MUI components.
