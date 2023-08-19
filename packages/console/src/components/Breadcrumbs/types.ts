@@ -32,7 +32,7 @@ export interface Breadcrumb {
    * A function used for fetching the popover data of a breadcrumb at runtime.
    * This is used for the popover list of items.
    */
-  asyncData: BreadcrumbAsyncPopOverData;
+  asyncData?: BreadcrumbAsyncPopOverData;
   /**
    * The title shown above the list within the popover.
    */

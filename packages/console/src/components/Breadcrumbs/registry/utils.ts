@@ -1,4 +1,3 @@
-import { defaultVoid } from '../async/fn';
 import { defaultValue } from '../defaultValue';
 import { Breadcrumb } from '../types';
 import { breadcrumbDefaultvalidator } from '../validators';
@@ -8,7 +7,7 @@ const defaultBreadcrumb: Breadcrumb = {
   label: '',
   defaultValue: defaultValue,
   selfLink: '',
-  asyncData: defaultVoid,
+  asyncData: undefined,
   validator: breadcrumbDefaultvalidator,
   viewAllLink: '',
   required: false,

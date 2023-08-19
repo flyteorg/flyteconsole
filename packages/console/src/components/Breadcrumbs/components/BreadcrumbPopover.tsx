@@ -21,6 +21,7 @@ import {
 import { useHistory } from 'react-router';
 import { Check, InsertLinkOutlined } from '@material-ui/icons';
 import { BreadcrumbEntity, BreadcrumbPopoverInterface } from '../types';
+import { defaultVoid } from '../async/fn';
 
 const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
   const history = useHistory();
@@ -32,7 +33,11 @@ const BreadcrumbPopOver = (props: BreadcrumbPopoverInterface) => {
     data: popoverQueryData,
   } = useQuery(
     `breadcrumb-list-${props.id}-${props.value}`,
-    () => props.asyncData(window.location, props),
+    () => {
+      return !props.asyncData
+        ? defaultVoid(window.location, props)
+        : props.asyncData(window.location, props);
+    },
     {
       refetchOnMount: true,
     },
