@@ -14,6 +14,7 @@ import {
   BreadcrumbFormControlInterface,
 } from '../types';
 import { fetchVersions } from './fn';
+import { getExecutionSpecProjectDomain } from './utils';
 
 const getExecutionData = async (
   projectId: string,
@@ -112,16 +113,19 @@ export const executonTaskWorkFlowNameAsyncSelfLink: BreadcrumbEntitySelfLinkAsyn
     const resourceName = getTaskOrWorkflowName(executionData);
     const resourceType = isExecutionTaskOrWorkflow(executionData);
 
+    const { project: desinationProject, domain: desinationDomain } =
+      getExecutionSpecProjectDomain(executionData.spec.launchPlan, breadcrumb);
+
     if (resourceType === ResourceType.TASK) {
       return Routes.TaskDetails.makeUrl(
-        breadcrumb.projectId,
-        breadcrumb.domainId,
+        desinationProject,
+        desinationDomain,
         resourceName,
       );
     }
     return Routes.WorkflowDetails.makeUrl(
-      breadcrumb.projectId,
-      breadcrumb.domainId,
+      desinationProject,
+      desinationDomain,
       resourceName,
     );
   };
@@ -141,6 +145,9 @@ export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
   const entityResourceName = getTaskOrWorkflowName(executionData);
   const entityResourceVersion = getTaskOrWorkflowVersion(executionData);
 
+  const { project: desinationProject, domain: desinationDomain } =
+    getExecutionSpecProjectDomain(executionData.spec.launchPlan, breadcrumb);
+
   const resourceId = {
     project: breadcrumb.projectId,
     domain: breadcrumb.domainId,
@@ -154,8 +161,8 @@ export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
     entityVersion => {
       const title = entityVersion?.id?.version || '';
       const url = Routes.EntityVersionDetails.makeUrl(
-        breadcrumb.projectId,
-        breadcrumb.domainId,
+        desinationProject,
+        desinationDomain,
         entityResourceName,
         executionType === ResourceType.TASK ? 'task' : 'workflow',
         title,
@@ -346,16 +353,19 @@ export const executionTaskWorkflowViewAll: BreadcrumbAsyncViewAllLink = async (
   const executionType = isExecutionTaskOrWorkflow(executionData);
   const entityResourceName = getTaskOrWorkflowName(executionData);
 
+  const { project: desinationProject, domain: desinationDomain } =
+    getExecutionSpecProjectDomain(executionData.spec.launchPlan, breadcrumb);
+
   if (executionType === ResourceType.TASK) {
     return Routes.TaskDetails.makeUrl(
-      breadcrumb.projectId,
-      breadcrumb.domainId,
+      desinationProject,
+      desinationDomain,
       entityResourceName,
     );
   }
   return Routes.WorkflowDetails.makeUrl(
-    breadcrumb.projectId,
-    breadcrumb.domainId,
+    desinationProject,
+    desinationDomain,
     entityResourceName,
   );
 };
