@@ -27,14 +27,9 @@ function fromLiteral(
   if (!literal.collection) {
     throw new Error('Collection literal missing `collection` property');
   }
-  if (!literal.collection.literals) {
-    throw new Error(
-      'Collection literal missing `collection.literals` property',
-    );
-  }
 
   const subTypeHelper = getHelperForInput(subtype.type);
-  const values = literal.collection.literals.map(literal => {
+  const values = literal.collection?.literals?.map?.(literal => {
     let temp = subTypeHelper.fromLiteral(literal, subtype);
     try {
       // JSON.parse corrupts large numbers, so we must use lossless json parsing
@@ -128,14 +123,23 @@ export const collectionHelper: InputHelper = {
     const subDefaultValue = subtypeHelper.typeDefinitionToDefaultValue(
       subtype!,
     );
-    const subLiteral = subtypeHelper.toLiteral({
-      value: subDefaultValue,
-      typeDefinition: subtype!,
-    });
+    let literalArray: Core.ILiteral[] | undefined;
+    if (
+      subDefaultValue !== undefined &&
+      subDefaultValue !== null &&
+      subDefaultValue !== ''
+    ) {
+      const subLiteral = subtypeHelper.toLiteral({
+        value: subDefaultValue,
+        typeDefinition: subtype!,
+      });
+      literalArray = [subLiteral];
+    }
+
     return fromLiteral(
       {
         collection: {
-          literals: [subLiteral],
+          literals: literalArray,
         },
       },
       { subtype: subtype! } as any,
