@@ -10,6 +10,9 @@ export const useStyles = makeStyles((theme: Theme) => ({
     flexBasis: workflowExecutionsTableColumnWidths.name,
     whiteSpace: 'normal',
   },
+  columnTags: {
+    flexBasis: 100,
+  },
   columnLaunchPlan: {
     flexGrow: 1,
     flexBasis: workflowExecutionsTableColumnWidths.launchPlan,

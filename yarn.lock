@@ -2132,6 +2132,7 @@ __metadata:
     react-loading-skeleton: ^1.1.2
     react-query: 3.3.0
     react-query-devtools: 3.0.0-beta.1
+    react-tag-input: ^6.8.1
     react-virtualized: ^9.21.1
     shallowequal: ^1.1.0
     traverse: ^0.6.7
@@ -8240,10 +8241,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.3.1":
+"classnames@npm:^2.3.1, classnames@npm:~2.3.1":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
+  languageName: node
+  linkType: hard
+
+"classnames@npm:~2.2.6":
+  version: 2.2.6
+  resolution: "classnames@npm:2.2.6"
+  checksum: 09a4fda780158aa8399079898eabeeca0c48c28641d9e4de140db7412e5e346843039ded1af0152f755afc2cc246ff8c3d6f227bf0dcb004e070b7fa14ec54cc
   languageName: node
   linkType: hard
 
@@ -11702,6 +11710,7 @@ __metadata:
     prettier: ^2.8.3
     react: ^16.13.1
     react-dom: ^16.13.1
+    react-tag-input: ~6.5.4
     serve-static: ^1.12.3
     source-map-loader: ^4.0.1
     ts-jest: ^26.3.0
@@ -15486,7 +15495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:4.x, lodash@npm:^4.17.15, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0":
+"lodash@npm:4.x, lodash@npm:^4.17.15, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.17.4, lodash@npm:^4.7.0, lodash@npm:~4.17.12":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -18890,6 +18899,38 @@ __metadata:
   peerDependencies:
     react: ">=15"
   checksum: 892d4e274a23bf4f39abc2efca54472fb646d3aed4b584020cf49654d2f50d09a2bacebe7c92b4ec7cb8925077376dfcd0664bad6442a73604397cefec9f01f9
+  languageName: node
+  linkType: hard
+
+"react-tag-input@npm:^6.8.1":
+  version: 6.8.1
+  resolution: "react-tag-input@npm:6.8.1"
+  dependencies:
+    classnames: ~2.3.1
+    lodash: ~4.17.12
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: ^17.0.2 || ^18.2.0
+    react-dnd: ^14.0.2
+    react-dnd-html5-backend: ^14.0.0
+    react-dom: 17.0.2 || ^18.2.0
+  checksum: b0b26bb3416455ab6af9f0fc69df28c1e573410b6dc1a349ae5eb20164d79934d727ec696776768ef2037a0fcb004fd28ed4c841f1a6e1266adca130f60dca26
+  languageName: node
+  linkType: hard
+
+"react-tag-input@npm:~6.5.4":
+  version: 6.5.4
+  resolution: "react-tag-input@npm:6.5.4"
+  dependencies:
+    classnames: ~2.2.6
+    lodash: ~4.17.12
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: ^16.3.1
+    react-dnd: ^5.0.0
+    react-dnd-html5-backend: ^3.0.2
+    react-dom: ^16.3.1
+  checksum: 24fa2ef4a22ec91b86b82f176dd39fa706b5499f69a43d2afab6500f829ee2f85cb0e89834b29a0c1d59c3223d0e4bbbafb7b3ececd41dd96831f44c9af64eb4
   languageName: node
   linkType: hard
 

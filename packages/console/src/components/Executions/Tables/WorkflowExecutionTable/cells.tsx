@@ -21,6 +21,7 @@ import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
+import { WithContext as ReactTags } from 'react-tag-input';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
@@ -50,6 +51,24 @@ export function getExecutionIdCell(
       </Typography>
     </>
   );
+}
+
+export function getExecutionTagsCell(
+  execution: Execution
+): React.ReactNode {
+  const tags = execution.spec.tags;
+  return <ReactTags
+    tags={tags}
+    // suggestions={suggestions}
+    // delimiters={delimiters}
+    // handleDelete={handleDelete}
+    // handleAddition={handleAddition}
+    // handleDrag={handleDrag}
+    // handleTagClick={handleTagClick}
+    inputFieldPosition="bottom"
+    autocomplete
+    editable
+  />
 }
 
 export function getStatusCell(execution: Execution): React.ReactNode {

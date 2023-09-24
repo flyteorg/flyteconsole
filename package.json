@@ -102,6 +102,7 @@
     "prettier": "^2.8.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-tag-input": "~6.5.4",
     "serve-static": "^1.12.3",
     "source-map-loader": "^4.0.1",
     "ts-jest": "^26.3.0",

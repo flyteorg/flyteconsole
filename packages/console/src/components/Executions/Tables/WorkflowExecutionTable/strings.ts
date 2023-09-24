@@ -5,6 +5,7 @@ import { Protobuf } from '@flyteorg/flyteidl-types';
 
 const str = {
   tableLabel_name: 'execution id',
+  tableLabel_tags: 'execution tags',
   tableLabel_launchPlan: 'launch plan',
   tableLabel_phase: 'status',
   tableLabel_startedAt: 'start time',
