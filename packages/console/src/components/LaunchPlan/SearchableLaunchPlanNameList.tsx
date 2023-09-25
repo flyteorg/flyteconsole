@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import { useNamedEntityListStyles } from 'components/common/SearchableNamedEntityList';
@@ -7,8 +8,6 @@ import {
   primaryTextColor,
   launchPlanLabelColor,
 } from 'components/Theme/constants';
-import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Routes } from 'routes/routes';
 import { debounce } from 'lodash';
@@ -32,15 +31,11 @@ interface SearchableLaunchPlanNameListProps {
 export const showOnHoverClass = 'showOnHover';
 
 const useStyles = makeStyles((theme: Theme) => ({
-  container: {
-    padding: theme.spacing(2),
-    paddingRight: theme.spacing(5),
-  },
   filterGroup: {
     display: 'flex',
     flexWrap: 'nowrap',
     flexDirection: 'row',
-    margin: theme.spacing(4, 5, 0, 2),
+    margin: theme.spacing(2, 5, 0, 2),
   },
   itemContainer: {
     padding: theme.spacing(3, 3),
@@ -86,6 +81,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   searchInputContainer: {
     padding: 0,
   },
+  svgIcon: {
+    marginRight: theme.spacing(2),
+  },
 }));
 
 /**
@@ -109,7 +107,12 @@ const SearchableLaunchPlanNameItem: React.FC<SearchableLaunchPlanNameItemProps> 
           className={classNames(listStyles.searchResult, styles.itemContainer)}
         >
           <div className={styles.itemName}>
-            <MuiLaunchPlanIcon width={16} height={16} />
+            <MuiLaunchPlanIcon
+              width={16}
+              height={16}
+              className={styles.svgIcon}
+              fill="#666666"
+            />
             <div>{id.name}</div>
           </div>
         </div>
@@ -158,7 +161,7 @@ export const SearchableLaunchPlanNameList: React.FC<
           )}
         />
       </FormGroup>
-      <div className={styles.container}>
+      <div>
         {results.map(({ value }) => (
           <SearchableLaunchPlanNameItem
             item={value}

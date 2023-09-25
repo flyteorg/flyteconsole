@@ -1,9 +1,54 @@
 import { Core } from '@flyteorg/flyteidl-types';
 import { isObject } from 'lodash';
+import { Literal } from 'models';
 import { InputTypeDefinition, InputValue, UnionValue } from '../types';
 import { getHelperForInput } from './getHelperForInput';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import t from '../../../common/strings';
+import { getInputDefintionForLiteralType } from '../utils';
+
+export function isScalarType(value: any): value is Literal {
+  return isObject(value) && !(value as any).type && !!(value as any).scalar;
+}
+
+function getUnionValueFromUnknownLiteral(
+  literal: Literal,
+  inputTypeDefinition: InputTypeDefinition,
+) {
+  let currentLiteral = literal;
+  if (isScalarType(currentLiteral)) {
+    currentLiteral = currentLiteral?.scalar as any as Literal;
+  }
+
+  if (currentLiteral) {
+    const def = getInputDefintionForLiteralType(currentLiteral as any);
+    const inputDefinition =
+      inputTypeDefinition?.listOfSubTypes?.find(s => s.type === def.type) ||
+      def;
+    const helper = getHelperForInput(inputDefinition.type);
+    const value = helper.fromLiteral(literal, inputDefinition);
+    const unionValue = {
+      value,
+      typeDefinition: inputDefinition,
+    } as UnionValue;
+    return unionValue;
+  }
+
+  const { listOfSubTypes } = inputTypeDefinition;
+  const values = listOfSubTypes?.map(subtype => {
+    const helper = getHelperForInput(subtype.type);
+    try {
+      const value = helper.fromLiteral(literal, subtype);
+
+      return { value, typeDefinition: subtype } as UnionValue;
+    } catch {
+      // no-op
+    }
+    return { value: undefined, typeDefinition: subtype };
+  });
+
+  return values?.filter(v => v.value)?.[0] || values?.[0];
+}
 
 function fromLiteral(
   literal: Core.ILiteral,
@@ -14,27 +59,26 @@ function fromLiteral(
     throw new Error(t('missingUnionListOfSubType'));
   }
 
-  // Unpack nested variant of union data value
-  const literalValue = literal?.scalar?.union?.value
-    ? literal.scalar.union.value
-    : literal;
+  const localLiteral = literal?.scalar?.union;
+  if (localLiteral?.type) {
+    const inputDef = getInputDefintionForLiteralType(localLiteral.type as any);
 
-  // loop though the subtypes to find the correct match literal typex`
-  for (let i = 0; i < listOfSubTypes.length; i++) {
+    // Unpack nested variant of union data value
+    const literalValue = localLiteral?.value || literal;
+
+    const helper = getHelperForInput(inputDef.type);
     try {
-      const value = getHelperForInput(listOfSubTypes[i].type).fromLiteral(
-        literalValue,
-        listOfSubTypes[i],
-      );
-      return { value, typeDefinition: listOfSubTypes[i] } as UnionValue;
-    } catch (error) {
-      // do nothing here. it's expected to have error from fromLiteral
-      // because we loop through all the type to decode the input value
-      // the error should be something like this
-      // new Error(`Failed to extract literal value with path ${path}`);
+      const value = helper.fromLiteral(literalValue, inputDef);
+      return { value, typeDefinition: inputDef } as UnionValue;
+    } catch {
+      return { value: undefined, typeDefinition: inputDef };
     }
+  } else {
+    return getUnionValueFromUnknownLiteral(
+      literal as Literal,
+      inputTypeDefinition,
+    ) as any;
   }
-  throw new Error(t('noMatchingResults'));
 }
 
 function toLiteral({
@@ -51,16 +95,21 @@ function toLiteral({
 
   const { value: unionValue, typeDefinition } = value as UnionValue;
 
-  return getHelperForInput(typeDefinition.type).toLiteral({
+  const literal = getHelperForInput(typeDefinition.type).toLiteral({
     value: unionValue,
     typeDefinition: typeDefinition,
   } as ConverterInput);
+  return {
+    scalar: {
+      union: {
+        value: literal,
+        type: typeDefinition.literalType,
+      },
+    },
+  };
 }
 
-function validate({
-  value,
-  typeDefinition: { listOfSubTypes },
-}: InputValidatorParams) {
+function validate({ value, ...props }: InputValidatorParams) {
   if (!value) {
     throw new Error(t('valueRequired'));
   }
@@ -68,14 +117,29 @@ function validate({
     throw new Error(t('valueMustBeObject'));
   }
 
-  const { typeDefinition } = value as UnionValue;
-  getHelperForInput(typeDefinition.type).validate(
-    value as InputValidatorParams,
-  );
+  try {
+    const { typeDefinition: subTypeDefinition } = value as UnionValue;
+    getHelperForInput(subTypeDefinition.type).validate({
+      required: props.required,
+      ...(value as any),
+    });
+  } catch (error) {
+    throw new Error(error.message);
+  }
 }
 
 export const unionHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    const { listOfSubTypes } = typeDefinition;
+    const selectedSubType = listOfSubTypes?.[0];
+    const subtypeHelper = getHelperForInput(selectedSubType?.type!);
+
+    return {
+      value: subtypeHelper.typeDefinitionToDefaultValue(selectedSubType!),
+      typeDefinition: selectedSubType,
+    };
+  },
 };

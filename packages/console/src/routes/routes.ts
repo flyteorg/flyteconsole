@@ -4,10 +4,11 @@ import { makeRoute } from '@flyteorg/common';
 import { projectBasePath, projectDomainBasePath } from './constants';
 
 /** Creates a path relative to a particular project */
-export const makeProjectBoundPath = (projectId: string, path = '') =>
-  makeRoute(
+export const makeProjectBoundPath = (projectId: string, path = '') => {
+  return makeRoute(
     `/projects/${projectId}${path.length ? ensureSlashPrefixed(path) : path}`,
   );
+};
 
 /** Creates a path relative to a particular project and domain. Paths should begin with a slash (/) */
 export const makeProjectDomainBoundPath = (
@@ -18,18 +19,30 @@ export const makeProjectDomainBoundPath = (
 
 export class Routes {
   static NotFound = {};
+
+  // Landing page
+  static SelectProject = {
+    id: '__FLYTE__VIEW_ALL_PROJECTS__',
+    path: makeRoute('/select-project'),
+  };
+
   // Projects
   static ProjectDetails = {
-    makeUrl: (project: string, section?: string) =>
-      makeProjectBoundPath(project, section ? `/${section}` : ''),
+    makeUrl: (project: string, section?: string) => {
+      if (project === this.SelectProject.id) {
+        return this.SelectProject.path;
+      }
+      return makeProjectBoundPath(project, section ? `/${section}` : '');
+    },
     path: projectBasePath,
     sections: {
       dashboard: {
-        makeUrl: (project: string, domain?: string) =>
-          makeProjectBoundPath(
+        makeUrl: (project: string, domain?: string) => {
+          return makeProjectBoundPath(
             project,
             `/executions${domain ? `?domain=${domain}` : ''}`,
-          ),
+          );
+        },
         path: `${projectBasePath}/executions`,
       },
       tasks: {
@@ -126,8 +139,7 @@ export class Routes {
     path: `${projectDomainBasePath}/executions/:executionId`,
   };
 
-  // Landing page
-  static SelectProject = {
-    path: makeRoute('/'),
-  };
+  public static getRoute(route: string) {
+    return this[route];
+  }
 }

@@ -16,6 +16,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { useQuery, useQueryClient } from 'react-query';
 import { Workflow } from 'models/Workflow/types';
 import { makeWorkflowQuery } from 'components/Workflow/workflowQueries';
+import { useBreadCrumbsGreyStyle } from 'components/Breadcrumbs';
 import { ExecutionContext } from '../contexts';
 import { useWorkflowExecutionQuery } from '../useWorkflowExecution';
 import { ExecutionMetadata } from './ExecutionMetadata';
@@ -53,6 +54,8 @@ const ExecutionContainer: React.FC<{}> = () => {
   const styles = useStyles();
   const [metadataExpanded, setMetadataExpanded] = React.useState(true);
   const toggleMetadata = () => setMetadataExpanded(!metadataExpanded);
+
+  useBreadCrumbsGreyStyle();
 
   return (
     <>

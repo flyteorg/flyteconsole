@@ -1,5 +1,7 @@
+// ts-ingnore
+
 import { makeStyles, Theme } from '@material-ui/core';
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 import { DropzoneProps, useDropzone } from 'react-dropzone';
 import FileItem from './FileItem';
 
@@ -76,7 +78,9 @@ export function FileUpload({
           here
         </div>
         {helpText}
-        <input {...getInputProps()} />
+        <input
+          {...(getInputProps() as unknown as React.HTMLAttributes<HTMLElement>)}
+        />
       </div>
     </div>
   );

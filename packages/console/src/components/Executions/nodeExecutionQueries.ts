@@ -64,12 +64,16 @@ export function makeNodeExecutionAndTasksQuery(
   id: NodeExecutionIdentifier,
   queryClient: QueryClient,
   dynamicParentNodeId?: string,
-): QueryInput<WorkflowNodeExecution> {
+) {
   return {
     queryKey: [QueryType.NodeExecutionAndTasks, id],
     queryFn: async () => {
       // step 1: Fetch the Node execution
       const nodeExecutionPure = await getNodeExecution(id);
+
+      const dynamicParent = dynamicParentNodeId
+        ? await getNodeExecution({ ...id, nodeId: dynamicParentNodeId })
+        : null;
 
       // step 2: Fetch the task executions and attach them to the node execution
       const workflowNodeExecution = (await getTaskExecutions(
@@ -78,7 +82,7 @@ export function makeNodeExecutionAndTasksQuery(
       )) as WorkflowNodeExecution;
 
       if (!workflowNodeExecution) {
-        return {} as WorkflowNodeExecution;
+        return [{} as WorkflowNodeExecution];
       }
 
       workflowNodeExecution.scopedId = workflowNodeExecution?.id?.nodeId;
@@ -111,11 +115,22 @@ export function makeNodeExecutionAndTasksQuery(
         ),
       );
 
-      return {
-        ...workflowNodeExecution,
-        taskExecutions: tasksExecutionData,
-        nodeExecutionData,
-      } as WorkflowNodeExecution;
+      const final = [
+        {
+          ...workflowNodeExecution,
+          taskExecutions: tasksExecutionData,
+          nodeExecutionData,
+        } as WorkflowNodeExecution,
+      ];
+
+      if (dynamicParent) {
+        final.push({
+          ...(dynamicParent as WorkflowNodeExecution),
+          scopedId: dynamicParentNodeId,
+        });
+      }
+
+      return final;
     },
   };
 }
@@ -125,12 +140,8 @@ export const getTaskExecutions = async (
   nodeExecution: WorkflowNodeExecution,
 ): Promise<WorkflowNodeExecution | undefined> => {
   const isTerminal = nodeExecutionIsTerminal(nodeExecution);
-  const tasksFetched = !!nodeExecution.tasksFetched;
   const isDynamic = isDynamicNode(nodeExecution);
-  if (!isDynamic && tasksFetched) {
-    // return null to signal no change
-    return;
-  }
+
   return await fetchTaskExecutionList(
     queryClient,
     nodeExecution.id as any,

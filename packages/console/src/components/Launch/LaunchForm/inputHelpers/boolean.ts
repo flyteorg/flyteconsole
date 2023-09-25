@@ -56,4 +56,7 @@ export const booleanHelper: InputHelper = {
   toLiteral,
   validate,
   defaultValue: false,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return false;
+  },
 };

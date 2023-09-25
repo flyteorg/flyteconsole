@@ -97,7 +97,7 @@ describe('ResumeSignalForm', () => {
       mockCompiledNode,
     ]);
     return render(
-      <ThemeProvider theme={getMuiTheme()}>
+      <ThemeProvider theme={getMuiTheme({})}>
         <QueryClientProvider client={queryClient}>
           <APIContext.Provider
             value={mockAPIContextValue({

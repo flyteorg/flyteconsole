@@ -8,7 +8,10 @@ import { Workflow } from 'models/Workflow/types';
 import { projects } from 'mocks/data/projects';
 import * as projectApi from 'models/Project/api';
 import { MemoryRouter } from 'react-router';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { EntityDetails } from '../EntityDetails';
+
+const queryClient = new QueryClient();
 
 jest.mock('models/Project/api');
 
@@ -27,9 +30,11 @@ describe('EntityDetails', () => {
 
   const renderDetails = (id: ResourceIdentifier) => {
     return render(
-      <MemoryRouter>
-        <EntityDetails id={id} />
-      </MemoryRouter>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <EntityDetails id={id} />
+        </MemoryRouter>
+      </QueryClientProvider>,
     );
   };
 
@@ -45,7 +50,7 @@ describe('EntityDetails', () => {
     // check text for header
     await waitFor(() =>
       expect(
-        within(screen.getByText(`${id.domain} / ${id.name}`)),
+        within(screen.getByText(`${id.domain} / ${id.name}`, { exact: false })),
       ).toBeInTheDocument(),
     );
 

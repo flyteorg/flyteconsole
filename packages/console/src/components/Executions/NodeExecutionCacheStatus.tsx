@@ -1,14 +1,16 @@
 import { NodeExecutionDetails } from 'components/Executions/types';
 import { useNodeExecutionContext } from 'components/Executions/contextProvider/NodeExecutionDetails';
 import { CatalogCacheStatus } from 'models/Execution/enums';
-import { NodeExecution } from 'models/Execution/types';
+import { MapTaskExecution, NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
 import { isMapTaskType } from 'models/Task/utils';
 import { useEffect, useState } from 'react';
 import { CacheStatus } from './CacheStatus';
+import { getTaskRetryAtemptsForIndex } from './TaskExecutionsList';
 
 interface NodeExecutionCacheStatusProps {
   execution: NodeExecution;
+  selectedTaskExecution?: MapTaskExecution;
   /** `normal` will render an icon with description message beside it
    *  `iconOnly` will render just the icon with the description as a tooltip
    */
@@ -25,12 +27,13 @@ interface NodeExecutionCacheStatusProps {
  */
 export const NodeExecutionCacheStatus: React.FC<
   NodeExecutionCacheStatusProps
-> = ({ execution, variant = 'normal', className }) => {
+> = ({ execution, selectedTaskExecution, variant = 'normal', className }) => {
   const taskNodeMetadata = execution.closure?.taskNodeMetadata;
   const { getNodeExecutionDetails } = useNodeExecutionContext();
   const [nodeDetails, setNodeDetails] = useState<
     NodeExecutionDetails | undefined
   >();
+  const isMapTask = isMapTaskType(nodeDetails?.taskTemplate?.type);
 
   useEffect(() => {
     let isCurrent = true;
@@ -44,8 +47,24 @@ export const NodeExecutionCacheStatus: React.FC<
     };
   });
 
-  if (isMapTaskType(nodeDetails?.taskTemplate?.type)) {
-    if (nodeDetails?.taskTemplate?.metadata?.cacheSerializable) {
+  if (isMapTask) {
+    if (nodeDetails?.taskTemplate?.metadata?.discoverable) {
+      if (selectedTaskExecution) {
+        const filteredResources = getTaskRetryAtemptsForIndex(
+          selectedTaskExecution?.closure?.metadata?.externalResources ?? [],
+          selectedTaskExecution.taskIndex,
+        );
+        const cacheStatus = filteredResources?.[0]?.cacheStatus;
+
+        return cacheStatus !== null ? (
+          <CacheStatus
+            cacheStatus={cacheStatus}
+            variant={variant}
+            className={className}
+          />
+        ) : null;
+      }
+
       return (
         <CacheStatus
           cacheStatus={CatalogCacheStatus.MAP_CACHE}
@@ -54,17 +73,25 @@ export const NodeExecutionCacheStatus: React.FC<
         />
       );
     }
+
+    return (
+      <CacheStatus
+        cacheStatus={CatalogCacheStatus.CACHE_DISABLED}
+        variant={variant}
+        className={className}
+      />
+    );
   }
 
   // cachestatus can be 0
-  if (taskNodeMetadata?.cacheStatus == null) {
+  if (taskNodeMetadata?.cacheStatus === null) {
     return null;
   }
 
   return (
     <CacheStatus
-      cacheStatus={taskNodeMetadata.cacheStatus}
-      sourceTaskExecutionId={taskNodeMetadata.catalogKey?.sourceTaskExecution}
+      cacheStatus={taskNodeMetadata?.cacheStatus}
+      sourceTaskExecutionId={taskNodeMetadata?.catalogKey?.sourceTaskExecution}
       variant={variant}
       className={className}
     />

@@ -1,11 +1,14 @@
 import React, { PropsWithChildren, useContext } from 'react';
 import { AppConfig } from '@flyteorg/common';
+import { Breadcrumb } from 'components';
 
 export interface ExternalConfigurationProviderProps {
   registry?: {
     nav?: React.FC<any>;
+    topLevelLayout?: React.FC<any>;
     taskExecutionAttemps?: React.FC<any>;
-    additionalRoutes?: any;
+    additionalRoutes?: any[];
+    breadcrumbs?: Breadcrumb[];
   };
   env?: any;
   config?: AppConfig;

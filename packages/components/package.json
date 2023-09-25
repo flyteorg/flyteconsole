@@ -1,6 +1,6 @@
 {
   "name": "@flyteorg/components",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Flyteconsole Components module, which is published as npm package and can be consumed by 3rd parties",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@flyteorg/locale": "^0.0.2",
-    "@flyteorg/ui-atoms": "^0.0.3",
+    "@flyteorg/ui-atoms": "^0.0.4",
     "@material-ui/core": "^4.0.0",
     "@material-ui/icons": "^4.0.0",
     "classnames": "^2.3.1"

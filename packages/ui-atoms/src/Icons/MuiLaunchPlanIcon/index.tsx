@@ -1,39 +1,16 @@
-import { makeStyles } from '@material-ui/core/styles';
-import { SvgIconProps, Theme } from '@material-ui/core';
-import classnames from 'classnames';
 import * as React from 'react';
+import { SvgIconProps, SvgIcon } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) => ({
-  svg: {
-    marginTop: 0,
-    marginRight: theme.spacing(2),
-    display: 'inline-block',
-    fontSize: '1.5rem',
-    transition: 'fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-    flexShrink: 0,
-    userSelect: 'none',
-    color: '#666666',
-  },
-}));
-
-export const MuiLaunchPlanIcon = (props: SvgIconProps): JSX.Element => {
-  const { fill, className, width = '1em', height = '1em', fontSize } = props;
-  const styles = useStyles();
+export const MuiLaunchPlanIcon = (props: SvgIconProps) => {
+  const { fill, ...rest } = props;
   return (
-    <svg
-      className={classnames(styles.svg, className)}
-      width={width}
-      height={height}
-      viewBox="0 0 16 16"
-      xmlns="http://www.w3.org/2000/svg"
-      fontSize={fontSize}
-    >
+    <SvgIcon viewBox="0 0 24 24" {...rest}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M2 15V2C2 1.44772 2.44772 1 3 1H12.7391C13.2914 1 13.7391 1.44772 13.7391 2V11.4421H9.82593H9.32593V11.9421V16H3C2.44772 16 2 15.5523 2 15ZM10.3259 12.4421H13.384L10.3259 15.5002V12.4421ZM5.1307 5.93466H11.0003V4.93466H5.1307V5.93466ZM11.0004 8.83351H5.13079V7.83351H11.0004V8.83351ZM5.13079 11.732H8.02934V10.732H5.13079V11.732Z"
+        d="M 4.963 19.792 L 4.963 4.208 C 4.963 3.545 5.5 3.009 6.162 3.009 L 17.837 3.009 C 18.501 3.009 19.037 3.545 19.037 4.208 L 19.037 15.527 L 14.345 15.527 L 13.746 15.527 L 13.746 16.126 L 13.746 20.991 L 6.162 20.991 C 5.5 20.991 4.963 20.454 4.963 19.792 Z M 14.945 16.724 L 18.612 16.724 L 14.945 20.393 L 14.945 16.724 Z M 8.717 8.924 L 15.753 8.924 L 15.753 7.725 L 8.717 7.725 L 8.717 8.924 Z M 15.753 12.4 L 8.717 12.4 L 8.717 11.201 L 15.753 11.201 L 15.753 12.4 Z M 8.717 15.873 L 12.192 15.873 L 12.192 14.676 L 8.717 14.676 L 8.717 15.873 Z"
         fill={fill || 'currentColor'}
       />
-    </svg>
+    </SvgIcon>
   );
 };

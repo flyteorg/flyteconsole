@@ -29,6 +29,16 @@ export function collectionChildToString(type: InputType, value: any) {
     : stringifyValue(value);
 }
 
+export function formatParameterValues(type: InputType, value: any) {
+  if (value === undefined) {
+    return '';
+  }
+
+  return JSON.stringify(value, null, type === InputType.Struct ? 2 : 0)
+    .split(',')
+    .join(', ');
+}
+
 /** Determines if a given input type, including all levels of nested types, is
  * supported for use in the Launch form.
  */
@@ -50,6 +60,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
     case InputType.Schema:
     case InputType.String:
     case InputType.Struct:
+    case InputType.StructuredDataset:
       return true;
     case InputType.Union:
       if (listOfSubTypes?.length) {
@@ -86,7 +97,7 @@ export function typeIsSupported(typeDefinition: InputTypeDefinition): boolean {
 }
 
 export function isKeyOfBlobDimensionality(
-  value: string,
+  value: string | number | symbol,
 ): value is keyof typeof BlobDimensionality {
-  return Object.keys(BlobDimensionality).indexOf(value) >= 0;
+  return Object.keys(BlobDimensionality).indexOf(value as any) >= 0;
 }

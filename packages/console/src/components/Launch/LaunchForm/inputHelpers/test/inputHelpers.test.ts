@@ -17,7 +17,6 @@ import {
   literalToInputValue,
   validateInput,
 } from '../inputHelpers';
-import { collectionChildToString } from '../utils';
 import {
   inputTypes,
   literalTestCases,
@@ -26,6 +25,7 @@ import {
   unsupportedTypes,
   validityTestCases,
 } from './testCases';
+import { formatParameterValues } from '../utils';
 
 const baseInputProps: InputProps = {
   description: 'test',
@@ -34,14 +34,14 @@ const baseInputProps: InputProps = {
   onChange: () => {},
   required: false,
   typeDefinition: inputTypes.unknown,
-  setIsError: () => {},
 };
 
 function makeSimpleInput(
   typeDefinition: InputTypeDefinition,
   value: any,
+  required = false,
 ): InputProps {
-  return { ...baseInputProps, value, typeDefinition };
+  return { ...baseInputProps, value, typeDefinition, required };
 }
 
 function makeMapInput(
@@ -93,8 +93,17 @@ describe('literalToInputValue', () => {
     literalToInputTestCases.map(([typeDefinition, input, output]) =>
       it(`should correctly convert ${typeDefinition.type}: ${stringifyValue(
         input,
-      )}`, () =>
-        expect(literalToInputValue(typeDefinition, input)).toEqual(output)),
+      )}`, () => {
+        const result = literalToInputValue(typeDefinition, input);
+        let expectedString = output;
+        if (typeDefinition.type === InputType.Struct) {
+          expectedString = formatParameterValues(typeDefinition.type, output);
+        }
+        if (typeDefinition.type === InputType.Integer) {
+          expectedString = `${output}`;
+        }
+        expect(expectedString).toEqual(result);
+      }),
     );
 
     supportedPrimitives.map(typeDefinition =>
@@ -159,11 +168,11 @@ describe('literalToInputValue', () => {
             literals: [input, input],
           },
         };
-        const stringifiedValue = collectionChildToString(
-          typeDefinition.type,
+
+        const expectedString = formatParameterValues(typeDefinition.type, [
           output,
-        );
-        const expectedString = `[${stringifiedValue},${stringifiedValue}]`;
+          output,
+        ]);
         const result = literalToInputValue(
           collectionInputTypeDefinition(typeDefinition),
           collection,
@@ -190,7 +199,7 @@ describe('literalToInputValue', () => {
           collectionInputTypeDefinition(typeDefinition),
           collection,
         ),
-      ).toEqual('[{},{}]');
+      ).toEqual('[{}, {}]');
     });
   });
 
@@ -211,10 +220,11 @@ describe('inputToLiteral', () => {
     literalTestCases.map(([typeDefinition, input, output]) => {
       it(`should correctly convert ${typeDefinition.type}: ${stringifyValue(
         input,
-      )} (${typeof input})`, () =>
-        expect(inputToLiteral(makeSimpleInput(typeDefinition, input))).toEqual(
-          output,
-        ));
+      )} (${typeof input})`, () => {
+        const expected = inputToLiteral(makeSimpleInput(typeDefinition, input));
+
+        expect(expected).toEqual(output);
+      });
     });
   });
 
@@ -223,9 +233,8 @@ describe('inputToLiteral', () => {
       let singleMapValue: any;
       let nestedMapValue: any;
       if (typeDefinition.type === InputType.Struct) {
-        const objValue = JSON.parse(input);
-        singleMapValue = stringifyValue({ a: objValue });
-        nestedMapValue = stringifyValue({ a: { b: objValue } });
+        singleMapValue = stringifyValue({ a: input });
+        nestedMapValue = stringifyValue({ a: { b: input } });
       } else if (['boolean', 'number'].includes(typeof input)) {
         singleMapValue = `{"a":${input}}`;
         nestedMapValue = `{"a":{"b":${input}}}`;
@@ -251,7 +260,8 @@ describe('inputToLiteral', () => {
         const result = inputToLiteral(
           makeMapInput(typeDefinition, singleMapValue),
         );
-        expect(result.map!.literals!.a).toEqual(output);
+        const expected = result.map!.literals!.a;
+        expect(expected).toEqual(output);
       });
 
       it(`should correctly convert nested map of type ${
@@ -260,7 +270,8 @@ describe('inputToLiteral', () => {
         const result = inputToLiteral(
           makeNestedMapInput(typeDefinition, nestedMapValue),
         );
-        expect(result.map!.literals!.a.map!.literals!.b).toEqual(output);
+        const expected = result.map!.literals!.a.map!.literals!.b;
+        expect(expected).toEqual(output);
       });
     });
   });
@@ -270,9 +281,8 @@ describe('inputToLiteral', () => {
       let singleCollectionValue: any;
       let nestedCollectionValue: any;
       if (typeDefinition.type === InputType.Struct) {
-        const objValue = JSON.parse(input);
-        singleCollectionValue = stringifyValue([objValue]);
-        nestedCollectionValue = stringifyValue([[objValue]]);
+        singleCollectionValue = stringifyValue([input]);
+        nestedCollectionValue = stringifyValue([[input]]);
       } else if (['boolean', 'number'].includes(typeof input)) {
         singleCollectionValue = `[${input}]`;
         nestedCollectionValue = `[[${input}]]`;
@@ -382,8 +392,8 @@ function generateValidityTests(
   invalid.map(value =>
     it(`should treat ${stringifyValue(
       value,
-    )} (${typeof value}) as invalid`, () => {
-      const input = makeSimpleInput(typeDefinition, value);
+    )} (${typeof value}) as invalid when required`, () => {
+      const input = makeSimpleInput(typeDefinition, value, true);
       expect(() => validateInput(input)).toThrowError();
     }),
   );

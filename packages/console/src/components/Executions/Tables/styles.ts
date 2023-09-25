@@ -91,6 +91,7 @@ export const useExecutionTableStyles = makeStyles((theme: Theme) => ({
     minWidth: 0,
     paddingBottom: theme.spacing(1),
     paddingTop: theme.spacing(1),
+    overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },

@@ -12,10 +12,17 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
   };
 }
 
-function validate({ value }: InputValidatorParams) {}
+function validate({ value }: InputValidatorParams) {
+  if (typeof value !== 'object' && Object.keys(value).length) {
+    throw new Error('Value must be an empty object');
+  }
+}
 
 export const noneHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return fromLiteral({} as any);
+  },
 };

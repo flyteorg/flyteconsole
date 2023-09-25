@@ -257,19 +257,18 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     useNodeExecutionsById();
 
   const nodeExecution = useMemo(() => {
-    return values(nodeExecutionsById).find(node =>
+    const finalExecution = values(nodeExecutionsById).find(node =>
       isEqual(node.id, nodeExecutionId),
     );
+
+    return finalExecution;
   }, [nodeExecutionId, nodeExecutionsById]);
 
   const [isReasonsVisible, setReasonsVisible] = useState<boolean>(false);
   const [dag, setDag] = useState<any>(null);
   const [details, setDetails] = useState<NodeExecutionDetails | undefined>();
   const [selectedTaskExecution, setSelectedTaskExecution] =
-    useState<MapTaskExecution | null>(null);
-  // const [nodePhase, setNodePhase] = useState<NodeExecutionPhase>(
-  //   nodeExecution?.closure.phase ?? NodeExecutionPhase.UNDEFINED,
-  // );
+    useState<MapTaskExecution>();
 
   const { getNodeExecutionDetails, compiledWorkflowClosure } =
     useNodeExecutionContext();
@@ -302,7 +301,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     return () => {
       isCurrent = false;
     };
-  });
+  }, [nodeExecution]);
 
   useEffect(() => {
     let isCurrent = true;
@@ -342,7 +341,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   }, [nodeExecutionId]);
 
   useEffect(() => {
-    setSelectedTaskExecution(null);
+    setSelectedTaskExecution(undefined);
   }, [nodeExecutionId, taskPhase]);
 
   // TODO: needs to be removed
@@ -372,7 +371,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   );
 
   const onBackClick = () => {
-    setSelectedTaskExecution(null);
+    setSelectedTaskExecution(undefined);
   };
 
   const headerTitle = useMemo(() => {
@@ -411,7 +410,7 @@ export const NodeExecutionDetailsPanelContent: React.FC<
       isGateNode,
     );
     return computedPhase;
-  }, [nodeExecution?.closure.phase, isGateNode]);
+  }, [nodeExecution, isGateNode]);
 
   const isRunningPhase = useMemo(
     () =>
@@ -449,7 +448,10 @@ export const NodeExecutionDetailsPanelContent: React.FC<
   if (nodeExecution) {
     detailsContent = (
       <>
-        <NodeExecutionCacheStatus execution={nodeExecution} />
+        <NodeExecutionCacheStatus
+          execution={nodeExecution}
+          selectedTaskExecution={selectedTaskExecution}
+        />
         <ExecutionTypeDetails details={details} execution={nodeExecution} />
       </>
     );

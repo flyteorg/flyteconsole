@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
@@ -91,7 +91,11 @@ export const ExecutionMetadataExtra: React.FC<{
   return (
     <>
       {details.map(({ className, label, value }) => (
-        <div className={classnames(styles.detailItem, className)} key={label}>
+        <Grid
+          item
+          className={classnames(styles.detailItem, className)}
+          key={label}
+        >
           <Typography className={commonStyles.truncateText} variant="subtitle1">
             {label}
           </Typography>
@@ -102,7 +106,7 @@ export const ExecutionMetadataExtra: React.FC<{
           >
             {value}
           </Typography>
-        </div>
+        </Grid>
       ))}
     </>
   );

@@ -11,14 +11,16 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
   return extractLiteralWithCheck<Long>(
     literal,
     primitiveLiteralPaths.scalarInteger,
-  ).toString();
+  )?.toString();
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  const integer =
-    value instanceof Long ? value : Long.fromString(value.toString());
+  const integerValue =
+    value === undefined || value instanceof Long
+      ? value
+      : Long.fromString(value.toString());
   return {
-    scalar: { primitive: { integer } },
+    scalar: { primitive: { integer: integerValue } },
   };
 }
 
@@ -45,4 +47,7 @@ export const integerHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return undefined as any;
+  },
 };

@@ -1,9 +1,9 @@
 import { stringifyValue } from 'common/utils';
 import { Core, Protobuf } from '@flyteorg/flyteidl-types';
-import { InputValue } from '../types';
+import { InputType, InputValue } from '../types';
 import { structPath } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
-import { extractLiteralWithCheck } from './utils';
+import { extractLiteralWithCheck, formatParameterValues } from './utils';
 
 export type PrimitiveType = string | number | boolean | null | object;
 
@@ -103,7 +103,10 @@ function fromLiteral(literal: Core.ILiteral): InputValue {
     structPath,
   );
 
-  return stringifyValue(protobufStructToObject(structValue));
+  return formatParameterValues(
+    InputType.Struct,
+    protobufStructToObject(structValue),
+  );
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
@@ -127,6 +130,7 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
   return { scalar: { generic: objectToProtobufStruct(parsedObject) } };
 }
 
+// TODO: proper validation based on struct params from typedefs
 function validate({ value }: InputValidatorParams) {
   if (typeof value !== 'string') {
     throw new Error('Value is not a string');
@@ -143,4 +147,7 @@ export const structHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return {};
+  },
 };

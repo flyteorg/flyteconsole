@@ -8,7 +8,7 @@ export function makeSwitchChangeHandler(onChange: InputChangeHandler) {
 }
 
 type StringChangeHandler = (
-  value: string,
+  value: string | undefined,
   roleType: AuthRoleTypes | null,
 ) => void;
 export function makeStringChangeHandler(

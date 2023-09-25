@@ -32,7 +32,7 @@ const str = {
   value: 'Value',
   basicInformation: 'Basic Information',
   description: 'Description',
-  launchPlanLatest: 'Launch Plan Detail  (Latest Version)',
+  launchPlanLatest: 'Launch Plan Detail (Latest Version)',
   expectedInputs: 'Expected Inputs',
   fixedInputs: 'Fixed Inputs',
   inputsName: 'Name',
