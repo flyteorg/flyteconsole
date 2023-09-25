@@ -21,7 +21,6 @@ import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
-import { WithContext as ReactTags } from 'react-tag-input';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
@@ -54,21 +53,25 @@ export function getExecutionIdCell(
 }
 
 export function getExecutionTagsCell(
-  execution: Execution
+  execution: Execution,
+  tagLayoutClassName: string,
+  tagColumnClassName: string,
 ): React.ReactNode {
-  const tags = execution.spec.tags;
-  return <ReactTags
-    tags={tags}
-    // suggestions={suggestions}
-    // delimiters={delimiters}
-    // handleDelete={handleDelete}
-    // handleAddition={handleAddition}
-    // handleDrag={handleDrag}
-    // handleTagClick={handleTagClick}
-    inputFieldPosition="bottom"
-    autocomplete
-    editable
-  />
+  // const tags = execution.spec.tags;
+  // const tags =  [ { id: "1", text: "Apples" } ]
+  if (!execution.spec.tags) {
+    return <div></div>
+  }
+  return <div className={tagLayoutClassName}>
+    {execution.spec.tags.map((label) => (
+      <div
+        key={label}
+        className={tagColumnClassName}
+      >
+        {label}
+      </div>
+    ))}
+  </div>
 }
 
 export function getStatusCell(execution: Execution): React.ReactNode {

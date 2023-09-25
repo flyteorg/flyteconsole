@@ -46,7 +46,7 @@ export function useWorkflowExecutionsTableColumns(
         label: t(patternKey('tableLabel', 'name')),
       },
       {
-        cellRenderer: ({ execution }) => getExecutionTagsCell(execution),
+        cellRenderer: ({ execution }) => getExecutionTagsCell(execution, styles.tagLayoutClassName, styles.tagColumnClassName),
         className: styles.columnTags,
         key: 'tags',
         label: t(patternKey('tableLabel', 'tags')),

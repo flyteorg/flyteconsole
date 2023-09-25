@@ -11,7 +11,7 @@ export const useStyles = makeStyles((theme: Theme) => ({
     whiteSpace: 'normal',
   },
   columnTags: {
-    flexBasis: 100,
+    flexBasis: 240,
   },
   columnLaunchPlan: {
     flexGrow: 1,
@@ -59,4 +59,20 @@ export const useStyles = makeStyles((theme: Theme) => ({
     width: '100px', // same as confirmationButton size
     textAlign: 'center',
   },
+  tagLayoutClassName: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  tagColumnClassName: {
+    height: '30px',
+    width: 'auto',
+    padding: '5px 5px 5px 5px',
+    marginBottom: '10px',
+    marginRight: '10px',
+    borderRadius: '5px',
+    borderSpacing: '15px 15px',
+    textAlign: 'center',
+    backgroundColor: '#9400D3',
+    color: 'white',
+  }
 }));
