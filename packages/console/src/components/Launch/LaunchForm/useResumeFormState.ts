@@ -5,6 +5,7 @@ import { partial } from 'lodash';
 import { NodeExecutionIdentifier } from 'models/Execution/types';
 import { CompiledNode } from 'models/Node/types';
 import { RefObject, useMemo, useRef } from 'react';
+import { LiteralType } from 'models';
 import {
   TaskResumeContext,
   TaskResumeTypestate,
@@ -52,9 +53,9 @@ async function loadInputs({ compiledNode }: TaskResumeContext) {
       label: 'Signal Input',
       name: 'signal',
       required: true,
-      typeDefinition: getInputDefintionForLiteralType({
-        simple: signalType.simple ?? undefined,
-      }),
+      typeDefinition: getInputDefintionForLiteralType(
+        signalType as LiteralType,
+      ),
     },
   ];
 
