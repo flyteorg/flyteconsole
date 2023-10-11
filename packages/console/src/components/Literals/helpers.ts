@@ -361,7 +361,7 @@ function processCollection(
     return 'invalid collection';
   }
 
-  if (!isNaN(mapTaskIndex!)) {
+  if (mapTaskIndex !== undefined && !isNaN(mapTaskIndex)) {
     literals = (literals || []).splice(mapTaskIndex!, 1);
   }
 
