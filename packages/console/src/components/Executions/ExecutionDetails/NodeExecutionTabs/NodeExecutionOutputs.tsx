@@ -20,7 +20,7 @@ export const NodeExecutionOutputs: React.FC<{
           map={executionData.value.fullOutputs}
           mapTaskIndex={taskIndex}
         />
-        {executionData.value.fullOutputs && executionData.value.fullOutputs.literals && (
+        {executionData.value.fullOutputs?.literals && (
           <ExecutionNodeURL
           nodeExecutionId={execution.id}
           suffix="o"
