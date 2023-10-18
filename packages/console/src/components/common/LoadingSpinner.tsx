@@ -19,6 +19,7 @@ const useStyles = makeStyles({
 type SizeValue = 'small' | 'medium' | 'large';
 interface LoadingSpinnerProps {
   size?: SizeValue;
+  useDelay?: boolean;
 }
 
 const spinnerSizes: Record<SizeValue, number> = {
@@ -30,9 +31,14 @@ const spinnerSizes: Record<SizeValue, number> = {
 /** Renders a loading spinner after 1000ms. Size options are 'small', 'medium', and 'large' */
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'large',
+  useDelay = true,
 }) => {
   const styles = useStyles();
-  const shouldRender = useDelayedValue(false, loadingSpinnerDelayMs, true);
+  const shouldRender = useDelayedValue(
+    false,
+    useDelay ? loadingSpinnerDelayMs : 0,
+    true,
+  );
   return shouldRender ? (
     <div
       className={classnames(styles.container, size)}

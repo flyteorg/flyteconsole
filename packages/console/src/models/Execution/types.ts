@@ -1,10 +1,4 @@
-import {
-  Admin,
-  Core,
-  Event,
-  Protobuf,
-  Service,
-} from '@flyteorg/flyteidl-types';
+import { Admin, Core, Event, Protobuf } from '@flyteorg/flyteidl-types';
 import {
   Identifier,
   LiteralMap,
@@ -100,6 +94,7 @@ export interface NodeExecution extends Admin.INodeExecution {
   metadata?: NodeExecutionMetadata;
   scopedId?: string;
   fromUniqueParentId?: string;
+  dynamicParentNodeId?: string;
 }
 
 export interface NodeExecutionClosure extends Admin.INodeExecutionClosure {
@@ -123,6 +118,7 @@ export interface TaskExecutionIdentifier extends Core.ITaskExecutionIdentifier {
 }
 export interface MapTaskExecution extends TaskExecution {
   taskIndex: number | null;
+  parentRetryAttempt?: number;
 }
 
 export interface TaskExecution extends Admin.ITaskExecution {
@@ -130,6 +126,7 @@ export interface TaskExecution extends Admin.ITaskExecution {
   inputUri: string;
   isParent?: boolean;
   closure: TaskExecutionClosure;
+  dynamicParentNodeId?: string;
 }
 export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
   createdAt: Protobuf.ITimestamp;

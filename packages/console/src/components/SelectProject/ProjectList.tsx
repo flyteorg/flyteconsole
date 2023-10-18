@@ -7,6 +7,11 @@ import {
 } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { ButtonLink } from 'components/common/ButtonLink';
+import {
+  LocalStorageProjectDomain,
+  LOCAL_PROJECT_DOMAIN,
+  setLocalStore,
+} from 'components/common/LocalStoreDefaults';
 import { useCommonStyles } from 'components/common/styles';
 import { Project } from 'models/Project/types';
 import * as React from 'react';
@@ -59,6 +64,19 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             color="primary"
             key={domainId}
             component={ButtonLink}
+            onClick={() => {
+              /**
+               * The last project/domain selected by a user is saved here and used by
+               * ApplicationRouter to bypass the project select UX when reopening the
+               * application if this value
+               * exists
+               */
+              const projectDomain: LocalStorageProjectDomain = {
+                domain: domainId,
+                project: project.name,
+              };
+              setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+            }}
             to={Routes.ProjectDetails.sections.dashboard.makeUrl(
               project.id,
               domainId,

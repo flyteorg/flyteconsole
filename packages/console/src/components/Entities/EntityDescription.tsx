@@ -3,10 +3,8 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { useCommonStyles } from 'components/common/styles';
 import { WaitForData } from 'components/common/WaitForData';
-import { useNamedEntity } from 'components/hooks/useNamedEntity';
 import {
   IdentifierScope,
-  NamedEntityMetadata,
   ResourceIdentifier,
   Variable,
 } from 'models/Common/types';
@@ -21,6 +19,7 @@ import { executionFilterGenerator } from './generators';
 import { Row } from './Row';
 import t, { patternKey } from './strings';
 import { entityStrings, entitySections } from './constants';
+import { useDescriptionEntityList } from '../hooks/useDescription';
 
 const Skeleton = reactLoadingSkeleton;
 
@@ -96,9 +95,30 @@ export const EntityDescription: React.FC<{
 }> = ({ id }) => {
   const commonStyles = useCommonStyles();
   const styles = useStyles();
-  const namedEntity = useNamedEntity(id);
-  const { metadata = {} as NamedEntityMetadata } = namedEntity.value;
-  const hasDescription = !!metadata.description;
+
+  const { resourceType } = id;
+  const sort = {
+    key: executionSortFields.createdAt,
+    direction: SortDirection.DESCENDING,
+  };
+
+  const baseFilters = React.useMemo(
+    () => executionFilterGenerator[resourceType](id),
+    [id, resourceType],
+  );
+
+  const descriptionEntities = useDescriptionEntityList(
+    { ...id, version: '' },
+    {
+      sort,
+      filter: baseFilters,
+      limit: 1,
+    },
+  );
+
+  const descriptionEntity = descriptionEntities?.value?.[0];
+  const hasDescription = descriptionEntity?.longDescription.value.length !== 0;
+  const hasLink = !!descriptionEntity?.sourceCode?.link;
   const sections = entitySections[id.resourceType];
 
   return (
@@ -113,7 +133,7 @@ export const EntityDescription: React.FC<{
         className={styles.description}
       >
         <WaitForData
-          {...namedEntity}
+          {...descriptionEntities}
           spinnerVariant="none"
           loadingComponent={Skeleton}
         >
@@ -124,12 +144,29 @@ export const EntityDescription: React.FC<{
               })}
             >
               {hasDescription
-                ? metadata.description
+                ? descriptionEntity?.longDescription?.value
                 : t(
                     patternKey('noDescription', entityStrings[id.resourceType]),
                   )}
             </span>
           </Row>
+          {hasLink && (
+            <Row title={t('githubLink')}>
+              <span>
+                {hasLink ? (
+                  <a
+                    href={descriptionEntity?.sourceCode?.link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {descriptionEntity?.sourceCode?.link}
+                  </a>
+                ) : (
+                  t(patternKey('noGithubLink', entityStrings[id.resourceType]))
+                )}
+              </span>
+            </Row>
+          )}
         </WaitForData>
         {sections?.descriptionInputsAndOutputs && <InputsAndOuputs id={id} />}
       </Typography>

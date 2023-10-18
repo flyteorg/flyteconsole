@@ -1,12 +1,12 @@
 import { Core } from '@flyteorg/flyteidl-types';
 import { isObject } from 'lodash';
 import { BlobDimensionality } from 'models/Common/types';
-import { BlobValue, InputValue } from '../types';
-import { literalNone } from './constants';
+import { BlobValue } from '../types';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
 import { isKeyOfBlobDimensionality } from './utils';
+import { literalNone } from './constants';
 
-function fromLiteral(literal: Core.ILiteral): InputValue {
+function fromLiteral(literal: Core.ILiteral): BlobValue {
   if (!literal.scalar || !literal.scalar.blob) {
     throw new Error('Literal blob missing scalar.blob property');
   }
@@ -37,17 +37,15 @@ function getDimensionality(value: string | number) {
 }
 
 function toLiteral({ value }: ConverterInput): Core.ILiteral {
-  if (!isObject(value)) {
+  if (!value) {
     return literalNone();
   }
+
   const {
     dimensionality: rawDimensionality,
     format: rawFormat,
     uri,
   } = value as BlobValue;
-  if (!uri) {
-    return literalNone();
-  }
 
   const dimensionality = getDimensionality(rawDimensionality);
 
@@ -61,27 +59,25 @@ function toLiteral({ value }: ConverterInput): Core.ILiteral {
 }
 
 function validate({ value, required }: InputValidatorParams) {
-  if (typeof value !== 'object') {
-    throw new Error('Value must be an object');
+  if (!isObject(value)) {
+    throw new Error('Invalid blob value');
   }
 
   const blobValue = value as BlobValue;
-  if (required && (typeof blobValue.uri == null || !blobValue.uri.length)) {
-    throw new Error('uri is required');
+  if (required && (!blobValue?.uri || typeof blobValue?.uri !== 'string')) {
+    throw new Error('Blob uri is required');
   }
-  if (blobValue != null && typeof blobValue.uri !== 'string') {
-    throw new Error('uri must be a string');
-  }
+
   if (blobValue.dimensionality == null) {
-    throw new Error('dimensionality is required');
+    throw new Error('Blob dimensionality is required');
   }
   if (!(getDimensionality(blobValue.dimensionality) in BlobDimensionality)) {
     throw new Error(
-      `unknown dimensionality value: ${blobValue.dimensionality}`,
+      `Unknown blob dimensionality value: ${blobValue.dimensionality}`,
     );
   }
-  if (blobValue.format != null && typeof blobValue.format !== 'string') {
-    throw new Error('format must be a string');
+  if (!!blobValue.format && typeof blobValue.format !== 'string') {
+    throw new Error('Blob format must be a string');
   }
 }
 
@@ -89,4 +85,13 @@ export const blobHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: (typeDefinition): BlobValue => {
+    return {
+      uri: undefined,
+      dimensionality:
+        typeDefinition?.literalType?.blob?.dimensionality ??
+        BlobDimensionality.SINGLE,
+      format: (typeDefinition?.literalType?.blob as any)?.format,
+    } as any as BlobValue;
+  },
 };

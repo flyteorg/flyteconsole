@@ -9,17 +9,16 @@ import {
   ExecutionContext,
   ExecutionContextData,
 } from 'components/Executions/contexts';
-import { Identifier, ResourceType } from 'models/Common/types';
+import { Identifier } from 'models/Common/types';
 import { WorkflowExecutionPhase } from 'models/Execution/enums';
 import { Execution } from 'models/Execution/types';
 import { createMockExecution } from 'models/__mocks__/executionsData';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router';
-import { Routes } from 'routes/routes';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createTestQueryClient } from 'test/utils';
-import { backLinkTitle, executionActionStrings } from '../constants';
-import { ExecutionDetailsAppBarContent } from '../ExecutionDetailsAppBarContent';
+import { executionActionStrings } from '../constants';
+import { ExecutionDetailsAppBarContentInner } from '../ExecutionDetailsAppBarContent';
 
 jest.mock('components/Navigation/SubNavBarContent', () => ({
   SubNavBarContent: ({ children }: React.Props<any>) => children,
@@ -28,6 +27,7 @@ jest.mock('components/Navigation/SubNavBarContent', () => ({
 describe('ExecutionDetailsAppBarContent', () => {
   let execution: Execution;
   let executionContext: ExecutionContextData;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let sourceId: Identifier;
   let queryClient: QueryClient;
 
@@ -47,7 +47,7 @@ describe('ExecutionDetailsAppBarContent', () => {
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <ExecutionContext.Provider value={executionContext}>
-            <ExecutionDetailsAppBarContent />
+            <ExecutionDetailsAppBarContentInner />
           </ExecutionContext.Provider>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -92,61 +92,6 @@ describe('ExecutionDetailsAppBarContent', () => {
     it('does not render an overflow menu', async () => {
       const { queryByLabelText } = renderContent();
       expect(queryByLabelText(commonLabels.moreOptionsButton)).toBeNull();
-    });
-  });
-
-  it('renders a back link to the parent workflow', async () => {
-    const { getByTitle } = renderContent();
-    await waitFor(() => {
-      const linkEl = getByTitle(backLinkTitle);
-      expect(linkEl.getAttribute('href')).toEqual(
-        Routes.WorkflowDetails.makeUrl(
-          sourceId.project,
-          sourceId.domain,
-          sourceId.name,
-        ),
-      );
-    });
-  });
-
-  it('renders the workflow name in the app bar content', async () => {
-    const { getByText } = renderContent();
-    const { project, domain } = execution.id;
-    await waitFor(() =>
-      expect(
-        getByText(`${project}/${domain}/${sourceId.name}/`),
-      ).toBeInTheDocument(),
-    );
-  });
-
-  describe('for single task executions', () => {
-    beforeEach(() => {
-      execution.spec.launchPlan.resourceType = ResourceType.TASK;
-      sourceId = execution.spec.launchPlan;
-    });
-
-    it('renders a back link to the parent task', async () => {
-      const { getByTitle } = renderContent();
-      await waitFor(() => {
-        const linkEl = getByTitle(backLinkTitle);
-        expect(linkEl.getAttribute('href')).toEqual(
-          Routes.TaskDetails.makeUrl(
-            sourceId.project,
-            sourceId.domain,
-            sourceId.name,
-          ),
-        );
-      });
-    });
-
-    it('renders the task name in the app bar content', async () => {
-      const { getByText } = renderContent();
-      const { project, domain } = execution.id;
-      await waitFor(() =>
-        expect(
-          getByText(`${project}/${domain}/${sourceId.name}/`),
-        ).toBeInTheDocument(),
-      );
     });
   });
 });

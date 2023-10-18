@@ -7,6 +7,7 @@ import { useCommonStyles } from 'components/common/styles';
 import { TaskExecutionPhase } from 'models/Execution/enums';
 import { MapTaskExecution, TaskExecution } from 'models/Execution/types';
 import { MapTaskStatusInfo } from 'components/common/MapTaskExecutionsList/MapTaskStatusInfo';
+import { isMapTaskV1 } from 'models';
 import { TaskExecutionDetails } from './TaskExecutionDetails';
 import { TaskExecutionError } from './TaskExecutionError';
 import { TaskExecutionLogs } from './TaskExecutionLogs';
@@ -46,12 +47,28 @@ export const MapTaskExecutionsListItem: React.FC<
   const styles = useStyles();
 
   const {
-    closure: { error, startedAt, updatedAt, duration, phase, logs, metadata },
+    closure: {
+      error,
+      startedAt,
+      updatedAt,
+      duration,
+      phase,
+      logs,
+      metadata,
+      eventVersion,
+      taskType,
+    },
     id: { retryAttempt },
   } = taskExecution;
   const taskHasStarted = phase >= TaskExecutionPhase.QUEUED;
   const headerText = formatRetryAttempt(retryAttempt);
   const logsByPhase = getGroupedLogs(metadata?.externalResources ?? []);
+
+  const isMapTask = isMapTaskV1(
+    eventVersion!,
+    metadata?.externalResources?.length ?? 0,
+    taskType ?? undefined,
+  );
 
   return (
     <PanelSection>
@@ -74,7 +91,6 @@ export const MapTaskExecutionsListItem: React.FC<
           <TaskExecutionError error={error} />
         </section>
       ) : null}
-
       {/* If main map task has log attached - show it here */}
       {logs && logs.length > 0 ? (
         <section className={styles.section}>
@@ -99,9 +115,8 @@ export const MapTaskExecutionsListItem: React.FC<
           />
         );
       })}
-
       {/* If map task is actively started - show 'started' and 'run time' details */}
-      {taskHasStarted && (
+      {taskHasStarted && !isMapTask && (
         <section className={styles.section}>
           <TaskExecutionDetails
             startedAt={startedAt}

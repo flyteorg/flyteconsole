@@ -1,4 +1,5 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import * as React from 'react';
+import { makeStyles, Theme, useTheme } from '@material-ui/core/styles';
 import { SvgIconProps } from '@material-ui/core/SvgIcon';
 import ChevronRight from '@material-ui/icons/ChevronRight';
 import DeviceHub from '@material-ui/icons/DeviceHub';
@@ -9,18 +10,18 @@ import { useCommonStyles } from 'components/common/styles';
 import { withRouteParams } from 'components/common/withRouteParams';
 import { useProject, useProjects } from 'components/hooks/useProjects';
 import { Project } from 'models/Project/types';
-import * as React from 'react';
-import {
-  matchPath,
-  NavLink,
-  NavLinkProps,
-  RouteComponentProps,
-} from 'react-router-dom';
+import { matchPath, NavLinkProps, RouteComponentProps } from 'react-router-dom';
 import { history } from 'routes/history';
 import { Routes } from 'routes/routes';
 import { MuiLaunchPlanIcon } from '@flyteorg/ui-atoms';
+import {
+  LOCAL_PROJECT_DOMAIN,
+  setLocalStore,
+} from 'components/common/LocalStoreDefaults';
 import { primaryHighlightColor } from 'components/Theme/constants';
 import { ProjectSelector } from './ProjectSelector';
+import NavLinkWithSearch from './NavLinkWithSearch';
+import { TopLevelLayoutContext } from './TopLevelLayoutState';
 
 interface ProjectNavigationRouteParams {
   domainId?: string;
@@ -72,94 +73,114 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
 }) => {
   const styles = useStyles();
   const commonStyles = useCommonStyles();
-  const project = useProject(projectId);
-  const projects = useProjects();
-  const onProjectSelected = (project: Project) =>
-    history.push(Routes.ProjectDetails.makeUrl(project.id, section));
+  if (!projectId) return <span>no project id</span>;
 
-  const routes: ProjectRoute[] = [
-    {
-      icon: Dashboard,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.ProjectDashboard.path,
-              exact: false,
-            });
-        return !!finalMatch;
-      },
-      path: Routes.ProjectDetails.sections.dashboard.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Project Dashboard',
-    },
-    {
-      icon: DeviceHub,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.WorkflowDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
-      },
-      path: Routes.ProjectDetails.sections.workflows.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Workflows',
-    },
-    {
-      icon: LinearScale,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.TaskDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
-      },
-      path: Routes.ProjectDetails.sections.tasks.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Tasks',
-    },
-    {
-      icon: MuiLaunchPlanIcon as any,
-      isActive: (match, location) => {
-        const finalMatch = match
-          ? match
-          : matchPath(location.pathname, {
-              path: Routes.LaunchPlanDetails.path,
-              exact: false,
-            });
-        return !!finalMatch;
-      },
-      path: Routes.ProjectDetails.sections.launchPlans.makeUrl(
-        project.value.id,
-        domainId,
-      ),
-      text: 'Launch Plans',
-    },
-  ];
+  const [projects] = useProjects();
+  const [project] = useProject(projectId);
 
+  const onProjectSelected = (project: Project) => {
+    const path = Routes.ProjectDetails.makeUrl(project.id, section);
+    const projectDomain = {
+      project: project.id,
+      domain: domainId || 'development',
+    };
+    /* Store user intent in localStorage */
+    setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
+    return history.push(path);
+  };
+
+  const routes: ProjectRoute[] = React.useMemo(() => {
+    if (!project?.id && !domainId) return [];
+    return [
+      {
+        icon: Dashboard,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.ProjectDashboard.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.dashboard.makeUrl(
+          project.id,
+          domainId,
+        ),
+        text: 'Project Dashboard',
+      },
+      {
+        icon: DeviceHub,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.WorkflowDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.workflows.makeUrl(
+          projectId,
+          domainId,
+        ),
+        text: 'Workflows',
+      },
+      {
+        icon: LinearScale,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.TaskDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.tasks.makeUrl(projectId, domainId),
+        text: 'Tasks',
+      },
+      {
+        icon: MuiLaunchPlanIcon as any,
+        isActive: (match, location) => {
+          const finalMatch = match
+            ? match
+            : matchPath(location.pathname, {
+                path: Routes.LaunchPlanDetails.path,
+                exact: false,
+              });
+          return !!finalMatch;
+        },
+        path: Routes.ProjectDetails.sections.launchPlans.makeUrl(
+          project.id,
+          domainId,
+        ),
+        text: 'Launch Plans',
+      },
+    ];
+  }, [project?.id, domainId]);
+
+  const { openSideNav } = React.useContext(TopLevelLayoutContext);
+  const theme = useTheme();
+  React.useEffect(() => {
+    if (window.innerWidth > theme.breakpoints.values.md) {
+      openSideNav();
+    }
+  }, []);
+
+  if (!project && !projects) return <></>;
   return (
     <>
-      {project.value && projects.value && (
+      {project?.id && (
         <ProjectSelector
-          projects={projects.value}
-          selectedProject={project.value}
+          projects={projects}
+          selectedProject={project}
           onProjectSelected={onProjectSelected}
         />
       )}
       <div className={styles.navLinksContainer}>
         {Object.values(routes).map(({ isActive, path, icon: Icon, text }) => (
-          <NavLink
+          <NavLinkWithSearch
             activeClassName={styles.navLinkActive}
             className={classnames(commonStyles.linkUnstyled, styles.navLink)}
             isActive={isActive}
@@ -169,7 +190,7 @@ const ProjectNavigationImpl: React.FC<ProjectNavigationRouteParams> = ({
             <Icon className={styles.navLinkIcon} />
             <span className={styles.navLinkText}>{text}</span>
             <ChevronRight className={styles.navLinkChevron} />
-          </NavLink>
+          </NavLinkWithSearch>
         ))}
       </div>
     </>

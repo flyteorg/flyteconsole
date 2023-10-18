@@ -14,6 +14,7 @@ import {
 import { isParentNode } from 'components/Executions/utils';
 import { isStartOrEndNode } from 'models/Node/utils';
 import { NodeExecutionsById } from 'components/Executions/contexts';
+import { cloneDeep, values } from 'lodash';
 import {
   getDisplayName,
   getSubWorkflowFromId,
@@ -216,6 +217,9 @@ const parseNode = ({
         /* 1. Add primary workflow as subworkflow on root */
         if (getSubWorkflowFromId(dWorkflowId, workflow) === false) {
           workflow.subWorkflows?.push(dPrimaryWorkflow);
+
+          workflow.tasks = workflow.tasks || [];
+          workflow.tasks?.push(...dynamicWorkflow.compiledWorkflow.tasks);
         }
 
         /* 2. Add subworkflows as subworkflows on root */
@@ -226,6 +230,9 @@ const parseNode = ({
           const subId = subworkflow.template.id;
           if (getSubWorkflowFromId(subId, workflow) === false) {
             workflow.subWorkflows?.push(subworkflow);
+            workflow.tasks?.push(
+              ...(subworkflow?.compiledWorkflow?.tasks || []),
+            );
           }
         }
       }
@@ -503,10 +510,13 @@ export interface TransformerWorkflowToDag {
 export const transformerWorkflowToDag = (
   workflow: CompiledWorkflowClosure,
   dynamicToMerge: any | null = null,
-  nodeExecutionsById = {},
+  inputNodeExecutionsById: NodeExecutionsById = {},
 ): TransformerWorkflowToDag => {
   const { primary } = workflow;
   const staticExecutionIdsMap = {};
+
+  // clone nodeExecutionsById to prevent mutation
+  const nodeExecutionsById = cloneDeep(inputNodeExecutionsById);
 
   const primaryWorkflowRoot = createDNode({
     compiledNode: {

@@ -21,7 +21,7 @@ describe('EntityVersionDetails', () => {
 
   const renderDetails = (id: ResourceIdentifier) => {
     return render(
-      <ThemeProvider theme={getMuiTheme()}>
+      <ThemeProvider theme={getMuiTheme({})}>
         <APIContext.Provider
           value={mockAPIContextValue({
             getTask: mockGetTask,

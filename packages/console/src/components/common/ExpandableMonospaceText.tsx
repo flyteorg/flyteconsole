@@ -142,7 +142,7 @@ export const ExpandableMonospaceText: React.FC<
         [expandedClass]: expanded,
       })}
     >
-      <div className={styles.errorMessage}>{`${text}`}</div>
+      <div className={styles.errorMessage}>{text}</div>
       {expanded ? null : <div className={styles.bottomFade} />}
       <div className={classnames(styles.actionContainer, showOnHoverClass)}>
         <ButtonBase

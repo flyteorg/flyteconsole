@@ -82,7 +82,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18.16.1
       - name: Install dependencies
         run: yarn install --immutable
       - name: Release
@@ -92,7 +92,8 @@ jobs:
           GIT_AUTHOR_EMAIL: "admin@flyte.org"
           GIT_COMMITTER_NAME: "flyte bot"
           GIT_COMMITTER_EMAIL: "admin@flyte.org"
-        run: npx semantic-release
+          CI: "true"
+        run: npx semantic-release@21.0.7
 
   check_for_tag:
     name: Get Release Tag

@@ -1,6 +1,5 @@
 import React, {
   PropsWithChildren,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -11,7 +10,7 @@ import {
   NodeExecutionsById,
   WorkflowNodeExecutionsContext,
 } from 'components/Executions/contexts';
-import { isEqual, keyBy, merge, mergeWith } from 'lodash';
+import { isEqual, keyBy, merge, mergeWith, cloneDeep } from 'lodash';
 import { dNode } from 'models/Graph/types';
 import {
   NodeExecutionDynamicWorkflowQueryResult,
@@ -100,7 +99,15 @@ export const WorkflowNodeExecutionsProvider = ({
           nodeExecutionsById,
         )
       : { dag: {} as dNode, staticExecutionIdsMap: {}, error: undefined };
+
     const { dag, staticExecutionIdsMap, error } = dagData;
+
+    if (error) {
+      // if an error occured, stop processing
+      setDagError(error);
+      return;
+    }
+
     const nodes = dag?.nodes ?? [];
 
     let newMergedDag = dag;
@@ -117,7 +124,6 @@ export const WorkflowNodeExecutionsProvider = ({
         }
       }
     }
-    setDagError(error);
     setMergedDag(prev => {
       if (stringifyIsEqual(prev, newMergedDag)) {
         return prev;
@@ -180,33 +186,31 @@ export const WorkflowNodeExecutionsProvider = ({
     }
   }, [shouldUpdate]);
 
-  const setCurrentNodeExecutionsById = useCallback(
-    (
-      newNodeExecutionsById: NodeExecutionsById,
-      checkForDynamicParents?: boolean,
-    ): void => {
-      setNodeExecutionsById(prev => {
-        const newNodes = mergeWith(
-          { ...prev },
-          { ...newNodeExecutionsById },
-          mergeNodeExecutions,
-        );
-        if (
-          JSON.stringify(prev, mapStringifyReplacer) ===
-          JSON.stringify(newNodes, mapStringifyReplacer)
-        ) {
-          return prev;
-        }
+  const setCurrentNodeExecutionsById = (
+    newNodeExecutionsById: NodeExecutionsById,
+    checkForDynamicParents?: boolean,
+  ): void => {
+    const mergedNodes = mergeWith(
+      cloneDeep(nodeExecutionsById),
+      cloneDeep(newNodeExecutionsById),
+      mergeNodeExecutions,
+    );
 
-        if (checkForDynamicParents) {
-          setShouldUpdate(true);
-        }
+    setNodeExecutionsById(prev => {
+      if (
+        JSON.stringify(prev, mapStringifyReplacer) ===
+        JSON.stringify(mergedNodes, mapStringifyReplacer)
+      ) {
+        return prev;
+      }
 
-        return newNodes;
-      });
-    },
-    [],
-  );
+      if (checkForDynamicParents) {
+        setShouldUpdate(true);
+      }
+
+      return mergedNodes;
+    });
+  };
 
   return (
     <WorkflowNodeExecutionsContext.Provider

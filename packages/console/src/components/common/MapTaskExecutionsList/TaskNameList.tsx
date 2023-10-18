@@ -10,17 +10,29 @@ import classnames from 'classnames';
 import { useCommonStyles } from '../styles';
 
 const useStyles = makeStyles((_theme: Theme) => ({
+  taskName: {
+    lineHeight: 2,
+    overflowWrap: 'anywhere',
+  },
+
   taskTitle: {
     cursor: 'default',
     '&:hover': {
       textDecoration: 'none',
     },
   },
+
   taskTitleLink: {
     cursor: 'pointer',
     '&:hover': {
       textDecoration: 'underline',
     },
+  },
+
+  taskCacheLogo: {
+    verticalAlign: 'middle',
+    position: 'relative',
+    left: 0,
   },
 }));
 
@@ -64,6 +76,7 @@ export const TaskNameList = ({
           onTaskSelected({
             ...taskExecution,
             taskIndex: (log as any).index,
+            parentRetryAttempt: taskExecution.id.retryAttempt,
           });
         };
 
@@ -80,18 +93,19 @@ export const TaskNameList = ({
               color={log.uri ? 'primary' : 'textPrimary'}
               onClick={log.uri ? handleClick : undefined}
               className={classnames(
+                styles.taskName,
                 log.uri ? styles.taskTitleLink : styles.taskTitle,
                 className,
               )}
               data-testid="map-task-log"
             >
               {taskLogName}
+              <CacheStatus
+                cacheStatus={cacheStatus}
+                variant="iconOnly"
+                className={classnames(styles.taskCacheLogo, className)}
+              />
             </Typography>
-            <CacheStatus
-              cacheStatus={cacheStatus}
-              variant="iconOnly"
-              className={className}
-            />
           </div>
         );
       })}

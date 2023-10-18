@@ -23,7 +23,7 @@ import {
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
 } from './launchMachine';
-import { SearchableSelectorOption } from './SearchableSelector';
+import { SearchableSelectorOption } from './LaunchFormComponents/SearchableSelector';
 
 export type InputValueMap = Map<string, InputValue>;
 export type LiteralValueMap = Map<string, Core.ILiteral>;
@@ -202,12 +202,13 @@ export enum InputType {
   Schema = 'SCHEMA',
   String = 'STRING',
   Struct = 'STRUCT',
+  StructuredDataset = 'STRUCTUREDDS',
   Union = 'Union',
   Unknown = 'UNKNOWN',
 }
 
 export interface InputTypeDefinition {
-  literalType: LiteralType;
+  literalType: Partial<LiteralType>;
   type: InputType;
   subtype?: InputTypeDefinition;
   listOfSubTypes?: InputTypeDefinition[];
@@ -217,6 +218,11 @@ export interface BlobValue {
   dimensionality: BlobDimensionality | string;
   format?: string;
   uri: string;
+}
+
+export interface DatasetValue {
+  uri?: string;
+  format?: string;
 }
 
 export interface UnionValue {
@@ -231,6 +237,7 @@ export type InputValue =
   | number
   | boolean
   | Date
+  | DatasetValue
   | BlobValue
   | UnionValue
   | NoneValue;
@@ -247,7 +254,8 @@ export interface InputProps {
   typeDefinition: InputTypeDefinition;
   value?: InputValue;
   onChange: InputChangeHandler;
-  setIsError: (boolean) => void;
+  // used to signal to the input that it is part of a collection
+  hasCollectionParent?: boolean;
 }
 
 export interface ParsedInput

@@ -1,20 +1,29 @@
+import React from 'react';
 import { useDownloadLink } from 'components/hooks/useDataProxy';
-import { WaitForData } from 'components/common/WaitForData';
-import * as React from 'react';
 import { Core } from '@flyteorg/flyteidl-types';
+import { LoadingSpinner, WaitForData } from 'components/common';
 
 /** Fetches and renders the deck data for a given `nodeExecutionId` */
 export const ExecutionNodeDeck: React.FC<{
   nodeExecutionId: Core.NodeExecutionIdentifier;
-}> = ({ nodeExecutionId }) => {
+  className?: string;
+}> = ({ nodeExecutionId, className = '' }) => {
   const downloadLink = useDownloadLink(nodeExecutionId);
+  const iFrameSrc = downloadLink?.value?.signedUrl?.[0];
 
   return (
-    <WaitForData {...downloadLink}>
+    <WaitForData {...downloadLink} loadingComponent={LoadingSpinner}>
       <iframe
         title="deck"
+        src={iFrameSrc}
+        width="100%"
         height="100%"
-        src={downloadLink?.value?.signedUrl?.[0]}
+        className={className}
+        style={{
+          border: 'none',
+          width: '100%',
+          height: '100%',
+        }}
       />
     </WaitForData>
   );

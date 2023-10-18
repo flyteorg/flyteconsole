@@ -39,4 +39,7 @@ export const floatHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return '';
+  },
 };

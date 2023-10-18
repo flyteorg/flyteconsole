@@ -32,7 +32,7 @@ export function useNodeExecutionData(
       debugName: 'NodeExecutionData',
       defaultValue: {} as ExecutionData,
       doFetch: id =>
-        getNodeExecutionData(id).catch(e => {
+        getNodeExecutionData(id).catch(() => {
           return {} as ExecutionData;
         }),
     },

@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => {
     },
     tabs: {
       borderBottom: `1px solid ${theme.palette.divider}`,
+      '& .c--MuiTab-root': {
+        minWidth: 'auto',
+      },
       '& .MuiTabs-flexContainer': {
         justifyContent: 'space-around',
       },
@@ -44,7 +47,7 @@ const defaultTab = tabIds.executions;
 
 export const NodeExecutionTabs: React.FC<{
   nodeExecution: NodeExecution;
-  selectedTaskExecution: MapTaskExecution | null;
+  selectedTaskExecution?: MapTaskExecution;
   onTaskSelected: (val: MapTaskExecution) => void;
   phase?: TaskExecutionPhase;
   taskTemplate?: TaskTemplate | null;

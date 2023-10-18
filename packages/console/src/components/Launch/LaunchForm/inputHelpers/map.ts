@@ -39,7 +39,12 @@ function fromLiteral(
 
   Object.entries(literal.map.literals).forEach(([key, childLiteral]) => {
     const helper = getHelperForInput(subtype.type);
-    result[key] = helper.fromLiteral(childLiteral, subtype);
+    const literalValue = helper.fromLiteral(childLiteral, subtype);
+    try {
+      result[key] = parseJSON(literalValue as any);
+    } catch {
+      result[key] = literalValue;
+    }
   });
 
   return stringifyValue(result);
@@ -94,13 +99,13 @@ function validate({
     throw new Error(t('valueNotParse'));
   }
   const obj = parseJSON(value);
-  if (
-    !Object.keys(obj).length ||
-    Object.keys(obj).some(key => !key.trim().length)
-  ) {
+  if (!Object.keys(obj).length) {
     throw new Error(t('valueKeyRequired'));
   }
   Object.keys(obj).forEach(key => {
+    if (!key || typeof key !== 'string') {
+      throw new Error(t('valueKeyInvalid'));
+    }
     const helper = getHelperForInput(subtype.type);
     const subValue = obj[key];
 
@@ -121,4 +126,7 @@ export const mapHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return '';
+  },
 };

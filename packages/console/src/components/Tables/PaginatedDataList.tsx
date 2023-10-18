@@ -18,7 +18,7 @@ import { workflowVersionsTableColumnWidths } from '../Executions/Tables/constant
 
 type Order = 'asc' | 'desc';
 
-interface PaginatedDataListHeaderProps<C> {
+interface PaginatedDataListHeaderProps {
   classes: ReturnType<typeof useStyles>;
   columns: ColumnDefinition<any>[];
   onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: theme.spacing(2),
     },
     table: {
-      minWidth: 750,
+      minWidth: 200,
     },
     radioButton: {
       width: workflowVersionsTableColumnWidths.radio,
@@ -83,8 +83,8 @@ const useStyles = makeStyles((theme: Theme) =>
  * @param props
  * @constructor
  */
-const PaginatedDataListHeader = <C,>(
-  props: PropsWithChildren<PaginatedDataListHeaderProps<C>>,
+const PaginatedDataListHeader = (
+  props: PropsWithChildren<PaginatedDataListHeaderProps>,
 ) => {
   const { classes, order, orderBy, onRequestSort, columns, showRadioButton } =
     props;

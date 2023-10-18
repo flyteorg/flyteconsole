@@ -1,6 +1,6 @@
 import { QueryInput, QueryType } from 'components/data/types';
 import { retriesToZero } from 'components/flytegraph/ReactFlow/utils';
-import { isEqual } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import {
   PaginatedEntityResponse,
   RequestConfig,
@@ -63,21 +63,26 @@ export function makeNodeExecutionQuery(
 export function makeNodeExecutionAndTasksQuery(
   id: NodeExecutionIdentifier,
   queryClient: QueryClient,
-): QueryInput<WorkflowNodeExecution> {
+  dynamicParentNodeId?: string,
+) {
   return {
     queryKey: [QueryType.NodeExecutionAndTasks, id],
     queryFn: async () => {
       // step 1: Fetch the Node execution
       const nodeExecutionPure = await getNodeExecution(id);
 
+      const dynamicParent = dynamicParentNodeId
+        ? await getNodeExecution({ ...id, nodeId: dynamicParentNodeId })
+        : null;
+
       // step 2: Fetch the task executions and attach them to the node execution
       const workflowNodeExecution = (await getTaskExecutions(
-        nodeExecutionPure,
         queryClient,
+        nodeExecutionPure,
       )) as WorkflowNodeExecution;
 
       if (!workflowNodeExecution) {
-        return {} as WorkflowNodeExecution;
+        return [{} as WorkflowNodeExecution];
       }
 
       workflowNodeExecution.scopedId = workflowNodeExecution?.id?.nodeId;
@@ -88,15 +93,11 @@ export function makeNodeExecutionAndTasksQuery(
       // -- only one request is made as it is constant across all attempts
       const taskExecutions = workflowNodeExecution?.taskExecutions || [];
       const taskId = taskExecutions?.[0]?.id?.taskId;
-      const compiledTaskClosure = await (taskId
-        ? getTask(taskId!).catch(e => {
-            debug(
-              '\t failed to get compiled task closure for taskId: ',
-              taskId,
-              ' Error message:',
-              e,
-            );
-          })
+
+      // don't issue a task compiled closure request if the node has a dynamic parent
+      // TODO: fetch dynamic parent to get the compiled closure
+      const compiledTaskClosure = await (taskId && !dynamicParentNodeId
+        ? getTask(taskId!).catch(() => null)
         : Promise.resolve(null));
 
       // step 5: get each task's executions data
@@ -114,31 +115,46 @@ export function makeNodeExecutionAndTasksQuery(
         ),
       );
 
-      return {
-        ...workflowNodeExecution,
-        taskExecutions: tasksExecutionData,
-        nodeExecutionData,
-      } as WorkflowNodeExecution;
+      const final = [
+        {
+          ...workflowNodeExecution,
+          taskExecutions: tasksExecutionData,
+          nodeExecutionData,
+        } as WorkflowNodeExecution,
+      ];
+
+      if (dynamicParent) {
+        final.push({
+          ...(dynamicParent as WorkflowNodeExecution),
+          scopedId: dynamicParentNodeId,
+        });
+      }
+
+      return final;
     },
   };
 }
 
-const getTaskExecutions = async (
-  nodeExecution: WorkflowNodeExecution,
+export const getTaskExecutions = async (
   queryClient: QueryClient,
+  nodeExecution: WorkflowNodeExecution,
 ): Promise<WorkflowNodeExecution | undefined> => {
   const isTerminal = nodeExecutionIsTerminal(nodeExecution);
-  const tasksFetched = !!nodeExecution.tasksFetched;
   const isDynamic = isDynamicNode(nodeExecution);
-  if (!isDynamic && tasksFetched) {
-    // return null to signal no change
-    return;
-  }
+
   return await fetchTaskExecutionList(
     queryClient,
     nodeExecution.id as any,
   ).then(taskExecutions => {
-    const useNewMapTaskView = taskExecutions.every(taskExecution => {
+    const finalTaskExecutions = cloneDeep(taskExecutions)?.map(
+      taskExecution =>
+        ({
+          ...taskExecution,
+          dynamicParentNodeId: nodeExecution.dynamicParentNodeId,
+        } as WorkflowTaskExecution),
+    );
+
+    const useNewMapTaskView = finalTaskExecutions?.every(taskExecution => {
       const {
         closure: { taskType, metadata, eventVersion = 0 },
       } = taskExecution;
@@ -149,7 +165,7 @@ const getTaskExecutions = async (
       );
     });
 
-    const externalResources: ExternalResource[] = taskExecutions
+    const externalResources: ExternalResource[] = finalTaskExecutions
       .map(taskExecution => taskExecution.closure.metadata?.externalResources)
       .flat()
       .filter((resource): resource is ExternalResource => !!resource);
@@ -160,7 +176,7 @@ const getTaskExecutions = async (
 
     return {
       ...nodeExecution,
-      taskExecutions,
+      taskExecutions: finalTaskExecutions,
       ...(useNewMapTaskView && logsByPhase.size > 0 && { logsByPhase }),
       ...((appendTasksFetched && { tasksFetched: true }) || {}),
     } as any as WorkflowNodeExecution;
@@ -175,18 +191,22 @@ export function makeNodeExecutionQueryEnhanced(
   const { id } = nodeExecution || {};
 
   return {
-    enabled: !!nodeExecution,
+    enabled: !!id,
     queryKey: [QueryType.NodeExecutionEnhanced, id],
     queryFn: async () => {
       // complexity:
       // +1 for parent node tasks
       // +1 for node execution list
       // +n= executionList.length
-      const isParent = isParentNode(nodeExecution);
-      const parentNodeID = nodeExecution.id.nodeId;
+      const parentExecution = cloneDeep(nodeExecution);
+      const isParent = isParentNode(parentExecution);
+      const fromUniqueParentId = parentExecution.id.nodeId;
       const parentScopeId =
-        nodeExecution.scopedId ?? nodeExecution.metadata?.specNodeId;
-      nodeExecution.scopedId = parentScopeId;
+        parentExecution.scopedId ?? parentExecution.metadata?.specNodeId;
+      parentExecution.scopedId = parentScopeId;
+      const dynamicParentNodeId = isDynamicNode(parentExecution)
+        ? fromUniqueParentId
+        : parentExecution.dynamicParentNodeId;
 
       // if the node is a parent, force refetch its children
       // called by NodeExecutionDynamicProvider
@@ -198,7 +218,7 @@ export function makeNodeExecutionQueryEnhanced(
               id.executionId,
               {
                 params: {
-                  [nodeExecutionQueryParams.parentNodeId]: parentNodeID,
+                  [nodeExecutionQueryParams.parentNodeId]: fromUniqueParentId,
                 },
               },
             ).then(childExecutions => {
@@ -206,17 +226,20 @@ export function makeNodeExecutionQueryEnhanced(
                 const scopedId = e.metadata?.specNodeId
                   ? retriesToZero(e?.metadata?.specNodeId)
                   : retriesToZero(e?.id?.nodeId);
-                e['scopedId'] = `${parentScopeId}-0-${scopedId}`;
-                e['fromUniqueParentId'] = parentNodeID;
 
-                return e;
+                return {
+                  ...e,
+                  scopedId: `${parentScopeId}-0-${scopedId}`,
+                  fromUniqueParentId,
+                  ...(dynamicParentNodeId ? { dynamicParentNodeId } : {}),
+                };
               });
               return children;
             })
         : () => Promise.resolve([]);
 
       const parentNodeAndTaskExecutions = await Promise.all([
-        getTaskExecutions(nodeExecution, queryClient),
+        getTaskExecutions(queryClient, parentExecution),
         parentNodeExecutions(),
       ]).then(([parent, children]) => {
         // strip closure and metadata to avoid overwriting data from queries that handle status updates

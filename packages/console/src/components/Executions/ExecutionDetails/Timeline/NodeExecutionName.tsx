@@ -7,8 +7,8 @@ import { SelectNodeExecutionLink } from 'components/Executions/Tables/SelectNode
 import { isEqual } from 'lodash';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import { NodeExecution } from 'models/Execution/types';
-import React, { useContext, useEffect, useState } from 'react';
-import { DetailsPanelContext, useDetailsPanel } from '../DetailsPanelContext';
+import React, { useEffect, useState } from 'react';
+import { useDetailsPanel } from '../DetailsPanelContext';
 
 interface NodeExecutionTimelineNameData {
   name: string;

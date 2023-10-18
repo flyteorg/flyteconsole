@@ -33,6 +33,7 @@ export const typeLabels: { [k in InputType]: string } = {
   [InputType.Schema]: 'schema - uri',
   [InputType.String]: 'string',
   [InputType.Struct]: 'struct',
+  [InputType.StructuredDataset]: 'structured dataset',
   [InputType.Union]: 'union',
   [InputType.Unknown]: 'unknown',
 };
@@ -49,6 +50,24 @@ export const simpleTypeToInputType: { [k in SimpleType]: InputType } = {
   [SimpleType.NONE]: InputType.None,
   [SimpleType.STRING]: InputType.String,
   [SimpleType.STRUCT]: InputType.Struct,
+};
+
+/** Maps nested `SimpleType`s to our flattened `InputType` enum. */
+export const primitiveToInputType: {
+  [k in
+    | 'integer'
+    | 'floatValue'
+    | 'stringValue'
+    | 'boolean'
+    | 'datetime'
+    | 'duration']: InputType;
+} = {
+  integer: InputType.Integer,
+  boolean: InputType.Boolean,
+  datetime: InputType.Datetime,
+  duration: InputType.Duration,
+  floatValue: InputType.Float,
+  stringValue: InputType.String,
 };
 
 export const defaultBlobValue: BlobValue = {

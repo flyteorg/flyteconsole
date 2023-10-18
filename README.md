@@ -46,7 +46,7 @@ For help with installing dependencies look into
    ```
 2. Now, export the following env variables:
 
-   `export ADMIN_API_URL=http://localhost:30080 export DISABLE_AUTH=1`
+   `export ADMIN_API_URL=http://localhost:30080`
 
    > You can persist these environment variables either in the current shell or in a `.env` file at the root
    > of the repository. A `.env` file will persist the settings across multiple terminal
@@ -116,12 +116,10 @@ few environment variables in your run command to setup the appliation.
 
 `CONFIG_DIR="/etc/flyte/config"` (required)
 
-`DISABLE_AUTH="1"` (optional)
-
 This example assumes building from `v1.0.0` on port `8080`
 
 ```bash
-docker run -p 8080:8080 -e BASE_URL="/console" -e CONFIG_DIR="/etc/flyte/config" -e DISABLE_AUTH="1" ghcr.io/flyteorg/flyteconsole:v1.0.0
+docker run -p 8080:8080 -e BASE_URL="/console" -e CONFIG_DIR="/etc/flyte/config" ghcr.io/flyteorg/flyteconsole:v1.0.0
 ```
 
 ### Run the server

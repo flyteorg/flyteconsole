@@ -29,6 +29,7 @@ import {
 } from './types';
 import {
   executionListTransformer,
+  makeExecutionMetricsPath,
   makeExecutionPath,
   makeNodeExecutionListPath,
   makeNodeExecutionPath,
@@ -427,3 +428,18 @@ export const updateExecution = (
     config,
   );
 };
+
+export const getExecutionMetrics = (
+  id: WorkflowExecutionIdentifier,
+  config?: RequestConfig,
+): Promise<Admin.WorkflowExecutionGetMetricsResponse> =>
+  getAdminEntity<
+    Admin.WorkflowExecutionGetMetricsResponse,
+    Admin.WorkflowExecutionGetMetricsResponse
+  >(
+    {
+      path: makeExecutionMetricsPath(id),
+      messageType: Admin.WorkflowExecutionGetMetricsResponse,
+    },
+    config,
+  );

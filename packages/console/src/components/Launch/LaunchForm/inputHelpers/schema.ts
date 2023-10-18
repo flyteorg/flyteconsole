@@ -27,4 +27,7 @@ export const schemaHelper: InputHelper = {
   fromLiteral,
   toLiteral,
   validate,
+  typeDefinitionToDefaultValue: typeDefinition => {
+    return {};
+  },
 };

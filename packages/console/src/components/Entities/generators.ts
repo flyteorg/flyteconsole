@@ -16,37 +16,29 @@ export const executionFilterGenerator: {
   ) => FilterOperation[];
 } = {
   [ResourceType.DATASET]: noFilters,
-  [ResourceType.LAUNCH_PLAN]: ({ name }, version) =>
-    version
+  [ResourceType.LAUNCH_PLAN]: ({ name }, version) => [
+    {
+      key: 'launch_plan.name',
+      operation: FilterOperationName.EQ,
+      value: name,
+    },
+    ...(version
       ? [
-          {
-            key: 'launch_plan.name',
-            operation: FilterOperationName.EQ,
-            value: name,
-          },
           {
             key: 'launch_plan.version',
             operation: FilterOperationName.EQ,
             value: version,
           },
         ]
-      : [
-          {
-            key: 'launch_plan.name',
-            operation: FilterOperationName.EQ,
-            value: name,
-          },
-        ],
-  [ResourceType.TASK]: ({ name }) => [
+      : []),
+  ],
+  [ResourceType.TASK]: ({ name }, version) => [
     {
       key: 'task.name',
       operation: FilterOperationName.EQ,
       value: name,
     },
-  ],
-  [ResourceType.UNSPECIFIED]: noFilters,
-  [ResourceType.WORKFLOW]: ({ name }, version) =>
-    version
+    ...(version
       ? [
           {
             key: 'workflow.version',
@@ -54,13 +46,25 @@ export const executionFilterGenerator: {
             value: version,
           },
         ]
-      : [
+      : []),
+  ],
+  [ResourceType.UNSPECIFIED]: noFilters,
+  [ResourceType.WORKFLOW]: ({ name }, version) => [
+    {
+      key: 'workflow.name',
+      operation: FilterOperationName.EQ,
+      value: name,
+    },
+    ...(version
+      ? [
           {
-            key: 'workflow.name',
+            key: 'workflow.version',
             operation: FilterOperationName.EQ,
-            value: name,
+            value: version,
           },
-        ],
+        ]
+      : []),
+  ],
 };
 
 const workflowListGenerator = ({ project, domain }: ResourceIdentifier) =>
@@ -70,14 +74,14 @@ const launchPlanListGenerator = ({ project, domain }: ResourceIdentifier) =>
 const taskListGenerator = ({ project, domain }: ResourceIdentifier) =>
   Routes.ProjectDetails.sections.tasks.makeUrl(project, domain);
 const unspecifiedGenerator = ({
-  project,
-  domain,
+  project: _project,
+  domain: _domain,
 }: ResourceIdentifier | Identifier) => {
   throw new Error('Unspecified Resourcetype.');
 };
 const unimplementedGenerator = ({
-  project,
-  domain,
+  project: _project,
+  domain: _domain,
 }: ResourceIdentifier | Identifier) => {
   throw new Error('Method not implemented.');
 };

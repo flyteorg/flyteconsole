@@ -10,7 +10,6 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "packages/**",
       "website"
     ]
   },
@@ -33,8 +32,8 @@
     "storybook": "start-storybook -p 6006",
     "test": "NODE_ENV=test BASE_URL=/console jest",
     "test:clear": "jest --clearCache",
-    "test-coverage": "NODE_ENV=test BASE_URL=/console jest --coverage",
-    "test-release": "npx semantic-release --debug --no-ci --test-run"
+    "test-coverage": "NODE_OPTIONS='--max-old-space-size=8192' NODE_ENV=test BASE_URL=/console jest --coverage",
+    "test-release": "CI=true npx semantic-release@21.0.7 --debug --no-ci --test-run"
   },
   "husky": {
     "hooks": {
@@ -46,7 +45,7 @@
     "react",
     "lyft"
   ],
-  "author": "Lyft <flyte-eng@lyft.com>",
+  "author": "Flyte Contributors <admin@flyte.org>",
   "license": "Apache-2.0",
   "lint-staged": {
     "*.{js,jsx,ts,tsx,scss,css,md,json}": [
@@ -62,7 +61,8 @@
     "@material-ui/icons": "^4.2.1",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/commit-analyzer": "^8.0.1",
-    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^7.0.5",
     "@semantic-release/npm": "^7.0.5",
     "@semantic-release/release-notes-generator": "^9.0.1",
@@ -76,6 +76,8 @@
     "@typescript-eslint/parser": "^5.48.2",
     "babel-loader": "^8.2.5",
     "chalk": "^4",
+    "chart.js": "3.6.2",
+    "chartjs-plugin-datalabels": "2.0.0",
     "cheerio": "^1.0.0-rc.12",
     "compression-webpack-plugin": "^9.2.0",
     "cookie-parser": "^1.4.3",
@@ -96,12 +98,15 @@
     "jest": "^26.0.0",
     "jest-transformer-svg": "^2.0.0",
     "lint-staged": "^13.1.0",
+    "marked-gfm-heading-id": "^3.0.4",
+    "marked-mangle": "^1.1.0",
     "morgan": "^1.10.0",
     "msw": "^0.24.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "prettier": "^2.8.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "semantic-release": "^21.0.7",
     "serve-static": "^1.12.3",
     "source-map-loader": "^4.0.1",
     "ts-jest": "^26.3.0",
@@ -126,7 +131,12 @@
     "@storybook/builder-webpack5": "^6.4.19",
     "@storybook/manager-webpack5": "^6.4.19",
     "@storybook/react": "^6.4.19",
-    "@storybook/testing-library": "^0.0.9"
+    "@storybook/testing-library": "^0.0.9",
+    "@types/traverse": "^0.6.32",
+    "ansicolors": "^0.3.2",
+    "execa": "^7.2.0",
+    "semantic-release": "^21.0.7",
+    "traverse": "^0.6.7"
   },
   "resolutions": {
     "@babel/cli": "~7.16.0",

@@ -2,6 +2,10 @@ import { getNodeExecutionPhaseConstants } from 'components/Executions/utils';
 import { primaryTextColor } from 'components/Theme/constants';
 import { NodeExecutionPhase } from 'models/Execution/enums';
 import t from 'components/Executions/strings';
+import { Admin, Core, Protobuf } from '@flyteorg/flyteidl-types';
+import { get, uniq } from 'lodash';
+import { timestampToDate } from 'common';
+import traverse from 'traverse';
 
 export const CASHED_GREEN = 'rgba(74,227,174,0.25)'; // statusColors.SUCCESS (Mint20) with 25% opacity
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
@@ -25,6 +29,58 @@ interface ChartDataInput {
 }
 
 /**
+ * Recursively traverses span data and returns a map of nodeId/taskId to span data.
+ * Example return:
+ *  {
+ *    "n0": [span, span, span],
+ *    "n1": [span, span]
+ *  }
+ */
+export const parseSpanData = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+) => {
+  const results: Record<string, any> = {};
+  const workflowSpans = data?.span ?? {};
+
+  const traverseSpanData = (rootSpan: Core.Span) => {
+    const spanNodeId =
+      rootSpan.nodeId?.nodeId ||
+      rootSpan.taskId?.nodeExecutionId?.nodeId ||
+      rootSpan.workflowId?.name ||
+      '';
+
+    if (!results[spanNodeId]) {
+      results[spanNodeId] = [];
+    }
+
+    if (rootSpan.spans?.length > 0) {
+      rootSpan.spans.forEach(span => {
+        /* Recurse if taskId/nodeId; else add to record */
+        if (span.nodeId?.nodeId || span.taskId?.nodeExecutionId?.nodeId) {
+          traverseSpanData(span as Core.Span);
+        } else {
+          results[spanNodeId].push(span);
+        }
+      });
+    }
+  };
+  traverseSpanData(workflowSpans as Core.Span);
+  return results;
+};
+
+export const getOperationsFromWorkflowExecutionMetrics = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+): string[] => {
+  const operationIds = uniq<string>(
+    traverse(data)
+      .paths()
+      .filter(path => path[path.length - 1] === 'operationId')
+      .map(path => get(data, path)),
+  );
+
+  return operationIds;
+};
+/**
  * Depending on amounf of second provided shows data in
  * XhXmXs or XmXs or Xs format
  */
@@ -33,12 +89,23 @@ export const formatSecondsToHmsFormat = (seconds: number) => {
   seconds %= 3600;
   const minutes = Math.floor(seconds / 60);
   seconds = seconds % 60;
+  /**
+   * Note:
+   *  if we're showing hours or minutes, round seconds
+   *  if we're (only) showing seconds, round to nearest 1/100
+   */
   if (hours > 0) {
-    return `${hours}h ${minutes}m ${seconds}s`;
+    return `${hours}h ${minutes}m ${Math.round(seconds)}s`;
   } else if (minutes > 0) {
-    return `${minutes}m ${seconds}s`;
+    return `${minutes}m ${Math.round(seconds)}s`;
+  } else {
+    seconds = Math.round(seconds * 100) / 100;
+    return `${seconds}s`;
   }
-  return `${seconds}s`;
+};
+
+export const getDurationString = (element: BarItemData): string => {
+  return formatSecondsToHmsFormat(element.durationSec);
 };
 
 /**
@@ -94,6 +161,28 @@ export const generateChartData = (data: BarItemData[]): ChartDataInput => {
   };
 };
 
+export const getDuration = (
+  startTime: Protobuf.ITimestamp,
+  endTime?: Protobuf.ITimestamp,
+) => {
+  const endTimeInMS = endTime ? timestampToDate(endTime).getTime() : Date.now();
+  const duration = endTimeInMS - timestampToDate(startTime).getTime();
+  return duration;
+};
+
+export const getExecutionMetricsOperationIds = (
+  data: Admin.WorkflowExecutionGetMetricsResponse,
+): string[] => {
+  const operationIds = uniq<string>(
+    traverse(data)
+      .paths()
+      .filter(path => path[path.length - 1] === 'operationId')
+      .map(path => get(data, path)),
+  );
+
+  return operationIds;
+};
+
 /**
  * Generates chart data format suitable for Chart.js Bar. Each bar consists of two data items:
  * |-----------|XXXXXXXXXXXXXXXX|
@@ -127,6 +216,13 @@ export const getChartData = (data: ChartDataInput) => {
         ...defaultStyle,
         data: data.durations,
         backgroundColor: data.barColor,
+        borderColor: 'rgba(0, 0, 0, 0.55)',
+        borderWidth: {
+          top: 0,
+          left: 0,
+          right: 1,
+          bottom: 0,
+        },
         datalabels: {
           // Positioning info - https://chartjs-plugin-datalabels.netlify.app/guide/positioning.html
           color: primaryTextColor,

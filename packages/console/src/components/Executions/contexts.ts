@@ -3,8 +3,8 @@ import {
   Execution,
   ExecutionData,
   LogsByPhase,
+  MapTaskExecution,
   NodeExecution,
-  TaskExecution,
 } from 'models/Execution/types';
 import { dNode } from 'models/Graph/types';
 import { createContext } from 'react';
@@ -13,7 +13,7 @@ export interface ExecutionContextData {
   execution: Execution;
 }
 
-export type WorkflowTaskExecution = TaskExecution & {
+export type WorkflowTaskExecution = MapTaskExecution & {
   task?: Task;
   taskData?: ExecutionData;
 };

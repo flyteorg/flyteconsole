@@ -1,8 +1,8 @@
+import * as React from 'react';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import ErrorOutline from '@material-ui/icons/ErrorOutline';
 import { NonIdealState } from 'components/common/NonIdealState';
 import { useCommonStyles } from 'components/common/styles';
-import * as React from 'react';
 import t from './strings';
 import { ParsedInput } from './types';
 

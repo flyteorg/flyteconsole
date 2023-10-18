@@ -20,6 +20,7 @@ export const mockNodeExecutionResponse: Admin.INodeExecution = {
     duration: millisecondsToDuration(1000 * 60 * 60 * 1.251),
     outputUri: 's3://path/to/my/outputs.pb',
   },
+  taskExecutions: [],
 };
 
 export const mockExecution = mockNodeExecutionResponse as NodeExecution;

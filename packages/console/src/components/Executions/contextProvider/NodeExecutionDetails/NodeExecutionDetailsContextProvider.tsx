@@ -9,7 +9,7 @@ import React, {
 import { log } from 'common/log';
 import { Identifier } from 'models/Common/types';
 import { NodeExecution } from 'models/Execution/types';
-import { CompiledWorkflowClosure, Workflow } from 'models/Workflow/types';
+import { CompiledWorkflowClosure } from 'models/Workflow/types';
 import { useQueryClient } from 'react-query';
 import { fetchWorkflow } from 'components/Workflow/workflowQueries';
 import { NodeExecutionDetails } from '../../types';
@@ -129,6 +129,7 @@ export const NodeExecutionDetailsContextProvider = ({
     const taskDetails = await getTaskThroughExecution(
       queryClient,
       nodeExecution,
+      closure,
     );
 
     const tasksMap = tasks;
@@ -160,7 +161,10 @@ export const NodeExecutionDetailsContextProvider = ({
       }
 
       // look for specific task by nodeId in current execution
-      if (nodeExecution.metadata?.isDynamic) {
+      if (
+        nodeExecution.metadata?.isDynamic ||
+        nodeExecution.dynamicParentNodeId
+      ) {
         details = await getDynamicTasks(nodeExecution);
       }
       return details;

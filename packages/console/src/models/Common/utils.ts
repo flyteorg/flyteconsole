@@ -50,3 +50,17 @@ export function makeNamedEntityPath({
     name,
   ]).join('/');
 }
+
+export function makeDescriptionEntityPath(
+  prefix: string,
+  { resourceType, project, domain, name, version }: Partial<Identifier>,
+) {
+  const path = takeWhile([
+    resourceType,
+    project,
+    domain,
+    name,
+    decodeURIComponent(version || ''),
+  ]).join('/');
+  return `${prefix}/${path}`;
+}
