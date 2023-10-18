@@ -20,10 +20,11 @@ export const NodeExecutionOutputs: React.FC<{
           map={executionData.value.fullOutputs}
           mapTaskIndex={taskIndex}
         />
-        <ExecutionNodeURL
+        {executionData.value.fullOutputs && executionData.value.fullOutputs.literals && (
+          <ExecutionNodeURL
           nodeExecutionId={execution.id}
           suffix="o"
-        ></ExecutionNodeURL>
+        ></ExecutionNodeURL>)}
       </PanelSection>
     </WaitForData>
   );

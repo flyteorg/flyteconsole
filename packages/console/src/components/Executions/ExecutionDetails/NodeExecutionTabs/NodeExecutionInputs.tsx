@@ -20,10 +20,12 @@ export const NodeExecutionInputs: React.FC<{
           map={executionData.value.fullInputs}
           mapTaskIndex={taskIndex}
         />
-        <ExecutionNodeURL
-          nodeExecutionId={execution.id}
-          suffix="i"
-        ></ExecutionNodeURL>
+        {executionData.value.fullInputs && executionData.value.fullInputs.literals && (
+          <ExecutionNodeURL
+            nodeExecutionId={execution.id}
+            suffix="i"
+          ></ExecutionNodeURL>
+        )}
       </PanelSection>
     </WaitForData>
   );

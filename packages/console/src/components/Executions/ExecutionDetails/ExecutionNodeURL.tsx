@@ -17,12 +17,11 @@ export const ExecutionNodeURL: React.FC<{
   const code = `from flytekit.remote.remote import FlyteRemote
 from flytekit.configuration import Config
 rr = FlyteRemote(
-    Config.auto(config_file="~/.flyte/config.yaml"),
+    Config.auto(),
     default_project="${project}",
     default_domain="${domain}",
 )
-url = "${url}"
-rr.get(url)`;
+rr.get("${url}")`;
   const handleClick = event => {
     if (event.shiftKey) {
       navigator.clipboard.writeText(code);
