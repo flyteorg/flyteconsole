@@ -149,4 +149,8 @@ export interface ExecutionData {
   fullOutputs: LiteralMap | null;
   deckUri?: string;
   dynamicWorkflow?: CompiledWorkflow;
+  flyteUrls?: {
+    inputs?: string;
+    outputs?: string;
+  };
 }

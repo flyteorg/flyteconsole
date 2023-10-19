@@ -412,33 +412,16 @@ export const NodeExecutionDetailsPanelContent: React.FC<
     return computedPhase;
   }, [nodeExecution, isGateNode]);
 
-  const isRunningPhase = useMemo(
-    () =>
-      frontendPhase === NodeExecutionPhase.QUEUED ||
-      frontendPhase === NodeExecutionPhase.RUNNING,
-    [frontendPhase],
-  );
-
-  const handleReasonsVisibility = () => {
-    setReasonsVisible(!isReasonsVisible);
-  };
-
   const statusContent = nodeExecution ? (
     <div className={styles.statusContainer}>
       <div className={styles.statusHeaderContainer}>
         <ExecutionStatusBadge phase={frontendPhase} type="node" />
-        {isRunningPhase && (
-          <InfoIcon
-            className={styles.reasonsIcon}
-            onClick={handleReasonsVisibility}
-          />
-        )}
       </div>
-      {isRunningPhase && isReasonsVisible && (
+      {reasons?.length ? (
         <div className={styles.statusBody}>
           <ScrollableMonospaceText text={reasons.join('\n\n')} />
         </div>
-      )}
+      ) : null}
     </div>
   ) : (
     <div className={styles.notRunStatus}>NOT RUN</div>

@@ -35,13 +35,15 @@ export function getTaskExecutionDetailReasons(
         ? taskExecution.closure.reasons
         : [{ message: taskExecution.closure.reason }]
     ).filter(r => !!r);
-
-    if (finalReasons) {
+    if (
+      finalReasons &&
+      finalReasons.some(eachReason => eachReason?.message?.trim() !== '')
+    ) {
       reasons = reasons.concat(
         finalReasons.map(
           reason =>
             (reason.occurredAt
-              ? formatDateUTC(timestampToDate(reason.occurredAt)) + ' '
+              ? `${formatDateUTC(timestampToDate(reason.occurredAt))} `
               : '') + reason.message,
         ),
       );

@@ -4,6 +4,7 @@ import { useNodeExecutionData } from 'components/hooks/useNodeExecution';
 import { LiteralMapViewer } from 'components/Literals/LiteralMapViewer';
 import { NodeExecution } from 'models/Execution/types';
 import * as React from 'react';
+import { ExecutionNodeURL } from '../ExecutionNodeURL';
 
 /** Fetches and renders the input data for a given `NodeExecution` */
 export const NodeExecutionInputs: React.FC<{
@@ -11,9 +12,17 @@ export const NodeExecutionInputs: React.FC<{
   taskIndex?: number;
 }> = ({ execution, taskIndex }) => {
   const executionData = useNodeExecutionData(execution.id);
+
   return (
     <WaitForData {...executionData}>
       <PanelSection>
+        {executionData.value?.flyteUrls?.inputs ? (
+          <ExecutionNodeURL
+            nodeExecutionId={execution.id}
+            dataSourceURI={executionData.value?.flyteUrls?.inputs}
+            copyUrlText="Copy Inputs URI"
+          />
+        ) : null}
         <LiteralMapViewer
           map={executionData.value.fullInputs}
           mapTaskIndex={taskIndex}
