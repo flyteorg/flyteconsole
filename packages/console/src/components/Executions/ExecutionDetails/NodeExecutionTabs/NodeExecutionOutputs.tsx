@@ -16,17 +16,24 @@ export const NodeExecutionOutputs: React.FC<{
   return (
     <WaitForData {...executionData}>
       <PanelSection>
-        {executionData.value?.flyteUrls?.outputs ? (
-          <ExecutionNodeURL
-            nodeExecutionId={execution.id}
-            dataSourceURI={executionData.value?.flyteUrls?.outputs}
-            copyUrlText="Copy Outputs URI"
-          />
-        ) : null}
-        <LiteralMapViewer
-          map={executionData.value.fullOutputs}
-          mapTaskIndex={taskIndex}
-        />
+        {(() => {
+          const data = executionData?.value;
+          const fullOutputs = data?.fullOutputs;
+          const dataSourceURI = data?.flyteUrls?.outputs;
+          const hasOutputs =
+            Object.keys(fullOutputs?.literals || {}).length > 0;
+          return (
+            <>
+              {hasOutputs && taskIndex === undefined ? (
+                <ExecutionNodeURL
+                  dataSourceURI={dataSourceURI}
+                  copyUrlText="Copy Outputs URI"
+                />
+              ) : null}
+              <LiteralMapViewer map={fullOutputs} mapTaskIndex={taskIndex} />
+            </>
+          );
+        })()}
       </PanelSection>
     </WaitForData>
   );

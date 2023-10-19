@@ -6,7 +6,6 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { DefaultComponentProps } from '@material-ui/core/OverridableComponent';
 import copyToClipboard from 'copy-to-clipboard';
 import { Theme, makeStyles } from '@material-ui/core/styles';
-import { Core } from '@flyteorg/flyteidl-types';
 import {
   primaryHighlightColor,
   separatorColor,
@@ -88,30 +87,34 @@ const CopyButton: React.FC<
 
 /** Fetches and renders the deck data for a given `nodeExecutionId` */
 export const ExecutionNodeURL: React.FC<{
-  nodeExecutionId: Core.NodeExecutionIdentifier;
-  dataSourceURI: string;
+  dataSourceURI?: string;
   copyUrlText: string;
-}> = ({ nodeExecutionId, dataSourceURI, copyUrlText }) => {
+}> = ({ dataSourceURI, copyUrlText }) => {
   const styles = useStyles();
   const [expanded, setExpanded] = React.useState<boolean>(false);
+  const isHttps = /^https:/.test(window.location.href);
 
-  const project = nodeExecutionId.executionId?.project;
-  const domain = nodeExecutionId.executionId?.domain;
-
-  const code = `from flytekit.remote.remote import FlyteRemote
-from flytekit.configuration import Config
-remote = FlyteRemote(
-    Config.for_endpoint(endpoint="${window.location.host}"),
-    default_project="${project}",
-    default_domain="${domain}"
-)
-remote.get("${dataSourceURI}")`;
+  const code = isHttps
+    ? // https snippet
+      `from flytekit.remote.remote import FlyteRemote
+  from flytekit.configuration import Config
+  remote = FlyteRemote(
+      Config.for_endpoint("${window.location.host}"),
+  )
+  remote.get("${dataSourceURI}")`
+    : // http snippet
+      `from flytekit.remote.remote import FlyteRemote
+  from flytekit.configuration import Config
+  remote = FlyteRemote(
+      Config.for_endpoint("${window.location.host}", True),
+  )
+  remote.get("${dataSourceURI}")`;
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
 
-  return (
+  return dataSourceURI ? (
     <Box
       className={styles.container}
       sx={{
@@ -165,7 +168,6 @@ remote.get("${dataSourceURI}")`;
               fontSize: '12px', // Adjust the font size as desired
               backgroundColor: errorBackgroundColor,
             }}
-            wrapLongLines={true}
           >
             {code}
           </SyntaxHighlighter>
@@ -182,5 +184,5 @@ remote.get("${dataSourceURI}")`;
         </Box>
       </Box>
     </Box>
-  );
+  ) : null;
 };

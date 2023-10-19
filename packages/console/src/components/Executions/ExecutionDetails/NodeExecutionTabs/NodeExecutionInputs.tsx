@@ -16,17 +16,23 @@ export const NodeExecutionInputs: React.FC<{
   return (
     <WaitForData {...executionData}>
       <PanelSection>
-        {executionData.value?.flyteUrls?.inputs ? (
-          <ExecutionNodeURL
-            nodeExecutionId={execution.id}
-            dataSourceURI={executionData.value?.flyteUrls?.inputs}
-            copyUrlText="Copy Inputs URI"
-          />
-        ) : null}
-        <LiteralMapViewer
-          map={executionData.value.fullInputs}
-          mapTaskIndex={taskIndex}
-        />
+        {(() => {
+          const data = executionData?.value;
+          const fullInputs = data?.fullInputs;
+          const dataSourceURI = data?.flyteUrls?.inputs;
+          const hasInputs = Object.keys(fullInputs?.literals || {}).length > 0;
+          return (
+            <>
+              {hasInputs && taskIndex === undefined ? (
+                <ExecutionNodeURL
+                  dataSourceURI={dataSourceURI}
+                  copyUrlText="Copy Inputs URI"
+                />
+              ) : null}
+              <LiteralMapViewer map={fullInputs} mapTaskIndex={taskIndex} />
+            </>
+          );
+        })()}
       </PanelSection>
     </WaitForData>
   );
