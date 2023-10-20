@@ -97,18 +97,18 @@ export const ExecutionNodeURL: React.FC<{
   const code = isHttps
     ? // https snippet
       `from flytekit.remote.remote import FlyteRemote
-  from flytekit.configuration import Config
-  remote = FlyteRemote(
-      Config.for_endpoint("${window.location.host}"),
-  )
-  remote.get("${dataSourceURI}")`
+from flytekit.configuration import Config
+remote = FlyteRemote(
+    Config.for_endpoint("${window.location.host}"),
+)
+remote.get("${dataSourceURI}")`
     : // http snippet
       `from flytekit.remote.remote import FlyteRemote
-  from flytekit.configuration import Config
-  remote = FlyteRemote(
-      Config.for_endpoint("${window.location.host}", True),
-  )
-  remote.get("${dataSourceURI}")`;
+from flytekit.configuration import Config
+remote = FlyteRemote(
+    Config.for_endpoint("${window.location.host}", True),
+)
+remote.get("${dataSourceURI}")`;
 
   const toggleExpanded = () => {
     setExpanded(!expanded);
