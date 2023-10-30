@@ -54,7 +54,9 @@ For help with installing dependencies look into
 
 3. Start the server (uses localhost:3000)
 
-   `bash yarn start `
+   ```bash
+   yarn start
+   ```
 
 4. Explore your local copy at `http://localhost:3000`
 
