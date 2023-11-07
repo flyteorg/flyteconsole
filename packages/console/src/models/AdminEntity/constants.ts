@@ -10,7 +10,7 @@ export const limits = {
    * `RequestConfig`. Use with caution, as this could result in a large query
    * response.
    */
-  NONE: 10000,
+  NONE: 100,
 };
 
 export const sortQueryKeys = {
