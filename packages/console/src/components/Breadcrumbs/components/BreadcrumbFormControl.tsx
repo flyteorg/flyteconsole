@@ -130,6 +130,23 @@ const BreadcrumbFormControlDefault = (
     },
   }))();
 
+  const selfLinkHref = useMemo(() => {
+    if (props.asyncData || asyncSelfLinkData) {
+      return asyncSelfLinkData;
+    }
+    if (typeof props.selfLink === 'function') {
+      return props.selfLink(window.location, props);
+    } else {
+      return props.selfLink;
+    }
+  }, [
+    props.selfLink,
+    props.projectId,
+    props.domainId,
+    props.asyncData,
+    asyncSelfLinkData,
+  ]);
+
   return (
     <div className={`breadcrumb-form-control ${styles.formControl}`}>
       <Grid container alignItems="center" className={styles.noWrap}>
@@ -143,6 +160,7 @@ const BreadcrumbFormControlDefault = (
                 disabled={!(props.selfLink || props.asyncSelfLink)}
                 className="breadcrumb-form-control-input"
                 onClick={handleValueClick}
+                href={selfLinkHref}
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
                     handleValueClick(e);

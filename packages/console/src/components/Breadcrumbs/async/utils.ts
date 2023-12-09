@@ -2,7 +2,8 @@ import { timestampToDate } from 'common';
 import { formatDateUTC } from 'common/formatters';
 import { Project } from 'models/Project/types';
 import { Routes } from 'routes';
-import { BreadcrumbEntity } from '../types';
+import { DomainIdentifierScope } from 'models';
+import { BreadcrumbEntity, BreadcrumbFormControlInterface } from '../types';
 
 export const formatEntities = data => {
   return data.entities.map(entity => {
@@ -92,4 +93,28 @@ export const formatProjectEntitiesAsDomains = (
       url,
     };
   });
+};
+
+/**
+ * Determine if the execution is from the same project and domain as the current page.
+ *
+ * @param executionSpecIdentifier
+ * @param breadcrumb
+ * @see https://docs.flyte.org/projects/flytectl/en/latest/gen/flytectl_create_execution.html
+ * @returns
+ */
+export const getExecutionSpecProjectDomain = (
+  executionSpecIdentifier: DomainIdentifierScope,
+  breadcrumb: BreadcrumbFormControlInterface,
+) => {
+  const project =
+    breadcrumb.projectId === executionSpecIdentifier.project
+      ? breadcrumb.projectId
+      : executionSpecIdentifier.project;
+  const domain =
+    breadcrumb.projectId === executionSpecIdentifier.domain
+      ? breadcrumb.domainId
+      : executionSpecIdentifier.domain;
+
+  return { project, domain };
 };
