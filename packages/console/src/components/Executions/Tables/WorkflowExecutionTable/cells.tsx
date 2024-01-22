@@ -4,6 +4,7 @@ import {
   IconButton,
   Button,
   CircularProgress,
+  Chip,
 } from '@material-ui/core';
 import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
 import UnarchiveOutline from '@material-ui/icons/UnarchiveOutlined';
@@ -97,6 +98,28 @@ export function getDurationCell(execution: Execution): React.ReactNode {
     >
       {timing !== null ? millisecondsToHMS(timing.duration) : ''}
     </Typography>
+  );
+}
+
+export function getExecutionTagsCell(
+  execution: Execution,
+  className: string,
+): React.ReactNode {
+  const isArchived = isExecutionArchived(execution);
+  const tags = execution.spec.tags ?? [];
+  return (
+    <div className={className}>
+      {tags.map(tag => {
+        return (
+          <Chip
+            key={tag}
+            label={tag}
+            size="small"
+            color={isArchived ? 'default' : 'primary'}
+          />
+        );
+      })}
+    </div>
   );
 }
 
