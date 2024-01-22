@@ -69,6 +69,7 @@ const CACHE_STATUSES = [
   { status: CatalogCacheStatus.CACHE_MISS, text: 'cache miss' },
   { status: CatalogCacheStatus.CACHE_POPULATED, text: 'cache populated' },
   { status: CatalogCacheStatus.CACHE_PUT_FAILURE, text: 'cache put failure' },
+  { status: CatalogCacheStatus.CACHE_EVICTED, text: 'cache evicted' },
 ];
 
 stories.add('Task Node by Cache Status', () => (

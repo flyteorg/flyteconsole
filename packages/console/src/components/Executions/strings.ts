@@ -19,6 +19,7 @@ const str = {
   unknown: 'Unknown',
   cacheDisabledMessage: 'Caching was disabled for this execution.',
   cacheHitMessage: 'Output for this execution was read from cache.',
+  cacheEvictedMessage: 'Output for this execution was evicted from cache.',
   cacheLookupFailureMessage: 'Failed to lookup cache information.',
   cacheMissMessage: 'No cached output was found for this execution.',
   cachePopulatedMessage: 'The result of this execution was written to cache.',

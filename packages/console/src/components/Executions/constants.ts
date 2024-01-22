@@ -274,6 +274,7 @@ export const cacheStatusMessages: { [k in CatalogCacheStatus]: string } = {
   [CatalogCacheStatus.CACHE_PUT_FAILURE]: t('cachePutFailure'),
   [CatalogCacheStatus.MAP_CACHE]: t('mapCacheMessage'),
   [CatalogCacheStatus.CACHE_SKIPPED]: t('cacheSkippedMessage'),
+  [CatalogCacheStatus.CACHE_EVICTED]: t('cacheEvictedMessage'),
 };
 export const unknownCacheStatusString = t('unknownCacheStatusString');
 export const viewSourceExecutionString = t('viewSourceExecutionString');

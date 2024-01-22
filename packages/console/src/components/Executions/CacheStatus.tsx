@@ -1,6 +1,7 @@
 import { SvgIconProps, Tooltip, Typography } from '@material-ui/core';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import CachedOutlined from '@material-ui/icons/CachedOutlined';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import ErrorOutlined from '@material-ui/icons/ErrorOutlined';
 import InfoOutlined from '@material-ui/icons/InfoOutlined';
 import SmsFailedOutlinedIcon from '@material-ui/icons/SmsFailedOutlined';
@@ -49,6 +50,11 @@ const NodeExecutionCacheStatusIcon: React.ComponentType<
     }
     case CatalogCacheStatus.CACHE_HIT: {
       return <CachedOutlined {...props} ref={ref} data-testid="cache-icon" />;
+    }
+    case CatalogCacheStatus.CACHE_EVICTED: {
+      return (
+        <DeleteOutlinedIcon {...props} ref={ref} data-testid="cache-icon" />
+      );
     }
     case CatalogCacheStatus.CACHE_POPULATED: {
       return (
