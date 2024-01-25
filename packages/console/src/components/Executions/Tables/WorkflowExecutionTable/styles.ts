@@ -64,5 +64,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
   executionTagsStack: {
     display: 'flex',
     gap: theme.spacing(0.5),
+    flexWrap: 'wrap',
   },
 }));
