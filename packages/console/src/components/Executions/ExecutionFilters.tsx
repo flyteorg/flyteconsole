@@ -5,12 +5,14 @@ import { MultiSelectForm } from 'components/common/MultiSelectForm';
 import { SearchInputForm } from 'components/common/SearchInputForm';
 import { SingleSelectForm } from 'components/common/SingleSelectForm';
 import { FilterPopoverButton } from 'components/Tables/filters/FilterPopoverButton';
+import { TagsInputForm } from 'components/common/TagsInputForm';
 import {
   FilterState,
   MultiFilterState,
   SearchFilterState,
   SingleFilterState,
   BooleanFilterState,
+  TagsFilterState,
 } from './filters/types';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,6 +51,7 @@ export interface ExecutionFiltersProps {
 
 const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
   const searchFilterState = filter as SearchFilterState;
+  const tagsFilterState = filter as TagsFilterState;
   switch (filter.type) {
     case 'single':
       return <SingleSelectForm {...(filter as SingleFilterState<any>)} />;
@@ -59,6 +62,13 @@ const RenderFilter: React.FC<{ filter: FilterState }> = ({ filter }) => {
         <SearchInputForm
           {...searchFilterState}
           defaultValue={searchFilterState.value}
+        />
+      );
+    case 'tags':
+      return (
+        <TagsInputForm
+          {...tagsFilterState}
+          defaultValue={tagsFilterState.tags}
         />
       );
     default:

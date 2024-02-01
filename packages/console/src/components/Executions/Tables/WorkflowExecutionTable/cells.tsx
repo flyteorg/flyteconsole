@@ -22,6 +22,7 @@ import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
+import { getColorFromString } from 'components/utils';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
@@ -115,7 +116,10 @@ export function getExecutionTagsCell(
             key={tag}
             label={tag}
             size="small"
-            color={isArchived ? 'default' : 'primary'}
+            color="default"
+            style={{
+              backgroundColor: isArchived ? undefined : getColorFromString(tag),
+            }}
           />
         );
       })}
