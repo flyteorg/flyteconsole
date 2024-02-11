@@ -64,7 +64,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^7.0.5",
-    "@semantic-release/npm": "^7.0.5",
+    "@semantic-release/npm": "^11.0.0",
     "@semantic-release/release-notes-generator": "^9.0.1",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/react": "^10.0.3",
@@ -107,7 +107,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-syntax-highlighter": "^15.5.0",
-    "semantic-release": "^21.0.7",
+    "semantic-release": "^22.0.0",
     "serve-static": "^1.12.3",
     "source-map-loader": "^4.0.1",
     "ts-jest": "^26.3.0",
@@ -136,7 +136,7 @@
     "@types/traverse": "^0.6.32",
     "ansicolors": "^0.3.2",
     "execa": "^7.2.0",
-    "semantic-release": "^21.0.7",
+    "semantic-release": "^22.0.0",
     "traverse": "^0.6.7"
   },
   "resolutions": {
