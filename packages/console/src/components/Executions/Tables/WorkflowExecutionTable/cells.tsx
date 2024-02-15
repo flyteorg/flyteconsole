@@ -4,6 +4,7 @@ import {
   IconButton,
   Button,
   CircularProgress,
+  Tooltip,
 } from '@material-ui/core';
 import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
 import UnarchiveOutline from '@material-ui/icons/UnarchiveOutlined';
@@ -54,24 +55,57 @@ export function getExecutionIdCell(
 
 export function getStatusCell(execution: Execution): React.ReactNode {
   const isArchived = isExecutionArchived(execution);
+  const { createdAt } = execution.closure;
+  const createdAtDate = timestampToDate(createdAt);
   const phase = execution.closure.phase ?? WorkflowExecutionPhase.UNDEFINED;
 
   return (
-    <ExecutionStatusBadge phase={phase} type="workflow" disabled={isArchived} />
+    <Tooltip
+      placement="top"
+      arrow
+      title={
+        <>
+          <Typography>Create Time</Typography>
+          <Typography>{formatDateUTC(createdAtDate)}</Typography>
+          <Typography>{formatDateLocalTimezone(createdAtDate)}</Typography>
+        </>
+      }
+    >
+      <div>
+        <ExecutionStatusBadge
+          phase={phase}
+          type="workflow"
+          disabled={isArchived}
+        />
+      </div>
+    </Tooltip>
   );
 }
 
 export function getStartTimeCell(execution: Execution): React.ReactNode {
-  const { startedAt } = execution.closure;
+  const { startedAt, createdAt } = execution.closure;
 
-  if (!startedAt) {
+  if (!startedAt || !createdAt) {
     return null;
   }
 
   const startedAtDate = timestampToDate(startedAt);
+  const createdAtDate = timestampToDate(createdAt);
   const isArchived = isExecutionArchived(execution);
 
   return (
+    // <Tooltip
+    //   placement="top"
+    //   arrow
+    //   title={
+    //     <>
+    //       <Typography>Create Time</Typography>
+    //       <Typography>{formatDateUTC(createdAtDate)}</Typography>
+    //       <Typography>{formatDateLocalTimezone(createdAtDate)}</Typography>
+    //     </>
+    //   }
+    // >
+    //   <div>
     <>
       <Typography
         variant="body1"
@@ -83,6 +117,8 @@ export function getStartTimeCell(execution: Execution): React.ReactNode {
         {formatDateLocalTimezone(startedAtDate)}
       </Typography>
     </>
+    // </div>
+    // </Tooltip>
   );
 }
 
