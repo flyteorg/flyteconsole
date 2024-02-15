@@ -22,7 +22,7 @@ build_prod:
 
 .PHONY: pack
 pack:
- 	yarn run build:pack
+	yarn run build:pack
 
 .PHONY: types
 types:
