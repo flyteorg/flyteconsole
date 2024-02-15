@@ -11,7 +11,7 @@ import { ExecutionMetadataLabels } from '../constants';
 import { ExecutionMetadata } from '../ExecutionMetadata';
 
 const clusterTestId = `metadata-${ExecutionMetadataLabels.cluster}`;
-const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
+const startTimeTestId = `metadata-${ExecutionMetadataLabels.startedAt}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
 const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
