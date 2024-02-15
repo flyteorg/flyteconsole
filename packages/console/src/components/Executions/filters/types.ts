@@ -20,7 +20,12 @@ export interface FilterButtonState {
   onClick: () => void;
 }
 
-export type FilterStateType = 'single' | 'multi' | 'search' | 'boolean';
+export type FilterStateType =
+  | 'single'
+  | 'multi'
+  | 'search'
+  | 'boolean'
+  | 'tags';
 
 export interface FilterState {
   active: boolean;
@@ -59,4 +64,11 @@ export interface MultiFilterState<FilterKey extends string, DataType>
 export interface BooleanFilterState extends FilterState {
   setActive: (active: boolean) => void;
   type: 'boolean';
+}
+
+export interface TagsFilterState extends FilterState {
+  onChange: (newTags: string[]) => void;
+  placeholder: string;
+  type: 'tags';
+  tags: string[];
 }

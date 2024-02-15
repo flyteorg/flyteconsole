@@ -10,6 +10,11 @@ export const useStyles = makeStyles((theme: Theme) => ({
     flexBasis: workflowExecutionsTableColumnWidths.name,
     whiteSpace: 'normal',
   },
+  columnExecutionTags: {
+    flexGrow: 1,
+    flexBasis: workflowExecutionsTableColumnWidths.tags,
+    whiteSpace: 'normal',
+  },
   columnLaunchPlan: {
     flexGrow: 1,
     flexBasis: workflowExecutionsTableColumnWidths.launchPlan,
@@ -55,5 +60,10 @@ export const useStyles = makeStyles((theme: Theme) => ({
   actionProgress: {
     width: '100px', // same as confirmationButton size
     textAlign: 'center',
+  },
+  executionTagsStack: {
+    display: 'flex',
+    gap: theme.spacing(0.5),
+    flexWrap: 'wrap',
   },
 }));

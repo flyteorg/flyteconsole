@@ -14,6 +14,7 @@ import { FilterState } from './types';
 import { useMultiFilterState } from './useMultiFilterState';
 import { useSearchFilterState } from './useSearchFilterState';
 import { useSingleFilterState } from './useSingleFilterState';
+import { useTagsFilterState } from './useTagsFilterState';
 
 export interface ExecutionFiltersState {
   appliedFilters: FilterOperation[];
@@ -44,6 +45,12 @@ export function useWorkflowExecutionFiltersState() {
       label: filterLabels.status,
       listHeader: 'Filter By',
       queryStateKey: 'status',
+    }),
+    useTagsFilterState({
+      filterKey: 'admin_tag.name',
+      label: filterLabels.tags,
+      placeholder: 'Enter Tags String',
+      queryStateKey: 'tags',
     }),
     useSearchFilterState({
       filterKey: 'workflow.version',

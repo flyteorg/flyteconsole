@@ -2,10 +2,11 @@ export const workflowExecutionsTableColumnWidths = {
   duration: 100,
   actions: 130,
   lastRun: 130,
-  name: 240,
+  name: 200,
   launchPlan: 120,
   phase: 120,
   startedAt: 200,
+  tags: 200,
 };
 
 export const nodeExecutionsTableColumnWidths = {

@@ -3,4 +3,5 @@ export const filterLabels = {
   startTime: 'Start Time',
   status: 'Status',
   version: 'Version',
+  tags: 'Tags',
 };

@@ -4,6 +4,7 @@ import {
   IconButton,
   Button,
   CircularProgress,
+  Chip,
 } from '@material-ui/core';
 import ArchiveOutlined from '@material-ui/icons/ArchiveOutlined';
 import UnarchiveOutline from '@material-ui/icons/UnarchiveOutlined';
@@ -21,6 +22,7 @@ import { Execution } from 'models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from 'models/Execution/enums';
 import classnames from 'classnames';
 import { LaunchPlanLink } from 'components/LaunchPlan/LaunchPlanLink';
+import { getColorFromString } from 'components/utils';
 import { WorkflowExecutionsTableState } from '../types';
 import { WorkflowExecutionLink } from '../WorkflowExecutionLink';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
@@ -97,6 +99,31 @@ export function getDurationCell(execution: Execution): React.ReactNode {
     >
       {timing !== null ? millisecondsToHMS(timing.duration) : ''}
     </Typography>
+  );
+}
+
+export function getExecutionTagsCell(
+  execution: Execution,
+  className: string,
+): React.ReactNode {
+  const isArchived = isExecutionArchived(execution);
+  const tags = execution.spec.tags ?? [];
+  return (
+    <div className={className}>
+      {tags.map(tag => {
+        return (
+          <Chip
+            key={tag}
+            label={tag}
+            size="small"
+            color="default"
+            style={{
+              backgroundColor: isArchived ? undefined : getColorFromString(tag),
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
