@@ -63,7 +63,7 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const { execution } = React.useContext(ExecutionContext);
 
   const { domain } = execution.id;
-  const { abortMetadata, duration, error, startedAt, workflowId } =
+  const { abortMetadata, duration, error, startedAt, createdAt, workflowId } =
     execution.closure;
   const { referenceExecution, systemMetadata } = execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
@@ -80,9 +80,15 @@ export const ExecutionMetadata: React.FC<{}> = () => {
       value: cluster,
     },
     {
-      label: ExecutionMetadataLabels.time,
+      label: ExecutionMetadataLabels.startedAt,
       value: startedAt
         ? formatDateUTC(timestampToDate(startedAt))
+        : dashedValueString,
+    },
+    {
+      label: ExecutionMetadataLabels.createdAt,
+      value: createdAt
+        ? formatDateUTC(timestampToDate(createdAt))
         : dashedValueString,
     },
     {
