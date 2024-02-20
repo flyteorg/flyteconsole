@@ -1,53 +1,30 @@
 {
-  "name": "@flyteorg/ui-atoms",
-  "version": "0.0.4",
-  "description": "Flyteconsole UI atoms",
+  "name": "@clients/ui-atoms",
+  "version": "0.1.0",
+  "description": "Clients UI atoms, such as basic button implemetnations, icons, and other atomic items",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/flyteorg/flyteconsole.git",
-    "directory": "packages/ui-atoms"
-  },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist",
-    "lib",
-    "node_modules"
-  ],
   "scripts": {
-    "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
-    "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
-    "build:watch:success": "yarn build:esm:alias && yalc push --force",
-    "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
-    "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",
-    "build:cjs": "run -T tsc --project ./tsconfig.build.json && run -T  tsc-alias -p ./tsconfig.build.json",
-    "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
-    "test": "NODE_ENV=test jest"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+    "build:types": "yarn build:cjs --emitDeclarationOnly && yarn build:esm --emitDeclarationOnly",
+    "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+    "test": "NODE_ENV=test run -T jest"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.9.2",
+    "@mui/styles": "^5.9.2",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tslib": "^2.4.1"
   },
   "dependencies": {
-    "@emotion/core": "10.1.1",
-    "@material-ui/core": "^4.0.0",
-    "@material-ui/icons": "^4.0.0",
-    "classnames": "^2.3.1"
-  },
-  "devDependencies": {
-    "@types/react": "^16.9.34",
-    "@types/react-dom": "^16.9.7"
+    "@clients/theme": "^0.1.0"
   }
 }

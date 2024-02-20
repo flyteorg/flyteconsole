@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { createContext, useContext } from 'react';
-import { getAdminApiUrl, getEndpointUrl } from '../utils';
-import { AdminEndpoint, RawEndpoint } from '../utils/constants';
-import { defaultLoginStatus, getLoginUrl, LoginStatus } from './login';
+import React, { createContext, useContext } from 'react';
+import AdminEndpoint from '../utils/AdminEndpoint';
+import { defaultLoginStatus, getLoginUrl, getLogoutUrl, LoginStatus } from './login';
+import getEndpointUrl from '../utils/getEndpointUrl';
+import RawEndpoint from '../utils/RawEndpoint';
+import getAdminApiUrl from '../utils/getAdminApiUrl';
 
 export interface FlyteApiContextState {
   loginStatus: LoginStatus;
   getLoginUrl: (redirect?: string) => string;
+  getLogoutUrl: (redirect?: string) => string;
   getProfileUrl: () => string;
   getAdminApiUrl: (endpoint: AdminEndpoint | string) => string;
 }
@@ -15,25 +17,27 @@ const FlyteApiContext = createContext<FlyteApiContextState>({
   // default values - used when Provider wrapper is not found
   loginStatus: defaultLoginStatus,
   getLoginUrl: () => '#',
+  getLogoutUrl: () => '#',
   getProfileUrl: () => '#',
   getAdminApiUrl: () => '#',
 });
 
 interface FlyteApiProviderProps {
   flyteApiDomain?: string;
+  disableAutomaticLogin?: boolean;
   children?: React.ReactNode;
 }
 
 export const useFlyteApi = () => useContext(FlyteApiContext);
 
 export const FlyteApiProvider = (props: FlyteApiProviderProps) => {
-  const { flyteApiDomain } = props;
+  const { flyteApiDomain, disableAutomaticLogin, children } = props;
 
   const [loginExpired, setLoginExpired] = React.useState(false);
 
   // Whenever we detect expired credentials, trigger a login redirect automatically
   React.useEffect(() => {
-    if (loginExpired) {
+    if (!disableAutomaticLogin && loginExpired) {
       window.location.href = getLoginUrl(flyteApiDomain);
     }
   }, [loginExpired]);
@@ -45,13 +49,15 @@ export const FlyteApiProvider = (props: FlyteApiProviderProps) => {
           expired: loginExpired,
           setExpired: setLoginExpired,
         },
-        getLoginUrl: redirect => getLoginUrl(flyteApiDomain, redirect),
-        getProfileUrl: () =>
-          getEndpointUrl(RawEndpoint.Profile, flyteApiDomain),
-        getAdminApiUrl: endpoint => getAdminApiUrl(endpoint, flyteApiDomain),
+        getLoginUrl: (redirect) => getLoginUrl(flyteApiDomain, redirect),
+        getLogoutUrl: (redirect) => getLogoutUrl(flyteApiDomain, redirect),
+        getProfileUrl: () => getEndpointUrl(RawEndpoint.Profile, flyteApiDomain),
+        getAdminApiUrl: (endpoint) => getAdminApiUrl(endpoint, flyteApiDomain),
       }}
     >
-      {props.children}
+      {children}
     </FlyteApiContext.Provider>
   );
 };
+
+export default FlyteApiProvider;

@@ -1,39 +1,45 @@
 {
-  "name": "@flyteorg/common",
-  "version": "0.0.4",
-  "description": "Flyteconsole common utilities",
+  "name": "@clients/common",
+  "version": "0.1.0",
+  "description": "common models",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/flyteorg/flyteconsole.git",
-    "directory": "packages/common"
-  },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist",
-    "lib",
-    "node_modules"
-  ],
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "scripts": {
-    "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
-    "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
-    "build:watch:success": "yarn build:esm:alias && yalc push --force",
-    "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
-    "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",
-    "build:cjs": "run -T tsc --project ./tsconfig.build.json && run -T  tsc-alias -p ./tsconfig.build.json",
-    "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
-    "test": "NODE_ENV=test jest"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+    "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+    "build:types": "yarn build:cjs --emitDeclarationOnly && yarn build:esm --emitDeclarationOnly",
+    "test": "NODE_ENV=test run -T jest"
+  },
+  "peerDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "lodash": "^4.17.21",
+    "protobufjs": "~6.11.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tslib": "^2.4.1"
+  },
+  "dependencies": {
+    "@flyteorg/flyteidl": "^1.10.7",
+    "@protobuf-ts/runtime": "^2.6.0",
+    "@protobuf-ts/runtime-rpc": "^2.6.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

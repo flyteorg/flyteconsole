@@ -1,7 +1,6 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
-const sharedConfig = require('../../script/test/jest.base.js');
+/** @type {import('ts-jest/dist/types').JestConfigWithTsJest} */
+const sharedConfig = require('../../scripts/jest.base.js');
 
 module.exports = {
   ...sharedConfig,
-  setupFilesAfterEnv: ['<rootDir>/../../script/test/jest-setup.ts'],
 };

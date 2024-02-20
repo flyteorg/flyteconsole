@@ -1,12 +1,34 @@
+# Packages
+bin/
+build/
+dist/
+lib/
 
-# *
-# !package.json
-# !yarn.lock
-# !packages/
-# !node_modules/
-# !jes
-.storybook/
-stories-intro/
-Dockerfile*
-.dockerignore
-README*
+# yarn related
+node_modules/**
+.pnp.*
+**/.yarn/*
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
+# patches contain the patchfiles which have been generated with the `yarn patch-commit` command.
+# We always want them in repository, since they are necessary to install dependencies.
+!.yarn/patches
+
+# results of tsc build
+tsconfig.tsbuildinfo
+
+# result of linting
+.eslintcache
+
+#coverage
+.coverage
+
+# misc
+.DS_Store
+.srl
+yarn-error.log
+
+# generated data
+certificate

@@ -1,7 +1,9 @@
-import { getAdminApiUrl, getEndpointUrl } from '.';
-import { AdminEndpoint, RawEndpoint } from './constants';
-import { transformRequestError } from './errors';
-import { isObject } from './nodeChecks';
+import AdminEndpoint from './AdminEndpoint';
+import RawEndpoint from './RawEndpoint';
+import getAdminApiUrl from './getAdminApiUrl';
+import getEndpointUrl from './getEndpointUrl';
+import isObject from './isObject';
+import transformRequestError from './transformRequestError';
 
 describe('flyte-api/utils', () => {
   it('getEndpointUrl properly uses local or admin domain', () => {
@@ -51,26 +53,15 @@ describe('flyte-api/utils', () => {
     expect(result.message).toEqual('default');
 
     // 401 - Unauthorised
-    result = transformRequestError(
-      { response: { status: 401 }, message: 'default' },
-      '',
-    );
-    expect(result.message).toEqual(
-      'User is not authorized to view this resource',
-    );
+    result = transformRequestError({ response: { status: 401 }, message: 'default' }, '');
+    expect(result.message).toEqual('User is not authorized to view this resource');
 
     // 404 - Not Found
-    result = transformRequestError(
-      { response: { status: 404 }, message: 'default' },
-      '',
-    );
+    result = transformRequestError({ response: { status: 404 }, message: 'default' }, '');
     expect(result.message).toEqual('The requested item could not be found');
 
     // unnown status - return item as is
-    result = transformRequestError(
-      { response: { status: 502 }, message: 'default' },
-      '',
-    );
+    result = transformRequestError({ response: { status: 502 }, message: 'default' }, '');
     expect(result.message).toEqual('default');
   });
 });

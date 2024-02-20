@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
-
 . "$(dirname -- "$0")/_/husky.sh"
-# exit if in a CI environment
 [ -n "$CI" ] && exit 0
 
 echo "Linting staged files..."

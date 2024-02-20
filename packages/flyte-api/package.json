@@ -1,59 +1,33 @@
 {
-  "name": "@flyteorg/flyte-api",
-  "version": "0.0.2",
+  "name": "@clients/flyte-api",
+  "version": "0.1.0",
   "description": "FlyteConsole plugin to allow access FlyteAPI",
   "main": "./dist/index.js",
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
-  "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/flyteorg/flyteconsole.git",
+    "url": "https://github.com/unionai/cloud.git",
     "directory": "packages/flyte-api"
   },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "dist",
-    "lib",
-    "node_modules"
-  ],
-  "keywords": [
-    "flyteorg",
-    "flyteconsole",
-    "react",
-    "flyte-api"
-  ],
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
   "scripts": {
-    "clean": "rm -rf dist && rm -rf lib && rm -rf **.tsbuildinfo || true",
-    "build:watch": "run -T tsc-watch --noClear --signalEmittedFiles -p ./tsconfig.build.es.json --onSuccess \"yarn build:watch:success\"",
-    "build:watch:success": "yarn build:esm:alias && yalc push --force",
-    "build": "yarn clean && yarn build:esm && yarn build:cjs",
-    "build:esm": "run -T tsc --module esnext --project ./tsconfig.build.es.json && yarn build:esm:alias",
-    "build:esm:alias": "run -T tsc-alias -p ./tsconfig.build.es.json",
-    "build:cjs": "run -T tsc --project ./tsconfig.build.json && run -T  tsc-alias -p ./tsconfig.build.json",
-    "build:types": "run -T tsc --module esnext --project ./tsconfig.build.es.json --emitDeclarationOnly && run -T tsc-alias -p ./tsconfig.build.es.json",
-    "push:update": "yarn clean && yarn build && yarn publish",
-    "test": "NODE_ENV=test jest"
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+    "build:types": "yarn build:cjs --emitDeclarationOnly && yarn build:esm --emitDeclarationOnly",
+    "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+    "test": "NODE_ENV=test run -T jest"
   },
   "peerDependencies": {
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "@clients/common": "^0.1.0",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tslib": "^2.4.1"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "camelcase-keys": "^7.0.2",
     "snakecase-keys": "^5.4.2"
-  },
-  "devDependencies": {
-    "@types/react": "^16.9.34",
-    "@types/react-dom": "^16.9.7"
   }
 }

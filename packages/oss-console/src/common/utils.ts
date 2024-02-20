@@ -1,0 +1,132 @@
+import Protobuf from '@clients/common/flyteidl/protobuf';
+import Long from 'long';
+import { WorkflowExecutionPhase } from '../models/Execution/enums';
+import { WorkflowExecutionIdentifier } from '../models/Execution/types';
+import { Routes } from '../routes/routes';
+
+/** Determines if a given date string or object is a valid, usable date. This will detect
+ * JS Date objects which have been initialized with invalid values as well as strings which
+ * cannot be successfully converted to a valid JS Date.
+ */
+export function isValidDate(input: string | Date): boolean {
+  const date = input instanceof Date ? input : new Date(input);
+  const time = date.getTime();
+  return !Number.isNaN(time) && time > 0;
+}
+
+export function timestampToMilliseconds(timestamp?: Protobuf.ITimestamp): number {
+  if (!timestamp) return 0;
+
+  const nanos = timestamp.nanos || 0;
+
+  const milliseconds = Long.fromValue(timestamp?.seconds!).toNumber() * 1000 + nanos / 1e6;
+
+  return milliseconds;
+}
+/** Converts a Protobuf Timestamp object to a JS Date */
+export function timestampToDate(timestamp?: Protobuf.ITimestamp): Date {
+  if (!timestamp) return new Date();
+
+  const milliseconds = timestampToMilliseconds(timestamp);
+  return new Date(milliseconds);
+}
+
+/** A sort comparison function for ordering timestamps in ascending progression */
+export function compareTimestampsAscending(a: Protobuf.ITimestamp, b: Protobuf.ITimestamp) {
+  const leftSeconds: Long =
+    (typeof a.seconds === 'number' ? Long.fromNumber(a.seconds) : (a.seconds as Long)) ||
+    Long.fromNumber(0);
+  const leftNanos: number = a.nanos || 0;
+  // i was here
+  const rightSeconds: Long =
+    (typeof b.seconds === 'number' ? Long.fromNumber(b.seconds) : (b.seconds as Long)) ||
+    Long.fromNumber(0);
+  const rightNanos: number = b.nanos || 0;
+  if (leftSeconds.eq(rightSeconds)) {
+    return leftNanos - rightNanos;
+  }
+  return leftSeconds.lt(rightSeconds) ? -1 : 1;
+}
+
+export function dateToTimestamp(date: Date): Protobuf.Timestamp {
+  const ms = date.getTime();
+  return Protobuf.Timestamp.create({
+    seconds: Long.fromNumber(ms / 1000),
+    nanos: (ms % 1000) * 1000000,
+  });
+}
+
+/** Converts a Protobuf Duration object to its equivalent value in milliseconds */
+export function durationToMilliseconds(duration: Protobuf.IDuration): number {
+  const nanos = duration.nanos || 0;
+  const seconds =
+    typeof duration.seconds === 'number' ? duration.seconds : (duration.seconds as Long).toNumber();
+  return seconds * 1000 + nanos / 1e6;
+}
+
+/** Converts a (possibly fractional) value in milliseconds to a Protobuf Duration object */
+export function millisecondsToDuration(milliseconds: number): Protobuf.Duration {
+  return new Protobuf.Duration({
+    seconds: Long.fromNumber(Math.floor(milliseconds / 1000)),
+    // Nanosecond resolution is more than enough, this is to prevent precision errors
+    nanos: Math.floor(milliseconds * 1e6) % 1e9,
+  });
+}
+
+/** Ensures that a string is slash-prefixed */
+export function ensureSlashPrefixed(path: string) {
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
+/** Creates a URL to the same host with a given path */
+export function createLocalURL(path: string) {
+  return `${window.location.origin}${ensureSlashPrefixed(path)}`;
+}
+
+/** Returns entires for an object, sorted lexicographically */
+export function sortedObjectEntries<T = unknown>(object: { [s: string]: T }): [string, T][] {
+  return Object.entries(object).sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+/** Returns keys for an objext, sorted lexicographically */
+export function sortedObjectKeys(object: Record<string, unknown>): ReturnType<typeof Object.keys> {
+  return Object.keys(object).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Helper function for exhaustive checks of discriminated unions.
+ * https://basarat.gitbooks.io/typescript/docs/types/discriminated-unions.html
+ */
+export function assertNever(value: never, { noThrow }: { noThrow?: boolean } = {}): never {
+  if (noThrow) {
+    return value;
+  }
+
+  throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
+}
+
+/** Simple shared stringify function to ensure consistency in formatting with
+ * respect to spacing.
+ */
+export function stringifyValue(value: unknown): string {
+  return JSON.stringify(value, null, 2);
+}
+
+export const padExecutions = (items: WorkflowExecutionPhase[]) => {
+  if (items.length >= 10) {
+    return items.slice(0, 10).reverse();
+  }
+  const emptyExecutions = new Array(10 - items.length).fill(undefined);
+  return [...items, ...emptyExecutions].reverse();
+};
+
+export const padExecutionPaths = (items: WorkflowExecutionIdentifier[]) => {
+  if (items.length >= 10) {
+    return items
+      .slice(0, 10)
+      .map((id) => Routes.ExecutionDetails.makeUrl(id))
+      .reverse();
+  }
+  const emptyExecutions = new Array(10 - items.length).fill(null);
+  return [...items.map((id) => Routes.ExecutionDetails.makeUrl(id)), ...emptyExecutions].reverse();
+};

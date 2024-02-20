@@ -1,11 +1,20 @@
-LICENSE
-src/generated/
-.github/
-.dist/
+# ignore infrastracture
+node_modules/
+bin/
+build/
 dist/
 lib/
-node_modules/
 tsd/
-webpack.common.config.ts
-webpack.dev.config.ts
-webpack.prod.config.ts
+
+# generated files
+generated/
+gen/
+
+# webpack settings
+webpack.*
+
+# Storybook md pages
+stories-intro/
+
+# package generator
+scripts/generator

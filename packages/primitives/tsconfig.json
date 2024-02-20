@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+
+  "include": ["src/**/*"],
+
+  "references": [
+    {
+      "path": "../common/tsconfig.json"
+    },
+    {
+      "path": "../flyte-api/tsconfig.json"
+    },
+    {
+      "path": "../locale/tsconfig.json"
+    },
+    {
+      "path": "../theme/tsconfig.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.json"
+    }
+  ]
+}

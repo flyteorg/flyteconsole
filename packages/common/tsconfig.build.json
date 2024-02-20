@@ -1,9 +1,16 @@
 {
   "extends": "./tsconfig.json",
 
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "composite": true
+  },
+
   "exclude": [
     // files excluded from the build, we can not put it inro default tsconfig
-    // as it will interfere with VSCode IntelliSence
+    // as it will screw VSCode IntelliSence
     "**/test",
     "**/mocks",
     "**/__mocks__",
