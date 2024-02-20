@@ -12,7 +12,5 @@ export const Primary: ComponentStory<typeof SampleComponent> = () => {
   return <SampleComponent />;
 };
 
-const Template: ComponentStory<typeof SampleComponent> = () => (
-  <SampleComponent />
-);
+const Template: ComponentStory<typeof SampleComponent> = () => <SampleComponent />;
 export const Secondary = Template.bind({});

@@ -4,14 +4,7 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['../../script/test/jest-setup.ts'],
-  testPathIgnorePatterns: [
-    '__stories__',
-    '.storybook',
-    '/node_modules/',
-    'dist',
-    'lib',
-    'build',
-  ],
+  testPathIgnorePatterns: ['__stories__', '.storybook', '/node_modules/', 'dist', 'lib', 'build'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json', 'node'],
   transform: {
     '^.+\\.(j|t)sx?$': 'ts-jest',
