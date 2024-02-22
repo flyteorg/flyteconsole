@@ -33,7 +33,7 @@
 
 ## 🎉 Announcement: Console Refresh 🎉
 
-We've recently updated FlyteConsole with a number of changes, including a refreshed UI, performance updates such as optimized fetch patterns, code-splitting, and a significant reduction in the vendor.js file size. In addition to these improvements, we've also addressed a number of bugs, including better support for dynamic executions and the timeline now supports long-running workflows.
+We've recently updated FlyteConsole with a number of changes, including a refreshed UI, performance updates such as an upgrade to MUI5, better optimized fetch patterns, code-splitting and a significant reduction in the vendor.js file size. In addition to these improvements, we've also addressed a number of bugs, including better support for dynamic executions and the timeline now supports long-running workflows.
 
 Most of these changes are non-breaking however, there are a few things we've changed:
 
