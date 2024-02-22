@@ -176,7 +176,8 @@
     "trim-newlines": "5.0.0",
     "glob-parent": "6.0.2",
     "prismjs": "1.29.0",
-    "postcss": "^8.4.31"
+    "postcss": "^8.4.31",
+    "protobufjs": "^6.11.4"
   },
   "packageManager": "yarn@3.2.1"
 }
