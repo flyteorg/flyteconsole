@@ -51,12 +51,15 @@
     "classnames": "^2.3.2",
     "lodash": "^4.17.21",
     "long": "^5.2.1",
-    "protobufjs": "~6.11.4",
+    "protobufjs": "^6.11.4",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-router": "5.3.4",
     "react-router-dom": "5.3.4",
     "tslib": "^2.4.1"
+  },
+  "resolutions": {
+    "protobufjs": "^6.11.4"
   },
   "engines": {
     "node": "18.1.0"
