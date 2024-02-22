@@ -99,7 +99,7 @@ export const ReactJsonViewWrapper: React.FC<ReactJsonViewProps> = props => {
         displayObjectSize={true}
         name={null}
         indentWidth={4}
-        collapseStringsAfterLength={80}
+        collapseStringsAfterLength={100}
         sortKeys={true}
         {...props}
       />
