@@ -25,7 +25,6 @@ module.exports = {
 
   roots: [
     '<rootDir>/packages/common/src',
-    '<rootDir>/packages/db/src',
     '<rootDir>/packages/flyte-api/src',
     '<rootDir>/packages/locale/src',
     '<rootDir>/packages/oss-console/src',
