@@ -21653,7 +21653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.5.2":
+"semver@npm:7.5.2, semver@npm:~7.0.0":
   version: 7.5.2
   resolution: "semver@npm:7.5.2"
   dependencies:
@@ -21681,15 +21681,6 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 12d8ad952fa353b0995bf180cdac205a4068b759a140e5d3c608317098b3575ac2f1e09182206bf2eb26120e1c0ed8fb92c48c592f6099680de56bb071423ca3
-  languageName: node
-  linkType: hard
-
-"semver@npm:~7.0.0":
-  version: 7.0.0
-  resolution: "semver@npm:7.0.0"
-  bin:
-    semver: bin/semver.js
-  checksum: 272c11bf8d083274ef79fe40a81c55c184dff84dd58e3c325299d0927ba48cece1f020793d138382b85f89bab5002a35a5ba59a3a68a7eebbb597eb733838778
   languageName: node
   linkType: hard
 
