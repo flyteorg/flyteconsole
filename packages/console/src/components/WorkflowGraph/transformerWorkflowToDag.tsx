@@ -492,6 +492,28 @@ const parseWorkflow = (
     };
   }
 
+  /* Build failure node and add downstream connection for edges building */
+  const failureNode = context.template.failureNode;
+  if (failureNode && failureNode.id) {
+    parseNode({
+      node: failureNode as CompiledNode,
+      root: root,
+      dynamicToMerge,
+      nodeExecutionsById,
+      staticExecutionIdsMap,
+      workflow,
+    });
+    nodeMap[failureNode.id] = {
+      dNode: root.nodes[root.nodes.length - 1],
+      compiledNode: failureNode as CompiledNode,
+    };
+    if (
+      !context.connections.downstream[startNodeId].ids.includes(failureNode.id)
+    ) {
+      context.connections.downstream[startNodeId].ids.push(failureNode.id);
+    }
+  }
+
   /* Build Edges */
   buildWorkflowEdges(root, context.connections, startNodeId, nodeMap);
   return root;
