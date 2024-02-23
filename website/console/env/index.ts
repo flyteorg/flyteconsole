@@ -64,8 +64,6 @@ const DISABLE_CONSOLE_ROUTE_PREFIX = process.env.DISABLE_CONSOLE_ROUTE_PREFIX ||
  */
 const ASSETS_PATH = `${BASE_URL}/assets/`;
 
-const FLYTE_NAVIGATION = process.env.FLYTE_NAVIGATION || '';
-
 /**
  * This is used to prevent use of the app during outages.
  * If this is set to 'true', the app will display a maintenance page.
@@ -83,7 +81,6 @@ const processEnv = {
   BASE_URL,
   BASE_HREF,
   DISABLE_CONSOLE_ROUTE_PREFIX,
-  FLYTE_NAVIGATION,
   MAINTENANCE_MODE,
 };
 

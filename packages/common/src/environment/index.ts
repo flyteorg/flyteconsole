@@ -18,7 +18,6 @@ export interface Env extends NodeJS.ProcessEnv {
    */
   BASE_HREF?: string;
   DISABLE_CONSOLE_ROUTE_PREFIX?: string;
-  FLYTE_NAVIGATION?: string;
 
   DISABLE_ANALYTICS?: string;
   NODE_ENV?: 'development' | 'production' | 'test';

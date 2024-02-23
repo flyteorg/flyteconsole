@@ -37,9 +37,9 @@ We've recently updated FlyteConsole with a number of changes, including a refres
 
 Most of these changes are non-breaking however, there are a few things we've changed:
 
--   removed FLYTE_NAVIGATION
--   removed registry
--   removed Google Analytics
+-   `FLYTE_NAVIGATION` and `HORIZONTAL_LAYOUT` env vars have been removed. These were used to provide configuration options to the page layout and navigation but are no longer needed as the new navigation is fixed.
+-   `ENABLE_GA` and `GA_TRACKING_ID` env vars have been removed. These were used to configure Google Analytics; Google Analytics was removed.
+-   `ExternalConfigurationProviderProps` and `registry` have been removed. These were used to provide override capabilities to specific components and were removed for simplicity.
 
 ## 📦 Install Dependencies
 
