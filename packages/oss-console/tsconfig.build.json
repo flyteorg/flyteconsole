@@ -1,0 +1,53 @@
+{
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // TODO: this items should be removed when violations are fixed:
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noImplicitOverride": false,
+
+    "composite": true
+  },
+
+  "exclude": [
+    // files excluded from the build, we can not put it inro default tsconfig
+    // as it will screw VSCode IntelliSence
+    "node_modules",
+    "dist",
+    "lib",
+    "build",
+    "**/test",
+    "**/mocks",
+    "**/__mocks__",
+    "**/__stories__",
+    "**/*.spec.*",
+    "**/*.test.*",
+    "**/*.mock.*",
+    "**/*.stories.*"
+  ],
+  "references": [
+    {
+      "path": "../common/tsconfig.build.json"
+    },
+    {
+      "path": "../flyte-api/tsconfig.build.json"
+    },
+    {
+      "path": "../locale/tsconfig.build.json"
+    },
+    {
+      "path": "../primitives/tsconfig.build.json"
+    },
+    {
+      "path": "../theme/tsconfig.build.json"
+    },
+    {
+      "path": "../ui-atoms/tsconfig.build.json"
+    }
+  ]
+}

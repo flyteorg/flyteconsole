@@ -1,0 +1,175 @@
+import Admin from '@clients/common/flyteidl/admin';
+import Protobuf from '@clients/common/flyteidl/protobuf';
+import Core from '@clients/common/flyteidl/core';
+import Event from '@clients/common/flyteidl/event';
+import { Identifier, LiteralMap, LiteralMapBlob, TaskLog, UrlBlob } from '../Common/types';
+import { ExecutionMode, TaskExecutionPhase, WorkflowExecutionPhase } from './enums';
+import { CompiledWorkflowClosure } from '../Workflow/types';
+
+export type WorkflowExecutionIdentifier = Omit<
+  RequiredNonNullable<Core.IWorkflowExecutionIdentifier>,
+  'org'
+> & {
+  org?: string;
+};
+
+export type ExecutionError = RequiredNonNullable<Core.IExecutionError>;
+export type ExternalResource = Event.IExternalResourceInfo;
+export type LogsByPhase = Map<TaskExecutionPhase, Core.ITaskLog[]>;
+export type ExternalResourcesByPhase = Map<TaskExecutionPhase, Event.IExternalResourceInfo[]>;
+
+export interface BaseExecutionClosure {
+  createdAt: Protobuf.ITimestamp;
+  duration?: Protobuf.Duration;
+  error?: ExecutionError;
+  startedAt?: Protobuf.ITimestamp;
+}
+
+export interface ExecutionClosure extends Admin.IExecutionClosure {
+  workflowId: Identifier;
+  createdAt: Protobuf.ITimestamp;
+  startedAt?: Protobuf.ITimestamp;
+  duration?: Protobuf.Duration;
+  computedInputs?: LiteralMap;
+  outputs?: LiteralMapBlob;
+  phase: WorkflowExecutionPhase;
+  error?: ExecutionError;
+  stateChangeDetails?: Admin.IExecutionStateChangeDetails;
+}
+
+export interface ExecutionMetadata extends Admin.IExecutionMetadata {
+  mode: ExecutionMode;
+  principal: string;
+  nesting: number;
+  referenceExecution?: WorkflowExecutionIdentifier;
+  parentNodeExecution?: NodeExecutionIdentifier;
+}
+
+export interface ExecutionSpec extends Admin.IExecutionSpec {
+  authRole?: Admin.IAuthRole;
+  securityContext?: Core.ISecurityContext;
+  inputs: LiteralMap;
+  launchPlan: Identifier;
+  metadata: ExecutionMetadata;
+  notifications: RequiredNonNullable<Admin.INotificationList>;
+}
+
+export interface Execution extends Admin.IExecution {
+  closure: ExecutionClosure;
+  id: WorkflowExecutionIdentifier;
+  spec: ExecutionSpec;
+}
+
+/** Node executions */
+export interface WorkflowNodeMetadata {
+  executionId: WorkflowExecutionIdentifier;
+}
+
+export interface CatalogMetadata extends Core.ICatalogMetadata {
+  artifactTag?: RequiredNonNullable<Core.ICatalogArtifactTag>;
+  datasetId: Identifier;
+  sourceTaskExecution: TaskExecutionIdentifier;
+}
+
+export interface TaskNodeMetadata extends Admin.ITaskNodeMetadata {
+  cacheStatus: Core.CatalogCacheStatus;
+  catalogKey?: CatalogMetadata;
+}
+export interface NodeExecutionIdentifier extends Core.INodeExecutionIdentifier {
+  nodeId: string;
+  executionId: WorkflowExecutionIdentifier;
+}
+
+export interface NodeExecutionMetadata extends Admin.INodeExecutionMetaData {
+  retryGroup?: string;
+  isParentNode?: boolean;
+  specNodeId?: string;
+}
+
+export interface NodeExecution extends Admin.INodeExecution {
+  id: NodeExecutionIdentifier;
+  inputUri: string;
+  closure: NodeExecutionClosure;
+  metadata?: NodeExecutionMetadata;
+  scopedId?: string;
+  fromUniqueParentId?: string;
+  dynamicParentNodeId?: string;
+}
+
+export interface NodeExecutionClosure extends Admin.INodeExecutionClosure {
+  createdAt: Protobuf.ITimestamp;
+  duration?: Protobuf.Duration;
+  error?: ExecutionError;
+  outputUri: string;
+  phase: Core.NodeExecution.Phase;
+  startedAt?: Protobuf.ITimestamp;
+  taskNodeMetadata?: TaskNodeMetadata;
+  workflowNodeMetadata?: WorkflowNodeMetadata;
+  deckUri?: string;
+}
+
+/** Task executions */
+
+export interface TaskExecutionIdentifier extends Core.ITaskExecutionIdentifier {
+  taskId: Identifier;
+  nodeExecutionId: NodeExecutionIdentifier;
+  retryAttempt?: number;
+}
+export interface MapTaskExecution extends TaskExecution {
+  taskIndex?: number | null;
+  parentRetryAttempt?: number;
+}
+
+export interface TaskExecutionClosure extends Admin.ITaskExecutionClosure {
+  createdAt: Protobuf.ITimestamp;
+  duration?: Protobuf.Duration;
+  error?: ExecutionError;
+  logs?: TaskLog[];
+  outputUri: string;
+  phase: TaskExecutionPhase;
+  startedAt?: Protobuf.ITimestamp;
+  eventVersion?: number;
+  reasons?: Admin.IReason[];
+  reason?: string;
+}
+
+export interface TaskExecution extends Admin.ITaskExecution {
+  id: TaskExecutionIdentifier;
+  inputUri: string;
+  isParent?: boolean;
+  closure: TaskExecutionClosure;
+  dynamicParentNodeId?: string;
+}
+
+export interface DynamicWorkflowNodeMetadata extends Admin.IDynamicWorkflowNodeMetadata {
+  id: Identifier;
+  compiledWorkflow: CompiledWorkflowClosure;
+  dynamicJobSpecUri: string;
+}
+/** Execution data */
+export interface ExecutionData extends Admin.NodeExecutionGetDataResponse {
+  inputs?: UrlBlob; // TODO FC#393: this field was deprecated use fullInputs instead - check for usage and remove
+  outputs?: UrlBlob; // TODO FC#393: this field  was deprecated use fullOutputs instead - check for usage and remove
+  fullInputs: LiteralMap | null;
+  fullOutputs: LiteralMap | null;
+  deckUri?: string;
+  dynamicWorkflow?: DynamicWorkflowNodeMetadata;
+  flyteUrls?: {
+    inputs?: string;
+    outputs?: string;
+  };
+}
+
+export interface Span extends RequiredNonNullable<Core.ISpan> {
+  spans: Span[];
+  startTime: Protobuf.ITimestamp;
+  endTime: Protobuf.ITimestamp;
+  workflowId: Core.IWorkflowExecutionIdentifier;
+  nodeId: Core.INodeExecutionIdentifier;
+  taskId: Core.ITaskExecutionIdentifier;
+  operationId: string;
+}
+export interface WorkflowExecutionGetMetricsResponse
+  extends RequiredNonNullable<Admin.WorkflowExecutionGetMetricsResponse> {
+  span: Span;
+}

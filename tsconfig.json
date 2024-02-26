@@ -1,50 +1,65 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "checkJs": false,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "removeComments": false,
-    "importHelpers": true,
-    "forceConsistentCasingInFileNames": false,
-
-    "jsx": "react",
     "lib": ["dom", "dom.iterable", "es6", "es2021"],
+    "jsx": "react",
     "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",
-
+    "allowJs": false,
+    "allowUnreachableCode": false,
     "esModuleInterop": true,
+    "strict": true,
+    "checkJs": false,
 
     "isolatedModules": true,
     "declaration": true,
     "declarationMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "importHelpers": true,
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
 
-    // More strict rules
+    // More strict
+    // "exactOptionalPropertyTypes": true, - too strict? -  https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes
     "noUncheckedIndexedAccess": false,
+    "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": false,
     "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-
     "sourceMap": true,
     "composite": true,
     "baseUrl": ".",
 
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+
+    "forceConsistentCasingInFileNames": false,
+
     "paths": {
-      "@flyteconsole/client-app": ["./website/src"],
-      "@flyteorg/*": ["./packages/*/src"]
-    }
+      "@clients/common": ["./packages/common/src"],
+      "@clients/common/*": ["./packages/common/src/*"],
+      "@clients/flyte-api": ["./packages/flyte-api/src"],
+      "@clients/flyte-api/*": ["./packages/flyte-api/src/*"],
+      "@clients/locale": ["./packages/locale/src"],
+      "@clients/locale/*": ["./packages/locale/src/*"],
+      "@clients/oss-console": ["./packages/oss-console/src"],
+      "@clients/oss-console/*": ["./packages/oss-console/src/*"],
+      "@clients/primitives": ["./packages/primitives/src"],
+      "@clients/primitives/*": ["./packages/primitives/src/*"],
+      "@clients/theme": ["./packages/theme/src"],
+      "@clients/theme/*": ["./packages/theme/src/*"],
+      "@clients/ui-atoms": ["./packages/ui-atoms/src"],
+      "@clients/ui-atoms/*": ["./packages/ui-atoms/src/*"]
+    },
+
+    "types": ["react", "node", "jest", "@testing-library/jest-dom"]
   },
-  "exclude": ["**/node_modules", "**/dist", "**/lib"]
+  "include": ["./packages/*/src", "./website/*/src"],
+  "exclude": ["**/node_modules", "**/dist", "**/lib", "**/build"]
 }

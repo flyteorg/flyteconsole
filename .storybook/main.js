@@ -20,10 +20,7 @@ module.exports = {
         // flyteidl.d.ts file.
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: [
-          'babel-loader',
-          { loader: 'ts-loader', options: { transpileOnly: true } },
-        ],
+        use: ['babel-loader', { loader: 'ts-loader', options: { transpileOnly: true } }],
       },
     ];
 
@@ -32,14 +29,8 @@ module.exports = {
       '@flyteorg/console': path.resolve(__dirname, '../packages/console/src'),
       '@flyteorg/locale': path.resolve(__dirname, '../packages/locale/src'),
       '@flyteorg/ui-atoms': path.resolve(__dirname, '../packages/ui-atoms/src'),
-      '@flyteorg/components': path.resolve(
-        __dirname,
-        '../packages/components/src',
-      ),
-      '@flyteorg/flyte-api': path.resolve(
-        __dirname,
-        '../packages/flyte-api/src',
-      ),
+      '@flyteorg/components': path.resolve(__dirname, '../packages/components/src'),
+      '@flyteorg/flyte-api': path.resolve(__dirname, '../packages/flyte-api/src'),
     };
 
     return config;

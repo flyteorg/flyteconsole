@@ -1,0 +1,27 @@
+{
+  "name": "@clients/theme",
+  "version": "0.1.0",
+  "description": "Project's theme",
+  "main": "./dist/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --outDir lib --project ./tsconfig.build.json",
+    "build:types": "yarn build:cjs --emitDeclarationOnly && yarn build:esm --emitDeclarationOnly",
+    "build:cjs": "run -T tsc --project ./tsconfig.build.json",
+    "test": "NODE_ENV=test run -T jest"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.9.2",
+    "@mui/styles": "^5.9.2",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "tslib": "^2.4.1"
+  }
+}

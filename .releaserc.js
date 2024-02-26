@@ -39,16 +39,12 @@ function getProdConfiguration() {
  * ################################################################
  */
 function isTestRun() {
-  return (
-    process.argv.includes('--dry-run') || process.argv.includes('--test-run')
-  );
+  return process.argv.includes('--dry-run') || process.argv.includes('--test-run');
 }
 
 function getTestConfiguration() {
   const localGitRepoPath = `file://${process.cwd()}/.git`;
-  const localBranchName = execSync('git branch --show-current')
-    .toString()
-    .trim();
+  const localBranchName = execSync('git branch --show-current').toString().trim();
 
   return {
     repositoryUrl: localGitRepoPath,

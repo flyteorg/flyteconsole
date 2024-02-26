@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
 import { FlyteApiProvider, useFlyteApi } from '.';
-import { AdminEndpoint } from '../utils/constants';
 import { getLoginUrl } from './login';
+import AdminEndpoint from '../utils/AdminEndpoint';
 
 const MockCoponent = () => {
   const context = useFlyteApi();

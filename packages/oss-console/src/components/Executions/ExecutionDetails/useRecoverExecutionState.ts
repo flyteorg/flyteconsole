@@ -1,0 +1,27 @@
+import { useContext } from 'react';
+import { useMutation } from 'react-query';
+import { useAPIContext } from '../../data/apiContext';
+import { WorkflowExecutionIdentifier } from '../../../models/Execution/types';
+import { ExecutionContext } from '../contexts';
+
+export function useRecoverExecutionState() {
+  const { recoverWorkflowExecution } = useAPIContext();
+  const {
+    execution: { id },
+  } = useContext(ExecutionContext);
+
+  const { mutate, ...recoverState } = useMutation<WorkflowExecutionIdentifier, Error>(async () => {
+    const { id: recoveredId } = await recoverWorkflowExecution({ id });
+    if (!recoveredId) {
+      throw new Error('API Response did not include new execution id');
+    }
+    return recoveredId as WorkflowExecutionIdentifier;
+  });
+
+  const recoverExecution = () => mutate();
+
+  return {
+    recoverState,
+    recoverExecution,
+  };
+}

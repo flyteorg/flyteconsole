@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:experimental
-# Use node:17 to docker build on M1
-FROM --platform=${BUILDPLATFORM} node:16 as builder
+
+FROM node:21.6.0 as builder
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
 ARG TARGETARCH
@@ -10,24 +10,31 @@ ENV npm_config_target_libc glibc
 
 WORKDIR /my-project/
 COPY . /my-project/
+
+# install production dependencies
 RUN : \
   --mount=type=cache,target=/root/.yarn \
-  # install production dependencies
-  && yarn workspaces focus --all --production \
-  && yarn build:types \
-  && BASE_URL=/console yarn run build:prod \
+  && yarn workspaces focus --production --all
+
+# build console web app
+RUN : \
+  --mount=type=cache,target=/root/.yarn \
+  && BASE_URL=/console yarn workspace @clients/console run build:prod
+
+# copy console build to /app
+RUN : \
+  --mount=type=cache,target=/root/.yarn \
   && mkdir /app \
-  && cp -R ./website/dist/* /app
+  && cp -R ./website/console/dist/* /app
 
 FROM gcr.io/distroless/nodejs
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
 COPY --from=builder /app app
 WORKDIR /app
-ENV NODE_ENV=production PORT=8080
+ENV NODE_ENV=production BASE_URL=/console PORT=8080
 EXPOSE 8080
 
 USER 1000
 
 CMD ["server.js"]
-

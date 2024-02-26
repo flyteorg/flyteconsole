@@ -1,61 +1,11 @@
-.env
-*.swp
-# direnv
-.envrc
-
-# C extensions
-*.so
-
-# Snyk
-.dccache
-
 # Packages
 bin/
 build/
 dist/
-downloads/
-env/
 lib/
-lib64/
-parts/
-sdist/
-var/
 
-# Translations
-*.mo
-
-# build packages or files that shouldn't be in repo
-node_modules
-bower_components
-.sass-cache
-.tmp
-app/public/dist
-app/public/styles/*.css
-
-# Mr Developer (mac, editor, IDEs, etc)
-.mr.developer.cfg
-.project
-.pydevproject
-.vagrant
-.ropeproject
-.tmp
-.sass-cache
-.DS_Store
-.zedstate
-.idea
-.cache/
-venv/
-*.tsbuildinfo
-*.log
-**.orig
-
-# Frontend
-.awcache/
-.dist/
-npm-debug.log
-jest
-jest_0
-.coverage/
+# git
+!.vscode/
 
 # yarn related
 node_modules
@@ -63,7 +13,6 @@ node_modules
 *.yalc
 yalc.lock
 **/.yarn/*
-yarn-error.log
 !**/.yarn/plugins
 !**/.yarn/releases
 !**/.yarn/sdks
@@ -72,6 +21,22 @@ yarn-error.log
 # We always want them in repository, since they are necessary to install dependencies.
 !.yarn/patches
 
-# Certs
+# results of tsc build
+*.tsbuildinfo
+
+# result of linting
+.eslintcache
+
+#coverage
+.coverage
+.jest-cache
+
+# misc
+.DS_Store
 .srl
-certificate/
+yarn-error.log
+.dccache
+
+# generated data
+certificate
+.env

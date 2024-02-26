@@ -1,10 +1,4 @@
-export REPOSITORY=flyteconsole
-include boilerplate/flyte/docker_build/Makefile
-
-.PHONY: update_boilerplate
-update_boilerplate:
-	@curl https://raw.githubusercontent.com/flyteorg/boilerplate/master/boilerplate/update.sh -o boilerplate/update.sh
-	@boilerplate/update.sh
+PACKAGES = packages
 
 .PHONY: install
 install: #installs dependencies
@@ -14,47 +8,35 @@ install: #installs dependencies
 lint: #lints the package for common code smells
 	yarn run lint
 
-.PHONY: build_prod
-build_prod:
-	yarn run clean
-	make types
-	BASE_URL=/console yarn run build:prod
+##########################################################################
+################################ CLEAN ###################################
+##########################################################################
+.PHONY: clean_all
+clean_all:
+	git clean -fxd --exclude scripts
 
-.PHONY: pack
-pack:
-	yarn run build:pack
-
-.PHONY: types
-types:
-	yarn workspaces focus --production --all
-	yarn run build:types
-
-# test_unit runs all unit tests
 .PHONY: test_unit
 test_unit:
-	yarn test
+	NODE_ENV=test yarn run jest --detectOpenHandles --no-cache
 
 # server starts the service in development mode
 .PHONY: server
 server:
 	yarn start
 
-.PHONY: clean
-clean:
-	yarn run clean
-
 # test_unit_codecov runs unit tests with code coverage turned on and
 # submits the coverage to codecov.io
 .PHONY: test_unit_codecov
 test_unit_codecov:
-	yarn run test-coverage
+	NODE_ENV=test yarn run jest --coverage --detectOpenHandles --no-cache
 
 .PHONY: generate_ssl
 generate_ssl:
-	./script/generate_ssl.sh
+	./scripts/generate_ssl.sh
 
-PLACEHOLDER_NPM := "version": "0.0.0-develop"
+PLACEHOLDER_NPM := \"version\": \"0.0.0-develop\"
 
 .PHONY: update_npmversion
 update_npmversion:
-	./script/update_npmversion.sh ${VERSION}
+	grep "$(PLACEHOLDER_NPM)" "website/console/package.json"
+	sed -i "s/$(PLACEHOLDER_NPM)/\"version\":	\"${VERSION}\"/g" "website/console/package.json"

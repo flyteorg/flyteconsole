@@ -1,0 +1,29 @@
+{
+  "extends": "../../tsconfig.json",
+
+  "include": ["src/**/*", "env"],
+
+  "references": [
+    {
+      "path": "../../packages/common/tsconfig.json"
+    },
+    {
+      "path": "../../packages/flyte-api/tsconfig.json"
+    },
+    {
+      "path": "../../packages/locale/tsconfig.json"
+    },
+    {
+      "path": "../../packages/oss-console/tsconfig.json"
+    },
+    {
+      "path": "../../packages/primitives/tsconfig.json"
+    },
+    {
+      "path": "../../packages/theme/tsconfig.json"
+    },
+    {
+      "path": "../../packages/ui-atoms/tsconfig.json"
+    }
+  ]
+}

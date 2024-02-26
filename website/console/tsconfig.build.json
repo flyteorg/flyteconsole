@@ -1,0 +1,47 @@
+{
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "tsBuildInfoFile": "./build/tsconfig.build.tsbuildinfo"
+  },
+  "exclude": [
+    // files excluded from the build, we can not put it inro default tsconfig
+    // as it will screw VSCode IntelliSence
+    "node_modules",
+    "dist",
+    "lib",
+    "build",
+    "**/test",
+    "**/mocks",
+    "**/__mocks__",
+    "**/__stories__",
+    "**/*.spec.*",
+    "**/*.test.*",
+    "**/*.mock.*",
+    "**/*.stories.*"
+  ],
+
+  "references": [
+    {
+      "path": "../../packages/common/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/flyte-api/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/locale/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/oss-console/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/primitives/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/theme/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/ui-atoms/tsconfig.build.json"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "@clients/primitives",
+  "version": "0.1.0",
+  "description": "UI primitives module, such as buttons, navBar, lists, notifications",
+  "main": "./dist/index.js",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "yarn build:esm && yarn build:cjs",
+    "build:esm": "run -T tsc --module esnext --outDir lib --project tsconfig.build.json",
+    "build:cjs": "run -T tsc --project tsconfig.build.json",
+    "build:types": "yarn build:cjs --emitDeclarationOnly && yarn build:esm --emitDeclarationOnly",
+    "test": "NODE_ENV=test run -T jest"
+  },
+  "dependencies": {
+    "@clients/common": "^0.1.0",
+    "@clients/flyte-api": "^0.1.0",
+    "@clients/locale": "^0.1.0",
+    "@clients/theme": "^0.1.0",
+    "@clients/ui-atoms": "^0.1.0",
+    "@mui/styles": "^5.9.2",
+    "@reduxjs/toolkit": "^1.9.1",
+    "@types/react-helmet": "^6.1.6",
+    "@types/string-template": "^1.0.2",
+    "moment": "^2.29.4",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^8.0.5",
+    "string-template": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.9.2",
+    "@tanstack/react-table": "^8.10.1",
+    "@types/chart.js": "^2.9.37",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.9",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.4",
+    "@types/react-router": "^5.1.19",
+    "@types/react-router-dom": "^5.3.3",
+    "chart.js": "3.8.0",
+    "classnames": "^2.3.2",
+    "lodash": "^4.17.21",
+    "react": "^18.1.0",
+    "react-chartjs-2": "^4.3.1",
+    "react-dom": "^18.1.0",
+    "react-router": "5.3.4",
+    "react-router-dom": "5.3.4",
+    "tslib": "^2.4.1"
+  },
+  "resolutions": {
+    "@types/react": "^18.0.9",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-router": "5.3.4",
+    "react-router-dom": "5.3.4"
+  },
+  "peerDependenciesMeta": {
+    "react-chartjs-2": {
+      "optional": true
+    }
+  }
+}
