@@ -39,7 +39,8 @@
     "test:failed:print": "node scripts/getFailedLogs.js",
     "test-coverage": "NODE_ENV=test yarn test --coverage=true",
     "test:todo": "node ./scripts/getTestTodo.js",
-    "find:dead:code": "npx ts-prune | grep -v 'used in module'"
+    "find:dead:code": "npx ts-prune | grep -v 'used in module'",
+    "test-release": "CI=true npx semantic-release@21.0.7 --debug --no-ci --test-run"
   },
   "husky": {
     "hooks": {
@@ -55,6 +56,13 @@
   "dependencies": {
     "@commitlint/cli": "^17.3.0",
     "@commitlint/config-conventional": "^17.3.0",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^7.0.5",
+    "@semantic-release/npm": "^7.0.5",
+    "@semantic-release/release-notes-generator": "^9.0.1",
     "@tanstack/react-table": "^8.10.1",
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^13.2.0",
@@ -117,6 +125,7 @@
     "react-helmet": "^6.1.0",
     "react-router": "5.3.4",
     "react-router-dom": "5.3.4",
+    "semantic-release": "^21.0.7",
     "source-map-loader": "^4.0.1",
     "string-template": "^1.0.0",
     "style-loader": "^3.3.3",
@@ -153,6 +162,7 @@
     "dotenv": "^16.3.1",
     "eslint-plugin-custom-rules": "file:./scripts/eslint-custom-rules",
     "parse5-htmlparser2-tree-adapter": "^7.0.0",
+    "semantic-release": "^21.0.7",
     "storybook-addon-mock": "^2.4.1"
   },
   "resolutions": {
