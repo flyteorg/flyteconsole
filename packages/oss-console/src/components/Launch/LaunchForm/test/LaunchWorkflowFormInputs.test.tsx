@@ -1,24 +1,5 @@
 import * as React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import {
-  fireEvent,
-  screen,
-  queryAllByRole,
-  render,
-  waitFor,
-  getByRole,
-  within,
-} from '@testing-library/react';
-import { muiTheme } from '@clients/theme/Theme/muiTheme';
-import {
-  QueryClient,
-  QueryClientProvider as QueryClientProviderImport,
-  QueryClientProviderProps,
-} from 'react-query';
-import Long from 'long';
-import { RequestConfig } from '@clients/common/types/adminEntityTypes';
-import { APIContext } from '../../../data/apiContext';
-import { mockAPIContextValue } from '../../../data/__mocks__/apiContext';
+
 import {
   BlobDimensionality,
   Identifier,
@@ -27,18 +8,10 @@ import {
   Variable,
 } from '../../../../models/Common/types';
 import {
-  createWorkflowExecution, // CreateWorkflowExecutionArguments
-} from '../../../../models/Execution/api';
-import { listLaunchPlans } from '../../../../models/Launch/api';
-import { LaunchPlan } from '../../../../models/Launch/types';
-import { getWorkflow, listWorkflows } from '../../../../models/Workflow/api';
-import { Workflow } from '../../../../models/Workflow/types';
-import { createMockWorkflowClosure } from '../../../../models/__mocks__/workflowData';
-import { createTestQueryClient } from '../../../../test/utils';
-import { WorkflowNodeExecutionsProvider } from '../../../Executions/contextProvider/NodeExecutionDetails/WorkflowNodeExecutionsProvider';
-import t from '../strings';
-import { LaunchForm } from '../LaunchForm';
-import { LaunchFormProps } from '../types';
+  QueryClient,
+  QueryClientProvider as QueryClientProviderImport,
+  QueryClientProviderProps,
+} from 'react-query';
 import {
   blobType,
   collectionType,
@@ -49,10 +22,38 @@ import {
   unionType,
 } from '../__mocks__/mockInputs';
 import {
-  // stringInputName,
+  fireEvent,
+  getByRole,
+  queryAllByRole,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
+import { getWorkflow, listWorkflows } from '../../../../models/Workflow/api';
+
+import { APIContext } from '../../../data/apiContext';
+import { LaunchForm } from '../LaunchForm';
+import { LaunchFormProps } from '../types';
+import { LaunchPlan } from '../../../../models/Launch/types';
+import Long from 'long';
+import { RequestConfig } from '@clients/common/types/adminEntityTypes';
+import { ThemeProvider } from '@mui/material/styles';
+import { Workflow } from '../../../../models/Workflow/types';
+import { WorkflowNodeExecutionsProvider } from '../../../Executions/contextProvider/NodeExecutionDetails/WorkflowNodeExecutionsProvider';
+import { createMockObjects } from './utils';
+import { createMockWorkflowClosure } from '../../../../models/__mocks__/workflowData';
+import { createTestQueryClient } from '../../../../test/utils';
+import {
+  createWorkflowExecution
+} from '../../../../models/Execution/api';
+import { listLaunchPlans } from '../../../../models/Launch/api';
+import { mockAPIContextValue } from '../../../data/__mocks__/apiContext';
+import { muiTheme } from '@clients/theme/Theme/muiTheme';
+import {
   stringNoLabelName,
 } from './constants';
-import { createMockObjects } from './utils';
+import t from '../strings';
 import { workflowNoInputsString } from '../constants';
 
 const QueryClientProvider: React.FC<React.PropsWithChildren<QueryClientProviderProps>> =
@@ -2224,7 +2225,7 @@ describe('LaunchForm: Workflow', () => {
         // expect datetime to be correctly prepopulated
         await waitFor(() => {
           // bool should be true
-          expect(datetimeInput!).toHaveValue('10/17/2023 19:07:39');
+          expect(datetimeInput!).toHaveValue('2023-10-17 19:07:39');
         });
 
         // expect  no validation error
