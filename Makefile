@@ -34,7 +34,7 @@ test_unit_codecov:
 generate_ssl:
 	./scripts/generate_ssl.sh
 
-PLACEHOLDER_NPM := \"version\": \"0.0.0-develop\"
+PLACEHOLDER_NPM := \"version\": \"0.0.1\"
 
 .PHONY: update_npmversion
 update_npmversion:
