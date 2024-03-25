@@ -254,18 +254,16 @@ export const NodeExecutionsTable: React.FC<{
               </TableHead>
               <TableBody>
                 {showNodes.length > 0 ? (
-                  showNodes.map((node) => {
-                    return (
-                      <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
-                        <NodeExecutionRow
-                          columns={columns}
-                          node={node}
-                          onToggle={toggleNode}
-                          key={node.scopedId}
-                        />
-                      </NodeExecutionDynamicProvider>
-                    );
-                  })
+                  showNodes.map((node) => (
+                    <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
+                      <NodeExecutionRow
+                        columns={columns}
+                        node={node}
+                        onToggle={toggleNode}
+                        key={node.scopedId}
+                      />
+                    </NodeExecutionDynamicProvider>
+                  ))
                 ) : (
                   <TableNoRowsCell displayMessage={noExecutionsFoundString} />
                 )}
