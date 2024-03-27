@@ -8,18 +8,6 @@ import { durationToMilliseconds, isValidDate } from './utils';
 
 const defaultUTCFormat = 'l LTS';
 
-/** Formats a date into a standard string with a moment-style "from now" hint
- * ex. 12/21/2017 8:19:36 PM (18 days ago)
- */
-export function dateWithFromNow(input: Date) {
-  if (!isValidDate(input)) {
-    return unknownValueString;
-  }
-
-  const date = moment.utc(input);
-  return `${date.format(defaultUTCFormat)} UTC (${date.fromNow()})`;
-}
-
 /** Formats a date into a moment-style "from now" value */
 export function dateFromNow(input: Date) {
   if (!isValidDate(input)) {
@@ -51,7 +39,7 @@ export function formatDateUTC(input: Date, formatString?: string) {
 /**
  * Gets human-readable date relative to "now"
  */
-export function formateDateRelative(input: Date, threshold = 24 * 60 * 60 * 1000) {
+export function formatDateRelative(input: Date, threshold = 24 * 60 * 60 * 1000) {
   if (!isValidDate(input)) {
     return unknownValueString;
   }
@@ -70,6 +58,18 @@ export function formateDateRelative(input: Date, threshold = 24 * 60 * 60 * 1000
  */
 export function formatDateLocalTimezone(input: Date) {
   return isValidDate(input) ? moment(input).tz(timezone).format('l LTS z') : unknownValueString;
+}
+
+/** Formats a date into a standard string with a moment-style "from now" hint
+ * ex. 12/21/2017 8:19:36 PM (18 days ago)
+ */
+export function dateWithFromNow(input: Date) {
+  if (!isValidDate(input)) {
+    return unknownValueString;
+  }
+
+  const date = moment.utc(input);
+  return `${formatDateLocalTimezone(input)} (${date.fromNow()})`;
 }
 
 /** Outputs a value in milliseconds in (H M S) format (ex. 2h 3m 30s) */
