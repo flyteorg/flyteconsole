@@ -1,10 +1,12 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import ArrowBackIos from '@mui/icons-material/ArrowBackIos';
 import Close from '@mui/icons-material/Close';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import classnames from 'classnames';
 import { LocationDescriptor } from 'history';
 import Skeleton from 'react-loading-skeleton';
@@ -105,8 +107,8 @@ const StatusContainer = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(1),
     cursor: 'pointer',
   },
-  '& .statusBody': {
-    marginTop: theme.spacing(2),
+  '& .reasonsIconContainer': {
+    textAlign: 'right',
   },
 }));
 
@@ -124,6 +126,23 @@ const NotRunStatus = styled('div')(({ theme }) => ({
   width: theme.spacing(11),
   fontFamily: CommonStylesConstants.bodyFontFamily,
   fontWeight: 'bold',
+}));
+
+const ModalScrollableMonospaceText = styled(ScrollableMonospaceText)(({ theme }) => ({
+  '&': {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '85%',
+    height: '85%',
+    boxShadow: 12,
+  },
+  '& .container': {
+    maxHeight: '100%',
+    height: '100%',
+    flexDirection: 'column',
+  },
 }));
 
 const tabIds = {
@@ -227,6 +246,26 @@ const WorkflowTabs: React.FC<{
   );
 };
 
+const TaskExecutionDetailReasons: React.FC<{ text: string }> = ({ text }) => {
+  const [open, setOpen] = useState(false);
+  const handleModalOpen = () => setOpen(true);
+  const handleModalClose = () => setOpen(false);
+
+  return (
+    <div>
+      <div className="reasonsIconContainer">
+        <IconButton onClick={handleModalOpen} title="Open in popup">
+          <OpenInFullIcon />
+        </IconButton>
+      </div>
+      <ScrollableMonospaceText text={text} />
+      <Modal open={open} onClose={handleModalClose}>
+        <ModalScrollableMonospaceText text={text} />
+      </Modal>
+    </div>
+  );
+};
+
 interface NodeExecutionStatusProps {
   nodeExecution?: NodeExecution;
   frontendPhase: NodeExecutionPhase;
@@ -248,11 +287,7 @@ const NodeExecutionStatus: FC<NodeExecutionStatusProps> = ({ nodeExecution, fron
       <div className="statusHeaderContainer">
         <ExecutionStatusBadge phase={frontendPhase} type="node" />
       </div>
-      {reasons?.length ? (
-        <div className="statusBody">
-          <ScrollableMonospaceText text={reasons.join('\n\n')} />
-        </div>
-      ) : null}
+      {reasons?.length && <TaskExecutionDetailReasons text={reasons.join('\n\n')} />}
     </StatusContainer>
   ) : (
     <NotRunStatus>NOT RUN</NotRunStatus>
