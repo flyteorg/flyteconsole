@@ -1,28 +1,73 @@
 import Typography from '@mui/material/Typography';
 import moment from 'moment';
-import * as React from 'react';
+import React, { useMemo } from 'react';
+import styled from '@mui/system/styled';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
 import { formatDateUTC } from '../../../common/formatters';
 import { padExecutionPaths, padExecutions, timestampToDate } from '../../../common/utils';
 import { WaitForData } from '../../common/WaitForData';
 import ProjectStatusBar from '../../ListProjectEntities/ProjectStatusBar';
 import { useWorkflowVersionsColumnStyles } from './styles';
 import { WorkflowVersionColumnDefinition } from './types';
+import { ResourceType } from '../../../models/Common/types';
+import { useLatestActiveLaunchPlan } from '../../LaunchPlan/hooks/useLatestActiveLaunchPlan';
+import { StatusBadge } from '../StatusBadge';
+import { ActiveLaunchPlanDisplayValueEnum } from '../../LaunchPlan/components/LaunchPlanCells';
 
 /**
  * Returns a memoized list of column definitions to use when rendering a
  * `WorkflowVersionRow`. Memoization is based on common/column style objects
  * and any fields in the incoming `WorkflowExecutionColumnOptions` object.
  */
+
 export function useWorkflowVersionsTableColumns(): WorkflowVersionColumnDefinition[] {
   const styles = useWorkflowVersionsColumnStyles();
   return React.useMemo(
     () => [
       {
-        cellRenderer: ({
-          workflow: {
-            id: { version },
-          },
-        }) => <Typography variant="body1">{version}</Typography>,
+        cellRenderer: ({ workflow: { id } }) => {
+          const { version } = id;
+          const isLaunchPlan = id.resourceType === ResourceType.LAUNCH_PLAN;
+
+          const activeScheduleLaunchPlanQuery = useLatestActiveLaunchPlan({
+            id,
+            enabled: isLaunchPlan,
+          });
+
+          const activeScheduleLaunchPlan = useMemo(() => {
+            return activeScheduleLaunchPlanQuery.data?.entities?.[0];
+          }, [activeScheduleLaunchPlanQuery]);
+
+          const isActiveVersion =
+            isLaunchPlan &&
+            activeScheduleLaunchPlan &&
+            activeScheduleLaunchPlan.id.version === version;
+          const versionText = version;
+          return (
+            <TableContainer sx={{ px: 0, borderBottom: 'none' }}>
+              <TableRow>
+                <TableCell sx={{ px: 0, borderBottom: 'none', maxWidth: 400 }}>
+                  <Typography variant="body1">{versionText}</Typography>
+                </TableCell>
+                {isActiveVersion && (
+                  <TableCell
+                    sx={{
+                      borderBottom: 'none',
+                      marginLeft: (theme) => theme.spacing(2),
+                    }}
+                  >
+                    <StatusBadge
+                      text={ActiveLaunchPlanDisplayValueEnum.ACTIVE}
+                      className="background-status-succeeded launchPlan"
+                    ></StatusBadge>
+                  </TableCell>
+                )}
+              </TableRow>
+            </TableContainer>
+          );
+        },
         className: styles.columnName,
         key: 'name',
         label: 'version id',

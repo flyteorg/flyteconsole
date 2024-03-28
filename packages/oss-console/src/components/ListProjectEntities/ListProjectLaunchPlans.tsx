@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { SearchableLaunchPlanNameList } from '../LaunchPlan/SearchableLaunchPlanNameList';
+import { LaunchPlanList } from '../LaunchPlan/LaunchPlanList';
 
 export interface ListProjectLaunchPlansProps {
   projectId: string;
@@ -11,5 +11,5 @@ export const ListProjectLaunchPlans: FC<ListProjectLaunchPlansProps> = ({
   domainId: domain,
   projectId: project,
 }) => {
-  return <SearchableLaunchPlanNameList domainId={domain} projectId={project} />;
+  return <LaunchPlanList domainId={domain} projectId={project} />;
 };

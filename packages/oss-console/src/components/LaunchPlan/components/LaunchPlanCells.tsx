@@ -2,25 +2,36 @@ import Shimmer from '@clients/primitives/Shimmer';
 import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
-import React, { ChangeEvent, forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import LaunchPlansLogo from '@clients/ui-atoms/LaunchPlansLogo';
 import Grid from '@mui/material/Grid';
 import Icon from '@mui/material/Icon';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import { useMutation } from 'react-query';
+import { useQueryClient } from 'react-query';
+import Typography from '@mui/material/Typography';
 import { LaunchPlan, LaunchPlanState } from '../../../models/Launch/types';
-import { updateLaunchPlan } from '../../../models/Launch/api';
-import { NamedEntity } from '../../../models/Common/types';
+import { NamedEntity, NamedEntityIdentifier } from '../../../models/Common/types';
 import {
   SearchResult,
   createHighlightedEntitySearchResult,
 } from '../../common/useSearchableListState';
 import { Routes } from '../../../routes/routes';
 
-import { getScheduleStringFromLaunchPlan } from '../../Entities/EntitySchedules';
+import { getRawScheduleStringFromLaunchPlan } from '../../Entities/EntitySchedules';
+import { getScheduleStringFromLaunchPlan } from '../../Entities/getScheduleStringFromLaunchPlan';
 import t from '../../common/strings';
+import { useConditionalQuery } from '../../hooks/useConditionalQuery';
+import { CREATED_AT_DESCENDING_SORT } from '../../../models/Launch/constants';
+import {
+  castLaunchPlanIdAsQueryKey,
+  makeListLaunchPlansQuery,
+} from '../../../queries/launchPlanQueries';
+import { StatusBadge } from '../../Executions/StatusBadge';
+import { useLatestActiveLaunchPlan } from '../hooks/useLatestActiveLaunchPlan';
+import { useLatestScheduledLaunchPlans } from '../hooks/useLatestScheduledLaunchPlans';
+import { hasAnyEvent } from '../utils';
+import { useSearchRowRefreshContext } from '../LaunchPlanTable/LaunchPlanTableRow';
+import { QueryType } from '../../data/types';
 
 export interface WorkflowNameProps {
   launchPlan?: LaunchPlan;
@@ -68,176 +79,232 @@ interface LaunchPlanNameProps
  * @returns
  */
 
-export const LaunchPlanName: React.FC<LaunchPlanNameProps> = ({
-  result,
-  value,
-  content,
-  inView,
-}) => {
-  const { id } = value;
-
-  const url = Routes.LaunchPlanDetails.makeUrl(id.project, id.domain, id.name);
+export const LaunchPlanName: React.FC<LaunchPlanNameProps> = ({ result, content, inView }) => {
   const finalContent = useMemo(() => {
     return result && inView ? createHighlightedEntitySearchResult(result) : content;
   }, [result, content, inView]);
 
   return (
-    <Grid container>
+    <Grid container data-testid="launch-plan-name">
       <Grid item xs={12}>
-        <Tooltip title={content}>
-          <ListItemButton
-            href={url}
-            LinkComponent={forwardRef((props, ref) => {
-              return <Link to={props?.href} ref={ref} {...props} />;
-            })}
-            sx={{
-              minHeight: '49.5px',
-              marginLeft: (theme) => theme.spacing(2),
-              marginRight: (theme) => theme.spacing(2),
-              padding: (theme) => theme.spacing(1, 2),
-              marginBottom: '-1px',
-            }}
-          >
-            <Grid container>
-              <Grid item sx={{ height: '24px', paddingRight: (theme) => theme.spacing(2) }}>
-                <Icon
-                  sx={{
-                    '& svg': {
-                      color: (theme) => theme.palette.common.grays[40],
-                      width: '20px',
-                    },
-                  }}
-                >
-                  <LaunchPlansLogo />
-                </Icon>
-              </Grid>
-              <Grid
-                item
-                alignSelf="center"
+        <Tooltip title={content} placement="bottom">
+          <Grid container>
+            <Grid item sx={{ height: '24px', paddingRight: (theme) => theme.spacing(2) }}>
+              <Icon
                 sx={{
-                  width: (theme) => `calc(100% - 24px - ${theme.spacing(2)})`,
-                  // text wrap
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
+                  '& svg': {
+                    color: (theme) => theme.palette.common.grays[40],
+                    width: '20px',
+                  },
                 }}
               >
-                <span>{finalContent}</span>
-              </Grid>
+                <LaunchPlansLogo />
+              </Icon>
             </Grid>
-          </ListItemButton>
+            <Grid
+              item
+              alignSelf="center"
+              sx={{
+                width: (theme) => `calc(100% - 24px - ${theme.spacing(2)})`,
+                // text wrap
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                overflow: 'hidden',
+              }}
+            >
+              <span>{finalContent}</span>
+            </Grid>
+          </Grid>
         </Tooltip>
       </Grid>
     </Grid>
   );
 };
+
 export interface ScheduleStatusProps {
   launchPlan?: LaunchPlan;
   refetch: () => void;
 }
-export const enum ScheduleDisplayValueEnum {
+export const enum ActiveLaunchPlanDisplayValueEnum {
+  NO_SCHEDULE = '-',
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
 }
-export const ScheduleStatus = ({ launchPlan, refetch }: ScheduleStatusProps) => {
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isActive, setIsActive] = useState<boolean>();
-  const [displayValue, setDisplayValue] = useState(t('noValue'));
 
-  useEffect(() => {
-    if (
-      launchPlan?.spec.entityMetadata?.schedule?.cronSchedule !== undefined &&
-      launchPlan?.closure?.state !== undefined
-    ) {
-      if (launchPlan.closure.state === LaunchPlanState.ACTIVE) {
-        setIsActive(true);
-      } else {
-        setIsActive(false);
-      }
-    }
-  }, [launchPlan]);
-
-  useEffect(() => {
-    if (
-      launchPlan?.spec.entityMetadata?.schedule?.cronSchedule !== undefined &&
-      launchPlan?.closure?.state !== undefined
-    ) {
-      if (isActive) {
-        setDisplayValue(ScheduleDisplayValueEnum.ACTIVE);
-      } else {
-        setDisplayValue(ScheduleDisplayValueEnum.INACTIVE);
-      }
-    }
-  }, [isActive]);
-
-  const mutation = useMutation(
-    (newState: LaunchPlanState) => updateLaunchPlan(launchPlan?.id, newState),
-    {
-      onMutate: () => setIsUpdating(true),
-      onSuccess: () => {
-        setIsUpdating(false);
-      },
-      onSettled: () => {
-        setIsUpdating(false);
-      },
-    },
-  );
-
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      refetch?.();
-    }
-  }, [mutation.isSuccess]);
-
-  const handleScheduleStatusChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { checked } = event.target;
-    mutation.mutate(checked ? LaunchPlanState.ACTIVE : LaunchPlanState.INACTIVE);
-    setIsActive(checked);
-  };
-
-  return !launchPlan || isUpdating ? (
-    <Shimmer />
-  ) : (
-    <Grid item xs={12} sm="auto" alignSelf="center" justifySelf="flex-end">
-      <Box pl={2}>
-        {displayValue === '-' ? (
-          '-'
-        ) : (
-          <FormControlLabel
-            control={<Switch checked={isActive} />}
-            label={displayValue}
-            onChange={(event) => {
-              handleScheduleStatusChange(event as ChangeEvent<HTMLInputElement>);
-            }}
-          />
-        )}
-      </Box>
-    </Grid>
-  );
+export const getTriggerTooltipValues = (launchPlan: LaunchPlan | undefined) => {
+  if (!launchPlan) {
+    return t('noValue');
+  }
+  return getScheduleTooltipValue(launchPlan);
 };
-export interface ScheduleDisplayValueProps {
+
+export const getTriggerDisplayValue = (launchPlan: LaunchPlan | undefined) => {
+  if (!launchPlan) {
+    return t('noValue');
+  }
+  return getScheduleStringFromLaunchPlan(launchPlan);
+};
+
+export const getScheduleTooltipValue = (launchPlan: LaunchPlan | undefined) => {
+  if (!launchPlan) {
+    return t('noValue');
+  }
+  return `${getScheduleStringFromLaunchPlan(launchPlan)} (${getRawScheduleStringFromLaunchPlan(
+    launchPlan,
+  )})`;
+};
+export interface TriggerDisplayValueProps {
   launchPlan?: LaunchPlan;
 }
-export const ScheduleDisplayValue = ({ launchPlan }: ScheduleDisplayValueProps) => {
-  const scheduleDisplayValue = useMemo(() => {
-    if (!launchPlan) {
-      return t('noValue');
-    }
-    let scheduleDisplayValue = getScheduleStringFromLaunchPlan(launchPlan);
-    if (scheduleDisplayValue === '') {
-      scheduleDisplayValue = t('noValue');
-    }
-    return scheduleDisplayValue;
-  }, [launchPlan]);
-
-  if (launchPlan === undefined) {
+export const TriggerDisplayValue = ({ launchPlan }: TriggerDisplayValueProps) => {
+  if (!launchPlan) {
     return <Shimmer />;
   }
+
+  const displayEventValueHeader = useMemo(() => {
+    return getTriggerDisplayValue(launchPlan);
+  }, [launchPlan]);
+
+  const displayEventValueSub = useMemo(() => {
+    return getRawScheduleStringFromLaunchPlan(launchPlan);
+  }, [launchPlan]);
+
+  const displayTooltipValue = useMemo(() => {
+    return getTriggerTooltipValues(launchPlan);
+  }, [launchPlan]);
+
   return (
-    <Tooltip title={scheduleDisplayValue}>
-      <Grid item xs={12} sm="auto" alignSelf="center" justifySelf="flex-end">
-        <Box pl={2}>{scheduleDisplayValue}</Box>
+    <Tooltip title={displayTooltipValue} placement="bottom-start">
+      <Grid container direction="column">
+        <Grid
+          item
+          sx={{
+            width: '100%',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              width: '100%',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {displayEventValueHeader}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="body2" color="text.secondary">
+            {displayEventValueSub}
+          </Typography>
+        </Grid>
       </Grid>
     </Tooltip>
+  );
+};
+export interface ScheduleStatusSummaryProps {
+  id: NamedEntityIdentifier;
+  inView: boolean;
+}
+export const ScheduleStatusSummary = ({ id, inView }: ScheduleStatusSummaryProps) => {
+  const queryClient = useQueryClient();
+  const { refresh, setRefresh } = useSearchRowRefreshContext();
+
+  /**
+   * Invalidate cache to trigger refetch on launchplan data to pickup state change
+   */
+  useEffect(() => {
+    if (refresh) {
+      const queryKey = [QueryType.ListLaunchPlans, castLaunchPlanIdAsQueryKey(id)];
+      queryClient.invalidateQueries(queryKey);
+      setRefresh(false);
+    }
+  }, [refresh, setRefresh, queryClient, id]);
+
+  const latestLaunchPlanQuery = useConditionalQuery(
+    {
+      ...makeListLaunchPlansQuery(queryClient, id, {
+        sort: CREATED_AT_DESCENDING_SORT,
+        limit: 1,
+      }),
+      enabled: inView,
+    },
+    (prev) => !prev && !!inView,
+  );
+  const activeLaunchPlanQuery = useLatestActiveLaunchPlan({
+    id,
+    enabled: inView,
+  });
+  const scheduledLaunchPlansQuery = useLatestScheduledLaunchPlans({
+    id,
+    limit: 1,
+    enabled: inView,
+  });
+
+  const activeLaunchPlan = useMemo(() => {
+    return activeLaunchPlanQuery.data?.entities?.[0];
+  }, [activeLaunchPlanQuery]);
+
+  const scheduledLaunchPlan = useMemo(() => {
+    return scheduledLaunchPlansQuery.data?.entities?.[0];
+  }, [scheduledLaunchPlansQuery]);
+
+  const hasEvent = hasAnyEvent(scheduledLaunchPlan);
+
+  const isActive = activeLaunchPlan?.closure?.state === LaunchPlanState.ACTIVE;
+
+  return !scheduledLaunchPlansQuery.isFetched &&
+    !activeLaunchPlanQuery.isFetched &&
+    !latestLaunchPlanQuery.isFetched ? (
+    <Shimmer />
+  ) : isActive ? (
+    <Grid
+      data-testid="launch-plan-schedule-status-summary"
+      container
+      alignItems="center"
+      sx={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+      }}
+    >
+      <Grid
+        item
+        sx={{
+          width: '60px',
+          flexShrink: 0,
+        }}
+      >
+        <StatusBadge
+          text={ActiveLaunchPlanDisplayValueEnum.ACTIVE}
+          className="background-status-succeeded launchPlan"
+        />
+      </Grid>
+
+      {hasEvent ? (
+        <Grid
+          item
+          sx={{
+            width: '1%',
+            flexGrow: 1,
+            boxSizing: 'border-box',
+            overflow: 'hidden',
+          }}
+        >
+          <TriggerDisplayValue launchPlan={activeLaunchPlan} />
+        </Grid>
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          No Trigger
+        </Typography>
+      )}
+    </Grid>
+  ) : (
+    <Typography variant="body2" color="text.secondary">
+      No active launch plan
+    </Typography>
   );
 };

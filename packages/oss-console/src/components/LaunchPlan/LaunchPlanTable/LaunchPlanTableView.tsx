@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,30 +8,42 @@ import TableRow from '@mui/material/TableRow';
 import { LargeLoadingComponent } from '@clients/primitives/LoadingSpinner';
 import { TableNoRowsCell } from '@clients/primitives/TableNoRowsCell';
 import { noLaunchPlansFoundString } from '@clients/common/constants';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import result from 'lodash/result';
 import { SearchResult } from '../../common/useSearchableListState';
 import { NamedEntity } from '../../../models/Common/types';
-import { ItemRenderer } from '../../common/FilterableNamedEntityList';
+import { LaunchPlanTableRow } from './LaunchPlanTableRow';
 
 export interface LaunchPlanTableViewProps {
   results: SearchResult<NamedEntity>[];
-  renderItem: ItemRenderer;
   loading: boolean;
 }
 
-export const LaunchPlanTableView = ({ results, renderItem, loading }: LaunchPlanTableViewProps) => {
+export const LaunchPlanTableView = ({ results, loading }: LaunchPlanTableViewProps) => {
+  const parentRef = useRef<any>(document.getElementById('scroll-element'));
+
+  const rowVirtualizer = useVirtualizer({
+    count: result?.length ? results.length + 1 : 0,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 100,
+    overscan: 15,
+  });
+
+  const items = rowVirtualizer.getVirtualItems();
+
   return (
-    <TableContainer>
-      <Table>
+    <TableContainer
+      sx={{
+        padding: (theme) => theme.spacing(0, 2),
+      }}
+    >
+      <Table data-testid="launch-plan-list-table">
         <TableHead>
           <TableRow>
+            <TableCell sx={{ minWidth: '320px', textTransform: 'none !important' }}>Name</TableCell>
             <TableCell sx={{ minWidth: '320px', textTransform: 'none !important' }}>
-              Launch Plan Name
+              Trigger
             </TableCell>
-            <TableCell sx={{ minWidth: '320px', textTransform: 'none !important' }}>
-              Underlying Workflow
-            </TableCell>
-            <TableCell sx={{ textTransform: 'none !important' }}>Schedule Status</TableCell>
-            <TableCell sx={{ textTransform: 'none !important' }}>Schedule</TableCell>
             <TableCell sx={{ textTransform: 'none !important' }}>Last Execution</TableCell>
             <TableCell sx={{ textTransform: 'none !important' }}>Last 10 Executions</TableCell>
           </TableRow>
@@ -42,7 +54,7 @@ export const LaunchPlanTableView = ({ results, renderItem, loading }: LaunchPlan
           ) : results.length === 0 ? (
             <TableNoRowsCell displayMessage={noLaunchPlansFoundString} />
           ) : (
-            results.map((r) => renderItem(r, false))
+            items.map((virtualRow) => <LaunchPlanTableRow {...results[virtualRow.index]} />)
           )}
         </TableBody>
       </Table>

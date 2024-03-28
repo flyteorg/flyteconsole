@@ -31,28 +31,13 @@ export const LaunchPlanList: FC<LaunchPlanListProps> = ({
   const {
     showScheduled,
     setShowScheduled,
-    getFilter: getScheduleFilter,
+    getFilters: getTriggerFilters,
   } = useLaunchPlanScheduledState();
 
   const requestConfigBase: RequestConfig = {
     limit: limits.NONE,
     sort: DEFAULT_SORT,
   };
-
-  const launchplansQuery = useConditionalQuery(
-    {
-      ...makeListLaunchPlansQuery(
-        queryClient,
-        { domain, project },
-        {
-          ...requestConfigBase,
-          filter: [getScheduleFilter()],
-        },
-      ),
-      enabled: showScheduled,
-    },
-    (prev) => !prev,
-  );
 
   const launchPlanEntitiesQuery = useConditionalQuery(
     {
@@ -61,6 +46,20 @@ export const LaunchPlanList: FC<LaunchPlanListProps> = ({
     (prev) => !prev,
   );
 
+  const launchPlansWithTriggersQuery = useConditionalQuery(
+    {
+      ...makeListLaunchPlansQuery(
+        queryClient,
+        { domain, project },
+        {
+          ...requestConfigBase,
+          filter: getTriggerFilters(),
+        },
+      ),
+      enabled: showScheduled,
+    },
+    (prev) => !prev,
+  );
   const { launchPlanEntities, loading } = useMemo(() => {
     return {
       launchPlanEntities: (launchPlanEntitiesQuery.data?.entities || []) as NamedEntity[],
@@ -68,12 +67,14 @@ export const LaunchPlanList: FC<LaunchPlanListProps> = ({
     };
   }, [launchPlanEntitiesQuery]);
 
-  const { onlyScheduledLaunchPlans, isLoadingOnlyScheduled } = useMemo(() => {
-    return {
-      onlyScheduledLaunchPlans: (launchplansQuery.data?.entities || []) as LaunchPlan[],
-      isLoadingOnlyScheduled: launchplansQuery.isLoading,
-    };
-  }, [launchplansQuery]);
+  const { onlyScheduledLaunchPlans: onlyLaunchPlansWithTriggers, isLoadingOnlyScheduled } =
+    useMemo(() => {
+      return {
+        onlyScheduledLaunchPlans: (launchPlansWithTriggersQuery.data?.entities ||
+          []) as LaunchPlan[],
+        isLoadingOnlyScheduled: launchPlansWithTriggersQuery.isLoading,
+      };
+    }, [launchPlansWithTriggersQuery]);
 
   return (
     <ResponsiveLaunchPlanList
@@ -82,7 +83,7 @@ export const LaunchPlanList: FC<LaunchPlanListProps> = ({
       projectId={project}
       noDivider
       launchPlanEntities={launchPlanEntities}
-      scheduledLaunchPlans={onlyScheduledLaunchPlans}
+      launchPlansWithTriggers={onlyLaunchPlansWithTriggers}
       showScheduled={showScheduled}
       onScheduleFilterChange={setShowScheduled}
       isLoading={loading || isLoadingOnlyScheduled}

@@ -3,10 +3,16 @@ import Skeleton from '@mui/material/Skeleton';
 import styled from '@mui/system/styled';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
-import FormControl, { FormControlProps } from '@mui/material/FormControl';
+import FormControl, { FormControlOwnProps, FormControlProps } from '@mui/material/FormControl';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import DoneIcon from '@mui/icons-material/Done';
+import Chip from '@mui/material/Chip';
+import FormHelperText from '@mui/material/FormHelperText';
+import { type IconButtonProps } from '@mui/material/IconButton';
+import { type PaperProps } from '@mui/material/Paper';
+import { type PopperProps } from '@mui/material/Popper';
 import { useFetchableData } from '../../../hooks/useFetchableData';
 import { useDebouncedValue } from '../../../hooks/useDebouncedValue';
 import { FetchFn } from '../../../hooks/types';
@@ -39,20 +45,32 @@ export interface SearchableSelectorOption<DataType> {
   data: DataType;
   name: string;
   description?: string;
+  isLatest?: boolean;
+  isActive?: boolean;
 }
 
 function generateDefaultFetch<DataType>(
   options: SearchableSelectorOption<DataType>[],
 ): FetchFn<SearchableSelectorOption<DataType>[], string> {
-  return (query: string) =>
-    Promise.resolve(options.filter((option) => option.name.includes(query)));
+  return (query: string) => Promise.resolve(options.filter((option) => option.id.includes(query)));
 }
 
-export interface SearchableSelectorProps<DataType> {
+export interface SearchableSelectorProps<DataType> extends FormControlOwnProps {
   id?: string;
   label: string;
+  disabled?: boolean;
+  disabledLabel?: string;
   options: SearchableSelectorOption<DataType>[];
   selectedItem?: SearchableSelectorOption<DataType>;
+  isLoading?: boolean;
+  showLatestVersionChip?: boolean;
+  formHelperText?: JSX.Element[];
+  componentsProps?: {
+    clearIndicator?: Partial<IconButtonProps>;
+    paper?: PaperProps;
+    popper?: Partial<PopperProps>;
+    popupIndicator?: Partial<IconButtonProps>;
+  };
   fetchSearchResults?: FetchFn<SearchableSelectorOption<DataType>[], string>;
   onSelectionChanged(newSelection: SearchableSelectorOption<DataType>): void;
 }
@@ -64,7 +82,21 @@ export interface SearchableSelectorProps<DataType> {
 export const SearchableSelector = <DataType extends {}>(
   props: SearchableSelectorProps<DataType>,
 ) => {
-  const { label, onSelectionChanged, options, fetchSearchResults, id, selectedItem } = props;
+  const {
+    id,
+    label,
+    disabled,
+    disabledLabel,
+    options,
+    selectedItem,
+    isLoading = false,
+    onSelectionChanged,
+    fetchSearchResults,
+    showLatestVersionChip,
+    formHelperText,
+    componentsProps,
+    ...htmlProps
+  } = props;
   const [rawSearchValue, setRawSearchValue] = useState<string>();
   const debouncedSearchValue = useDebouncedValue(rawSearchValue, searchDebounceTimeMs);
   const commonStyles = useCommonStyles();
@@ -81,21 +113,21 @@ export const SearchableSelector = <DataType extends {}>(
     debouncedSearchValue,
   );
   const isLoadingOptions = useMemo(() => {
-    const isLoading =
-      rawSearchValue !== undefined
+    const isLoadingOptions =
+      isLoading ||
+      (rawSearchValue !== undefined
         ? rawSearchValue.length > minimumQuerySize
           ? // if length is greater than 3, we want to show the loading state
             isLoadingState(searchResults.state)
           : // else show loading
             true
-        : false;
-    return isLoading;
-  }, [searchResults, rawSearchValue]);
+        : false);
+    return isLoadingOptions;
+  }, [searchResults, rawSearchValue, isLoading]);
 
-  const finalOptions = useMemo(
-    () => (rawSearchValue ? searchResults.value : options),
-    [rawSearchValue, searchResults.value, options],
-  );
+  const finalOptions = useMemo(() => {
+    return !rawSearchValue ? options : searchResults.value;
+  }, [rawSearchValue, searchResults.value, options]);
 
   const selectOption = (option?: SearchableSelectorOption<DataType>) => {
     if (!option) {
@@ -107,18 +139,21 @@ export const SearchableSelector = <DataType extends {}>(
     onSelectionChanged(option);
   };
 
+  const finalLabel = disabledLabel && disabled ? disabledLabel : label;
+
   return (
-    <StyledContainer>
+    <StyledContainer data-testid={`searchable-selector-${id}`} {...(htmlProps as any)} disabled>
       <Autocomplete
         freeSolo
         forcePopupIcon
         id={id}
         value={selectedItem}
-        inputValue={rawSearchValue === undefined ? selectedItem?.id : rawSearchValue}
+        inputValue={rawSearchValue === undefined ? selectedItem?.name || '' : rawSearchValue || ''}
         options={finalOptions}
         loading={isLoadingOptions}
         loadingText={<Skeleton variant="text" />}
         noOptionsText="No results found."
+        disabled={disabled}
         onInputChange={(_event, newInputValue, reason) => {
           switch (reason) {
             case 'reset': {
@@ -144,33 +179,83 @@ export const SearchableSelector = <DataType extends {}>(
         }}
         getOptionLabel={(option) => (typeof option === 'string' ? option : option.name)}
         getOptionKey={(option) => (typeof option === 'string' ? option : option.name)}
-        renderInput={(params) => <TextField {...params} label={label} />}
+        renderInput={(params) => <TextField {...params} label={finalLabel} />}
         renderOption={(props, option, _state, _ownerState) => {
+          const isSelected = selectedItem && option.id === selectedItem.id;
           return (
             <Box
               sx={{
-                borderRadius: '8px',
-                mb: (theme) => theme.spacing(0.5),
                 [`&.${autocompleteClasses.option}`]: {
                   px: (theme) => theme.spacing(0.5),
                   py: 0,
+                  '&:hover': {
+                    backgroundColor: '#F4F6FC',
+                  },
                   '&:div': {
                     margin: 0,
                   },
                 },
                 width: '100%',
+                minHeight: '40px',
+                display: 'flex',
+                flexDirection: 'row',
               }}
               component="li"
               {...props}
             >
+              <Box
+                sx={{
+                  width: '40px',
+                  height: '35px',
+                }}
+              >
+                {isSelected ? (
+                  <DoneIcon
+                    sx={{
+                      marginLeft: (theme) => theme.spacing(1.15),
+                    }}
+                  />
+                ) : null}
+              </Box>
               <ListItemText
+                sx={{
+                  paddingLeft: (theme) => theme.spacing(1),
+                  paddingRight: (theme) => theme.spacing(2),
+                }}
                 primary={
-                  <Typography variant="inherit" noWrap>
-                    <span>{option.name}</span>
-                  </Typography>
+                  <>
+                    <Typography
+                      variant="inherit"
+                      noWrap
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                      }}
+                    >
+                      <span>{option.name}</span>
+                      {option.isLatest && showLatestVersionChip ? (
+                        <Chip
+                          sx={{
+                            backgroundColor: (theme) => theme.palette.common.primary.union200,
+                            borderRadius: (theme) => theme.spacing(0.5),
+                            color: (theme) => theme.palette.common.primary.black,
+                            '& .MuiChip-label': {
+                              fontSize: (theme) => theme.spacing(1.5),
+                              padding: (theme) => theme.spacing(0.75, 0.75),
+                            },
+                          }}
+                          variant="filled"
+                          size="small"
+                          label="Latest"
+                        />
+                      ) : null}
+                    </Typography>
+                  </>
                 }
                 secondary={
-                  <Typography variant="inherit" noWrap>
+                  <Typography variant="inherit">
                     <span className={commonStyles.hintText}>{option.description}</span>
                   </Typography>
                 }
@@ -181,7 +266,7 @@ export const SearchableSelector = <DataType extends {}>(
         ListboxProps={{
           sx: {
             width: '100%',
-            px: (theme) => theme.spacing(0.5),
+            maxWidth: '100%',
           },
         }}
         componentsProps={{
@@ -189,10 +274,17 @@ export const SearchableSelector = <DataType extends {}>(
             sx: {
               width: 'fit-content',
               minWidth: 250,
+              maxWidth: '100%',
             },
           },
+          ...(componentsProps || []),
         }}
       />
+      {formHelperText?.map((text, index) => (
+        <FormHelperText sx={{ marginTop: 2 }}>{text}</FormHelperText>
+      ))}
+
+      <FormHelperText />
     </StyledContainer>
   );
 };
