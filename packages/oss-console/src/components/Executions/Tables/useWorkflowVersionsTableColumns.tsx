@@ -1,7 +1,6 @@
 import Typography from '@mui/material/Typography';
 import moment from 'moment';
 import React, { useMemo } from 'react';
-import styled from '@mui/system/styled';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
