@@ -4,8 +4,16 @@ import { FilterOperation, FilterOperationName } from '@clients/common/types/admi
 interface ScheduleFilterState {
   showScheduled: boolean;
   setShowScheduled: (newValue: boolean) => void;
-  getFilter: () => FilterOperation;
+  getFilters: () => FilterOperation[];
 }
+
+export const getScheduleFilter = (showScheduled: boolean): FilterOperation => {
+  return {
+    key: 'schedule_type',
+    operation: FilterOperationName.NE,
+    value: showScheduled ? ['NONE'] : [],
+  };
+};
 
 /**
  *  Allows to filter by Archive state
@@ -13,17 +21,13 @@ interface ScheduleFilterState {
 export function useLaunchPlanScheduledState(): ScheduleFilterState {
   const [showScheduled, setShowScheduled] = useState(false);
 
-  const getFilter = (): FilterOperation => {
-    return {
-      key: 'schedule_type',
-      operation: FilterOperationName.NE,
-      value: showScheduled ? ['NONE'] : [],
-    };
+  const getFilters = (): FilterOperation[] => {
+    return [getScheduleFilter(showScheduled)];
   };
 
   return {
     showScheduled,
     setShowScheduled,
-    getFilter,
+    getFilters,
   };
 }

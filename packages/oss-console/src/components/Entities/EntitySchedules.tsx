@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
@@ -11,30 +11,23 @@ import styled from '@mui/system/styled';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import { SortDirection } from '@clients/common/types/adminEntityTypes';
-import { useQueryClient } from 'react-query';
-import { makeListDescriptionEntitiesQuery } from '@clients/oss-console/queries/descriptionEntitiesQuery';
-import { executionSortFields } from '../../models/Execution/constants';
-import { makeListLaunchPlansQuery } from '../../queries/launchPlanQueries';
+import keys from 'lodash/keys';
+import { FilterOperationName } from '@clients/common/types/adminEntityTypes';
+import classnames from 'classnames';
 import { LocalCacheItem, useLocalCache } from '../../basics/LocalCache';
-import {
-  getScheduleFrequencyString,
-  getScheduleOffsetString,
-  formatDateUTC,
-} from '../../common/formatters';
-import { timestampToDate } from '../../common/utils';
 import { useCommonStyles } from '../common/styles';
-import { ResourceIdentifier, ResourceType } from '../../models/Common/types';
+import { FixedRateUnit, ResourceIdentifier } from '../../models/Common/types';
 import { LaunchPlan } from '../../models/Launch/types';
 import { entityStrings } from './constants';
 import t, { patternKey } from './strings';
-
-import { LaunchPlanLastNExecutions } from '../LaunchPlan/components/LaunchPlanLastNExecutions';
-import { LaunchPlanNextPotentialExecution } from '../LaunchPlan/components/LaunchPlanNextPotentialExecution';
-import { ScheduleDisplayValue, ScheduleStatus } from '../LaunchPlan/components/LaunchPlanCells';
-import { useConditionalQuery } from '../hooks/useConditionalQuery';
 import { WaitForQuery } from '../common/WaitForQuery';
-import { executionFilterGenerator } from './generators';
+import { useLatestActiveLaunchPlan } from '../LaunchPlan/hooks/useLatestActiveLaunchPlan';
+import {
+  LaunchPlanLastRun,
+  LaunchPlanName,
+  LaunchPlanNextPotentialExecution,
+  ScheduleFrequency,
+} from './EntitySchedulesCells';
 
 const EntitySchedulesContainer = styled('div')(({ theme }) => ({
   '.header': {
@@ -54,131 +47,119 @@ const EntitySchedulesContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export const getScheduleStringFromLaunchPlan = (launchPlan: LaunchPlan) => {
-  const { schedule } = launchPlan.spec.entityMetadata;
-  const frequencyString = getScheduleFrequencyString(schedule);
-  const offsetString = getScheduleOffsetString(schedule);
-  const scheduleString = offsetString
-    ? `${frequencyString} (offset by ${offsetString})`
-    : frequencyString;
+export const getRawScheduleStringFromLaunchPlan = (launchPlan?: LaunchPlan) => {
+  const { schedule } = launchPlan?.spec?.entityMetadata || {};
+  if (schedule?.rate) {
+    const unit = schedule?.rate.unit;
+    const unitString =
+      keys(FixedRateUnit).find((key) => (FixedRateUnit[key as any] as any) === unit) || '';
 
-  return scheduleString;
+    return `${schedule?.rate.value}, ${
+      unitString.charAt(0).toUpperCase() + unitString.slice(1).toLowerCase()
+    }`;
+  }
+  if (schedule?.cronSchedule) {
+    return schedule.cronSchedule.schedule;
+  }
+
+  return '';
 };
 
-const RenderSchedules: React.FC<{
+const EntitySchedulesTable: React.FC<{
+  id: ResourceIdentifier;
   launchPlans: LaunchPlan[];
-  refetch: () => void;
-}> = ({ launchPlans, refetch }) => {
-  return (
+}> = ({ id, launchPlans }) => {
+  const commonStyles = useCommonStyles();
+  const cellClass = classnames('cell', 'header');
+
+  return launchPlans.length > 0 ? (
     <Table size="small" sx={{ margin: '10px 0' }}>
       <TableHead>
         <TableRow>
-          <TableCell>
-            <Typography variant="h3">{t(patternKey('launchPlan', 'status'))}</Typography>
+          <TableCell
+            classes={{
+              root: cellClass,
+            }}
+          >
+            {t(patternKey('launchPlan', 'scheduleFrequency'))}
           </TableCell>
-          <TableCell>
-            <Typography variant="h3">{t(patternKey('launchPlan', 'schedule'))}</Typography>
+          <TableCell
+            classes={{
+              root: cellClass,
+            }}
+          >
+            {t(patternKey('launchPlan', 'name'))}
           </TableCell>
-          <TableCell>
-            <Typography variant="h3">{t(patternKey('launchPlan', 'lastExecution'))}</Typography>
+          <TableCell
+            classes={{
+              root: cellClass,
+            }}
+          >
+            {t(patternKey('launchPlan', 'lastExecution'))}
           </TableCell>
-          <TableCell>
-            <Typography variant="h3">
-              {t(patternKey('launchPlan', 'nextPotentialExecution'))}
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h3">{t(patternKey('launchPlan', 'createdAt'))}</Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h3">{t(patternKey('launchPlan', 'scheduledVersion'))}</Typography>
+          <TableCell
+            classes={{
+              root: cellClass,
+            }}
+          >
+            {t(patternKey('launchPlan', 'nextPotentialExecution'))}
           </TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {launchPlans.map((launchPlan) => {
-          const createdAt = launchPlan?.closure?.createdAt!;
-          const createdAtTime = formatDateUTC(timestampToDate(createdAt));
-
           return (
             <TableRow key={launchPlan.id.name}>
               <TableCell className="rowCell">
-                <ScheduleStatus launchPlan={launchPlan} refetch={refetch} />
+                <ScheduleFrequency launchPlan={launchPlan} />
               </TableCell>
               <TableCell className="rowCell">
-                <ScheduleDisplayValue launchPlan={launchPlan} />
+                <LaunchPlanName launchPlan={launchPlan} />
               </TableCell>
               <TableCell className="rowCell">
-                <LaunchPlanLastNExecutions launchPlan={launchPlan} showLastExecutionOnly inView />
+                <LaunchPlanLastRun launchPlan={launchPlan} />
               </TableCell>
               <TableCell className="rowCell">
                 <LaunchPlanNextPotentialExecution launchPlan={launchPlan} />
               </TableCell>
-              <TableCell className="rowCell">{createdAtTime}</TableCell>
-              <TableCell className="rowCell">{launchPlan.id.version}</TableCell>
             </TableRow>
           );
         })}
       </TableBody>
     </Table>
+  ) : (
+    <Typography variant="body2" className={commonStyles.hintText}>
+      {t(patternKey('noSchedules', entityStrings[id.resourceType]))}
+    </Typography>
   );
 };
 
-const sort = {
-  key: executionSortFields.createdAt,
-  direction: SortDirection.DESCENDING,
-};
 export const EntitySchedules: React.FC<{
   id: ResourceIdentifier;
 }> = ({ id }) => {
-  const queryClient = useQueryClient();
-  const commonStyles = useCommonStyles();
   const [showTable, setShowTable] = useLocalCache(LocalCacheItem.ShowLaunchplanSchedules);
 
-  const { domain, project } = id || {};
-
-  // capture if we are on a launch plan details page page
-  const isLaunchPlan = id.resourceType === ResourceType.LAUNCH_PLAN;
-
-  // if not on a launch plan details page, get the latest version of the entity(workflow)
-  const workflowEntityDescriptionQuery = useConditionalQuery(
-    {
-      enabled: !isLaunchPlan,
-      ...makeListDescriptionEntitiesQuery(queryClient, { ...id, version: '' }, { sort, limit: 1 }),
-    },
-    (prev) => !prev && !!showTable,
-  );
-
-  // get the latest version of the workflow
-  const latestVersionId = workflowEntityDescriptionQuery.data?.entities?.[0]?.id;
-
-  // get the filters for the latestVersionId
-  const filter = latestVersionId
-    ? executionFilterGenerator[latestVersionId.resourceType!](
-        latestVersionId as any,
-        latestVersionId?.version,
-      )
-    : undefined;
-
-  // if the ID is a launchPlan, use the original ID, otherwise use the workflow latest version ID
-  const launchPlanRequestId = isLaunchPlan ? id : latestVersionId && { domain, project };
-  const launchPlanQuery = useConditionalQuery(
-    {
-      enabled: !!launchPlanRequestId,
-      ...makeListLaunchPlansQuery(queryClient, launchPlanRequestId!, {
-        sort,
-        limit: 1,
-        ...(isLaunchPlan ? {} : { filter }),
-      }),
-    },
-    (prev) => !prev && !!showTable,
-  );
+  const latestActiveSchedulesQuery = useLatestActiveLaunchPlan({
+    // Don't pass the wf name here, it's already included in the additionalFilters
+    id: {
+      project: id.project,
+      domain: id.domain,
+    } as any,
+    limit: 5,
+    // add the workflow name to the filter
+    additionalFilters: [
+      {
+        key: 'workflow.name',
+        operation: FilterOperationName.EQ,
+        value: id.name,
+      },
+    ],
+  });
 
   return (
-    <WaitForQuery query={launchPlanQuery}>
-      {(data) => {
-        const launchPlans = data.entities;
-        const isSchedulePresent = launchPlans?.[0]?.spec?.entityMetadata?.schedule != null;
+    <WaitForQuery query={latestActiveSchedulesQuery}>
+      {({ entities: launchPlans }) => {
+        const isSchedulePresent = !!launchPlans?.length;
         return isSchedulePresent ? (
           <EntitySchedulesContainer>
             <Grid container item alignSelf="center" justifyContent="space-between">
@@ -207,13 +188,7 @@ export const EntitySchedules: React.FC<{
             </Grid>
             {showTable ? (
               <div className="schedulesContainer">
-                {launchPlans.length > 0 ? (
-                  <RenderSchedules launchPlans={launchPlans} refetch={launchPlanQuery.refetch} />
-                ) : (
-                  <Typography variant="body2" className={commonStyles.hintText}>
-                    {t(patternKey('noSchedules', entityStrings[id.resourceType]))}
-                  </Typography>
-                )}
+                <EntitySchedulesTable launchPlans={launchPlans} id={id} />
               </div>
             ) : (
               <Divider />
