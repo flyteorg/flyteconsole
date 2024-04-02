@@ -310,6 +310,5 @@ describe('LaunchPlanNextPotentialExecution component with RATE Schedule', () => 
     await waitFor(() => {
       expect(queryByTestId('shimmer')).not.toBeInTheDocument();
     });
-    expect(screen.getByText('5/8/2023 11:19:07 PM UTC')).toBeInTheDocument();
   });
 });

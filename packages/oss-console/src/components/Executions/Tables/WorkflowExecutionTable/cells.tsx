@@ -13,6 +13,7 @@ import ArchiveLogo from '@clients/ui-atoms/ArchiveLogo';
 import { HoverTooltip } from '@clients/primitives/HoverTooltip';
 import Shimmer from '@clients/primitives/Shimmer';
 import styled from '@mui/system/styled';
+import { getScheduleStringFromLaunchPlan } from '../../../Entities/getScheduleStringFromLaunchPlan';
 import {
   formatDateLocalTimezone,
   formatDateUTC,
@@ -21,10 +22,9 @@ import {
 } from '../../../../common/formatters';
 import { timestampToDate } from '../../../../common/utils';
 import { ExecutionStatusBadge } from '../../ExecutionStatusBadge';
-import { Execution } from '../../../../models/Execution/types';
+import { Execution, ExecutionMetadata } from '../../../../models/Execution/types';
 import { ExecutionState, WorkflowExecutionPhase } from '../../../../models/Execution/enums';
 import { Routes } from '../../../../routes/routes';
-import { getScheduleStringFromLaunchPlan } from '../../../Entities/EntitySchedules';
 import { WorkflowExecutionsTableState } from '../types';
 import { getWorkflowExecutionTimingMS, isExecutionArchived } from '../../utils';
 import t from './strings';
@@ -199,7 +199,8 @@ export function getWorkflowTaskCell(execution: Execution): React.ReactNode {
 }
 
 export function getScheduleCell(execution: Execution): React.ReactNode {
-  const isEnabled = !!execution.spec.metadata.scheduledAt;
+  const meta: ExecutionMetadata = execution.spec.metadata;
+  const isEnabled = !!meta.scheduledAt;
   const queryClient = useQueryClient();
   const lpQuery = useConditionalQuery(
     { ...makeLaunchPlanQuery(queryClient, execution.spec.launchPlan), enabled: isEnabled },
@@ -374,11 +375,12 @@ export function ApprovalDoubleCell(props: ApprovalDoubleCellProps) {
           color="primary"
           variant="contained"
           disableElevation
-          onClick={() =>
+          onClick={(event) => {
+            event.stopPropagation();
             onConfirmClick(
               isArchived ? ExecutionState.EXECUTION_ACTIVE : ExecutionState.EXECUTION_ARCHIVED,
-            )
-          }
+            );
+          }}
           sx={{
             borderTopRightRadius: '0px',
             borderBottomRightRadius: '0px',

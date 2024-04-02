@@ -1,20 +1,18 @@
 import React, { PropsWithChildren, forwardRef, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
 import Shimmer from '@clients/primitives/Shimmer';
-import LaunchPlansLogo from '@clients/ui-atoms/LaunchPlansLogo';
 import { useQueryClient } from 'react-query';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom';
 import { makeListLaunchPlansQuery } from '../../../queries/launchPlanQueries';
 import { CREATED_AT_DESCENDING_SORT } from '../../../models/Launch/constants';
 import { SearchResult } from '../../common/SearchableList';
 import { Routes } from '../../../routes/routes';
 import { LaunchPlanLastNExecutions } from '../components/LaunchPlanLastNExecutions';
-import { ScheduleDisplayValue, ScheduleStatus, WorkflowName } from '../components/LaunchPlanCells';
-import { createHighlightedEntitySearchResult } from '../../common/useSearchableListState';
+import { LaunchPlanName, ScheduleStatusSummary } from '../components/LaunchPlanCells';
 import { NamedEntity } from '../../../models/Common/types';
 import { useConditionalQuery } from '../../hooks/useConditionalQuery';
 
@@ -38,51 +36,16 @@ const CardRow: React.FC<
   );
 };
 
-interface CardButtonProps extends Pick<SearchResult<NamedEntity>, 'value' | 'result' | 'content'> {
-  inView: boolean;
-}
-
-const CardButton: React.FC<CardButtonProps> = ({ value, result, content, inView }) => {
-  const { id } = value;
-
-  const launchPlanDetailsUrl = Routes.LaunchPlanDetails.makeUrl(id.project, id.domain, id.name);
-  const finalContent = useMemo(() => {
-    return result && inView ? createHighlightedEntitySearchResult(result) : content;
-  }, [result, content, inView]);
-
-  return (
-    <ListItemButton
-      sx={{ marginLeft: '-16px', cursor: 'pointer' }}
-      alignItems="flex-start"
-      href={launchPlanDetailsUrl}
-      LinkComponent={forwardRef((props, ref) => {
-        return <Link to={props?.href} ref={ref} {...props} />;
-      })}
-    >
-      <Grid container sx={{ paddingBottom: (theme) => theme.spacing(1), flexWrap: 'nowrap' }}>
-        <Grid item>
-          <LaunchPlansLogo />
-        </Grid>
-        <Grid item>
-          <Typography
-            fontWeight={600}
-            sx={{
-              wordBreak: 'break-all',
-            }}
-          >
-            <span>{finalContent}</span>
-          </Typography>
-        </Grid>
-      </Grid>
-    </ListItemButton>
-  );
-};
-
 interface LaunchPlanListCardProps extends SearchResult<NamedEntity> {}
 
 const LaunchPlanListCard: React.FC<LaunchPlanListCardProps> = ({ value, result, content }) => {
   const queryClient = useQueryClient();
   const [inViewRef, inView] = useInView();
+
+  if (!value) {
+    return null;
+  }
+
   const { id } = value;
 
   const launchPlanWorkflowQuery = useConditionalQuery(
@@ -100,45 +63,49 @@ const LaunchPlanListCard: React.FC<LaunchPlanListCardProps> = ({ value, result, 
     };
   }, [launchPlanWorkflowQuery]);
 
+  const launchPlanDetailsUrl = Routes.LaunchPlanDetails.makeUrl(id.project, id.domain, id.name);
   return (
-    <Grid
-      container
-      ref={inViewRef}
-      sx={{
-        minHeight: '400',
-        borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-        margin: (theme) => theme.spacing(0, 2, 2, 2),
-        padding: (theme) => `${theme.spacing(2)} !important`,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'left',
-      }}
-    >
-      <CardButton value={value} result={result} content={content} inView={inView} />
-      <CardRow title="Underlying Workflow" isFetched={isFetched}>
-        <WorkflowName isFetched={isFetched} launchPlan={launchPlan} />
-      </CardRow>
-      <CardRow title="Schedule Status" isFetched={isFetched}>
-        <ScheduleStatus launchPlan={launchPlan} refetch={launchPlanWorkflowQuery.refetch} />
-      </CardRow>
-      <CardRow title="Schedule" isFetched={isFetched}>
-        <ScheduleDisplayValue launchPlan={launchPlan} />
-      </CardRow>
-      <CardRow title="Last Execution" isFetched={launchPlan !== undefined}>
-        <Box sx={{ paddingLeft: '16px' }}>
-          <LaunchPlanLastNExecutions
-            launchPlan={launchPlan}
-            showLastExecutionOnly
-            inView={inView}
-          />
-        </Box>
-      </CardRow>
-      <CardRow title="Last 10 Executions" isFetched={launchPlan !== undefined}>
-        <Box sx={{ paddingLeft: '16px' }}>
-          <LaunchPlanLastNExecutions launchPlan={launchPlan} inView={inView} />
-        </Box>
-      </CardRow>
-    </Grid>
+    <div ref={inViewRef} data-testid="launch-plan-card">
+      <ListItemButton
+        data-testid="launch-plan-card-link"
+        href={launchPlanDetailsUrl}
+        LinkComponent={forwardRef((props, ref) => {
+          return <Link to={props?.href} ref={ref} {...props} />;
+        })}
+        alignItems="flex-start"
+        sx={{ marginLeft: '-16px', cursor: 'pointer', padding: (theme) => theme.spacing(0, 2) }}
+      >
+        <Grid
+          container
+          sx={{
+            minHeight: '400',
+            borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+            margin: (theme) => theme.spacing(0, 2, 2, 2),
+            padding: (theme) => `${theme.spacing(2)} !important`,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'left',
+          }}
+        >
+          <LaunchPlanName inView={inView} content={content} value={value} result={result} />
+
+          <CardRow title="Trigger" isFetched={isFetched}>
+            <ScheduleStatusSummary id={id} inView={inView} />
+          </CardRow>
+
+          <CardRow title="Last Execution" isFetched={launchPlan !== undefined}>
+            <Box data-testid="launch-plan-last-execution">
+              <LaunchPlanLastNExecutions id={id} showLastExecutionOnly inView={inView} />
+            </Box>
+          </CardRow>
+          <CardRow title="Last 10 Executions" isFetched={launchPlan !== undefined}>
+            <Box data-testid="launch-plan-last-10-executions">
+              <LaunchPlanLastNExecutions id={id} inView={inView} />
+            </Box>
+          </CardRow>
+        </Grid>
+      </ListItemButton>
+    </div>
   );
 };
 

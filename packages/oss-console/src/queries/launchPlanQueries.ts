@@ -11,6 +11,11 @@ import {
 } from '../models/Common/types';
 import { ListNamedEntitiesInput, listNamedEntities } from '../models/Common/api';
 
+export const castLaunchPlanIdAsQueryKey = (id: Partial<NamedEntityIdentifier>) => {
+  const { domain, project, name } = id || {};
+  return !!domain && !!project && { domain, project, name };
+};
+
 export function makeLaunchPlanQuery(
   queryClient: QueryClient,
   id: LaunchPlanId,
@@ -36,9 +41,7 @@ export function makeListLaunchPlansQuery(
   id: Partial<NamedEntityIdentifier>,
   config?: RequestConfig,
 ): QueryInput<PaginatedEntityResponse<LaunchPlan>> {
-  const { domain, project, name } = id || {};
-  // needs at least project and domain to be valid
-  const castedId = !!domain && !!project && { domain, project, name };
+  const castedId = castLaunchPlanIdAsQueryKey(id);
   return {
     enabled: !!castedId,
     queryKey: [QueryType.ListLaunchPlans, castedId, config],
@@ -55,6 +58,13 @@ export function makeListLaunchPlansQuery(
   };
 }
 
+export function fetchLaunchPlansList(
+  queryClient: QueryClient,
+  id: Partial<NamedEntityIdentifier>,
+  config?: RequestConfig,
+) {
+  return queryClient.fetchQuery(makeListLaunchPlansQuery(queryClient, id, config));
+}
 /**
  *
  * @param queryClient The query client.

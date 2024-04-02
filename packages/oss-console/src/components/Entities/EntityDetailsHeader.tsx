@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import styled from '@mui/system/styled';
 import isNil from 'lodash/isNil';
+import Grid from '@mui/material/Grid';
 import { Identifier, ResourceIdentifier, ResourceType } from '../../models/Common/types';
 import { LaunchForm } from '../Launch/LaunchForm/LaunchForm';
 import { useEscapeKey } from '../hooks/useKeyListener';
@@ -10,6 +11,7 @@ import { LaunchTaskFormProps, LaunchWorkflowFormProps } from '../Launch/LaunchFo
 import t, { patternKey } from './strings';
 import { entityStrings } from './constants';
 import BreadcrumbTitleActions from '../Breadcrumbs/components/BreadcrumbTitleActions';
+import { LaunchPlanDetailsHeader } from '../LaunchPlan/components/LaunchPlanDetailsHeader';
 
 const EntityDetailsHeaderContainer = styled('div')(({ theme }) => ({
   '.headerContainer': {
@@ -88,24 +90,33 @@ export const EntityDetailsHeader: React.FC<EntityDetailsHeaderProps> = ({
     onCancelLaunch();
   });
 
+  const showLaunchPlanDetails = id.resourceType === ResourceType.LAUNCH_PLAN;
+
   return (
     <EntityDetailsHeaderContainer>
       <div>
         <BreadcrumbTitleActions>
-          {launchable ? (
-            <Button
-              color="primary"
-              id="launch-workflow"
-              onClick={() => {
-                setShowLaunchForm(true);
-              }}
-              variant="contained"
-            >
-              {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
-            </Button>
-          ) : (
-            <></>
-          )}
+          <Grid
+            container
+            direction="row"
+            sx={showLaunchPlanDetails ? { maxWidth: '654px', width: '100%' } : {}}
+          >
+            {launchable ? (
+              <Button
+                color="primary"
+                id="launch-workflow"
+                onClick={() => {
+                  setShowLaunchForm(true);
+                }}
+                variant="contained"
+              >
+                {t(patternKey('launchStrings', entityStrings[id.resourceType]))}
+              </Button>
+            ) : (
+              <></>
+            )}
+            {showLaunchPlanDetails ? <LaunchPlanDetailsHeader id={id} /> : null}
+          </Grid>
         </BreadcrumbTitleActions>
       </div>
       {launchable ? (
