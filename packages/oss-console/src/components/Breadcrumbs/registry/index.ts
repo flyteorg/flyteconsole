@@ -106,7 +106,7 @@ export class BreadcrumbRegistry {
 
   static makeUrlSegments(location: Location, projectId = '', domainId = '') {
     const pathName = location.pathname;
-    const basePath = process.env.BASE_PATH || '/console';
+    const basePath = process.env.BASE_URL || '/console';
 
     // Remove first occurence of base path
     const pathNameWithoutBasePath = pathName.replace(basePath, '');
