@@ -6,7 +6,7 @@ import { DISPLAY_NAME_END, DISPLAY_NAME_START } from '../flytegraph/ReactFlow/ut
 import { createDebugLogger } from '../../common/log';
 import { dTypes, dEdge, dNode } from '../../models/Graph/types';
 import { startNodeId, endNodeId } from '../../models/Node/constants';
-import { CompiledNode, ConnectionSet, TaskNode } from '../../models/Node/types';
+import { ArrayNode, CompiledNode, ConnectionSet, TaskNode } from '../../models/Node/types';
 import { CompiledTask } from '../../models/Task/types';
 import { CompiledWorkflow, CompiledWorkflowClosure } from '../../models/Workflow/types';
 import { isStartOrEndNode } from '../../models/Node/utils';
@@ -81,6 +81,7 @@ const createDNode = ({
     gateNode: compiledNode.gateNode,
     level: parentDNode?.level !== undefined ? parentDNode.level + 1 : 0,
     ...nodeMetadata,
+    ...(compiledNode.arrayNode ? { arrayNode: compiledNode.arrayNode } : {}),
     ...(compiledNode.workflowNode ? { workflowNode: compiledNode.workflowNode } : {}),
     ...(compiledNode.gateNode ? { gateNode: compiledNode.gateNode } : {}),
     ...(compiledNode.branchNode ? { taskNode: compiledNode.taskNode } : {}),
@@ -247,6 +248,21 @@ const parseNode = ({
         compiledWorkflowClosure,
       });
     }
+  } else if (node?.arrayNode) {
+    const arrayNode = (node.arrayNode as ArrayNode).node;
+    const taskNode = arrayNode.taskNode as TaskNode;
+    const taskType: CompiledTask = getTaskTypeFromCompiledNode(
+      taskNode,
+      compiledWorkflowClosure.tasks,
+    ) as CompiledTask;
+    dNode = createDNode({
+      compiledNode: node,
+      parentDNode: root,
+      taskTemplate: taskType,
+      nodeMetadataMap,
+      staticExecutionIdsMap,
+      compiledWorkflowClosure,
+    });
   } else if (node.taskNode) {
     const taskNode = node.taskNode as TaskNode;
     const taskType: CompiledTask = getTaskTypeFromCompiledNode(
