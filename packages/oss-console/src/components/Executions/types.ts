@@ -1,8 +1,6 @@
 import {
   NodeExecution,
-  NodeExecutionClosure,
   NodeExecutionMetadata,
-  WorkflowNodeMetadata,
 } from '../../models/Execution/types';
 import { TaskTemplate } from '../../models/Task/types';
 
@@ -15,6 +13,7 @@ export interface ExecutionPhaseConstants {
 }
 
 export enum NodeExecutionDisplayType {
+  ArrayNode = 'Array Node',
   MapTask = 'Map Task',
   BatchHiveTask = 'Hive Batch Task',
   BranchNode = 'Branch Node',
