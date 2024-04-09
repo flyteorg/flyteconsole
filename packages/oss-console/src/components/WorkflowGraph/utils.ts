@@ -100,7 +100,7 @@ export const getSubWorkflowFromId = (
 };
 
 export const getTaskTypeFromCompiledNode = (taskNode: TaskNode, tasks: CompiledTask[]) => {
-  if (!taskNode.referenceId) {
+  if (!taskNode?.referenceId) {
     return undefined;
   }
   for (let i = 0; i < tasks.length; i++) {
