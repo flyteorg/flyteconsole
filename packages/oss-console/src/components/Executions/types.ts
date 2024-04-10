@@ -1,7 +1,4 @@
-import {
-  NodeExecution,
-  NodeExecutionMetadata,
-} from '../../models/Execution/types';
+import { NodeExecution, NodeExecutionMetadata } from '../../models/Execution/types';
 import { TaskTemplate } from '../../models/Task/types';
 
 export interface ExecutionPhaseConstants {

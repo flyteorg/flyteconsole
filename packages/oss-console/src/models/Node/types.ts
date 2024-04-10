@@ -6,7 +6,6 @@ export type WorkflowNode = Core.IWorkflowNode;
 /** A graph node indicating a branching decision. */
 export type BranchNode = Core.IBranchNode;
 
-
 /** A graph node indicating a Array Node. */
 export interface ArrayNode extends Core.IArrayNode {
   node: CompiledNode;
