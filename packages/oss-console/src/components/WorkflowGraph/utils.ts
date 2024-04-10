@@ -100,6 +100,9 @@ export const getSubWorkflowFromId = (
 };
 
 export const getTaskTypeFromCompiledNode = (taskNode: TaskNode, tasks: CompiledTask[]) => {
+  if (!taskNode?.referenceId) {
+    return undefined;
+  }
   for (let i = 0; i < tasks.length; i++) {
     const compiledTask: CompiledTask = tasks[i];
     const taskTemplate: TaskTemplate = compiledTask.template;
@@ -108,7 +111,7 @@ export const getTaskTypeFromCompiledNode = (taskNode: TaskNode, tasks: CompiledT
       return compiledTask;
     }
   }
-  return null;
+  return undefined;
 };
 
 export const getNodeNameFromDag = (dagData: dNode, nodeId: string) => {

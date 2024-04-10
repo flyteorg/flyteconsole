@@ -7,6 +7,7 @@ import { Identifier } from '../../../../models/Common/types';
 import { CompiledTask } from '../../../../models/Task/types';
 import { dNode } from '../../../../models/Graph/types';
 import { isEndNode, isStartNode } from '../../../../models/Node/utils';
+import { getTaskTypeFromCompiledNode } from '../../../WorkflowGraph/utils';
 
 interface NodeExecutionInfo extends NodeExecutionDetails {
   scopedId?: string;
@@ -104,6 +105,16 @@ export const getNodeDetails = (
     };
   }
 
+  if (compiledNode?.arrayNode) {
+    returnVal = {
+      ...returnVal,
+      displayType:
+        returnVal.displayType !== NodeExecutionDisplayType.Unknown
+          ? returnVal.displayType
+          : NodeExecutionDisplayType.ArrayNode,
+    };
+  }
+
   return returnVal;
 };
 
@@ -118,6 +129,13 @@ export const getNodeDetailsFromTask = (node: dNode, task?: CompiledTask): NodeEx
     taskTemplate: task?.template,
     displayType: taskType ?? NodeExecutionDisplayType.Unknown,
   };
+
+  if (node.value?.arrayNode) {
+    returnVal = {
+      ...returnVal,
+      displayType: NodeExecutionDisplayType.ArrayNode,
+    };
+  }
 
   if (node.value?.workflowNode) {
     const { workflowNode } = node.value;
@@ -160,7 +178,7 @@ export const getNodeExecutionDetails = (
   node: dNode,
   tasks: CompiledTask[] = [],
 ): NodeExecutionInfo => {
-  const templateName = node?.value?.taskNode?.referenceId?.name ?? node.name;
-  const task = tasks.find((t) => t.template.id.name === templateName);
+  const taskNode = node?.value?.arrayNode?.node?.taskNode || node?.value?.taskNode;
+  const task = getTaskTypeFromCompiledNode(taskNode!, tasks);
   return getNodeDetailsFromTask(node, task);
 };

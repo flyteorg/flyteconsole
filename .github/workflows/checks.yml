@@ -37,10 +37,11 @@ jobs:
         run: yarn install  --immutable
       - name: Run tests and generate coverage
         run: make test_unit_codecov
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v3
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: .coverage/coverage-final.json
-          fail_ci_if_error: true
+          fail_ci_if_error: false
 
   lint_project:
     runs-on: ubuntu-latest
@@ -68,13 +69,7 @@ jobs:
   release:
     name: Generate Release
     if: ${{ (github.event_name != 'pull_request') && (needs.extract_branch.outputs.branch == 'master') }}
-    needs:
-      [
-        unit_tests_with_coverage,
-        lint_project,
-        build_docker_image,
-        extract_branch,
-      ]
+    needs: [unit_tests_with_coverage, lint_project, build_docker_image, extract_branch]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

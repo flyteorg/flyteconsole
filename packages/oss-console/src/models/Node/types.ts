@@ -6,6 +6,14 @@ export type WorkflowNode = Core.IWorkflowNode;
 /** A graph node indicating a branching decision. */
 export type BranchNode = Core.IBranchNode;
 
+/** A graph node indicating a Array Node. */
+export interface ArrayNode extends Core.IArrayNode {
+  node: CompiledNode;
+  parallelism?: number;
+  minSuccesses?: number;
+  minSuccessRatio?: number;
+}
+
 /** A graph node indicating a task to be executed. This is the most common
  * node type in a Flyte graph.
  */
@@ -30,6 +38,7 @@ export interface CompiledNode extends Core.INode {
   inputs?: Binding[];
   metadata?: CompiledNodeMetadata;
   outputAliases?: Alias[];
+  arrayNode?: ArrayNode;
   taskNode?: TaskNode;
   upstreamNodeIds?: string[];
   workflowNode?: WorkflowNode;
