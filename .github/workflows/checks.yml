@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: .coverage/coverage-final.json
-          fail_ci_if_error: true
+          fail_ci_if_error: false
 
   lint_project:
     runs-on: ubuntu-latest
