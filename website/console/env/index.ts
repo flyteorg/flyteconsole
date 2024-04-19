@@ -31,13 +31,13 @@ const CERTIFICATE_PATH = '../../scripts/certificate';
 const ADMIN_API_USE_SSL = process.env.ADMIN_API_USE_SSL || 'http';
 
 // Admin domain used as base for window URL and API urls
-const ADMIN_API_URL = process.env.ADMIN_API_URL?.replace(/https?:\/\//, '') || 'localhost:30080';
+const ADMIN_API_URL = process.env.ADMIN_API_URL?.replace(/https?:\/\//, '') || '';
 
 // If this is unset, API calls will default to the same host used to serve this app
 const ADMIN_API = ADMIN_API_URL ? `//${ADMIN_API_URL}` : '';
 
 // Webpage for local development
-const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || 'localhost';
+const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || `localhost.${ADMIN_API_URL}`;
 
 /**
  * @depricated use BASE_HREF
