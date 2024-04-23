@@ -14,6 +14,8 @@ import styled from '@mui/system/styled';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { executionSortFields } from '../../models/Execution/constants';
+import { SortDirection } from '@clients/common/types/adminEntityTypes';
 import { FilterOperationName } from '@clients/common/types/adminEntityTypes';
 import { useLaunchPlans } from '../hooks/useLaunchPlans';
 import { formatType, getInputDefintionForLiteralType } from '../Launch/LaunchForm/utils';
@@ -69,6 +71,11 @@ interface Input {
 export const EntityInputs: React.FC<{
   id: ResourceIdentifier;
 }> = ({ id }) => {
+  const sort = {
+    key: executionSortFields.createdAt,
+    direction: SortDirection.DESCENDING,
+  };
+
   const launchPlanState = useLaunchPlans(
     { project: id.project, domain: id.domain },
     {
@@ -80,6 +87,7 @@ export const EntityInputs: React.FC<{
           value: id.name,
         },
       ],
+      sort,
     },
   );
 
