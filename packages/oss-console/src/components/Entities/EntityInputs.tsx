@@ -14,13 +14,13 @@ import styled from '@mui/system/styled';
 import CheckIcon from '@mui/icons-material/Check';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { FilterOperationName } from '@clients/common/types/adminEntityTypes';
-import { useLaunchPlans } from '../hooks/useLaunchPlans';
+import keys from 'lodash/keys';
 import { formatType, getInputDefintionForLiteralType } from '../Launch/LaunchForm/utils';
 import { ResourceIdentifier } from '../../models/Common/types';
-import { LaunchPlanClosure, LaunchPlanSpec } from '../../models/Launch/types';
+import { LaunchPlan } from '../../models/Launch/types';
 import t from './strings';
 import { transformLiterals } from '../Literals/helpers';
+import { useLatestLaunchPlans } from '../LaunchPlan/hooks/useLatestLaunchPlans';
 
 const coerceDefaultValue = (value: string | object | undefined): string | undefined => {
   if (typeof value === 'object') {
@@ -33,9 +33,6 @@ const EntityInputsContainer = styled(Grid)(({ theme }) => ({
   marginBottom: theme.spacing(1),
   '& .MuiTableHead-root .MuiTableCell-root': {
     borderTop: 'none',
-  },
-  '& .MuiTableCell-root:first-of-type': {
-    paddingLeft: 0,
   },
   '& .configs': {
     listStyleType: 'none',
@@ -69,27 +66,13 @@ interface Input {
 export const EntityInputs: React.FC<{
   id: ResourceIdentifier;
 }> = ({ id }) => {
-  const launchPlanState = useLaunchPlans(
-    { project: id.project, domain: id.domain },
-    {
-      limit: 1,
-      filter: [
-        {
-          key: 'launch_plan.name',
-          operation: FilterOperationName.EQ,
-          value: id.name,
-        },
-      ],
-    },
-  );
+  const latestLaunchPlanQuery = useLatestLaunchPlans({
+    id,
+    limit: 1,
+  });
 
-  const closure = launchPlanState?.value?.length
-    ? launchPlanState.value[0].closure
-    : ({} as LaunchPlanClosure);
-
-  const spec = launchPlanState?.value?.length
-    ? launchPlanState.value[0].spec
-    : ({} as LaunchPlanSpec);
+  const latestLaunchPlan = latestLaunchPlanQuery.data?.entities?.[0];
+  const { closure, spec } = latestLaunchPlan || ({} as LaunchPlan);
 
   const expectedInputs = useMemo<Input[]>(() => {
     const results: Input[] = [];
@@ -110,7 +93,7 @@ export const EntityInputs: React.FC<{
 
   const fixedInputs = useMemo<Input[]>(() => {
     const inputsMap = transformLiterals(spec?.fixedInputs?.literals ?? {});
-    return Object.keys(inputsMap).map((name) => ({
+    return keys(inputsMap).map((name) => ({
       name,
       defaultValue: inputsMap[name],
     }));
