@@ -28,7 +28,6 @@ import { NoDataIsAvailable } from '../../Literals/LiteralMapViewer';
 import { fetchWorkflow } from '../../../queries/workflowQueries';
 import { PanelSection } from '../../common/PanelSection';
 import { ReactJsonViewWrapper } from '../../common/ReactJsonView';
-import { ScrollableMonospaceText } from '../../common/ScrollableMonospaceText';
 import { dNode } from '../../../models/Graph/types';
 import { NodeExecutionPhase, TaskExecutionPhase } from '../../../models/Execution/enums';
 import { transformWorkflowToKeyedDag, getNodeNameFromDag } from '../../WorkflowGraph/utils';
@@ -46,6 +45,7 @@ import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails/W
 import { useNodeExecutionContext } from '../contextProvider/NodeExecutionDetails/NodeExecutionDetailsContextProvider';
 import { useWorkflowNodeExecutionTaskExecutionsQuery } from '../../hooks/useWorkflowNodeExecutionTaskExecutionsQuery';
 import { nodeExecutionRefreshIntervalMs } from '../constants';
+import { ExpandableMonospaceText } from '../../common/ExpandableMonospaceText';
 
 const NodeTypeLink = styled(RouterLink)(() => ({
   fontWeight: 'normal',
@@ -250,7 +250,7 @@ const NodeExecutionStatus: FC<NodeExecutionStatusProps> = ({ nodeExecution, fron
       </div>
       {reasons?.length ? (
         <div className="statusBody">
-          <ScrollableMonospaceText text={reasons.join('\n\n')} />
+          <ExpandableMonospaceText text={reasons.join('\n\n')} />
         </div>
       ) : null}
     </StatusContainer>
