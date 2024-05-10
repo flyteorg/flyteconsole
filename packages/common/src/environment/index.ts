@@ -1,7 +1,7 @@
 export interface Env extends NodeJS.ProcessEnv {
   ADMIN_API?: string;
   /**
-   * @depricated use BASE_HREF
+   * @deprecated use BASE_HREF
    */
   BASE_URL?: string;
 
@@ -56,7 +56,7 @@ const makeEnvInit = () => {
   if (envInit.BASE_URL) {
     if (envInit.NODE_ENV !== 'test' && envInit.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.warn('BASE_URL will be depricated.');
+      console.warn('BASE_URL will be deprecated.');
     }
   }
 
