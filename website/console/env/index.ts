@@ -21,6 +21,9 @@ if (file.error) {
 /** Current environment environment. "development", "test" or "production" */
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
+/** Port to run the server on */
+const PORT = process.env.PORT || 8080;
+
 /**
  * Certificate path required for local development, should not include trailing '/'.
  * Located at top level of the repository in script folder
@@ -40,7 +43,7 @@ const ADMIN_API = ADMIN_API_URL ? `//${ADMIN_API_URL}` : '';
 const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || `localhost.${ADMIN_API_URL}`;
 
 /**
- * @depricated use BASE_HREF
+ * @deprecated use BASE_HREF
  */
 const BASE_URL = process.env.BASE_URL || '';
 
@@ -76,6 +79,7 @@ const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE || '';
 
 const processEnv = {
   NODE_ENV,
+  PORT,
   ADMIN_API,
   ADMIN_API_URL,
   BASE_URL,
@@ -86,6 +90,7 @@ const processEnv = {
 
 export {
   NODE_ENV,
+  PORT,
   BASE_URL,
   BASE_HREF,
   DISABLE_CONSOLE_ROUTE_PREFIX,
