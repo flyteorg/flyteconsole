@@ -22,7 +22,7 @@ import {
 } from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
-  LaunchFormInputsRef,
+  LaunchExecutionClusterLabelInputRef, LaunchFormInputsRef,
   LaunchInterruptibleInputRef,
   LaunchOverwriteCacheInputRef,
   LaunchRoleInputRef,
@@ -116,6 +116,7 @@ async function submit(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
+  executionClusterLabelInputRef: RefObject<LaunchExecutionClusterLabelInputRef>,
   { referenceExecutionId, taskVersion }: TaskLaunchContext,
 ) {
   if (!taskVersion) {
@@ -132,6 +133,7 @@ async function submit(
   const literals = formInputsRef.current.getValues();
   const interruptible = interruptibleInputRef.current?.getValue();
   const overwriteCache = overwriteCacheInputRef.current?.getValue();
+  const executionClusterLabel = executionClusterLabelInputRef.current?.getValue();
   const launchPlanId = taskVersion;
   const { domain, project } = taskVersion;
 
@@ -144,6 +146,7 @@ async function submit(
     inputs: { literals },
     interruptible,
     overwriteCache,
+    executionClusterLabel,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -159,6 +162,7 @@ function getServices(
   roleInputRef: RefObject<LaunchRoleInputRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
+  executionClusterLabelInputRef: RefObject<LaunchExecutionClusterLabelInputRef>,
 ) {
   return {
     loadTaskVersions: partial(loadTaskVersions, apiContext),
@@ -170,6 +174,7 @@ function getServices(
         roleInputRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
+        executionClusterLabelInputRef,
         launchContext,
       ),
     validate: partial(
@@ -198,6 +203,7 @@ export function useLaunchTaskFormState({
     values: defaultInputValues,
     interruptible,
     overwriteCache,
+    executionClusterLabel,
   } = initialParameters;
 
   const apiContext = useAPIContext();
@@ -205,6 +211,10 @@ export function useLaunchTaskFormState({
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
   const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
+  const executionClusterLabelInputRef =  useRef<LaunchExecutionClusterLabelInputRef>({
+     getValue: () => executionClusterLabel,
+     validate: () => true,
+   });
 
   const services = useMemo(
     () =>
@@ -214,8 +224,9 @@ export function useLaunchTaskFormState({
         roleInputRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
+        executionClusterLabelInputRef,
       ),
-    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, overwriteCacheInputRef],
+    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, overwriteCacheInputRef, executionClusterLabelInputRef],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -233,6 +244,7 @@ export function useLaunchTaskFormState({
       sourceId,
       interruptible,
       overwriteCache,
+      executionClusterLabel,
     },
   });
 
@@ -286,6 +298,7 @@ export function useLaunchTaskFormState({
     roleInputRef,
     interruptibleInputRef,
     overwriteCacheInputRef,
+    executionClusterLabelInputRef,
     state,
     service,
     taskSourceSelectorState,

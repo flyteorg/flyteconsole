@@ -2092,7 +2092,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clients/common@workspace:packages/common"
   dependencies:
-    "@flyteorg/flyteidl": ^1.10.7
+    "@flyteorg/flyteidl": ^1.11.1-b1
     "@protobuf-ts/runtime": ^2.6.0
     "@protobuf-ts/runtime-rpc": ^2.6.0
   peerDependencies:
@@ -2940,10 +2940,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@flyteorg/flyteidl@npm:^1.10.7":
-  version: 1.10.7
-  resolution: "@flyteorg/flyteidl@npm:1.10.7"
-  checksum: fa559d1b5fc676a220fdfdad1a689affcc7e34e375e9755153f14f44e41a1637414ccf43b5eeab8b4d8cd3b1f5d36d30ae5d75922e391f45d50e0b3f593fb8bb
+"@flyteorg/flyteidl@npm:^1.11.1-b1":
+  version: 1.11.1-b1
+  resolution: "@flyteorg/flyteidl@npm:1.11.1-b1"
+  checksum: 2d0932231b269c6b8d58d69caccf28c5a9222a64a448016cc5cbc0662e6d4d2445a17e403c61a459ec7998c85c4e07d4641c55cb3f1d967c468a7cdcc818f135
   languageName: node
   linkType: hard
 

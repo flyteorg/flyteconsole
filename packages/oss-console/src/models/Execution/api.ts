@@ -115,6 +115,7 @@ export interface CreateWorkflowExecutionArguments {
   referenceExecutionId?: WorkflowExecutionIdentifier;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  executionClusterLabel?: Admin.IExecutionClusterLabel | null;
 }
 
 /** Submits a request to create a new `WorkflowExecution` using the provided
@@ -135,6 +136,7 @@ export const createWorkflowExecution = (
     referenceExecutionId: referenceExecution,
     interruptible,
     overwriteCache,
+    executionClusterLabel,
   }: CreateWorkflowExecutionArguments,
   config?: RequestConfig,
 ) => {
@@ -147,6 +149,7 @@ export const createWorkflowExecution = (
     },
     labels,
     annotations,
+    executionClusterLabel,
   };
 
   if (securityContext?.runAs?.iamRole || securityContext?.runAs?.k8sServiceAccount) {
