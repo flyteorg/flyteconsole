@@ -40,7 +40,7 @@ const ADMIN_API = ADMIN_API_URL ? `//${ADMIN_API_URL}` : '';
 const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || `localhost.${ADMIN_API_URL}`;
 
 /**
- * @depricated use BASE_HREF
+ * @deprecated use BASE_HREF
  */
 const BASE_URL = process.env.BASE_URL || '';
 
