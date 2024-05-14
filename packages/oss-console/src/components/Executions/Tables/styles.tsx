@@ -13,7 +13,7 @@ export const grayedClassName = 'grayed';
 // specificity in the browser. The execution table styles are overridden by
 // the columns styles in some cases. So the column styles should be defined
 // last.
-// DEPRICATED, REMOVE ONCE VARIFIED
+// DEPRECATED, REMOVE ONCE VERIFIED
 const executionTableStylesNameSpace = 'EXECUTION_TABLE-';
 const executionTableStyles: Record<string, string> = {
   filters: `${executionTableStylesNameSpace}filters`,
