@@ -15,8 +15,6 @@ const fs = require('fs');
 // const https = require('https');
 const env = require('../../env');
 
-const PORT = 8080;
-
 collectDefaultMetrics();
 
 const app = express();
@@ -56,7 +54,7 @@ app.use(mainRouter);
 
 const showEntryPointUrl = () => {
   console.log(chalk.magenta(`Express server ready!`));
-  const url = `https://${env.LOCAL_DEV_HOST}:${PORT}${env.BASE_URL}`;
+  const url = `https://${env.LOCAL_DEV_HOST}:${env.PORT}${env.BASE_URL}`;
 
   // Open a new browser tab if in development
   if (env.NODE_ENV === 'development') {
@@ -84,9 +82,9 @@ if (env.ADMIN_API_USE_SSL === 'https') {
       },
       app,
     )
-    .listen(PORT, showEntryPointUrl);
+    .listen(env.PORT, showEntryPointUrl);
 } else {
-  server = app.listen(PORT, showEntryPointUrl);
+  server = app.listen(env.PORT, showEntryPointUrl);
 }
 
 const shutdown: NodeJS.SignalsListener = (signal) => {
