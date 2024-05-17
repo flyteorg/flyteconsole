@@ -40,7 +40,7 @@ const ADMIN_API_URL = process.env.ADMIN_API_URL?.replace(/https?:\/\//, '') || '
 const ADMIN_API = ADMIN_API_URL ? `//${ADMIN_API_URL}` : '';
 
 // Webpage for local development
-const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || 'localhost';
+const LOCAL_DEV_HOST = process.env.LOCAL_DEV_HOST || `localhost.${ADMIN_API_URL}`;
 
 /**
  * @deprecated use BASE_HREF
