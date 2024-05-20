@@ -6,7 +6,18 @@ jest.mock('react-syntax-highlighter/dist/esm/styles/prism', () => ({
 
 // mock axios to avoid open handles
 const axiosMock = jest.mock('axios', () => ({
-  request: jest.fn().mockResolvedValue({ data: {} }),
+  create: jest.fn().mockReturnValue({
+    request: jest.fn().mockResolvedValue({ response: {} }),
+    get: jest.fn().mockResolvedValue({ data: {} }),
+    interceptors: {
+      request: {
+        use: jest.fn(),
+      },
+      response: {
+        use: jest.fn(),
+      },
+    }
+  }),
   defaults: {
     transformRequest: [],
     transformResponse: [],
