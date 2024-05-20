@@ -63,7 +63,7 @@
     "@tanstack/react-virtual": "^3.0.0-alpha.0",
     "@types/d3-shape": "^1.2.6",
     "@xstate/react": "^1.0.0",
-    "axios": "^0.27.2",
+    "axios": "^1.7.1",
     "copy-to-clipboard": "^3.0.8",
     "cronstrue": "^1.31.0",
     "d3-dag": "^0.3.4",

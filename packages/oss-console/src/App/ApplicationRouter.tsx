@@ -13,34 +13,52 @@ import { PrettyError } from '../components/Errors/PrettyError';
 import { useDomainPathUpgrade } from '../routes/useDomainPathUpgrade';
 import { Routes } from '../routes/routes';
 import AnimateRoute from '../routes/AnimateRoute';
+import { loadChunkWithAuth } from '../components/data/loadChunkWithAuth';
 
-const SelectProject = lazy(
-  () => import(/* webpackChunkName: "SelectProject" */ '../components/SelectProject'),
+const SelectProject = lazy(() =>
+  loadChunkWithAuth(
+    () => import(/* webpackChunkName: "SelectProject" */ '../components/SelectProject'),
+  ),
 );
-const ListProjectEntities = lazy(
-  () => import(/* webpackChunkName: "ListProjectEntities" */ '../components/ListProjectEntities'),
+const ListProjectEntities = lazy(() =>
+  loadChunkWithAuth(
+    () => import(/* webpackChunkName: "ListProjectEntities" */ '../components/ListProjectEntities'),
+  ),
 );
 
-const ExecutionDetails = lazy(
-  () =>
-    import(/* webpackChunkName: "ExecutionDetails" */ '../components/Executions/ExecutionDetails'),
+const ExecutionDetails = lazy(() =>
+  loadChunkWithAuth(
+    () =>
+      import(
+        /* webpackChunkName: "ExecutionDetails" */ '../components/Executions/ExecutionDetails'
+      ),
+  ),
 );
 
-const TaskDetails = lazy(() => import(/* webpackChunkName: "TaskDetails" */ '../components/Task'));
-const WorkflowDetails = lazy(
-  () => import(/* webpackChunkName: "WorkflowDetails" */ '../components/Workflow/WorkflowDetails'),
+const TaskDetails = lazy(() =>
+  loadChunkWithAuth(() => import(/* webpackChunkName: "TaskDetails" */ '../components/Task')),
 );
-const LaunchPlanDetails = lazy(
-  () =>
-    import(
-      /* webpackChunkName: "LaunchPlanDetails" */ '../components/LaunchPlan/LaunchPlanDetails'
-    ),
+const WorkflowDetails = lazy(() =>
+  loadChunkWithAuth(
+    () =>
+      import(/* webpackChunkName: "WorkflowDetails" */ '../components/Workflow/WorkflowDetails'),
+  ),
 );
-const EntityVersionsDetailsContainer = lazy(
-  () =>
-    import(
-      /* webpackChunkName: "EntityVersionsDetailsContainer" */ '../components/Entities/VersionDetails/EntityVersionDetailsContainer'
-    ),
+const LaunchPlanDetails = lazy(() =>
+  loadChunkWithAuth(
+    () =>
+      import(
+        /* webpackChunkName: "LaunchPlanDetails" */ '../components/LaunchPlan/LaunchPlanDetails'
+      ),
+  ),
+);
+const EntityVersionsDetailsContainer = lazy(() =>
+  loadChunkWithAuth(
+    () =>
+      import(
+        /* webpackChunkName: "EntityVersionsDetailsContainer" */ '../components/Entities/VersionDetails/EntityVersionDetailsContainer'
+      ),
+  ),
 );
 
 export const ApplicationRouter: React.FC = () => {

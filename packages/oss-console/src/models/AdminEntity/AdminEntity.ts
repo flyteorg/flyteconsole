@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import { AxiosRequestConfig, Method } from 'axios';
 import {
   AdminEntityTransformer,
   DecodableType,
@@ -7,6 +7,7 @@ import {
 } from '@clients/common/types/adminEntityTypes';
 import { decodeProtoResponse } from '@clients/common/Utils/decodeProtoResponse';
 import { transformRequestError } from '@clients/flyte-api/utils/transformRequestError';
+import { axioClient } from '@clients/oss-console/components/data/axiosClient';
 import { generateAdminApiQuery } from './AdminApiQuery';
 import { adminApiUrl, encodeProtoPayload, logProtoResponse } from './utils';
 
@@ -54,7 +55,7 @@ async function request(
   };
 
   try {
-    const { data } = await axios.request(finalOptions);
+    const { data } = await axioClient.request(finalOptions);
     return data;
   } catch (e) {
     throw transformRequestError(e, endpoint, true);
