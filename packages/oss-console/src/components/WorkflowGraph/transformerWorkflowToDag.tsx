@@ -451,7 +451,6 @@ const parseWorkflow = ({
   }
 
   const templateNodeList = context.template.nodes;
-
   /* Build Nodes from template */
   for (let i = 0; i < templateNodeList.length; i++) {
     const compiledNode: CompiledNode = templateNodeList[i];
@@ -473,6 +472,28 @@ const parseWorkflow = ({
       dNode,
       compiledNode: templateNodeList[i],
     };
+  }
+
+  /* Build failure node and add downstream connection for edges building */
+  const failureNode = { ...context.template.failureNode, failureNode: true };
+  if (failureNode && failureNode.id) {
+    parseNode({
+      node: failureNode as CompiledNode,
+      root,
+      nodeMetadataMap,
+      staticExecutionIdsMap,
+      compiledWorkflowClosure,
+    });
+    nodeMap[failureNode.id] = {
+      dNode: root.nodes[root.nodes.length - 1],
+      compiledNode: failureNode as CompiledNode,
+    };
+    if (!context.connections.downstream[startNodeId].ids.includes(failureNode.id)) {
+      context.connections.downstream[startNodeId].ids.push(failureNode.id);
+      context.connections.downstream[failureNode.id] = {
+        ids: [endNodeId],
+      };
+    }
   }
 
   /* Build Edges */
