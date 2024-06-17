@@ -31,7 +31,7 @@ import {
   LaunchRoles,
   LaunchInterruptibleInputRef,
   LaunchOverwriteCacheInputRef,
-  LaunchRoleInputRef,
+  LaunchRoleInputRef, LaunchExecutionClusterLabelInputRef,
 } from './types';
 import { useWorkflowSourceSelectorState } from './useWorkflowSourceSelectorState';
 import { getUnsupportedRequiredInputs } from './utils';
@@ -165,6 +165,7 @@ async function submit(
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
+  executionClusterLabelInputRef: RefObject<LaunchExecutionClusterLabelInputRef>,
   { launchPlan, referenceExecutionId, workflowVersion }: WorkflowLaunchContext,
 ) {
   if (!launchPlan) {
@@ -183,6 +184,7 @@ async function submit(
     advancedOptionsRef.current?.getValues() || {};
   const interruptible = interruptibleInputRef.current?.getValue();
   const overwriteCache = overwriteCacheInputRef.current?.getValue();
+  const executionClusterLabel = executionClusterLabelInputRef.current?.getValue();
   const launchPlanId = launchPlan.id;
   const { domain, project } = workflowVersion;
 
@@ -200,6 +202,7 @@ async function submit(
     inputs: { literals },
     interruptible,
     overwriteCache,
+    executionClusterLabel,
   });
   const newExecutionId = response.id as WorkflowExecutionIdentifier;
   if (!newExecutionId) {
@@ -229,6 +232,7 @@ function getServices(
   advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
+  executionClusterLabelInputRef: RefObject<LaunchExecutionClusterLabelInputRef>,
 ) {
   return {
     loadWorkflowVersions: partial(loadWorkflowVersions, apiContext),
@@ -245,6 +249,7 @@ function getServices(
         advancedOptionsRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
+        executionClusterLabelInputRef,
         launchContext,
       ),
     validate: () =>
@@ -281,6 +286,7 @@ export function useLaunchWorkflowFormState({
     securityContext,
     interruptible,
     overwriteCache,
+    executionClusterLabel,
   } = initialParameters;
 
   const apiContext = useAPIContext();
@@ -289,6 +295,10 @@ export function useLaunchWorkflowFormState({
   const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
   const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
+  const executionClusterLabelInputRef =  useRef<LaunchExecutionClusterLabelInputRef>({
+    getValue: () => executionClusterLabel,
+    validate: () => true,
+  });
 
   const services = useMemo(
     () =>
@@ -299,6 +309,7 @@ export function useLaunchWorkflowFormState({
         advancedOptionsRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
+        executionClusterLabelInputRef,
       ),
     [
       apiContext,
@@ -307,6 +318,7 @@ export function useLaunchWorkflowFormState({
       advancedOptionsRef,
       interruptibleInputRef,
       overwriteCacheInputRef,
+      executionClusterLabelInputRef,
     ],
   );
 
@@ -332,6 +344,7 @@ export function useLaunchWorkflowFormState({
       annotations,
       interruptible,
       overwriteCache,
+      executionClusterLabel,
     },
   });
 
@@ -448,6 +461,7 @@ export function useLaunchWorkflowFormState({
     roleInputRef,
     interruptibleInputRef,
     overwriteCacheInputRef,
+    executionClusterLabelInputRef,
     state,
     service,
     workflowSourceSelectorState,
