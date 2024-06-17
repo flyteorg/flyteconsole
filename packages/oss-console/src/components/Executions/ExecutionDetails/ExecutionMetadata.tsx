@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import styled from '@mui/system/styled';
 import * as CommonStylesConstants from '@clients/theme/CommonStyles/constants';
 import { dashedValueString } from '@clients/common/constants';
-import { formatDateUTC, protobufDurationToHMS } from '../../../common/formatters';
+import { formatDateLocalTimezone, protobufDurationToHMS } from '../../../common/formatters';
 import { timestampToDate } from '../../../common/utils';
 import { useCommonStyles } from '../../common/styles';
 import { Routes } from '../../../routes/routes';
@@ -85,7 +85,7 @@ export const ExecutionMetadata: React.FC<{}> = () => {
     },
     {
       label: ExecutionMetadataLabels.time,
-      value: startedAt ? formatDateUTC(timestampToDate(startedAt)) : dashedValueString,
+      value: startedAt ? formatDateLocalTimezone(timestampToDate(startedAt)) : dashedValueString,
     },
     {
       label: ExecutionMetadataLabels.duration,
