@@ -52,6 +52,7 @@ export interface ExecutionSpec extends Admin.IExecutionSpec {
   launchPlan: Identifier;
   metadata: ExecutionMetadata;
   notifications: RequiredNonNullable<Admin.INotificationList>;
+  clusterAssignment: Admin.IClusterAssignment;
 }
 
 export interface Execution extends Admin.IExecution {

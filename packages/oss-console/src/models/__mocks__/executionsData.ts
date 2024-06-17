@@ -85,6 +85,7 @@ export const createMockExecutionSpec: () => ExecutionSpec = () => ({
   launchPlan: { ...MOCK_LAUNCH_PLAN_ID },
   notifications: { notifications: [] },
   metadata: generateExecutionMetadata(),
+  clusterAssignment: { clusterPoolName: 'cluster1' },
 });
 
 export const createMockExecution: (id?: string | number) => Execution = (id = 1) => {

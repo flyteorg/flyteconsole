@@ -68,6 +68,7 @@ export interface WorkflowInitialLaunchParameters extends BaseInitialLaunchParame
   annotations?: Admin.IAnnotations | null;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  clusterAssignment?: Admin.IClusterAssignment | null;
 }
 
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
@@ -82,6 +83,7 @@ export interface TaskInitialLaunchParameters extends BaseInitialLaunchParameters
   securityContext?: Core.ISecurityContext;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  clusterAssignment?: Admin.IClusterAssignment | null;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   taskId: NamedEntityIdentifier;
