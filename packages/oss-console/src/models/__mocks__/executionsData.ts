@@ -21,6 +21,12 @@ export const MOCK_WORKFLOW_ID = {
   version: 'version',
 };
 
+export const MOCK_EXECUTION_ID = {
+  project: 'project',
+  domain: 'domain',
+  name: 'name',
+}
+
 export function fixedDuration(): Protobuf.Duration {
   return {
     nanos: 0,
@@ -76,6 +82,15 @@ export function generateExecutionMetadata(): ExecutionMetadata {
     principal: 'human',
     systemMetadata: {
       executionCluster: 'flyte',
+    },
+    referenceExecution: {
+      ...MOCK_EXECUTION_ID
+    },
+    parentNodeExecution: {
+      nodeId: 'node',
+      executionId: {
+        ...MOCK_EXECUTION_ID
+      }
     },
   };
 }

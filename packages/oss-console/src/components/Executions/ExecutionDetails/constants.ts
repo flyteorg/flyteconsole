@@ -12,6 +12,7 @@ export enum ExecutionMetadataLabels {
   securityContextDefault = 'default',
   interruptible = 'Interruptible override',
   overwriteCache = 'Overwrite cached outputs',
+  parent = 'Parent',
 }
 
 export const tabs = {

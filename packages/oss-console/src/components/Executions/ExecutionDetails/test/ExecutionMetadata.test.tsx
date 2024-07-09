@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { getByTestId, render } from '@testing-library/react';
 import Protobuf from '@clients/common/flyteidl/protobuf';
 import * as React from 'react';
 import { MemoryRouter } from 'react-router';
@@ -14,6 +14,8 @@ const startTimeTestId = `metadata-${ExecutionMetadataLabels.time}`;
 const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
 const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
+const relatedToTestId = `metadata-${ExecutionMetadataLabels.relatedTo}`;
+const parentNodeExecutionTestId = `metadata-${ExecutionMetadataLabels.parent}`
 
 jest.mock('../../../../models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -106,4 +108,14 @@ describe('ExecutionMetadata', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(overwriteCacheTestId)).toHaveTextContent('false');
   });
+
+  it('shows related to if metadata is available', () => {
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(relatedToTestId)).toHaveTextContent('name');
+  })
+
+  it('shows parent execution if metadata is available', () => {
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(parentNodeExecutionTestId)).toHaveTextContent('name');
+  })
 });

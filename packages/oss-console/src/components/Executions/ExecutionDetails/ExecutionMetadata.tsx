@@ -69,7 +69,11 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const startedAt = execution?.closure?.startedAt;
   const workflowId = execution?.closure?.workflowId;
 
-  const { referenceExecution, systemMetadata } = execution.spec.metadata;
+  const {
+    referenceExecution,
+    systemMetadata ,
+    parentNodeExecution,
+  } = execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
 
   const details: DetailItem[] = [
@@ -105,6 +109,20 @@ export const ExecutionMetadata: React.FC<{}> = () => {
         </RouterLink>
       ),
     });
+  }
+
+  if (parentNodeExecution != null && parentNodeExecution.executionId != null) {
+    details.push({
+      label: ExecutionMetadataLabels.parent,
+      value: (
+        <RouterLink
+          className={commonStyles.primaryLinks}
+          to={Routes.ExecutionDetails.makeUrl(parentNodeExecution.executionId)}
+      >
+          {parentNodeExecution.executionId.name}
+        </RouterLink>
+      )
+    })
   }
 
   return (
