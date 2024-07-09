@@ -14,6 +14,7 @@ import { ExecutionContext } from '../contexts';
 import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';
 import { ExecutionMetadataLabels } from './constants';
 import { ExecutionMetadataExtra } from './ExecutionMetadataExtra';
+import { ExecutionLabels } from './ExecutionLabels';
 
 const StyledContainer = styled('div')(({ theme }) => {
   return {
@@ -69,6 +70,7 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const startedAt = execution?.closure?.startedAt;
   const workflowId = execution?.closure?.workflowId;
 
+  const { labels } = execution.spec;
   const {
     referenceExecution,
     systemMetadata ,
@@ -118,9 +120,18 @@ export const ExecutionMetadata: React.FC<{}> = () => {
         <RouterLink
           className={commonStyles.primaryLinks}
           to={Routes.ExecutionDetails.makeUrl(parentNodeExecution.executionId)}
-      >
+        >
           {parentNodeExecution.executionId.name}
         </RouterLink>
+      ),
+    });
+  }
+
+  if (labels != null && labels.values != null) {
+    details.push({
+      label: ExecutionMetadataLabels.labels,
+      value: (
+        <ExecutionLabels values={labels.values} />
       )
     })
   }

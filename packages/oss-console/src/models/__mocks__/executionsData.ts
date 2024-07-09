@@ -100,6 +100,11 @@ export const createMockExecutionSpec: () => ExecutionSpec = () => ({
   launchPlan: { ...MOCK_LAUNCH_PLAN_ID },
   notifications: { notifications: [] },
   metadata: generateExecutionMetadata(),
+  labels: {
+    values: {
+      "key": "value"
+    }
+  }
 });
 
 export const createMockExecution: (id?: string | number) => Execution = (id = 1) => {
