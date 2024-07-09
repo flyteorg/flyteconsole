@@ -15,7 +15,7 @@ const useStyles = makeStyles({
     maxWidth: '420px'
   },
   chip: {
-    margin: 4,
+    margin: '2px 2px 2px 0',
   },
 });
 
@@ -26,6 +26,7 @@ export const ExecutionLabels: React.FC<Props> = ({values}) => {
     <div className={classes.chipContainer}>
       {Object.entries(values).map(([key, value]) => (
         <Chip
+          color='info'
           key={key}
           label={value ? `${key}: ${value}` : key}
           className={classes.chip}

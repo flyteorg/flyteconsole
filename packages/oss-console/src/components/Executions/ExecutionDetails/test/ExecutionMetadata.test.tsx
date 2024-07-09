@@ -119,7 +119,7 @@ describe('ExecutionMetadata', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(parentNodeExecutionTestId)).toHaveTextContent('name');
   })
-  
+
   it('shows labels if spec has them', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(labelsTestId)).toHaveTextContent("key: value");

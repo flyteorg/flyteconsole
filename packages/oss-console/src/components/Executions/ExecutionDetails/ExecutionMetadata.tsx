@@ -131,7 +131,8 @@ export const ExecutionMetadata: React.FC<{}> = () => {
     details.push({
       label: ExecutionMetadataLabels.labels,
       value: (
-        <ExecutionLabels values={labels.values} />
+        Object.entries(labels.values).length > 0 ? 
+          <ExecutionLabels values={labels.values} /> : dashedValueString
       )
     })
   }
