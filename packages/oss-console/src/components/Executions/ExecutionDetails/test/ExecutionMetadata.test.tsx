@@ -16,6 +16,7 @@ const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
 const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
 const relatedToTestId = `metadata-${ExecutionMetadataLabels.relatedTo}`;
 const parentNodeExecutionTestId = `metadata-${ExecutionMetadataLabels.parent}`
+const labelsTestId = `metadata-${ExecutionMetadataLabels.labels}`;
 
 jest.mock('../../../../models/Launch/api', () => ({
   getLaunchPlan: jest.fn(() => Promise.resolve({ spec: {} })),
@@ -117,5 +118,10 @@ describe('ExecutionMetadata', () => {
   it('shows parent execution if metadata is available', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(parentNodeExecutionTestId)).toHaveTextContent('name');
+  })
+
+  it('shows labels if spec has them', () => {
+    const { getByTestId } = renderMetadata();
+    expect(getByTestId(labelsTestId)).toHaveTextContent("key: value");
   })
 });
