@@ -23,6 +23,7 @@ import { EntityExecutions } from './EntityExecutions';
 import { EntityVersions } from './EntityVersions';
 import { executionFilterGenerator } from './generators';
 import { executionSortFields } from '../../models/Execution/constants';
+import { EntitySchedules } from './EntitySchedules';
 
 const EntityDetailsContainer = styled(Grid)(({ theme }) => ({
   minHeight: '100vh',
@@ -123,9 +124,15 @@ export const EntityDetails: React.FC<EntityDetailsProps> = ({ id }) => {
                 paddingRight: (theme) => theme.spacing(2),
               }}
             >
-              {sections.description && (
+              {!!sections.description && (
                 <Grid item xs={12}>
                   <EntityDescription id={id} />
+                </Grid>
+              )}
+
+              {!!sections.schedules && (
+                <Grid item xs={12}>
+                  <EntitySchedules id={id} />
                 </Grid>
               )}
 

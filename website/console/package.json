@@ -25,6 +25,7 @@
     "@patternfly/react-core": "^4.276.8",
     "@patternfly/react-log-viewer": "^4.87.100",
     "@tanstack/react-table": "^8.10.1",
+    "axios-auth-refresh": "^3.3.6",
     "chartjs-plugin-datalabels": "2.0.0",
     "cron-parser": "^4.9.0",
     "moment": "^2.29.4",

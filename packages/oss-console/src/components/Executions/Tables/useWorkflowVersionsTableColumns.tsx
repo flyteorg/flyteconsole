@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
+import Grid from '@mui/material/Grid';
 import { formatDateUTC } from '../../../common/formatters';
 import { padExecutionPaths, padExecutions, timestampToDate } from '../../../common/utils';
 import { WaitForData } from '../../common/WaitForData';
@@ -45,26 +46,36 @@ export function useWorkflowVersionsTableColumns(): WorkflowVersionColumnDefiniti
             activeScheduleLaunchPlan.id.version === version;
           const versionText = version;
           return (
-            <TableContainer sx={{ px: 0, borderBottom: 'none' }}>
-              <TableRow>
-                <TableCell sx={{ px: 0, borderBottom: 'none', maxWidth: 400 }}>
-                  <Typography variant="body1">{versionText}</Typography>
-                </TableCell>
-                {isActiveVersion && (
-                  <TableCell
-                    sx={{
-                      borderBottom: 'none',
-                      marginLeft: (theme) => theme.spacing(2),
-                    }}
-                  >
-                    <StatusBadge
-                      text={ActiveLaunchPlanDisplayValueEnum.ACTIVE}
-                      className="background-status-succeeded launchPlan"
-                    ></StatusBadge>
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableContainer>
+            <Grid container flex="1 0 auto" flexWrap="nowrap" gap={1}>
+              <Grid
+                item
+                flexGrow={1}
+                style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  style={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {versionText}
+                </Typography>
+              </Grid>
+              {isActiveVersion && (
+                <Grid item flexGrow={0} textAlign="right" display="flex" gap={1}>
+                  <StatusBadge
+                    text={ActiveLaunchPlanDisplayValueEnum.ACTIVE}
+                    className="background-status-succeeded launchPlan"
+                  ></StatusBadge>
+                </Grid>
+              )}
+            </Grid>
           );
         },
         className: styles.columnName,

@@ -16,7 +16,6 @@ import { FeatureFlagsProvider } from '../basics/FeatureFlags';
 import { debug, debugPrefix } from '../common/log';
 import { APIContext, useAPIState } from '../components/data/apiContext';
 import { QueryAuthorizationObserver } from '../components/data/QueryAuthorizationObserver';
-import { createQueryClient } from '../components/data/queryCache';
 import { SystemStatusBanner } from '../components/Notifications/SystemStatusBanner';
 import { history } from '../routes/history';
 import { LocalCacheProvider } from '../basics/LocalCache/ContextProvider';
@@ -30,11 +29,10 @@ import TopLevelLayoutProvider from '../components/common/TopLevelLayout/TopLevel
 import ApplicationRouter from './ApplicationRouter';
 import { ErrorBoundary } from '../components/common/ErrorBoundary';
 import DownForMaintenance from '../components/Errors/DownForMaintenance';
+import { globalQueryClient } from '../components/data/globalQueryClient';
 
 const QueryClientProvider: React.FC<PropsWithChildren<QueryClientProviderProps>> =
   QueryClientProviderImport;
-
-const queryClient = createQueryClient();
 
 export const AppComponent: React.FC<unknown> = () => {
   if (env.NODE_ENV === 'development') {
@@ -61,7 +59,7 @@ export const AppComponent: React.FC<unknown> = () => {
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             TransitionComponent={Collapse}
           >
-            <QueryClientProvider client={queryClient}>
+            <QueryClientProvider client={globalQueryClient}>
               <FlyteApiProvider flyteApiDomain={env.ADMIN_API} disableAutomaticLogin>
                 <APIContext.Provider value={apiState}>
                   <QueryAuthorizationObserver />

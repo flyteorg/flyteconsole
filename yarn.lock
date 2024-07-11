@@ -2134,6 +2134,7 @@ __metadata:
     "@patternfly/react-core": ^4.276.8
     "@patternfly/react-log-viewer": ^4.87.100
     "@tanstack/react-table": ^8.10.1
+    axios-auth-refresh: ^3.3.6
     chartjs-plugin-datalabels: 2.0.0
     cron-parser: ^4.9.0
     moment: ^2.29.4
@@ -2172,7 +2173,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@clients/flyte-api@workspace:packages/flyte-api"
   dependencies:
-    axios: ^0.27.2
+    axios: ^1.7.1
     camelcase-keys: ^7.0.2
     snakecase-keys: ^5.4.2
   peerDependencies:
@@ -2232,7 +2233,7 @@ __metadata:
     "@types/serve-static": ^1.7.31
     "@types/shallowequal": ^0.2.3
     "@xstate/react": ^1.0.0
-    axios: ^0.27.2
+    axios: ^1.7.1
     copy-to-clipboard: ^3.0.8
     cronstrue: ^1.31.0
     d3-dag: ^0.3.4
@@ -9605,13 +9606,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^0.27.2":
-  version: 0.27.2
-  resolution: "axios@npm:0.27.2"
-  dependencies:
-    follow-redirects: ^1.14.9
-    form-data: ^4.0.0
-  checksum: 38cb7540465fe8c4102850c4368053c21683af85c5fdf0ea619f9628abbcb59415d1e22ebc8a6390d2bbc9b58a9806c874f139767389c862ec9b772235f06854
+"axios-auth-refresh@npm:^3.3.6":
+  version: 3.3.6
+  resolution: "axios-auth-refresh@npm:3.3.6"
+  peerDependencies:
+    axios: ">= 0.18 < 0.19.0 || >= 0.19.1"
+  checksum: 74206569065a4ece84830210d4f21900aa9690259c3c21743efb195309bcbcb6c3f5e59ce973ea8fe5d9155f5b241001c35448e527da9f32d7ee37d030d51544
   languageName: node
   linkType: hard
 
@@ -9623,6 +9623,17 @@ __metadata:
     form-data: ^4.0.0
     proxy-from-env: ^1.1.0
   checksum: 87d4d429927d09942771f3b3a6c13580c183e31d7be0ee12f09be6d5655304996bb033d85e54be81606f4e89684df43be7bf52d14becb73a12727bf33298a082
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.1":
+  version: 1.7.1
+  resolution: "axios@npm:1.7.1"
+  dependencies:
+    follow-redirects: ^1.15.6
+    form-data: ^4.0.0
+    proxy-from-env: ^1.1.0
+  checksum: 77760d94b3812e07d4a5b02468a55eed5c8435ef4d605d159f2808775bdd15da60ab5b15b665a6f72800b5d261875d808b410cd3cb1d7571cdc6ec5e0108025a
   languageName: node
   linkType: hard
 
@@ -15022,7 +15033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.9":
+"follow-redirects@npm:^1.0.0":
   version: 1.15.2
   resolution: "follow-redirects@npm:1.15.2"
   peerDependenciesMeta:
@@ -15039,6 +15050,16 @@ __metadata:
     debug:
       optional: true
   checksum: 5ca49b5ce6f44338cbfc3546823357e7a70813cecc9b7b768158a1d32c1e62e7407c944402a918ea8c38ae2e78266312d617dc68783fac502cbb55e1047b34ec
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: a62c378dfc8c00f60b9c80cab158ba54e99ba0239a5dd7c81245e5a5b39d10f0c35e249c3379eae719ff0285fff88c365dd446fab19dee771f1d76252df1bbf5
   languageName: node
   linkType: hard
 

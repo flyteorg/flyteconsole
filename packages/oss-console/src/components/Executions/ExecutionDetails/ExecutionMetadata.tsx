@@ -14,6 +14,7 @@ import { ExecutionContext } from '../contexts';
 import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';
 import { ExecutionMetadataLabels } from './constants';
 import { ExecutionMetadataExtra } from './ExecutionMetadataExtra';
+import { ExecutionLabels } from './ExecutionLabels';
 
 const StyledContainer = styled('div')(({ theme }) => {
   return {
@@ -69,7 +70,12 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const startedAt = execution?.closure?.startedAt;
   const workflowId = execution?.closure?.workflowId;
 
-  const { referenceExecution, systemMetadata } = execution.spec.metadata;
+  const { labels } = execution.spec;
+  const {
+    referenceExecution,
+    systemMetadata ,
+    parentNodeExecution,
+  } = execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
 
   const details: DetailItem[] = [
@@ -105,6 +111,30 @@ export const ExecutionMetadata: React.FC<{}> = () => {
         </RouterLink>
       ),
     });
+  }
+
+  if (parentNodeExecution != null && parentNodeExecution.executionId != null) {
+    details.push({
+      label: ExecutionMetadataLabels.parent,
+      value: (
+        <RouterLink
+          className={commonStyles.primaryLinks}
+          to={Routes.ExecutionDetails.makeUrl(parentNodeExecution.executionId)}
+        >
+          {parentNodeExecution.executionId.name}
+        </RouterLink>
+      ),
+    });
+  }
+
+  if (labels != null && labels.values != null) {
+    details.push({
+      label: ExecutionMetadataLabels.labels,
+      value: (
+        Object.entries(labels.values).length > 0 ? 
+          <ExecutionLabels values={labels.values} /> : dashedValueString
+      )
+    })
   }
 
   return (
