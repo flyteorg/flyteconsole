@@ -24,7 +24,7 @@
     "tslib": "^2.4.1"
   },
   "dependencies": {
-    "@flyteorg/flyteidl": "^1.10.7",
+    "@flyteorg/flyteidl": "^1.11.1-b1",
     "@protobuf-ts/runtime": "^2.6.0",
     "@protobuf-ts/runtime-rpc": "^2.6.0"
   },
