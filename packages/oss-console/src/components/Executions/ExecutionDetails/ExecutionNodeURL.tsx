@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import { RowExpander } from '../Tables/RowExpander';
 import { ScrollableMonospaceText } from '../../common/ScrollableMonospaceText';
+import { env } from '@clients/common/environment';
 
 const StyledScrollableMonospaceText = styled(ScrollableMonospaceText)(({ theme }) => ({
   '&>div': {
@@ -31,19 +32,18 @@ export const ExecutionNodeURL: React.FC<{
   const isHttps = /^https:/.test(window.location.href);
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const code = isHttps
-    ? // https snippet
-      `from flytekit.remote.remote import FlyteRemote
+  const config =
+    env.CODE_SNIPPET_USE_AUTO_CONFIG === "true"
+      ? 'Config.auto()'
+      : isHttps
+      ? // https snippet
+        `Config.for_endpoint("${window.location.host}")`
+      : // http snippet
+        `Config.for_endpoint("${window.location.host}", True)`;
+    const code = `from flytekit.remote.remote import FlyteRemote
 from flytekit.configuration import Config
 remote = FlyteRemote(
-    Config.for_endpoint("${window.location.host}"),
-)
-remote.get("${dataSourceURI}")`
-    : // http snippet
-      `from flytekit.remote.remote import FlyteRemote
-from flytekit.configuration import Config
-remote = FlyteRemote(
-    Config.for_endpoint("${window.location.host}", True),
+    ${config},
 )
 remote.get("${dataSourceURI}")`;
 
