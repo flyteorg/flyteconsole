@@ -77,6 +77,11 @@ const ASSETS_PATH = `${BASE_URL}/assets/`;
  */
 const MAINTENANCE_MODE = process.env.MAINTENANCE_MODE || '';
 
+/**
+ * Controls whether the config object in the inputs/outputs Python code snippet is automatically constructed
+ */
+const CODE_SNIPPET_USE_AUTO_CONFIG = process.env.CODE_SNIPPET_USE_AUTO_CONFIG || '';
+
 const processEnv = {
   NODE_ENV,
   PORT,
@@ -86,6 +91,7 @@ const processEnv = {
   BASE_HREF,
   DISABLE_CONSOLE_ROUTE_PREFIX,
   MAINTENANCE_MODE,
+  CODE_SNIPPET_USE_AUTO_CONFIG,
 };
 
 export {
@@ -101,5 +107,6 @@ export {
   ADMIN_API,
   LOCAL_DEV_HOST,
   MAINTENANCE_MODE,
+  CODE_SNIPPET_USE_AUTO_CONFIG,
   processEnv,
 };

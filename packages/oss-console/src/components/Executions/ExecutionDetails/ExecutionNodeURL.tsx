@@ -3,6 +3,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { prism } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import copyToClipboard from 'copy-to-clipboard';
+import { env } from '@clients/common/environment';
 import { errorBackgroundColor } from '@clients/theme/CommonStyles/constants';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -31,19 +32,19 @@ export const ExecutionNodeURL: React.FC<{
   const isHttps = /^https:/.test(window.location.href);
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const code = isHttps
-    ? // https snippet
-      `from flytekit.remote.remote import FlyteRemote
+  const config =
+    // eslint-disable-next-line no-nested-ternary
+    env.CODE_SNIPPET_USE_AUTO_CONFIG === "true"
+      ? 'Config.auto()'
+      : isHttps
+      ? // https snippet
+        `Config.for_endpoint("${window.location.host}")`
+      : // http snippet
+        `Config.for_endpoint("${window.location.host}", True)`;
+    const code = `from flytekit.remote.remote import FlyteRemote
 from flytekit.configuration import Config
 remote = FlyteRemote(
-    Config.for_endpoint("${window.location.host}"),
-)
-remote.get("${dataSourceURI}")`
-    : // http snippet
-      `from flytekit.remote.remote import FlyteRemote
-from flytekit.configuration import Config
-remote = FlyteRemote(
-    Config.for_endpoint("${window.location.host}", True),
+    ${config},
 )
 remote.get("${dataSourceURI}")`;
 
