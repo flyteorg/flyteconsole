@@ -33,6 +33,12 @@ export interface Env extends NodeJS.ProcessEnv {
    * @example MAINTENANCE_MODE="We are currently down for maintenance.\n\nPlease try again later."
    */
   MAINTENANCE_MODE?: string;
+
+  /**
+   * Controls whether the config object in the inputs/outputs Python code snippet is automatically constructed
+   * Leave unset to use the config object for endpoint window.location.host
+   */
+  CODE_SNIPPET_USE_AUTO_CONFIG?: string;
 }
 
 /** Represents a plain object where string keys map to values of the same type */
