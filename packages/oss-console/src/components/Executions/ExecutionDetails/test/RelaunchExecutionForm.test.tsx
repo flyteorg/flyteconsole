@@ -231,6 +231,29 @@ describe('RelaunchExecutionForm', () => {
         }),
       });
     });
+
+    it('should have correct execution cluster label', async () => {
+      execution.spec.executionClusterLabel = {
+        value: 'label'
+      };
+      const { getByText } = renderForm();
+      await waitFor(() => expect(getByText(mockContentString)));
+      checkLaunchFormProps({
+        initialParameters: expect.objectContaining({
+          executionClusterLabel: execution.spec.executionClusterLabel,
+        }),
+      });
+    });
+
+    it('should have null execution cluster label', async () => {
+      const { getByText } = renderForm();
+      await waitFor(() => expect(getByText(mockContentString)));
+      checkLaunchFormProps({
+        initialParameters: expect.objectContaining({
+          executionClusterLabel: undefined,
+        }),
+      });
+    });
   });
 
   describe('Launch form with full inputs', () => {

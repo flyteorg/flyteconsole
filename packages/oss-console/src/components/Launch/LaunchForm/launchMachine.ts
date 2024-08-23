@@ -96,6 +96,7 @@ export interface WorkflowLaunchContext extends BaseLaunchContext {
   securityContext?: Core.ISecurityContext | null;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  executionClusterLabel?: Admin.IExecutionClusterLabel | null;
 }
 
 export interface TaskLaunchContext extends BaseLaunchContext {
@@ -105,6 +106,7 @@ export interface TaskLaunchContext extends BaseLaunchContext {
   taskVersionOptions?: Task[];
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  executionClusterLabel?: Admin.IExecutionClusterLabel | null;
 }
 
 export interface TaskResumeContext extends BaseLaunchContext {

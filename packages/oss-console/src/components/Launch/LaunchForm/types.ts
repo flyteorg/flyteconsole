@@ -68,6 +68,7 @@ export interface WorkflowInitialLaunchParameters extends BaseInitialLaunchParame
   annotations?: Admin.IAnnotations | null;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  executionClusterLabel?: Admin.IExecutionClusterLabel | null;
 }
 
 export interface LaunchWorkflowFormProps extends BaseLaunchFormProps {
@@ -82,6 +83,7 @@ export interface TaskInitialLaunchParameters extends BaseInitialLaunchParameters
   securityContext?: Core.ISecurityContext;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
+  executionClusterLabel?: Admin.IExecutionClusterLabel | null;
 }
 export interface LaunchTaskFormProps extends BaseLaunchFormProps {
   taskId: NamedEntityIdentifier;
@@ -115,6 +117,11 @@ export interface LaunchInterruptibleInputRef {
   validate(): boolean;
 }
 
+export interface LaunchExecutionClusterLabelInputRef {
+  getValue(): Admin.IExecutionClusterLabel | null | undefined;
+  validate(): boolean;
+}
+
 export interface LaunchAdvancedOptionsRef {
   getValues(): Admin.IExecutionSpec;
   validate(): boolean;
@@ -143,6 +150,7 @@ export interface LaunchWorkflowFormState {
   roleInputRef: React.RefObject<LaunchRoleInputRef>;
   interruptibleInputRef: React.RefObject<LaunchInterruptibleInputRef>;
   overwriteCacheInputRef: React.RefObject<LaunchOverwriteCacheInputRef>;
+  executionClusterLabelInputRef: React.RefObject<LaunchExecutionClusterLabelInputRef>;
   state: State<WorkflowLaunchContext, WorkflowLaunchEvent, any, WorkflowLaunchTypestate>;
   service: Interpreter<WorkflowLaunchContext, any, WorkflowLaunchEvent, WorkflowLaunchTypestate>;
   workflowSourceSelectorState: WorkflowSourceSelectorState;
@@ -153,6 +161,7 @@ export interface LaunchTaskFormState {
   roleInputRef: React.RefObject<LaunchRoleInputRef>;
   interruptibleInputRef: React.RefObject<LaunchInterruptibleInputRef>;
   overwriteCacheInputRef: React.RefObject<LaunchOverwriteCacheInputRef>;
+  executionClusterLabelInputRef: React.RefObject<LaunchExecutionClusterLabelInputRef>;
   state: State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
   service: Interpreter<TaskLaunchContext, any, TaskLaunchEvent, TaskLaunchTypestate>;
   taskSourceSelectorState: TaskSourceSelectorState;
