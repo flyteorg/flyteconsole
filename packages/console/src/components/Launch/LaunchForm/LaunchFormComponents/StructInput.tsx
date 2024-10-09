@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Form from '@rjsf/material-ui';
 import {
   MuiThemeProvider,
@@ -7,6 +7,7 @@ import {
   createTheme,
 } from '@material-ui/core/styles';
 import validator from '@rjsf/validator-ajv8';
+import * as msgpack from '@msgpack/msgpack';
 import { InputProps } from '../types';
 import {
   protobufValueToPrimitive,
@@ -74,6 +75,7 @@ export const StructInput: FC<InputProps> = props => {
     typeDefinition: { literalType },
     value = '',
     hasCollectionParent,
+    initialValue,
   } = props;
 
   const { jsonFormRenderable, parsedJson } = useMemo(() => {
@@ -116,6 +118,16 @@ export const StructInput: FC<InputProps> = props => {
     onChange(JSON.stringify(formData));
     setParamData(formData);
   }, []);
+
+  useEffect(() => {
+    if (!jsonFormRenderable && initialValue) {
+      const value = initialValue.scalar?.binary?.value;
+      if (value) {
+        const parsedValue = msgpack.decode(value);
+        onChange(JSON.stringify(parsedValue));
+      }
+    }
+  }, [jsonFormRenderable, initialValue]);
 
   return jsonFormRenderable ? (
     <StylesProvider
