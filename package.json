@@ -59,6 +59,7 @@
     "@commitlint/config-conventional": "^17.3.0",
     "@material-ui/core": "^4.2.0",
     "@material-ui/icons": "^4.2.1",
+    "@msgpack/msgpack": "^3.0.0-beta2",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/exec": "^6.0.3",

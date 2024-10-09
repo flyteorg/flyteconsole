@@ -19,7 +19,7 @@ const unsupportedHelper = noneHelper;
 
 /** Maps an `InputType` to a function which will convert its value into a `Literal` */
 const inputHelpers: Record<InputType, InputHelper> = {
-  [InputType.Binary]: noneHelper,
+  [InputType.Binary]: structHelper,
   [InputType.Blob]: blobHelper,
   [InputType.Boolean]: booleanHelper,
   [InputType.Collection]: collectionHelper,

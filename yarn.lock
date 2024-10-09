@@ -2822,6 +2822,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@msgpack/msgpack@npm:^3.0.0-beta2":
+  version: 3.0.0-beta2
+  resolution: "@msgpack/msgpack@npm:3.0.0-beta2"
+  checksum: d86e5d48146051952d6bea35a6cf733a401cf65ad5614d79689aa48c7076021737ca2c782978dd1b6c0c9c45888b246e379e45ae906179e3a0e8ef4ee6f221c1
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -12428,6 +12435,7 @@ __metadata:
     "@commitlint/config-conventional": ^17.3.0
     "@material-ui/core": ^4.2.0
     "@material-ui/icons": ^4.2.1
+    "@msgpack/msgpack": ^3.0.0-beta2
     "@semantic-release/changelog": ^5.0.1
     "@semantic-release/commit-analyzer": ^8.0.1
     "@semantic-release/exec": ^6.0.3

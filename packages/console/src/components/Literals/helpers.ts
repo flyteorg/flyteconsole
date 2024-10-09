@@ -1,6 +1,7 @@
 import { formatDateUTC, protobufDurationToHMS } from 'common/formatters';
 import { timestampToDate } from 'common/utils';
 import { Core, Protobuf } from '@flyteorg/flyteidl-types';
+import * as msgpack from '@msgpack/msgpack';
 import Long from 'long';
 import { BlobDimensionality, SchemaColumnType } from 'models/Common/types';
 
@@ -78,6 +79,15 @@ function processBinary(binary?: Core.IBinary | null) {
 
   if (!tag) {
     return 'invalid binary';
+  }
+
+  // Might have different binary types in the future
+  // Use corresponding decoder to decode the binary data
+  if (tag === 'msgpack' && binary.value) {
+    return {
+      tag: 'msgpack',
+      value: msgpack.decode(binary.value),
+    };
   }
 
   return {
