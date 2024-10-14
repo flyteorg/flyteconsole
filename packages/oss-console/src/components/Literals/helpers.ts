@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
 import Protobuf from '@clients/common/flyteidl/protobuf';
 import Core from '@clients/common/flyteidl/core';
+import * as msgpack from '@msgpack/msgpack';
 import Long from 'long';
 import cloneDeep from 'lodash/cloneDeep';
 import { formatDateUTC, protobufDurationToHMS } from '../../common/formatters';
@@ -77,6 +78,13 @@ function processBinary(binary?: Core.IBinary | null) {
 
   if (!tag) {
     return 'invalid binary';
+  }
+
+  if (tag === 'msgpack' && binary.value) {
+    return {
+      tag: 'msgpack',
+      value: msgpack.decode(binary.value),
+    };
   }
 
   return {
