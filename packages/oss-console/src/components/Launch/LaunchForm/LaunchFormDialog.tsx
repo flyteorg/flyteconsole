@@ -15,6 +15,7 @@ interface LaunchFormDialogProps {
   setShowLaunchForm: React.Dispatch<React.SetStateAction<boolean>>;
   compiledNode?: CompiledNode;
   nodeExecutionId?: NodeExecutionIdentifier;
+  nodeExecutionScopeId?: string;
 }
 
 function getLaunchProps(id: ResourceIdentifier) {
@@ -34,6 +35,7 @@ export const LaunchFormDialog = ({
   setShowLaunchForm,
   compiledNode,
   nodeExecutionId,
+  nodeExecutionScopeId,
 }: LaunchFormDialogProps): JSX.Element => {
   const onCancelLaunch = (_?: any) => {
     setShowLaunchForm(false);
@@ -48,7 +50,7 @@ export const LaunchFormDialog = ({
   const dialogOnClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
   };
-
+  console.log('kai', nodeExecutionScopeId);
   return (
     <Dialog
       scroll="paper"
@@ -64,12 +66,13 @@ export const LaunchFormDialog = ({
           onClose={onCancelLaunch}
           {...getLaunchProps(id)}
         />
-      ) : compiledNode && nodeExecutionId ? (
+      ) : compiledNode && nodeExecutionId && nodeExecutionScopeId ? (
         <ResumeForm
           initialParameters={initialParameters}
           nodeExecutionId={nodeExecutionId}
           onClose={onCancelLaunch}
           compiledNode={compiledNode}
+          nodeExecutionScopeId={nodeExecutionScopeId}
         />
       ) : null}
     </Dialog>
