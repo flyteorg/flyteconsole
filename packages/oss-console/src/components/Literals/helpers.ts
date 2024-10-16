@@ -80,7 +80,14 @@ function processBinary(binary?: Core.IBinary | null) {
     return 'invalid binary';
   }
 
-  if (tag === 'msgpack' && binary.value) {
+  if (!binary.value) {
+    return {
+      tag: `${tag}`,
+      value: '(empty)',
+    };
+  }
+
+  if (tag === 'msgpack') {
     return {
       tag: 'msgpack',
       value: msgpack.decode(binary.value),
