@@ -13,12 +13,9 @@ const scalarBinaryTestCases: TestCaseList<Core.IBinary> = {
     value: { value: encode(testJson), tag: 'msgpack' },
     expected: { result_var: { tag: 'msgpack', value: testJson } },
   },
-  UNSUPPORTED_TAG: {
-    value: { tag: 'tag2', value: new Uint8Array([1, 2, 3, 4]) },
-    expected: { result_var: {
-      tag: "tag2",
-      value: "(unsupported tag type)",
-    }},
+  WITH_VAL: {
+    value: { value: new Uint8Array(), tag: 'tag1' },
+    expected: { result_var: { tag: 'tag1', value: '(binary data now shown)' } },
   },
   EMPTY_VALUE: {
     value: { tag: 'msgpack' },
