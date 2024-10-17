@@ -95,7 +95,8 @@ function processBinary(binary?: Core.IBinary | null) {
   }
 
   return {
-    tag: `${tag} (binary data not shown)`,
+    tag: `${tag}`,
+    value: "(unsupported tag type)",
   };
 }
 
