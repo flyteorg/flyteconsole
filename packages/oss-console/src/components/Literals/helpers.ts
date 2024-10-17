@@ -96,7 +96,7 @@ function processBinary(binary?: Core.IBinary | null) {
 
   return {
     tag: `${tag}`,
-    value: "(binary data now shown)",
+    value: "(binary data not shown)",
   };
 }
 

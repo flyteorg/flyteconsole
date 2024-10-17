@@ -15,12 +15,12 @@ const scalarBinaryTestCases: TestCaseList<Core.IBinary> = {
   },
   WITH_VAL: {
     value: { value: new Uint8Array(), tag: 'tag1' },
-    expected: { result_var: { tag: 'tag1', value: '(binary data now shown)' } },
+    expected: { result_var: { tag: 'tag1', value: '(binary data not shown)' } },
   },
   EMPTY_VALUE: {
     value: { tag: 'msgpack' },
-    expected: { result_var: { tag: 'msgpack', value: "(empty)" } },
-  }
+    expected: { result_var: { tag: 'msgpack', value: '(empty)' } },
+  },
 };
 
 export default scalarBinaryTestCases;
