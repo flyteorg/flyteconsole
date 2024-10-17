@@ -27,7 +27,7 @@ RUN : \
   && mkdir /app \
   && cp -R ./website/console/dist/* /app
 
-FROM gcr.io/distroless/nodejs
+FROM gcr.io/distroless/nodejs18-debian12
 LABEL org.opencontainers.image.source https://github.com/flyteorg/flyteconsole
 
 COPY --from=builder /app app
