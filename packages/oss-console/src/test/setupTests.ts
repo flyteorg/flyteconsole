@@ -16,7 +16,7 @@ const axiosMock = jest.mock('axios', () => ({
       response: {
         use: jest.fn(),
       },
-    }
+    },
   }),
   defaults: {
     transformRequest: [],
