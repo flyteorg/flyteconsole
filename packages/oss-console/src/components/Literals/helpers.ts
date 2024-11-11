@@ -10,9 +10,16 @@ import isNil from 'lodash/isNil';
 import { formatDateUTC, protobufDurationToHMS } from '../../common/formatters';
 import { timestampToDate } from '../../common/utils';
 import { BlobDimensionality, SchemaColumnType } from '../../models/Common/types';
-import { asValueWithKind } from '../Launch/LaunchForm/inputHelpers/struct';
 
 const DEFAULT_UNSUPPORTED = 'This type is not yet supported';
+
+
+export function asValueWithKind(value: Protobuf.IValue): Protobuf.Value {
+  if (typeof value === 'object' && 'kind' in value) {
+    return value as Protobuf.Value;
+  }
+  return Protobuf.Value.create({ ...value });
+}
 
 // PRIMITIVE
 function processPrimitive(primitive?: (Core.IPrimitive & Pick<Core.Primitive, 'value'>) | null) {
