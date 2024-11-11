@@ -7,7 +7,7 @@ import { extractLiteralWithCheck, formatParameterValues } from './utils';
 
 export type PrimitiveType = string | number | boolean | null | object;
 
-function asValueWithKind(value: Protobuf.IValue): Protobuf.Value {
+export function asValueWithKind(value: Protobuf.IValue): Protobuf.Value {
   return value instanceof Protobuf.Value ? value : Protobuf.Value.create(value);
 }
 
