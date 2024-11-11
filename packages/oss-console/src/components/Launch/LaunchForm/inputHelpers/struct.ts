@@ -1,6 +1,5 @@
 import Protobuf from '@clients/common/flyteidl/protobuf';
 import Core from '@clients/common/flyteidl/core';
-import * as msgpack from '@msgpack/msgpack';
 import { InputType, InputValue } from '../types';
 import { structPath } from './constants';
 import { ConverterInput, InputHelper, InputValidatorParams } from './types';
@@ -91,25 +90,9 @@ function objectToProtobufStruct(obj: Dictionary<any>): Protobuf.IStruct {
   return { fields };
 }
 
-function parseBinary(binary: Core.IBinary): string {
-  if (!binary.value) {
-    throw new Error('Binary value is empty');
-  }
-
-  if (binary.tag === 'msgpack') {
-    return JSON.stringify(msgpack.decode(binary.value));
-  }
-
-  // unsupported binary type, it might be temporary
-  return '';
-}
-
 function fromLiteral(literal: Core.ILiteral): InputValue {
-  if (literal.scalar?.binary) {
-    return parseBinary(literal.scalar.binary);
-  }
-
   const structValue = extractLiteralWithCheck<Protobuf.IStruct>(literal, structPath);
+
   const finalValue = formatParameterValues(InputType.Struct, protobufStructToObject(structValue));
   return finalValue;
 }
