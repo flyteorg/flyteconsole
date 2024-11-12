@@ -15,7 +15,7 @@ const durationTestId = `metadata-${ExecutionMetadataLabels.duration}`;
 const interruptibleTestId = `metadata-${ExecutionMetadataLabels.interruptible}`;
 const overwriteCacheTestId = `metadata-${ExecutionMetadataLabels.overwriteCache}`;
 const relatedToTestId = `metadata-${ExecutionMetadataLabels.relatedTo}`;
-const parentNodeExecutionTestId = `metadata-${ExecutionMetadataLabels.parent}`
+const parentNodeExecutionTestId = `metadata-${ExecutionMetadataLabels.parent}`;
 const labelsTestId = `metadata-${ExecutionMetadataLabels.labels}`;
 
 jest.mock('../../../../models/Launch/api', () => ({
@@ -113,15 +113,15 @@ describe('ExecutionMetadata', () => {
   it('shows related to if metadata is available', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(relatedToTestId)).toHaveTextContent('name');
-  })
+  });
 
   it('shows parent execution if metadata is available', () => {
     const { getByTestId } = renderMetadata();
     expect(getByTestId(parentNodeExecutionTestId)).toHaveTextContent('name');
-  })
+  });
 
   it('shows labels if spec has them', () => {
     const { getByTestId } = renderMetadata();
-    expect(getByTestId(labelsTestId)).toHaveTextContent("key: value");
-  })
+    expect(getByTestId(labelsTestId)).toHaveTextContent('key: value');
+  });
 });

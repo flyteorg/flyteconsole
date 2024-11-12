@@ -1,4 +1,5 @@
 import '../common/setupProtobuf';
+import '../common/decodeMsgPackLiterals';
 import React, { PropsWithChildren } from 'react';
 import Collapse from '@mui/material/Collapse';
 import { FlyteApiProvider } from '@clients/flyte-api/ApiProvider';

@@ -1,7 +1,4 @@
 import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
-
-Object.assign(global, { TextDecoder, TextEncoder });
 
 jest.mock('react-syntax-highlighter/dist/esm/styles/prism', () => ({
   prism: {},
@@ -19,7 +16,7 @@ const axiosMock = jest.mock('axios', () => ({
       response: {
         use: jest.fn(),
       },
-    }
+    },
   }),
   defaults: {
     transformRequest: [],

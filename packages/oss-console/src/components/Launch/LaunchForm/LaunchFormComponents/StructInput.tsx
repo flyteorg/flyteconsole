@@ -1,8 +1,7 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Form } from '@rjsf/mui';
 import validator from '@rjsf/validator-ajv8';
 import styled from '@mui/system/styled';
-import * as msgpack from '@msgpack/msgpack';
 import { InputProps } from '../types';
 import { protobufValueToPrimitive, PrimitiveType } from '../inputHelpers/struct';
 import { StyledCard } from './StyledCard';

@@ -34,14 +34,14 @@ export const ExecutionNodeURL: React.FC<{
 
   const config =
     // eslint-disable-next-line no-nested-ternary
-    env.CODE_SNIPPET_USE_AUTO_CONFIG === "true"
+    env.CODE_SNIPPET_USE_AUTO_CONFIG === 'true'
       ? 'Config.auto()'
       : isHttps
       ? // https snippet
         `Config.for_endpoint("${window.location.host}")`
       : // http snippet
         `Config.for_endpoint("${window.location.host}", True)`;
-    const code = `from flytekit.remote.remote import FlyteRemote
+  const code = `from flytekit.remote.remote import FlyteRemote
 from flytekit.configuration import Config
 remote = FlyteRemote(
     ${config},

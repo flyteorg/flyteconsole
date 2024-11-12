@@ -25,7 +25,7 @@ export const MOCK_EXECUTION_ID = {
   project: 'project',
   domain: 'domain',
   name: 'name',
-}
+};
 
 export function fixedDuration(): Protobuf.Duration {
   return {
@@ -84,13 +84,13 @@ export function generateExecutionMetadata(): ExecutionMetadata {
       executionCluster: 'flyte',
     },
     referenceExecution: {
-      ...MOCK_EXECUTION_ID
+      ...MOCK_EXECUTION_ID,
     },
     parentNodeExecution: {
       nodeId: 'node',
       executionId: {
-        ...MOCK_EXECUTION_ID
-      }
+        ...MOCK_EXECUTION_ID,
+      },
     },
   };
 }
@@ -102,9 +102,9 @@ export const createMockExecutionSpec: () => ExecutionSpec = () => ({
   metadata: generateExecutionMetadata(),
   labels: {
     values: {
-      "key": "value"
-    }
-  }
+      key: 'value',
+    },
+  },
 });
 
 export const createMockExecution: (id?: string | number) => Execution = (id = 1) => {

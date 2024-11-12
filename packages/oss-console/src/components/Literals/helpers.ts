@@ -1,14 +1,25 @@
+'use client';
+
 /* eslint-disable no-use-before-define */
 import Protobuf from '@clients/common/flyteidl/protobuf';
 import Core from '@clients/common/flyteidl/core';
-import * as msgpack from '@msgpack/msgpack';
 import Long from 'long';
 import cloneDeep from 'lodash/cloneDeep';
+import has from 'lodash/has';
+import isNil from 'lodash/isNil';
 import { formatDateUTC, protobufDurationToHMS } from '../../common/formatters';
 import { timestampToDate } from '../../common/utils';
 import { BlobDimensionality, SchemaColumnType } from '../../models/Common/types';
 
 const DEFAULT_UNSUPPORTED = 'This type is not yet supported';
+
+
+export function asValueWithKind(value: Protobuf.IValue): Protobuf.Value {
+  if (typeof value === 'object' && 'kind' in value) {
+    return value as Protobuf.Value;
+  }
+  return Protobuf.Value.create({ ...value });
+}
 
 // PRIMITIVE
 function processPrimitive(primitive?: (Core.IPrimitive & Pick<Core.Primitive, 'value'>) | null) {
@@ -16,25 +27,26 @@ function processPrimitive(primitive?: (Core.IPrimitive & Pick<Core.Primitive, 'v
     return 'invalid primitive';
   }
 
-  const type = primitive.value;
-
-  switch (type) {
-    case 'datetime':
-      return formatDateUTC(timestampToDate(primitive.datetime as Protobuf.Timestamp));
-    case 'duration':
-      return protobufDurationToHMS(primitive.duration as Protobuf.Duration);
-    case 'integer': {
-      return Long.fromValue(primitive.integer as Long).toNumber();
-    }
-    case 'boolean':
-      return primitive.boolean;
-    case 'floatValue':
-      return primitive.floatValue;
-    case 'stringValue':
-      return `${primitive.stringValue}`;
-    default:
-      return 'unknown';
+  if (has(primitive, 'datetime')) {
+    return formatDateUTC(timestampToDate(primitive.datetime as Protobuf.Timestamp));
   }
+
+  if (has(primitive, 'duration')) {
+    return protobufDurationToHMS(primitive.duration as Protobuf.Duration);
+  }
+  if (has(primitive, 'integer')) {
+    return Long.fromValue(primitive.integer as Long).toNumber();
+  }
+  if (has(primitive, 'boolean')) {
+    return primitive.boolean;
+  }
+  if (has(primitive, 'floatValue')) {
+    return primitive.floatValue;
+  }
+  if (has(primitive, 'stringValue')) {
+    return `${primitive.stringValue}`;
+  }
+  return 'unknown';
 }
 
 // BLOB
@@ -80,23 +92,8 @@ function processBinary(binary?: Core.IBinary | null) {
     return 'invalid binary';
   }
 
-  if (!binary.value) {
-    return {
-      tag: `${tag}`,
-      value: '(empty)',
-    };
-  }
-
-  if (tag === 'msgpack') {
-    return {
-      tag: 'msgpack',
-      value: msgpack.decode(binary.value),
-    };
-  }
-
   return {
-    tag: `${tag}`,
-    value: "(binary data not shown)",
+    tag: `${tag} (binary data not shown)`,
   };
 }
 
@@ -188,21 +185,22 @@ function processProtobufStructValue(struct?: Protobuf.IStruct | null) {
 }
 
 function processGenericValue(value: Protobuf.IValue & Pick<Protobuf.Value, 'kind'>) {
-  const { kind } = value;
+  const finalValue = asValueWithKind(value);
+  const { kind } = finalValue;
 
   switch (kind) {
     case 'nullValue':
       return '(empty)';
     case 'listValue': {
-      const list = value.listValue;
+      const list = finalValue.listValue;
       return list?.values?.map((x) => processGenericValue(x));
     }
     case 'structValue':
-      return processProtobufStructValue(value?.structValue);
+      return processProtobufStructValue(finalValue?.structValue);
     case 'numberValue':
     case 'stringValue':
     case 'boolValue':
-      return value[kind];
+      return finalValue[kind];
     default:
       return 'unknown';
   }
@@ -263,26 +261,31 @@ function processLiteralType(
 ) {
   const type = literalType?.type;
 
-  switch (type) {
-    case 'simple':
-      return processSimpleType(literalType?.simple);
-    case 'schema':
-      return `schema (${processSchemaType(literalType?.schema, true)})`;
-    case 'collectionType':
-      return `collection of ${processLiteralType(literalType?.collectionType)}`;
-    case 'mapValueType':
-      return `map value of ${processLiteralType(literalType?.mapValueType)}`;
-    case 'blob':
-      return processBlobType(literalType?.blob);
-    case 'enumType':
-      return `enum (${processEnumType(literalType?.enumType)})`;
-    case 'structuredDatasetType':
-      return processStructuredDatasetType(literalType?.structuredDatasetType);
-    case 'unionType':
-      return processUnionType(literalType?.unionType, true);
-    default:
-      return DEFAULT_UNSUPPORTED;
+  if (has(literalType, 'simple')) {
+    return processSimpleType(literalType?.simple);
   }
+  if (has(literalType, 'schema')) {
+    return `schema (${processSchemaType(literalType?.schema, true)})`;
+  }
+  if (has(literalType, 'collectionType')) {
+    return `collection of ${processLiteralType(literalType?.collectionType)}`;
+  }
+  if (has(literalType, 'mapValueType')) {
+    return `map value of ${processLiteralType(literalType?.mapValueType)}`;
+  }
+  if (has(literalType, 'blob')) {
+    return processBlobType(literalType?.blob);
+  }
+  if (has(literalType, 'enumType')) {
+    return `enum (${processEnumType(literalType?.enumType)})`;
+  }
+  if (has(literalType, 'structuredDatasetType')) {
+    return processStructuredDatasetType(literalType?.structuredDatasetType);
+  }
+  if (has(literalType, 'unionType')) {
+    return processUnionType(literalType?.unionType, true);
+  }
+  return DEFAULT_UNSUPPORTED;
 }
 
 function processStructuredDatasetType(structuredDatasetType?: Core.IStructuredDatasetType | null) {
@@ -328,30 +331,36 @@ function processStructuredDataset(structuredDataSet?: Core.IStructuredDataset | 
 }
 
 function processScalar(scalar?: (Core.IScalar & Pick<Core.Scalar, 'value'>) | null) {
-  const type = scalar?.value;
-
-  switch (type) {
-    case 'primitive':
-      return processPrimitive(scalar?.primitive);
-    case 'blob':
-      return processBlob(scalar?.blob);
-    case 'binary':
-      return processBinary(scalar?.binary);
-    case 'schema':
-      return processSchema(scalar?.schema);
-    case 'noneType':
-      return processNone(scalar?.noneType);
-    case 'error':
-      return processError(scalar?.error);
-    case 'generic':
-      return processGeneric(scalar?.generic);
-    case 'structuredDataset':
-      return processStructuredDataset(scalar?.structuredDataset);
-    case 'union':
-      return processUnion(scalar?.union as Core.IUnion);
-    default:
-      return DEFAULT_UNSUPPORTED;
+  if (has(scalar, 'primitive')) {
+    return processPrimitive(scalar?.primitive);
   }
+
+  if (has(scalar, 'blob')) {
+    return processBlob(scalar?.blob);
+  }
+  if (has(scalar, 'binary')) {
+    return processBinary(scalar?.binary);
+  }
+  if (has(scalar, 'schema')) {
+    return processSchema(scalar?.schema);
+  }
+  if (has(scalar, 'noneType')) {
+    return processNone(scalar?.noneType);
+  }
+  if (has(scalar, 'error')) {
+    return processError(scalar?.error);
+  }
+  if (has(scalar, 'generic')) {
+    return processGeneric(scalar?.generic);
+  }
+  if (has(scalar, 'structuredDataset')) {
+    return processStructuredDataset(scalar?.structuredDataset);
+  }
+  if (has(scalar, 'union')) {
+    return processUnion(scalar?.union as Core.IUnion);
+  }
+
+  return DEFAULT_UNSUPPORTED;
 }
 
 function processCollection(collection?: Core.ILiteralCollection | null, mapTaskIndex?: number) {
@@ -378,26 +387,42 @@ function processMap(map?: Core.ILiteralMap | null, mapTaskIndex?: number) {
   return transformLiterals(literals, mapTaskIndex);
 }
 
-function processLiteral(
-  literal?: Core.ILiteral & Pick<Core.Literal, 'value'>,
+function processOffloadedLiteral(
+  offloadedLiteral?: Core.ILiteralOffloadedMetadata | null,
   mapTaskIndex?: number,
 ) {
-  const type = literal?.value;
+  const uri = offloadedLiteral?.uri;
 
+  if (isNil(uri) || uri === '') {
+    return 'invalid offloaded literal';
+  }
+
+  return {
+    offloaded_uri: uri,
+  };
+}
+
+function processLiteral(literal?: Core.ILiteral, mapTaskIndex?: number): any {
   if (!literal) {
     return 'invalid literal';
   }
 
-  switch (type) {
-    case 'scalar':
-      return processScalar(literal.scalar);
-    case 'collection':
-      return processCollection(literal.collection, mapTaskIndex);
-    case 'map':
-      return processMap(literal.map, mapTaskIndex);
-    default:
-      return DEFAULT_UNSUPPORTED;
+  if (has(literal, 'scalar')) {
+    return processScalar(literal.scalar);
   }
+
+  if (has(literal, 'collection')) {
+    return processCollection(literal.collection, mapTaskIndex);
+  }
+
+  if (has(literal, 'map')) {
+    return processMap(literal.map, mapTaskIndex);
+  }
+
+  if (has(literal, 'offloadedMetadata')) {
+    return processOffloadedLiteral(literal.offloadedMetadata, mapTaskIndex);
+  }
+  return DEFAULT_UNSUPPORTED;
 }
 
 export function transformLiterals(json: { [k: string]: Core.ILiteral }, mapTaskIndex?: number) {

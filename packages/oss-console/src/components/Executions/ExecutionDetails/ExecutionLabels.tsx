@@ -2,7 +2,7 @@ import React from 'react';
 import Chip from '@mui/material/Chip';
 import makeStyles from '@mui/styles/makeStyles';
 
-type ValuesType = {[p: string]: string};
+type ValuesType = { [p: string]: string };
 interface Props {
   values: ValuesType;
 }
@@ -12,21 +12,20 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     width: '100%',
-    maxWidth: '420px'
+    maxWidth: '420px',
   },
   chip: {
     margin: '2px 2px 2px 0',
   },
 });
 
-
-export const ExecutionLabels: React.FC<Props> = ({values}) => {
+export const ExecutionLabels: React.FC<Props> = ({ values }) => {
   const classes = useStyles();
   return (
     <div className={classes.chipContainer}>
       {Object.entries(values).map(([key, value]) => (
         <Chip
-          color='info'
+          color="info"
           key={key}
           label={value ? `${key}: ${value}` : key}
           className={classes.chip}

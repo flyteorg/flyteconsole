@@ -71,11 +71,7 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const workflowId = execution?.closure?.workflowId;
 
   const { labels } = execution.spec;
-  const {
-    referenceExecution,
-    systemMetadata ,
-    parentNodeExecution,
-  } = execution.spec.metadata;
+  const { referenceExecution, systemMetadata, parentNodeExecution } = execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
 
   const details: DetailItem[] = [
@@ -130,11 +126,13 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   if (labels != null && labels.values != null) {
     details.push({
       label: ExecutionMetadataLabels.labels,
-      value: (
-        Object.entries(labels.values).length > 0 ? 
-          <ExecutionLabels values={labels.values} /> : dashedValueString
-      )
-    })
+      value:
+        Object.entries(labels.values).length > 0 ? (
+          <ExecutionLabels values={labels.values} />
+        ) : (
+          dashedValueString
+        ),
+    });
   }
 
   return (
