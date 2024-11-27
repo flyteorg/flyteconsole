@@ -1,5 +1,6 @@
 import React from 'react';
 import Core from '@clients/common/flyteidl/core';
+import NotFoundError from '@clients/common/Errors/NotFoundError';
 import { LoadingSpinner } from '@clients/primitives/LoadingSpinner';
 import { useDownloadLink } from '../../hooks/useDataProxy';
 import { WaitForData } from '../../common/WaitForData';
@@ -26,6 +27,22 @@ export const ExecutionNodeDeck: React.FC<{
     'allow-top-navigation-by-user-activation',
     'allow-downloads',
   ].join(' ');
+
+  if (downloadLink?.lastError instanceof NotFoundError) {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        <h1>The deck will be ready soon. Please try again later.</h1>
+        <p>
+          If you're using the real-time deck, it's because the 'publish'
+          function has not been invoked yet.
+        </p>
+        <p>
+          If you're not using the real-time deck, it's because the corresponding
+          task is still in progress.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <WaitForData {...downloadLink} loadingComponent={LoadingSpinner}>

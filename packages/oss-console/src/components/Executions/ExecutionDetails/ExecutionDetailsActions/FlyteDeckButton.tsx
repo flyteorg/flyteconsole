@@ -58,7 +58,6 @@ export const FlyteDeckButton: FC<FlyteDeckButtonProps> = ({
         variant="outlined"
         color="primary"
         onClick={() => setShowDeck(true)}
-        disabled={phase !== NodeExecutionPhase.SUCCEEDED}
       >
         {flyteDeckText || t('flyteDeck')}
       </Button>
