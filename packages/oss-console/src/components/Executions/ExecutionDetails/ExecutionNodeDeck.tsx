@@ -40,6 +40,22 @@ export const ExecutionNodeDeck: React.FC<{
           If you're not using the real-time deck, it's because the corresponding
           task is still in progress.
         </p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#fff',
+            backgroundColor: '#a31aff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+          }}
+        >
+          Refresh
+        </button>
       </div>
     );
   }
