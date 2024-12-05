@@ -9,8 +9,8 @@ import { WaitForData } from '../../common/WaitForData';
 export const ExecutionNodeDeck: React.FC<{
   nodeExecutionId: Core.NodeExecutionIdentifier;
   className?: string;
-}> = ({ nodeExecutionId, className = '' }) => {
-  const downloadLink = useDownloadLink(nodeExecutionId);
+  downloadLink: ReturnType<typeof useDownloadLink>;
+}> = ({ className = '', downloadLink }) => {
   const iFrameSrc = downloadLink?.value?.signedUrl?.[0];
 
   // Taken from https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe#sandbox
@@ -40,22 +40,6 @@ export const ExecutionNodeDeck: React.FC<{
           If you're not using the real-time deck, it's because the corresponding task is still in
           progress.
         </p>
-        <button
-          onClick={() => downloadLink.fetch()}
-          style={{
-            marginTop: '20px',
-            padding: '10px 20px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: '#fff',
-            backgroundColor: '#a31aff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Refresh
-        </button>
       </div>
     );
   }
