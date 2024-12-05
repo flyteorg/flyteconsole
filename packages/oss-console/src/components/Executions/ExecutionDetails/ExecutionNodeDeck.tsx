@@ -33,15 +33,15 @@ export const ExecutionNodeDeck: React.FC<{
       <div style={{ textAlign: 'center' }}>
         <h1>The deck will be ready soon. Please try again later.</h1>
         <p>
-          If you're using the real-time deck, it's because the 'publish'
-          function has not been invoked yet.
+          If you're using the real-time deck, it's because the 'publish' function has not been
+          invoked yet.
         </p>
         <p>
-          If you're not using the real-time deck, it's because the corresponding
-          task is still in progress.
+          If you're not using the real-time deck, it's because the corresponding task is still in
+          progress.
         </p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => downloadLink.fetch()}
           style={{
             marginTop: '20px',
             padding: '10px 20px',
