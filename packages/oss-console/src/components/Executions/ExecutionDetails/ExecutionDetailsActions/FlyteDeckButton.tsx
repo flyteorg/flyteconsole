@@ -97,7 +97,7 @@ export const FlyteDeckButton: FC<FlyteDeckButtonProps> = ({
               }}
               py={2}
             >
-              {t('flyteDeck')}
+              {flyteDeckText || t('flyteDeck')}
               <IconButton onClick={() => downloadLink.fetch()}>
                 <RefreshIcon />
               </IconButton>
