@@ -28,7 +28,11 @@ export const ExecutionNodeDeck: React.FC<{
     'allow-downloads',
   ].join(' ');
 
-  if (downloadLink?.lastError instanceof NotFoundError) {
+  /**
+   * if the download link query has an error other than 404, we show a 'pretty' message to the user.
+   * else: we show the built in DataError handler passed to the WaitForQuery component.
+   */
+  if (downloadLink?.lastError && !(downloadLink?.lastError instanceof NotFoundError)) {
     return (
       <div style={{ textAlign: 'center' }}>
         <h1>The deck will be ready soon. Please try again later.</h1>
@@ -44,6 +48,7 @@ export const ExecutionNodeDeck: React.FC<{
     );
   }
 
+  // 404 or no error case
   return (
     <WaitForData {...downloadLink} loadingComponent={LoadingSpinner}>
       <iframe
