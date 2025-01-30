@@ -8,6 +8,8 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
+import { useDownloadLink } from '@clients/oss-console/components/hooks/useDataProxy';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import t from '../strings';
 import { WorkflowNodeExecution } from '../../contexts';
 import { NodeExecutionPhase } from '../../../../models/Execution/enums';
@@ -52,14 +54,11 @@ export const FlyteDeckButton: FC<FlyteDeckButtonProps> = ({
     setSetFullScreen(!fullScreen);
   };
 
+  const downloadLink = useDownloadLink(nodeExecution?.id);
+
   return nodeExecution?.closure?.deckUri ? (
     <>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => setShowDeck(true)}
-        disabled={phase !== NodeExecutionPhase.SUCCEEDED}
-      >
+      <Button variant="outlined" color="primary" onClick={() => setShowDeck(true)}>
         {flyteDeckText || t('flyteDeck')}
       </Button>
       <Dialog
@@ -91,10 +90,17 @@ export const FlyteDeckButton: FC<FlyteDeckButtonProps> = ({
                 fontSize: '24px',
                 lineHeight: '32px',
                 marginBlock: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 1,
               }}
               py={2}
             >
-              {t('flyteDeck')}
+              {flyteDeckText || t('flyteDeck')}
+              <IconButton onClick={() => downloadLink.fetch()}>
+                <RefreshIcon />
+              </IconButton>
             </Typography>
           </Grid>
           <Grid item>
@@ -109,7 +115,7 @@ export const FlyteDeckButton: FC<FlyteDeckButtonProps> = ({
             overflow: 'hidden',
           }}
         >
-          <ExecutionNodeDeck nodeExecutionId={nodeExecution.id} />
+          <ExecutionNodeDeck nodeExecutionId={nodeExecution.id} downloadLink={downloadLink} />
         </DialogContent>
       </Dialog>
     </>
