@@ -1,7 +1,7 @@
 import { env } from '@clients/common/environment';
 import { InterpreterOptions } from 'xstate';
 
-export const detailsPanelWidth = 432;
+export const defaultDetailsPanelWidth = 432;
 
 export const labels = {
   moreOptionsButton: 'Display more options',
