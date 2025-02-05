@@ -26,6 +26,7 @@ export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
   nodeExecutionId: NodeExecutionIdentifier;
+  nodeExecutionScopeId: string;
 }
 
 /** Renders the form for requesting a resume request on a gate node */
@@ -33,6 +34,7 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   compiledNode,
   nodeExecutionId,
   onClose,
+  nodeExecutionScopeId,
 }) => {
   const { formInputsRef, state, service } = useResumeFormState({
     compiledNode,
@@ -41,14 +43,15 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   });
   const { nodeExecutionsById } = useNodeExecutionsById();
   const [nodeExecution, setNodeExecution] = useState<NodeExecution>(
-    nodeExecutionsById[nodeExecutionId.nodeId],
+    nodeExecutionsById[nodeExecutionScopeId],
   );
+  window.console.log('kai', nodeExecutionScopeId, nodeExecution);
   const styles = useStyles();
   const baseState = state as BaseInterpretedLaunchState;
   const baseService = service as BaseLaunchService;
   const [isError, setIsError] = useState<boolean>(false);
   const nodeExecutionDataQuery = useNodeExecutionDataQuery({
-    id: nodeExecution.id,
+    id: nodeExecution?.id,
   });
   // Any time the inputs change (even if it's just re-ordering), we must
   // change the form key so that the inputs component will re-mount.
@@ -57,9 +60,9 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
   }, [state.context.parsedInputs]);
 
   useEffect(() => {
-    const newNodeExecution = nodeExecutionsById[nodeExecutionId.nodeId];
+    const newNodeExecution = nodeExecutionsById[nodeExecutionScopeId];
     setNodeExecution(newNodeExecution);
-  }, [nodeExecutionId.nodeId]);
+  }, [nodeExecutionScopeId]);
 
   return (
     <>
