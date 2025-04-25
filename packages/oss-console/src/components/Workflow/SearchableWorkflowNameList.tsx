@@ -286,6 +286,16 @@ const WorkflowCard = ({ item, inView }: { item: NamedEntity; inView: boolean }) 
             operation: FilterOperationName.EQ,
             value: item.id.name,
           },
+          {
+            key: 'workflow.project',
+            operation: FilterOperationName.EQ,
+            value: item.id.project,
+          },
+          {
+            key: 'workflow.domain',
+            operation: FilterOperationName.EQ,
+            value: item.id.domain,
+          },
         ],
       }),
       enabled: !!inView && !!item.id.name,
