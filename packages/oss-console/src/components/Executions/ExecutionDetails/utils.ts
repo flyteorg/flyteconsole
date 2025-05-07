@@ -1,7 +1,7 @@
 import { ResourceType } from '../../../models/Common/types';
 import { Execution, NodeExecution, TaskExecution } from '../../../models/Execution/types';
 import { timestampToDate } from '../../../common/utils';
-import { formatDateUTC } from '../../../common/formatters';
+import { formatDateLocalTimezone } from '../../../common/formatters';
 
 export function isSingleTaskExecution(execution: Execution) {
   return execution.spec.launchPlan.resourceType === ResourceType.TASK;
@@ -21,8 +21,9 @@ export function getTaskExecutionDetailReasons(
       reasons = reasons.concat(
         finalReasons.map(
           (reason) =>
-            (reason.occurredAt ? `${formatDateUTC(timestampToDate(reason.occurredAt))} ` : '') +
-            reason.message,
+            (reason.occurredAt
+              ? `${formatDateLocalTimezone(timestampToDate(reason.occurredAt))} `
+              : '') + reason.message,
         ),
       );
     }

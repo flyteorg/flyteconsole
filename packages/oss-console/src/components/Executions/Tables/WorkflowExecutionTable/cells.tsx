@@ -17,7 +17,7 @@ import { getScheduleStringFromLaunchPlan } from '../../../Entities/getScheduleSt
 import {
   formatDateLocalTimezone,
   formatDateUTC,
-  formateDateRelative,
+  formatDateRelative,
   millisecondsToHMS,
 } from '../../../../common/formatters';
 import { timestampToDate } from '../../../../common/utils';
@@ -83,7 +83,7 @@ export function getStartTimeCell(
   // const isArchived = isExecutionArchived(execution);
 
   if (isRelativeStartTime) {
-    return formateDateRelative(startedAtDate);
+    return formatDateRelative(startedAtDate);
   }
 
   const localTime = React.useMemo(() => {
@@ -113,8 +113,8 @@ export function getStartTimeCell(
       }
       return `${h}h ${m}m ago`;
     }
-    return utc;
-  }, [startedAtDate, utc]);
+    return localTime;
+  }, [startedAtDate, localTime]);
 
   const tooltipText = React.useMemo(() => {
     const isLast24Hours = moment().diff(startedAtDate, 'hours') < 24;

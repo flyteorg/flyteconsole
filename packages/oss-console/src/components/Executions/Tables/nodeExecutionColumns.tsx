@@ -123,10 +123,10 @@ export function generateColumns(
         return (
           <>
             <Typography variant="body1" className={className}>
-              {formatDateUTC(startedAtDate)}
+              {formatDateLocalTimezone(startedAtDate)}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary" className={className}>
-              {formatDateLocalTimezone(startedAtDate)}
+              {formatDateUTC(startedAtDate)}
             </Typography>
           </>
         );

@@ -1,7 +1,9 @@
 import { render } from '@testing-library/react';
 import * as React from 'react';
+import moment from 'moment-timezone';
 import { ThemeProvider } from '@mui/material/styles';
 import { muiTheme } from '@clients/theme/Theme/muiTheme';
+import { timezone } from '@clients/oss-console/common/timezone';
 import { unknownValueString } from '@clients/common/constants';
 import { long } from '../../../../test/utils';
 import { TaskExecutionDetails } from '../TaskExecutionDetails';
@@ -9,7 +11,8 @@ import { TaskExecutionDetails } from '../TaskExecutionDetails';
 const date = { seconds: long(5), nanos: 0 };
 const duration = { seconds: long(0), nanos: 0 };
 
-const dateContent = '1/1/1970 12:00:05 AM UTC';
+const utcDateContent = '1/1/1970 12:00:05 AM UTC';
+const dateContent = moment(utcDateContent).tz(timezone).format('l LTS z');
 
 describe('TaskExecutionDetails', () => {
   it('should render details with task started info and duration', () => {
