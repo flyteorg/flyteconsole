@@ -2224,7 +2224,7 @@ describe('LaunchForm: Workflow', () => {
         // expect datetime to be correctly prepopulated
         await waitFor(() => {
           // bool should be true
-          expect(datetimeInput!).toHaveValue('10/17/2023 19:07:39');
+          expect(datetimeInput!).toHaveValue('2023-10-17 19:07:39');
         });
 
         // expect  no validation error
