@@ -14,6 +14,7 @@ export enum ExecutionMetadataLabels {
   overwriteCache = 'Overwrite cached outputs',
   parent = 'Parent',
   labels = 'Labels',
+  principal = 'Created by',
 }
 
 export const tabs = {

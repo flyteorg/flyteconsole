@@ -71,7 +71,7 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const workflowId = execution?.closure?.workflowId;
 
   const { labels } = execution.spec;
-  const { referenceExecution, systemMetadata, parentNodeExecution } = execution.spec.metadata;
+  const { referenceExecution, systemMetadata, parentNodeExecution, principal } = execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
 
   const details: DetailItem[] = [
@@ -84,6 +84,10 @@ export const ExecutionMetadata: React.FC<{}> = () => {
     {
       label: ExecutionMetadataLabels.cluster,
       value: cluster,
+    },
+    {
+      label: ExecutionMetadataLabels.principal,
+      value: principal || dashedValueString,
     },
     {
       label: ExecutionMetadataLabels.time,
