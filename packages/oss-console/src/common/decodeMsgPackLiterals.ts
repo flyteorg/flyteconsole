@@ -1,9 +1,9 @@
 import core from '@clients/common/flyteidl/core';
 import google from '@clients/common/flyteidl/google';
-import $protobuf from 'protobufjs';
-import { unpack } from 'msgpackr';
-import isNil from 'lodash/isNil';
 import entries from 'lodash/entries';
+import isNil from 'lodash/isNil';
+import { unpack } from 'msgpackr';
+import $protobuf from 'protobufjs';
 
 // Convert a JavaScript object to Protobuf Struct
 function convertToStruct(obj: any) {
@@ -61,4 +61,10 @@ core.Literal.decode = (reader: $protobuf.Reader | Uint8Array, length?: number) =
     } as core.Literal;
   }
   return result;
+};
+
+// const _originalBindingDataCollectionDecode = flyteidl.core.BindingData.decode;
+core.BindingData.decode = (_reader: $protobuf.Reader | Uint8Array, _length?: number) => {
+  // bindings not used anywhere in the code (for now)
+  return {};
 };
