@@ -10,6 +10,7 @@ interface ResumeFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
   initialParameters?: TaskInitialLaunchParameters;
   nodeExecutionId: NodeExecutionIdentifier;
+  nodeExecutionScopeId: string;
 }
 
 /** Renders the form for requesting a resume request on a gate node */
