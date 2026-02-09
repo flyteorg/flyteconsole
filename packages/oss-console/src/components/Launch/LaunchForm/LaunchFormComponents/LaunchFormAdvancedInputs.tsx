@@ -15,6 +15,9 @@ import validator from '@rjsf/validator-ajv8';
 import { State } from 'xstate';
 import { LaunchAdvancedOptionsRef } from '../types';
 import {
+  TaskLaunchContext,
+  TaskLaunchEvent,
+  TaskLaunchTypestate,
   WorkflowLaunchContext,
   WorkflowLaunchEvent,
   WorkflowLaunchTypestate,
@@ -22,7 +25,9 @@ import {
 import { useStyles } from '../styles';
 
 interface LaunchAdvancedOptionsProps {
-  state: State<WorkflowLaunchContext, WorkflowLaunchEvent, any, WorkflowLaunchTypestate>;
+  state:
+    | State<WorkflowLaunchContext, WorkflowLaunchEvent, any, WorkflowLaunchTypestate>
+    | State<TaskLaunchContext, TaskLaunchEvent, any, TaskLaunchTypestate>;
 }
 
 const isValueValid = (value: any) => {
@@ -35,9 +40,7 @@ export const LaunchFormAdvancedInputs = forwardRef<
 >(
   (
     {
-      state: {
-        context: { launchPlan, ...other },
-      },
+      state: { context },
     },
     ref,
   ) => {
@@ -48,61 +51,76 @@ export const LaunchFormAdvancedInputs = forwardRef<
     const [maxParallelism, setMaxParallelism] = useState('');
     const [rawOutputDataConfig, setRawOutputDataConfig] = useState('');
 
+    // Only show max parallelism for workflow launches, not task launches
+    const isWorkflowLaunch = 'launchPlan' in context;
+
     useEffect(() => {
-      if (isValueValid(other.disableAll)) {
-        setDisableAll(other.disableAll!);
+      if (isValueValid(context.disableAll)) {
+        setDisableAll(context.disableAll!);
       }
-      if (isValueValid(other.maxParallelism)) {
-        setMaxParallelism(`${other.maxParallelism}`);
+      // maxParallelism only exists on WorkflowLaunchContext
+      if (isWorkflowLaunch && 'maxParallelism' in context && isValueValid(context.maxParallelism)) {
+        setMaxParallelism(`${context.maxParallelism}`);
       }
       if (
-        other?.rawOutputDataConfig?.outputLocationPrefix !== undefined &&
-        other.rawOutputDataConfig.outputLocationPrefix !== null
+        context?.rawOutputDataConfig?.outputLocationPrefix !== undefined &&
+        context.rawOutputDataConfig.outputLocationPrefix !== null
       ) {
-        setRawOutputDataConfig(other.rawOutputDataConfig.outputLocationPrefix);
+        setRawOutputDataConfig(context.rawOutputDataConfig.outputLocationPrefix);
       }
+      // Access launchPlan safely - it only exists in WorkflowLaunchContext
+      const launchPlan = isWorkflowLaunch ? context.launchPlan : undefined;
       const newLabels = {
-        ...(other.labels?.values || {}),
+        ...(context.labels?.values || {}),
         ...(launchPlan?.spec?.labels?.values || {}),
       };
       const newAnnotations = {
-        ...(other.annotations?.values || {}),
+        ...(context.annotations?.values || {}),
         ...(launchPlan?.spec?.annotations?.values || {}),
       };
       setLabelsParamData(newLabels);
       setAnnotationsParamData(newAnnotations);
     }, [
-      other.disableAll,
-      other.maxParallelism,
-      other.rawOutputDataConfig,
-      other.labels,
-      other.annotations,
-      launchPlan?.spec,
+      context.disableAll,
+      context.rawOutputDataConfig,
+      context.labels,
+      context.annotations,
+      context,
+      isWorkflowLaunch,
     ]);
 
     useImperativeHandle(
       ref,
       () => ({
         getValues: () => {
-          return {
+          const baseValues = {
             disableAll,
             rawOutputDataConfig: {
               outputLocationPrefix: rawOutputDataConfig,
             },
-            maxParallelism: parseInt(maxParallelism || '', 10),
             labels: {
               values: labelsParamData,
             },
             annotations: {
               values: annotationsParamData,
             },
-          } as Admin.IExecutionSpec;
+          };
+
+          // Only include maxParallelism for workflow launches
+          if (isWorkflowLaunch) {
+            return {
+              ...baseValues,
+              maxParallelism: parseInt(maxParallelism || '', 10),
+            } as Admin.IExecutionSpec;
+          }
+
+          return baseValues as Admin.IExecutionSpec;
         },
         validate: () => {
           return true;
         },
       }),
-      [disableAll, maxParallelism, rawOutputDataConfig, labelsParamData, annotationsParamData],
+      [disableAll, maxParallelism, rawOutputDataConfig, labelsParamData, annotationsParamData, isWorkflowLaunch],
     );
 
     const handleDisableAllChange = useCallback(() => {
@@ -211,16 +229,18 @@ export const LaunchFormAdvancedInputs = forwardRef<
             onChange={handleRawOutputDataConfigChange}
           />
         </section>
-        <section title="Max parallelism">
-          <TextField
-            variant="outlined"
-            label="Max parallelism"
-            fullWidth
-            margin="normal"
-            value={maxParallelism}
-            onChange={handleMaxParallelismChange}
-          />
-        </section>
+        {isWorkflowLaunch ? (
+          <section title="Max parallelism">
+            <TextField
+              variant="outlined"
+              label="Max parallelism"
+              fullWidth
+              margin="normal"
+              value={maxParallelism}
+              onChange={handleMaxParallelismChange}
+            />
+          </section>
+        ) : null}
       </>
     );
   },

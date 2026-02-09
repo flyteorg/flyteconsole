@@ -22,6 +22,7 @@ import {
 } from './launchMachine';
 import { validate as baseValidate } from './services';
 import {
+  LaunchAdvancedOptionsRef,
   LaunchFormInputsRef,
   LaunchInterruptibleInputRef,
   LaunchOverwriteCacheInputRef,
@@ -97,6 +98,7 @@ async function loadInputs(
 async function validate(
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
+  _advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   _interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   _overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
@@ -114,6 +116,7 @@ async function submit(
   { createWorkflowExecution }: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
+  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
   { referenceExecutionId, taskVersion }: TaskLaunchContext,
@@ -130,14 +133,20 @@ async function submit(
 
   const { securityContext } = roleInputRef?.current?.getValue?.() || {};
   const literals = formInputsRef.current.getValues();
+  const { disableAll, labels, annotations, rawOutputDataConfig } =
+    advancedOptionsRef.current?.getValues() || {};
   const interruptible = interruptibleInputRef.current?.getValue();
   const overwriteCache = overwriteCacheInputRef.current?.getValue();
   const launchPlanId = taskVersion;
   const { domain, project } = taskVersion;
 
   const response = await createWorkflowExecution({
+    annotations,
     securityContext,
+    disableAll,
+    rawOutputDataConfig,
     domain,
+    labels,
     launchPlanId,
     project,
     referenceExecutionId,
@@ -157,6 +166,7 @@ function getServices(
   apiContext: APIContextValue,
   formInputsRef: RefObject<LaunchFormInputsRef>,
   roleInputRef: RefObject<LaunchRoleInputRef>,
+  advancedOptionsRef: RefObject<LaunchAdvancedOptionsRef>,
   interruptibleInputRef: RefObject<LaunchInterruptibleInputRef>,
   overwriteCacheInputRef: RefObject<LaunchOverwriteCacheInputRef>,
 ) {
@@ -168,17 +178,19 @@ function getServices(
         apiContext,
         formInputsRef,
         roleInputRef,
+        advancedOptionsRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
         launchContext,
       ),
-    validate: partial(
-      validate,
-      formInputsRef,
-      roleInputRef,
-      interruptibleInputRef,
-      overwriteCacheInputRef,
-    ),
+    validate: () =>
+      validate(
+        formInputsRef,
+        roleInputRef,
+        advancedOptionsRef,
+        interruptibleInputRef,
+        overwriteCacheInputRef,
+      ),
   };
 }
 
@@ -196,6 +208,10 @@ export function useLaunchTaskFormState({
     authRole: defaultAuthRole,
     taskId: preferredTaskId,
     values: defaultInputValues,
+    disableAll,
+    rawOutputDataConfig,
+    labels,
+    annotations,
     interruptible,
     overwriteCache,
   } = initialParameters;
@@ -203,6 +219,7 @@ export function useLaunchTaskFormState({
   const apiContext = useAPIContext();
   const formInputsRef = useRef<LaunchFormInputsRef>(null);
   const roleInputRef = useRef<LaunchRoleInputRef>(null);
+  const advancedOptionsRef = useRef<LaunchAdvancedOptionsRef>(null);
   const interruptibleInputRef = useRef<LaunchInterruptibleInputRef>(null);
   const overwriteCacheInputRef = useRef<LaunchOverwriteCacheInputRef>(null);
 
@@ -212,10 +229,11 @@ export function useLaunchTaskFormState({
         apiContext,
         formInputsRef,
         roleInputRef,
+        advancedOptionsRef,
         interruptibleInputRef,
         overwriteCacheInputRef,
       ),
-    [apiContext, formInputsRef, roleInputRef, interruptibleInputRef, overwriteCacheInputRef],
+    [apiContext, formInputsRef, roleInputRef, advancedOptionsRef, interruptibleInputRef, overwriteCacheInputRef],
   );
 
   const [state, sendEvent, service] = useMachine<
@@ -231,6 +249,10 @@ export function useLaunchTaskFormState({
       preferredTaskId,
       referenceExecutionId,
       sourceId,
+      disableAll,
+      rawOutputDataConfig,
+      labels,
+      annotations,
       interruptible,
       overwriteCache,
     },
@@ -282,6 +304,7 @@ export function useLaunchTaskFormState({
   }, [service, sendEvent]);
 
   return {
+    advancedOptionsRef,
     formInputsRef,
     roleInputRef,
     interruptibleInputRef,
