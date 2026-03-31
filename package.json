@@ -157,7 +157,6 @@
     "@testing-library/dom": "^9.3.3",
     "@testing-library/user-event": "^14.5.1",
     "@types/dagre": "^0.7.52",
-    "buildkite-test-collector": "^1.6.4",
     "dotenv": "^16.3.1",
     "eslint-plugin-custom-rules": "file:./scripts/eslint-custom-rules",
     "parse5-htmlparser2-tree-adapter": "^7.0.0",

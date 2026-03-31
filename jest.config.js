@@ -40,7 +40,5 @@ module.exports = {
   coverageDirectory: '<rootDir>/.coverage',
   collectCoverageFrom: ['**/*.ts', '**/*.tsx'],
   coveragePathIgnorePatterns: [...sharedConfig.coveragePathIgnorePatterns],
-  // 'buildkite-test-collector/jest/reporter': https://buildkite.com/docs/test-analytics/javascript-collectors#configure-the-test-framework-jest
-  // reporters: ['default'],
   coverageReporters: ['text', 'text-summary', 'json', 'html', 'clover', 'lcov'],
 };
