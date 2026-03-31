@@ -5,6 +5,7 @@ import ErrorOutline from '@mui/icons-material/ErrorOutline';
 import LockPerson from '@clients/ui-atoms/LockPerson';
 import NotFoundError from '@clients/common/Errors/NotFoundError';
 import NotAuthorizedError from '@clients/common/Errors/NotAuthorizedError';
+import HttpRequestError from '@clients/common/Errors/HttpRequestError';
 import { NonIdealState } from '../common/NonIdealState';
 import { PrettyError } from './PrettyError';
 
@@ -20,7 +21,10 @@ export interface DataErrorProps {
 
 /** A shared error component to be used when data fails to load. */
 export const DataError: React.FC<DataErrorProps> = ({ error, errorTitle, retry }) => {
-  if (error instanceof NotFoundError) {
+  if (
+    error instanceof NotFoundError ||
+    (error instanceof HttpRequestError && error.response?.status === 404)
+  ) {
     return (
       <PrettyError
       // 404 is default config, so we don't need to pass it in.

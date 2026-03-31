@@ -1,5 +1,6 @@
 import React from 'react';
 import { WaitForQuery } from '../../../common/WaitForQuery';
+import { DataError } from '../../../Errors/DataError';
 import { PanelSection } from '../../../common/PanelSection';
 import { useNodeExecutionDataQuery } from '../../../hooks/useNodeExecutionDataQuery';
 import { LiteralMapViewer } from '../../../Literals/LiteralMapViewer';
@@ -15,7 +16,12 @@ export const NodeExecutionInputs: React.FC<{
     id: execution.id,
   });
   return (
-    <WaitForQuery query={executionDataQuery}>
+    <WaitForQuery
+      query={executionDataQuery}
+      errorComponent={DataError}
+      errorTitle="Failed to load execution inputs"
+      fetch={() => executionDataQuery.refetch()}
+    >
       {(data) => {
         const fullInputs = data?.fullInputs;
         const dataSourceURI = data?.flyteUrls?.inputs;

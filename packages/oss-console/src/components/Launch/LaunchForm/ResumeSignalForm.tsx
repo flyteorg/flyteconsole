@@ -21,6 +21,7 @@ import { LaunchFormHeader } from './LaunchFormHeader';
 import launchFormStrings from './strings';
 import { LaunchFormActions } from './LaunchFormActions';
 import { WaitForQuery } from '../../common/WaitForQuery';
+import { DataError } from '../../Errors/DataError';
 
 export interface ResumeSignalFormProps extends BaseLaunchFormProps {
   compiledNode: CompiledNode;
@@ -76,7 +77,12 @@ export const ResumeSignalForm: React.FC<ResumeSignalFormProps> = ({
           setIsError={setIsError}
         />
         <Typography variant="h6">{t('gateNodeInput')}</Typography>
-        <WaitForQuery query={nodeExecutionDataQuery}>
+        <WaitForQuery
+          query={nodeExecutionDataQuery}
+          errorComponent={DataError}
+          errorTitle="Failed to load gate node inputs"
+          fetch={() => nodeExecutionDataQuery.refetch()}
+        >
           {(data) => <LiteralMapViewer map={data?.fullInputs} />}
         </WaitForQuery>
       </DialogContent>
