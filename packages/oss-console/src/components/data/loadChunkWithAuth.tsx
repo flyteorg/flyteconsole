@@ -1,7 +1,7 @@
-import React from 'react';
 import NotAuthorizedError from '@clients/common/Errors/NotAuthorizedError';
-import { refreshAuth } from './axiosClient';
+import React from 'react';
 import { ErrorHandler } from '../Errors/ErrorHandler';
+import { refreshAuth } from './fetchClient';
 
 type ImportFunction = () => Promise<{ default: React.ComponentType<any> }>;
 

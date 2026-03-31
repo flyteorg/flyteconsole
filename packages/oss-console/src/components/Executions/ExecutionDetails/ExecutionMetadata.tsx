@@ -1,20 +1,20 @@
-import React from 'react';
+import { dashedValueString } from '@clients/common/constants';
+import * as CommonStylesConstants from '@clients/theme/CommonStyles/constants';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import classnames from 'classnames';
-import { Link as RouterLink } from 'react-router-dom';
 import styled from '@mui/system/styled';
-import * as CommonStylesConstants from '@clients/theme/CommonStyles/constants';
-import { dashedValueString } from '@clients/common/constants';
+import classnames from 'classnames';
+import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { formatDateUTC, protobufDurationToHMS } from '../../../common/formatters';
 import { timestampToDate } from '../../../common/utils';
-import { useCommonStyles } from '../../common/styles';
 import { Routes } from '../../../routes/routes';
+import { useCommonStyles } from '../../common/styles';
 import { ExecutionContext } from '../contexts';
 import { ExpandableExecutionError } from '../Tables/ExpandableExecutionError';
 import { ExecutionMetadataLabels } from './constants';
-import { ExecutionMetadataExtra } from './ExecutionMetadataExtra';
 import { ExecutionLabels } from './ExecutionLabels';
+import { ExecutionMetadataExtra } from './ExecutionMetadataExtra';
 
 const StyledContainer = styled('div')(({ theme }) => {
   return {
@@ -71,7 +71,8 @@ export const ExecutionMetadata: React.FC<{}> = () => {
   const workflowId = execution?.closure?.workflowId;
 
   const { labels } = execution.spec;
-  const { referenceExecution, systemMetadata, parentNodeExecution, principal } = execution.spec.metadata;
+  const { referenceExecution, systemMetadata, parentNodeExecution, principal } =
+    execution.spec.metadata;
   const cluster = systemMetadata?.executionCluster ?? dashedValueString;
 
   const details: DetailItem[] = [

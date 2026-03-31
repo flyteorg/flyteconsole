@@ -6,7 +6,7 @@ import {
 } from '@clients/common/types/adminEntityTypes';
 import { decodeProtoResponse } from '@clients/common/Utils/decodeProtoResponse';
 import { transformRequestError } from '@clients/flyte-api/utils/transformRequestError';
-import { axioClient } from '@clients/oss-console/components/data/axiosClient';
+import { AdminRequestBody, fetchClient } from '@clients/oss-console/components/data/fetchClient';
 import { generateAdminApiQuery } from './AdminApiQuery';
 import { adminApiUrl, encodeProtoPayload, logProtoResponse } from './utils';
 
@@ -42,12 +42,12 @@ async function request(
   }
 
   try {
-    const { data } = await axioClient.request<ArrayBuffer>({
+    const { data } = await fetchClient.request<ArrayBuffer>({
       method,
       url: adminApiUrl(endpoint),
       params,
       headers,
-      data: config.data != null ? (config.data as BodyInit) : undefined,
+      data: config.data != null ? (config.data as AdminRequestBody) : undefined,
     });
     return data;
   } catch (e) {

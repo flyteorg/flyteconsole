@@ -2,12 +2,16 @@ import { env } from '@clients/common/environment';
 import HttpRequestError from '@clients/common/Errors/HttpRequestError';
 import { onlineManager } from 'react-query';
 
+/** Derived from `fetch` so eslint `no-undef` does not require DOM globals as identifiers. */
+type FetchRequestInit = NonNullable<Parameters<typeof fetch>[1]>;
+export type AdminRequestBody = NonNullable<FetchRequestInit['body']>;
+
 export type AdminRequestConfig = {
   url: string;
   method?: string;
   headers?: Record<string, string>;
   params?: Record<string, unknown>;
-  data?: BodyInit | null;
+  data?: AdminRequestBody | null;
   /** If true, skip 401 refresh + retry (e.g. login probe inside refresh). */
   skipAuthRefresh?: boolean;
 };
@@ -28,9 +32,9 @@ function appendQuery(url: string, params?: Record<string, unknown>): string {
   const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null);
   if (!entries.length) return url;
   const usp = new URLSearchParams();
-  for (const [k, v] of entries) {
+  entries.forEach(([k, v]) => {
     usp.set(k, String(v));
-  }
+  });
   const q = usp.toString();
   if (!q) return url;
   return `${url}${url.includes('?') ? '&' : '?'}${q}`;
@@ -40,16 +44,13 @@ export const refreshAuth = async (httpError?: HttpRequestError, isChunk?: boolea
   if (httpError?.response?.status !== 401 && !isChunk) {
     return;
   }
-  return fetch(
-    `${env.ADMIN_API_URL}/login?redirect_url=${env.BASE_URL}/select-project`,
-    {
-      credentials: 'include',
-      redirect: 'follow',
-      headers: {
-        Accept: 'text/html',
-      },
+  return fetch(`${env.ADMIN_API_URL}/login?redirect_url=${env.BASE_URL}/select-project`, {
+    credentials: 'include',
+    redirect: 'follow',
+    headers: {
+      Accept: 'text/html',
     },
-  )
+  })
     .then((res) => {
       const redirectUrl = `${env.ADMIN_API_URL}${env.BASE_URL}/select-project`;
       if (res.url.includes(redirectUrl)) {
@@ -67,21 +68,21 @@ export const refreshAuth = async (httpError?: HttpRequestError, isChunk?: boolea
     });
 };
 
-export const axioClient = {
+export const fetchClient = {
   async request<T = ArrayBuffer>(config: AdminRequestConfig): Promise<{ data: T }> {
     const skipRefresh = config.skipAuthRefresh === true;
 
     const doFetch = () => {
       const url = appendQuery(config.url, config.params);
       const method = (config.method || 'get').toUpperCase();
-      const init: RequestInit = {
+      const init: FetchRequestInit = {
         method,
         credentials: 'include',
         redirect: 'error',
         headers: config.headers,
       };
       if (method !== 'GET' && method !== 'HEAD' && config.data != null) {
-        init.body = config.data as BodyInit;
+        init.body = config.data;
       }
       return fetch(url, init);
     };
@@ -89,12 +90,12 @@ export const axioClient = {
     let res = await doFetch();
 
     if (res.status === 401 && !skipRefresh) {
-      await queueRefresh(() =>
-        refreshAuth(
+      await queueRefresh(async () => {
+        await refreshAuth(
           new HttpRequestError(res.statusText, { status: 401, statusText: res.statusText }),
           false,
-        ),
-      );
+        );
+      });
       res = await doFetch();
     }
 
