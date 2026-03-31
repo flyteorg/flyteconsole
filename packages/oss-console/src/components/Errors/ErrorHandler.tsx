@@ -1,6 +1,6 @@
 import NotAuthorizedError from '@clients/common/Errors/NotAuthorizedError';
 import NotFoundError from '@clients/common/Errors/NotFoundError';
-import { AxiosError } from 'axios';
+import HttpRequestError from '@clients/common/Errors/HttpRequestError';
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -10,7 +10,7 @@ import { useFlyteApi } from '@clients/flyte-api/ApiProvider';
 import { GenericError } from './GenericError';
 
 export interface ErrorHandlerProps {
-  error: NotFoundError | NotAuthorizedError | AxiosError | Error;
+  error: NotFoundError | NotAuthorizedError | HttpRequestError | Error;
 }
 
 export const ErrorHandler: React.FC<ErrorHandlerProps> = ({ error }) => {
@@ -51,7 +51,7 @@ export const ErrorHandler: React.FC<ErrorHandlerProps> = ({ error }) => {
 
   if (
     error instanceof NotFoundError ||
-    (error instanceof AxiosError && error.response?.status === 404)
+    (error instanceof HttpRequestError && error.response?.status === 404)
   ) {
     return (
       <GenericError
@@ -73,7 +73,7 @@ export const ErrorHandler: React.FC<ErrorHandlerProps> = ({ error }) => {
 
   if (
     error instanceof NotAuthorizedError ||
-    (error instanceof AxiosError && error.response?.status === 401)
+    (error instanceof HttpRequestError && error.response?.status === 401)
   ) {
     return (
       <GenericError
@@ -105,7 +105,7 @@ export const ErrorHandler: React.FC<ErrorHandlerProps> = ({ error }) => {
     );
   }
 
-  if (error instanceof AxiosError && error.response?.status === 403) {
+  if (error instanceof HttpRequestError && error.response?.status === 403) {
     return (
       <GenericError
         title="403"
@@ -128,7 +128,7 @@ export const ErrorHandler: React.FC<ErrorHandlerProps> = ({ error }) => {
 
   return (
     <GenericError
-      title={(error as AxiosError)?.response?.status || 'Oops!'}
+      title={(error as HttpRequestError)?.response?.status || 'Oops!'}
       description="Something went wrong."
       content={
         <>

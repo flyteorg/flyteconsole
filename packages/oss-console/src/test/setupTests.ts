@@ -4,31 +4,26 @@ jest.mock('react-syntax-highlighter/dist/esm/styles/prism', () => ({
   prism: {},
 }));
 
-// mock axios to avoid open handles
-const axiosMock = jest.mock('axios', () => ({
-  create: jest.fn().mockReturnValue({
-    request: jest.fn().mockResolvedValue({ response: {} }),
-    get: jest.fn().mockResolvedValue({ data: {} }),
-    interceptors: {
-      request: {
-        use: jest.fn(),
-      },
-      response: {
-        use: jest.fn(),
-      },
-    },
-  }),
-  defaults: {
-    transformRequest: [],
-    transformResponse: [],
-    withCredentials: true,
-  },
-}));
+// Avoid real network I/O from fetch in unit tests.
+const fetchMock = jest.fn(() =>
+  Promise.resolve({
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    url: 'http://localhost/',
+    headers: new Headers({ 'content-type': 'application/json' }),
+    json: () => Promise.resolve({}),
+    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)),
+    text: () => Promise.resolve(''),
+  } as Response),
+);
+
+global.fetch = fetchMock as typeof fetch;
 
 beforeAll(() => {});
 
 afterEach(() => {});
 
 afterAll(() => {
-  axiosMock.clearAllMocks();
+  fetchMock.mockClear();
 });

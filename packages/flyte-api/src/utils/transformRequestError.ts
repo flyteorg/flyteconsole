@@ -1,13 +1,11 @@
-import { AxiosError } from 'axios';
+import HttpRequestError from '@clients/common/Errors/HttpRequestError';
 import Admin from '@clients/common/flyteidl/admin';
 import NotFoundError from '@clients/common/Errors/NotFoundError';
 import NotAuthorizedError from '@clients/common/Errors/NotAuthorizedError';
 import { decodeProtoResponse } from '@clients/common/Utils/decodeProtoResponse';
 
-// to enrich the error message by adding the response
-function decodeErrorResponseMessage(error: AxiosError) {
+function decodeErrorResponseMessage(error: HttpRequestError) {
   try {
-    // probablly using a wrong decode type.. is there a decode type for the error message?
     const decodedErrorResponseMessage = decodeProtoResponse(
       error.response?.data as any,
       Admin.RawOutputDataConfig,
@@ -24,16 +22,14 @@ function decodeErrorResponseMessage(error: AxiosError) {
   return error;
 }
 
-/** Detects special cases for errors returned from Axios and lets others pass through. */
+/** Detects special cases for HTTP errors and lets others pass through. */
 export function transformRequestError(err: unknown, path: string, decodeError = false) {
-  const error = err as AxiosError;
+  const error = err as HttpRequestError;
 
   if (!error.response) {
     return error;
   }
 
-  // For some status codes, we'll throw a special error to allow
-  // client code and components to handle separately
   if (error.response.status === 404) {
     return new NotFoundError(path);
   }
@@ -45,7 +41,6 @@ export function transformRequestError(err: unknown, path: string, decodeError = 
     return decodeErrorResponseMessage(error);
   }
 
-  // this error is not decoded.
   return error;
 }
 

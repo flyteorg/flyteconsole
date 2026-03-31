@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
 import NotFoundError from '@clients/common/Errors/NotFoundError';
 import NotAuthorizedError from '@clients/common/Errors/NotAuthorizedError';
-import { AxiosError } from 'axios';
+import HttpRequestError from '@clients/common/Errors/HttpRequestError';
 import { log } from '../../common/log';
 import { useCommonStyles } from './styles';
 import { NonIdealState } from './NonIdealState';
@@ -63,7 +63,7 @@ export class ErrorBoundary extends React.Component<
       if (
         this.state.error instanceof NotFoundError ||
         this.state.error instanceof NotAuthorizedError ||
-        (this.state.error as AxiosError).response?.status === 403
+        (this.state.error as HttpRequestError).response?.status === 403
       ) {
         return <ErrorHandler error={this.state.error} />;
       }

@@ -1,8 +1,8 @@
 import { env } from '@clients/common/environment';
 import Admin from '@clients/common/flyteidl/admin';
 import Core from '@clients/common/flyteidl/core';
-import { getAxiosApiCall } from '@clients/flyte-api/utils/getAxiosApiCall';
 import { PaginatedEntityResponse, RequestConfig } from '@clients/common/types/adminEntityTypes';
+import { getFetchApiCall } from '@clients/flyte-api/utils/getFetchApiCall';
 import { getAdminEntity } from '../AdminEntity/AdminEntity';
 import { defaultPaginationConfig } from '../AdminEntity/constants';
 import { defaultSystemStatus, identifierPrefixes } from './constants';
@@ -104,7 +104,7 @@ export const getSystemStatus = async () => {
   }
   const path = env.STATUS_URL;
 
-  const result = await getAxiosApiCall<SystemStatus>(path);
+  const result = await getFetchApiCall<SystemStatus>(path);
   if (!result) {
     throw new Error('Failed to fetch system status');
   }

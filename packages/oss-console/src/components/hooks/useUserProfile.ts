@@ -1,5 +1,5 @@
 import { useFlyteApi } from '@clients/flyte-api/ApiProvider';
-import { getAxiosApiCall } from '@clients/flyte-api/utils/getAxiosApiCall';
+import { getFetchApiCall } from '@clients/flyte-api/utils/getFetchApiCall';
 import { UserProfile } from '../../models/Common/types';
 import { useFetchableData } from './useFetchableData';
 
@@ -11,7 +11,7 @@ export function useUserProfile() {
   return useFetchableData<UserProfile | null>({
     debugName: 'UserProfile',
     defaultValue: null,
-    doFetch: () => getAxiosApiCall(profilePath),
+    doFetch: () => getFetchApiCall(profilePath),
     useCache: true,
   });
 }
