@@ -27,6 +27,15 @@ function queueRefresh(fn: () => Promise<void>): Promise<void> {
   return refreshInFlight;
 }
 
+function isRedirectResponse(res: Response): boolean {
+  if (res.type === 'opaqueredirect') {
+    return true;
+  }
+  const { status } = res;
+  // 304 Not Modified is 3xx but not a redirect; treat other 3xx like axios maxRedirects:0.
+  return status >= 300 && status < 400 && status !== 304;
+}
+
 function appendQuery(url: string, params?: Record<string, unknown>): string {
   if (!params) return url;
   const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null);
@@ -78,7 +87,7 @@ export const fetchClient = {
       const init: FetchRequestInit = {
         method,
         credentials: 'include',
-        redirect: 'error',
+        redirect: 'manual',
         headers: config.headers,
       };
       if (method !== 'GET' && method !== 'HEAD' && config.data != null) {
@@ -88,6 +97,13 @@ export const fetchClient = {
     };
 
     let res = await doFetch();
+
+    if (isRedirectResponse(res)) {
+      throw new HttpRequestError(res.statusText || 'Redirect', {
+        status: res.status,
+        statusText: res.statusText || 'Redirect',
+      });
+    }
 
     if (res.status === 401 && !skipRefresh) {
       await queueRefresh(async () => {
