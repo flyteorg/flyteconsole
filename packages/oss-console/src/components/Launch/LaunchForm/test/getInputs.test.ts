@@ -15,9 +15,9 @@ describe('getInputs', () => {
     const { parameters } = launchPlan.closure!.expectedInputs;
     parameters[stringInputName].default = null;
 
-    expect(() => getInputsForWorkflow(mockWorkflow, launchPlan)).not.toThrowError();
+    expect(() => getInputsForWorkflow(mockWorkflow, launchPlan)).not.toThrow();
 
     delete parameters[stringInputName].default;
-    expect(() => getInputsForWorkflow(mockWorkflow, launchPlan)).not.toThrowError();
+    expect(() => getInputsForWorkflow(mockWorkflow, launchPlan)).not.toThrow();
   });
 });

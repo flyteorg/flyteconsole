@@ -3,6 +3,10 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  /** Prefer Node export conditions so deps like `nanoid` resolve to CJS, not ESM `index.browser.js`. */
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons', 'default'],
+  },
   clearMocks: true,
 
   maxWorkers: '90%',
@@ -19,7 +23,8 @@ module.exports = {
     ],
   },
   extensionsToTreatAsEsm: ['.ts'],
-  transformIgnorePatterns: ['^.+\\.js$', '^.+\\.css$', '/[\\/]node_modules[\\/]/'],
+  // Do not transform most of node_modules; allow `nanoid` (pure ESM .js) when it is still resolved as browser.
+  transformIgnorePatterns: ['^.+\\.css$', '/node_modules/(?!nanoid/)'],
   setupFilesAfterEnv: ['<rootDir>/../../scripts/jest-setup.ts'],
   resolver: '<rootDir>/../../scripts/jest-resolver.js',
   testMatch: ['**/*.test.{ts,tsx}'],

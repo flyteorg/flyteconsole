@@ -104,9 +104,6 @@
     "html-webpack-plugin": "^5.5.3",
     "husky": "^8.0.2",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-transformer-svg": "^2.0.1",
     "lint-staged": "^13.0.3",
     "long": "^5.2.1",
     "moment": "^2.29.4",
@@ -159,6 +156,9 @@
     "@types/dagre": "^0.7.52",
     "dotenv": "^16.3.1",
     "eslint-plugin-custom-rules": "file:./scripts/eslint-custom-rules",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "jest-transformer-svg": "^2.1.0",
     "parse5-htmlparser2-tree-adapter": "^7.0.0",
     "semantic-release": "^21.0.7",
     "storybook-addon-mock": "^2.4.1"
@@ -185,7 +185,9 @@
     "glob-parent": "6.0.2",
     "prismjs": "1.29.0",
     "postcss": "^8.4.31",
-    "protobufjs": "^6.11.4"
+    "protobufjs": "^6.11.4",
+    "brace-expansion@npm:^2.0.1": "2.0.3",
+    "brace-expansion@npm:^1.1.7": "1.1.13"
   },
   "packageManager": "yarn@3.2.1"
 }

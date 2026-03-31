@@ -36,14 +36,14 @@ describe('useQueryState Hook', () => {
   test('history API does not call on page load', () => {
     const { result } = renderHook(() => useQueryState());
     // 1 is test initialization, 2 is mutation
-    expect(mockHistoryPush).toBeCalledTimes(0);
+    expect(mockHistoryPush).toHaveBeenCalledTimes(0);
     expect(result.current[0]).toEqual({ initial: 'foo' });
   });
 
   test('initializes with correct default values', () => {
     renderHook(() => useQueryState());
 
-    expect(mockHistoryPush).toBeCalledTimes(0);
+    expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
 
   test('setQueryStateValue updates params', () => {
@@ -81,7 +81,7 @@ describe('useQueryState Hook', () => {
     });
 
     expect(result.current[0]).toEqual({ initial: 'foo' });
-    expect(mockHistoryPush).toBeCalledTimes(0);
+    expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
 
   test('setQueryStateValue updates params and calls history.push', () => {
@@ -91,7 +91,7 @@ describe('useQueryState Hook', () => {
       result.current[1]('newKey1', 'newValue1');
     });
 
-    expect(mockHistoryPush).toBeCalledTimes(1); // initial and state update
+    expect(mockHistoryPush).toHaveBeenCalledTimes(1); // initial and state update
     expect(mockHistoryPush).toHaveBeenLastCalledWith({ search: 'initial=foo&newKey1=newValue1' });
   });
 });

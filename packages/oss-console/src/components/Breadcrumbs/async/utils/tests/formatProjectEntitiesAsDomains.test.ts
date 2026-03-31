@@ -9,14 +9,12 @@ jest.mock('@clients/common/environment', () => ({
   makeRoute: (path: string) => `${path}`.replace(/\/+$/, ''),
 }));
 
-Object.defineProperty(window, 'location', {
-  value: {
-    pathname: '/console',
-  },
-  writable: true, // possibility to override
-});
-
 describe('formatProjectEntitiesAsDomains', () => {
+  beforeAll(() => {
+    // `makeRoute` / `legacyConsoleRouteSection()` in @clients/common/routes reads pathname.
+    window.history.pushState({}, '', '/console');
+  });
+
   const mockData: Project[] = [
     {
       id: 'project1',

@@ -10,11 +10,8 @@ jest.mock('@clients/common/environment', () => ({
 }));
 
 describe('formatProjectEntitiesAsDomains', () => {
-  Object.defineProperty(window, 'location', {
-    value: {
-      pathname: '/console',
-    },
-    writable: true, // possibility to override
+  beforeAll(() => {
+    window.history.pushState({}, '', '/console');
   });
 
   const mockData: Project[] = [

@@ -252,7 +252,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -296,7 +296,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -343,7 +343,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -394,7 +394,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -433,7 +433,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -476,7 +476,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -517,7 +517,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -546,7 +546,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -598,7 +598,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -643,7 +643,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -687,7 +687,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -761,7 +761,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -807,7 +807,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -842,7 +842,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -878,7 +878,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -926,7 +926,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('required should work as expected', async () => {
@@ -975,7 +975,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
 
     it('default value should work as expected', async () => {
@@ -1031,7 +1031,7 @@ describe('LaunchForm: Workflow', () => {
 
       // clicking submit should work
       await fireEvent.click(submitButton);
-      await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+      await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
     });
   });
 
@@ -1116,7 +1116,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -1202,7 +1202,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -1300,7 +1300,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -1384,7 +1384,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -1469,7 +1469,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -1563,7 +1563,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -1635,7 +1635,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -1716,7 +1716,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -1804,7 +1804,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -1870,7 +1870,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -1961,7 +1961,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -2048,7 +2048,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -2110,7 +2110,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -2170,7 +2170,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -2234,7 +2234,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
   });
@@ -2298,7 +2298,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -2361,7 +2361,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -2451,7 +2451,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -2514,7 +2514,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -2577,7 +2577,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -2668,7 +2668,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -2733,7 +2733,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('required should work as expected', async () => {
@@ -2799,7 +2799,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
 
       it('default value should work as expected', async () => {
@@ -2892,7 +2892,7 @@ describe('LaunchForm: Workflow', () => {
 
         // clicking submit should work
         await fireEvent.click(submitButton);
-        await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+        await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
       });
     });
 
@@ -2963,7 +2963,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('required should work as expected', async () => {
@@ -3034,7 +3034,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('default value should work as expected', async () => {
@@ -3137,7 +3137,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
       });
 
@@ -3204,7 +3204,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('required should work as expected', async () => {
@@ -3277,7 +3277,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('default value should work as expected', async () => {
@@ -3380,7 +3380,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
       });
 
@@ -3445,7 +3445,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('required should work as expected', async () => {
@@ -3511,7 +3511,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
 
         it('default value should work as expected', async () => {
@@ -3610,7 +3610,7 @@ describe('LaunchForm: Workflow', () => {
 
           // clicking submit should work
           await fireEvent.click(submitButton);
-          await waitFor(() => expect(mockCreateWorkflowExecution).toBeCalledTimes(1));
+          await waitFor(() => expect(mockCreateWorkflowExecution).toHaveBeenCalledTimes(1));
         });
       });
     });

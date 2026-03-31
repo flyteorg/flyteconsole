@@ -337,13 +337,13 @@ function generateValidityTests(
   valid.map((value) =>
     it(`should treat ${stringifyValue(value)} (${typeof value}) as valid`, () => {
       const input = makeSimpleInput(typeDefinition, value);
-      expect(() => validateInput(input)).not.toThrowError();
+      expect(() => validateInput(input)).not.toThrow();
     }),
   );
   invalid.map((value) =>
     it(`should treat ${stringifyValue(value)} (${typeof value}) as invalid when required`, () => {
       const input = makeSimpleInput(typeDefinition, value, true);
-      expect(() => validateInput(input)).toThrowError();
+      expect(() => validateInput(input)).toThrow();
     }),
   );
 }
@@ -385,7 +385,7 @@ describe('validateInput', () => {
     const simpleInput = makeSimpleInput(type, input);
     simpleInput.required = true;
     delete simpleInput.value;
-    expect(() => validateInput(simpleInput)).toThrowError();
+    expect(() => validateInput(simpleInput)).toThrow();
   });
 
   it('should throw errors for missing required Blob values', () => {
@@ -395,7 +395,7 @@ describe('validateInput', () => {
       dimensionality: BlobDimensionality.SINGLE,
     });
     simpleInput.required = true;
-    expect(() => validateInput(simpleInput)).toThrowError();
+    expect(() => validateInput(simpleInput)).toThrow();
   });
 
   it('should not throw an error for a required input with an initial value and no value', () => {
@@ -403,6 +403,6 @@ describe('validateInput', () => {
     simpleInput.required = true;
     simpleInput.initialValue = primitiveLiteral({ stringValue: 'abcdefg' });
     delete simpleInput.value;
-    expect(() => validateInput(simpleInput)).not.toThrowError();
+    expect(() => validateInput(simpleInput)).not.toThrow();
   });
 });
