@@ -8,6 +8,7 @@ import { CompiledTask } from '../../../../models/Task/types';
 import { dNode } from '../../../../models/Graph/types';
 import { isEndNode, isStartNode } from '../../../../models/Node/utils';
 import { getTaskTypeFromCompiledNode } from '../../../WorkflowGraph/utils';
+import { applyNodeTaskResourceOverrides } from './utils';
 
 interface NodeExecutionInfo extends NodeExecutionDetails {
   scopedId?: string;
@@ -73,7 +74,7 @@ export const getNodeDetails = (
     scopedId,
     displayId: compiledNode?.id ?? 'unknownNode',
     displayName: templateName,
-    taskTemplate: task?.template,
+    taskTemplate: applyNodeTaskResourceOverrides(task?.template, compiledNode),
     displayType: taskType ?? NodeExecutionDisplayType.Unknown,
   };
 
@@ -121,12 +122,13 @@ export const getNodeDetails = (
 export const getNodeDetailsFromTask = (node: dNode, task?: CompiledTask): NodeExecutionInfo => {
   const templateName = node?.value?.taskNode?.referenceId?.name ?? node?.name;
   const taskType = getTaskDisplayType(task?.template.type);
+  const compiledNode = node?.value as Partial<CompiledNode>;
 
   let returnVal: NodeExecutionInfo = {
     scopedId: node.scopedId,
     displayId: node?.value?.id ?? node.id ?? 'unknownNode',
     displayName: templateName ?? node.name,
-    taskTemplate: task?.template,
+    taskTemplate: applyNodeTaskResourceOverrides(task?.template, compiledNode),
     displayType: taskType ?? NodeExecutionDisplayType.Unknown,
   };
 

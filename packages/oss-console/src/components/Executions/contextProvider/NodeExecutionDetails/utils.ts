@@ -3,6 +3,7 @@ import mergeWith from 'lodash/mergeWith';
 import { isCompiledWorkflowClosure } from '../../../../models/Workflow/utils';
 import { CompiledWorkflow, CompiledWorkflowClosure } from '../../../../models/Workflow/types';
 import { CompiledNode } from '../../../../models/Node/types';
+import { TaskTemplate } from '../../../../models/Task/types';
 import { getSubWorkflowFromId } from '../../../WorkflowGraph/utils';
 
 export const mergeNodeExecutions = (val, srcVal, _topkey) => {
@@ -69,4 +70,29 @@ export const findNodeInWorkflowClosure = (
   }
 
   return currentNode;
+};
+
+export const applyNodeTaskResourceOverrides = (
+  taskTemplate?: TaskTemplate,
+  compiledNode?: Partial<CompiledNode>,
+): TaskTemplate | undefined => {
+  if (!taskTemplate) {
+    return taskTemplate;
+  }
+
+  const overrideResources =
+    compiledNode?.taskNode?.overrides?.resources ??
+    compiledNode?.arrayNode?.node?.taskNode?.overrides?.resources;
+
+  if (!overrideResources) {
+    return taskTemplate;
+  }
+
+  return {
+    ...taskTemplate,
+    container: {
+      ...taskTemplate.container,
+      resources: overrideResources,
+    },
+  };
 };

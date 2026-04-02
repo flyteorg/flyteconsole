@@ -7,6 +7,8 @@ import { fetchTaskTemplate } from '../../../../queries/taskQueries';
 import { TaskTemplate } from '../../../../models/Task/types';
 import { WorkflowNodeExecution } from '../../contexts';
 import { CompiledWorkflowClosure } from '../../../../models/Workflow/types';
+import { CompiledNode } from '../../../../models/Node/types';
+import { applyNodeTaskResourceOverrides, findNodeInWorkflowClosure } from './utils';
 
 export const getTaskThroughExecution = async (
   queryClient: QueryClient,
@@ -39,11 +41,16 @@ export const getTaskThroughExecution = async (
     }
   }
 
+  const compiledNode = findNodeInWorkflowClosure(
+    nodeExecution.scopedId || nodeExecution.metadata?.specNodeId || nodeExecution.id.nodeId,
+    closure,
+  ) as Partial<CompiledNode>;
+
   const taskDetails: NodeExecutionDetails = {
     displayId: nodeExecution.id.nodeId,
     displayName: taskExecutions?.[0]?.id.taskId.name,
     displayType: getTaskDisplayType(taskTemplate?.type),
-    taskTemplate,
+    taskTemplate: applyNodeTaskResourceOverrides(taskTemplate, compiledNode),
   };
 
   return taskDetails;
