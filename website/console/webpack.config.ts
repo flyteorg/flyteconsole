@@ -9,6 +9,7 @@ import HTMLWebpackPlugin, { Options as HtmlWebpackOptions } from 'html-webpack-p
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 const CopyPlugin = require('copy-webpack-plugin');
+const { CycloneDxWebpackPlugin } = require('@cyclonedx/webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 const { merge } = require('webpack-merge');
 /**
@@ -227,6 +228,10 @@ module.exports = (_env: any, argv: { mode: 'production' | 'development' }) => {
         includeAliases: ['http', 'https', 'stream', 'zlib', 'Buffer'],
       }),
       getDefinePlugin(false),
+      new CycloneDxWebpackPlugin({
+        outputLocation: './cyclonedx',
+        includeWellknown: false,
+      }),
       new HTMLWebpackPlugin(htmlWebpackOptions),
     ],
 
