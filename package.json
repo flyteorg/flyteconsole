@@ -116,7 +116,7 @@
     "postcss-loader": "^7.3.3",
     "prettier": "^2.8.1",
     "prom-client": "^14.0.1",
-    "protobufjs": "^6.11.4",
+    "protobufjs": "^7.5.6",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-helmet": "^6.1.0",
@@ -185,7 +185,7 @@
     "glob-parent": "6.0.2",
     "prismjs": "1.29.0",
     "postcss": "^8.4.31",
-    "protobufjs": "^6.11.4",
+    "protobufjs": "^7.5.6",
     "brace-expansion@npm:^2.0.1": "2.0.3",
     "brace-expansion@npm:^1.1.7": "1.1.13"
   },
