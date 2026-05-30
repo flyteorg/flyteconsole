@@ -15567,7 +15567,7 @@ __metadata:
     nodemon: ^2.0.19
     parse5: ^7.1.2
     parse5-htmlparser2-tree-adapter: ^7.0.0
-    postcss: ^8.4.25
+    postcss: ^8.5.10
     postcss-loader: ^7.3.3
     prettier: ^2.8.1
     prom-client: ^14.0.1
