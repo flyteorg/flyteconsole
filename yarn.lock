@@ -2469,7 +2469,7 @@ __metadata:
     dom-helpers: 5.2.1
     fuzzysort: ^2.0.4
     intersection-observer: ^0.7.0
-    js-yaml: ^3.13.1
+    js-yaml: ^4.2.0
     linkify-it: ^2.2.0
     lossless-json: ^1.0.3
     memoize-one: ^5.0.0
@@ -19266,6 +19266,17 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: c7830dfd456c3ef2c6e355cc5a92e6700ceafa1d14bba54497b34a99f0376cecbb3e9ac14d3e5849b426d5a5140709a66237a8c991c675431271c4ce5504151a
+  languageName: node
+  linkType: hard
+
+"js-yaml@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "js-yaml@npm:4.2.0"
+  dependencies:
+    argparse: ^2.0.1
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 86bd35548a0c19cd1f5861147c09aa1f52eb0fc9464f34023524d22bbe079c62c30fd00750e63f632e8d12c12ad36ea0dd1e6bec5171c492ecad433d8db295eb
   languageName: node
   linkType: hard
 
