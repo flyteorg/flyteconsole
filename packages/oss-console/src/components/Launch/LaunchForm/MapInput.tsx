@@ -109,7 +109,7 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
   );
 };
 
-const getNewMapItem = (id, key = '', value = ''): MapInputItem => {
+const getNewMapItem = (id: number | null, key = '', value = ''): MapInputItem => {
   return { id, key, value };
 };
 
@@ -121,7 +121,11 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
   try {
     const mapObj = JSON.parse(value.toString());
     if (typeof mapObj === 'object') {
-      return Object.keys(mapObj).map((key, index) => getNewMapItem(index, key, mapObj[key]));
+      return Object.keys(mapObj).map((key, index) => {
+        // Object values (e.g. Map[str, struct] on relaunch) must be JSON-stringified for the text field.
+        const itemValue = mapObj[key];
+        return getNewMapItem(index, key, typeof itemValue === 'object' ? JSON.stringify(itemValue) : itemValue);
+      });
     }
   } catch (e) {
     // do nothing
