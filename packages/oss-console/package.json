@@ -73,7 +73,7 @@
     "dom-helpers": "5.2.1",
     "fuzzysort": "^2.0.4",
     "intersection-observer": "^0.7.0",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.15.0",
     "linkify-it": "^2.2.0",
     "lossless-json": "^1.0.3",
     "memoize-one": "^5.0.0",
