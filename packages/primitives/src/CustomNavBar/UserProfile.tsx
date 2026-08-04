@@ -9,8 +9,8 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 import get from 'lodash/get';
 import LogoutLogo from '@clients/ui-atoms/LogoutLogo';
-import { useFlyteApi } from '@clients/flyte-api/ApiProvider';
 import { Flyte } from '../types/flyteTypes';
+import { SignOutPanel } from '../SessionManagent/SignOutPanel';
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   background: 'transparent',
@@ -67,7 +67,7 @@ export interface UserProfileProps {
 /** Displays User name when user is logged in - would be used as User settings entry in future */
 export const UserProfile = ({ profile }: UserProfileProps) => {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null);
-  const apiContext = useFlyteApi();
+  const [signOutOpen, setSignOutOpen] = useState(false);
 
   const handlePopoverOpen: MouseEventHandler = (event) => {
     setAnchorEl(event.currentTarget);
@@ -139,7 +139,10 @@ export const UserProfile = ({ profile }: UserProfileProps) => {
                 variant="text"
                 color="inherit"
                 className="actionButton"
-                href={apiContext.getLogoutUrl()}
+                onClick={() => {
+                  handlePopoverClose();
+                  setSignOutOpen(true);
+                }}
                 data-cy="logout-button"
                 startIcon={<LogoutLogo className="logoutIcon" />}
               >
@@ -149,6 +152,9 @@ export const UserProfile = ({ profile }: UserProfileProps) => {
           </Box>
         </Popover>
       </AvatarWrapper>
+
+      {/* Outside the Popover so closing the menu doesn't unmount the dialog. */}
+      <SignOutPanel open={signOutOpen} onCancel={() => setSignOutOpen(false)} />
     </>
   );
 };
