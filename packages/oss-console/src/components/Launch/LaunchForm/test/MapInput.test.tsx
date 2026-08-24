@@ -28,9 +28,6 @@ const renderMap = (value: string) =>
 
 describe('MapInput', () => {
   it('renders an object map value as JSON (not "[object Object]") when relaunching', () => {
-    // A map whose values are themselves objects -- the shape a prior execution produces when
-    // relaunching (e.g. Map[str, struct]). Before the fix this binds an object straight into the
-    // value text field, which coerces to "[object Object]" (and produced render errors).
     const { container } = renderMap('{"foo":{"nested":"bar"}}');
 
     const keyField = container.querySelector('.keyControl input') as HTMLInputElement;

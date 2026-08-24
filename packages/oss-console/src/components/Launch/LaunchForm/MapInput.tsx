@@ -122,9 +122,12 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
     const mapObj = JSON.parse(value.toString());
     if (typeof mapObj === 'object') {
       return Object.keys(mapObj).map((key, index) => {
-        // Object values (e.g. Map[str, struct] on relaunch) must be JSON-stringified for the text field.
         const itemValue = mapObj[key];
-        return getNewMapItem(index, key, typeof itemValue === 'object' ? JSON.stringify(itemValue) : itemValue);
+        return getNewMapItem(
+          index,
+          key,
+          typeof itemValue === 'object' ? JSON.stringify(itemValue) : itemValue,
+        );
       });
     }
   } catch (e) {
