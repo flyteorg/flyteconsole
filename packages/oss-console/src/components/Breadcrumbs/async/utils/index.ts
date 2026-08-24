@@ -67,7 +67,7 @@ export const getExecutionSpecProjectDomain = (
       ? breadcrumb.projectId
       : executionSpecIdentifier.project;
   const domain =
-    breadcrumb.projectId === executionSpecIdentifier.domain
+    breadcrumb.domainId === executionSpecIdentifier.domain
       ? breadcrumb.domainId
       : executionSpecIdentifier.domain;
 
