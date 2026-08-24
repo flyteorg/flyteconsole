@@ -50,17 +50,23 @@ const getExecutionData = async (projectId: string, domainId: string, executionId
 };
 
 const isExecutionTaskOrWorkflow = (executionData: Execution) => {
-  return executionData.spec.launchPlan.resourceType === ResourceType.TASK
+  // Check the resourceType of the actual executed entity (workflowId),
+  // not the launch plan identifier
+  return executionData.closure.workflowId.resourceType === ResourceType.TASK
     ? ResourceType.TASK
     : ResourceType.WORKFLOW;
 };
 
 const getTaskOrWorkflowName = (executionData: Execution): string => {
-  return executionData.spec.launchPlan.name;
+  // Return the actual workflow/task name from closure.workflowId,
+  // not the launch plan name from spec.launchPlan
+  return executionData.closure.workflowId.name;
 };
 
 const getTaskOrWorkflowVersion = (executionData: Execution): string => {
-  return executionData.spec.launchPlan.version;
+  // Return the actual workflow/task version from closure.workflowId,
+  // not the launch plan version from spec.launchPlan
+  return executionData.closure.workflowId.version;
 };
 
 const getExecutionValue = (location: Location) => {
@@ -126,8 +132,9 @@ export const executonTaskWorkFlowNameAsyncSelfLink: BreadcrumbEntitySelfLinkAsyn
   const resourceName = getTaskOrWorkflowName(executionData);
   const resourceType = isExecutionTaskOrWorkflow(executionData);
 
+  // Use closure.workflowId (the actual workflow) instead of spec.launchPlan
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 
@@ -153,8 +160,9 @@ export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
   const entityResourceName = getTaskOrWorkflowName(executionData);
   const entityResourceVersion = getTaskOrWorkflowVersion(executionData);
 
+  // Use closure.workflowId (the actual workflow) instead of spec.launchPlan
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 
@@ -340,8 +348,9 @@ export const executionTaskWorkflowViewAll: BreadcrumbAsyncViewAllLink = async (
   const executionType = isExecutionTaskOrWorkflow(executionData);
   const entityResourceName = getTaskOrWorkflowName(executionData);
 
+  // Use closure.workflowId (the actual workflow) instead of spec.launchPlan
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 

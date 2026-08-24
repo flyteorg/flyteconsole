@@ -67,7 +67,7 @@ export const contextualBreadcrumbRegistryList: Breadcrumb[] = [
   }),
   makeBreadcrumb({
     id: 'executions:task-workflow-name',
-    label: 'Launch Plan Name',
+    label: 'Workflow Name',
     defaultValue: 'Executions',
     popoverTitle: 'Versions',
     asyncValue: executonTaskWorkFlowNameAsyncValue,
