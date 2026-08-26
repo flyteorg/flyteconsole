@@ -94,6 +94,7 @@ export const PausedTasksComponent: React.FC<PausedTasksComponentProps> = ({
           nodeExecutionId={nodeExecutionsById[selectedNode.scopedId].id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
+          nodeExecutionScopeId={selectedNode.scopedId}
         />
       ) : null}
     </div>

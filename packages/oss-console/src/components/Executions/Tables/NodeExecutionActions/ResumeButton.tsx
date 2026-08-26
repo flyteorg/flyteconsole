@@ -81,6 +81,7 @@ export const ResumeButton: FC<ResumeButtonProps> = ({ node }) => {
               nodeExecutionId={nodeExecution.id as NodeExecutionIdentifier}
               showLaunchForm={showResumeForm}
               setShowLaunchForm={setShowResumeForm}
+              nodeExecutionScopeId={nodeExecution.scopedId}
             />
           ) : null;
         }}
