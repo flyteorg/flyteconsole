@@ -88,6 +88,7 @@ describe('Executions > CacheStatus', () => {
       ${CatalogCacheStatus.CACHE_MISS}           | ${cacheStatusMessages[CatalogCacheStatus.CACHE_MISS]}
       ${CatalogCacheStatus.CACHE_POPULATED}      | ${cacheStatusMessages[CatalogCacheStatus.CACHE_POPULATED]}
       ${CatalogCacheStatus.CACHE_PUT_FAILURE}    | ${cacheStatusMessages[CatalogCacheStatus.CACHE_PUT_FAILURE]}
+      ${CatalogCacheStatus.CACHE_EVICTED}        | ${cacheStatusMessages[CatalogCacheStatus.CACHE_EVICTED]}
     `('for each case', ({ cacheStatus, expected }) => {
       it(`renders correct text ${expected} for status ${cacheStatus}`, async () => {
         const { queryByText } = renderComponent({ cacheStatus });
