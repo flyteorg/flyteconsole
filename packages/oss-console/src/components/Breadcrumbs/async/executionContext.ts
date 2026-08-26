@@ -49,18 +49,24 @@ const getExecutionData = async (projectId: string, domainId: string, executionId
   return executionData;
 };
 
-const isExecutionTaskOrWorkflow = (executionData: Execution) => {
+export const isExecutionTaskOrWorkflow = (executionData: Execution) => {
   return executionData.spec.launchPlan.resourceType === ResourceType.TASK
     ? ResourceType.TASK
     : ResourceType.WORKFLOW;
 };
 
-const getTaskOrWorkflowName = (executionData: Execution): string => {
-  return executionData.spec.launchPlan.name;
+export const getTaskOrWorkflowName = (executionData: Execution): string => {
+  if (isExecutionTaskOrWorkflow(executionData) === ResourceType.TASK) {
+    return executionData.spec.launchPlan.name;
+  }
+  return executionData.closure.workflowId.name;
 };
 
-const getTaskOrWorkflowVersion = (executionData: Execution): string => {
-  return executionData.spec.launchPlan.version;
+export const getTaskOrWorkflowVersion = (executionData: Execution): string => {
+  if (isExecutionTaskOrWorkflow(executionData) === ResourceType.TASK) {
+    return executionData.spec.launchPlan.version;
+  }
+  return executionData.closure.workflowId.version;
 };
 
 const getExecutionValue = (location: Location) => {
