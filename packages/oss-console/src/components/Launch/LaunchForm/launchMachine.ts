@@ -103,6 +103,10 @@ export interface TaskLaunchContext extends BaseLaunchContext {
   preferredTaskId?: Identifier;
   taskVersion?: Identifier;
   taskVersionOptions?: Task[];
+  disableAll?: boolean | null;
+  rawOutputDataConfig?: Admin.IRawOutputDataConfig | null;
+  labels?: Admin.ILabels | null;
+  annotations?: Admin.IAnnotations | null;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
 }
