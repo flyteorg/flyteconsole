@@ -62,7 +62,7 @@ export function formateDateRelative(input: Date, threshold = 24 * 60 * 60 * 1000
     return moment.utc(input).fromNow();
   }
 
-  return formatDate(input, 'MM/DD/YY HH:MM A');
+  return formatDate(input, 'YYYY-MM-DD HH:MM A');
 }
 
 /** Formats a date into a standard local format used throughout the UI

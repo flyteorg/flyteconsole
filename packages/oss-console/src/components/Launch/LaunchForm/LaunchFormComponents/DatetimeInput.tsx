@@ -41,7 +41,7 @@ export const DatetimeInput: FC<InputProps> = (props) => {
           },
         }}
         ampm={false}
-        format="MM/DD/YYYY HH:mm:ss"
+        format="YYYY-MM-DD HH:mm:ss"
         label={label}
         onChange={handleChange}
         value={!value?.length ? null : moment(value)}
