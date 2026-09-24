@@ -12,7 +12,7 @@ import {
   QueryClientProviderProps,
 } from 'react-query';
 import Long from 'long';
-import { RequestConfig } from '@clients/common/types/adminEntityTypes';
+import { FilterOperationName, RequestConfig } from '@clients/common/types/adminEntityTypes';
 import { APIContext } from '../../../data/apiContext';
 import { mockAPIContextValue } from '../../../data/__mocks__/apiContext';
 import {
@@ -253,6 +253,50 @@ describe('LaunchForm: Workflow', () => {
         const label = container.querySelector('#launch-workflow-selector');
         expect(label).toHaveValue(mockWorkflowVersions[0].id.version);
       });
+    });
+
+    it('should scope launch plans to the selected workflow identifier', async () => {
+      const selectedWorkflow = {
+        ...mockWorkflowVersions[0].id,
+        project: 'other-project',
+        domain: 'production',
+      };
+      mockWorkflowVersions[0].id = selectedWorkflow;
+      renderForm();
+
+      await waitFor(() =>
+        expect(mockListLaunchPlans).toHaveBeenCalledWith(
+          {
+            project: selectedWorkflow.project,
+            domain: selectedWorkflow.domain,
+          },
+          {
+            limit: 50,
+            filter: [
+              {
+                key: 'workflow.name',
+                operation: FilterOperationName.EQ,
+                value: selectedWorkflow.name,
+              },
+              {
+                key: 'workflow.version',
+                operation: FilterOperationName.EQ,
+                value: selectedWorkflow.version,
+              },
+              {
+                key: 'workflow.project',
+                operation: FilterOperationName.EQ,
+                value: selectedWorkflow.project,
+              },
+              {
+                key: 'workflow.domain',
+                operation: FilterOperationName.EQ,
+                value: selectedWorkflow.domain,
+              },
+            ],
+          },
+        ),
+      );
     });
 
     it('should select the launch plan matching the workflow name by default', async () => {

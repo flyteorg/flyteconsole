@@ -76,6 +76,16 @@ async function loadLaunchPlans(
           operation: FilterOperationName.EQ,
           value: version,
         },
+        {
+          key: 'workflow.project',
+          operation: FilterOperationName.EQ,
+          value: project,
+        },
+        {
+          key: 'workflow.domain',
+          operation: FilterOperationName.EQ,
+          value: domain,
+        },
       ],
       limit: 50,
     },

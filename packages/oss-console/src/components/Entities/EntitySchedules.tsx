@@ -153,6 +153,16 @@ export const EntitySchedules: React.FC<{
         operation: FilterOperationName.EQ,
         value: id.name,
       },
+      {
+        key: 'workflow.project',
+        operation: FilterOperationName.EQ,
+        value: id.project,
+      },
+      {
+        key: 'workflow.domain',
+        operation: FilterOperationName.EQ,
+        value: id.domain,
+      },
     ],
   });
 
