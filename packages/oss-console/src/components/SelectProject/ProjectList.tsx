@@ -1,9 +1,10 @@
-import React, { forwardRef, useCallback } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableContainer from '@mui/material/TableContainer';
 import Typography from '@mui/material/Typography';
@@ -83,8 +84,14 @@ interface ProjectListProps {
   projects: SearchResult<Project>[];
 }
 
+const defaultRowsPerPage = 25;
+const rowsPerPageOptions = [25, 50, 100];
+
 /** Displays the available Projects and domains as a list of cards */
 export const ProjectList: React.FC<ProjectListProps> = (props) => {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
+
   const selectProject = useCallback((domainId: string, projectId: string) => {
     /**
      * The last project/domain selected by a user is saved here and used by
@@ -99,6 +106,24 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
     setLocalStore(LOCAL_PROJECT_DOMAIN, projectDomain);
   }, []);
 
+  const paginatedProjects = useMemo(() => {
+    const startIndex = page * rowsPerPage;
+    return props.projects.slice(startIndex, startIndex + rowsPerPage);
+  }, [page, props.projects, rowsPerPage]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [props.projects]);
+
+  const onPageChange = (_event: unknown, nextPage: number) => {
+    setPage(nextPage);
+  };
+
+  const onRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(Number(event.target.value));
+    setPage(0);
+  };
+
   return (
     <StyledTableContainer>
       <Table aria-label="projects table">
@@ -110,7 +135,7 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props?.projects?.map?.(({ value: project, result, content }) => (
+          {paginatedProjects.map(({ value: project, result, content }) => (
             <TableRow key={project.id}>
               <TableCell scope="row">
                 <Typography variant="h5" className="ellipsis" data-cy="project-name">
@@ -143,9 +168,18 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
                 </Box>
               </TableCell>
             </TableRow>
-          )) || null}
+          ))}
         </TableBody>
       </Table>
+      <TablePagination
+        component="div"
+        count={props.projects.length}
+        page={page}
+        onPageChange={onPageChange}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={onRowsPerPageChange}
+        rowsPerPageOptions={rowsPerPageOptions}
+      />
     </StyledTableContainer>
   );
 };
