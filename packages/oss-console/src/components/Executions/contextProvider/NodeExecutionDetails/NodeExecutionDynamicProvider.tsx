@@ -71,15 +71,25 @@ export const NodeExecutionDynamicProvider = ({
     refetchInterval: nodeExecutionRefreshIntervalMs,
   });
 
+  // Depend on the returned data and success state, not the query wrapper, whose identity can
+  // change on unrelated renders. This avoids reindexing and merging the same children again.
+  // The provider keeps the setter stable; the query's polling interval is unchanged.
+  // Example: two different query wrappers contain the same [Prepare, Fit] array object
+  // and isSuccess=true. The old dependency reran the merge; these dependencies skip repeating it.
+  // A poll that changes Fit's phase supplies changed data and runs the merge again.
   useEffect(() => {
-    // don't update if still fetching
+    // Only publish results once the query has successful data.
     if (!nodeExecutionChildrenQuery.isSuccess) {
       return;
     }
 
     const result = keyBy(nodeExecutionChildrenQuery.data, 'scopedId');
     setCurrentNodeExecutionsById(result);
-  }, [nodeExecutionChildrenQuery]);
+  }, [
+    nodeExecutionChildrenQuery.data,
+    nodeExecutionChildrenQuery.isSuccess,
+    setCurrentNodeExecutionsById,
+  ]);
 
   /**
    * Fetch node execution data only for dynamic nodes

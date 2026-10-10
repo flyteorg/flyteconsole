@@ -1,5 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import * as React from 'react';
+import { FilterOperationName } from '@clients/common/types/adminEntityTypes';
 import {
   QueryClient,
   QueryClientProvider as QueryClientProviderImport,
@@ -43,6 +44,8 @@ jest.mock('../../../../components/Executions/Tables/NodeExecutionRow', () => ({
     const execution = nodeExecutionsById[node.scopedId];
     return (
       <div data-testid="node-execution-row">
+        <div data-testid="node-execution-col-scoped-id">{node.scopedId}</div>
+        <div data-testid="node-execution-col-grayed-out">{String(!!node.grayedOut)}</div>
         <div data-testid="node-execution-col-id">{execution?.id?.nodeId}</div>
         <div data-testid="node-execution-col-phase">{execution?.closure?.phase}</div>
       </div>
@@ -111,35 +114,39 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
     jest.clearAllMocks();
   });
 
-  const renderTable = ({ nodeExecutionsById, initialNodes, filterState }) =>
-    render(
-      <QueryClientProvider client={queryClient}>
-        <ExecutionContext.Provider
-          value={{
-            execution: {
-              id: executionId,
-            } as Execution,
-          }}
-        >
-          <NodeExecutionDetailsContextProvider initialWorkflow={workflow}>
-            <WorkflowNodeExecutionsContext.Provider
-              value={{
-                dagData: {
-                  dagError: null,
-                  mergedDag: {} as any,
-                },
-                visibleNodes: initialNodes,
-                nodeExecutionsById,
-                setCurrentNodeExecutionsById: () => {},
-                toggleNode: () => {},
-              }}
-            >
-              <NodeExecutionsTable filterState={filterState} />
-            </WorkflowNodeExecutionsContext.Provider>
-          </NodeExecutionDetailsContextProvider>
-        </ExecutionContext.Provider>
-      </QueryClientProvider>,
-    );
+  const table = ({ nodeExecutionsById, initialNodes, filterState }) => (
+    <QueryClientProvider client={queryClient}>
+      <ExecutionContext.Provider
+        value={{
+          execution: {
+            id: executionId,
+          } as Execution,
+        }}
+      >
+        <NodeExecutionDetailsContextProvider initialWorkflow={workflow}>
+          <WorkflowNodeExecutionsContext.Provider
+            value={{
+              dagData: {
+                dagError: null,
+                mergedDag: {} as any,
+              },
+              visibleNodes: initialNodes,
+              nodeExecutionsById,
+              setCurrentNodeExecutionsById: () => {},
+              toggleNode: () => {},
+            }}
+          >
+            <NodeExecutionsTable filterState={filterState} />
+          </WorkflowNodeExecutionsContext.Provider>
+        </NodeExecutionDetailsContextProvider>
+      </ExecutionContext.Provider>
+    </QueryClientProvider>
+  );
+
+  const renderTable = (props: Parameters<typeof table>[0]) => {
+    const view = render(table(props));
+    return { ...view, rerenderTable: (next: typeof props) => view.rerender(table(next)) };
+  };
 
   it('renders empty content when there are no nodes', async () => {
     const filterState = {
@@ -326,5 +333,87 @@ describe('NodeExecutionsTableExecutions > Tables > NodeExecutionsTable', () => {
       expect(ids[i]).toHaveTextContent(filteredNodeExecutions[i].id?.nodeId);
       expect(renderedPhases[i]).toHaveTextContent(phases[i].toString());
     }
+  });
+
+  it('updates nested rows on expansion without serializing compiled node payloads', async () => {
+    jest.spyOn(executionsApi, 'listNodeExecutions').mockResolvedValue({ entities: [] });
+    jest.spyOn(executionsApi, 'listTaskExecutions').mockResolvedValue({ entities: [] });
+    const parent = mockNodes(1)[0];
+    const child = { ...mockNodes(1)[0], scopedId: 'n1-0-n1', level: 1 };
+    const grandchild = { ...mockNodes(1)[0], scopedId: 'n1-0-n1-0-n1', level: 2 };
+    child.nodes = [grandchild];
+    parent.nodes = [child];
+    // Fail on serialization instead of relying on a machine-dependent timing threshold.
+    // A flattened row retains this payload, so JSON equality would invoke its toJSON method.
+    const serialize = jest.fn(() => {
+      throw new Error('Table rows must not serialize compiled payloads');
+    });
+    parent.value = { toJSON: serialize } as unknown as dNode['value'];
+    const filterState = { filters: [], appliedFilters: [] };
+    const nodeExecutionsById = {};
+    const view = renderTable({ initialNodes: [parent], nodeExecutionsById, filterState });
+    const rowIds = () =>
+      view.queryAllByTestId('node-execution-col-scoped-id').map((element) => element.textContent);
+    expect(rowIds()).toEqual(['n1']);
+
+    // Model an immutable expansion update: new node/array references must invalidate cached rows.
+    const expanded = { ...parent, expanded: true, nodes: [{ ...child, expanded: true }] };
+    view.rerenderTable({ initialNodes: [expanded], nodeExecutionsById, filterState });
+    expect(rowIds()).toEqual(['n1', 'n1-0-n1', 'n1-0-n1-0-n1']);
+    view.rerenderTable({ initialNodes: [parent], nodeExecutionsById, filterState });
+    expect(rowIds()).toEqual(['n1']);
+    expect(parent.expanded).toBeUndefined();
+    expect(child.expanded).toBeUndefined();
+    expect(serialize).not.toHaveBeenCalled();
+  });
+
+  it('preserves expansion while filtering and responds to execution phase updates', async () => {
+    jest.spyOn(executionsApi, 'listNodeExecutions').mockResolvedValue({ entities: [] });
+    jest.spyOn(executionsApi, 'listTaskExecutions').mockResolvedValue({ entities: [] });
+    const nodes = mockNodes(2);
+    nodes[0] = { ...nodes[0], expanded: true, level: 0 };
+    const child = { ...mockNodes(1)[0], scopedId: 'n1-0-n1', level: 1 };
+    nodes[0].nodes = [child];
+    const executions = mockExecutionsById(2, [
+      NodeExecutionPhase.RUNNING,
+      NodeExecutionPhase.SUCCEEDED,
+    ]);
+    executions[child.scopedId] = {
+      ...executions.n2,
+      scopedId: child.scopedId,
+      id: { ...executions.n2.id, nodeId: child.id },
+    };
+    const filterState = {
+      filters: [],
+      appliedFilters: [
+        { key: 'phase', operation: FilterOperationName.VALUE_IN, value: ['SUCCEEDED'] },
+      ],
+    };
+    const view = renderTable({ initialNodes: nodes, nodeExecutionsById: executions, filterState });
+    const grayedRows = () =>
+      view.queryAllByTestId('node-execution-col-grayed-out').map((element) => element.textContent);
+    await waitFor(() => expect(grayedRows()).toEqual(['true', 'false', 'false']));
+    expect(
+      view.queryAllByTestId('node-execution-col-scoped-id').map((element) => element.textContent),
+    ).toEqual(['n1', child.scopedId, 'n2']);
+    expect(nodes[0].grayedOut).toBeUndefined();
+
+    // Status changes must still refresh phase filtering even when the node tree is unchanged.
+    const updated = {
+      ...executions,
+      n1: {
+        ...executions.n1,
+        closure: { ...executions.n1.closure, phase: NodeExecutionPhase.SUCCEEDED },
+      },
+    };
+    view.rerenderTable({ initialNodes: nodes, nodeExecutionsById: updated, filterState });
+    await waitFor(() => expect(grayedRows()).toEqual(['false', 'false', 'false']));
+    view.rerenderTable({
+      initialNodes: nodes,
+      nodeExecutionsById: updated,
+      filterState: { filters: [], appliedFilters: [] },
+    });
+    await waitFor(() => expect(grayedRows()).toEqual(['false', 'false', 'false']));
+    expect(nodes[0].expanded).toBe(true);
   });
 });
