@@ -1,7 +1,5 @@
 import React, { useMemo, useEffect, useState, useContext } from 'react';
-import merge from 'lodash/merge';
 import isEqual from 'lodash/isEqual';
-import cloneDeep from 'lodash/cloneDeep';
 import Grid from '@mui/material/Grid';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -19,7 +17,6 @@ import { noExecutionsFoundString } from '@clients/common/constants';
 import { dNode } from '../../../models/Graph/types';
 import { NodeExecution } from '../../../models/Execution/types';
 import { isStartOrEndNodeId } from '../../../models/Node/utils';
-import { stringifyIsEqual } from '../../../common/stringifyIsEqual';
 import { generateColumns } from './nodeExecutionColumns';
 import { useColumnStyles } from './styles';
 import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails/WorkflowNodeExecutionsProvider';
@@ -35,26 +32,6 @@ import {
   useExecutionNodeViewsStatePoll,
 } from '../ExecutionDetails/useExecutionNodeViewsStatePoll';
 import { NodeExecutionPhase } from '../../../models/Execution/enums';
-
-const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
-  if (!target?.length) {
-    return target;
-  }
-  const originClone = cloneDeep(origin);
-  const newTarget = cloneDeep(target);
-  newTarget?.forEach((value) => {
-    const originalNode = originClone.find(
-      (og) => og.id === value.id && og.scopedId === value.scopedId,
-    );
-    const newNodes = mergeOriginIntoNodes(value.nodes, originalNode?.nodes || []);
-
-    value = merge(value, originalNode);
-    value.nodes = newNodes;
-    return value;
-  });
-
-  return newTarget;
-};
 
 const executionMatchesPhaseFilter = (
   { key, value, operation }: FilterOperation,
@@ -72,6 +49,12 @@ const executionMatchesPhaseFilter = (
   return false;
 };
 
+// Filtering changes child lists and display flags, so shallow node copies are sufficient.
+// They preserve expansion flags and share the compiled payloads without mutating the input.
+// Deep-cloning at every recursive step would copy the same descendants repeatedly.
+// Example: filter for SUCCEEDED when expanded Train is RUNNING and its child Fit succeeded.
+// Keep Train as dimmed context and Fit as a matching child. Copy their display fields and
+// child lists, sharing task definitions; the original Train's grayedOut flag stays unchanged.
 const filterNodes = (
   initialNodes: dNode[],
   appliedFilters: FilterOperation[],
@@ -81,32 +64,25 @@ const filterNodes = (
     return [];
   }
 
-  let initialClone = cloneDeep(initialNodes);
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const n of initialClone) {
-    n.nodes = filterNodes(n.nodes, appliedFilters, nodeExecutionsById);
-  }
-
-  initialClone = initialClone.filter((node) => {
-    const hasFilteredChildren = !!node.nodes?.length;
-    const phaseFilter = appliedFilters.find((f) => f.key === 'phase');
+  const phaseFilter = appliedFilters.find((f) => f.key === 'phase');
+  return initialNodes.reduce<dNode[]>((result, node) => {
+    const nodes = filterNodes(node.nodes, appliedFilters, nodeExecutionsById);
+    const hasFilteredChildren = !!nodes.length;
     const execution = nodeExecutionsById[node?.scopedId];
     const shouldBeIncluded =
       !!phaseFilter &&
       !isStartOrEndNodeId(node.id) &&
       executionMatchesPhaseFilter(phaseFilter, execution);
-    const result = !!node.level || hasFilteredChildren || shouldBeIncluded;
-
-    if (!shouldBeIncluded) {
-      // eslint-disable-next-line no-param-reassign
-      node.grayedOut = true;
+    // Keep nested rows and ancestors as context, dimming nodes whose own phase does not match.
+    if (!!node.level || hasFilteredChildren || shouldBeIncluded) {
+      result.push({
+        ...node,
+        nodes,
+        grayedOut: shouldBeIncluded ? node.grayedOut : true,
+      });
     }
-
     return result;
-  });
-
-  return initialClone;
+  }, []);
 };
 
 const isPhaseFilter = (appliedFilters: FilterOperation[] = []) => {
@@ -134,17 +110,16 @@ export const NodeExecutionsTable: React.FC<{
 
   const [filters, setFilters] = useState<FilterOperation[]>([]);
 
-  // query to get filtered data to narrow down Table outputs
+  // The server handles non-phase filters; phase filtering below uses local execution states.
   const { nodeExecutionsQuery: filteredNodeExecutionsQuery } = useExecutionNodeViewsStatePoll(
     execution,
     filters.filter((f) => f.key !== 'phase'),
   );
 
-  const [showNodes, setShowNodes] = useState<dNode[]>([]);
-
-  const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
-
-  // wait for changes to filtered node executions
+  // Keep the settled results while fetching. Depend on the fields read here because the
+  // query wrapper can get a new identity on unrelated renders, repeating this comparison.
+  // Example: an unrelated render wraps the same [Train] array object in a new query object.
+  // With the same data, isFetching flag, and filters, this effect needs no work.
   useEffect(() => {
     if (filteredNodeExecutionsQuery.isFetching) {
       return;
@@ -155,13 +130,16 @@ export const NodeExecutionsTable: React.FC<{
       : filteredNodeExecutionsQuery.data;
 
     setFilteredNodeExecutions((prev) => {
+      // Equal responses should retain their reference so cached filtering can reuse its input.
+      // Example: two settled duration-filter responses both contain identical Train records;
+      // keep the previously stored array instead of invalidating cached filtering with a new one.
       if (isEqual(prev, newFilteredNodeExecutions)) {
         return prev;
       }
 
       return newFilteredNodeExecutions;
     });
-  }, [filteredNodeExecutionsQuery]);
+  }, [filteredNodeExecutionsQuery.data, filteredNodeExecutionsQuery.isFetching, filters]);
 
   useEffect(() => {
     setFilters((prev) => {
@@ -172,10 +150,15 @@ export const NodeExecutionsTable: React.FC<{
     });
   }, [appliedFilters]);
 
-  useEffect(() => {
+  // Derive rows from the current tree, which already carries expansion flags.
+  // Execution records are a dependency because phase updates can change filtered membership
+  // or dimming, even when the workflow structure stays the same.
+  // Example: with a SUCCEEDED filter, RUNNING Train is dimmed beside its matching Fit child.
+  // When Train succeeds, recalculate its dimming even though the workflow definition is unchanged.
+  // Using the current tree also preserves Train's expansion without the old deep-clone/merge step.
+  const filteredNodes = useMemo(() => {
     if (filters.length > 0) {
-      // if filter was apllied, but filteredNodeExecutions is empty, we only appliied Phase filter,
-      // and need to clear out items manually
+      // Phase-only filtering needs no server match list; start from the full visible tree.
       const isFilteredByPhase = hasPhaseFilter(filters);
       const showFilteredNodes = filters.length > 1 || (!isFilteredByPhase && filters.length === 1);
       const nodesToFilter = showFilteredNodes
@@ -187,36 +170,26 @@ export const NodeExecutionsTable: React.FC<{
         : visibleNodes;
 
       if (isFilteredByPhase) {
-        // top level
-        const finalFilteredNodes = filterNodes(nodesToFilter || [], filters, nodeExecutionsById);
-
-        setFilteredNodes(finalFilteredNodes);
-      } else {
-        setFilteredNodes(nodesToFilter);
+        return filterNodes(nodesToFilter || [], filters, nodeExecutionsById);
       }
-
-      return;
+      return nodesToFilter;
     }
-    setFilteredNodes(visibleNodes);
+    // Without filters, a status update can reuse this exact array. Status cells still read
+    // the latest execution records separately; their values do not require new row objects.
+    // Example: Train's status changes RUNNING -> SUCCEEDED, but the rows stay [Download, Train].
+    return visibleNodes;
   }, [visibleNodes, filteredNodeExecutions, filters, nodeExecutionsById]);
 
-  useEffect(() => {
-    const mergeFilteredNodes = filters.length > 0;
-    const newShownNodes = mergeFilteredNodes
-      ? // if there are filtered nodes, merge original ones into them to preserve toggle status
-        mergeOriginIntoNodes(cloneDeep(filteredNodes || []), cloneDeep(visibleNodes))
-      : // else, merge originalNodes into initialNodes to preserve toggle status
-        visibleNodes;
-
-    const plainNodes = convertToPlainNodes(newShownNodes || []);
-    setShowNodes((prev) => {
-      if (stringifyIsEqual(prev, plainNodes)) {
-        return prev;
-      }
-
-      return plainNodes;
-    });
-  }, [visibleNodes, filteredNodes, nodeExecutionsById, filters]);
+  // useMemo checks array identity: the same filteredNodes object reuses the row list;
+  // a new array recalculates it. Changed input nodes/arrays must be replaced, never mutated.
+  // Deriving rows here avoids an effect that stores duplicate state and schedules another render.
+  // Flattened rows still reference child trees, so JSON equality would serialize the same
+  // descendants and compiled payloads repeatedly, once through each ancestor's row.
+  // Example: collapsed Train gives rows [Download, Train]; expanded Train gives
+  // [Download, Train, Prepare, Fit]. Unchanged input reuses the calculated row list.
+  // Previously each update calculated rows in an effect, serialized them for comparison,
+  // and saved changed rows in state. Now the current rows are calculated during rendering.
+  const showNodes = useMemo(() => convertToPlainNodes(filteredNodes), [filteredNodes]);
 
   const columns = useMemo(
     () => generateColumns(columnStyles, nodeExecutionsById),
