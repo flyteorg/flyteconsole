@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useContext } from 'react';
+import React, { useMemo, useEffect, useState, useContext, useRef } from 'react';
 import merge from 'lodash/merge';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
@@ -17,8 +17,8 @@ import {
 import TableNoRowsCell from '@clients/primitives/TableNoRowsCell';
 import { noExecutionsFoundString } from '@clients/common/constants';
 import { dNode } from '../../../models/Graph/types';
-import { NodeExecution } from '../../../models/Execution/types';
-import { isStartOrEndNodeId } from '../../../models/Node/utils';
+import { NodeExecution, WorkflowExecutionIdentifier } from '../../../models/Execution/types';
+import { isExpanded, isStartOrEndNodeId } from '../../../models/Node/utils';
 import { stringifyIsEqual } from '../../../common/stringifyIsEqual';
 import { generateColumns } from './nodeExecutionColumns';
 import { useColumnStyles } from './styles';
@@ -35,6 +35,12 @@ import {
   useExecutionNodeViewsStatePoll,
 } from '../ExecutionDetails/useExecutionNodeViewsStatePoll';
 import { NodeExecutionPhase } from '../../../models/Execution/enums';
+
+interface PendingNodeExpansion {
+  nodeId: string;
+  executionId: WorkflowExecutionIdentifier;
+  startedAt: number;
+}
 
 const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
   if (!target?.length) {
@@ -141,6 +147,37 @@ export const NodeExecutionsTable: React.FC<{
   );
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
+  const pendingExpansion = useRef<PendingNodeExpansion>();
+
+  const onToggleNode = (node: dNode) => {
+    pendingExpansion.current = isExpanded(node)
+      ? undefined
+      : {
+          nodeId: node.scopedId,
+          executionId: { ...execution.id },
+          startedAt: performance.now(),
+        };
+    toggleNode(node);
+  };
+
+  useEffect(() => {
+    const expansion = pendingExpansion.current;
+    if (!expansion) return;
+    const parentRow = showNodes.find((node) => node.scopedId === expansion.nodeId);
+    if (!parentRow || !isExpanded(parentRow)) return;
+
+    // showNodes is the flattened list; the expanded parent's child rows have committed.
+    pendingExpansion.current = undefined;
+    try {
+      performance.measure('flyteconsole.node.expand', {
+        start: expansion.startedAt,
+        end: performance.now(),
+        detail: { scopedId: expansion.nodeId, executionId: expansion.executionId },
+      });
+    } catch {
+      // Unsupported User Timing must not interrupt node expansion.
+    }
+  }, [showNodes]);
 
   const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
 
@@ -260,7 +297,7 @@ export const NodeExecutionsTable: React.FC<{
                         <NodeExecutionRow
                           columns={columns}
                           node={node}
-                          onToggle={toggleNode}
+                          onToggle={onToggleNode}
                           key={node.scopedId}
                         />
                       </NodeExecutionDynamicProvider>
