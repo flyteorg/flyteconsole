@@ -315,6 +315,7 @@ const ReactFlowGateNodeInner = ({ data }: RFNode) => {
           nodeExecutionId={nodeExecution?.id}
           showLaunchForm={showResumeForm}
           setShowLaunchForm={setShowResumeForm}
+          nodeExecutionScopeId={nodeExecution?.scopedId}
         />
       )}
     </div>
