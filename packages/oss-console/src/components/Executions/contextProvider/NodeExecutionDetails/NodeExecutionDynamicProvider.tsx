@@ -7,9 +7,10 @@ import React, {
   useState,
 } from 'react';
 import keyBy from 'lodash/keyBy';
+import isEqual from 'lodash/isEqual';
 import { useInView } from 'react-intersection-observer';
 import { useNodeExecutionDataQuery } from '../../../hooks/useNodeExecutionDataQuery';
-import { isDynamicNode, nodeExecutionIsTerminal } from '../../utils';
+import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from '../../utils';
 import { dNode } from '../../../../models/Graph/types';
 import { nodeExecutionRefreshIntervalMs } from '../../constants';
 import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
@@ -30,13 +31,17 @@ export const NodeExecutionDynamicContext = createContext<INodeExecutionDynamicCo
   },
 });
 
+export type NodeChildrenLoadStatus = 'loading' | 'ready' | 'error' | 'offscreen';
+
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
   node: dNode;
+  onChildrenLoadStatusChange?: (scopedId: string, status?: NodeChildrenLoadStatus) => void;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
   node,
   children,
+  onChildrenLoadStatusChange,
 }: NodeExecutionDynamicProviderProps) => {
   const { updateWorkflow } = useNodeExecutionContext();
   const { setCurrentNodeExecutionsById, nodeExecutionsById } = useNodeExecutionsById();
@@ -47,7 +52,7 @@ export const NodeExecutionDynamicProvider = ({
   );
 
   const [throttledInView, setThrottledInView] = useState(false);
-  const { ref } = useInView({
+  const { ref, entry } = useInView({
     delay: 100,
     initialInView: false,
     fallbackInView: true,
@@ -103,6 +108,40 @@ export const NodeExecutionDynamicProvider = ({
 
     updateWorkflow(node.scopedId, nodeExecutionDataQuery.data);
   }, [nodeExecutionDataQuery.data]);
+
+  // A successful request alone is too early: the returned executions must be in the
+  // row context, and a dynamic workflow must have made it into the rendered DAG.
+  // A successful empty list is valid (e.g. children have not started yet).
+  const childrenInContext = nodeExecutionChildrenQuery.data?.every(
+    (child) => !!nodeExecutionsById[child.scopedId!],
+  );
+  const dynamicWorkflow = nodeExecutionDataQuery.data?.dynamicWorkflow;
+  const dynamicDagReady =
+    !isDynamicNode(nodeExecution) ||
+    (!!dynamicWorkflow && isEqual(node.value?.workflowNode?.subWorkflowRef, dynamicWorkflow.id));
+  let childrenLoadStatus: NodeChildrenLoadStatus = 'loading';
+  if (!isParentNode(nodeExecution)) {
+    childrenLoadStatus = 'ready';
+  } else if (entry && !throttledInView) {
+    // Wait for the first visibility observation before deciding a row is offscreen.
+    childrenLoadStatus = 'offscreen';
+  } else if (
+    nodeExecutionChildrenQuery.isError ||
+    (isDynamicNode(nodeExecution) && nodeExecutionDataQuery.isError)
+  ) {
+    childrenLoadStatus = 'error';
+  } else if (nodeExecutionChildrenQuery.isSuccess && childrenInContext && dynamicDagReady) {
+    childrenLoadStatus = 'ready';
+  }
+
+  useEffect(() => {
+    onChildrenLoadStatusChange?.(node.scopedId, childrenLoadStatus);
+  }, [node.scopedId, childrenLoadStatus, onChildrenLoadStatusChange]);
+
+  useEffect(
+    () => () => onChildrenLoadStatusChange?.(node.scopedId),
+    [node.scopedId, onChildrenLoadStatusChange],
+  );
 
   return (
     <NodeExecutionDynamicContext.Provider
