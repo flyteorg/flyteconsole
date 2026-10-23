@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useContext, useRef } from 'react';
+import React, { useMemo, useEffect, useState, useContext, useRef, useCallback } from 'react';
 import merge from 'lodash/merge';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
@@ -26,7 +26,10 @@ import { useNodeExecutionsById } from '../contextProvider/NodeExecutionDetails/W
 import { NodeExecutionRow } from './NodeExecutionRow';
 import { ExecutionFiltersState } from '../filters/useExecutionFiltersState';
 import { nodeExecutionPhaseConstants } from '../constants';
-import { NodeExecutionDynamicProvider } from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
+import {
+  NodeChildrenLoadStatus,
+  NodeExecutionDynamicProvider,
+} from '../contextProvider/NodeExecutionDetails/NodeExecutionDynamicProvider';
 import { ExecutionFilters } from '../ExecutionFilters';
 import { ExecutionContext, FilteredNodeExecutions, NodeExecutionsById } from '../contexts';
 import { convertToPlainNodes } from '../ExecutionDetails/Timeline/helpers';
@@ -39,7 +42,10 @@ import { NodeExecutionPhase } from '../../../models/Execution/enums';
 interface PendingNodeExpansion {
   nodeId: string;
   executionId: WorkflowExecutionIdentifier;
+  workflowName?: string;
+  filters: FilterOperation[];
   startedAt: number;
+  rowsCommitted: boolean;
 }
 
 const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
@@ -148,6 +154,22 @@ export const NodeExecutionsTable: React.FC<{
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const pendingExpansion = useRef<PendingNodeExpansion>();
+  const [childrenLoadStatuses, setChildrenLoadStatuses] = useState<
+    Record<string, NodeChildrenLoadStatus>
+  >({});
+
+  const onChildrenLoadStatusChange = useCallback(
+    (scopedId: string, status?: NodeChildrenLoadStatus) => {
+      setChildrenLoadStatuses((previous) => {
+        if (previous[scopedId] === status) return previous;
+        const next = { ...previous };
+        if (status) next[scopedId] = status;
+        else delete next[scopedId];
+        return next;
+      });
+    },
+    [],
+  );
 
   const onToggleNode = (node: dNode) => {
     pendingExpansion.current = isExpanded(node)
@@ -155,7 +177,10 @@ export const NodeExecutionsTable: React.FC<{
       : {
           nodeId: node.scopedId,
           executionId: { ...execution.id },
+          workflowName: execution.closure?.workflowId?.name,
+          filters: appliedFilters,
           startedAt: performance.now(),
+          rowsCommitted: false,
         };
     toggleNode(node);
   };
@@ -164,20 +189,53 @@ export const NodeExecutionsTable: React.FC<{
     const expansion = pendingExpansion.current;
     if (!expansion) return;
     const parentRow = showNodes.find((node) => node.scopedId === expansion.nodeId);
-    if (!parentRow || !isExpanded(parentRow)) return;
-
-    // showNodes is the flattened list; the expanded parent's child rows have committed.
-    pendingExpansion.current = undefined;
-    try {
-      performance.measure('flyteconsole.node.expand', {
-        start: expansion.startedAt,
-        end: performance.now(),
-        detail: { scopedId: expansion.nodeId, executionId: expansion.executionId },
-      });
-    } catch {
-      // Unsupported User Timing must not interrupt node expansion.
+    if (
+      !parentRow ||
+      !isEqual(expansion.executionId, execution.id) ||
+      !isEqual(expansion.filters, appliedFilters)
+    ) {
+      pendingExpansion.current = undefined;
+      return;
     }
-  }, [showNodes]);
+    if (!isExpanded(parentRow)) {
+      if (expansion.rowsCommitted) pendingExpansion.current = undefined;
+      return;
+    }
+
+    const measure = (name: string) => {
+      try {
+        performance.measure(name, {
+          start: expansion.startedAt,
+          end: performance.now(),
+          detail: {
+            scopedId: expansion.nodeId,
+            executionId: expansion.executionId,
+            workflowName: expansion.workflowName,
+          },
+        });
+      } catch {
+        // Unsupported User Timing must not interrupt node expansion.
+      }
+    };
+
+    // Preserve the original click-to-row-commit measurement.
+    if (!expansion.rowsCommitted) {
+      expansion.rowsCommitted = true;
+      measure('flyteconsole.node.expand');
+    }
+
+    // Child rows can still be fetching their executions and dynamic workflow definitions.
+    // Wait for those loaders too, but don't include rows that require scrolling into view.
+    const statuses = convertToPlainNodes([parentRow]).map(
+      (node) => childrenLoadStatuses[node.scopedId],
+    );
+    if (statuses.includes('error')) {
+      pendingExpansion.current = undefined;
+    } else if (statuses.every((status) => status === 'ready' || status === 'offscreen')) {
+      pendingExpansion.current = undefined;
+      measure('flyteconsole.node.expand.children_loaded');
+    }
+  }, [showNodes, childrenLoadStatuses, execution.id, appliedFilters]);
 
   const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
 
@@ -293,7 +351,11 @@ export const NodeExecutionsTable: React.FC<{
                 {showNodes.length > 0 ? (
                   showNodes.map((node) => {
                     return (
-                      <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
+                      <NodeExecutionDynamicProvider
+                        node={node}
+                        key={node.scopedId}
+                        onChildrenLoadStatusChange={onChildrenLoadStatusChange}
+                      >
                         <NodeExecutionRow
                           columns={columns}
                           node={node}
