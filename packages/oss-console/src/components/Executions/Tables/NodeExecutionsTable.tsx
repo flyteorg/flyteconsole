@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useContext, useRef } from 'react';
+import React, { useMemo, useEffect, useState, useContext, useRef, useCallback } from 'react';
 import merge from 'lodash/merge';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
@@ -39,7 +39,10 @@ import { NodeExecutionPhase } from '../../../models/Execution/enums';
 interface PendingNodeExpansion {
   nodeId: string;
   executionId: WorkflowExecutionIdentifier;
+  workflowName?: string;
+  filters: FilterOperation[];
   startedAt: number;
+  rowsCommitted: boolean;
 }
 
 const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
@@ -148,14 +151,29 @@ export const NodeExecutionsTable: React.FC<{
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const pendingExpansion = useRef<PendingNodeExpansion>();
+  const [childrenReady, setChildrenReady] = useState<Record<string, boolean>>({});
+
+  const onChildrenReadyChange = useCallback((scopedId: string, ready?: boolean) => {
+    setChildrenReady((previous) => {
+      if (previous[scopedId] === ready) return previous;
+      const next = { ...previous };
+      if (ready === undefined) delete next[scopedId];
+      else next[scopedId] = ready;
+      return next;
+    });
+  }, []);
 
   const onToggleNode = (node: dNode) => {
+    // As before, track only the latest click; a collapse cancels the pending timer.
     pendingExpansion.current = isExpanded(node)
       ? undefined
       : {
           nodeId: node.scopedId,
           executionId: { ...execution.id },
+          workflowName: execution.closure?.workflowId?.name,
+          filters: appliedFilters,
           startedAt: performance.now(),
+          rowsCommitted: false,
         };
     toggleNode(node);
   };
@@ -164,20 +182,51 @@ export const NodeExecutionsTable: React.FC<{
     const expansion = pendingExpansion.current;
     if (!expansion) return;
     const parentRow = showNodes.find((node) => node.scopedId === expansion.nodeId);
-    if (!parentRow || !isExpanded(parentRow)) return;
-
-    // showNodes is the flattened list; the expanded parent's child rows have committed.
-    pendingExpansion.current = undefined;
-    try {
-      performance.measure('flyteconsole.node.expand', {
-        start: expansion.startedAt,
-        end: performance.now(),
-        detail: { scopedId: expansion.nodeId, executionId: expansion.executionId },
-      });
-    } catch {
-      // Unsupported User Timing must not interrupt node expansion.
+    // Navigation or filter changes mean the user is no longer waiting on this view.
+    if (
+      !parentRow ||
+      // Compare plain values because API IDs are protobuf class instances.
+      !isEqual(expansion.executionId, { ...execution.id }) ||
+      !isEqual(expansion.filters, appliedFilters)
+    ) {
+      pendingExpansion.current = undefined;
+      return;
     }
-  }, [showNodes]);
+    if (!isExpanded(parentRow)) {
+      if (expansion.rowsCommitted) pendingExpansion.current = undefined;
+      return;
+    }
+
+    const measure = (name: string) => {
+      try {
+        performance.measure(name, {
+          start: expansion.startedAt,
+          end: performance.now(),
+          detail: {
+            scopedId: expansion.nodeId,
+            executionId: expansion.executionId,
+            workflowName: expansion.workflowName,
+          },
+        });
+      } catch {
+        // Unsupported User Timing must not interrupt node expansion.
+      }
+    };
+
+    // React has rendered the expanded rows, so the original measurement can finish.
+    if (!expansion.rowsCommitted) {
+      expansion.rowsCommitted = true;
+      measure('flyteconsole.node.expand');
+    }
+
+    // Rows can appear before their data does. Keep the same start time until the
+    // parent and its displayed descendants report ready. Missing reports must wait.
+    const expandedRows = convertToPlainNodes([parentRow]);
+    if (expandedRows.every((node) => childrenReady[node.scopedId] === true)) {
+      pendingExpansion.current = undefined;
+      measure('flyteconsole.node.expand.children_loaded');
+    }
+  }, [showNodes, childrenReady, execution.id, appliedFilters]);
 
   const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
 
@@ -293,7 +342,11 @@ export const NodeExecutionsTable: React.FC<{
                 {showNodes.length > 0 ? (
                   showNodes.map((node) => {
                     return (
-                      <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
+                      <NodeExecutionDynamicProvider
+                        node={node}
+                        key={node.scopedId}
+                        onChildrenReadyChange={onChildrenReadyChange}
+                      >
                         <NodeExecutionRow
                           columns={columns}
                           node={node}
