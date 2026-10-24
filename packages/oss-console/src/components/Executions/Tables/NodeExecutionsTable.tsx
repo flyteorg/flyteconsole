@@ -151,16 +151,20 @@ export const NodeExecutionsTable: React.FC<{
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const pendingExpansion = useRef<PendingNodeExpansion>();
-  const [childrenReady, setChildrenReady] = useState<Record<string, boolean>>({});
+  const readinessByNodeId = useRef(new Map<string, boolean>());
+  const [readinessVersion, setReadinessVersion] = useState(0);
 
-  const onChildrenReadyChange = useCallback((scopedId: string, ready?: boolean) => {
-    setChildrenReady((previous) => {
-      if (previous[scopedId] === ready) return previous;
-      const next = { ...previous };
-      if (ready === undefined) delete next[scopedId];
-      else next[scopedId] = ready;
-      return next;
-    });
+  const reportRowReadiness = useCallback((scopedId: string, ready?: boolean) => {
+    const readiness = readinessByNodeId.current;
+    if (readiness.get(scopedId) === ready) return;
+
+    // Each report updates one entry without copying the other rows' reports.
+    if (ready === undefined) readiness.delete(scopedId);
+    else readiness.set(scopedId, ready);
+
+    // Keep cached reports while idle, but only rerender to check an active timer.
+    // React batches reports from the same commit into one table update.
+    if (pendingExpansion.current) setReadinessVersion((version) => version + 1);
   }, []);
 
   const onToggleNode = (node: dNode) => {
@@ -182,7 +186,7 @@ export const NodeExecutionsTable: React.FC<{
     const expansion = pendingExpansion.current;
     if (!expansion) return;
     const parentRow = showNodes.find((node) => node.scopedId === expansion.nodeId);
-    // Navigation or filter changes mean the user is no longer waiting on this view.
+    // Cancel if this expansion no longer belongs to the current view.
     if (
       !parentRow ||
       // Compare plain values because API IDs are protobuf class instances.
@@ -193,7 +197,7 @@ export const NodeExecutionsTable: React.FC<{
       return;
     }
     if (!isExpanded(parentRow)) {
-      if (expansion.rowsCommitted) pendingExpansion.current = undefined;
+      // The expanded node may not have reached the table yet. Keep waiting.
       return;
     }
 
@@ -213,7 +217,7 @@ export const NodeExecutionsTable: React.FC<{
       }
     };
 
-    // React has rendered the expanded rows, so the original measurement can finish.
+    // Record the row commit once; both measurements start at the same click.
     if (!expansion.rowsCommitted) {
       expansion.rowsCommitted = true;
       measure('flyteconsole.node.expand');
@@ -222,11 +226,11 @@ export const NodeExecutionsTable: React.FC<{
     // Rows can appear before their data does. Keep the same start time until the
     // parent and its displayed descendants report ready. Missing reports must wait.
     const expandedRows = convertToPlainNodes([parentRow]);
-    if (expandedRows.every((node) => childrenReady[node.scopedId] === true)) {
+    if (expandedRows.every((node) => readinessByNodeId.current.get(node.scopedId) === true)) {
       pendingExpansion.current = undefined;
       measure('flyteconsole.node.expand.children_loaded');
     }
-  }, [showNodes, childrenReady, execution.id, appliedFilters]);
+  }, [showNodes, readinessVersion, execution.id, appliedFilters]);
 
   const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
 
@@ -345,7 +349,7 @@ export const NodeExecutionsTable: React.FC<{
                       <NodeExecutionDynamicProvider
                         node={node}
                         key={node.scopedId}
-                        onChildrenReadyChange={onChildrenReadyChange}
+                        reportRowReadiness={reportRowReadiness}
                       >
                         <NodeExecutionRow
                           columns={columns}

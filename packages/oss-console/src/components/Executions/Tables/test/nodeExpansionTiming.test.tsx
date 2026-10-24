@@ -11,8 +11,9 @@ import { ExecutionFiltersState } from '../../filters/useExecutionFiltersState';
 import { useNodeExecutionChildrenQuery } from '../../../hooks/useNodeExecutionChildrenQuery';
 import { useNodeExecutionDataQuery } from '../../../hooks/useNodeExecutionDataQuery';
 import { NodeExecutionDetailsContext } from '../../contextProvider/NodeExecutionDetails/NodeExecutionDetailsContextProvider';
+import { ExecutionFilters } from '../../ExecutionFilters';
 
-jest.mock('../../ExecutionFilters', () => ({ ExecutionFilters: () => null }));
+jest.mock('../../ExecutionFilters', () => ({ ExecutionFilters: jest.fn(() => null) }));
 jest.mock('../../ExecutionDetails/useExecutionNodeViewsStatePoll', () => ({
   ...jest.requireActual('../../ExecutionDetails/useExecutionNodeViewsStatePoll'),
   useExecutionNodeViewsStatePoll: () => ({ nodeExecutionsQuery: { isFetching: true } }),
@@ -146,6 +147,10 @@ test('records both timings once for a Nodes-tab expand click with cached childre
   expect(toggleNode).toHaveBeenCalledWith(expect.objectContaining(parent));
   expect(measure).not.toHaveBeenCalled();
 
+  // A render can happen before the expanded node reaches the table.
+  rerender(<Table node={parent} filters={{ ...filterState, appliedFilters: [] }} />);
+  expect(measure).not.toHaveBeenCalled();
+
   now.mockReturnValue(350);
   measure.mockImplementationOnce(() => expect(screen.getByText('Child task')).toBeInTheDocument());
   rerender(<Table node={expandedParent} />);
@@ -276,9 +281,12 @@ test.each([
       } as ExecutionFiltersState,
     },
   },
-])('cancels child loading timing on $name', ({ changes }) => {
+])('cancels child loading timing on $name', ({ name, changes }) => {
   childrenQueries.parent = { isSuccess: false };
   const update = renderExpansion();
+  if (name === 'collapse') {
+    fireEvent.click(screen.getByTitle('Collapse row'));
+  }
   update(changes);
   childrenQueries.parent = { isSuccess: true, data: [childExecution] };
   update(changes);
@@ -318,4 +326,69 @@ test('preserves timing when filters are recreated with the same values', () => {
   childrenQueries.parent = { isSuccess: true, data: [childExecution] };
   update({ filters: { ...filterState, appliedFilters: [] } });
   expect(measure).toHaveBeenCalledTimes(2);
+});
+
+test('does not rerender the table for readiness reports without an active expansion', () => {
+  childrenQueries.parent = { isSuccess: false };
+  render(<Table node={parent} />);
+  (ExecutionFilters as jest.Mock).mockClear();
+
+  // Visibility changes rerender the provider and change its readiness report.
+  mockAllIsIntersecting(false);
+  mockAllIsIntersecting(true);
+
+  expect(ExecutionFilters).not.toHaveBeenCalled();
+  expect(measure).not.toHaveBeenCalled();
+});
+
+test('a second expansion replaces the pending child-loading measurement', () => {
+  const now = jest.spyOn(performance, 'now').mockReturnValue(100);
+  const grandchild = { ...child, id: 'grandchild', scopedId: 'parent-child-grandchild' };
+  const nestedChild = { ...child, type: dTypes.subworkflow, nodes: [grandchild] };
+  const nestedParent = { ...parent, nodes: [nestedChild] };
+  const grandchildExecution = {
+    ...childExecution,
+    id: { nodeId: grandchild.scopedId, executionId },
+    scopedId: grandchild.scopedId,
+  };
+  const nodeExecutionsById = {
+    ...executions,
+    [child.scopedId]: { ...childExecution, metadata: { isParentNode: true } },
+    [grandchild.scopedId]: grandchildExecution,
+  };
+  childrenQueries.parent = { isSuccess: false };
+  childrenQueries[child.scopedId] = { isSuccess: false };
+  const { rerender } = render(
+    <Table node={nestedParent} nodeExecutionsById={nodeExecutionsById} />,
+  );
+  fireEvent.click(screen.getByTitle('Expand row'));
+  rerender(
+    <Table node={{ ...nestedParent, expanded: true }} nodeExecutionsById={nodeExecutionsById} />,
+  );
+  expect(measure).toHaveBeenCalledTimes(1);
+
+  now.mockReturnValue(250);
+  fireEvent.click(screen.getByTitle('Expand row'));
+  const bothExpanded = {
+    ...nestedParent,
+    expanded: true,
+    nodes: [{ ...nestedChild, expanded: true }],
+  };
+  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
+  expect(measure).toHaveBeenCalledTimes(2);
+
+  now.mockReturnValue(600);
+  childrenQueries[child.scopedId] = { isSuccess: true, data: [grandchildExecution] };
+  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
+  expect(measure).toHaveBeenLastCalledWith('flyteconsole.node.expand.children_loaded', {
+    start: 250,
+    end: 600,
+    detail: { scopedId: child.scopedId, executionId, workflowName },
+  });
+  expect(measure).toHaveBeenCalledTimes(3);
+
+  // Finishing the first expansion's request must not emit its cancelled timing.
+  childrenQueries.parent = { isSuccess: true, data: [nodeExecutionsById[child.scopedId]] };
+  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
+  expect(measure).toHaveBeenCalledTimes(3);
 });

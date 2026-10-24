@@ -33,13 +33,13 @@ export const NodeExecutionDynamicContext = createContext<INodeExecutionDynamicCo
 
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
   node: dNode;
-  onChildrenReadyChange?: (scopedId: string, ready?: boolean) => void;
+  reportRowReadiness?: (scopedId: string, ready?: boolean) => void;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
   node,
   children,
-  onChildrenReadyChange,
+  reportRowReadiness,
 }: NodeExecutionDynamicProviderProps) => {
   const { updateWorkflow } = useNodeExecutionContext();
   const { setCurrentNodeExecutionsById, nodeExecutionsById } = useNodeExecutionsById();
@@ -107,33 +107,64 @@ export const NodeExecutionDynamicProvider = ({
     updateWorkflow(node.scopedId, nodeExecutionDataQuery.data);
   }, [nodeExecutionDataQuery.data]);
 
-  // The request can finish before React applies its result to the rows. Wait for
-  // the execution records and, for dynamic nodes, the workflow's rendered graph.
-  // An empty response is valid: some workflow nodes may not have started yet.
-  const childrenInContext = nodeExecutionChildrenQuery.data?.every(
-    (child) => !!nodeExecutionsById[child.scopedId!],
-  );
-  const dynamicWorkflow = nodeExecutionDataQuery.data?.dynamicWorkflow;
-  const dynamicDagReady =
-    !isDynamicNode(nodeExecution) ||
-    (!!dynamicWorkflow && isEqual(node.value?.workflowNode?.subWorkflowRef, dynamicWorkflow.id));
-  // Offscreen rows fetch on scroll, so they don't block this expansion's timer.
-  // `entry` distinguishes an offscreen row from one we haven't observed yet.
-  const isOffscreen = !!entry && !throttledInView;
-  const childrenReady =
-    !isParentNode(nodeExecution) ||
-    isOffscreen ||
-    (nodeExecutionChildrenQuery.isSuccess && !!childrenInContext && dynamicDagReady);
+  const isRowReady = () => {
+    // Leaf rows have no children to load.
+    if (!isParentNode(nodeExecution)) {
+      return true;
+    }
+
+    // If the browser has checked this row’s visibility, and it’s offscreen, don’t wait for it
+    if (entry && !throttledInView) {
+      return true;
+    }
+
+    // If the request hasn’t succeeded, or we don’t have its response data, we’re still waiting.
+    const loadedChildren = nodeExecutionChildrenQuery.data;
+    if (!nodeExecutionChildrenQuery.isSuccess || !loadedChildren) {
+      return false;
+    }
+
+    // A response can arrive before React puts its records into the table's data.
+    // An empty response is valid: some children may not have started yet.
+    const allChildrenInTable = loadedChildren.every((child) => {
+      if (child.scopedId === undefined) {
+        return false;
+      }
+      return Boolean(nodeExecutionsById[child.scopedId]);
+    });
+    if (!allChildrenInTable) {
+      return false;
+    }
+
+    // Dynamic nodes also need their downloaded workflow applied to the graph.
+    if (isDynamicNode(nodeExecution)) {
+      const loadedWorkflow = nodeExecutionDataQuery.data?.dynamicWorkflow;
+      if (!loadedWorkflow) {
+        return false;
+      }
+      const renderedWorkflowId = node.value?.workflowNode?.subWorkflowRef;
+      return isEqual(renderedWorkflowId, loadedWorkflow.id);
+    }
+
+    return true;
+  };
+  const rowReady = isRowReady();
 
   useEffect(() => {
-    onChildrenReadyChange?.(node.scopedId, childrenReady);
-  }, [node.scopedId, childrenReady, onChildrenReadyChange]);
+    if (reportRowReadiness) {
+      reportRowReadiness(node.scopedId, rowReady);
+    }
+  }, [node.scopedId, rowReady, reportRowReadiness]);
 
-  // Forget removed rows so reopening them cannot reuse an old "ready" signal.
-  useEffect(
-    () => () => onChildrenReadyChange?.(node.scopedId),
-    [node.scopedId, onChildrenReadyChange],
-  );
+  useEffect(() => {
+    // React calls this cleanup when the row is removed. Omitting ready removes
+    // its checklist entry, so reopening it cannot reuse an old report.
+    return () => {
+      if (reportRowReadiness) {
+        reportRowReadiness(node.scopedId);
+      }
+    };
+  }, [node.scopedId, reportRowReadiness]);
 
   return (
     <NodeExecutionDynamicContext.Provider
