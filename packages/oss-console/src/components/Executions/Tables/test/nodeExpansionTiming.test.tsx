@@ -54,19 +54,21 @@ const workflowExecution = {
   spec: { launchPlan: { name: 'a-different-launch-plan-name' } },
 } as Execution;
 const filterState = { appliedFilters: [] } as unknown as ExecutionFiltersState;
-const childExecution = {
-  id: { nodeId: child.scopedId, executionId },
-  scopedId: child.scopedId,
-  closure: { phase: NodeExecutionPhase.SUCCEEDED },
-} as NodeExecution;
-const executions: Record<string, NodeExecution> = {
-  parent: {
-    id: { nodeId: parent.id, executionId },
-    scopedId: parent.scopedId,
-    metadata: { isParentNode: true },
+const executionFor = (node: dNode, metadata: NodeExecution['metadata'] = {}) =>
+  ({
+    id: { nodeId: node.scopedId, executionId },
+    scopedId: node.scopedId,
+    metadata,
     closure: { phase: NodeExecutionPhase.SUCCEEDED },
-  } as NodeExecution,
+  } as NodeExecution);
+const childExecution = executionFor(child);
+const executions: Record<string, NodeExecution> = {
+  parent: executionFor(parent, { isParentNode: true }),
   [child.scopedId]: childExecution,
+};
+const dynamicExecutions = {
+  ...executions,
+  [child.scopedId]: executionFor(child, { isParentNode: true, isDynamic: true }),
 };
 let childrenQueries: Record<string, Partial<ReturnType<typeof useNodeExecutionChildrenQuery>>>;
 let dataQueries: Record<string, Partial<ReturnType<typeof useNodeExecutionDataQuery>>>;
@@ -76,15 +78,10 @@ const toggleNode = jest.fn();
 const measure = jest.fn();
 const originalMeasure = Object.getOwnPropertyDescriptor(performance, 'measure');
 const Table = ({
-  node,
+  node = parent,
   nodeExecutionsById = executions,
   execution = workflowExecution,
   filters = filterState,
-}: {
-  node: dNode;
-  nodeExecutionsById?: Record<string, NodeExecution>;
-  execution?: Execution;
-  filters?: ExecutionFiltersState;
 }) => (
   <WorkflowNodeExecutionsContext.Provider
     value={{
@@ -109,16 +106,25 @@ const Table = ({
   </WorkflowNodeExecutionsContext.Provider>
 );
 
-// Keep the real table and child loader; only the network hooks are mocked.
-// Tests can deliver a response first, then apply it to the rendered row separately.
+// Keep the real table and loader; responses and their application to rows are controlled separately.
 const renderExpansion = (props: Partial<React.ComponentProps<typeof Table>> = {}) => {
-  const view = render(<Table node={parent} {...props} />);
+  let current = { node: parent, ...props };
+  const view = render(<Table {...current} />);
   fireEvent.click(screen.getByTitle('Expand row'));
-  const update = (changes: Partial<React.ComponentProps<typeof Table>> = {}) =>
-    view.rerender(<Table node={expandedParent} {...props} {...changes} />);
-  update();
+  const update = (changes: Partial<React.ComponentProps<typeof Table>> = {}) => {
+    current = { ...current, ...changes };
+    view.rerender(<Table {...current} />);
+  };
+  update({ node: { ...current.node, expanded: true } });
   return update;
 };
+
+const expectTiming = (name: string, start: number, end: number, scopedId = parent.scopedId) =>
+  expect(measure).toHaveBeenCalledWith(`flyteconsole.node.${name}`, {
+    start,
+    end,
+    detail: { scopedId, executionId, workflowName },
+  });
 
 beforeEach(() => {
   measure.mockReset();
@@ -154,16 +160,8 @@ test('records both timings once for a Nodes-tab expand click with cached childre
   now.mockReturnValue(350);
   measure.mockImplementationOnce(() => expect(screen.getByText('Child task')).toBeInTheDocument());
   rerender(<Table node={expandedParent} />);
-  expect(measure).toHaveBeenCalledWith('flyteconsole.node.expand', {
-    start: 100,
-    end: 350,
-    detail: { scopedId: 'parent', executionId, workflowName },
-  });
-  expect(measure).toHaveBeenCalledWith('flyteconsole.node.expand.children_loaded', {
-    start: 100,
-    end: 350,
-    detail: { scopedId: 'parent', executionId, workflowName },
-  });
+  expectTiming('expand', 100, 350);
+  expectTiming('expand.children_loaded', 100, 350);
   rerender(<Table node={{ ...expandedParent, name: 'Updated parent' }} />);
   expect(measure).toHaveBeenCalledTimes(2);
 });
@@ -188,12 +186,16 @@ test('an unsupported timing API does not prevent child rows rendering', () => {
   expect(screen.getByText('Child task')).toBeInTheDocument();
 });
 
-test('waits for the child response to be committed to the row context', () => {
+test('waits through retries and equivalent filter updates until the response reaches the rows', () => {
   const now = jest.spyOn(performance, 'now').mockReturnValue(100);
   childrenQueries.parent = { isSuccess: false };
   const parentOnly = { parent: executions.parent };
   const update = renderExpansion({ nodeExecutionsById: parentOnly });
   expect(screen.getByText('Child task')).toBeInTheDocument();
+  expect(measure).toHaveBeenCalledTimes(1);
+
+  childrenQueries.parent = { isError: true };
+  update({ filters: { ...filterState, appliedFilters: [] } });
   expect(measure).toHaveBeenCalledTimes(1);
 
   now.mockReturnValue(500);
@@ -204,22 +206,14 @@ test('waits for the child response to be committed to the row context', () => {
 
   now.mockReturnValue(550);
   update({ nodeExecutionsById: executions });
-  expect(measure).toHaveBeenLastCalledWith('flyteconsole.node.expand.children_loaded', {
-    start: 100,
-    end: 550,
-    detail: { scopedId: 'parent', executionId, workflowName },
-  });
+  expectTiming('expand.children_loaded', 100, 550);
+  expect(measure).toHaveBeenCalledTimes(2);
 });
 
 test('waits for a newly revealed dynamic child to load and render its workflow definition', () => {
   const now = jest.spyOn(performance, 'now').mockReturnValue(100);
-  const dynamicExecution = {
-    ...childExecution,
-    metadata: { isParentNode: true, isDynamic: true },
-  };
-  const nodeExecutionsById = { ...executions, [child.scopedId]: dynamicExecution };
   childrenQueries[child.scopedId] = { isSuccess: false };
-  const update = renderExpansion({ nodeExecutionsById });
+  const update = renderExpansion({ nodeExecutionsById: dynamicExecutions });
   expect(measure).toHaveBeenCalledTimes(1);
 
   childrenQueries[child.scopedId] = { isSuccess: true, data: [] };
@@ -241,28 +235,16 @@ test('waits for a newly revealed dynamic child to load and render its workflow d
     value: { workflowNode: { subWorkflowRef: dynamicWorkflowId } },
   } as dNode;
   update({ node: { ...expandedParent, nodes: [loadedChild] } });
-  expect(measure).toHaveBeenLastCalledWith('flyteconsole.node.expand.children_loaded', {
-    start: 100,
-    end: 900,
-    detail: { scopedId: 'parent', executionId, workflowName },
-  });
+  expectTiming('expand.children_loaded', 100, 900);
   expect(measure).toHaveBeenCalledTimes(2);
 });
 
 test.each([
-  {
-    name: 'an empty child response',
-    query: { isSuccess: true, data: [] },
-    nodeExecutionsById: { parent: executions.parent },
-  },
-  {
-    name: 'background polling',
-    query: { isSuccess: true, isFetching: true, data: [childExecution] },
-    nodeExecutionsById: executions,
-  },
-])('does not wait for $name', ({ query, nodeExecutionsById }) => {
-  childrenQueries.parent = query;
-  renderExpansion({ nodeExecutionsById });
+  { name: 'an empty child response', data: [], isFetching: false },
+  { name: 'background polling', data: [childExecution], isFetching: true },
+])('does not wait for $name', ({ data, isFetching }) => {
+  childrenQueries.parent = { isSuccess: true, data, isFetching };
+  renderExpansion({ nodeExecutionsById: data.length ? executions : { parent: executions.parent } });
   expect(measure).toHaveBeenCalledTimes(2);
 });
 
@@ -293,38 +275,13 @@ test.each([
   expect(measure).toHaveBeenCalledTimes(1);
 });
 
-test('waits through a failed request until a retry succeeds', () => {
-  childrenQueries.parent = { isSuccess: false };
-  const update = renderExpansion();
-  childrenQueries.parent = { isError: true };
-  update();
-  expect(measure).toHaveBeenCalledTimes(1);
-  childrenQueries.parent = { isSuccess: true, data: [childExecution] };
-  update();
-  expect(measure).toHaveBeenCalledTimes(2);
-});
-
 test('waits for visibility to be known, then excludes children below the viewport', () => {
-  const nodeExecutionsById = {
-    ...executions,
-    [child.scopedId]: { ...childExecution, metadata: { isParentNode: true, isDynamic: true } },
-  };
-  renderExpansion({ nodeExecutionsById });
+  renderExpansion({ nodeExecutionsById: dynamicExecutions });
   expect(measure).toHaveBeenCalledTimes(1);
   mockAllIsIntersecting(true);
   expect(measure).toHaveBeenCalledTimes(1);
 
   mockIsIntersecting(screen.getByText('Child task').closest('tr')!, false);
-  expect(measure).toHaveBeenCalledTimes(2);
-});
-
-test('preserves timing when filters are recreated with the same values', () => {
-  childrenQueries.parent = { isSuccess: false };
-  const update = renderExpansion();
-  update({ filters: { ...filterState, appliedFilters: [] } });
-  expect(measure).toHaveBeenCalledTimes(1);
-  childrenQueries.parent = { isSuccess: true, data: [childExecution] };
-  update({ filters: { ...filterState, appliedFilters: [] } });
   expect(measure).toHaveBeenCalledTimes(2);
 });
 
@@ -346,49 +303,30 @@ test('a second expansion replaces the pending child-loading measurement', () => 
   const grandchild = { ...child, id: 'grandchild', scopedId: 'parent-child-grandchild' };
   const nestedChild = { ...child, type: dTypes.subworkflow, nodes: [grandchild] };
   const nestedParent = { ...parent, nodes: [nestedChild] };
-  const grandchildExecution = {
-    ...childExecution,
-    id: { nodeId: grandchild.scopedId, executionId },
-    scopedId: grandchild.scopedId,
-  };
+  const grandchildExecution = executionFor(grandchild);
   const nodeExecutionsById = {
     ...executions,
-    [child.scopedId]: { ...childExecution, metadata: { isParentNode: true } },
+    [child.scopedId]: executionFor(child, { isParentNode: true }),
     [grandchild.scopedId]: grandchildExecution,
   };
   childrenQueries.parent = { isSuccess: false };
   childrenQueries[child.scopedId] = { isSuccess: false };
-  const { rerender } = render(
-    <Table node={nestedParent} nodeExecutionsById={nodeExecutionsById} />,
-  );
-  fireEvent.click(screen.getByTitle('Expand row'));
-  rerender(
-    <Table node={{ ...nestedParent, expanded: true }} nodeExecutionsById={nodeExecutionsById} />,
-  );
+  const update = renderExpansion({ node: nestedParent, nodeExecutionsById });
   expect(measure).toHaveBeenCalledTimes(1);
 
   now.mockReturnValue(250);
   fireEvent.click(screen.getByTitle('Expand row'));
-  const bothExpanded = {
-    ...nestedParent,
-    expanded: true,
-    nodes: [{ ...nestedChild, expanded: true }],
-  };
-  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
+  update({ node: { ...expandedParent, nodes: [{ ...nestedChild, expanded: true }] } });
   expect(measure).toHaveBeenCalledTimes(2);
 
   now.mockReturnValue(600);
   childrenQueries[child.scopedId] = { isSuccess: true, data: [grandchildExecution] };
-  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
-  expect(measure).toHaveBeenLastCalledWith('flyteconsole.node.expand.children_loaded', {
-    start: 250,
-    end: 600,
-    detail: { scopedId: child.scopedId, executionId, workflowName },
-  });
+  update();
+  expectTiming('expand.children_loaded', 250, 600, child.scopedId);
   expect(measure).toHaveBeenCalledTimes(3);
 
   // Finishing the first expansion's request must not emit its cancelled timing.
   childrenQueries.parent = { isSuccess: true, data: [nodeExecutionsById[child.scopedId]] };
-  rerender(<Table node={bothExpanded} nodeExecutionsById={nodeExecutionsById} />);
+  update();
   expect(measure).toHaveBeenCalledTimes(3);
 });
