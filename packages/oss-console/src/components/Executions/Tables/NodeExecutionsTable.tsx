@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useState, useContext, useRef } from 'react';
+import React, { useMemo, useEffect, useState, useContext, useRef, useCallback } from 'react';
 import merge from 'lodash/merge';
 import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
@@ -39,7 +39,10 @@ import { NodeExecutionPhase } from '../../../models/Execution/enums';
 interface PendingNodeExpansion {
   nodeId: string;
   executionId: WorkflowExecutionIdentifier;
+  workflowName?: string;
+  filters: FilterOperation[];
   startedAt: number;
+  rowsCommitted: boolean;
 }
 
 const mergeOriginIntoNodes = (target: dNode[], origin: dNode[]) => {
@@ -148,14 +151,33 @@ export const NodeExecutionsTable: React.FC<{
 
   const [showNodes, setShowNodes] = useState<dNode[]>([]);
   const pendingExpansion = useRef<PendingNodeExpansion>();
+  const readinessByNodeId = useRef(new Map<string, boolean>());
+  const [readinessVersion, setReadinessVersion] = useState(0);
+
+  const reportRowReadiness = useCallback((scopedId: string, ready?: boolean) => {
+    const readiness = readinessByNodeId.current;
+    if (readiness.get(scopedId) === ready) return;
+
+    // Each report updates one entry without copying the other rows' reports.
+    if (ready === undefined) readiness.delete(scopedId);
+    else readiness.set(scopedId, ready);
+
+    // Keep cached reports while idle, but only rerender to check an active timer.
+    // React batches reports from the same commit into one table update.
+    if (pendingExpansion.current) setReadinessVersion((version) => version + 1);
+  }, []);
 
   const onToggleNode = (node: dNode) => {
+    // As before, track only the latest click; a collapse cancels the pending timer.
     pendingExpansion.current = isExpanded(node)
       ? undefined
       : {
           nodeId: node.scopedId,
           executionId: { ...execution.id },
+          workflowName: execution.closure?.workflowId?.name,
+          filters: appliedFilters,
           startedAt: performance.now(),
+          rowsCommitted: false,
         };
     toggleNode(node);
   };
@@ -164,20 +186,51 @@ export const NodeExecutionsTable: React.FC<{
     const expansion = pendingExpansion.current;
     if (!expansion) return;
     const parentRow = showNodes.find((node) => node.scopedId === expansion.nodeId);
-    if (!parentRow || !isExpanded(parentRow)) return;
-
-    // showNodes is the flattened list; the expanded parent's child rows have committed.
-    pendingExpansion.current = undefined;
-    try {
-      performance.measure('flyteconsole.node.expand', {
-        start: expansion.startedAt,
-        end: performance.now(),
-        detail: { scopedId: expansion.nodeId, executionId: expansion.executionId },
-      });
-    } catch {
-      // Unsupported User Timing must not interrupt node expansion.
+    // Cancel if this expansion no longer belongs to the current view.
+    if (
+      !parentRow ||
+      // Compare plain values because API IDs are protobuf class instances.
+      !isEqual(expansion.executionId, { ...execution.id }) ||
+      !isEqual(expansion.filters, appliedFilters)
+    ) {
+      pendingExpansion.current = undefined;
+      return;
     }
-  }, [showNodes]);
+    if (!isExpanded(parentRow)) {
+      // The expanded node may not have reached the table yet. Keep waiting.
+      return;
+    }
+
+    const measure = (name: string) => {
+      try {
+        performance.measure(name, {
+          start: expansion.startedAt,
+          end: performance.now(),
+          detail: {
+            scopedId: expansion.nodeId,
+            executionId: expansion.executionId,
+            workflowName: expansion.workflowName,
+          },
+        });
+      } catch {
+        // Unsupported User Timing must not interrupt node expansion.
+      }
+    };
+
+    // Record the row commit once; both measurements start at the same click.
+    if (!expansion.rowsCommitted) {
+      expansion.rowsCommitted = true;
+      measure('flyteconsole.node.expand');
+    }
+
+    // Rows can appear before their data does. Keep the same start time until the
+    // parent and its displayed descendants report ready. Missing reports must wait.
+    const expandedRows = convertToPlainNodes([parentRow]);
+    if (expandedRows.every((node) => readinessByNodeId.current.get(node.scopedId) === true)) {
+      pendingExpansion.current = undefined;
+      measure('flyteconsole.node.expand.children_loaded');
+    }
+  }, [showNodes, readinessVersion, execution.id, appliedFilters]);
 
   const [filteredNodes, setFilteredNodes] = useState<dNode[] | undefined>(undefined);
 
@@ -293,7 +346,11 @@ export const NodeExecutionsTable: React.FC<{
                 {showNodes.length > 0 ? (
                   showNodes.map((node) => {
                     return (
-                      <NodeExecutionDynamicProvider node={node} key={node.scopedId}>
+                      <NodeExecutionDynamicProvider
+                        node={node}
+                        key={node.scopedId}
+                        reportRowReadiness={reportRowReadiness}
+                      >
                         <NodeExecutionRow
                           columns={columns}
                           node={node}

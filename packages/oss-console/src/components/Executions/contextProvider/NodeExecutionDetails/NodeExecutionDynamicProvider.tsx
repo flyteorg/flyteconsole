@@ -7,9 +7,10 @@ import React, {
   useState,
 } from 'react';
 import keyBy from 'lodash/keyBy';
+import isEqual from 'lodash/isEqual';
 import { useInView } from 'react-intersection-observer';
 import { useNodeExecutionDataQuery } from '../../../hooks/useNodeExecutionDataQuery';
-import { isDynamicNode, nodeExecutionIsTerminal } from '../../utils';
+import { isDynamicNode, isParentNode, nodeExecutionIsTerminal } from '../../utils';
 import { dNode } from '../../../../models/Graph/types';
 import { nodeExecutionRefreshIntervalMs } from '../../constants';
 import { useNodeExecutionsById } from './WorkflowNodeExecutionsProvider';
@@ -32,11 +33,13 @@ export const NodeExecutionDynamicContext = createContext<INodeExecutionDynamicCo
 
 export type NodeExecutionDynamicProviderProps = PropsWithChildren<{
   node: dNode;
+  reportRowReadiness?: (scopedId: string, ready?: boolean) => void;
 }>;
 /** Should wrap "top level" component in Execution view, will build a nodeExecutions tree for specific workflow */
 export const NodeExecutionDynamicProvider = ({
   node,
   children,
+  reportRowReadiness,
 }: NodeExecutionDynamicProviderProps) => {
   const { updateWorkflow } = useNodeExecutionContext();
   const { setCurrentNodeExecutionsById, nodeExecutionsById } = useNodeExecutionsById();
@@ -47,7 +50,7 @@ export const NodeExecutionDynamicProvider = ({
   );
 
   const [throttledInView, setThrottledInView] = useState(false);
-  const { ref } = useInView({
+  const { ref, entry } = useInView({
     delay: 100,
     initialInView: false,
     fallbackInView: true,
@@ -103,6 +106,65 @@ export const NodeExecutionDynamicProvider = ({
 
     updateWorkflow(node.scopedId, nodeExecutionDataQuery.data);
   }, [nodeExecutionDataQuery.data]);
+
+  const isRowReady = () => {
+    // Leaf rows have no children to load.
+    if (!isParentNode(nodeExecution)) {
+      return true;
+    }
+
+    // If the browser has checked this row’s visibility, and it’s offscreen, don’t wait for it
+    if (entry && !throttledInView) {
+      return true;
+    }
+
+    // If the request hasn’t succeeded, or we don’t have its response data, we’re still waiting.
+    const loadedChildren = nodeExecutionChildrenQuery.data;
+    if (!nodeExecutionChildrenQuery.isSuccess || !loadedChildren) {
+      return false;
+    }
+
+    // A response can arrive before React puts its records into the table's data.
+    // An empty response is valid: some children may not have started yet.
+    const allChildrenInTable = loadedChildren.every((child) => {
+      if (child.scopedId === undefined) {
+        return false;
+      }
+      return Boolean(nodeExecutionsById[child.scopedId]);
+    });
+    if (!allChildrenInTable) {
+      return false;
+    }
+
+    // Dynamic nodes also need their downloaded workflow applied to the graph.
+    if (isDynamicNode(nodeExecution)) {
+      const loadedWorkflow = nodeExecutionDataQuery.data?.dynamicWorkflow;
+      if (!loadedWorkflow) {
+        return false;
+      }
+      const renderedWorkflowId = node.value?.workflowNode?.subWorkflowRef;
+      return isEqual(renderedWorkflowId, loadedWorkflow.id);
+    }
+
+    return true;
+  };
+  const rowReady = isRowReady();
+
+  useEffect(() => {
+    if (reportRowReadiness) {
+      reportRowReadiness(node.scopedId, rowReady);
+    }
+  }, [node.scopedId, rowReady, reportRowReadiness]);
+
+  useEffect(() => {
+    // React calls this cleanup when the row is removed. Omitting ready removes
+    // its checklist entry, so reopening it cannot reuse an old report.
+    return () => {
+      if (reportRowReadiness) {
+        reportRowReadiness(node.scopedId);
+      }
+    };
+  }, [node.scopedId, reportRowReadiness]);
 
   return (
     <NodeExecutionDynamicContext.Provider
