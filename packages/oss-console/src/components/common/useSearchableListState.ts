@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import fuzzysort from 'fuzzysort';
-import React, { createElement, useMemo, useState } from 'react';
+import React, { createElement, useDeferredValue, useMemo, useState } from 'react';
 import get from 'lodash/get';
 import { createDebugLogger } from '../../common/log';
 
@@ -92,25 +92,33 @@ export const useSearchableListState = <T extends {}>({
   propertyGetter,
 }: SearchableListStateArgs<T>) => {
   const [searchString, setSearchString] = useState('');
+  const deferredSearchString = useDeferredValue(searchString);
 
-  const { results, loading = true } = useMemo(() => {
-    const unfilteredResults = toSearchResults(items, propertyGetter);
-    const preparedItems = items.map((value) => ({
-      value,
-      prepared: fuzzysort.prepare(getProperty(value, propertyGetter)),
-    }));
-    const results =
-      searchString.length === 0
+  const { unfilteredResults, preparedItems } = useMemo(
+    () => ({
+      unfilteredResults: toSearchResults(items, propertyGetter),
+      preparedItems: items.map((value) => ({
+        value,
+        prepared: fuzzysort.prepare(getProperty(value, propertyGetter)),
+      })),
+    }),
+    [items, propertyGetter],
+  );
+
+  const results = useMemo(() => {
+    const nextResults =
+      deferredSearchString.length === 0
         ? unfilteredResults
-        : getFilteredItems(preparedItems, propertyGetter, searchString);
-    debug('useSearchableListState', { results, searchString });
-    return { results, loading: false };
-  }, [searchString, items]);
+        : getFilteredItems(preparedItems, propertyGetter, deferredSearchString);
+    debug('useSearchableListState', { results: nextResults, searchString: deferredSearchString });
+    return nextResults;
+  }, [deferredSearchString, unfilteredResults, preparedItems, propertyGetter]);
+
   return {
     results,
     searchString,
     setSearchString,
-    loading,
+    loading: deferredSearchString !== searchString,
   };
 };
 /* eslint-enable no-undef */
