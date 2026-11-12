@@ -46,6 +46,18 @@ type MapInputItem = {
   value: string;
 };
 
+// The helpers for these subtypes validate and convert parsed objects and reject JSON text,
+// so their map values stay objects. Any other object value is kept as JSON text.
+const objectValueTypes = [
+  InputType.Union,
+  InputType.Blob,
+  InputType.StructuredDataset,
+  InputType.None,
+];
+
+const getDisplayValue = (value: unknown) =>
+  typeof value === 'object' ? JSON.stringify(value) : value;
+
 const arrayToMappedType = (array: MapInputItem[]): string => {
   const newPairs = array.map((item) => {
     return {
@@ -93,7 +105,7 @@ const MapSingleInputItem = (props: MapInputItemProps) => {
           onChange={({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
             setValue(value);
           }}
-          value={data.value}
+          value={getDisplayValue(data.value)}
           variant="outlined"
           className="valueControl"
           multiline={!isOneLineType}
@@ -113,11 +125,12 @@ const getNewMapItem = (id: number | null, key = '', value = ''): MapInputItem =>
   return { id, key, value };
 };
 
-function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
+function parseMappedTypeValue(value?: InputValue, subtype?: InputTypeDefinition): MapInputItem[] {
   const fallback = [getNewMapItem(0)];
   if (!value) {
     return fallback;
   }
+  const keepObjects = !!subtype && objectValueTypes.includes(subtype.type);
   try {
     const mapObj = JSON.parse(value.toString());
     if (typeof mapObj === 'object') {
@@ -126,7 +139,7 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
         return getNewMapItem(
           index,
           key,
-          typeof itemValue === 'object' ? JSON.stringify(itemValue) : itemValue,
+          !keepObjects && typeof itemValue === 'object' ? JSON.stringify(itemValue) : itemValue,
         );
       });
     }
@@ -139,7 +152,9 @@ function parseMappedTypeValue(value?: InputValue): MapInputItem[] {
 
 export const MapInput = (props: InputProps) => {
   const { value, label, onChange, error, typeDefinition, name } = props;
-  const [data, setData] = React.useState<MapInputItem[]>(parseMappedTypeValue(value));
+  const [data, setData] = React.useState<MapInputItem[]>(
+    parseMappedTypeValue(value, typeDefinition.subtype),
+  );
 
   const onAddItem = () => {
     setData((data) => [...data, getNewMapItem(data.length)]);
