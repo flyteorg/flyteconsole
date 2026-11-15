@@ -42,7 +42,7 @@ interface EntityDetailsProps {
 const EXECUTIONS_LIMIT = 100;
 
 const DEFAULT_SORT = {
-  key: executionSortFields.createdAt,
+  key: executionSortFields.executionCreatedAt,
   direction: SortDirection.DESCENDING,
 };
 
