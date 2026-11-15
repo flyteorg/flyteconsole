@@ -29,8 +29,9 @@ function convertToValue(value: any) {
     protoValue.structValue = convertToStruct(value);
   } else if (typeof value === 'string') {
     protoValue.stringValue = value;
-  } else if (typeof value === 'number') {
-    protoValue.numberValue = value;
+  } else if (typeof value === 'number' || typeof value === 'bigint') {
+    // msgpackr decodes 64-bit integers as BigInt, and a Struct number is a double.
+    protoValue.numberValue = Number(value);
   } else if (typeof value === 'boolean') {
     protoValue.boolValue = value;
   } else if (value === null) {
