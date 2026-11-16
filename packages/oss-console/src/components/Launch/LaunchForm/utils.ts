@@ -233,10 +233,13 @@ export function literalsToLiteralValueMap(
 
   for (let i = 0; i < Object.keys(literals).length; i++) {
     const name = Object.keys(literals)[i];
-    const { type } = nameToTypeMap[name];
-    const typeDefinition = getInputDefintionForLiteralType(type);
-    const inputKey = createInputCacheKey(name, typeDefinition);
-    literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
+    const variable = nameToTypeMap[name];
+    if (variable) {
+      const { type } = variable;
+      const typeDefinition = getInputDefintionForLiteralType(type);
+      const inputKey = createInputCacheKey(name, typeDefinition);
+      literalValueMap.set(inputKey, literals[Object.keys(literals)[i]]);
+    }
   }
 
   return literalValueMap;
