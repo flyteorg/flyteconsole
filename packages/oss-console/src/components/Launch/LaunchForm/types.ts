@@ -80,6 +80,10 @@ export interface TaskInitialLaunchParameters extends BaseInitialLaunchParameters
   taskId?: Identifier;
   authRole?: Admin.IAuthRole;
   securityContext?: Core.ISecurityContext;
+  disableAll?: boolean | null;
+  rawOutputDataConfig?: Admin.IRawOutputDataConfig | null;
+  labels?: Admin.ILabels | null;
+  annotations?: Admin.IAnnotations | null;
   interruptible?: Protobuf.IBoolValue | null;
   overwriteCache?: boolean | null;
 }
@@ -149,6 +153,7 @@ export interface LaunchWorkflowFormState {
 }
 
 export interface LaunchTaskFormState {
+  advancedOptionsRef: React.RefObject<LaunchAdvancedOptionsRef>;
   formInputsRef: React.RefObject<LaunchFormInputsRef>;
   roleInputRef: React.RefObject<LaunchRoleInputRef>;
   interruptibleInputRef: React.RefObject<LaunchInterruptibleInputRef>;

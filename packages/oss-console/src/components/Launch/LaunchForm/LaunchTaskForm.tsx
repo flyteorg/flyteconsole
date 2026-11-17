@@ -1,4 +1,9 @@
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import DialogContent from '@mui/material/DialogContent';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
 import { getCacheKey } from '../../Cache/utils';
 import t from './strings';
@@ -9,6 +14,7 @@ import { LaunchState } from './launchMachine';
 import { LaunchRoleInput } from './LaunchRoleInput';
 import { LaunchInterruptibleInput } from './LaunchFormComponents/LaunchInterruptibleInput';
 import { LaunchOverwriteCacheInput } from './LaunchFormComponents/LaunchOverwriteCacheInput';
+import { LaunchFormAdvancedInputs } from './LaunchFormComponents/LaunchFormAdvancedInputs';
 import { SearchableSelector } from './LaunchFormComponents/SearchableSelector';
 import { useStyles } from './styles';
 import { BaseInterpretedLaunchState, BaseLaunchService, LaunchTaskFormProps } from './types';
@@ -20,6 +26,7 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
   const {
     formInputsRef,
     roleInputRef,
+    advancedOptionsRef,
     interruptibleInputRef,
     overwriteCacheInputRef,
     state,
@@ -65,13 +72,6 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
             />
           </section>
         ) : null}
-        {isEnterInputsState(baseState) ? (
-          <LaunchRoleInput
-            initialValue={state.context.defaultAuthRole}
-            ref={roleInputRef}
-            showErrors={state.context.showErrors}
-          />
-        ) : null}
         <LaunchFormInputs
           key={formKey}
           ref={formInputsRef}
@@ -79,14 +79,39 @@ export const LaunchTaskForm: React.FC<LaunchTaskFormProps> = (props) => {
           variant="task"
           setIsError={setIsError}
         />
-        <LaunchInterruptibleInput
-          initialValue={state.context.interruptible}
-          ref={interruptibleInputRef}
-        />
-        <LaunchOverwriteCacheInput
-          initialValue={state.context.overwriteCache}
-          ref={overwriteCacheInputRef}
-        />
+        <Accordion className={styles.noBorder}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            classes={{
+              root: styles.summaryWrapper,
+              content: styles.advancedOptions,
+            }}
+          >
+            <Typography variant="body1" fontWeight={500} paddingRight={1}>
+              Advanced options
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails classes={{ root: styles.detailsWrapper }}>
+            {isEnterInputsState(baseState) ? (
+              <LaunchRoleInput
+                initialValue={state.context.defaultAuthRole}
+                ref={roleInputRef}
+                showErrors={state.context.showErrors}
+              />
+            ) : null}
+            {isEnterInputsState(baseState) ? (
+              <LaunchFormAdvancedInputs ref={advancedOptionsRef} state={state} />
+            ) : null}
+            <LaunchInterruptibleInput
+              initialValue={state.context.interruptible}
+              ref={interruptibleInputRef}
+            />
+            <LaunchOverwriteCacheInput
+              initialValue={state.context.overwriteCache}
+              ref={overwriteCacheInputRef}
+            />
+          </AccordionDetails>
+        </Accordion>
       </DialogContent>
       <LaunchFormActions
         state={baseState}
