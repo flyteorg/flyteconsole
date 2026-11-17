@@ -3,6 +3,7 @@ import { type SvgIconProps } from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CachedOutlined from '@mui/icons-material/CachedOutlined';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import ErrorOutlined from '@mui/icons-material/ErrorOutlined';
 import InfoOutlined from '@mui/icons-material/InfoOutlined';
 import SmsFailedOutlinedIcon from '@mui/icons-material/SmsFailedOutlined';
@@ -54,6 +55,9 @@ const NodeExecutionCacheStatusIcon: React.ComponentType<
     }
     case CatalogCacheStatus.MAP_CACHE: {
       return <MapCacheIcon {...svgIconProps} ref={ref} data-testid="cache-icon" />;
+    }
+    case CatalogCacheStatus.CACHE_EVICTED: {
+      return <DeleteForeverOutlinedIcon {...svgIconProps} ref={ref} data-testid="cache-icon" />;
     }
     default: {
       assertNever(status as never);
