@@ -20,6 +20,7 @@ const ThemedAppBar = styled(AppBar)(({ theme }) => ({
   background: theme.palette.common.primary.flyte,
   fontFamily: 'Roboto Condensed',
   overflow: 'visible',
+  textAlign: 'center',
 
   '&, & *': {
     '&::-webkit-scrollbar': {
@@ -29,7 +30,7 @@ const ThemedAppBar = styled(AppBar)(({ theme }) => ({
   },
 
   span: {
-    fontFamily: 'Roboto Condensed',
+    fontFamily: 'Roboto',
     fontSize: '12px',
     WebkitFontSmoothing: 'subpixel-antialiased',
     letterSpacing: '0.1px',
