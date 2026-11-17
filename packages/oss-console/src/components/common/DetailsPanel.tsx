@@ -4,7 +4,9 @@ import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
 import styled from '@mui/system/styled';
 import { detailsPanelId } from '@clients/common/constants';
-import { detailsPanelWidth } from './constants';
+import classnames from 'classnames';
+import useResize from '@clients/oss-console/components/hooks/useResize';
+import { defaultDetailsPanelWidth } from './constants';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   display: 'flex',
@@ -12,7 +14,15 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   maxHeight: '100%',
   paddingBottom: theme.spacing(2),
   pointerEvents: 'initial',
-  width: detailsPanelWidth,
+  '& .dragger': {
+    width: '3px',
+    cursor: 'ew-resize',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    zIndex: 100,
+  },
 }));
 
 interface DetailsPanelProps {
@@ -29,6 +39,9 @@ export const DetailsPanel: React.FC<PropsWithChildren<DetailsPanelProps>> = ({
   open = false,
 }) => {
   const theme = useTheme();
+
+  const { width, enableResize } = useResize({ minWidth: defaultDetailsPanelWidth });
+
   return (
     <Drawer
       anchor="right"
@@ -50,7 +63,8 @@ export const DetailsPanel: React.FC<PropsWithChildren<DetailsPanelProps>> = ({
       open={open}
       key="detailsPanel"
     >
-      <StyledPaper id={detailsPanelId} square>
+      <StyledPaper id={detailsPanelId} square sx={{ width }}>
+        <div onMouseDown={enableResize} className={classnames('dragger')} />
         {children}
       </StyledPaper>
     </Drawer>
