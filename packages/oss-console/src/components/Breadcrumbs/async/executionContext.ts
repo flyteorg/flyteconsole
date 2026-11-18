@@ -133,7 +133,7 @@ export const executonTaskWorkFlowNameAsyncSelfLink: BreadcrumbEntitySelfLinkAsyn
   const resourceType = isExecutionTaskOrWorkflow(executionData);
 
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 
@@ -160,13 +160,13 @@ export const executionTaskWorkflowVersions: BreadcrumbAsyncPopOverData = async (
   const entityResourceVersion = getTaskOrWorkflowVersion(executionData);
 
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 
   const resourceId = {
-    project: breadcrumb.projectId,
-    domain: breadcrumb.domainId,
+    project: desinationProject,
+    domain: desinationDomain,
     name: entityResourceName,
     resourceType: executionType,
   };
@@ -347,7 +347,7 @@ export const executionTaskWorkflowViewAll: BreadcrumbAsyncViewAllLink = async (
   const entityResourceName = getTaskOrWorkflowName(executionData);
 
   const { project: desinationProject, domain: desinationDomain } = getExecutionSpecProjectDomain(
-    executionData.spec.launchPlan,
+    executionData.closure.workflowId,
     breadcrumb,
   );
 
