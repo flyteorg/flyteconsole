@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,8 +8,6 @@ import TableRow from '@mui/material/TableRow';
 import { LargeLoadingComponent } from '@clients/primitives/LoadingSpinner';
 import { TableNoRowsCell } from '@clients/primitives/TableNoRowsCell';
 import { noLaunchPlansFoundString } from '@clients/common/constants';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import result from 'lodash/result';
 import { SearchResult } from '../../common/useSearchableListState';
 import { NamedEntity } from '../../../models/Common/types';
 import { LaunchPlanTableRow } from './LaunchPlanTableRow';
@@ -20,17 +18,6 @@ export interface LaunchPlanTableViewProps {
 }
 
 export const LaunchPlanTableView = ({ results, loading }: LaunchPlanTableViewProps) => {
-  const parentRef = useRef<any>(document.getElementById('scroll-element'));
-
-  const rowVirtualizer = useVirtualizer({
-    count: result?.length ? results.length + 1 : 0,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
-    overscan: 15,
-  });
-
-  const items = rowVirtualizer.getVirtualItems();
-
   return (
     <TableContainer
       sx={{
@@ -54,7 +41,10 @@ export const LaunchPlanTableView = ({ results, loading }: LaunchPlanTableViewPro
           ) : results.length === 0 ? (
             <TableNoRowsCell displayMessage={noLaunchPlansFoundString} />
           ) : (
-            items.map((virtualRow) => <LaunchPlanTableRow {...results[virtualRow.index]} />)
+            results.map((searchResult, index) => {
+              const { key, ...rest } = searchResult;
+              return <LaunchPlanTableRow key={key || String(index)} {...rest} />;
+            })
           )}
         </TableBody>
       </Table>
