@@ -97,13 +97,13 @@ describe('ProjectDashboard', () => {
 
   const defaultQueryParams1 = {
     [sortQueryKeys.direction]: SortDirection[SortDirection.DESCENDING],
-    [sortQueryKeys.key]: executionSortFields.createdAt,
+    [sortQueryKeys.key]: executionSortFields.executionCreatedAt,
   };
 
   const defaultQueryParams2 = {
     filters: 'eq(user,subject)',
     [sortQueryKeys.direction]: SortDirection[SortDirection.DESCENDING],
-    [sortQueryKeys.key]: executionSortFields.createdAt,
+    [sortQueryKeys.key]: executionSortFields.executionCreatedAt,
   };
 
   jest.spyOn(LocalCache, 'useLocalCache');

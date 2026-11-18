@@ -265,7 +265,7 @@ const CardRow: React.FC<
 const EXECUTIONS_CONFIG = {
   limit: 10,
   sort: {
-    key: executionSortFields.createdAt,
+    key: executionSortFields.executionCreatedAt,
     direction: SortDirection.DESCENDING,
   },
 };

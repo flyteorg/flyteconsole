@@ -23,7 +23,8 @@ export const terminalExecutionStates: WorkflowExecutionPhase[] = [
 ];
 
 export const executionSortFields = {
-  createdAt: 'execution_created_at',
+  createdAt: 'created_at',
+  executionCreatedAt: 'execution_created_at',
   startedAt: 'started_at',
 };
 

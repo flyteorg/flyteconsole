@@ -52,7 +52,7 @@ export const WorkflowVersionRow: FC<WorkflowVersionRowProps & { style?: CSSPrope
   const versionTableStyles = useWorkflowVersionsColumnStyles();
 
   const sort = {
-    key: executionSortFields.createdAt,
+    key: executionSortFields.executionCreatedAt,
     direction: SortDirection.DESCENDING,
   };
 

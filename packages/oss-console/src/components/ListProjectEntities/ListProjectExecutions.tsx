@@ -21,7 +21,7 @@ export interface ProjectDashboardProps {
 }
 
 const DEFAULT_SORT = {
-  key: executionSortFields.createdAt,
+  key: executionSortFields.executionCreatedAt,
   direction: SortDirection.DESCENDING,
 };
 

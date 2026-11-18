@@ -385,7 +385,7 @@ export const executionsPeerExecutionList: BreadcrumbAsyncPopOverData = async (
   };
 
   const sort = {
-    key: executionSortFields.createdAt,
+    key: executionSortFields.executionCreatedAt,
     direction: SortDirection.DESCENDING,
   };
 
